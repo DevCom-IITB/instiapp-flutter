@@ -1,0 +1,1280 @@
+[
+    {
+        "id": "6435daa0-42f3-47d2-b237-644312cad32e",
+        "name": "Hostel 1",
+        "short_name": "1",
+        "long_name": "Queen of the Campus",
+        "mess": [
+            {
+                "id": "66455130-cd5d-4592-8e27-d4cd2cbd80bc",
+                "day": 7,
+                "breakfast": "Masala Dosa/Rawa Dosa, Sambar and Coconut Chutney, Red Chana Sprouts",
+                "lunch": "Curd Rice, Masoor Dal, Mix Veg, Dates/Tomato Khatta, Chips Papad, Rasam",
+                "snacks": "Maggie/Noodle, Mix Fruit Shake**",
+                "dinner": "Ask your mess co to update menu",
+                "hostel": "6435daa0-42f3-47d2-b237-644312cad32e"
+            },
+            {
+                "id": "d75f95cc-fe6a-4cb5-a06c-56e443e0e24d",
+                "day": 4,
+                "breakfast": "Upma and Sheera, Coconut Chutney, Red Chana and Sprouts",
+                "lunch": "Lemon Rice, Toor Dal Tadka, Paneer Butter Masala, Banana Fry, Rice Papad, Dal Sambar",
+                "snacks": "Meetha Wada, Green Chutney\n",
+                "dinner": "Ask your mess co to update menu",
+                "hostel": "6435daa0-42f3-47d2-b237-644312cad32e"
+            },
+            {
+                "id": "eae89460-4784-4002-bf1c-40e4ad130388",
+                "day": 5,
+                "breakfast": "Idli, Medu Wada, Sambar and Chana Dal Chutney, and Corn",
+                "lunch": "Jeera Rice, Plain Moong Dal, Rajma, Bhendi Fry, Kerala Papad, Rasam",
+                "snacks": " \tMisal Pav/Pav Bhaji ",
+                "dinner": "Ask your mess co to update menu",
+                "hostel": "6435daa0-42f3-47d2-b237-644312cad32e"
+            },
+            {
+                "id": "347b8f68-a762-48ef-a417-118fc6602438",
+                "day": 3,
+                "breakfast": "Uttapam, Chana Dal Chutney, Moong, Sprouts",
+                "lunch": "Fried Rice/Biryani, Plain Toor Dal, Gobi Chilli, Dahi Bengan, Friums, Rasam",
+                "snacks": "Samosa, Green Chutney",
+                "dinner": "Ask your mess co to update menu",
+                "hostel": "6435daa0-42f3-47d2-b237-644312cad32e"
+            },
+            {
+                "id": "e17f7c3d-78e8-46bd-b054-27ef30d713ff",
+                "day": 1,
+                "breakfast": "Poha, Matki Gravy and Sev, Peanut",
+                "lunch": "Chole Bhature, Plain massor Dal, Dahi Bhoondi, Kerala Papad, Rasam",
+                "snacks": " \tBhel Puri",
+                "dinner": "Ask your mess co to update menu",
+                "hostel": "6435daa0-42f3-47d2-b237-644312cad32e"
+            },
+            {
+                "id": "58cc680b-3a8b-47da-bf86-e34c348af098",
+                "day": 2,
+                "breakfast": "Plain Paratha, Alu Tomato Curry, Corn",
+                "lunch": "Kasmiri Pulav, Toor Dal Tadka, Drumstick Mustard Curry, French Fries, Fried Papad, Ginger Sambar",
+                "snacks": "Wada Pav",
+                "dinner": "Ask your mess co to update menu",
+                "hostel": "6435daa0-42f3-47d2-b237-644312cad32e"
+            },
+            {
+                "id": "254fa2c1-6b5d-4339-8890-474d49b8cd09",
+                "day": 6,
+                "breakfast": "Alu Paratha, Tomato Chutney and Moon Sprouts",
+                "lunch": "Dal Khichdi, Kadi Pakoda, Beans/Chauli Alu Fry, Rice Papad, Jeera Sambar",
+                "snacks": " \tRawa Idli, Green Chutney",
+                "dinner": "Ask your mess co to update menu",
+                "hostel": "6435daa0-42f3-47d2-b237-644312cad32e"
+            }
+        ]
+    },
+    {
+        "id": "82a8363e-99de-4b8a-b131-f67c72d8a00b",
+        "name": "Hostel 10",
+        "short_name": "10",
+        "long_name": "Phoenix",
+        "mess": [
+            {
+                "id": "ad85e6b3-0c75-47ee-a441-e837b50eb5e7",
+                "day": 1,
+                "breakfast": "GOBHI PARATHA\nCURD\nMOONG SPROUTS\nCHOCOS\nBANANA\nANAR\nMIXED JAM\n",
+                "lunch": "PADWAL CHANA\nMIX VEG HANDI\nMOONG DAL\nVEG PULAO\nTIL CHUTNEY\nTRIANGLE PAPAD\nSOL KADHI\nNORMAL SALAD\nEGG BIRYANI\n",
+                "snacks": "VEG CUTLET\nAPPLE BER\nICE TEA\n",
+                "dinner": "SURAN SABJI\nSOYA MASALA\nDAL FRY\nMANCHOW SOUP\nRASGULLA\n\nCHICKEN HANDI\n",
+                "hostel": "82a8363e-99de-4b8a-b131-f67c72d8a00b"
+            },
+            {
+                "id": "5452685e-5770-4f84-9cbd-8373ffc30c0d",
+                "day": 2,
+                "breakfast": "VEG POHA\nSEV\nCORN\nWATERMELON\nCUSTARD APPLE\nORANGE JAM\n",
+                "lunch": "GAWARFALI SABJI\nPANEER BUTTER MASALA\nPEELI DAL\nLEMON RICE\nGARLIC CHUTNEY\nJWARI PAPAD\nRASNA\nPASTA SALAD\nMACHER JHOL\n",
+                "snacks": "KHANDVI\nRUSK (2)\nCHICKOO MILKSHAKE\n",
+                "dinner": "TENDLI FRY\nSTUFFED TOMATO\nKHATTI MEETHI DAL\nSAMBHAR\nRICE KHEER\n\nMUGHLAI CHICKEN\n",
+                "hostel": "82a8363e-99de-4b8a-b131-f67c72d8a00b"
+            },
+            {
+                "id": "eca53054-8261-495b-b7e3-429c43039d94",
+                "day": 6,
+                "breakfast": "MASALA DOSA\nSAMBHAR, CHUTNEY, GROUNDNUT SPROUTS\nPEANUT BUTTER\nPAPAYA\nAPPLE \nMIXED JAM\n",
+                "lunch": "TURAI DRY\nDUM ALOO\nDAL TARKA\nMETHI RICE\nMULTIGRAIN ROTI\nCOCONUT CHUTNEY\nKATRAN PAPAD\nNIMBU PANI\nMIX SPROUTS SALAD\nEGG PARATHA\n",
+                "snacks": "PAV BHAJI\nPLUM\nGREEN TEA\n",
+                "dinner": "BEANS SABJI\nPANEER LABABDAR\nBLACK DAL\nPEPPER RASAM\nSTRAWBERRY ICECREAM\n\nCHICKEN HARIYALI\n",
+                "hostel": "82a8363e-99de-4b8a-b131-f67c72d8a00b"
+            },
+            {
+                "id": "ab3cf1b8-a6fd-4f76-956e-9b0445374486",
+                "day": 4,
+                "breakfast": "METHI PARATHA\nBHAJI, CURD\nCHANA SPROUTS\nCHOCOS\nBANANA\nMOSAMBI\nPINEAPPLE JAM\n",
+                "lunch": " PARWAL SABJI\nRAJMA MASALA\nCHILKA MOONG DAL\nJEERA RICE\nGROUNDNUT CHUTNEY\nROASTED PAPAD\nLASSI\nCARROT SALAD\nCHICKEN CHILLY\n\n",
+                "snacks": "CHURA GHUGNI\nAPPLE JUICE\nCOLD COFFEE\n",
+                "dinner": "RAW BANANA SABJI\nKADHI PAKODA\nVEG DAL\nGARLIC RASAM\nSHAHI TUKDA\n\nEGG MASALA\n",
+                "hostel": "82a8363e-99de-4b8a-b131-f67c72d8a00b"
+            },
+            {
+                "id": "e34253dd-39fb-4813-9005-32985662bc11",
+                "day": 5,
+                "breakfast": "VEG UPMA\nGREEN CHUTNEY\nCORN\nWATERMELON\nORANGE\nSTRAWBERRY JAM\n",
+                "lunch": "PUMPKIN SABJI\nPUNJABI CHOLE\nMETHI POORI\nKOLHAPURI DAL\nVEG BIRYANI\nSCHEZWAN CHUTNEY\nFRYMES\nROOAFZHA\nVEG SALAD\nCHICKEN LOLLIPOP\n",
+                "snacks": "BREAD POHA\nCUSTARD APPLE\nICE TEA\n",
+                "dinner": "BHINDI DO PYAZA\nMETHI MALAI MATAR\nPANCHRANGI DAL\nVEG CORIANDER SOUP\nKAJU KATLI\n\nFISH FRY\n",
+                "hostel": "82a8363e-99de-4b8a-b131-f67c72d8a00b"
+            },
+            {
+                "id": "f15a5e77-9b75-4a51-850f-338fb4630509",
+                "day": 3,
+                "breakfast": "IDLI VADA \nSAMBHAR\nMIXED SPROUTS\nPEANUT BUTTER\nMUSKMELON\nPLUM\nMANGO JAM\n",
+                "lunch": "GOBHI MASALA\nSEV TAMATAR\nTIKHAT DAL\nSOYA RICE\n THECHA\nSABUDANA PAPAD\nPUDINA SHARBAT\nMIX VEG SALAD\nCHICKEN MAHARAJA\n",
+                "snacks": "ONION SAMOSA\nPERU\nGREEN TEA\n",
+                "dinner": "CHAWLI GREEN\nLAUKI KOFTA\nTAMATAR DAL\nSINDHI KADHI \nJALEBI\n\nKADHAI CHICKEN\n",
+                "hostel": "82a8363e-99de-4b8a-b131-f67c72d8a00b"
+            },
+            {
+                "id": "4a24b3e9-5268-47d7-9dd3-49f877eabcb1",
+                "day": 7,
+                "breakfast": "SABUDANA KHICHADI\nCURD\nMIX SPROUTS\nMUSKMELON\nMOSAMBI\nORANGE JAM\n",
+                "lunch": "KAKORA FRY\nMIX VEG (GROUNDNUT GRAVY)\nDAL FRY\nCORN RICE\nPUDINA CHUTNEY\nFRY PAPAD\nCHAAS\nGREEN SALAD\nHYDERABADI CHICKEN\n",
+                "snacks": "PANI PURI\nDATES \nLEMON TEA\n",
+                "dinner": "URAD CHANA DRY\nMANCHURIAN GRAVY\nMIX DAL\nMULTIGRAIN ROTI\nTOMATO SOUP\nBALUSHAHI\n\nCHICKEN DUM BIRYANI\n",
+                "hostel": "82a8363e-99de-4b8a-b131-f67c72d8a00b"
+            }
+        ]
+    },
+    {
+        "id": "0fb0ee5e-2805-4431-ad54-f7b56e70f714",
+        "name": "Hostel 11",
+        "short_name": "11",
+        "long_name": "Athena",
+        "mess": [
+            {
+                "id": "cb37888c-7b84-4ed3-8ece-f24d466f630a",
+                "day": 2,
+                "breakfast": "",
+                "lunch": "",
+                "snacks": "",
+                "dinner": "",
+                "hostel": "0fb0ee5e-2805-4431-ad54-f7b56e70f714"
+            },
+            {
+                "id": "48135ffe-4b1f-485c-9f6a-4ee97ae14bb3",
+                "day": 3,
+                "breakfast": "",
+                "lunch": "",
+                "snacks": "",
+                "dinner": "",
+                "hostel": "0fb0ee5e-2805-4431-ad54-f7b56e70f714"
+            },
+            {
+                "id": "cbb2cf38-81b1-4922-bd0c-2624e0bbde12",
+                "day": 4,
+                "breakfast": "",
+                "lunch": "",
+                "snacks": "",
+                "dinner": "",
+                "hostel": "0fb0ee5e-2805-4431-ad54-f7b56e70f714"
+            },
+            {
+                "id": "87eb2bcd-fe0c-447a-8a88-31eec9106aa9",
+                "day": 7,
+                "breakfast": "",
+                "lunch": "",
+                "snacks": "",
+                "dinner": "",
+                "hostel": "0fb0ee5e-2805-4431-ad54-f7b56e70f714"
+            },
+            {
+                "id": "a91a3833-0c0c-4b8f-bd6f-92dba463b164",
+                "day": 6,
+                "breakfast": "",
+                "lunch": "",
+                "snacks": "",
+                "dinner": "",
+                "hostel": "0fb0ee5e-2805-4431-ad54-f7b56e70f714"
+            },
+            {
+                "id": "c2179fc9-8a8a-4668-be9c-10a0b4e91896",
+                "day": 1,
+                "breakfast": "",
+                "lunch": "",
+                "snacks": "",
+                "dinner": "",
+                "hostel": "0fb0ee5e-2805-4431-ad54-f7b56e70f714"
+            },
+            {
+                "id": "c96329aa-b974-4a77-8317-bbba4a6128c1",
+                "day": 5,
+                "breakfast": "",
+                "lunch": "",
+                "snacks": "",
+                "dinner": "",
+                "hostel": "0fb0ee5e-2805-4431-ad54-f7b56e70f714"
+            }
+        ]
+    },
+    {
+        "id": "f4efea9a-3c66-403c-b3fb-11b43c744943",
+        "name": "Hostel 12",
+        "short_name": "12",
+        "long_name": "Crown of the Campus",
+        "mess": [
+            {
+                "id": "be9be000-779b-4837-beff-1fb18a092bde",
+                "day": 2,
+                "breakfast": "Mix veg Paratha\nCurd, Sauce\nEgg Bhurji\nPaneer Bhurji\nMusali/Bournvita\nBoiled Peanut\nBread-Butter- pineapple Jam\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "Cabbage Mutter\nPatwadi Curry\nChana Dal\nVangi Bhat\nchapati / roti\nCocumber Pachadi\nCurd\n\nMasala fry papad\nOnion, Cucumber, Tomato\nSteam Rice\nRasam\npaneer popcorn",
+                "snacks": "vadapav\nBread-Butter-Jam\nTea-ketchup",
+                "dinner": "Moong gassi\nGreen Chawali +Aloo 20% \nCorn Rice\nDal Makhani\nOnion, Cucumber, Beet-root\nchapati / roti\nTisa chutney+Pickle\nSteam Rice\nSambhar\nSwaeet corn soup\nSewai kheer soup\nFruit\nVeg 65\n\nPineapple",
+                "hostel": "f4efea9a-3c66-403c-b3fb-11b43c744943"
+            },
+            {
+                "id": "78f0de96-40e2-41b2-8b74-3cab2019a8c7",
+                "day": 5,
+                "breakfast": "veg paratha\nCurd, Sause\nEgg Bhurji\nPaneer Bhurji\nChocos/Bournvita\nsprouted moong \nBread-Butter- JAM-I\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "bhindi masala\nkadhi pakoda\nTur Dal \nMix Veg Rice\nchapati / roti\nPickle\nCurd\nTomato soup+croutons\nFryums\nColourful Chopped Salad\nSteam Rice\nSambhar\nChiken Handi",
+                "snacks": "Pinwheel samosa\nBread-Butter-Jam\nTea-coffee-ketchup",
+                "dinner": "Red Mathh +Aloo (10%)\nFlower -mutter-tomatogravy\nTawa Pulav\nDal Tadka\nOnion, Cucumber, Beet-root\nchapati / roti\ncucumber chutney\nSteam Rice\nRasam\n\nDudhi Halwa\nFruit\nfish fry+currey",
+                "hostel": "f4efea9a-3c66-403c-b3fb-11b43c744943"
+            },
+            {
+                "id": "0317a0e9-6c1d-43e8-8f15-eda20f7cc959",
+                "day": 6,
+                "breakfast": "Veg Dalia+ Labsi(In-gudh)\nChutni\nEgg Omelet\nPaneer Bhurji\nCornflakes/Bournvita\nChana boiled\nBread-butter-Jam\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "parwal dry \nSprouted Moong Rassa type\nMoong Dal\nKhichadi\nchapati / roti\nlemon Pickle\nButter milk\n\nOswal Papad\nOnion, Cucumber, Beet-root\nSteam Rice\nRasam\npaneer kadhai dry",
+                "snacks": " Veg Maggie\nBread-Butter-Jam\nTea-ketchup",
+                "dinner": "pindi chhole\nveg kolhapuri\nVeg Dum Biryani\nPalak Dal\nTomato, Carrot, Cucumber\nchapati / roti\nTisa chutney + pickle\nSteam Rice\nSambhar\n\nBalushahi\nFruit\nmutton",
+                "hostel": "f4efea9a-3c66-403c-b3fb-11b43c744943"
+            },
+            {
+                "id": "1d9bc362-ad98-4510-a6aa-a00c5bb9f8c9",
+                "day": 4,
+                "breakfast": "Onion Uttapam\nChutney, Sambar\nEgg Bhurji\nPaneer Bhurji\nMueseli/Bournvita\nBoiled Corn\nBread-Peanutbutter-mix jam\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "red pumpkin dry\nstuffed capcicum\nDal Bukhara\nJira Rice\nchapati / roti\nCoconut till red chutney\nCurd\n\nFried kerala papad\nTomato, Carrot, Cucumber\nSteam Rice\nRasam\nveg manchurian",
+                "snacks": "Pani puri\nBread-Butter-Jam\nTea-ketchup",
+                "dinner": "Suran Chana dry\npalak paneer\nLemon Rice\nDal Kolhapuri\nTomato, Carrot, Cucumber\nchapati / roti\n Mango Pickle\nSteam Rice\nSambhar\n\nRajbhog- 2Pcs\nFruit\nChicken koliwada(4pc)\n\nOrange",
+                "hostel": "f4efea9a-3c66-403c-b3fb-11b43c744943"
+            },
+            {
+                "id": "5bbaab9c-162e-4f84-9140-e8d54d2fa1b0",
+                "day": 7,
+                "breakfast": " Palak Puri \nDry yellow aloo sabji\nEgg Bhurji\nPaneer Bhurji\nChocos/Bournvita\nBoiled Corn\nBread-Butter-JAM-II\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "Turai moong dry\nPaneer butter masala\nPancharatna Dal\nCurd Rice\nMethi paratha\nGongura chutney\nFruit custurd\n\nFried Methi papad\nOnion, Carrot, Cucumber\nSteam Rice\nSambhar\nChicken xakoti",
+                "snacks": "Masala dosa\nBread-Butter-Jam\nTea-ketchup",
+                "dinner": "french fry \nveg kofta \nTomato  masala rice\nDalAdraki(Moong+tur)\nOnion, Cucumber, Beet-root\nchapati / roti\nMango Pickle\nSteam Rice\nRasam\nCorn soup\nKala jamun-(2pcs)\nFruit\nChicken Biryani\n\nPomegranate",
+                "hostel": "f4efea9a-3c66-403c-b3fb-11b43c744943"
+            },
+            {
+                "id": "32e9a034-53ea-4784-9279-10323a175586",
+                "day": 1,
+                "breakfast": "Kanchipuram Idli and Meduwada\nChutni, sambhar\nEgg Omelet\nPaneer Bhurji\nMueseli/Bournvita\nGermenated-Chana\nBread-Butter- mix Jam\nTea-coffee\nBanana / Boiled Egg\nMilk",
+                "lunch": "Bhavela baingan Dry\nRajama Masala\nDal fry(Moong only)\nTomato Rice\nchapati\nPickle\nCurd\n\nfry  papad\nOnion, Beet root,cumber\nSteam Rice\nSambhar\nChicken pahadi",
+                "snacks": "Dabeli\nBread-Butter-Jam\nTea-coffee-ketchup",
+                "dinner": "Gawar +Pyaj(10%Dry\nBabycorn mushroom\nOnion Jira Rice\nMix Dal Tadka\nOnion, Cucumber, Beet-root\nchapati / roti\nMix Pickle\nSteam Rice\nRasam\n\nKulfi\nFruit\nChicken Koliwada\n\nMuskmelon",
+                "hostel": "f4efea9a-3c66-403c-b3fb-11b43c744943"
+            },
+            {
+                "id": "9cd63b11-e93e-4863-9561-c214f60a6ac9",
+                "day": 3,
+                "breakfast": "POHA\nMatki Usal ,Ratlami sev\nEgg Omelet\nPaneer Bhurji\nChocos/Bournvita\nGreen chana\nBread-Butter- mix Jam\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "Karela Fry\nChhole Bhature\nVaran \nAjwan rice\nchapati / roti\nPickle\nSweet and salt lassi\n\nMasala Roasted Papad\nOnion, Cucumber, Beet-root\nSteam Rice\nSambhar\nchicken kolhapuri",
+                "snacks": "dahi wada\nBread-Peanut Butter-Jam\nTea-coffee-ketchup",
+                "dinner": "soyabin kadhai\nmethi mutter gravy \nPulihara Rice\nred Masoor Dal\nPeanut salad\nchapati / roti\nSengadana   green chutney\nSteam Rice\nRasam\n\nJalebi-2pcs \n\nchicken biryani\n\nDates 3 Pieces",
+                "hostel": "f4efea9a-3c66-403c-b3fb-11b43c744943"
+            }
+        ]
+    },
+    {
+        "id": "9a58b1ed-4cbe-40cc-94c3-860d1323e26c",
+        "name": "Hostel 13",
+        "short_name": "13",
+        "long_name": "House of Titans",
+        "mess": [
+            {
+                "id": "9c5d3d2d-b531-437f-93cf-15a9bd9e8f2b",
+                "day": 4,
+                "breakfast": "Onion Uttapam\nChutney, Sambar\nEgg Bhurji\nPaneer Bhurji\nMueseli/Bournvita\nBoiled Corn\nBread-Peanutbutter-mix jam\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "red pumpkin dry\nstuffed capcicum\nDal Bukhara\nJira Rice\nchapati / roti\nCoconut till red chutney\nCurd\n\nFried kerala papad\nTomato, Carrot, Cucumber\nSteam Rice\nRasam\nveg manchurian",
+                "snacks": "Pani puri\nBread-Butter-Jam\nTea-ketchup",
+                "dinner": "Suran Chana dry\npalak paneer\nLemon Rice\nDal Kolhapuri\nTomato, Carrot, Cucumber\nchapati / roti\n Mango Pickle\nSteam Rice\nSambhar\n\nRajbhog- 2Pcs\nFruit\nChicken koliwada(4pc)\n\nOrange",
+                "hostel": "9a58b1ed-4cbe-40cc-94c3-860d1323e26c"
+            },
+            {
+                "id": "d80f93d7-da6b-44a9-aff4-fc5803657f32",
+                "day": 7,
+                "breakfast": " Palak Puri \nDry yellow aloo sabji\nEgg Bhurji\nPaneer Bhurji\nChocos/Bournvita\nBoiled Corn\nBread-Butter-JAM-II\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "Turai moong dry\nPaneer butter masala\nPancharatna Dal\nCurd Rice\nMethi paratha\nGongura chutney\nFruit custurd\n\nFried Methi papad\nOnion, Carrot, Cucumber\nSteam Rice\nSambhar\nChicken xakoti",
+                "snacks": "Masala dosa\nBread-Butter-Jam\nTea-ketchup",
+                "dinner": "french fry \nveg kofta \nTomato  masala rice\nDalAdraki(Moong+tur)\nOnion, Cucumber, Beet-root\nchapati / roti\nMango Pickle\nSteam Rice\nRasam\nCorn soup\nKala jamun-(2pcs)\nFruit\nChicken Biryani\n\nPomegranate",
+                "hostel": "9a58b1ed-4cbe-40cc-94c3-860d1323e26c"
+            },
+            {
+                "id": "52b0cfb2-bf72-46e7-8741-961b983afca2",
+                "day": 2,
+                "breakfast": "Mix veg Paratha\nCurd, Sauce\nEgg Bhurji\nPaneer Bhurji\nMusali/Bournvita\nBoiled Peanut\nBread-Butter- pineapple Jam\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "Cabbage Mutter\nPatwadi Curry\nChana Dal\nVangi Bhat\nchapati / roti\nCocumber Pachadi\nCurd\n\nMasala fry papad\nOnion, Cucumber, Tomato\nSteam Rice\nRasam\npaneer popcorn",
+                "snacks": "vadapav\nBread-Butter-Jam\nTea-ketchup",
+                "dinner": "Moong gassi\nGreen Chawali +Aloo 20% \nCorn Rice\nDal Makhani\nOnion, Cucumber, Beet-root\nchapati / roti\nTisa chutney+Pickle\nSteam Rice\nSambhar\nSwaeet corn soup\nSewai kheer soup\nFruit\nVeg 65\n\nPineapple",
+                "hostel": "9a58b1ed-4cbe-40cc-94c3-860d1323e26c"
+            },
+            {
+                "id": "c110f936-5be6-4260-9aca-5e313b9f7b71",
+                "day": 3,
+                "breakfast": "POHA\nMatki Usal ,Ratlami sev\nEgg Omelet\nPaneer Bhurji\nChocos/Bournvita\nGreen chana\nBread-Butter- mix Jam\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "Karela Fry\nChhole Bhature\nVaran \nAjwan rice\nchapati / roti\nPickle\nSweet and salt lassi\n\nMasala Roasted Papad\nOnion, Cucumber, Beet-root\nSteam Rice\nSambhar\nchicken kolhapuri",
+                "snacks": "dahi wada\nBread-Peanut Butter-Jam\nTea-coffee-ketchup",
+                "dinner": "soyabin kadhai\nmethi mutter gravy \nPulihara Rice\nred Masoor Dal\nPeanut salad\nchapati / roti\nSengadana   green chutney\nSteam Rice\nRasam\n\nJalebi-2pcs \n\nchicken biryani\n\nDates 3 Pieces",
+                "hostel": "9a58b1ed-4cbe-40cc-94c3-860d1323e26c"
+            },
+            {
+                "id": "b4155326-4766-456a-936c-b5f468a8cc4c",
+                "day": 6,
+                "breakfast": "Veg Dalia+ Labsi(In-gudh)\nChutni\nEgg Omelet\nPaneer Bhurji\nCornflakes/Bournvita\nChana boiled\nBread-butter-Jam\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "parwal dry \nSprouted Moong Rassa type\nMoong Dal\nKhichadi\nchapati / roti\nlemon Pickle\nButter milk\n\nOswal Papad\nOnion, Cucumber, Beet-root\nSteam Rice\nRasam\npaneer kadhai dry",
+                "snacks": " Veg Maggie\nBread-Butter-Jam\nTea-ketchup",
+                "dinner": "pindi chhole\nveg kolhapuri\nVeg Dum Biryani\nPalak Dal\nTomato, Carrot, Cucumber\nchapati / roti\nTisa chutney + pickle\nSteam Rice\nSambhar\n\nBalushahi\nFruit\nmutton",
+                "hostel": "9a58b1ed-4cbe-40cc-94c3-860d1323e26c"
+            },
+            {
+                "id": "56fac3dc-6944-4a68-86d0-ff86ae16b534",
+                "day": 1,
+                "breakfast": "Kanchipuram Idli and Meduwada\nChutni, sambhar\nEgg Omelet\nPaneer Bhurji\nMueseli/Bournvita\nGermenated-Chana\nBread-Butter- mix Jam\nTea-coffee\nBanana / Boiled Egg\nMilk",
+                "lunch": "Bhavela baingan Dry\nRajama Masala\nDal fry(Moong only)\nTomato Rice\nchapati\nPickle\nCurd\n\nfry  papad\nOnion, Beet root,cumber\nSteam Rice\nSambhar\nChicken pahadi",
+                "snacks": "Dabeli\nBread-Butter-Jam\nTea-coffee-ketchup",
+                "dinner": "Gawar +Pyaj(10%Dry\nBabycorn mushroom\nOnion Jira Rice\nMix Dal Tadka\nOnion, Cucumber, Beet-root\nchapati / roti\nMix Pickle\nSteam Rice\nRasam\n\nKulfi\nFruit\nChicken Koliwada\n\nMuskmelon",
+                "hostel": "9a58b1ed-4cbe-40cc-94c3-860d1323e26c"
+            },
+            {
+                "id": "a8daee9a-2dd5-4337-97f8-cfdffb4186f2",
+                "day": 5,
+                "breakfast": "veg paratha\nCurd, Sause\nEgg Bhurji\nPaneer Bhurji\nChocos/Bournvita\nsprouted moong \nBread-Butter- JAM-I\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "bhindi masala\nkadhi pakoda\nTur Dal \nMix Veg Rice\nchapati / roti\nPickle\nCurd\nTomato soup+croutons\nFryums\nColourful Chopped Salad\nSteam Rice\nSambhar\nChiken Handi",
+                "snacks": "Pinwheel samosa\nBread-Butter-Jam\nTea-coffee-ketchup",
+                "dinner": "Red Mathh +Aloo (10%)\nFlower -mutter-tomatogravy\nTawa Pulav\nDal Tadka\nOnion, Cucumber, Beet-root\nchapati / roti\ncucumber chutney\nSteam Rice\nRasam\n\nDudhi Halwa\nFruit\nfish fry+currey",
+                "hostel": "9a58b1ed-4cbe-40cc-94c3-860d1323e26c"
+            }
+        ]
+    },
+    {
+        "id": "94656639-d76b-4d79-9018-ea7722f50150",
+        "name": "Hostel 14",
+        "short_name": "14",
+        "long_name": "Siliconship",
+        "mess": [
+            {
+                "id": "ffb405b6-b507-4235-b616-b98b5367a502",
+                "day": 3,
+                "breakfast": "POHA\nMatki Usal ,Ratlami sev\nEgg Omelet\nPaneer Bhurji\nChocos/Bournvita\nGreen chana\nBread-Butter- mix Jam\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "Karela Fry\nChhole Bhature\nVaran \nAjwan rice\nchapati / roti\nPickle\nSweet and salt lassi\n\nMasala Roasted Papad\nOnion, Cucumber, Beet-root\nSteam Rice\nSambhar\nchicken kolhapuri",
+                "snacks": "dahi wada\nBread-Peanut Butter-Jam\nTea-coffee-ketchup",
+                "dinner": "soyabin kadhai\nmethi mutter gravy \nPulihara Rice\nred Masoor Dal\nPeanut salad\nchapati / roti\nSengadana   green chutney\nSteam Rice\nRasam\n\nJalebi-2pcs \n\nchicken biryani\n\nDates 3 Pieces",
+                "hostel": "94656639-d76b-4d79-9018-ea7722f50150"
+            },
+            {
+                "id": "a69f10f2-11e2-4c7d-ad4c-b69427fdfd6a",
+                "day": 2,
+                "breakfast": "Mix veg Paratha\nCurd, Sauce\nEgg Bhurji\nPaneer Bhurji\nMusali/Bournvita\nBoiled Peanut\nBread-Butter- pineapple Jam\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "Cabbage Mutter\nPatwadi Curry\nChana Dal\nVangi Bhat\nchapati / roti\nCocumber Pachadi\nCurd\n\nMasala fry papad\nOnion, Cucumber, Tomato\nSteam Rice\nRasam\npaneer popcorn",
+                "snacks": "vadapav\nBread-Butter-Jam\nTea-ketchup",
+                "dinner": "Moong gassi\nGreen Chawali +Aloo 20% \nCorn Rice\nDal Makhani\nOnion, Cucumber, Beet-root\nchapati / roti\nTisa chutney+Pickle\nSteam Rice\nSambhar\nSwaeet corn soup\nSewai kheer soup\nFruit\nVeg 65\n\nPineapple",
+                "hostel": "94656639-d76b-4d79-9018-ea7722f50150"
+            },
+            {
+                "id": "724a05db-93c6-4f38-b65a-ac1affa9d81a",
+                "day": 1,
+                "breakfast": "Kanchipuram Idli and Meduwada\nChutni, sambhar\nEgg Omelet\nPaneer Bhurji\nMueseli/Bournvita\nGermenated-Chana\nBread-Butter- mix Jam\nTea-coffee\nBanana / Boiled Egg\nMilk",
+                "lunch": "Bhavela baingan Dry\nRajama Masala\nDal fry(Moong only)\nTomato Rice\nchapati\nPickle\nCurd\n\nfry  papad\nOnion, Beet root,cumber\nSteam Rice\nSambhar\nChicken pahadi",
+                "snacks": "Dabeli\nBread-Butter-Jam\nTea-coffee-ketchup",
+                "dinner": "Gawar +Pyaj(10%Dry\nBabycorn mushroom\nOnion Jira Rice\nMix Dal Tadka\nOnion, Cucumber, Beet-root\nchapati / roti\nMix Pickle\nSteam Rice\nRasam\n\nKulfi\nFruit\nChicken Koliwada\n\nMuskmelon",
+                "hostel": "94656639-d76b-4d79-9018-ea7722f50150"
+            },
+            {
+                "id": "76f9876c-e56b-4d10-a798-7a5b8870679e",
+                "day": 4,
+                "breakfast": "Onion Uttapam\nChutney, Sambar\nEgg Bhurji\nPaneer Bhurji\nMueseli/Bournvita\nBoiled Corn\nBread-Peanutbutter-mix jam\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "red pumpkin dry\nstuffed capcicum\nDal Bukhara\nJira Rice\nchapati / roti\nCoconut till red chutney\nCurd\n\nFried kerala papad\nTomato, Carrot, Cucumber\nSteam Rice\nRasam\nveg manchurian",
+                "snacks": "Pani puri\nBread-Butter-Jam\nTea-ketchup",
+                "dinner": "Suran Chana dry\npalak paneer\nLemon Rice\nDal Kolhapuri\nTomato, Carrot, Cucumber\nchapati / roti\n Mango Pickle\nSteam Rice\nSambhar\n\nRajbhog- 2Pcs\nFruit\nChicken koliwada(4pc)\n\nOrange",
+                "hostel": "94656639-d76b-4d79-9018-ea7722f50150"
+            },
+            {
+                "id": "67dd1fb9-e6dc-415a-bcf6-7d7d95933b3d",
+                "day": 5,
+                "breakfast": "veg paratha\nCurd, Sause\nEgg Bhurji\nPaneer Bhurji\nChocos/Bournvita\nsprouted moong \nBread-Butter- JAM-I\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "bhindi masala\nkadhi pakoda\nTur Dal \nMix Veg Rice\nchapati / roti\nPickle\nCurd\nTomato soup+croutons\nFryums\nColourful Chopped Salad\nSteam Rice\nSambhar\nChiken Handi",
+                "snacks": "Pinwheel samosa\nBread-Butter-Jam\nTea-coffee-ketchup",
+                "dinner": "Red Mathh +Aloo (10%)\nFlower -mutter-tomatogravy\nTawa Pulav\nDal Tadka\nOnion, Cucumber, Beet-root\nchapati / roti\ncucumber chutney\nSteam Rice\nRasam\n\nDudhi Halwa\nFruit\nfish fry+currey",
+                "hostel": "94656639-d76b-4d79-9018-ea7722f50150"
+            },
+            {
+                "id": "7fb2159e-f8cb-4882-acbd-926654b9e415",
+                "day": 6,
+                "breakfast": "Veg Dalia+ Labsi(In-gudh)\nChutni\nEgg Omelet\nPaneer Bhurji\nCornflakes/Bournvita\nChana boiled\nBread-butter-Jam\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "parwal dry \nSprouted Moong Rassa type\nMoong Dal\nKhichadi\nchapati / roti\nlemon Pickle\nButter milk\n\nOswal Papad\nOnion, Cucumber, Beet-root\nSteam Rice\nRasam\npaneer kadhai dry",
+                "snacks": " Veg Maggie\nBread-Butter-Jam\nTea-ketchup",
+                "dinner": "pindi chhole\nveg kolhapuri\nVeg Dum Biryani\nPalak Dal\nTomato, Carrot, Cucumber\nchapati / roti\nTisa chutney + pickle\nSteam Rice\nSambhar\n\nBalushahi\nFruit\nmutton",
+                "hostel": "94656639-d76b-4d79-9018-ea7722f50150"
+            },
+            {
+                "id": "712ec650-2d31-4394-9ecc-e0d822aab270",
+                "day": 7,
+                "breakfast": " Palak Puri \nDry yellow aloo sabji\nEgg Bhurji\nPaneer Bhurji\nChocos/Bournvita\nBoiled Corn\nBread-Butter-JAM-II\nTea-coffee-ketchup\nBanana / Boiled Egg\nMilk",
+                "lunch": "Turai moong dry\nPaneer butter masala\nPancharatna Dal\nCurd Rice\nMethi paratha\nGongura chutney\nFruit custurd\n\nFried Methi papad\nOnion, Carrot, Cucumber\nSteam Rice\nSambhar\nChicken xakoti",
+                "snacks": "Masala dosa\nBread-Butter-Jam\nTea-ketchup",
+                "dinner": "french fry \nveg kofta \nTomato  masala rice\nDalAdraki(Moong+tur)\nOnion, Cucumber, Beet-root\nchapati / roti\nMango Pickle\nSteam Rice\nRasam\nCorn soup\nKala jamun-(2pcs)\nFruit\nChicken Biryani\n\nPomegranate",
+                "hostel": "94656639-d76b-4d79-9018-ea7722f50150"
+            }
+        ]
+    },
+    {
+        "id": "f48a8ab9-141c-40c6-a5c5-e4e901566583",
+        "name": "Hostel 15",
+        "short_name": "15",
+        "long_name": "Trident",
+        "mess": [
+            {
+                "id": "10b22c60-abe1-4e33-bf60-b9b1a728c4ab",
+                "day": 5,
+                "breakfast": "IDLI\nSAMBHER /CHUTNI\nBOILED CHOWLI\nBBJ/TEA/COFFEE\nMILK /BV/CHOCOS\nBOILED EGG\nBANANA\nOMELETTE\nPANEER BHURJI 50GM\nPEANUT BUTTER\n",
+                "lunch": "ALOO 65\nMIXED SPROUT MASALA\nMASALA DAL\nSTEAM RICE\nVEG BIRYANI\nCHAPATI\nSPROUT SALAD\nFRY\nVEG RAITA\nJAIN FOOD\nCHICKEN HANDI\n",
+                "snacks": "RED PASTA\nFRUIT ORANGE\nBBJ/TEA/COFFEE\n",
+                "dinner": "TAWA VEG\nVEG MANCHURIN\nDAL SULTANI\nSTEAM RICE\nVEG SCHZEWAN RICE\nCHAPATI\nGREEN\nROASTED\nCOLD DRINK\nJAIN FOOD\nFISH MASALA\n",
+                "hostel": "f48a8ab9-141c-40c6-a5c5-e4e901566583"
+            },
+            {
+                "id": "5df8de26-cfa4-42bd-9be1-c5fb9c57c07c",
+                "day": 4,
+                "breakfast": "ALOO PARATHA\nCURD\nBOILED CORN\nBBJ/TEA/COFFEE\nMILK /BV/CORNFLAKES\nBOILED EGG\nBANANA\nEGG BHURJI\nPANEER BHURJI 50GM\n",
+                "lunch": "CABBAGE FOGATE\nSTUFFED CAPSICUM\nDAL ADRAKI\nSTEAM RICE\nCORN PULAV\nCHAPATI\nPASTA SALAD\nFRYUMS\nRASNA\nJAIN FOOD\nVEG S/Z FINGER\n",
+                "snacks": "CHEESE BURGER\nCHOCOLATE MILK SHAKE\nBBJ/TEA/COFFEE\n",
+                "dinner": "BAINGAN BHARTA\nPANEER HANDI\nDAL VARAN\nSTEAM RICE\nCORN PULAV\nCHAPATI\nGREEN\nFRY\nGULAB JAMUN\nJAIN FOOD\nGOBHI MANCHURIAN\n",
+                "hostel": "f48a8ab9-141c-40c6-a5c5-e4e901566583"
+            },
+            {
+                "id": "792bb431-2abd-4b72-803e-76c4f8e68a50",
+                "day": 3,
+                "breakfast": "ONION UTTAPAM\nSAMBHAR\nGROUNDNUT\nBBJ/TEA/COFFEE\nMILK /BV/ OATES\nBOILED EGG\nBANANA\nOMELETTE\nPANEER BHURJI 50GM\n",
+                "lunch": "CHHOLE MASALA\nALOO ZAIKA\nDAL TADKA\nSTEAM RICE\nJEERA RICE\nBATURE + CHAPATI\nGREEN SALAD + ONION\nROASTED\nBUTTER MILK\nJAIN FOOD\nCHICKEN LOLLYPOP\n",
+                "snacks": "SCHEZWAN MASALA DOSA\nFRUIT APPLE\nBBJ/TEA/COFFEE\nPEANUT BUTTER\n",
+                "dinner": "SPROUTED MOONG DRY\nVEG MAKHWANWALA\nYELLOW DAL\nSTEAM RICE\nCUPSICUM RICE\nCHAPATI\nGREEN\nROASTED\nFROZEN YOGURT\nJAIN FOOD\nCHICKEN BIRYANI\n",
+                "hostel": "f48a8ab9-141c-40c6-a5c5-e4e901566583"
+            },
+            {
+                "id": "1d36559e-1c82-478b-b46b-864e80caf023",
+                "day": 2,
+                "breakfast": "METHI THEPLA\nAALU CHANA BHAJI\nMOONG SPROUTED\nBBJ/TEA/COFFEE\nMILK /BV/CHOCOS\nBOILED EGG\nBANANA\nEGG BHURJI\nPANEER BHURJI 50GM\n",
+                "lunch": "KURKURI BHINDI\nKADHI PAKAODA\nDAL LASONI\nSTEAM RICE\nTADKA RICE\nCHAPATI\nGREEN\nFRYUMS\nCURD\nJAIN FOOD\nPANEER CHILLY\n",
+                "snacks": "DAHI VADA\nFRUIT PINEAPPLE\nBBJ/TEA/COFFEE\n",
+                "dinner": "FRENCH FRIES\nVEG KOFTA\nDAL PANCHARATAN\nSTEAM RICE\nTAWA PULAV\nCHAPATI\nGREEN\nFRY\nSAHI TAKUDA\nJAIN FOOD\nMUSHROOM CHILLY\n",
+                "hostel": "f48a8ab9-141c-40c6-a5c5-e4e901566583"
+            },
+            {
+                "id": "023404f6-31be-4413-a7b1-d5547a2760b8",
+                "day": 1,
+                "breakfast": "POHA/ DALIYA\nMATKI USAL\nBOILED CORN\nBBJ/TEA/COFFEE\nMILK /BV/ CORNFLAKES\nBOILED EGG\nBANANA\nOMELETTE\nPANEER BHURJI 50GM\nPEANUT BUTTER\n",
+                "lunch": "SOYABEEN CHILLY\nPANEER TIKKA MASALA\nDAL FRY\nSTEAM RICE\nPEAS PULAV\nCHAPATI\nPASTA SALAD\nROASTED\nSWEET LASSI\nJAIN FOOD\nVEG CRISPY\n",
+                "snacks": "PANI PURI\nCOLD COFFEE\nBBJ/TEA/COFFEE\n",
+                "dinner": "DUM ALOO MASALA\nCHOWLI\nDAL PANCHARATAN\nSTEAM RICE\nMASOOR PULAV\nCHAPTI\nGREEN\nFRYUMS\nMOOND DAL HALWA\nJAIN FOOD\nBUTTER CHICKEN\n",
+                "hostel": "f48a8ab9-141c-40c6-a5c5-e4e901566583"
+            },
+            {
+                "id": "a4b62050-7fbe-40fc-938c-3c37e32532e4",
+                "day": 7,
+                "breakfast": "VEG UPMA\nCHUTNEY\nMOONG SPROUTED\nBBJ/TEA/COFFEE\nMILK /BV/ OATES\nBOILED EGG\nBANANA\nOMELETTE\nPANEER BHURJI 50GM\n",
+                "lunch": "ALOO CHILLY\nRAJMA\nDAL BANJARA\nSTEAM RICE\nTAWA PULAV\nCHAPATI\nGREEN\nFRY\nFRUIT CURSTED\nJAIN FOOD\nCHICKEN BIRYANI\n",
+                "snacks": "MAGGI\nWATERMELON JUICE\nBBJ/TEA/COFFEE\nPEANUT BUTTER\n",
+                "dinner": "CARROT MUTTER\nSTUFFED TOMATO\nDAL TADKA\nSTEAM RICE\nVEG PULAV\nCHAPATI\nGREEN\nFRY\nJALEBI\nJAIN FOOD\nCHICKEN FRY MASALA\n",
+                "hostel": "f48a8ab9-141c-40c6-a5c5-e4e901566583"
+            },
+            {
+                "id": "619cc2a7-4071-4177-a0a2-0abe5be786c4",
+                "day": 6,
+                "breakfast": "MIXED PARATHA\nCURD\nGROUNDNUT\nBBJ/TEA/COFFEE\nMILK /BV/CORNFLAKES\nBOILED EGG\nBANANA\nEGG BHURJI\nPANEER BHURJI 50GM\n",
+                "lunch": "JEERA ALOO\nCORN PALAK\nDAL FRY\nSTEAM RICE\nONION PULAV\nCHAPATI\nGREEN\nROASTED\nLEMON JUICE\nJAIN FOOD\nPANEER 65\n",
+                "snacks": "RAGDA PATTICE\nFRUIT PAPAYA\nBBJ/TEA/COFFEE\n",
+                "dinner": "CHHOLE PINDI\nMETHI MUTTER MASALA\nDAL KOLHA PURI\nSTEAM RICE\nCUPSICUM RICE\nPURI + CHAPATI\nCHANA CHAT\nFRYUMS\nRASGULLA\nJAIN FOOD\nEGG MASALA\n",
+                "hostel": "f48a8ab9-141c-40c6-a5c5-e4e901566583"
+            }
+        ]
+    },
+    {
+        "id": "c738cae2-a994-4ad2-b55c-2f5aea0f622b",
+        "name": "Hostel 16",
+        "short_name": "16",
+        "long_name": "Olympus",
+        "mess": [
+            {
+                "id": "598b9b2f-8c8b-4459-8c7a-170b2aec56ad",
+                "day": 3,
+                "breakfast": "Banana, BBJ, Tea, Coffee, Milk,Semiya Upma, Matki Sprout\r\n",
+                "lunch": "Rajma, Methi Puri, Dahi, Jeera Rice,Bobla Baji, Rasam\r\n,Fried Mirchi, Salad , Pickle ,White Rice",
+                "snacks": "Dhokla,Strawberry Shake Shake\r\n\n,Tea, coffee, BBJ, seasonal fruit",
+                "dinner": "Fried mirchi, salad,Butter Chicken , Paneer Corn  Baji, Dal rice, Chappati,Fruit Custard\r\n",
+                "hostel": "c738cae2-a994-4ad2-b55c-2f5aea0f622b"
+            },
+            {
+                "id": "82c491e8-8ca8-4b71-816e-73d35d857a95",
+                "day": 5,
+                "breakfast": "Banana, BBJ, Tea, Coffee, Milk,Kanda Poha, Egg Burjee, Paneer Burjee,BBJ,Sweet Corn\n",
+                "lunch": "Chole Bhature , Chutteny, Jeera Rice, Dahi, Rasna\r\nFried Mirchi, Salad , Pickle ,White Rice, Drinks Alternate\r\n",
+                "snacks": "Tea, coffee, BBJ, seasonal fruit,Dabeli,,Butterscotch Shake\r\n",
+                "dinner": "Fried mirchi, salad,Akka Masoor Baji,  Kitchdi, Bonda Khadi, Rice, Ice-Cream\r\n",
+                "hostel": "c738cae2-a994-4ad2-b55c-2f5aea0f622b"
+            },
+            {
+                "id": "02404835-7e76-4683-b74d-62fe561607f3",
+                "day": 2,
+                "breakfast": "Banana, BBJ, Tea, Coffee, Milk,Puri Bhaji,Boiled Egg ,Sweet Corn\r\n",
+                "lunch": "Tomato Sev bhaji,DDR, Papad, CHAWLI PULSE, Rasam\r\n,Fried Mirchi, Salad , Pickle ,White Rice",
+                "snacks": "Tea, Coffee, BBJ, Seasonal Fruit,Medu vada, Sambar , Chatni, Cold Coffee\r\n",
+                "dinner": "Fried mirchi, salad,Gobi Mutter  Dry bhaji, Soyabean  Dry bhaji Sheera,Dal, Lemon Rice,             \r\n",
+                "hostel": "c738cae2-a994-4ad2-b55c-2f5aea0f622b"
+            },
+            {
+                "id": "d93c1d8a-82d0-4099-84ad-bcaa9671b592",
+                "day": 1,
+                "breakfast": "Banana, BBJ, Tea, Coffee,Milk,Kanda Poha , Omlettlee, Sweet Corn\r\n",
+                "lunch": "Alu  Mutter ,DDR, Rasam, Papad\r\n\n,Fried Mirchi, Salad , Pickle ,White Rice",
+                "snacks": "Tea, Coffee, BBJ,Dabeli, Fruit\r\n",
+                "dinner": "Fried mirchi, salad,Arvi masala, Tomato Rice, Plain Rice, Dal, Gulab Jamun\r\n",
+                "hostel": "c738cae2-a994-4ad2-b55c-2f5aea0f622b"
+            },
+            {
+                "id": "a1cb0fd9-e1dc-4efe-831c-91a1504d5e79",
+                "day": 4,
+                "breakfast": "Banana, BBJ, Tea, Coffee, Milk,Utappam, Chutney, Chena Sprout\r\n\n",
+                "lunch": "Aloo Methi  bhaji , ,Dal,Alu Papad\r\n,Fried Mirchi, Salad , Pickle ,White Rice",
+                "snacks": "Tea, coffee, BBJ, seasonal fruit,Kulcha, Thandai\r\n",
+                "dinner": "Fried mirchi, salad,Damaloo,,  Palak Rice, Dalmakhani, DDR,  Egg Curry (1),Seera\r\n",
+                "hostel": "c738cae2-a994-4ad2-b55c-2f5aea0f622b"
+            },
+            {
+                "id": "1d37a0cc-7f3d-4a7c-accf-44eb9397ecfd",
+                "day": 6,
+                "breakfast": "Puri Baji, Boiled Egg, Red Chena Sprout\r\nEgg,Banana, BBJ, Tea, Coffee, Milk\n",
+                "lunch": "Aloo Cabbage baji, , DDR, Papad, Sambhar, Rasna\r\n,Fried Mirchi, Salad , Pickle ,White Rice",
+                "snacks": "Tea, Coffee, BBJ, Seasonal Fruit \n,Ragada Patties, Cold Cofffee,\r\n",
+                "dinner": "Fried Mirchi, Salad\n,Mashroom Mutter, Tendli Chena baji DDR\r\n",
+                "hostel": "c738cae2-a994-4ad2-b55c-2f5aea0f622b"
+            },
+            {
+                "id": "381eea47-3149-4431-8560-a2b293ff0d44",
+                "day": 7,
+                "breakfast": "Banana, BBJ, Tea, Coffee, Milk,Paneer Parota, Boiled Egg, Boild Groundnut\r\n",
+                "lunch": "Kashmiri Pulav, Paneer butter masala, Boonti raita, Papad, Laddu\r\n,Fried Mirchi, Salad , Pickle ,White Rice",
+                "snacks": "Tea, coffee, BBJ, seasona fruit,Pani puri, Strabarry Shake\r\n",
+                "dinner": "Fried mirchi, salad,Khicadi, Kadi Pakoda, Papad, Rice Chapati\r\n",
+                "hostel": "c738cae2-a994-4ad2-b55c-2f5aea0f622b"
+            }
+        ]
+    },
+    {
+        "id": "8d6c3c30-808b-494a-8548-83cb8ae3aa92",
+        "name": "Hostel 2",
+        "short_name": "2",
+        "long_name": "The Wild Ones",
+        "mess": [
+            {
+                "id": "2358ca5e-9cea-45f5-b889-e076cb2646b1",
+                "day": 1,
+                "breakfast": "POHA\nJALEBI\nBOILED SPROUTS, CORNFLAKES\nBOILED EGG/OMELETTE",
+                "lunch": "CHAWLI MASALA,AALOO 65\nPLAIN RICE, LEMON RICE, CURD\nMASALA PAPAD\nRASNA",
+                "snacks": "SCHEZWAN DOSA\nFRUIT \nCHOCOS",
+                "dinner": "PANEER BUTTER MASALA\nPLAIN PARATHA, STEAM RICE\nSCHEZWAN RICE, DAL TADKA\nSWEET--ICE CREAM\nEXTRA -  CHICKEN AMRITSARI",
+                "hostel": "8d6c3c30-808b-494a-8548-83cb8ae3aa92"
+            },
+            {
+                "id": "43e4a64a-4e1d-4041-a0c7-673d553886d6",
+                "day": 3,
+                "breakfast": "ONION UTTAPAM\nBOILED GROUNDNUT, COCONUT CHUTNEY\nBOILED EGG/ OMLETTE\n",
+                "lunch": "CHOLE​ ​BHATURE​ ​+​ ​ROTI\nIMLI CHUTNI\nJEERA RICE, STEAM RICE\nDAL KOLHAPURI,SAMBHAR\nFRYMES,LASSI",
+                "snacks": "PAV BHAJI\nPINEAPPLE",
+                "dinner": "MATKI MASALA, STUFFED CAPSICUM\nVEG PULAV, PLAIN RICE\nPALAK DAL\nSWEET-- COLD DRINKS\nEXTRA -- CHICKEN BIRYANI",
+                "hostel": "8d6c3c30-808b-494a-8548-83cb8ae3aa92"
+            },
+            {
+                "id": "25559cf4-3264-4258-907f-5c151de493cb",
+                "day": 4,
+                "breakfast": "DAL PAKHWAN, BOILED CHANA\nCORNFLACKS\nBOILED EGG/BHURJI",
+                "lunch": "CORN PULAV,STEAM RICE\nKALA CHANA DRY, MALAI KOFTA\nBUTTER MILK\nDAL MAKHANI, DISCO PAPAD",
+                "snacks": "SAMOSA CHAT\nPEANUT BUTTER\nFRUIT",
+                "dinner": "VEG MAKHANI,TENDLI FRY\nBROWN ONION RICE\nSTEAM RICE,DAL FRY\nSWEET - PEDA\nEXTRA--  PANEER CHILLY",
+                "hostel": "8d6c3c30-808b-494a-8548-83cb8ae3aa92"
+            },
+            {
+                "id": "ec02c65c-13b6-4f04-89f3-208b3d80cab2",
+                "day": 2,
+                "breakfast": "PANEER PARATHA\nSEJWAN CHUTNEY \n CURD, BOILED MOONG\nCORNFLAKES\nBOILED EGG/ BHURJI",
+                "lunch": "VEG TAWA DRY\nDUM AALOO\nPLAIN RICE,  DAL ADRAKI\nVEG BIRYANI,​ BOONDI​ RAITA\nROASTED PAPAD,NIMBU PANI",
+                "snacks": "PASTA\nCOLD COFFEE\n(NO COLD MILK )\nFRUIT\n",
+                "dinner": "BAIGAN MASALA , BHINDI FRY\nSPRING ONION RICE,  STEAM RICE\nDAL TOMATO\nSWEET -- RAS MALAI\nEXTRA -- EGG CURRY",
+                "hostel": "8d6c3c30-808b-494a-8548-83cb8ae3aa92"
+            },
+            {
+                "id": "e8091014-7e7a-45a7-b092-8d67cfc6bd90",
+                "day": 6,
+                "breakfast": "IDLI\nCOCONUT CHUTNEY, SAMBAR\nBOILED EGG/ OMELETTE\nCORNFLAKES\nFRESS MATKI",
+                "lunch": "KADHAI PANEER\nPALAK PURI + ROTI\nVEG PULAV,STEAM RICE, FRYMES\nRASAM\nSHRIKHAND",
+                "snacks": "PANI PURI\nFRUIT",
+                "dinner": "VEG MANCHURIAN, RAJMA PUNJABI DRY\nDAL PANJABI, STEM RICE\n VEG FRIED RICE\nSWEET-- BASUNDI",
+                "hostel": "8d6c3c30-808b-494a-8548-83cb8ae3aa92"
+            },
+            {
+                "id": "c7785c51-9afb-4d48-9c1f-7589e5cf0c36",
+                "day": 7,
+                "breakfast": "AALOO PARATHA\nTAMATAR DHANIYA CHUTNEY\nCURD, BOILED CORN \nCORNFLACKS\nBOILED EGG/BURJI\n",
+                "lunch": "SOYA BEAN CHILLY\nCHANA MASALA\nSTEAM RICE , CURD RICE\nCHANA DAAL FRY\nNIMBU PANI",
+                "snacks": "MIX PAKODA\nFRUIT",
+                "dinner": "CHOLE PINDI, FRENCH FRIES\nFRIED RICE, VEG MANCHOW SOUP\nSTEAM RICE,DAL FRY\nSWEET - COCONUT BARFI\nEXTRA -PEPPER CHICKEN",
+                "hostel": "8d6c3c30-808b-494a-8548-83cb8ae3aa92"
+            },
+            {
+                "id": "987f57f0-d7d2-45bb-b209-03e787df5edc",
+                "day": 5,
+                "breakfast": "PURI BHAJI\nBOILED CORN \nCORNFLAKES \nBOILED EGG/PANEER BHURJI\n",
+                "lunch": "RAJMA MAKHANI, AALOO GOBHI DRY\nSTEAM RICE, DAL KHICHDI\nDAL BUKHARA\nMASALA PAPAD\nCURD",
+                "snacks": "VEG CHEESE BURGER\nBANANA MILKSHAKE",
+                "dinner": "MASHROOM MATAR GRAVY\nBHINDI JODHPURI, JEERA RICE\nDAL PANJABI, STEM RICE\nSWEET -- MOONG DAL HALWA\nEXTRA -- CHICKEN LOLLIPOP",
+                "hostel": "8d6c3c30-808b-494a-8548-83cb8ae3aa92"
+            }
+        ]
+    },
+    {
+        "id": "2041d0d3-c1be-409f-bc1f-0f5566083b3b",
+        "name": "Hostel 3",
+        "short_name": "3",
+        "long_name": "Vitruvians!",
+        "mess": [
+            {
+                "id": "35a09844-fcd3-44a7-9499-e7403f5c8cbe",
+                "day": 6,
+                "breakfast": " MIX VEG PARATHA\r\nCURD+SZ CHTNI\r\nGROUNDNUT\r\nBBJ/TEA/COFFEE\r\nMILK/BV/CHOCOS\r\nBOILED EGG\r\nBANANA\r\nOMLETTE",
+                "lunch": " ALOO 65\r\nVEG HANDI\r\nDAL METHI\r\nCORN PULAV\r\nCHAPATI\r\nPUDINA CHTNI\r\nSALAD\r\nFRYUMS\r\nLASSI",
+                "snacks": " PANI PURI\r\nBBJ/TEA/COFFEE\r\nMUSKMELON SHAKE",
+                "dinner": " LAUKI DRY\r\nPINDI CHOLE\r\nDAL + TADKA\r\nMASALA BHAT\r\nCHAPATI\r\nLSN CHTNI\r\nMAYO SALAD\r\nMOONG DAL HALWA\r\nTANDOORI CHICKEN\r\nPANEER 65",
+                "hostel": "2041d0d3-c1be-409f-bc1f-0f5566083b3b"
+            },
+            {
+                "id": "002c0015-793c-4839-8e08-baffcf280989",
+                "day": 5,
+                "breakfast": " SEVAI UPMA\r\nCHTNI+SAMBHAR\r\nCHANA\r\nBBJ/TEA/COFFEE\r\nMILK/BV/OATS\r\nBOILED EGG\r\nBANANA\r\nOMLETTE\r\nPEANUT BUTTER",
+                "lunch": " METHI ALOO\r\nCHANA MASALA\r\nDAL LEHSUNI\r\nHYDERABADI BIRYANI\r\nCHAPATI\r\nTOMATO CHTNI\r\nTOSSED SALAD\r\nALOO PAPAD\r\nVEG RAITA",
+                "snacks": " PYAAZ KACHORI\r\nBBJ/TEA/COFFEE\r\nBANANA MILKSHAKE\r\nPEANUT BUTTER",
+                "dinner": " PANEER HANDI\r\nDAL MAKHANI\r\nKASHMIRI PULAV\r\nTANDOORI ROTI\r\nPALAK CHTNI\r\nSALAD\r\nRASGULLA\r\nCHICKEN DHABA",
+                "hostel": "2041d0d3-c1be-409f-bc1f-0f5566083b3b"
+            },
+            {
+                "id": "d0990b36-48bc-4975-979c-603eb5d489f5",
+                "day": 2,
+                "breakfast": " ",
+                "lunch": " ",
+                "snacks": " ",
+                "dinner": " ",
+                "hostel": "2041d0d3-c1be-409f-bc1f-0f5566083b3b"
+            },
+            {
+                "id": "d0a6e646-6ea6-4b73-a296-4ae9203873ad",
+                "day": 3,
+                "breakfast": " ",
+                "lunch": "  ",
+                "snacks": " ",
+                "dinner": " ",
+                "hostel": "2041d0d3-c1be-409f-bc1f-0f5566083b3b"
+            },
+            {
+                "id": "54cf2c1b-2059-4b35-bd66-9a63221c4477",
+                "day": 7,
+                "breakfast": " PURI BHAJI\r\nCABBAGE SALAD\r\nBOILED CORN\r\nBBJ/TEA/COFFEE\r\nMILK/BV/CORNFLAKES\r\nBOILED EGG\r\nBANANA\r\nEGG BHURJI\r\nPEANUT BUTTER",
+                "lunch": " MOONG METHI M/S\r\nRAJMA LEHSUNI\r\nTOMATO DAL\r\nPEAS PULAV\r\nMETHI PURI+CHAPATI\r\nTHECHA\r\nSALAD\r\nMASALA PAPAD\r\nSHRIKHAND",
+                "snacks": " VEG CUTLET\r\nBBJ/TEA/COFFEE\r\nWATERMELON\r\nPEANUT BUTTER",
+                "dinner": " VEG CHILLI MILI\r\nGATTE KI SABJI\r\nDAL MASOOR\r\nFRIED RICE\r\nCHAPATI\r\nTOMATO CHTNI\r\nCHANA SALAD\r\nCOLD DRINKS\r\nCHICKEN LOLLIPOP",
+                "hostel": "2041d0d3-c1be-409f-bc1f-0f5566083b3b"
+            },
+            {
+                "id": "4f4d3f7c-1f98-4281-bb61-535372b24882",
+                "day": 4,
+                "breakfast": " ALOO PARATHA\r\nDAHI+SZ CHTNI\r\nBOILED CORN\r\nBBJ/TEA/COFFEE\r\nMILK/BV/OATS\r\nBOILED EGG\r\nBANANA\r\nEGG BHURJI",
+                "lunch": " TAWA VEG\r\nLAUKI KOFTA\r\nDAL BANJARA\r\nLEMON RICE+SAMBHAR\r\nCHAPATI\r\nGRNDNT CHTNI\r\nSALAD\r\nMASALA PAPAD\r\nBUTTERMILK",
+                "snacks": " VADA PAV\r\nBBJ/TEA/COFFEE\r\nCOLD COFFEE",
+                "dinner": " CARROT MATAR\r\nRAJMA PUNJABI\r\nDAL KOLHAPURI\r\nDAL KHICHDI TADKA\r\nCHAPATI\r\nLSN CHTNI\r\nSALAD\r\nKALA JAMUN\r\nCHICKEN KOHLAPURI",
+                "hostel": "2041d0d3-c1be-409f-bc1f-0f5566083b3b"
+            },
+            {
+                "id": "cb6bf28a-ebfa-4741-95e4-fb3d3d7cd846",
+                "day": 1,
+                "breakfast": " ",
+                "lunch": " ",
+                "snacks": " ",
+                "dinner": " ",
+                "hostel": "2041d0d3-c1be-409f-bc1f-0f5566083b3b"
+            }
+        ]
+    },
+    {
+        "id": "c4c8cb2f-4884-4583-a255-0e264918a1ed",
+        "name": "Hostel 4",
+        "short_name": "4",
+        "long_name": "MadHouse",
+        "mess": [
+            {
+                "id": "65fdfc92-fad7-4124-9622-fa19282b962e",
+                "day": 1,
+                "breakfast": "Puri Sabzi\nMoong (Sprouts)\nChocos\nBBJ, Tea,Coffee, Hot/ Cold Milk, \nOmelette\nBournvita, Horlicks\nBanana",
+                "lunch": "Aloo Parwal(Dry)\nVeg Makhanwala(Gravy)\nDal Fry\nJeera Rice\nCurd\nSalad",
+                "snacks": "Dabeli\nBBJ, Tea,Coffee,  \nBanana Shake\nFruit",
+                "dinner": "Aloo do pyaza (Dry)\nMushroom Masala (Gravy)\nPlain Rice\nPlain Roti, Ghee Roti\nAkkha Masoor Dal\n\nSweet: Gur ka Kheer",
+                "hostel": "c4c8cb2f-4884-4583-a255-0e264918a1ed"
+            },
+            {
+                "id": "c6728793-b1b4-487b-a24b-4acfe2f10b88",
+                "day": 3,
+                "breakfast": "Bread Poha\nSweet Corn (Sprouts)\nChocos\nBBJ, Tea,Coffee, Hot/ Cold Milk, \nOmelette\nBournvita, Horlicks\nBanana",
+                "lunch": "Bhindi Masala (Dry) \nMix Sprouts (Gravy)\nMasoor Dal\nVeg Pulao, Plain Rice\nCurd\nMacroni Salad, \n",
+                "snacks": "Egg and Veg noodles\nBBJ, Tea,Coffee\nMix Fruit Shake\n",
+                "dinner": "Suran Chana (Dry)\nDum Aloo (Gravy)\nPlain Rice\nPlain Roti, Ghee Roti\nDal Tadka\n\nSweet: Sewaiya\n\nNon-Veg Extras: \nChicken Masala / Chicken Kolhapuri (Rs. 50/-)",
+                "hostel": "c4c8cb2f-4884-4583-a255-0e264918a1ed"
+            },
+            {
+                "id": "54ba1d33-27f4-4ff5-80d1-27c8fb9df2a7",
+                "day": 7,
+                "breakfast": "Dal Paratha\nKala Chana (Sprouts)\nChocos\nBBJ, Tea,Coffee, Hot/ Cold Milk, \nEgg Bhurji\nBournvita, Horlicks\nBanana",
+                "lunch": "Tinda Masala(Dry) \nRajma Masala (Gravy) \nDal Fry, Masala Puri \nPlain Rice \nButtermilk \nRasna",
+                "snacks": "Veg Pasta, Non-veg pasta\nBBJ, Tea,Coffee, Hot/Cold Milk, \nBournvita, Horlicks\nFruit",
+                "dinner": "Aloo Palak (Dry)\nChana Masala (Gravy)\nPlain Rice\nPlain Roti, Ghee Roti\nSambhar, Plain Dal\n\nSweet: Muffins",
+                "hostel": "c4c8cb2f-4884-4583-a255-0e264918a1ed"
+            },
+            {
+                "id": "4dcbbc74-e068-4338-9de5-3af649469c2e",
+                "day": 2,
+                "breakfast": "Fried Idli\nKala Chana (Sprouts)\nCornflakes\nBBJ, Tea,Coffee, Hot/ Cold Milk, \nBoiled Eggs\nBournvita, Horlicks\nBanana",
+                "lunch": "Chhole Bhature(Dry)\nVeg Makhanwala(Gravy)\nDal Tadka\nPlain Rice\nButtermilk\nSalad",
+                "snacks": "Masala Dosa.\nBBJ, Tea,Coffee, Hot/Cold Milk \nBournvita, Horlicks\nFruit",
+                "dinner": "Aloo Methi (Dry)\nKadai Paneer (Gravy)\nPlain Rice\nPlain Roti, Ghee Roti\nDal Fry\n\nSweet: Ice-cream",
+                "hostel": "c4c8cb2f-4884-4583-a255-0e264918a1ed"
+            },
+            {
+                "id": "926b1a1c-b71e-442e-9c83-3b5ac12ed426",
+                "day": 4,
+                "breakfast": "Idli Sambhar\nKala Chana (Sprouts)\nCornflakes\nBBJ, Tea,Coffee, Hot/ Cold Milk, \nBoiled Eggs\nBournvita, Horlicks\nBanana",
+                "lunch": "Aloo Jeera (Dry)\nKadhi Pakoda(Gravy)\nDal Panchratni\n Plain Rice\nBoondi Raita\nSabudana Papad\nNimbu Paani",
+                "snacks": "Mendhu Vada\nBBJ, Tea,Coffee, Hot/Cold Milk, \nBournvita, Horlicks\nFruit",
+                "dinner": "Baingan Masala (Dry)\nAloo Vatana(Gravy)\nPlain Rice, Veg Pulao\nPlain Roti, Ghee Roti\nDal Fry\n\nSweet: Coldrinks",
+                "hostel": "c4c8cb2f-4884-4583-a255-0e264918a1ed"
+            },
+            {
+                "id": "005bdb28-9c4f-4edf-8031-87fe24c2dd6d",
+                "day": 6,
+                "breakfast": "Utthapam\nMoong (Sprouts)\nCornflakes\nBBJ, Tea,Coffee, Hot/ Cold Milk, \nBoiled Eggs\nBournvita, Horlicks\nBanana",
+                "lunch": "Chawali (Dry) \nGajar Matar Masala (Gravy)\nSambhar\nCurd Rice\nShikanji",
+                "snacks": "Pani Puri\nBBJ, Tea,Coffee, Hot/Cold Milk, \nBournvita, Horlicks\nFruit",
+                "dinner": "Veg Kolhapuri (Gravy)\nMatar Paneer Masala (Gravy)\nPlain Rice\nPlain Roti, Ghee Roti\nDal Fry\n\nSweet: Jalebi",
+                "hostel": "c4c8cb2f-4884-4583-a255-0e264918a1ed"
+            },
+            {
+                "id": "cb9d635e-74de-446a-9c41-337d68385f01",
+                "day": 5,
+                "breakfast": "Kanda Poha\nMatki (Sprouts)\nChocos\nBBJ, Tea,Coffee, Hot/ Cold Milk, \nEgg Bhurji\nBournvita, Horlicks\nBanana",
+                "lunch": "Mix Veg (Dry) \nMalai Kofta (Gravy)\nChana Dal\nPlain Rice\nCurd\nKokam Sarbat",
+                "snacks": "Chole Kulche\nBBJ, Tea,\nCold Coffee\nFruit",
+                "dinner": "Crispy Fried Bhindi (Dry)\nChana Masala (Gravy)\nPlain Rice\nPlain Roti, Ghee Roti\nDal Panchratni\n\nSweet: Thandai\n\nNon-Veg Extras:\nChicken Biryani (Rs. 55)",
+                "hostel": "c4c8cb2f-4884-4583-a255-0e264918a1ed"
+            }
+        ]
+    },
+    {
+        "id": "0f0f4cfd-82d9-4e37-86e2-d993c50d72ca",
+        "name": "Hostel 5",
+        "short_name": "5",
+        "long_name": "Penthouse",
+        "mess": [
+            {
+                "id": "aba4687d-2c4c-4877-aea9-344e75a1475b",
+                "day": 3,
+                "breakfast": "Aloo Paratha & Dahi\r\nBBJ, Tea, Coffee, Oats\r\nBoiled Chana\r\nEgg/Omelette/Full Fry\r\nBanana",
+                "lunch": "Chole Bhature\nJeera Rice\nDal Fry\nLassi\nSprouted Salad, Imli Chutney, Jaggery\nRoasted Papad \nKalakand Barfi\nFried Green Chillies\nExtras: Omelette/Bhurji/Dahi",
+                "snacks": "Dhokla \nBBJ, Tea, Milk, Coffee\nPeanut Butter                                 pomogrenate",
+                "dinner": "Doodhi Chana, Methi Matar Malai\r\nRoti\r\nJeera Rice\r\nDal Bukhara, Boondi raita\r\nCucumber, Carrot, Onion\r\nMasala Papad\r\n\r\nMalai Sandwich\r\nTandoori Chicken,Omelette/ Bhurji/ Dahi",
+                "hostel": "0f0f4cfd-82d9-4e37-86e2-d993c50d72ca"
+            },
+            {
+                "id": "d4db25a0-0d9e-4413-ad9e-a2696bdea39d",
+                "day": 2,
+                "breakfast": "Medu Vada\nBBJ, Tea, Coffee, Muesli\nBoiled Grountnut\nEgg\nApple ",
+                "lunch": "Soyabean Chilly Dry, Chana Masala (Gravy)\nRoti\nCoconut Rice\nDal Tadka\nIce Tea, Dahi\nCucumber, Carrot, Onion, Jaggery\nFryums\n\nFried Green Chillies\nExtras: Omelette/Bhurji, Paneer Bhurji/Dahi",
+                "snacks": "Veg Roll\r\nBBJ, Tea, Milk, Coffee\r\nStrawberry MIlkshake\r\nEgg/Omelette/Full Fry\r\n",
+                "dinner": "Malai Kofta, Gawar ki Phali    Roti\nLemon Rice\nChana Dal    \n Cucumber, Carrot, Onion\nAloo Papad\nSweet Corn Soup\nBesan Ladoo, Muskmelon          Extras: Tawa Paneer, Dahi, Omelette/Bhurji",
+                "hostel": "0f0f4cfd-82d9-4e37-86e2-d993c50d72ca"
+            },
+            {
+                "id": "a4482e7c-9386-46e8-8501-57d8b2cfddbf",
+                "day": 1,
+                "breakfast": "Poha & Matki Ussal, Jalebi\nBBJ, Tea, Coffee, Cornflakes\nSweet Corn\nEgg\nBanana",
+                "lunch": "Aloo Do Pyaza Dry, Kadhi Pakoda\r\nRoti\r\nJaipuri Mewa Pulav\r\nChana Dal\r\nNimbu Pani\r\nCucumber, Tomato, Onion\r\nRoasted Papad\r\n\r\nGreen Chilly Thecha\r\nOmelette/Bhurji/Dahi",
+                "snacks": "Onion Kachori\r\nBBJ, Tea, Milk, Coffee\r\nGuava\r\nEgg/Omelette/Full Fry\r\n",
+                "dinner": "Sev Tomato, Tawa Chole\r\nRoti\r\nJeera Rice\r\nDal Palak\r\nCucumber, Carrot, Onion, Jaggery\r\nAloo Chips\r\n\r\nIce-cream\r\nButter Chicken, Dahi, Omelette/Bhurji",
+                "hostel": "0f0f4cfd-82d9-4e37-86e2-d993c50d72ca"
+            },
+            {
+                "id": "31699242-7091-458f-a40b-cf7d2886e605",
+                "day": 6,
+                "breakfast": "Palak Puri/Puri Bhaji\nBBJ, Tea, Coffee, Cornflakes\nBoiled Groundnut\nEgg/Omelette/Full Fry\nCustard Apple",
+                "lunch": "Bhindi Fry, Dum Aloo\r\nPlain Paratha\r\nSchezwan Rice\r\nKaala Masoor Dal\r\nChaas\r\nSprouted salad\r\nMasala Papad\r\n\r\nFried Green Chillies\r\nOmelette/Bhurji/Dahi",
+                "snacks": "Tadka Maggi, Veg. Maggi \nBBJ, Tea, Milk, Coffee\nPapaya\nEgg/Omelette/Full Fry\n",
+                "dinner": "Manchurian(dry), French Fries\nAloo Matar Paratha\nFried Rice\nMix Veg. Raita\nCucumber, Carrot, Onion, Tomato Chutney\nFryums\nCold Drink\n\nExtras: Paneer Bhurji, Dahi, Egg Bhurji",
+                "hostel": "0f0f4cfd-82d9-4e37-86e2-d993c50d72ca"
+            },
+            {
+                "id": "fcdf1b4c-11f4-4407-8b36-caa477b3de0c",
+                "day": 4,
+                "breakfast": "Idli, Sambhar & Chutney\r\nBBJ, Tea, Coffee, Cornflakes\r\nSprouted Matki\r\nEgg/Omelette/Full Fry\r\nBanana",
+                "lunch": "Moong Masala Dry, Palak Sarso Ka Saag\r\nMakki Di Roti\r\nDal Khichdi\r\nUrad Chana Dal\r\nChaas\r\nCucumber, Carrot, Tomato, Jaggery\r\nSabudana Papad\r\n\r\nFried Green Chillies\r\nOmelette/Bhurji/ Dahi",
+                "snacks": "Veg Cheese Burger  \nBBJ, Tea, Milk, Coffee Green Apple",
+                "dinner": "Chana Masala (Dry), Chawli Masala\nRoti\nVeg Pulao\nDal Tadka , Dahi\nCucumber, Carrot, Onion, Jaggery\nFried Papad\nManchow Soup\nMoong Dal Halwa\nChicken Masala, Dahi,Omelette/Bhurji",
+                "hostel": "0f0f4cfd-82d9-4e37-86e2-d993c50d72ca"
+            },
+            {
+                "id": "a15bb648-aafa-46a2-b960-6ef0d215c7b2",
+                "day": 5,
+                "breakfast": "Sabudana Khichdi\r\nBBJ, Tea, Coffee, Cornflakes\r\nSweet Corn\r\nEgg/Omelette/Full Fry\r\nBanana",
+                "lunch": "Rajma, Aloo Jeera\nPuri\nVeg Biryani\nDal Tadka\nNimbu Pani, Mix Veg. Raita\nCucumber, Beet Root, Onion, Jaggery\nAloo Chips\nShreekhand\nGreen Chilly Thecha\nOmelette/Bhurji/Dahi",
+                "snacks": "Rawa Masala Dosa\r\nBBJ, Tea, Milk, Coffee\r\nCold Coffee\r\nEgg/Omelette/Full Fry\r\n",
+                "dinner": "Paneer Butter Masala\nButter naan\nKashmiri Pulao\n Dal Pancharatna, Boondi Raita\nCucumber, Raddish, Onion\nRoasted papad\n\nShahi Tukda With Rabdi, Watermelon\nExtras: Chicken Masala, Dahi,Omelette/Bhurji",
+                "hostel": "0f0f4cfd-82d9-4e37-86e2-d993c50d72ca"
+            },
+            {
+                "id": "444b4bf5-de45-4451-ab01-20e0bcf211d3",
+                "day": 7,
+                "breakfast": "Mix Veg. Uttapam\r\nBBJ, Tea, Coffee, Cornflakes\r\nBoiled Chana\r\nEgg/Omelette/Full Fry\r\nBanana",
+                "lunch": "Paneer Handi\nTandoori Roti\nNeutrela Rice\nDal  Bukhara\nNimbu Pani, Dahi\nCucumber, Radish, Onion\nSabudana Papad\n\nFried Green Chillies\nOmelette/Bhurji/Dahi",
+                "snacks": "Pani Puri\r\nBBJ, Tea, Milk, Coffee\r\nOrange\r\nEgg/Omelette/Full Fry\r\nPeanut Butter",
+                "dinner": "Sproted Matki Ussal (Dry), Aloo Matar\r\nRoti\r\nVeg Biryani\r\nDal Makhani, Mix Veg. Raita\r\nCucumber, Carrot, Onion, Jaggery\r\nMasala Papad\r\n\r\nPetha\r\nChicken Biryani & Gravy, Dahi, Omelette/Bhurji",
+                "hostel": "0f0f4cfd-82d9-4e37-86e2-d993c50d72ca"
+            }
+        ]
+    },
+    {
+        "id": "c88996e8-d5af-4023-942a-abc63d0ca24b",
+        "name": "Hostel 6",
+        "short_name": "6",
+        "long_name": "Vikings",
+        "mess": [
+            {
+                "id": "9e2cb7a3-e148-4027-85e5-144b70a82b37",
+                "day": 6,
+                "breakfast": "MIX PARATHA; PULSES: GREEN MOONG; TEA/COFFEE/MILK \nBOURNVITA & CHOCOS;\n BREAD-BUTTER-JAM; FRUIT:BANANA; EGG OMLETTE; VEG CARD ITEM: CHEESE SLICE",
+                "lunch": "GRAVY: ALOO MUTTER; DRY: MATKI USAL; MOONG DAL; THECHA; KHICHDI; CUCHUMBER; ROASTED PAPAD; LASSI",
+                "snacks": "SNACKS: SCHEZWAN MASALA DOSA; BEVERAGES;TEA/COFFEE MILK/CHOCOS; BREAD-BUTTER-JAM; FRUIT: FRUIT; VEG ITEM: CHEESE SLICE",
+                "dinner": "GRAVY: SEV BHAJI; DRY: ALOO CHILLY MILLY; ARHAR DAL; CHAPATI; CAPSICUM RICE; DESSERT: SHAHI TUKDA; EXTRA: PANEER CHILLY",
+                "hostel": "c88996e8-d5af-4023-942a-abc63d0ca24b"
+            },
+            {
+                "id": "1d67ea81-4acb-4197-8520-3eb4093d4c98",
+                "day": 3,
+                "breakfast": "TOMATO ONION UTTAPAM; PULSES: SWEET CORN; TEA/COFFEE/MILK \nBOURNVITA & CHOCOS;\n BREAD-BUTTER-JAM; FRUIT:BANANA; EGG OMELETTE; VEG CARD ITEM: COOKIE",
+                "lunch": "CHHOLE BHATURE; DAL: ARHAR DAL; JEERA RICE; SALAD; MASALA CHHAAS",
+                "snacks": "SNACKS: DHOKLA; BEVERAGES;TEA/COFFEE MILK/CORNFLAKES; BREAD-BUTTER-JAM; PEANUT BUTTER; FRUIT: FRUIT",
+                "dinner": "GRAVY: PANEER BUTTER MASALA; PARATHA;GREEN PEAS PULAV; ARHAR DAL; SWEET:GAJAR HALWA; EXTRA: CHICKEN FRY(3 PIECES)",
+                "hostel": "c88996e8-d5af-4023-942a-abc63d0ca24b"
+            },
+            {
+                "id": "9c9a0d08-0e39-4e72-a5be-fe75bdac7f61",
+                "day": 1,
+                "breakfast": "ALOO POHA & \nSHEERA;PULSES:MATKI;\nTEA/COFFEE/MILK \nBOURNVITA & CORNFLAKES;\nBREAD-PEANUT BUTTER-JAM; FRUIT:BANANA EGG: OMELETTE\nVEG CARD ITEM: FRUIT",
+                "lunch": "PANEER DHABA STYLE;PARATHA;DAL; CHILKA MOONG RICE;FRYUMS;SALAD; NIMBU PANI",
+                "snacks": "SNACKS: DAHI KACHORI; BEVERAGES:TEA/COFFEE MILK/CORNFLAKES BREAD-BUTTER-JAM; PEANUT BUTTER; FRUIT : FRUIT; VEG CARD ITEM: FRUIT ",
+                "dinner": "GRAVY:VEG KOFTA; DRY: FRENCH FRIES; STEAM RICE; DAL PUDINA; CHAPATI; SALAD; RAS MALAI; EXTRA: EGG CURRY(2 EGGS)",
+                "hostel": "c88996e8-d5af-4023-942a-abc63d0ca24b"
+            },
+            {
+                "id": "2fb91264-9fc3-4f28-a63a-a614c25351fe",
+                "day": 2,
+                "breakfast": "ALOO PARATHA; CURD; PULSES:BOILED GROUNDNUT;\nTEA/COFFEE/MILK \nBOURNVITA & CORNFLAKES;\n BREAD-BUTTER-JAM; BANANA EGG: EGG BHURJI \nVEG CARD ITEM: PANEER BHURJI",
+                "lunch": "GRAVY: GATTA CURRY;DRY:CABBAGE FOGATE;; DAL: PUDINA DAL;RICE; SALAD:CHANA CHAAT;THECHA; DISCO PAPAD; ORANGE RASANA",
+                "snacks": "PANI PURI; TEA/COFFEE/MILK \nBOURNVITA & CORNFLAKES;\nBREAD-BUTTER-JAM; FRUIT: FRUIT JUICE",
+                "dinner": "GRAVY:VEG HANDI; DRY:SPROUTED MOONG DRY; DAL: MASOOR DAL, TAWA PULAV, CHAPATI;PASTA SALAD;SWEET: PINEAPPLE SHEERA; EXTRA: PANEER TIKKA MASALA",
+                "hostel": "c88996e8-d5af-4023-942a-abc63d0ca24b"
+            },
+            {
+                "id": "8f6d5398-809d-4bae-8f13-39afb778a62f",
+                "day": 5,
+                "breakfast": "PURI BHAJI; PULSE: BOILED GROUNDNUT; TEA/COFFEE/MILK \nBOURNVITA & CORNFLAKES;\nBREAD-PEANUT BUTTER-JAM; FRUIT:BANANA; EGG BHURJI; VEG CARD ITEM: PANEER BHURJI",
+                "lunch": "RAJMA MASALA; METHI PURI; DAL TADKA; ALOO JEERA DRY; RICE; ROASTED PAPAD; SALAD; CURD RICE; SHRIKHAND, NIMBU PANI",
+                "snacks": "PANEER PARATHA; TEA/COFFEE/MILK \nBOURNVITA & CHOCOS;\n BREAD-PEANUT BUTTER-JAM; FRUIT: FRUIT; VEG CARD ITEM: COOKIE",
+                "dinner": "GRAVY: CHHOLE MASALA; DRY: BAIGAN MASALA; RICE PARATHA;MANCHOW SOUP; DAL PUDINA; SWEET: RAJ BHOG; EXTRA: BUTTER CHICKEN(4 PIECES)",
+                "hostel": "c88996e8-d5af-4023-942a-abc63d0ca24b"
+            },
+            {
+                "id": "77ee13ad-a47f-4ebd-9945-bf8adf36c128",
+                "day": 4,
+                "breakfast": "MASALA CHEESE SANDWICH; PULSES: MIX SPROUT, TEA/COFFEE/MILK \nBOURNVITA & CHOCOS\n BREAD-BUTTER-JAM, BANANA; EGG BHURJI; VEG ITEM: PANEER BHURJI",
+                "lunch": "KADHI PAKODA; DRY: CHANA MASALA; MASOOR DAL; CHAPATI; CORN RICE; MASALA PAPAD; SALAD, MANGO RASANA",
+                "snacks": "FRIED MAGGIE; TEA/COFFEE/MILK \nBOURNVITA & CHOCOS\n BREAD-BUTTER-JAM; FRUIT: FRUIT",
+                "dinner": "GRAVY: METHI MUTTER MASALA; DRY:ALOO 65; DAL:CHANA DAL FRY; RICE:JEERA RICE CHAPATI/SALAD DESSERT: IMARATI; EXTRA: PANEER 65",
+                "hostel": "c88996e8-d5af-4023-942a-abc63d0ca24b"
+            },
+            {
+                "id": "733b7f45-26ae-4a05-bd62-7e0151f10ced",
+                "day": 7,
+                "breakfast": "IDLI SAMBHAR; PULSE: CHOWLI; TEA/COFFEE/MILK \nBOURNVITA & CORNFLAKES;\n BREAD-BUTTER-JAM; FRUIT:BANANA; EGG OMLETTE; VEG CARD ITEM: PANEER BHURJI",
+                "lunch": "GRAVY:CHOWLI MASALA; DRY: BHINDI PAKODA; DAL:DAL MAKHANI VEG BIRYANI; THECHA CHAPATI, FRY PAPAD, SALAD, BOONDI RAITA, KOKAM SHARBAT",
+                "snacks": "PAV BHAJI, TEA/COFFEE/MILK \nBOURNVITA & CORNFLAKES;\n BREAD-BUTTER-JAM; BANANA SHAKE",
+                "dinner": "VEG MANCHURIAN; DRY: GOBHI CAPSICUM; DAL TADKA; CHAPATI; SALAD;SOUP:TOMATO SOUP ; FRIED RICE; SWEET: COLD DRINK; EXTRA: CHICKEN BIRYANI (3 PIECES)",
+                "hostel": "c88996e8-d5af-4023-942a-abc63d0ca24b"
+            }
+        ]
+    },
+    {
+        "id": "79814f53-c8b5-4f35-be94-86c481f2b057",
+        "name": "Hostel 7",
+        "short_name": "7",
+        "long_name": "Lady of the Lake",
+        "mess": [
+            {
+                "id": "7e5a06f7-ccc9-4bab-84a8-97d66908802b",
+                "day": 6,
+                "breakfast": "Mix Paratha, BBJ, Tea, Coffee, Milk/Lemon Juice, Cornflakes, Boiled Groundnut, Cornflakes, Egg/Omelette/Bhurji, Banana",
+                "lunch": "Aloo bhujiya, Methi Puri, Tomato Rice, Hakka Masoor Dal, Cucumber, Carrot, Onion, Shrikhand, Omelette/Bhurji",
+                "snacks": "Pav Bhaji, BBJ, Tea, Milk, Coffee, Egg/Omelette/Bhurji",
+                "dinner": "Chole Dry, Paratha, Veg Biryani, Dal Lehsuni, Cucumber, Carrot, Onion, Veg Raita, Pineapple Juice",
+                "hostel": "79814f53-c8b5-4f35-be94-86c481f2b057"
+            },
+            {
+                "id": "4cc5ec6a-ece8-40d0-8db7-079060aafe2b",
+                "day": 4,
+                "breakfast": "Onion Uthappam, BBJ, Tea, Coffee, Milk/Lemon Juice, Cornflakes, Boiled Groundnuts, Egg/Omelette/Bhurji, Banana",
+                "lunch": "Chole Bhature, Plain Rice, Tur Dal, Lassi, Cucumber, Carrot, Onion, Imli Chutney, Omelette/Bhurji",
+                "snacks": "Bread Pakoda , BBJ, Tea, Milk, Coffee, Egg/Omelette/Bhurji, Ice tea",
+                "dinner": "Baingan Masala, Paratha, Jeera Rice, Lehsuni Dal, Tandoori Salad, Fruit, Icecream, Paneer 65",
+                "hostel": "79814f53-c8b5-4f35-be94-86c481f2b057"
+            },
+            {
+                "id": "2e816d5b-98bf-44bb-8e53-1b01ccd64816",
+                "day": 3,
+                "breakfast": "Onion Paratha, BBJ, Tea, Coffee, Milk/Lemon Juice, Chocos/Bournvita, Sprouted Chana, Egg/Omelette/Bhurji, Banana",
+                "lunch": "Mutter Paneer, Roti, Lemon Rice, Chana Dal, Chaas, Cucumber, Carrot, Onion, Fryums, Lehsuni Chutney, Omelette/Bhurji",
+                "snacks": "Pani Puri, BBJ, Tea, Milk, Coffee, Egg/Omelette/Bhurji",
+                "dinner": "Soya Mutter Mix, Roti, Pudina Rice, Dal Palak, Tandoori Salad, Fruit, Chamcham, Chicken kolhapuri",
+                "hostel": "79814f53-c8b5-4f35-be94-86c481f2b057"
+            },
+            {
+                "id": "1d9122c5-1a0a-4411-962e-399041acfe6b",
+                "day": 1,
+                "breakfast": "Puri Bhaji, BBJ, Tea, Coffee, Milk/Lemon Juice, Chocos/Bournvita,Sprouted Moong, Egg/Omelette/Bhurji, Banana",
+                "lunch": "Aalu gobi, Roti, Veg Pulao, Dal Makhani, Boondi Raita, Cucumber, Carrot, Onion, Roasted Papad, Omelette/Bhurji",
+                "snacks": "Methi Paratha, BBJ, Tea, Milk, Coffee, Egg/Omelette/Bhurji, Ice tea",
+                "dinner": "Paneer Lajawab, Roti, Plain Rice, Dal Tadka, Cucumber, Carrot, Onion, Fruit,, Chicken Chilly",
+                "hostel": "79814f53-c8b5-4f35-be94-86c481f2b057"
+            },
+            {
+                "id": "53a115d1-ab16-4bb6-84ea-c71f61e2369b",
+                "day": 2,
+                "breakfast": "Kanda Poha Sev, BBJ, Tea, Coffee, Milk/Lemon Juice, Cornflakes, Egg/Omelette/Bhurji, Banana",
+                "lunch": "Rajma Masala , Roti, Plain Rice,  Dal Tadka, Boondi Raita, Cucumber, Carrot, Onion, Omelette/Bhurji",
+                "snacks": "Vada Pav, BBJ, Tea, Milk, Coffee, Egg/Omelette/Bhurji",
+                "dinner": "Malai Kofta, Roti, Plain Rice, Dal Fry, Cucumber, Carrot, Onion, Black Current shake, Manchurian with hot garlic sauce",
+                "hostel": "79814f53-c8b5-4f35-be94-86c481f2b057"
+            },
+            {
+                "id": "01445406-ff46-45d7-a970-39dfd69f781f",
+                "day": 5,
+                "breakfast": "Idli Sambhar, BBJ, Tea, Coffee, Milk/Lemon Juice, Chocos/Bournvita, Sprouted Chana, Egg/Omelette/Bhurji, Banana",
+                "lunch": "Aloo Methi, Roti, Dal Khichdi, Kadhi Pakoda, Boondi Raita, Cucumber, Carrot, Onion, Masala Fried Papad, Schezwan Chutney, Rasna, Omelette/Bhurji",
+                "snacks": "Fried Maggi, BBJ, Tea, Milk, Coffee, Egg/Omelette/Bhurji",
+                "dinner": "Tawa Paneer,  Roti, Plain Rice, Dal Tadka, Cucumber, Carrot, Onion, Fruit Custard",
+                "hostel": "79814f53-c8b5-4f35-be94-86c481f2b057"
+            },
+            {
+                "id": "e967cf79-9f0c-443c-8854-9d26caa59662",
+                "day": 7,
+                "breakfast": "Aloo Cheese Sandwich, BBJ, Tea, Coffee, Milk/Lemon Juice, Cornflakes , Sweet Corn, Egg/Omelette/Bhurji, Banana",
+                "lunch": "Bhindi Masala, Roti, Onion Pista Rice, Dal Makhani, Rasna, Fryums, Cucumber, Carrot, Onion, Fryums,  RasnaThecha chutney, Omelette/Bhurji",
+                "snacks": "Mysore Masala Dosa, BBJ, Tea, Milk, Coffee, Egg/Omelette/Bhurji",
+                "dinner": "Veg Amritsari, Roti, Capsicum Rice, Palak Dal, Cucumber, Carrot, Onion, Cold-Drinks, Egg Masala",
+                "hostel": "79814f53-c8b5-4f35-be94-86c481f2b057"
+            }
+        ]
+    },
+    {
+        "id": "1aa8fffd-bfe7-48b5-ba79-5f0bfda2a900",
+        "name": "Hostel 8",
+        "short_name": "8",
+        "long_name": "Woodland",
+        "mess": [
+            {
+                "id": "030df90c-975d-430c-81ea-a2dc202d64b8",
+                "day": 3,
+                "breakfast": "poha\r\nBanana\r\nSweet Corn\r\n",
+                "lunch": "Chole Bhature\r\nMoong Dal\r\nCoconut Rice\r\nBhature\r\nLassi\r\nRoasted Papad, Onion, Tomato, Beetroot\r\n",
+                "snacks": "Aloo Cheese Sandwitch\nCold Coffee\nPeanut Butter\n",
+                "dinner": "Paneer Kadai Masala\nDal Varan\nVeg Pulao, Plain Rice\nBoondi Raita\nOnion, Cucumber, Carrot\nIce Cream\nChicken Biryani\n",
+                "hostel": "1aa8fffd-bfe7-48b5-ba79-5f0bfda2a900"
+            },
+            {
+                "id": "21de40a0-a4c5-49e1-9e63-1b5fd301e79f",
+                "day": 1,
+                "breakfast": "Onion paratha\r\nbanana\r\nSweet Corn\r\n",
+                "lunch": "Dal Palak khichdi, Black Chana Masala\nDal Fry\n,Plain Rice\nRoti\nCurd, , Nimbu pani\nRoasted Papad,Black Chana Salad\n",
+                "snacks": "Red and white pasta\r\nMuskmelon\r\n       Mayonese\r\n",
+                "dinner": "Paneer Do Pyaza\r\nDal Makhni\r\nCorn Rice\r\nRoti\r\nBoondi Raita\r\nSprouted Moong Salad,Onion\r\nRas Malai\r\nChicken Tikka Masala\r\n",
+                "hostel": "1aa8fffd-bfe7-48b5-ba79-5f0bfda2a900"
+            },
+            {
+                "id": "7a2bbcd0-dda5-4d23-8798-9ff803965bce",
+                "day": 5,
+                "breakfast": "veg upma\nBanana\nSprouted Moong\n",
+                "lunch": "Aloo Torkari\nDal Tadka\nKhichdi\nRoti\nCurd,\nFryums, Onion, Carrot, Tomato\n",
+                "snacks": "Paneer Paratha\nBadam Milkshake\n  Mayonnaise\n",
+                "dinner": "Chawli Spicy,Navratan Korma\nButter Dal Fry\nLemon Rice,Plain Rice\nroti\nBoondi Raita\nOnion, Carrot, Radish\nChum Chum\nChicken Lollipop\n",
+                "hostel": "1aa8fffd-bfe7-48b5-ba79-5f0bfda2a900"
+            },
+            {
+                "id": "d7b2c0d0-62c6-4bf8-9578-18f7b282ada6",
+                "day": 2,
+                "breakfast": "Idli, Masala Idli\r\nbanana\r\nBoiled Peanuts\r\n",
+                "lunch": "Aloo Chatpata ,Rajma Masala\nTuar Dal\nTomato Rice\nMethi Poori\nCurd, \nMasala Papad, Onion, Tomato, Cucumber\n",
+                "snacks": "Misal Pav\r\n\r\nPeanut Butter\r\n",
+                "dinner": "Corn Mushroom,Veg Hyderabadi\r\nTuar Dal\r\nMoti Pulao,Plain Rice\r\nParatha\r\nLauki Raita\r\nBlack Chana Salad\r\nMoong Dal Halwa\r\nPaneer 65\r\n",
+                "hostel": "1aa8fffd-bfe7-48b5-ba79-5f0bfda2a900"
+            },
+            {
+                "id": "ae4239d6-3d27-4f60-bdb2-8636297dda06",
+                "day": 6,
+                "breakfast": "mix utaapam\napple\nSprouted Chana\n",
+                "lunch": "Kadhi Pakoda,\n Mix Pulses\nDal Fry\nSchezwan Rice\nRoti\nMasala Chaach\nMasala Papad,,Sprouted Moong Salad\n",
+                "snacks": "Dahi Vada\nPear\nThandai\n",
+                "dinner": "Veg Makhanwala,Tawa Veg\nUrad Dal\nTawa Pulao, Plain Rice\nParatha\nCarrot Raita \nBlack Chana Salad\nKheer\n",
+                "hostel": "1aa8fffd-bfe7-48b5-ba79-5f0bfda2a900"
+            },
+            {
+                "id": "46c6adbd-119a-40b7-a91e-625cd323b924",
+                "day": 4,
+                "breakfast": "Onion Uttapam\nApple\nBoiled Peanuts\n",
+                "lunch": "Malai Kofta, Corn Masala\nDal Urad\nVeg Fried Rice, Plain Rice\nRoti\nCurd, rasna\nFried  Papad,Black Chana Salad\n",
+                "snacks": "Pav Bhaji\nwatermelon\nTandoori Mayonnaise\n",
+                "dinner": "Chole Tariwala\nDal Pancharatna\nVeg Pulao,Plain Rice\nparatha\nVegetable Raita\nSprouted Moong Salad\nCold Drinks\nPaneer 65\n",
+                "hostel": "1aa8fffd-bfe7-48b5-ba79-5f0bfda2a900"
+            },
+            {
+                "id": "9e679392-3ee5-405a-b1f4-44bd9580a7d9",
+                "day": 7,
+                "breakfast": "Puri Bhaji\nBanana\nBoiled Peanuts\n",
+                "lunch": "Matar Paneer\nDal Makhani\nTomato Rice\n roti\n\nFryums,Onion, Carrot, Radish\n",
+                "snacks": "Pani Puri\nApple \nVegetable Spread\n",
+                "dinner": "Soya Chili, Moong Masala\nTuar Dal\nTomato Rice\nParatha\nLauki Raita\nOnion, Carrot, Radish\nShahi Tukda\n",
+                "hostel": "1aa8fffd-bfe7-48b5-ba79-5f0bfda2a900"
+            }
+        ]
+    },
+    {
+        "id": "bf664e35-3bfa-4a74-8153-374fa3fc082e",
+        "name": "Hostel 9",
+        "short_name": "9",
+        "long_name": "Pluto",
+        "mess": [
+            {
+                "id": "b2030cb4-ff3a-4e5f-ac39-2af0d6cc5646",
+                "day": 1,
+                "breakfast": "aloo onion paratha\r\nBBJ, Milk, Tea, Coffee\r\nSweet Corn\r\ncornflakes\r\nEgg/ omelette/ Bhurji\r\nbanana",
+                "lunch": "Onion Corn Rice\r\nDal Tadka\r\nRoti\r\nAaloo Chatpata\r\nKadi Pakoda\r\n\r\nBeet Root, carrot, Onion",
+                "snacks": "Vada Pav\r\nBBJ, Milk, Tea, Coffee\r\nMuskmelon\r\nChocos",
+                "dinner": "Green Peas Pulao\r\nMasoor Dal\r\nTandoori Roti\r\nPalak Paneer \r\ncurd\r\nTomato, carrot, Onion\r\nRoasted papad\r\nRasgula",
+                "hostel": "bf664e35-3bfa-4a74-8153-374fa3fc082e"
+            },
+            {
+                "id": "40841d97-a184-4077-9bef-82bd4c20d409",
+                "day": 3,
+                "breakfast": "masala idli\r\nBBJ, Milk, Tea, Coffee\r\nSweet Corn\r\nCornflakes\r\nEgg/ omelette/ Bhurji\r\nbanana",
+                "lunch": "Soyabean rice\r\nDal Fry\r\nroti\r\n\r\nChawli Masala\r\npodina Chaas\r\nCucumber, carrot, Onion",
+                "snacks": "Pav Bhaji\r\nBBJ, Milk, Tea, Coffee\r\nPomegranate\r\nCornflakes",
+                "dinner": "Veg onion Pulao\r\nDal Tadka\r\nRoti\r\nWhite Peas Masala\r\nboondi raita\r\nCucumber, carrot, Onion\r\nMasala Papad\r\nMoti Choor Ladoo\r\n\r\nPaneer Chilly Dry",
+                "hostel": "bf664e35-3bfa-4a74-8153-374fa3fc082e"
+            },
+            {
+                "id": "2b458d1d-7ce7-41fe-b820-c5d6bc6c9170",
+                "day": 2,
+                "breakfast": "medu wada\r\nBBJ, Milk, Tea, Coffee\r\nMatki Boiled\r\nCornflakes\r\nEgg/ omelette/ Bhurji\r\nApple",
+                "lunch": "Masala Khichdi\r\nMasoor dal\r\nroti\r\nBhindi Dry\r\nVeg Patiala Spicy\r\nBoondi Raita\r\nCucumber, carrot, Onion\r\nFried papad",
+                "snacks": "Veg Cheese Burger\r\nBBJ, Milk, Tea, Coffee\r\nPineapple Juice\r\ncornflakes\r\npeanut butter",
+                "dinner": "Curd rice\r\nKali daal\r\nParatha\r\nBlack Chana Masala\r\nVegetable Raita\r\nCucumber, carrot, Onion\r\n\r\nIce Cream\r\n\r\nVeg Manchurian Dry",
+                "hostel": "bf664e35-3bfa-4a74-8153-374fa3fc082e"
+            },
+            {
+                "id": "cfda3294-44c9-4e49-b337-1c231dbbc119",
+                "day": 5,
+                "breakfast": "\r\nOnion Paratha\r\nBBJ, Milk, Tea, Coffee\r\nBlack Chana\r\nChocos\r\nEgg/ omelette/ Bhurji\r\nbanana",
+                "lunch": "Jeera Rice\r\nDal Lasooni\r\nBhature\r\n\r\nChole Masala\r\nVeg Raita\r\nTomato, carrot, Onion\r\n\r\n\r\nShrikhand",
+                "snacks": "Besan Chillah\r\nBBJ, Milk, Tea, Coffee\r\nOrange\r\nCornflakes",
+                "dinner": "corn rice\r\nDal fry\r\nRoti\r\nAaloo Jeera\r\nCurd\r\nCucumber, carrot, Onion\r\nFried Papad\r\n\r\n\r\nPaneer Bhurji + KFC",
+                "hostel": "bf664e35-3bfa-4a74-8153-374fa3fc082e"
+            },
+            {
+                "id": "9e54370d-ecc1-46a4-82b0-f38c5415435b",
+                "day": 7,
+                "breakfast": "poori bhaji\r\nBBJ, Milk, Tea, Coffee\r\nBoiled Moong\r\nCornflakes\r\nEgg/ omelette/ Bhurji\r\nBanana",
+                "lunch": "Coconut rice\r\nakbari dal\r\nroti\r\nBaigan Bharta\r\nRajma Masala\r\nboondi raita\r\nBeet Root, carrot, Onion",
+                "snacks": "Chinese Bhel\r\nBBJ, Milk, Tea, Coffee\r\nbanana milkshakle\r\nChocos",
+                "dinner": "Fried rice\r\ndal kohlapuri\r\nRoti\r\nMatki Masala\r\ncurd\r\nCucumber, carrot, Onion\r\nMasala Papad\r\nChumchum\r\ntomato soup\r\nChicken Biryani",
+                "hostel": "bf664e35-3bfa-4a74-8153-374fa3fc082e"
+            },
+            {
+                "id": "ab8f67e1-b977-4bb9-a5eb-b90573a0b9d3",
+                "day": 4,
+                "breakfast": "Vermicelli Upma\r\nBBJ, Milk, Tea, Coffee\r\nBoiled Groundnut\r\nChocos\r\nEgg/ omelette/ Bhurji\r\napple",
+                "lunch": "Coconut Rice\r\nTur Dal\r\nTandoori Roti\r\n\r\nPaneer Buttet Masala\r\ncurd\r\nBeet Root, Carrot, Onion\r\nRoasted Papad",
+                "snacks": "Samosa + Chole\r\nBBJ, Milk, Tea, Coffee\r\nwatermelon juice\r\nCornflakes\r\npeanut butter",
+                "dinner": "Veg Biryani\r\nmoong dal\r\nRoti\r\nLauki Chana Masala\r\nboondi raita\r\nBeet Root, carrot, Onion\r\n\r\ngulab jamun\r\nfrench fries\r\nChicken Koliwada Fry",
+                "hostel": "bf664e35-3bfa-4a74-8153-374fa3fc082e"
+            },
+            {
+                "id": "59861730-c7ab-4adf-9b7f-b6ad16d6072b",
+                "day": 6,
+                "breakfast": "Shezwan masala dosa\r\nBBJ, Milk, Tea, Coffee\r\nSweet Corn\r\nCornflakes\r\nEgg/ omelette/ Bhurji\r\nbanana",
+                "lunch": "Veg Hyderabadi Biryani\r\nDal Makhani\r\nRoti\r\n\r\nKofta masala\r\ncurd\r\nBeet Root, carrot, Onion\r\nMasala Papad",
+                "snacks": "Paneer Paratha\r\nBBJ, Milk, Tea, Coffee\r\npineapple pieces\r\ncornflakes",
+                "dinner": "masala bhatt\r\ndal tadka\r\nRoti\r\nFrench Beans Dry\r\nboondi raita\r\nBeet Root, carrot, Onion\r\n\r\nFruit custard\r\n\r\nChilly Potato",
+                "hostel": "bf664e35-3bfa-4a74-8153-374fa3fc082e"
+            }
+        ]
+    },
+    {
+        "id": "4d06fd45-68d6-4328-acd1-cbf2bc806145",
+        "name": "QIP",
+        "short_name": "qip",
+        "long_name": "QIP",
+        "mess": [
+            {
+                "id": "7a70519f-a784-4291-85cb-3ce83a5c633e",
+                "day": 7,
+                "breakfast": "Ask your mess co to update menu!",
+                "lunch": "Ask your mess co to update menu!",
+                "snacks": "Ask your mess co to update menu!",
+                "dinner": "Ask your mess co to update menu!",
+                "hostel": "4d06fd45-68d6-4328-acd1-cbf2bc806145"
+            },
+            {
+                "id": "91c54c34-8198-4107-b400-a5f8d6ad3bc5",
+                "day": 1,
+                "breakfast": "Ask your mess co to update menu!",
+                "lunch": "Ask your mess co to update menu!",
+                "snacks": "Ask your mess co to update menu!",
+                "dinner": "Ask your mess co to update menu!",
+                "hostel": "4d06fd45-68d6-4328-acd1-cbf2bc806145"
+            },
+            {
+                "id": "601e3a5d-94cd-45ce-9586-58edef283739",
+                "day": 3,
+                "breakfast": "Ask your mess co to update menu!",
+                "lunch": "Ask your mess co to update menu!",
+                "snacks": "Ask your mess co to update menu!",
+                "dinner": "Ask your mess co to update menu!",
+                "hostel": "4d06fd45-68d6-4328-acd1-cbf2bc806145"
+            },
+            {
+                "id": "5fa234f8-c417-41f9-9c56-e8dbe1c44c24",
+                "day": 2,
+                "breakfast": "Ask your mess co to update menu!",
+                "lunch": "Ask your mess co to update menu!",
+                "snacks": "Ask your mess co to update menu!",
+                "dinner": "Ask your mess co to update menu!",
+                "hostel": "4d06fd45-68d6-4328-acd1-cbf2bc806145"
+            },
+            {
+                "id": "80f0c473-6f46-42de-97b7-ea85a451d39d",
+                "day": 4,
+                "breakfast": "Ask your mess co to update menu!",
+                "lunch": "Ask your mess co to update menu!",
+                "snacks": "Ask your mess co to update menu!",
+                "dinner": "Ask your mess co to update menu!",
+                "hostel": "4d06fd45-68d6-4328-acd1-cbf2bc806145"
+            },
+            {
+                "id": "774582c1-fe7f-4479-a023-8b030022ee5a",
+                "day": 5,
+                "breakfast": "Ask your mess co to update menu!",
+                "lunch": "Ask your mess co to update menu!",
+                "snacks": "Ask your mess co to update menu!",
+                "dinner": "Ask your mess co to update menu!",
+                "hostel": "4d06fd45-68d6-4328-acd1-cbf2bc806145"
+            },
+            {
+                "id": "cf57e568-ac4b-408a-932f-4be0b0aa9c1a",
+                "day": 6,
+                "breakfast": "Ask your mess co to update menu!",
+                "lunch": "Ask your mess co to update menu!",
+                "snacks": "Ask your mess co to update menu!",
+                "dinner": "Ask your mess co to update menu!",
+                "hostel": "4d06fd45-68d6-4328-acd1-cbf2bc806145"
+            }
+        ]
+    },
+    {
+        "id": "5a74ec5b-12b6-43d1-a815-1f8e9f8d95ce",
+        "name": "Tansa",
+        "short_name": "tansa",
+        "long_name": "King of the Campus",
+        "mess": [
+            {
+                "id": "14da7a7a-215b-4d4c-b4d2-b1da46e679f6",
+                "day": 4,
+                "breakfast": "Ask your mess co to update menu!",
+                "lunch": "Ask your mess co to update menu!",
+                "snacks": "Ask your mess co to update menu!",
+                "dinner": "Ask your mess co to update menu!",
+                "hostel": "5a74ec5b-12b6-43d1-a815-1f8e9f8d95ce"
+            },
+            {
+                "id": "177c4623-c5a7-4c22-a4fb-080530b3051b",
+                "day": 1,
+                "breakfast": "Ask your mess co to update menu!",
+                "lunch": "Ask your mess co to update menu!",
+                "snacks": "Ask your mess co to update menu!",
+                "dinner": "Ask your mess co to update menu!",
+                "hostel": "5a74ec5b-12b6-43d1-a815-1f8e9f8d95ce"
+            },
+            {
+                "id": "540cae4f-54d5-4d6f-95d1-cc79b720da4e",
+                "day": 2,
+                "breakfast": "Ask your mess co to update menu!",
+                "lunch": "Ask your mess co to update menu!",
+                "snacks": "Ask your mess co to update menu!",
+                "dinner": "Ask your mess co to update menu!",
+                "hostel": "5a74ec5b-12b6-43d1-a815-1f8e9f8d95ce"
+            },
+            {
+                "id": "f1b41f45-c383-4eda-acac-fdd8dc99afa6",
+                "day": 3,
+                "breakfast": "Ask your mess co to update menu!",
+                "lunch": "Ask your mess co to update menu!",
+                "snacks": "Ask your mess co to update menu!",
+                "dinner": "Ask your mess co to update menu!",
+                "hostel": "5a74ec5b-12b6-43d1-a815-1f8e9f8d95ce"
+            },
+            {
+                "id": "ca394aed-1b0b-4212-a838-a476d55b21f3",
+                "day": 5,
+                "breakfast": "Ask your mess co to update menu!",
+                "lunch": "Ask your mess co to update menu!",
+                "snacks": "Ask your mess co to update menu!",
+                "dinner": "Ask your mess co to update menu!",
+                "hostel": "5a74ec5b-12b6-43d1-a815-1f8e9f8d95ce"
+            },
+            {
+                "id": "d2c6ae50-5afc-4339-990c-7210135286a3",
+                "day": 6,
+                "breakfast": "Ask your mess co to update menu!",
+                "lunch": "Ask your mess co to update menu!",
+                "snacks": "Ask your mess co to update menu!",
+                "dinner": "Ask your mess co to update menu!",
+                "hostel": "5a74ec5b-12b6-43d1-a815-1f8e9f8d95ce"
+            },
+            {
+                "id": "a631efe4-62fd-4779-93db-9e87c9347ef1",
+                "day": 7,
+                "breakfast": "Ask your mess co to update menu!",
+                "lunch": "Ask your mess co to update menu!",
+                "snacks": "Ask your mess co to update menu!",
+                "dinner": "Ask your mess co to update menu!",
+                "hostel": "5a74ec5b-12b6-43d1-a815-1f8e9f8d95ce"
+            }
+        ]
+    }
+]
