@@ -37,10 +37,10 @@ class _$HostelSerializer implements StructuredSerializer<Hostel> {
       'name',
       serializers.serialize(object.name, specifiedType: const FullType(String)),
       'short_name',
-      serializers.serialize(object.short_name,
+      serializers.serialize(object.shortName,
           specifiedType: const FullType(String)),
       'long_name',
-      serializers.serialize(object.long_name,
+      serializers.serialize(object.longName,
           specifiedType: const FullType(String)),
       'mess',
       serializers.serialize(object.mess,
@@ -71,11 +71,11 @@ class _$HostelSerializer implements StructuredSerializer<Hostel> {
               specifiedType: const FullType(String)) as String;
           break;
         case 'short_name':
-          result.short_name = serializers.deserialize(value,
+          result.shortName = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
         case 'long_name':
-          result.long_name = serializers.deserialize(value,
+          result.longName = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
         case 'mess':
@@ -176,16 +176,16 @@ class _$Hostel extends Hostel {
   @override
   final String name;
   @override
-  final String short_name;
+  final String shortName;
   @override
-  final String long_name;
+  final String longName;
   @override
   final BuiltList<HostelMess> mess;
 
   factory _$Hostel([void updates(HostelBuilder b)]) =>
       (new HostelBuilder()..update(updates)).build();
 
-  _$Hostel._({this.id, this.name, this.short_name, this.long_name, this.mess})
+  _$Hostel._({this.id, this.name, this.shortName, this.longName, this.mess})
       : super._() {
     if (id == null) {
       throw new BuiltValueNullFieldError('Hostel', 'id');
@@ -193,11 +193,11 @@ class _$Hostel extends Hostel {
     if (name == null) {
       throw new BuiltValueNullFieldError('Hostel', 'name');
     }
-    if (short_name == null) {
-      throw new BuiltValueNullFieldError('Hostel', 'short_name');
+    if (shortName == null) {
+      throw new BuiltValueNullFieldError('Hostel', 'shortName');
     }
-    if (long_name == null) {
-      throw new BuiltValueNullFieldError('Hostel', 'long_name');
+    if (longName == null) {
+      throw new BuiltValueNullFieldError('Hostel', 'longName');
     }
     if (mess == null) {
       throw new BuiltValueNullFieldError('Hostel', 'mess');
@@ -217,16 +217,16 @@ class _$Hostel extends Hostel {
     return other is Hostel &&
         id == other.id &&
         name == other.name &&
-        short_name == other.short_name &&
-        long_name == other.long_name &&
+        shortName == other.shortName &&
+        longName == other.longName &&
         mess == other.mess;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc($jc(0, id.hashCode), name.hashCode), short_name.hashCode),
-            long_name.hashCode),
+        $jc($jc($jc($jc(0, id.hashCode), name.hashCode), shortName.hashCode),
+            longName.hashCode),
         mess.hashCode));
   }
 
@@ -235,8 +235,8 @@ class _$Hostel extends Hostel {
     return (newBuiltValueToStringHelper('Hostel')
           ..add('id', id)
           ..add('name', name)
-          ..add('short_name', short_name)
-          ..add('long_name', long_name)
+          ..add('shortName', shortName)
+          ..add('longName', longName)
           ..add('mess', mess))
         .toString();
   }
@@ -253,13 +253,13 @@ class HostelBuilder implements Builder<Hostel, HostelBuilder> {
   String get name => _$this._name;
   set name(String name) => _$this._name = name;
 
-  String _short_name;
-  String get short_name => _$this._short_name;
-  set short_name(String short_name) => _$this._short_name = short_name;
+  String _shortName;
+  String get shortName => _$this._shortName;
+  set shortName(String shortName) => _$this._shortName = shortName;
 
-  String _long_name;
-  String get long_name => _$this._long_name;
-  set long_name(String long_name) => _$this._long_name = long_name;
+  String _longName;
+  String get longName => _$this._longName;
+  set longName(String longName) => _$this._longName = longName;
 
   ListBuilder<HostelMess> _mess;
   ListBuilder<HostelMess> get mess =>
@@ -272,8 +272,8 @@ class HostelBuilder implements Builder<Hostel, HostelBuilder> {
     if (_$v != null) {
       _id = _$v.id;
       _name = _$v.name;
-      _short_name = _$v.short_name;
-      _long_name = _$v.long_name;
+      _shortName = _$v.shortName;
+      _longName = _$v.longName;
       _mess = _$v.mess?.toBuilder();
       _$v = null;
     }
@@ -301,8 +301,8 @@ class HostelBuilder implements Builder<Hostel, HostelBuilder> {
           new _$Hostel._(
               id: id,
               name: name,
-              short_name: short_name,
-              long_name: long_name,
+              shortName: shortName,
+              longName: longName,
               mess: mess.build());
     } catch (_) {
       String _$failedField;

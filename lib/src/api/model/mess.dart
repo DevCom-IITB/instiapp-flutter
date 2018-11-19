@@ -67,7 +67,6 @@
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
-import 'serializers.dart';
 
 part 'mess.g.dart';
 
@@ -75,8 +74,13 @@ part 'mess.g.dart';
 abstract class Hostel implements Built<Hostel, HostelBuilder> {
   String get id;
   String get name;
-  String get short_name;
-  String get long_name;
+  
+  @BuiltValueField(wireName: 'short_name')
+  String get shortName;
+
+  @BuiltValueField(wireName: 'long_name')
+  String get longName;
+  
   BuiltList<HostelMess> get mess;
 
   static Serializer<Hostel> get serializer => _$hostelSerializer;

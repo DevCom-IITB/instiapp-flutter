@@ -1,7 +1,7 @@
-import 'mess.dart';
 import 'dart:convert';
 
-import 'serializers.dart';
+import 'api/model/mess.dart';
+import 'api/model/serializers.dart';
 
 List<Hostel> parseMess(String jsonStr) {
   final parsed = json.decode(jsonStr);
