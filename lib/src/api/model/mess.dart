@@ -1,108 +1,35 @@
-// class Hostel {
-//   final String id;
-//   final String name;
-//   final String shortName;
-//   final String longName;
-//   final List<HostelMess> mess;
+import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-//   const Hostel({
-//     this.id,
-//     this.name,
-//     this.shortName,
-//     this.longName,
-//     this.mess,
-//   });
+part 'mess.jser.dart';
 
-//   factory Hostel.fromJson(Map<String, dynamic> hostel) {
-//     if (hostel == null) return null;
-
-//     final messes = List<dynamic>.from(hostel["mess"]);
-//     final mess = messes.map((mess) => HostelMess.fromJson(mess)).toList();
-
-//     return Hostel(
-//       id: hostel["id"],
-//       name: hostel["name"],
-//       shortName: hostel["short_name"],
-//       longName: hostel["long_name"],
-//       mess: mess,
-//     );
-//   }
-// }
-
-// class HostelMess {
-//   final String id;
-//   final int day;
-//   final String breakfast;
-//   final String lunch;
-//   final String snacks;
-//   final String dinner;
-//   final String hostel;
-
-//   const HostelMess({
-//     this.id,
-//     this.day,
-//     this.breakfast,
-//     this.lunch,
-//     this.snacks,
-//     this.dinner,
-//     this.hostel,
-//   });
-
-//   factory HostelMess.fromJson(Map<String, dynamic> mess) {
-//     if (mess == null) return null;
-
-//     return HostelMess(
-//       id: mess['id'],
-//       day: mess['day'],
-//       breakfast: mess['breakfast'],
-//       lunch: mess['lunch'],
-//       snacks: mess['snacks'],
-//       dinner: mess['dinner'],
-//       hostel: mess['hostel'],
-//     );
-//   }
-// }
-
-
-import 'package:built_value/built_value.dart';
-import 'package:built_collection/built_collection.dart';
-import 'package:built_value/serializer.dart';
-
-part 'mess.g.dart';
-
-
-abstract class Hostel implements Built<Hostel, HostelBuilder> {
-  String get id;
-  String get name;
+class Hostel{
+  String id;
+  String name;
   
-  @BuiltValueField(wireName: 'short_name')
-  String get shortName;
+  @Alias('short_name')
+  String shortName;
 
-  @BuiltValueField(wireName: 'long_name')
-  String get longName;
+  @Alias('long_name')
+  String longName;
   
-  BuiltList<HostelMess> get mess;
-
-  static Serializer<Hostel> get serializer => _$hostelSerializer;
-
-  Hostel._();
-  factory Hostel([updates(HostelBuilder b)]) = _$Hostel;
+  List<HostelMess> mess;
 }
 
-abstract class HostelMess implements Built<HostelMess, HostelMessBuilder> {
-  String get id;
-  int get day;
-  String get breakfast;
-  String get lunch;
-  String get snacks;
-  String get dinner;
-  String get hostel;
-  
-  static Serializer<HostelMess> get serializer => _$hostelMessSerializer;
-
-  HostelMess._();
-  factory HostelMess([updates(HostelMessBuilder b)]) = _$HostelMess;
+class HostelMess {
+  String id;
+  int day;
+  String breakfast;
+  String lunch;
+  String snacks;
+  String dinner;
+  String hostel;
 }
+
+@GenSerializer(serializers: const [HostelMessSerializer])
+class HostelSerializer extends Serializer<Hostel> with _$HostelSerializer {}
+
+@GenSerializer()
+class HostelMessSerializer extends Serializer<HostelMess> with _$HostelMessSerializer {}
 
 
 const hostelsJsonString = r"""

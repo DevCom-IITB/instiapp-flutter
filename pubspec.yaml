@@ -19,18 +19,22 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
-  built_collection: '>=2.0.0 <5.0.0'
-  built_value: '>=5.5.5 <7.0.0'
+  # built_collection: '>=2.0.0 <5.0.0'
+  # built_value: '>=5.5.5 <7.0.0'
   url_launcher: ^4.0.1
   flutter_webview_plugin: ^0.3.0+2
   http: ^0.12.0
+  jaguar_retrofit: ^2.5.12
+  jaguar_serializer: ^2.2.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-    
+  
+  jaguar_serializer_cli: ^2.2.4
+  jaguar_retrofit_gen: ^2.5.10
   build_runner: ^1.0.0
-  built_value_generator: ^6.1.6
+  # built_value_generator: ^6.1.6
   test: ^1.5.1
 
 
@@ -41,6 +45,60 @@ dev_dependencies:
 flutter:
   assets:
     - assets/
+  fonts: 
+    - family: Bitter
+      fonts:
+        - asset: fonts/Bitter/Bitter-Regular.ttf
+        - asset: fonts/Bitter/Bitter-Bold.ttf
+          weight: 700
+    - family: Jost
+      fonts:
+        - asset: fonts/Jost/Jost-100-Hairline.ttf
+          weight: 100
+        - asset: fonts/Jost/Jost-200-Thin.ttf
+          weight: 200
+        - asset: fonts/Jost/Jost-300-Light.ttf
+          weight: 300
+        - asset: fonts/Jost/Jost-400-Book.ttf
+          weight: 400
+        - asset: fonts/Jost/Jost-500-Medium.ttf
+          weight: 500
+        - asset: fonts/Jost/Jost-600-Semi.ttf
+          weight: 600
+        - asset: fonts/Jost/Jost-700-Bold.ttf
+          weight: 700
+        - asset: fonts/Jost/Jost-800-Heavy.ttf
+          weight: 800
+        - asset: fonts/Jost/Jost-900-Black.ttf
+          weight: 900
+        - asset: fonts/Jost/Jost-100-Hairline.ttf
+          style: italic
+          weight: 100
+        - asset: fonts/Jost/Jost-200-Thin.ttf
+          style: italic
+          weight: 200
+        - asset: fonts/Jost/Jost-300-Light.ttf
+          style: italic
+          weight: 300
+        - asset: fonts/Jost/Jost-400-Book.ttf
+          style: italic
+          weight: 400
+        - asset: fonts/Jost/Jost-500-Medium.ttf
+          style: italic
+          weight: 500
+        - asset: fonts/Jost/Jost-600-Semi.ttf
+          style: italic
+          weight: 600
+        - asset: fonts/Jost/Jost-700-Bold.ttf
+          style: italic
+          weight: 700
+        - asset: fonts/Jost/Jost-800-Heavy.ttf
+          style: italic
+          weight: 800
+        - asset: fonts/Jost/Jost-900-Black.ttf
+          style: italic
+          weight: 900
+
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

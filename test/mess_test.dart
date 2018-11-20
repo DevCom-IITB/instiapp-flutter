@@ -1,7 +1,18 @@
+import 'package:instiapp/src/api/apiclient.dart';
+import 'package:instiapp/src/api/model/mess.dart';
 import 'package:instiapp/src/json_parsing.dart';
+import 'package:jaguar_resty/jaguar_resty.dart';
 import 'package:test/test.dart';
+import 'package:http/io_client.dart';
 
 void main() {
+
+  test("Network mess test", () async {
+    globalClient = IOClient();
+    final client = InstiAppApi();
+    List<Hostel> hostels = await client.getHostelMess();
+    expect(hostels[0].name, "Hostel 1");
+  });
   test("Test mess.json parsing", () {
 
     const jsonString = r"""
