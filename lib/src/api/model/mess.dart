@@ -13,6 +13,18 @@ class Hostel{
   String longName;
   
   List<HostelMess> mess;
+
+  int compareTo(Hostel h) {
+    int x = int.tryParse(this.shortName);
+    if (x == null) {
+      return this.shortName.compareTo(h.shortName);
+    }
+    int y = int.tryParse(h.shortName);
+    if (y == null) {
+      return this.shortName.compareTo(h.shortName);
+    }
+    return x.compareTo(y);
+  }
 }
 
 class HostelMess {

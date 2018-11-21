@@ -18,7 +18,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<Hostel> hostels = parseMess(hostelsJsonString);
   final client = InstiAppApi();
 
   @override
@@ -36,9 +35,13 @@ class _MyHomePageState extends State<MyHomePage> {
       body: FutureBuilder<List<Hostel>>(
         builder: (BuildContext context, AsyncSnapshot<List<Hostel>> hostels) {
           if (hostels.hasData) {
-            return ListView(
+            return GridView(
               children: hostels.data.map(_buildItem).toList(),
               physics: BouncingScrollPhysics(),
+              gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+              scrollDirection: Axis.horizontal,
+              controller: TrackingScrollController(),
             );
           } else {
             return Center(
@@ -48,23 +51,25 @@ class _MyHomePageState extends State<MyHomePage> {
             );
           }
         },
-        future: client.getHostelMess(),
+        future: client.getSortedHostelMess(),
       ),
     );
   }
 
   Widget _buildItem(Hostel hostel) {
     return Center(
-      child: ListTile(
-        title: Text(
-          hostel.longName,
-          style: Theme.of(context).textTheme.title,
-        ),
-        subtitle: Text(
-          hostel.name,
-          style: Theme.of(context).textTheme.subtitle,
-        ),
-        onTap: _launchURL,
+      child: GridTile(
+        footer: GridTileBar(
+            title: Text(
+              hostel.longName,
+              style: Theme.of(context).textTheme.title,
+            ),
+            subtitle: Text(
+              hostel.name,
+              style: Theme.of(context).textTheme.subtitle,
+            )),
+        child: Center(child: Text(hostel.id)),
+        // onTap: _launchURL,
       ),
     );
   }

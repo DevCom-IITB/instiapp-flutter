@@ -1,14 +1,11 @@
-import 'dart:convert';
 import 'dart:io';
-
-import 'package:http/http.dart' as http;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:instiapp/src/api/apiclient.dart';
 
-import 'package:instiapp/src/api/model/login_response.dart';
-import 'package:instiapp/src/api/model/serializers.dart';
+import 'package:instiapp/src/api/model/user.dart';
 
 
 const String api = "https://api.insti.app/api";
@@ -22,6 +19,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final flutterWebviewPlugin = FlutterWebviewPlugin();
   HttpServer server;
+
   int port;
   final String successUrl = "https://redirecturi";
   final String guestUrl = "https://guesturi";
@@ -107,16 +105,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   login(final String authCode, final String redirectUrl) async {
-    var uri = Uri.https(
-        authority, "/api/login", {'code': authCode, 'redir': redirectUrl});
-    print(uri);
-    var response = await http.get(uri.toString());
-
-    var resp = jsonDecode(response.body);
-    var login_response = Map<String, dynamic>.from(resp);
-    if (login_response.containsKey("sessionid")) {
-      LoginResponse loginResponse = standardSerializers.oneFrom(login_response);
-      Navigator.of(context).pushNamed('/home');
+    var response = await InstiAppApi().login(authCode, redirectUrl);
+    if (response.sessionid != null) {
+      Navigator.of(context).pushReplacementNamed('/home');
     } else {
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text("Authentication Failed"),
