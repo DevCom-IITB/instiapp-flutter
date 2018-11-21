@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
-        fontFamily: "Jost",
+        fontFamily: "SourceSansPro",
       ),
       routes: {
         "/": (_) => LoginPage(),

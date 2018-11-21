@@ -46,6 +46,58 @@ flutter:
   assets:
     - assets/
   fonts: 
+    - family: OpenSans
+      fonts:
+        - asset: fonts/OpenSans/OpenSans-Regular.ttf
+        - asset: fonts/OpenSans/OpenSans-Italic.ttf
+          style: italic
+        - asset: fonts/OpenSans/OpenSans-Light.ttf
+          weight: 300
+        - asset: fonts/OpenSans/OpenSans-LightItalic.ttf
+          style: italic
+          weight: 300
+        - asset: fonts/OpenSans/OpenSans-Bold.ttf
+          weight: 700
+        - asset: fonts/OpenSans/OpenSans-BoldItalic.ttf
+          style: italic
+          weight: 700
+    - family: Niramit
+      fonts:
+        - asset: fonts/Niramit/Niramit-Regular.ttf
+        - asset: fonts/Niramit/Niramit-Italic.ttf
+          style: italic
+        - asset: fonts/Niramit/Niramit-Light.ttf
+          weight: 300
+        - asset: fonts/Niramit/Niramit-LightItalic.ttf
+          style: italic
+          weight: 300
+        - asset: fonts/Niramit/Niramit-Bold.ttf
+          weight: 700
+        - asset: fonts/Niramit/Niramit-BoldItalic.ttf
+          style: italic
+          weight: 700
+    - family: SourceSansPro
+      fonts:
+        - asset: fonts/SourceSansPro/SourceSansPro-Regular.ttf
+        - asset: fonts/SourceSansPro/SourceSansPro-Italic.ttf
+          style: italic
+        - asset: fonts/SourceSansPro/SourceSansPro-Light.ttf
+          weight: 300
+        - asset: fonts/SourceSansPro/SourceSansPro-LightItalic.ttf
+          style: italic
+          weight: 300
+        - asset: fonts/SourceSansPro/SourceSansPro-Bold.ttf
+          weight: 700
+        - asset: fonts/SourceSansPro/SourceSansPro-BoldItalic.ttf
+          style: italic
+          weight: 700
+    - family: WorkSans
+      fonts:
+        - asset: fonts/WorkSans/WorkSans-Regular.ttf
+        - asset: fonts/WorkSans/WorkSans-Light.ttf
+          weight: 300
+        - asset: fonts/WorkSans/WorkSans-Bold.ttf
+          weight: 700
     - family: Bitter
       fonts:
         - asset: fonts/Bitter/Bitter-Regular.ttf
