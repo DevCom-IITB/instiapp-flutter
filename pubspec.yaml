@@ -46,36 +46,6 @@ flutter:
   assets:
     - assets/
   fonts: 
-    - family: OpenSans
-      fonts:
-        - asset: fonts/OpenSans/OpenSans-Regular.ttf
-        - asset: fonts/OpenSans/OpenSans-Italic.ttf
-          style: italic
-        - asset: fonts/OpenSans/OpenSans-Light.ttf
-          weight: 300
-        - asset: fonts/OpenSans/OpenSans-LightItalic.ttf
-          style: italic
-          weight: 300
-        - asset: fonts/OpenSans/OpenSans-Bold.ttf
-          weight: 700
-        - asset: fonts/OpenSans/OpenSans-BoldItalic.ttf
-          style: italic
-          weight: 700
-    - family: Niramit
-      fonts:
-        - asset: fonts/Niramit/Niramit-Regular.ttf
-        - asset: fonts/Niramit/Niramit-Italic.ttf
-          style: italic
-        - asset: fonts/Niramit/Niramit-Light.ttf
-          weight: 300
-        - asset: fonts/Niramit/Niramit-LightItalic.ttf
-          style: italic
-          weight: 300
-        - asset: fonts/Niramit/Niramit-Bold.ttf
-          weight: 700
-        - asset: fonts/Niramit/Niramit-BoldItalic.ttf
-          style: italic
-          weight: 700
     - family: SourceSansPro
       fonts:
         - asset: fonts/SourceSansPro/SourceSansPro-Regular.ttf
@@ -90,66 +60,12 @@ flutter:
           weight: 700
         - asset: fonts/SourceSansPro/SourceSansPro-BoldItalic.ttf
           style: italic
-          weight: 700
-    - family: WorkSans
-      fonts:
-        - asset: fonts/WorkSans/WorkSans-Regular.ttf
-        - asset: fonts/WorkSans/WorkSans-Light.ttf
-          weight: 300
-        - asset: fonts/WorkSans/WorkSans-Bold.ttf
-          weight: 700
+          weight: 700   
     - family: Bitter
       fonts:
         - asset: fonts/Bitter/Bitter-Regular.ttf
         - asset: fonts/Bitter/Bitter-Bold.ttf
           weight: 700
-    - family: Jost
-      fonts:
-        - asset: fonts/Jost/Jost-100-Hairline.ttf
-          weight: 100
-        - asset: fonts/Jost/Jost-200-Thin.ttf
-          weight: 200
-        - asset: fonts/Jost/Jost-300-Light.ttf
-          weight: 300
-        - asset: fonts/Jost/Jost-400-Book.ttf
-          weight: 400
-        - asset: fonts/Jost/Jost-500-Medium.ttf
-          weight: 500
-        - asset: fonts/Jost/Jost-600-Semi.ttf
-          weight: 600
-        - asset: fonts/Jost/Jost-700-Bold.ttf
-          weight: 700
-        - asset: fonts/Jost/Jost-800-Heavy.ttf
-          weight: 800
-        - asset: fonts/Jost/Jost-900-Black.ttf
-          weight: 900
-        - asset: fonts/Jost/Jost-100-Hairline.ttf
-          style: italic
-          weight: 100
-        - asset: fonts/Jost/Jost-200-Thin.ttf
-          style: italic
-          weight: 200
-        - asset: fonts/Jost/Jost-300-Light.ttf
-          style: italic
-          weight: 300
-        - asset: fonts/Jost/Jost-400-Book.ttf
-          style: italic
-          weight: 400
-        - asset: fonts/Jost/Jost-500-Medium.ttf
-          style: italic
-          weight: 500
-        - asset: fonts/Jost/Jost-600-Semi.ttf
-          style: italic
-          weight: 600
-        - asset: fonts/Jost/Jost-700-Bold.ttf
-          style: italic
-          weight: 700
-        - asset: fonts/Jost/Jost-800-Heavy.ttf
-          style: italic
-          weight: 800
-        - asset: fonts/Jost/Jost-900-Black.ttf
-          style: italic
-          weight: 900
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

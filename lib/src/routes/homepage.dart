@@ -20,10 +20,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final client = InstiAppApi();
 
+  int hostelIndex;
+
   @override
   void initState() {
     super.initState();
     globalClient = IOClient();
+    hostelIndex = 3;
   }
 
   @override
@@ -39,20 +42,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 fontFamily: "Bitter", color: Colors.white)),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48.0),
-          child: Theme(
-            data: Theme.of(context).copyWith(
-                textTheme: TextTheme(button: TextStyle(color: Colors.white))),
-            child: Container(
-              height: 48.0,
-              alignment: Alignment.center,
-              child: DropdownButton(
-                items: [
-                  DropdownMenuItem(
-                    child: Text("H1"),
-                  ),
-                ],
-                onChanged: (a) {},
-              ),
+          child: Container(
+            color: Colors.white,
+            height: 48.0,
+            padding: EdgeInsets.only(left: 16.0),
+            alignment: Alignment.centerLeft,
+            child: DropdownButton(
+              hint: Text("Hostel"),
+              items: [
+                DropdownMenuItem(
+                  child: Text("H1"),
+                ),
+              ],
+              onChanged: (a) {},
             ),
           ),
         ),
@@ -61,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (BuildContext context, AsyncSnapshot<List<Hostel>> hostels) {
           if (hostels.hasData) {
             return ListView(
-              children: hostels.data[3].mess.map(_buildSingleDayMess).toList(),
+              children: hostels.data[hostelIndex].mess.map(_buildSingleDayMess).toList(),
               physics: BouncingScrollPhysics(),
             );
           } else {
@@ -78,6 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildSingleDayMess(HostelMess mess) {
+    var localTheme = Theme.of(context).textTheme;
     return Card(
       child: Padding(
           padding: const EdgeInsets.all(12.0),
@@ -86,14 +89,14 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               Text(
                 mess.getDayName(),
-                style: Theme.of(context).textTheme.display1,
+                style: localTheme.display1,
               ),
               SizedBox(
                 height: 8.0,
               ),
               Text(
                 "Breakfast",
-                style: Theme.of(context).textTheme.headline,
+                style: localTheme.headline,
               ),
               ContentText(mess.breakfast, context),
               SizedBox(
@@ -101,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Text(
                 "Lunch",
-                style: Theme.of(context).textTheme.headline,
+                style: localTheme.headline,
               ),
               ContentText(mess.lunch, context),
               SizedBox(
@@ -109,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Text(
                 "Snacks",
-                style: Theme.of(context).textTheme.headline,
+                style: localTheme.headline,
               ),
               ContentText(mess.snacks, context),
               SizedBox(
@@ -117,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Text(
                 "Dinner",
-                style: Theme.of(context).textTheme.headline,
+                style: localTheme.headline,
               ),
               ContentText(mess.dinner, context),
               SizedBox(
