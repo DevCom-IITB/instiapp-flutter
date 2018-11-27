@@ -63,7 +63,9 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (BuildContext context, AsyncSnapshot<List<Hostel>> hostels) {
           if (hostels.hasData) {
             return ListView(
-              children: hostels.data[hostelIndex].mess.map(_buildSingleDayMess).toList(),
+              children: (hostels.data[hostelIndex].mess
+                        ..sort((h1, h2) => h1.compareTo(h2)))
+                        .map(_buildSingleDayMess).toList(),
               physics: BouncingScrollPhysics(),
             );
           } else {

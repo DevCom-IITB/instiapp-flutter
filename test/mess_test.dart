@@ -11,7 +11,7 @@ void main() {
     globalClient = IOClient();
     final client = InstiAppApi();
     List<Hostel> hostels = await client.getHostelMess();
-    expect(hostels[0].name, "Hostel 1");
+    expect(hostels[0].name, isNotNull);
   });
   test("Test mess.json parsing", () {
     final hostels = parseMess(messJsonString);

@@ -1,5 +1,5 @@
 import 'package:jaguar_serializer/jaguar_serializer.dart';
-
+import 'dart:core';
 part 'mess.jser.dart';
 
 class Hostel{
@@ -35,6 +35,16 @@ class HostelMess {
   String snacks;
   String dinner;
   String hostel;
+
+  int compareTo(HostelMess h) {
+    final now = DateTime.now();
+    int today = now.weekday;
+
+    int x = (this.day - today) + (this.day - today < 0 ? 7 : 0); 
+    int y = (h.day - today) + (h.day - today < 0 ? 7 : 0); 
+
+    return x.compareTo(y);
+  }
 
   static Map<int, String> dayToName = {
     1: "Monday",
