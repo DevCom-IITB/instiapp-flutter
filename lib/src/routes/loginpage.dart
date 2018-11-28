@@ -5,9 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:instiapp/src/api/apiclient.dart';
 
-import 'package:instiapp/src/api/model/user.dart';
-
-
 const String api = "https://api.insti.app/api";
 const String authority = "api.insti.app";
 
@@ -55,27 +52,28 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Material(
-        child: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Image(
-            color: Theme.of(context).accentColor,
-            image: AssetImage('assets/lotus.png'),
-            width: 250.0,
-            fit: BoxFit.scaleDown,
-          ),
-          CircularProgressIndicator(
-            backgroundColor: Theme.of(context).accentColor,
-          ),
-          Text(
-            "InstiApp",
-            style: Theme.of(context).textTheme.display1.copyWith(
-                fontFamily: "Bitter", color: Theme.of(context).accentColor),
-          ),
-        ],
+          child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Image(
+              color: Theme.of(context).accentColor,
+              image: AssetImage('assets/lotus.png'),
+              width: 250.0,
+              fit: BoxFit.scaleDown,
+            ),
+            CircularProgressIndicator(
+              backgroundColor: Theme.of(context).accentColor,
+            ),
+            Text(
+              "InstiApp",
+              style: Theme.of(context).textTheme.display1.copyWith(
+                  fontFamily: "Bitter", color: Theme.of(context).accentColor),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   Future<void> startLoginPageServer() async {

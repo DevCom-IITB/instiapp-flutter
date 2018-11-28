@@ -17,7 +17,7 @@ void main() {
     final hostels = parseMess(messJsonString);
     expect(hostels[0].name, "Hostel 1");
     expect(hostels[0].mess[0].day, 7);
-  });
+  }, timeout: Timeout.parse("10s"));
 }
 
 const messJsonString = r"""

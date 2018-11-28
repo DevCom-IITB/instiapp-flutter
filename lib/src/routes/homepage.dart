@@ -1,13 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/io_client.dart';
-import 'package:instiapp/src/api/apiclient.dart';
-import 'package:jaguar_retrofit/jaguar_retrofit.dart';
+import 'package:instiapp/src/ia_bloc.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:instiapp/src/api/model/mess.dart';
-import 'package:instiapp/src/json_parsing.dart';
+
+import 'dart:collection';
+
+class BlocProvider extends InheritedWidget {
+  final InstiAppBloc bloc;
+
+  BlocProvider(this.bloc, {child}) : super(child: child);
+
+  @override
+  bool updateShouldNotify(InheritedWidget oldWidget) {
+    return false;
+  }
+
+  static BlocProvider of(BuildContext context) {
+    return context.inheritFromWidgetOfExactType(BlocProvider);
+  }
+}
 
 class MyHomePage extends StatefulWidget {
   final String title = "InstiApp";
@@ -18,66 +32,94 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final client = InstiAppApi();
-
-  int hostelIndex;
-
+  int hostelIndex = 3;
+  InstiAppBloc _bloc;
   @override
   void initState() {
     super.initState();
-    globalClient = IOClient();
-    hostelIndex = 3;
+    _bloc = InstiAppBloc();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: ImageIcon(AssetImage('assets/lotus.png'), color: Colors.white,),
-        ),
-        title: Text("Mess",
-            style: Theme.of(context).textTheme.headline.copyWith(
-                fontFamily: "Bitter", color: Colors.white)),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(48.0),
-          child: Container(
-            color: Colors.white,
-            height: 48.0,
-            padding: EdgeInsets.only(left: 16.0),
-            alignment: Alignment.centerLeft,
-            child: DropdownButton(
-              hint: Text("Hostel"),
-              items: [
-                DropdownMenuItem(
-                  child: Text("H1"),
-                ),
-              ],
-              onChanged: (a) {},
+    return BlocProvider(
+      _bloc,
+      child: Scaffold(
+        appBar: AppBar(
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: ImageIcon(
+              AssetImage('assets/lotus.png'),
+              color: Colors.white,
+            ),
+          ),
+          title: Text("Mess",
+              style: Theme.of(context)
+                  .textTheme
+                  .headline
+                  .copyWith(fontFamily: "Bitter", color: Colors.white)),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(48.0),
+            child: Container(
+              color: Colors.white,
+              height: 48.0,
+              padding: EdgeInsets.only(left: 16.0),
+              alignment: Alignment.centerLeft,
+              child: buildDropdownButton(),
             ),
           ),
         ),
+        body: StreamBuilder<UnmodifiableListView<Hostel>>(
+          stream: _bloc.hostels,
+          builder: (BuildContext context,
+              AsyncSnapshot<UnmodifiableListView<Hostel>> hostels) {
+            if (hostels.hasData) {
+              hostels.data[hostelIndex].mess.sort((h1, h2) => h1.compareTo(h2));
+              return ListView(
+                children: hostels.data[hostelIndex].mess
+                    .map(_buildSingleDayMess)
+                    .toList(),
+                // children: <Widget>[],
+                physics: BouncingScrollPhysics(),
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: Theme.of(context).accentColor,
+                ),
+              );
+            }
+          },
+        ),
       ),
-      body: FutureBuilder<List<Hostel>>(
-        builder: (BuildContext context, AsyncSnapshot<List<Hostel>> hostels) {
-          if (hostels.hasData) {
-            return ListView(
-              children: (hostels.data[hostelIndex].mess
-                        ..sort((h1, h2) => h1.compareTo(h2)))
-                        .map(_buildSingleDayMess).toList(),
-              physics: BouncingScrollPhysics(),
-            );
-          } else {
-            return Center(
-              child: CircularProgressIndicator(
-                backgroundColor: Theme.of(context).accentColor,
-              ),
-            );
-          }
-        },
-        future: client.getSortedHostelMess(),
-      ),
+    );
+  }
+
+  Widget buildDropdownButton() {
+    return StreamBuilder<UnmodifiableListView<Hostel>>(
+      stream: _bloc.hostels,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return DropdownButton<int>(
+            value: hostelIndex,
+            items: snapshot.data
+                .asMap()
+                .entries
+                .map((entry) => DropdownMenuItem<int>(
+                      child: Text(entry.value.name),
+                      value: entry.key,
+                    ))
+                .toList(),
+            onChanged: (h) {
+              setState(() {
+                hostelIndex = h;
+              });
+            },
+          );
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
 
