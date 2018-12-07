@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:instiapp/src/ia_bloc.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -34,6 +35,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int hostelIndex = 3;
   InstiAppBloc _bloc;
+
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -42,22 +46,32 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return BlocProvider(
       _bloc,
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: ImageIcon(
-              AssetImage('assets/lotus.png'),
-              color: Colors.white,
-            ),
+          leading: IconButton(
+            icon: Icon(OMIcons.menu, color: Colors.white,),
+            onPressed: () {
+              _scaffoldKey.currentState.openDrawer();
+            },
           ),
-          title: Text("Mess",
-              style: Theme.of(context)
-                  .textTheme
-                  .headline
-                  .copyWith(fontFamily: "Bitter", color: Colors.white)),
+          title: Row(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: ImageIcon(
+                  AssetImage('assets/lotus.png'),
+                  color: Colors.white,
+                ),
+              ),
+              Text("Mess",
+                  style: theme.textTheme.headline
+                      .copyWith(fontFamily: "Bitter", color: Colors.white)),
+            ],
+          ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(48.0),
             child: Container(
@@ -69,6 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
+        drawer: buildDrawer(context),
         body: StreamBuilder<UnmodifiableListView<Hostel>>(
           stream: _bloc.hostels,
           builder: (BuildContext context,
@@ -85,12 +100,127 @@ class _MyHomePageState extends State<MyHomePage> {
             } else {
               return Center(
                 child: CircularProgressIndicator(
-                  backgroundColor: Theme.of(context).accentColor,
+                  backgroundColor: theme.accentColor,
                 ),
               );
             }
           },
         ),
+      ),
+    );
+  }
+
+  Drawer buildDrawer(BuildContext context) {
+    var theme = Theme.of(context);
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          UserAccountsDrawerHeader(
+            currentAccountPicture: CircleAvatar(
+              child: Icon(OMIcons.person),
+            ),
+            accountName: Text(
+              _bloc.loggedIn ? 'Name Goes Here' : 'Not Logged in',
+              style: theme.textTheme.body1.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            accountEmail: Text(
+              _bloc.loggedIn ? 'ID goes here' : "",
+              style: theme.textTheme.body1.copyWith(color: Colors.white),
+            ),
+            decoration: BoxDecoration(
+              color: theme.accentColor,
+            ),
+          ),
+          ListTile(
+            leading: Icon(OMIcons.dashboard),
+            title: Text(
+              "Feed",
+              style: theme.textTheme.title,
+            ),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: Icon(OMIcons.rssFeed),
+            title: Text(
+              "News",
+              style: theme.textTheme.title,
+            ),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: Icon(OMIcons.search),
+            title: Text(
+              "Explore",
+              style: theme.textTheme.title,
+            ),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: Icon(OMIcons.restaurant),
+            title: Text(
+              "Mess Menu",
+              style: theme.textTheme.title,
+            ),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: Icon(OMIcons.workOutline),
+            title: Text(
+              "Placement Blog",
+              style: theme.textTheme.title,
+            ),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: Icon(OMIcons.workOutline),
+            title: Text(
+              "Internship Blog",
+              style: theme.textTheme.title,
+            ),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: Icon(OMIcons.dateRange),
+            title: Text(
+              "Calender",
+              style: theme.textTheme.title,
+            ),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: Icon(OMIcons.map),
+            title: Text(
+              "Map",
+              style: theme.textTheme.title,
+            ),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: Icon(OMIcons.feedback),
+            title: Text(
+              "Complaints/Suggestions",
+              style: theme.textTheme.title,
+            ),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: Icon(OMIcons.link),
+            title: Text(
+              "Quick Links",
+              style: theme.textTheme.title,
+            ),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: Icon(OMIcons.settings),
+            title: Text(
+              "Settings",
+              style: theme.textTheme.title,
+            ),
+            onTap: () {},
+          ),
+        ],
       ),
     );
   }

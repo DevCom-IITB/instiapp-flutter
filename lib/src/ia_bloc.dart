@@ -11,6 +11,8 @@ class InstiAppBloc {
 
   final client = InstiAppApi();
 
+  var loggedIn = false;
+
   var _hostels = <Hostel>[];
 
   InstiAppBloc() {
