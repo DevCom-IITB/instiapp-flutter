@@ -12,17 +12,20 @@ class InstiAppBloc {
 
   final client = InstiAppApi();
 
-  Session session;
+  Stream<Session> get session => _sessionSubject.stream;
+  final _sessionSubject = BehaviorSubject<Session>();
+
   var loggedIn = false;
 
   var _hostels = <Hostel>[];
+  Session currSession;
 
-
-  InstiAppBloc({this.session}) {
+  InstiAppBloc({this.currSession}) {
     globalClient = IOClient();
     _updateHostels().then((_) {
         _hostelsSubject.add(UnmodifiableListView(_hostels));
     });
+    _sessionSubject.add(currSession);
   }
 
   Future<Null> _updateHostels() async {

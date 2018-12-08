@@ -78,11 +78,12 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> startLoginPageServer() async {
-    server = await HttpServer.bind(InternetAddress.loopbackIPv4, 9399);
+    var defAssets = DefaultAssetBundle.of(context);
+    server = await HttpServer.bind(InternetAddress.loopbackIPv4, 9399, shared: true);
     server.listen((HttpRequest request) async {
       print("URI: ${request.uri}");
       if (request.uri.toString() == '/') {
-        var html = await DefaultAssetBundle.of(context)
+        var html = await defAssets
             .loadString('assets/login.html');
         request.response
           ..statusCode = 200
@@ -90,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
           ..write(html);
       } else if (request.uri.toString().contains('lotus')) {
         var binary =
-            await DefaultAssetBundle.of(context).load('assets/lotus.png');
+            await defAssets.load('assets/lotus.png');
         request.response
           ..statusCode = 200
           ..headers.set("Content-Type", "image/png")
@@ -99,6 +100,7 @@ class _LoginPageState extends State<LoginPage> {
         request.response..statusCode = 404;
       }
       await request.response.close();
+      print("Served");
       // await server.close(force: true);
     });
   }
