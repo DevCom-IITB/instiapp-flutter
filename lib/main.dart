@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:instiapp/src/api/model/user.dart';
 
 import 'package:instiapp/src/routes/homepage.dart';
 import 'package:instiapp/src/routes/loginpage.dart';
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         "/": (_) => LoginPage(),
-        "/home": (_) => MyHomePage(),
+        "/home": (_) => MyHomePage(Session()),
       },
     );
   }

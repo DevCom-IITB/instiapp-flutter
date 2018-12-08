@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:instiapp/src/api/apiclient.dart';
+import 'package:instiapp/src/routes/homepage.dart';
 
 const String api = "https://api.insti.app/api";
 const String authority = "api.insti.app";
@@ -105,7 +106,10 @@ class _LoginPageState extends State<LoginPage> {
   login(final String authCode, final String redirectUrl) async {
     var response = await InstiAppApi().login(authCode, redirectUrl);
     if (response.sessionid != null) {
-      Navigator.of(context).pushReplacementNamed('/home');
+      // Navigator.of(context).pushReplacementNamed('/home');
+      Navigator.of(context).push( MaterialPageRoute(
+        builder: (BuildContext context) => MyHomePage(response)
+      ) );
     } else {
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text("Authentication Failed"),

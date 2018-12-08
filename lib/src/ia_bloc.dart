@@ -1,5 +1,6 @@
 import 'package:instiapp/src/api/apiclient.dart';
 import 'package:instiapp/src/api/model/mess.dart';
+import 'package:instiapp/src/api/model/user.dart';
 import 'dart:collection';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/io_client.dart';
@@ -11,11 +12,13 @@ class InstiAppBloc {
 
   final client = InstiAppApi();
 
+  Session session;
   var loggedIn = false;
 
   var _hostels = <Hostel>[];
 
-  InstiAppBloc() {
+
+  InstiAppBloc({this.session}) {
     globalClient = IOClient();
     _updateHostels().then((_) {
         _hostelsSubject.add(UnmodifiableListView(_hostels));

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:instiapp/src/api/model/user.dart';
 import 'package:instiapp/src/ia_bloc.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 
@@ -26,22 +27,26 @@ class BlocProvider extends InheritedWidget {
 
 class MyHomePage extends StatefulWidget {
   final String title = "InstiApp";
-  MyHomePage({Key key}) : super(key: key);
+  final Session _session;
+  MyHomePage(this._session, {Key key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState(_session);
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int hostelIndex = 3;
+  int hostelIndex = 0;
   InstiAppBloc _bloc;
+  Session session;
+
+  _MyHomePageState(this.session);
 
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    _bloc = InstiAppBloc();
+    _bloc = InstiAppBloc(session: session);
   }
 
   @override
@@ -121,11 +126,11 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Icon(OMIcons.person),
             ),
             accountName: Text(
-              _bloc.loggedIn ? 'Name Goes Here' : 'Not Logged in',
+              _bloc.session.sessionid != null ? _bloc.session.profile.name : 'Not Logged in',
               style: theme.textTheme.body1.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
             ),
             accountEmail: Text(
-              _bloc.loggedIn ? 'ID goes here' : "",
+              _bloc.session.sessionid != null ? _bloc.session.profile.rollNo : "",
               style: theme.textTheme.body1.copyWith(color: Colors.white),
             ),
             decoration: BoxDecoration(
