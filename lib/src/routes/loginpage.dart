@@ -7,7 +7,6 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:instiapp/src/api/apiclient.dart';
 import 'package:instiapp/src/bloc_provider.dart';
 import 'package:instiapp/src/ia_bloc.dart';
-import 'package:instiapp/src/routes/homepage.dart';
 
 const String api = "https://api.insti.app/api";
 const String authority = "api.insti.app";
@@ -28,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
   InstiAppBloc _bloc; 
   StreamSubscription<String> onUrlChangedSub;
   String url;
-  
+
   @override
   void initState() {
     super.initState();
@@ -55,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
 
         server.close(force: true);
 
-        Navigator.of(context).pushReplacementNamed('/home');
+        Navigator.of(context).pushReplacementNamed('/mess');
       }
     });
   }
@@ -121,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
     if (response.sessionid != null) {
       // BlocProvider.of(context).bloc.updateSession(response);
       _bloc.updateSession(response);
-      Navigator.of(context).pushReplacementNamed('/home');
+      Navigator.of(context).pushReplacementNamed('/mess');
 
       this.onUrlChangedSub.cancel();
       flutterWebviewPlugin.close();

@@ -4,7 +4,7 @@ import 'package:instiapp/src/api/model/user.dart';
 import 'package:instiapp/src/bloc_provider.dart';
 import 'package:instiapp/src/ia_bloc.dart';
 
-import 'package:instiapp/src/routes/homepage.dart';
+import 'package:instiapp/src/routes/messpage.dart';
 import 'package:instiapp/src/routes/loginpage.dart';
 
 void main() => runApp(MyApp());
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         ),
         routes: {
           "/": (_) => LoginPage(),
-          "/home": (_) => MyHomePage(),
+          "/mess": (_) => MessPage(),
         },
       ),
     );

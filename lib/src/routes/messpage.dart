@@ -12,18 +12,18 @@ import 'package:instiapp/src/api/model/mess.dart';
 
 import 'dart:collection';
 
-class MyHomePage extends StatefulWidget {
+class MessPage extends StatefulWidget {
   final String title = "InstiApp";
-  MyHomePage({Key key}) : super(key: key);
+  MessPage({Key key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MessPageState createState() => _MessPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MessPageState extends State<MessPage> {
   String currHostel = '1';
 
-  _MyHomePageState();
+  _MessPageState();
 
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
