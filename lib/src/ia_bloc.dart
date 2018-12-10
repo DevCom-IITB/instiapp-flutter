@@ -7,29 +7,36 @@ import 'package:http/io_client.dart';
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 
 class InstiAppBloc {
+  // Different Streams for the state
   Stream<UnmodifiableListView<Hostel>> get hostels => _hostelsSubject.stream;
   final _hostelsSubject = BehaviorSubject<UnmodifiableListView<Hostel>>();
-
-  final client = InstiAppApi();
-
+  
   Stream<Session> get session => _sessionSubject.stream;
   final _sessionSubject = BehaviorSubject<Session>();
 
-  var loggedIn = false;
-
+  // actual current state
   var _hostels = <Hostel>[];
   Session currSession;
 
-  InstiAppBloc({this.currSession}) {
+  // api functions
+  final client = InstiAppApi();
+
+  InstiAppBloc() {
     globalClient = IOClient();
-    _updateHostels().then((_) {
-        _hostelsSubject.add(UnmodifiableListView(_hostels));
-    });
-    _sessionSubject.add(currSession);
   }
 
-  Future<Null> _updateHostels() async {
+  Future<Null> updateHostels() async {
     final hostels = await client.getSortedHostelMess();
     _hostels = hostels;
-  } 
+    _hostelsSubject.add(UnmodifiableListView(_hostels));
+  }
+
+  void updateSession(Session sess) {
+    currSession = sess;
+    _sessionSubject.add(sess);
+  }
+
+  void logout() {
+    updateSession(null);
+  }
 }

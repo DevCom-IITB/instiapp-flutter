@@ -3,7 +3,7 @@ import 'package:jaguar_serializer/jaguar_serializer.dart';
 part 'user.jser.dart';
 
 class Session {  
-  String sessionid;
+  String sessionid; 
   String user;
 
   @Alias('profile_id')

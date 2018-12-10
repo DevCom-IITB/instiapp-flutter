@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:instiapp/src/api/apiclient.dart';
+import 'package:instiapp/src/bloc_provider.dart';
+import 'package:instiapp/src/ia_bloc.dart';
 import 'package:instiapp/src/routes/homepage.dart';
 
 const String api = "https://api.insti.app/api";
@@ -22,29 +25,36 @@ class _LoginPageState extends State<LoginPage> {
   final String successUrl = "https://redirecturi";
   final String guestUrl = "https://guesturi";
 
+  InstiAppBloc _bloc; 
+  StreamSubscription<String> onUrlChangedSub;
+  String url;
+  
   @override
   void initState() {
     super.initState();
 
     startLoginPageServer().then((_) {
-      final url = "http://${server.address.host}:${server.port}/";
+      url = "http://${server.address.host}:${server.port}/";
       print("Formed URL: $url");
       flutterWebviewPlugin.launch(url);
     });
-    flutterWebviewPlugin.onUrlChanged.listen((String url) {
+    
+    onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {
       print("Changed URL: $url");
       if (url.startsWith(successUrl)) {
         var uri = Uri.parse(url);
         var code = uri.queryParameters['code'];
         print(code);
 
-        flutterWebviewPlugin.close();
-        server.close(force: true);
-
+        flutterWebviewPlugin.hide();
         login(code, successUrl);
       }
       else if (url.startsWith(guestUrl)) {
+        this.onUrlChangedSub.cancel();
         flutterWebviewPlugin.close();
+
+        server.close(force: true);
+
         Navigator.of(context).pushReplacementNamed('/home');
       }
     });
@@ -52,6 +62,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    _bloc = BlocProvider.of(context).bloc;
     return Material(
           child: Center(
         child: Column(
@@ -79,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> startLoginPageServer() async {
     var defAssets = DefaultAssetBundle.of(context);
-    server = await HttpServer.bind(InternetAddress.loopbackIPv4, 9399, shared: true);
+    server = await HttpServer.bind(InternetAddress.loopbackIPv4, 9399);
     server.listen((HttpRequest request) async {
       print("URI: ${request.uri}");
       if (request.uri.toString() == '/') {
@@ -108,14 +119,19 @@ class _LoginPageState extends State<LoginPage> {
   login(final String authCode, final String redirectUrl) async {
     var response = await InstiAppApi().login(authCode, redirectUrl);
     if (response.sessionid != null) {
-      // Navigator.of(context).pushReplacementNamed('/home');
-      Navigator.of(context).push( MaterialPageRoute(
-        builder: (BuildContext context) => MyHomePage(response)
-      ) );
+      // BlocProvider.of(context).bloc.updateSession(response);
+      _bloc.updateSession(response);
+      Navigator.of(context).pushReplacementNamed('/home');
+
+      this.onUrlChangedSub.cancel();
+      flutterWebviewPlugin.close();
+      server.close(force: true);
     } else {
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text("Authentication Failed"),
       ));
+      flutterWebviewPlugin.show();
+      flutterWebviewPlugin.launch(url);
     }
   }
 }

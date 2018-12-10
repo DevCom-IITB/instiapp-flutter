@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:instiapp/src/api/model/user.dart';
+import 'package:instiapp/src/bloc_provider.dart';
+import 'package:instiapp/src/drawer.dart';
 import 'package:instiapp/src/ia_bloc.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 
@@ -10,264 +12,102 @@ import 'package:instiapp/src/api/model/mess.dart';
 
 import 'dart:collection';
 
-class BlocProvider extends InheritedWidget {
-  final InstiAppBloc bloc;
-
-  BlocProvider(this.bloc, {child}) : super(child: child);
-
-  @override
-  bool updateShouldNotify(InheritedWidget oldWidget) {
-    return false;
-  }
-
-  static BlocProvider of(BuildContext context) {
-    return context.inheritFromWidgetOfExactType(BlocProvider);
-  }
-}
-
 class MyHomePage extends StatefulWidget {
   final String title = "InstiApp";
-  final Session _session;
-  MyHomePage(this._session, {Key key}) : super(key: key);
+  MyHomePage({Key key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState(_session);
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   String currHostel = '1';
-  InstiAppBloc _bloc;
-  Session session;
 
-  _MyHomePageState(this.session);
+  _MyHomePageState();
 
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   void initState() {
-    super.initState();
-    _bloc = InstiAppBloc(currSession: session);
+    super.initState();     
   }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    return BlocProvider(
-      _bloc,
-      child: Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(
-              OMIcons.menu,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              _scaffoldKey.currentState.openDrawer();
-            },
+    var bloc = BlocProvider.of(context).bloc;
+    
+    bloc.updateHostels();
+
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            OMIcons.menu,
+            color: Colors.white,
           ),
-          title: Row(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: ImageIcon(
-                  AssetImage('assets/lotus.png'),
-                  color: Colors.white,
-                ),
-              ),
-              Text("Mess",
-                  style: theme.textTheme.headline
-                      .copyWith(fontFamily: "Bitter", color: Colors.white)),
-            ],
-          ),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(48.0),
-            child: Container(
-              color: Colors.white,
-              height: 48.0,
-              padding: EdgeInsets.only(left: 16.0),
-              alignment: Alignment.centerLeft,
-              child: buildDropdownButton(),
-            ),
-          ),
-        ),
-        drawer: buildDrawer(context),
-        body: StreamBuilder<UnmodifiableListView<Hostel>>(
-          stream: _bloc.hostels,
-          builder: (BuildContext context,
-              AsyncSnapshot<UnmodifiableListView<Hostel>> hostels) {
-            currHostel = _bloc.currSession.sessionid == null
-                ? "1"
-                : _bloc.currSession.profile.hostel;
-            if (hostels.hasData) {
-              var currMess = hostels.data
-                  .firstWhere((h) => h.shortName == currHostel)
-                  .mess
-                ..sort((h1, h2) => h1.compareTo(h2));
-              return ListView(
-                children: currMess.map(_buildSingleDayMess).toList(),
-                // children: <Widget>[],
-                physics: BouncingScrollPhysics(),
-              );
-            } else {
-              return Center(
-                child: CircularProgressIndicator(
-                  backgroundColor: theme.accentColor,
-                ),
-              );
-            }
+          onPressed: () {
+            _scaffoldKey.currentState.openDrawer();
           },
         ),
+        title: Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: ImageIcon(
+                AssetImage('assets/lotus.png'),
+                color: Colors.white,
+              ),
+            ),
+            Text("Mess",
+                style: theme.textTheme.headline
+                    .copyWith(fontFamily: "Bitter", color: Colors.white)),
+          ],
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48.0),
+          child: Container(
+            color: Colors.white,
+            height: 48.0,
+            padding: EdgeInsets.only(left: 16.0),
+            alignment: Alignment.centerLeft,
+            child: buildDropdownButton(),
+          ),
+        ),
+      ),
+      drawer: DrawerOnly(),
+      body: StreamBuilder<UnmodifiableListView<Hostel>>(
+        stream: bloc.hostels,
+        builder: (BuildContext context,
+            AsyncSnapshot<UnmodifiableListView<Hostel>> hostels) {
+          currHostel = bloc.currSession?.profile?.hostel ?? "1";
+          if (hostels.hasData) {
+            var currMess = hostels.data
+                .firstWhere((h) => h.shortName == currHostel)
+                .mess
+              ..sort((h1, h2) => h1.compareTo(h2));
+            return ListView(
+              children: currMess.map(_buildSingleDayMess).toList(),
+              // children: <Widget>[],
+              physics: BouncingScrollPhysics(),
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(
+                backgroundColor: theme.accentColor,
+              ),
+            );
+          }
+        },
       ),
     );
   }
 
-  StreamBuilder<Session> buildDrawer(BuildContext context) {
-    return StreamBuilder<Session>(
-      stream: _bloc.session,
-      initialData: Session(),
-      builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
-        var theme = Theme.of(context);
-        var textTheme =
-            theme.textTheme.subhead.copyWith(fontWeight: FontWeight.bold);
-        var navList = <Widget>[
-          UserAccountsDrawerHeader(
-            currentAccountPicture: CircleAvatar(
-              child: Icon(OMIcons.person),
-            ),
-            accountName: Text(
-              snapshot.data.sessionid != null
-                  ? snapshot.data.profile.name
-                  : 'Not Logged in',
-              style: theme.textTheme.body1
-                  .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-            accountEmail: snapshot.data.sessionid != null
-                ? Text(snapshot.data.profile.rollNo,
-                    style: theme.textTheme.body1.copyWith(color: Colors.white))
-                : RaisedButton(
-                    child: Text("Log in"),
-                    onPressed: () {
-                      Navigator.of(context).pushReplacementNamed('/');
-                    },
-                  ),
-            decoration: BoxDecoration(
-              color: theme.accentColor,
-            ),
-          ),
-          ListTile(
-            leading: Icon(OMIcons.dashboard),
-            title: Text(
-              "Feed",
-              style: textTheme,
-            ),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: Icon(OMIcons.rssFeed),
-            title: Text(
-              "News",
-              style: textTheme,
-            ),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: Icon(OMIcons.search),
-            title: Text(
-              "Explore",
-              style: textTheme,
-            ),
-            onTap: () {},
-          ),
-          ListTile(
-            selected: true,
-            leading: Icon(OMIcons.restaurant),
-            title: Text(
-              "Mess Menu",
-              style: textTheme,
-            ),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: Icon(OMIcons.workOutline),
-            title: Text(
-              "Placement Blog",
-              style: textTheme,
-            ),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: Icon(OMIcons.workOutline),
-            title: Text(
-              "Internship Blog",
-              style: textTheme,
-            ),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: Icon(OMIcons.dateRange),
-            title: Text(
-              "Calender",
-              style: textTheme,
-            ),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: Icon(OMIcons.map),
-            title: Text(
-              "Map",
-              style: textTheme,
-            ),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: Icon(OMIcons.feedback),
-            title: Text(
-              "Complaints/Suggestions",
-              style: textTheme,
-            ),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: Icon(OMIcons.link),
-            title: Text(
-              "Quick Links",
-              style: textTheme,
-            ),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: Icon(OMIcons.settings),
-            title: Text(
-              "Settings",
-              style: textTheme,
-            ),
-            onTap: () {},
-          ),
-        ];
-        if (snapshot.data.sessionid != null) {
-          navList.add(ListTile(
-            leading: Icon(OMIcons.exitToApp),
-            title: Text(
-              "Logout",
-              style: textTheme,
-            ),
-            onTap: () {},
-          ));
-        }
-        return Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: navList,
-          ),
-        );
-      },
-    );
-  }
-
   Widget buildDropdownButton() {
+    var bloc = BlocProvider.of(context).bloc;
     return StreamBuilder<UnmodifiableListView<Hostel>>(
-      stream: _bloc.hostels,
+      stream: bloc.hostels,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return DropdownButton<int>(
