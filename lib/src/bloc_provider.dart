@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:instiapp/src/ia_bloc.dart';
+import 'package:instiapp/src/blocs/ia_bloc.dart';
 
 class BlocProvider extends InheritedWidget {
   final InstiAppBloc bloc;

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:instiapp/src/api/apiclient.dart';
 import 'package:instiapp/src/bloc_provider.dart';
-import 'package:instiapp/src/ia_bloc.dart';
+import 'package:instiapp/src/blocs/ia_bloc.dart';
 
 const String api = "https://api.insti.app/api";
 const String authority = "api.insti.app";
@@ -23,9 +23,12 @@ class _LoginPageState extends State<LoginPage> {
   int port;
   final String successUrl = "https://redirecturi";
   final String guestUrl = "https://guesturi";
+  final String gymkhanaUrl = "https://gymkhana.iitb.ac.in";
 
   InstiAppBloc _bloc; 
   StreamSubscription<String> onUrlChangedSub;
+  StreamSubscription<WebViewStateChanged> onStateChangedSub;
+
   String url;
 
   @override
@@ -50,11 +53,22 @@ class _LoginPageState extends State<LoginPage> {
       }
       else if (url.startsWith(guestUrl)) {
         this.onUrlChangedSub.cancel();
+        this.onStateChangedSub.cancel();
         flutterWebviewPlugin.close();
 
         server.close(force: true);
 
         Navigator.of(context).pushReplacementNamed('/mess');
+      }
+      else if (url.startsWith(gymkhanaUrl)) {
+        flutterWebviewPlugin.hide();
+      }
+    });
+    onStateChangedSub = flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged state) {
+      if (state.type == WebViewState.finishLoad) {
+        if (state.url.startsWith(gymkhanaUrl)) {
+          flutterWebviewPlugin.show();
+        }
       }
     });
   }
@@ -123,6 +137,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.of(context).pushReplacementNamed('/mess');
 
       this.onUrlChangedSub.cancel();
+      this.onStateChangedSub.cancel();
       flutterWebviewPlugin.close();
       server.close(force: true);
     } else {

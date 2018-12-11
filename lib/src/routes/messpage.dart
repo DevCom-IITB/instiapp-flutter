@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:instiapp/src/api/model/user.dart';
 import 'package:instiapp/src/bloc_provider.dart';
 import 'package:instiapp/src/drawer.dart';
-import 'package:instiapp/src/ia_bloc.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 
 import 'package:url_launcher/url_launcher.dart';

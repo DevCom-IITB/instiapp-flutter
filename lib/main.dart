@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:instiapp/src/api/model/user.dart';
 import 'package:instiapp/src/bloc_provider.dart';
-import 'package:instiapp/src/ia_bloc.dart';
+import 'package:instiapp/src/blocs/ia_bloc.dart';
 
 import 'package:instiapp/src/routes/messpage.dart';
 import 'package:instiapp/src/routes/loginpage.dart';
