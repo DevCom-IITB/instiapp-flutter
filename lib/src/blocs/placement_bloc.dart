@@ -27,7 +27,7 @@ class PlacementBlogBloc {
 
   PlacementBlogBloc(this.bloc) {
     _indexController.stream
-        .bufferTime(Duration(milliseconds: 5000))
+        .bufferTime(Duration(milliseconds: 500))
         .where((batch) => batch.isNotEmpty)
         .listen(_handleIndexes);
   }
