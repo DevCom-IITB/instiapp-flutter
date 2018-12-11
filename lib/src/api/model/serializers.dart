@@ -7,6 +7,7 @@ import 'package:instiapp/src/api/model/user.dart';
 import 'package:instiapp/src/api/model/body.dart';
 import 'package:instiapp/src/api/model/event.dart';
 import 'package:instiapp/src/api/model/mess.dart';
+import 'package:instiapp/src/api/model/placementblogpost.dart';
 
 SerializerRepo standardSerializers = JsonRepo(serializers: [
   HostelSerializer(),
@@ -15,4 +16,5 @@ SerializerRepo standardSerializers = JsonRepo(serializers: [
   SessionSerializer(),
   BodySerializer(),
   EventSerializer(),
+  PlacementBlogPostSerializer(),
 ]);

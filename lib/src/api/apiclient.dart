@@ -1,5 +1,6 @@
 import 'package:http/io_client.dart';
 import 'package:instiapp/src/api/model/mess.dart';
+import 'package:instiapp/src/api/model/placementblogpost.dart';
 import 'package:instiapp/src/api/model/user.dart';
 import 'package:jaguar_resty/jaguar_resty.dart';
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
@@ -20,15 +21,12 @@ class InstiAppApi extends _$InstiAppApiClient implements ApiClient {
   }
   factory InstiAppApi() => _instance;
 
-  Future<List<Hostel>> getSortedHostelMess() async {
-    var hostels = await getHostelMess();
-    hostels.sort((h1, h2) => h1.compareTo(h2));
-    return hostels;
-  }
-
   @GetReq(path: "/mess")
   Future<List<Hostel>> getHostelMess();
 
   @GetReq(path: "/login")
   Future<Session> login(@QueryParam() String code, @QueryParam() String redir);
+
+  @GetReq(path: "/placement-blog")
+  Future<List<PlacementBlogPost>> getPlacementBlogFeed(@Header("Cookie") String sessionID, @QueryParam("from") int from, @QueryParam("num") int number, @QueryParam("query") String query);
 }

@@ -5,6 +5,8 @@ import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:rxdart/rxdart.dart';
 
 class DrawerOnly extends StatefulWidget {
+  DrawerOnly({Key key}) : super(key: key);
+
   @override
   DrawerOnlyState createState() {
     return new DrawerOnlyState();
@@ -83,6 +85,9 @@ class DrawerOnlyState extends State<DrawerOnly> {
             title: "Mess Menu",
             onTap: () {
               changeSelection(4, navList);
+              var navi = Navigator.of(context);
+              navi.pop();
+              navi.pushReplacementNamed('/mess');
             },
           ),
           NavListTile(
@@ -90,6 +95,9 @@ class DrawerOnlyState extends State<DrawerOnly> {
             title: "Placement Blog",
             onTap: () {
               changeSelection(5, navList);
+              var navi = Navigator.of(context);
+              navi.pop();
+              navi.pushReplacementNamed('/placeblog');
             },
           ),
           NavListTile(

@@ -6,6 +6,7 @@ import 'package:instiapp/src/ia_bloc.dart';
 
 import 'package:instiapp/src/routes/messpage.dart';
 import 'package:instiapp/src/routes/loginpage.dart';
+import 'package:instiapp/src/routes/placementblogpage.dart';
 
 void main() => runApp(MyApp());
 
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
         routes: {
           "/": (_) => LoginPage(),
           "/mess": (_) => MessPage(),
+          "/placeblog": (_) => PlacementBlogPage(),
         },
       ),
     );

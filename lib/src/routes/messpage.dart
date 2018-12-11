@@ -13,7 +13,6 @@ import 'package:instiapp/src/api/model/mess.dart';
 import 'dart:collection';
 
 class MessPage extends StatefulWidget {
-  final String title = "InstiApp";
   MessPage({Key key}) : super(key: key);
 
   @override
@@ -76,7 +75,7 @@ class _MessPageState extends State<MessPage> {
           ),
         ),
       ),
-      drawer: DrawerOnly(),
+      drawer: DrawerOnly(key: bloc.drawerKey),
       body: StreamBuilder<UnmodifiableListView<Hostel>>(
         stream: bloc.hostels,
         builder: (BuildContext context,
