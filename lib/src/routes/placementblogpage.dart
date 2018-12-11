@@ -30,11 +30,11 @@ class _PlacementBlogPageState extends State<PlacementBlogPage> {
 
     _hideButtonController = ScrollController();
     _hideButtonController.addListener(() {
-      if (_hideButtonController.position.userScrollDirection == ScrollDirection.reverse) {
+      if (_hideButtonController.position.userScrollDirection == ScrollDirection.reverse && isFabVisible == 1) {
         setState(() {
           isFabVisible = 0;
         });
-      } else if(_hideButtonController.position.userScrollDirection == ScrollDirection.forward) {
+      } else if(_hideButtonController.position.userScrollDirection == ScrollDirection.forward && isFabVisible == 0) {
         setState(() {
           isFabVisible = 1;
         });
