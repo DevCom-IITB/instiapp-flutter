@@ -25,6 +25,18 @@ class DrawerOnlyState extends State<DrawerOnly> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    activeTile = 1;
+  }
+
+  @override
+  void dispose() {
+    print("disposing drawer");
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of(context).bloc;
     return StreamBuilder<Session>(

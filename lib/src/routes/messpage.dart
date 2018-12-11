@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:instiapp/src/bloc_provider.dart';
+import 'package:instiapp/src/blocs/ia_bloc.dart';
 import 'package:instiapp/src/drawer.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 
@@ -18,7 +19,7 @@ class MessPage extends StatefulWidget {
 }
 
 class _MessPageState extends State<MessPage> {
-  String currHostel = '1';
+  String currHostel = "0";
 
   _MessPageState();
 
@@ -73,12 +74,13 @@ class _MessPageState extends State<MessPage> {
           ),
         ),
       ),
-      drawer: DrawerOnly(key: bloc.drawerKey),
+      drawer: DrawerOnly(key: InstiAppBloc.drawerKey),
       body: StreamBuilder<UnmodifiableListView<Hostel>>(
         stream: bloc.hostels,
         builder: (BuildContext context,
             AsyncSnapshot<UnmodifiableListView<Hostel>> hostels) {
-          currHostel = bloc.currSession?.profile?.hostel ?? "1";
+          if (currHostel == "0")
+            currHostel = bloc.currSession?.profile?.hostel ?? "1";
           if (hostels.hasData) {
             var currMess = hostels.data
                 .firstWhere((h) => h.shortName == currHostel)

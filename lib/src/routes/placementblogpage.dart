@@ -80,7 +80,7 @@ class _PlacementBlogPageState extends State<PlacementBlogPage> {
           ],
         ),
       ),
-      drawer: DrawerOnly(key: bloc.drawerKey),
+      drawer: DrawerOnly(key: InstiAppBloc.drawerKey),
       body: StreamBuilder(
         stream: bloc.session,
         builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
