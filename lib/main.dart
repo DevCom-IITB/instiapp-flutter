@@ -10,12 +10,25 @@ import 'package:instiapp/src/routes/placementblogpage.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
-
+class MyApp extends StatefulWidget {
   // This widget is the root of your application.
   @override
+  MyAppState createState() {
+    return new MyAppState();
+  }
+}
+
+class MyAppState extends State<MyApp> {
+  InstiAppBloc _bloc = InstiAppBloc();
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = InstiAppBloc();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var _bloc = InstiAppBloc();
     return BlocProvider(
       _bloc,
       child: MaterialApp(

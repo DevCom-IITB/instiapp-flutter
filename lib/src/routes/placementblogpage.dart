@@ -19,7 +19,9 @@ class PlacementBlogPage extends StatefulWidget {
 }
 
 class _PlacementBlogPageState extends State<PlacementBlogPage> {
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
 
   ScrollController _hideButtonController;
 
@@ -30,11 +32,15 @@ class _PlacementBlogPageState extends State<PlacementBlogPage> {
 
     _hideButtonController = ScrollController();
     _hideButtonController.addListener(() {
-      if (_hideButtonController.position.userScrollDirection == ScrollDirection.reverse && isFabVisible == 1) {
+      if (_hideButtonController.position.userScrollDirection ==
+              ScrollDirection.reverse &&
+          isFabVisible == 1) {
         setState(() {
           isFabVisible = 0;
         });
-      } else if(_hideButtonController.position.userScrollDirection == ScrollDirection.forward && isFabVisible == 0) {
+      } else if (_hideButtonController.position.userScrollDirection ==
+              ScrollDirection.forward &&
+          isFabVisible == 0) {
         setState(() {
           isFabVisible = 1;
         });
@@ -84,15 +90,19 @@ class _PlacementBlogPageState extends State<PlacementBlogPage> {
               builder: (BuildContext context,
                   AsyncSnapshot<UnmodifiableListView<PlacementBlogPost>>
                       snapshot) {
-                return ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  itemBuilder: (BuildContext context, int index) {
-                    return buildPlacementPost(
-                        bloc.placementBloc, index, snapshot.data);
-                  },
-                  itemCount:
-                      (snapshot.data == null ? 0 : snapshot.data.length) + 20,
-                  controller: _hideButtonController,
+                return RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  onRefresh: _handleRefresh,
+                  child: ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (BuildContext context, int index) {
+                      return buildPlacementPost(
+                          bloc.placementBloc, index, snapshot.data);
+                    },
+                    itemCount:
+                        (snapshot.data == null ? 0 : snapshot.data.length) + 20,
+                    controller: _hideButtonController,
+                  ),
                 );
               },
             );
@@ -112,16 +122,21 @@ class _PlacementBlogPageState extends State<PlacementBlogPage> {
         child: FloatingActionButton(
           onPressed: () {
             _hideButtonController.animateTo(0.0,
-                curve: Curves.easeOut,
-                duration: const Duration(milliseconds: 300));
+                curve: Curves.fastOutSlowIn,
+                duration: const Duration(milliseconds: 600));
             setState(() {
-                          isFabVisible = 0.0;
-                        });
+              isFabVisible = 0.0;
+            });
           },
           child: Icon(OMIcons.arrowUpward),
         ),
       ),
     );
+  }
+
+  Future<void> _handleRefresh() {
+    var bloc = BlocProvider.of(context).bloc;
+    return bloc.placementBloc.refresh();
   }
 
   Widget buildPlacementPost(

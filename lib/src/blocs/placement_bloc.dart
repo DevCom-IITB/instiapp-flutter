@@ -22,9 +22,6 @@ class PlacementBlogBloc {
   // parent bloc
   InstiAppBloc bloc;
 
-  // bloc state
-  var _placePosts = <PlacementBlogPost>[];
-
   PlacementBlogBloc(this.bloc) {
     _indexController.stream
         .bufferTime(Duration(milliseconds: 500))
@@ -128,7 +125,6 @@ class PlacementBlogBloc {
 
     // Only notify when there are posts
     if (posts.length > 0) {
-      _placePosts = posts;
       _placementBlogSubject.add(UnmodifiableListView<PlacementBlogPost>(posts));
     }
   }
@@ -145,10 +141,17 @@ class PlacementBlogBloc {
             blockSyntaxes: [tableParse]);
         p.published = dateTimeFormatter(p.published);
       });
-      _placePosts = posts;
       _placementBlogSubject.add(UnmodifiableListView(posts));
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<void> refresh() {
+    _fetchPages.clear();
+    _pagesBeingFetched.clear();
+    _placementBlogSubject.add(UnmodifiableListView([]));
+
+    return Future.delayed(Duration(milliseconds: 300));
   }
 }
