@@ -28,6 +28,8 @@ dependencies:
   jaguar_retrofit: ^2.5.12
   jaguar_serializer: ^2.2.4
   rxdart: ^0.19.0
+  flutter_html: ^0.8.2
+  markdown: ^2.0.2
 
 dev_dependencies:
   flutter_test:

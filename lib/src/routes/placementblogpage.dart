@@ -6,6 +6,10 @@ import 'package:instiapp/src/api/model/user.dart';
 import 'package:instiapp/src/bloc_provider.dart';
 import 'package:instiapp/src/drawer.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:markdown/markdown.dart' as markdown;
+import 'dart:core';
+import 'package:url_launcher/url_launcher.dart';
 
 class PlacementBlogPage extends StatefulWidget {
   @override
@@ -84,26 +88,45 @@ class _PlacementBlogPageState extends State<PlacementBlogPage> {
         ));
   }
 
+  
+
   Widget buildPlacementPost(PlacementBlogPost post) {
     var theme = Theme.of(context);
     return Card(
+      key: ValueKey(post.postID),
         child: Padding(
       padding: const EdgeInsets.all(12.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             post.title,
-            style: theme.textTheme.subhead,
+            textAlign: TextAlign.start,
+            style: theme.textTheme.headline,
+          ),
+          Text(
+            post.published,
+            textAlign: TextAlign.start,
+            style: theme.textTheme.body1,
           ),
           SizedBox(
             height: 8.0,
           ),
-          Text(
-            post.content,
-            style: theme.textTheme.subtitle,
+          Html(
+            data: post.content,
+            defaultTextStyle: theme.textTheme.subhead,
+            onLinkTap: (link) async {
+              print(link);
+              if (await canLaunch(link)) {
+                await launch(link);
+              }
+              else {
+                throw "Couldn't launch $link"; 
+              }
+            },
           ),
         ],
       ),
     ));
   }
-}
+} 
