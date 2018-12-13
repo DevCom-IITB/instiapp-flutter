@@ -23,14 +23,14 @@ abstract class _$InstiAppApiClient implements ApiClient {
   }
 
   Future<List<PlacementBlogPost>> getPlacementBlogFeed(
-      String sessionid, int from, int number, String query) async {
+      String sessionID, int from, int number, String query) async {
     var req = base.get
         .path(basePath)
         .path("/placement-blog")
         .query("from", from)
         .query("num", number)
         .query("query", query)
-        .header("Cookie", sessionid);
+        .header("Cookie", sessionID);
     return req.list(convert: serializers.oneFrom);
   }
 }
