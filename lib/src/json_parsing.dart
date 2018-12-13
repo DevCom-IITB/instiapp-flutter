@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:instiapp/src/api/model/user.dart';
+import 'package:InstiApp/src/api/model/user.dart';
 
 import 'api/model/mess.dart';
 import 'api/model/serializers.dart';

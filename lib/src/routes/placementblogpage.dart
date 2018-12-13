@@ -2,12 +2,12 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:instiapp/src/api/model/placementblogpost.dart';
-import 'package:instiapp/src/api/model/user.dart';
-import 'package:instiapp/src/bloc_provider.dart';
-import 'package:instiapp/src/blocs/placement_bloc.dart';
-import 'package:instiapp/src/drawer.dart';
-import 'package:instiapp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/api/model/placementblogpost.dart';
+import 'package:InstiApp/src/api/model/user.dart';
+import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/blocs/placement_bloc.dart';
+import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'dart:core';

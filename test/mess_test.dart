@@ -1,6 +1,6 @@
-import 'package:instiapp/src/api/apiclient.dart';
-import 'package:instiapp/src/api/model/mess.dart';
-import 'package:instiapp/src/json_parsing.dart';
+import 'package:InstiApp/src/api/apiclient.dart';
+import 'package:InstiApp/src/api/model/mess.dart';
+import 'package:InstiApp/src/json_parsing.dart';
 import 'package:jaguar_resty/jaguar_resty.dart';
 import 'package:test/test.dart';
 import 'package:http/io_client.dart';

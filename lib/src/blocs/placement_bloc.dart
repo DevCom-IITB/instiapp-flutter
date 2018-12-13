@@ -1,7 +1,7 @@
 import 'dart:collection';
 
-import 'package:instiapp/src/api/model/placementblogpost.dart';
-import 'package:instiapp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/api/model/placementblogpost.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'dart:math';

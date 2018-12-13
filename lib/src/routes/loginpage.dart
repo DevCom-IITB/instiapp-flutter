@@ -4,11 +4,11 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:instiapp/src/api/apiclient.dart';
-import 'package:instiapp/src/api/model/serializers.dart';
-import 'package:instiapp/src/api/model/user.dart';
-import 'package:instiapp/src/bloc_provider.dart';
-import 'package:instiapp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/api/apiclient.dart';
+import 'package:InstiApp/src/api/model/serializers.dart';
+import 'package:InstiApp/src/api/model/user.dart';
+import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 

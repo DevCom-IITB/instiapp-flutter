@@ -1,4 +1,4 @@
-import 'package:instiapp/src/json_parsing.dart';
+import 'package:InstiApp/src/json_parsing.dart';
 import 'package:test/test.dart';
 
 main() {

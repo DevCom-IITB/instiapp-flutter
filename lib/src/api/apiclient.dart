@@ -1,12 +1,12 @@
 import 'package:http/io_client.dart';
-import 'package:instiapp/src/api/model/mess.dart';
-import 'package:instiapp/src/api/model/placementblogpost.dart';
-import 'package:instiapp/src/api/model/user.dart';
+import 'package:InstiApp/src/api/model/mess.dart';
+import 'package:InstiApp/src/api/model/placementblogpost.dart';
+import 'package:InstiApp/src/api/model/user.dart';
 import 'package:jaguar_resty/jaguar_resty.dart';
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
-import 'package:instiapp/src/api/model/serializers.dart';
+import 'package:InstiApp/src/api/model/serializers.dart';
 
 part 'apiclient.jretro.dart';
 

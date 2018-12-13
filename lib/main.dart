@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:instiapp/src/api/model/user.dart';
-import 'package:instiapp/src/bloc_provider.dart';
-import 'package:instiapp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/api/model/user.dart';
+import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 
-import 'package:instiapp/src/routes/messpage.dart';
-import 'package:instiapp/src/routes/loginpage.dart';
-import 'package:instiapp/src/routes/placementblogpage.dart';
+import 'package:InstiApp/src/routes/messpage.dart';
+import 'package:InstiApp/src/routes/loginpage.dart';
+import 'package:InstiApp/src/routes/placementblogpage.dart';
 
 void main() => runApp(MyApp());
 
@@ -32,7 +32,7 @@ class MyAppState extends State<MyApp> {
     return BlocProvider(
       _bloc,
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'InstiApp',
         theme: ThemeData(
           fontFamily: "SourceSansPro",
           primarySwatch: Colors.deepPurple,

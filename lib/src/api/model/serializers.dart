@@ -3,11 +3,11 @@ library serializers;
 
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-import 'package:instiapp/src/api/model/user.dart';
-import 'package:instiapp/src/api/model/body.dart';
-import 'package:instiapp/src/api/model/event.dart';
-import 'package:instiapp/src/api/model/mess.dart';
-import 'package:instiapp/src/api/model/placementblogpost.dart';
+import 'package:InstiApp/src/api/model/user.dart';
+import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/mess.dart';
+import 'package:InstiApp/src/api/model/placementblogpost.dart';
 
 JsonRepo standardSerializers = JsonRepo(serializers: [
   HostelSerializer(),
