@@ -59,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
         url = "http://${server.address.host}:${server.port}/";
         print("Formed URL: $url");
         print("startLoginPageServer.then: Launching Web View");
+        await Future.delayed(Duration(milliseconds: 300));
         flutterWebviewPlugin.launch(
           url,
           hidden: false,
@@ -70,6 +71,8 @@ class _LoginPageState extends State<LoginPage> {
             MediaQuery.of(context).size.height,
           ),
         );
+        // await Future.delayed(Duration(milliseconds: 300));
+        // flutterWebviewPlugin.show();
       });
 
       onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {

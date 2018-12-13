@@ -31,7 +31,7 @@ class InstiAppBloc {
   final client = InstiAppApi();
 
   // default homepage
-  String homepageName = "/placeblog";
+  String homepageName = "/mess";
 
   InstiAppBloc() {
     globalClient = IOClient();
