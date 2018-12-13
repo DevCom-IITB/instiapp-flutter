@@ -128,7 +128,7 @@ class _PlacementBlogPageState extends State<PlacementBlogPage> {
               isFabVisible = 0.0;
             });
           },
-          child: Icon(OMIcons.arrowUpward),
+          child: Icon(OMIcons.keyboardArrowUp),
         ),
       ),
     );

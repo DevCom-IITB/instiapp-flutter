@@ -5,8 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:instiapp/src/api/apiclient.dart';
+import 'package:instiapp/src/api/model/serializers.dart';
+import 'package:instiapp/src/api/model/user.dart';
 import 'package:instiapp/src/bloc_provider.dart';
 import 'package:instiapp/src/blocs/ia_bloc.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 const String api = "https://api.insti.app/api";
 const String authority = "api.insti.app";
@@ -24,12 +28,13 @@ class _LoginPageState extends State<LoginPage> {
   final String successUrl = "https://redirecturi";
   final String guestUrl = "https://guesturi";
   final String gymkhanaUrl = "https://gymkhana.iitb.ac.in";
- final String httpGymkhanaUrl = "http://gymkhana.iitb.ac.in";
+  final String httpGymkhanaUrl = "http://gymkhana.iitb.ac.in";
   InstiAppBloc _bloc;
   StreamSubscription<String> onUrlChangedSub;
   StreamSubscription<WebViewStateChanged> onStateChangedSub;
 
   String url;
+  Session currSession;
 
   @override
   void dispose() {
@@ -41,65 +46,88 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
 
-    startLoginPageServer().then((_) async {
-      url = "http://${server.address.host}:${server.port}/";
-      print("Formed URL: $url");
-      print("startLoginPageServer.then: Launching Web View");
-      flutterWebviewPlugin.launch(
-        url,
-        hidden: false,
-        withJavascript: true,
-        rect: new Rect.fromLTWH(
-          0.0,
-          0.0,
-          MediaQuery.of(context).size.width,
-          MediaQuery.of(context).size.height,
-        ),
-      );
-    });
-
-    onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {
-      print("Changed URL: $url");
-      if (url.startsWith(successUrl)) {
-        var uri = Uri.parse(url);
-        var code = uri.queryParameters['code'];
-        print(code);
-
-        print("onUrlChanged: Hiding Web View");
-        flutterWebviewPlugin.hide();
-        login(code, successUrl);
-      } else if (url.startsWith(guestUrl)) {
-        this.onUrlChangedSub.cancel();
-        this.onStateChangedSub.cancel();
-        print("onUrlChanged: Closing Web View");
-        flutterWebviewPlugin.close();
-
-        server.close(force: true);
-
-        Navigator.of(context).pushReplacementNamed('/mess');
-      } else if (url.startsWith(gymkhanaUrl)) {
-        print("onUrlChanged: Hiding Web View");
-        flutterWebviewPlugin.hide();
-      } else if (url.startsWith(httpGymkhanaUrl)) {
-        print("onUrlChanged: http gymkhana");
-        flutterWebviewPlugin.reloadUrl(url.replaceFirst("http", "https"));
+    checkLogin().then((Session sess) {
+      // If session already exists, continue to homepage with current session
+      if (sess != null) {
+        _bloc?.updateSession(sess);
+        Navigator.of(context).pushReplacementNamed("/mess");
+        return;
       }
-    });
-    onStateChangedSub =
-        flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged state) {
-      print(state.type);
-      if (state.type == WebViewState.finishLoad) {
-        if (state.url.startsWith(gymkhanaUrl)) {
-          print("onStateChanged: Showing Web View");
-          flutterWebviewPlugin.show();
+
+      // No stored session found 
+      startLoginPageServer().then((_) async {
+        url = "http://${server.address.host}:${server.port}/";
+        print("Formed URL: $url");
+        print("startLoginPageServer.then: Launching Web View");
+        flutterWebviewPlugin.launch(
+          url,
+          hidden: false,
+          withJavascript: true,
+          rect: new Rect.fromLTWH(
+            0.0,
+            0.0,
+            MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height,
+          ),
+        );
+      });
+
+      onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {
+        print("Changed URL: $url");
+        if (url.startsWith(successUrl)) {
+          var uri = Uri.parse(url);
+          var code = uri.queryParameters['code'];
+          print(code);
+
+          print("onUrlChanged: Hiding Web View");
+          flutterWebviewPlugin.hide();
+          login(code, successUrl);
+        } else if (url.startsWith(guestUrl)) {
+          this.onUrlChangedSub.cancel();
+          this.onStateChangedSub.cancel();
+          print("onUrlChanged: Closing Web View");
+          flutterWebviewPlugin.close();
+
+          server.close(force: true);
+
+          Navigator.of(context).pushReplacementNamed('/mess');
+        } else if (url.startsWith(gymkhanaUrl)) {
+          print("onUrlChanged: Hiding Web View");
+          flutterWebviewPlugin.hide();
+        } else if (url.startsWith(httpGymkhanaUrl)) {
+          print("onUrlChanged: http gymkhana");
+          flutterWebviewPlugin.reloadUrl(url.replaceFirst("http", "https"));
         }
-      }
+      });
+      onStateChangedSub = flutterWebviewPlugin.onStateChanged
+          .listen((WebViewStateChanged state) {
+        print(state.type);
+        if (state.type == WebViewState.finishLoad) {
+          if (state.url.startsWith(gymkhanaUrl)) {
+            print("onStateChanged: Showing Web View");
+            flutterWebviewPlugin.show();
+          }
+        }
+      });
     });
+  }
+
+  Future<Session> checkLogin() async {    
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getKeys().contains("session")){
+      standardSerializers.decodeOne(prefs.getString("session"));
+      Session sess = standardSerializers.decodeOne(prefs.getString("session"));
+      if (sess?.sessionid != null) {
+        return sess;
+      }
+    }
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
     _bloc = BlocProvider.of(context).bloc;
+
     return Material(
       child: Center(
         child: Column(

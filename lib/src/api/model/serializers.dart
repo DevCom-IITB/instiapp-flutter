@@ -9,7 +9,7 @@ import 'package:instiapp/src/api/model/event.dart';
 import 'package:instiapp/src/api/model/mess.dart';
 import 'package:instiapp/src/api/model/placementblogpost.dart';
 
-SerializerRepo standardSerializers = JsonRepo(serializers: [
+JsonRepo standardSerializers = JsonRepo(serializers: [
   HostelSerializer(),
   HostelMessSerializer(),
   UserSerializer(),
