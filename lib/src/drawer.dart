@@ -4,37 +4,16 @@ import 'package:instiapp/src/bloc_provider.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:rxdart/rxdart.dart';
 
-class DrawerOnly extends StatefulWidget {
-  DrawerOnly({Key key}) : super(key: key);
+class DrawerOnly extends StatelessWidget {
 
-  @override
-  DrawerOnlyState createState() {
-    return new DrawerOnlyState();
-  }
-}
-
-class DrawerOnlyState extends State<DrawerOnly> {
-  int activeTile = 1;
-
-  void changeSelection(int pos, List<Widget> navList) {
-    NavListTile tile = navList[activeTile];
-    tile.setSelection(false);
-    activeTile = pos;
-    tile = navList[activeTile];
-    tile.setSelection(true);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    activeTile = 1;
-  }
-
-  @override
-  void dispose() {
-    print("disposing drawer");
-    super.dispose();
-  }
+  // For now not highlighting the current page in the drawer
+  // void changeSelection(int pos, List<Widget> navList) {
+  //   NavListTile tile = navList[activeTile];
+  //   tile.setSelection(false);
+  //   activeTile = pos;
+  //   tile = navList[activeTile];
+  //   tile.setSelection(true);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -75,83 +54,85 @@ class DrawerOnlyState extends State<DrawerOnly> {
             icon: OMIcons.dashboard,
             title: "Feed",
             onTap: () {
-              changeSelection(1, navList);
+              // changeSelection(1, navList);
             },
           ),
           NavListTile(
             icon: OMIcons.rssFeed,
             title: "News",
             onTap: () {
-              changeSelection(2, navList);
+              // changeSelection(2, navList);
             },
           ),
           NavListTile(
             icon: OMIcons.search,
             title: "Explore",
             onTap: () {
-              changeSelection(3, navList);
+              // changeSelection(3, navList);
             },
           ),
           NavListTile(
             icon: OMIcons.restaurant,
             title: "Mess Menu",
+            selected: true,
             onTap: () {
-              changeSelection(4, navList);
+              // changeSelection(4, navList);
               var navi = Navigator.of(context);
               navi.pop();
-              navi.pushReplacementNamed('/mess');
+              navi.pushNamed('/mess');
             },
           ),
           NavListTile(
             icon: OMIcons.workOutline,
             title: "Placement Blog",
+            selected: true,
             onTap: () {
-              changeSelection(5, navList);
+              // changeSelection(5, navList);
               var navi = Navigator.of(context);
               navi.pop();
-              navi.pushReplacementNamed('/placeblog');
+              navi.pushNamed('/placeblog');
             },
           ),
           NavListTile(
             icon: OMIcons.workOutline,
             title: "Internship Blog",
             onTap: () {
-              changeSelection(6, navList);
+              // changeSelection(6, navList);
             },
           ),
           NavListTile(
             icon: OMIcons.dateRange,
             title: "Calender",
             onTap: () {
-              changeSelection(7, navList);
+              // changeSelection(7, navList);
             },
           ),
           NavListTile(
             icon: OMIcons.map,
             title: "Map",
             onTap: () {
-              changeSelection(8, navList);
+              // changeSelection(8, navList);
             },
           ),
           NavListTile(
             icon: OMIcons.feedback,
             title: "Complaints/Suggestions",
             onTap: () {
-              changeSelection(9, navList);
+              // changeSelection(9, navList);
             },
           ),
           NavListTile(
             icon: OMIcons.link,
             title: "Quick Links",
             onTap: () {
-              changeSelection(10, navList);
+              // changeSelection(10, navList);
             },
           ),
           NavListTile(
             icon: OMIcons.settings,
             title: "Settings",
             onTap: () {
-              changeSelection(11, navList);
+              // changeSelection(11, navList);
             },
           ),
         ];
@@ -164,8 +145,11 @@ class DrawerOnlyState extends State<DrawerOnly> {
             },
           ));
         }
-        NavListTile a = navList[activeTile];
-        a.setSelection(true);
+        
+        // For now not highlighting the current page
+        // NavListTile a = navList[activeTile];
+        // a.setSelection(true);
+
         return Drawer(
           child: ListView(
             padding: EdgeInsets.zero,

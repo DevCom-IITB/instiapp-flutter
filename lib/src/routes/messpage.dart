@@ -74,7 +74,7 @@ class _MessPageState extends State<MessPage> {
           ),
         ),
       ),
-      drawer: DrawerOnly(key: InstiAppBloc.drawerKey),
+      drawer: DrawerOnly(),
       body: StreamBuilder<UnmodifiableListView<Hostel>>(
         stream: bloc.hostels,
         builder: (BuildContext context,

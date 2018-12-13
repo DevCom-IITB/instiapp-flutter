@@ -30,8 +30,8 @@ class InstiAppBloc {
   // api functions
   final client = InstiAppApi();
 
-  // drawer key
-  static final drawerKey = const Key('__DRAWERKEY__');
+  // default homepage
+  String homepageName = "/placeblog";
 
   InstiAppBloc() {
     globalClient = IOClient();

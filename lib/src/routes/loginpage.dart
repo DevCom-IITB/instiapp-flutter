@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
       // If session already exists, continue to homepage with current session
       if (sess != null) {
         _bloc?.updateSession(sess);
-        Navigator.of(context).pushReplacementNamed("/mess");
+        Navigator.of(context).pushReplacementNamed(_bloc?.homepageName);
         return;
       }
 
@@ -90,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
 
           server.close(force: true);
 
-          Navigator.of(context).pushReplacementNamed('/mess');
+          Navigator.of(context).pushReplacementNamed(_bloc?.homepageName);
         } else if (url.startsWith(gymkhanaUrl)) {
           print("onUrlChanged: Hiding Web View");
           flutterWebviewPlugin.hide();
@@ -183,7 +183,7 @@ class _LoginPageState extends State<LoginPage> {
     var response = await InstiAppApi().login(authCode, redirectUrl);
     if (response.sessionid != null) {
       _bloc.updateSession(response);
-      Navigator.of(context).pushReplacementNamed('/mess');
+      Navigator.of(context).pushReplacementNamed(_bloc?.homepageName);
 
       this.onUrlChangedSub.cancel();
       this.onStateChangedSub.cancel();
