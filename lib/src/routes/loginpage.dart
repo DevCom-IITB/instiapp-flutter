@@ -24,23 +24,40 @@ class _LoginPageState extends State<LoginPage> {
   final String successUrl = "https://redirecturi";
   final String guestUrl = "https://guesturi";
   final String gymkhanaUrl = "https://gymkhana.iitb.ac.in";
-
-  InstiAppBloc _bloc; 
+ final String httpGymkhanaUrl = "http://gymkhana.iitb.ac.in";
+  InstiAppBloc _bloc;
   StreamSubscription<String> onUrlChangedSub;
   StreamSubscription<WebViewStateChanged> onStateChangedSub;
 
   String url;
 
   @override
+  void dispose() {
+    flutterWebviewPlugin.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
 
-    startLoginPageServer().then((_) {
+    startLoginPageServer().then((_) async {
       url = "http://${server.address.host}:${server.port}/";
       print("Formed URL: $url");
-      flutterWebviewPlugin.launch(url);
+      print("startLoginPageServer.then: Launching Web View");
+      flutterWebviewPlugin.launch(
+        url,
+        hidden: false,
+        withJavascript: true,
+        rect: new Rect.fromLTWH(
+          0.0,
+          0.0,
+          MediaQuery.of(context).size.width,
+          MediaQuery.of(context).size.height,
+        ),
+      );
     });
-    
+
     onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {
       print("Changed URL: $url");
       if (url.startsWith(successUrl)) {
@@ -48,25 +65,32 @@ class _LoginPageState extends State<LoginPage> {
         var code = uri.queryParameters['code'];
         print(code);
 
+        print("onUrlChanged: Hiding Web View");
         flutterWebviewPlugin.hide();
         login(code, successUrl);
-      }
-      else if (url.startsWith(guestUrl)) {
+      } else if (url.startsWith(guestUrl)) {
         this.onUrlChangedSub.cancel();
         this.onStateChangedSub.cancel();
+        print("onUrlChanged: Closing Web View");
         flutterWebviewPlugin.close();
 
         server.close(force: true);
 
         Navigator.of(context).pushReplacementNamed('/mess');
-      }
-      else if (url.startsWith(gymkhanaUrl)) {
+      } else if (url.startsWith(gymkhanaUrl)) {
+        print("onUrlChanged: Hiding Web View");
         flutterWebviewPlugin.hide();
+      } else if (url.startsWith(httpGymkhanaUrl)) {
+        print("onUrlChanged: http gymkhana");
+        flutterWebviewPlugin.reloadUrl(url.replaceFirst("http", "https"));
       }
     });
-    onStateChangedSub = flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged state) {
+    onStateChangedSub =
+        flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged state) {
+      print(state.type);
       if (state.type == WebViewState.finishLoad) {
         if (state.url.startsWith(gymkhanaUrl)) {
+          print("onStateChanged: Showing Web View");
           flutterWebviewPlugin.show();
         }
       }
@@ -77,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     _bloc = BlocProvider.of(context).bloc;
     return Material(
-          child: Center(
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
@@ -107,15 +131,13 @@ class _LoginPageState extends State<LoginPage> {
     server.listen((HttpRequest request) async {
       print("URI: ${request.uri}");
       if (request.uri.toString() == '/') {
-        var html = await defAssets
-            .loadString('assets/login.html');
+        var html = await defAssets.loadString('assets/login.html');
         request.response
           ..statusCode = 200
           ..headers.set("Content-Type", ContentType.html.mimeType)
           ..write(html);
       } else if (request.uri.toString().contains('lotus')) {
-        var binary =
-            await defAssets.load('assets/lotus.png');
+        var binary = await defAssets.load('assets/lotus.png');
         request.response
           ..statusCode = 200
           ..headers.set("Content-Type", "image/png")
@@ -132,19 +154,22 @@ class _LoginPageState extends State<LoginPage> {
   login(final String authCode, final String redirectUrl) async {
     var response = await InstiAppApi().login(authCode, redirectUrl);
     if (response.sessionid != null) {
-      // BlocProvider.of(context).bloc.updateSession(response);
       _bloc.updateSession(response);
       Navigator.of(context).pushReplacementNamed('/mess');
 
       this.onUrlChangedSub.cancel();
       this.onStateChangedSub.cancel();
+      print("login: Closing Web View");
       flutterWebviewPlugin.close();
       server.close(force: true);
     } else {
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text("Authentication Failed"),
       ));
+
+      print("login: Showing Web View");
       flutterWebviewPlugin.show();
+      print("login: Launching Web View");
       flutterWebviewPlugin.launch(url);
     }
   }
