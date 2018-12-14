@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
         return;
       }
 
-      // No stored session found 
+      // No stored session found
       startLoginPageServer().then((_) async {
         url = "http://${server.address.host}:${server.port}/";
         print("Formed URL: $url");
@@ -64,15 +64,13 @@ class _LoginPageState extends State<LoginPage> {
           url,
           hidden: false,
           withJavascript: true,
-          rect: new Rect.fromLTWH(
+          rect: Rect.fromLTWH(
             0.0,
             0.0,
             MediaQuery.of(context).size.width,
             MediaQuery.of(context).size.height,
           ),
         );
-        // await Future.delayed(Duration(milliseconds: 300));
-        // flutterWebviewPlugin.show();
       });
 
       onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {
@@ -115,9 +113,9 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  Future<Session> checkLogin() async {    
+  Future<Session> checkLogin() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getKeys().contains("session")){
+    if (prefs.getKeys().contains("session")) {
       standardSerializers.decodeOne(prefs.getString("session"));
       Session sess = standardSerializers.decodeOne(prefs.getString("session"));
       if (sess?.sessionid != null) {
@@ -130,7 +128,12 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     _bloc = BlocProvider.of(context).bloc;
-
+    flutterWebviewPlugin.resize(Rect.fromLTWH(
+      0.0,
+      0.0,
+      MediaQuery.of(context).size.width,
+      MediaQuery.of(context).size.height,
+    ));
     return Material(
       child: Center(
         child: Column(
