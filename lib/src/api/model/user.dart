@@ -1,3 +1,6 @@
+import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/role.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
 part 'user.jser.dart';
@@ -38,17 +41,20 @@ class User {
 
   // TODO: Other misc. things
 
-  // List<Event> events_interested;
-  // List<Event> events_going;
+  @Alias('events_interested')
+  List<Event> eventsInterested;
 
-  // List<Body> followedBodies;
-  // List<Role> roles;
+  @Alias('events_going')
+  List<Event> eventsGoing;
+
+  List<Body> followedBodies;
+  List<Role> roles;
   
-  // @Alias('institute_roles')
-  // List<Role> instituteRoles;
+  @Alias('institute_roles')
+  List<Role> instituteRoles;
 
-  // @Alias('former_roles')
-  // List<Role> formerRoles;
+  @Alias('former_roles')
+  List<Role> formerRoles;
 }
 
 @GenSerializer(serializers: const [UserSerializer])
