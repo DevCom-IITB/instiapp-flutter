@@ -34,6 +34,15 @@ abstract class _$SessionSerializer implements Serializer<Session> {
 }
 
 abstract class _$UserSerializer implements Serializer<User> {
+  Serializer<Event> __eventSerializer;
+  Serializer<Event> get _eventSerializer =>
+      __eventSerializer ??= new EventSerializer();
+  Serializer<Body> __bodySerializer;
+  Serializer<Body> get _bodySerializer =>
+      __bodySerializer ??= new BodySerializer();
+  Serializer<Role> __roleSerializer;
+  Serializer<Role> get _roleSerializer =>
+      __roleSerializer ??= new RoleSerializer();
   @override
   Map<String, dynamic> toMap(User model) {
     if (model == null) return null;
@@ -48,6 +57,33 @@ abstract class _$UserSerializer implements Serializer<User> {
     setMapValue(ret, 'about', model.about);
     setMapValue(ret, 'website_url', model.websiteUrl);
     setMapValue(ret, 'ldap_id', model.ldapId);
+    setMapValue(
+        ret,
+        'events_interested',
+        codeIterable(model.eventsInterested,
+            (val) => _eventSerializer.toMap(val as Event)));
+    setMapValue(
+        ret,
+        'events_going',
+        codeIterable(
+            model.eventsGoing, (val) => _eventSerializer.toMap(val as Event)));
+    setMapValue(
+        ret,
+        'followedBodies',
+        codeIterable(
+            model.followedBodies, (val) => _bodySerializer.toMap(val as Body)));
+    setMapValue(ret, 'roles',
+        codeIterable(model.roles, (val) => _roleSerializer.toMap(val as Role)));
+    setMapValue(
+        ret,
+        'institute_roles',
+        codeIterable(
+            model.instituteRoles, (val) => _roleSerializer.toMap(val as Role)));
+    setMapValue(
+        ret,
+        'former_roles',
+        codeIterable(
+            model.formerRoles, (val) => _roleSerializer.toMap(val as Role)));
     return ret;
   }
 
@@ -65,6 +101,19 @@ abstract class _$UserSerializer implements Serializer<User> {
     obj.about = map['about'] as String;
     obj.websiteUrl = map['website_url'] as String;
     obj.ldapId = map['ldap_id'] as String;
+    obj.eventsInterested = codeIterable<Event>(
+        map['events_interested'] as Iterable,
+        (val) => _eventSerializer.fromMap(val as Map));
+    obj.eventsGoing = codeIterable<Event>(map['events_going'] as Iterable,
+        (val) => _eventSerializer.fromMap(val as Map));
+    obj.followedBodies = codeIterable<Body>(map['followedBodies'] as Iterable,
+        (val) => _bodySerializer.fromMap(val as Map));
+    obj.roles = codeIterable<Role>(
+        map['roles'] as Iterable, (val) => _roleSerializer.fromMap(val as Map));
+    obj.instituteRoles = codeIterable<Role>(map['institute_roles'] as Iterable,
+        (val) => _roleSerializer.fromMap(val as Map));
+    obj.formerRoles = codeIterable<Role>(map['former_roles'] as Iterable,
+        (val) => _roleSerializer.fromMap(val as Map));
     return obj;
   }
 }
