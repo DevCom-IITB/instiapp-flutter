@@ -96,8 +96,12 @@ class DrawerOnly extends StatelessWidget {
           NavListTile(
             icon: OMIcons.workOutline,
             title: "Internship Blog",
+            selected: true,
             onTap: () {
               // changeSelection(6, navList);
+              var navi = Navigator.of(context);
+              navi.pop();
+              navi.pushNamed('/trainblog');
             },
           ),
           NavListTile(
