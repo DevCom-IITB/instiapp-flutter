@@ -1,40 +1,40 @@
 import 'dart:collection';
 
-import 'package:InstiApp/src/api/model/placementblogpost.dart';
+import 'package:InstiApp/src/api/model/trainingblogpost.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'dart:math';
 
-class PlacementBlogBloc {
+class TrainingBlogBloc {
   // Streams
-  Stream<UnmodifiableListView<PlacementBlogPost>> get placementBlog =>
-      _placementBlogSubject.stream;
-  final _placementBlogSubject =
-      BehaviorSubject<UnmodifiableListView<PlacementBlogPost>>();
+  Stream<UnmodifiableListView<TrainingBlogPost>> get trainingBlog =>
+      _trainingBlogSubject.stream;
+  final _trainingBlogSubject =
+      BehaviorSubject<UnmodifiableListView<TrainingBlogPost>>();
 
   Sink<int> get inPostIndex => _indexController.sink;
   PublishSubject<int> _indexController = PublishSubject<int>();
 
   // Params
   int _noOfPostsPerPage = 20;
-  String query = ""; 
+  String query = "";
 
   // parent bloc
   InstiAppBloc bloc;
 
-  PlacementBlogBloc(this.bloc) {
+  TrainingBlogBloc(this.bloc) {
     _setIndexListener();
   }
 
-  void _setIndexListener() {
+  _setIndexListener() {
     _indexController.stream
         .bufferTime(Duration(milliseconds: 500))
         .where((batch) => batch.isNotEmpty)
         .listen(_handleIndexes);
   }
 
-  final _fetchPages = <int, List<PlacementBlogPost>>{};
+  final _fetchPages = <int, List<TrainingBlogPost>>{};
 
   final _pagesBeingFetched = Set<int>();
 
@@ -58,9 +58,8 @@ class PlacementBlogBloc {
     return "${week[dt.weekday - 1]}, ${month[dt.month - 1]} ${dt.day.toString()}${dt.year == DateTime.now().year ? "" : dt.year.toString()}, ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}";
   }
 
-  Future<List<PlacementBlogPost>> getBlogPage(int page) async {
-    var sessId = bloc.getSessionIdHeader(); 
-    var posts = await bloc.client.getPlacementBlogFeed(bloc.getSessionIdHeader(),
+  Future<List<TrainingBlogPost>> getBlogPage(int page) async {
+    var posts = await bloc.client.getTrainingBlogFeed(bloc.getSessionIdHeader(),
         page * _noOfPostsPerPage, _noOfPostsPerPage, query);
     var tableParse = markdown.TableSyntax();
     posts.forEach((p) {
@@ -86,7 +85,7 @@ class PlacementBlogBloc {
           _pagesBeingFetched.add(pageIndex);
           // Fetch it
           getBlogPage(pageIndex)
-              .then((List<PlacementBlogPost> fetchedPage) =>
+              .then((List<TrainingBlogPost> fetchedPage) =>
                   _handleFetchedPage(fetchedPage, pageIndex));
         }
       }
@@ -98,7 +97,7 @@ class PlacementBlogBloc {
   /// 1) record it
   /// 2) notify everyone who might be interested in knowing it
   ///
-  void _handleFetchedPage(List<PlacementBlogPost> page, int pageIndex) {
+  void _handleFetchedPage(List<TrainingBlogPost> page, int pageIndex) {
     // Remember the page
     _fetchPages[pageIndex] = page;
     // Remove it from the ones being fetched
@@ -109,7 +108,7 @@ class PlacementBlogBloc {
     // which respect the sequence (since MovieCard are in sequence)
     // therefore, we need to iterate through the pages that are
     // actually fetched and stop if there is a gap.
-    List<PlacementBlogPost> posts = <PlacementBlogPost>[];
+    List<TrainingBlogPost> posts = <TrainingBlogPost>[];
     List<int> pageIndexes = _fetchPages.keys.toList();
 
     final int minPageIndex = pageIndexes.reduce(min);
@@ -130,7 +129,7 @@ class PlacementBlogBloc {
 
     // Only notify when there are posts
     if (posts.length > 0) {
-      _placementBlogSubject.add(UnmodifiableListView<PlacementBlogPost>(posts));
+      _trainingBlogSubject.add(UnmodifiableListView<TrainingBlogPost>(posts));
     }
   }
 
@@ -138,10 +137,10 @@ class PlacementBlogBloc {
     _indexController.close();
     _fetchPages.clear();
     _pagesBeingFetched.clear();
-    _placementBlogSubject.add(UnmodifiableListView([]));
+    _trainingBlogSubject.add(UnmodifiableListView([]));
 
     _indexController = PublishSubject<int>();
-    _setIndexListener();
+    _setIndexListener();_setIndexListener();
 
     return Future.delayed(Duration(milliseconds: 300));
   }

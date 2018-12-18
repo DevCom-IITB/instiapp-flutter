@@ -1,3 +1,4 @@
+import 'package:InstiApp/src/blocs/training_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
@@ -22,6 +23,7 @@ class InstiAppBloc {
 
   // Sub Blocs
   PlacementBlogBloc placementBloc;
+  TrainingBlogBloc trainingBloc;
 
   // actual current state
   Session currSession;
@@ -36,6 +38,7 @@ class InstiAppBloc {
   InstiAppBloc() {
     globalClient = IOClient();
     placementBloc = PlacementBlogBloc(this);
+    trainingBloc = TrainingBlogBloc(this);
   }
 
   String getSessionIdHeader() {
