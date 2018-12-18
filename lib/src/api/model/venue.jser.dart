@@ -40,8 +40,8 @@ abstract class _$VenueSerializer implements Serializer<Venue> {
     obj.venuePixelX = map['pixel_x'] as int;
     obj.venuePixelY = map['pixel_y'] as int;
     obj.venueReusable = map['reusable'] as bool;
-    obj.venueLatitude = map['lat'] as double;
-    obj.venueLongitude = map['lng'] as double;
+    obj.venueLatitude = map['lat'] as String;
+    obj.venueLongitude = map['lng'] as String;
     return obj;
   }
 }

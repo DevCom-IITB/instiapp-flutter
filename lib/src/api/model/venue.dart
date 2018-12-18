@@ -34,10 +34,10 @@ class Venue {
   bool venueReusable;
 
   @Alias("lat")
-  double venueLatitude;
+  String venueLatitude;
 
   @Alias("lng")
-  double venueLongitude;
+  String venueLongitude;
 }
 
 @GenSerializer()

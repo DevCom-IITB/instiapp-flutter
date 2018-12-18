@@ -1,3 +1,4 @@
+import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/blocs/training_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/apiclient.dart';
@@ -21,6 +22,9 @@ class InstiAppBloc {
   Stream<Session> get session => _sessionSubject.stream;
   final _sessionSubject = BehaviorSubject<Session>();
 
+  Stream<UnmodifiableListView<Event>> get events => _eventsSubject.stream;
+  final _eventsSubject = BehaviorSubject<UnmodifiableListView<Event>>();
+
   // Sub Blocs
   PlacementBlogBloc placementBloc;
   TrainingBlogBloc trainingBloc;
@@ -28,6 +32,7 @@ class InstiAppBloc {
   // actual current state
   Session currSession;
   var _hostels = <Hostel>[];
+  var _events = <Event>[];
 
   // api functions
   final client = InstiAppApi();
@@ -42,7 +47,7 @@ class InstiAppBloc {
   }
 
   String getSessionIdHeader() {
-    return "sessionid=" + currSession?.sessionid;
+    return "sessionid=" + currSession?.sessionid ?? "";
   }
 
   Future<Null> updateHostels() async {
@@ -50,6 +55,15 @@ class InstiAppBloc {
     hostels.sort((h1, h2) => h1.compareTo(h2));
     _hostels = hostels;
     _hostelsSubject.add(UnmodifiableListView(_hostels));
+  }
+
+  Future<Null> updateEvents() async {
+    var newsFeedResponse = await client.getNewsFeed(getSessionIdHeader());
+    _events = newsFeedResponse.events;
+    if (_events.length >= 1) {
+      _events[0].eventBigImage = true;
+    }
+    _eventsSubject.add(UnmodifiableListView(_events));
   }
 
   void updateSession(Session sess) {

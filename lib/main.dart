@@ -1,3 +1,4 @@
+import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:InstiApp/src/routes/trainingblogpage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,7 @@ class MyAppState extends State<MyApp> {
           "/mess": (_) => MessPage(),
           "/placeblog": (_) => PlacementBlogPage(),
           "/trainblog": (_) => TrainingBlogPage(),
+          "/feed": (_) => FeedPage(),
         },
       ),
     );

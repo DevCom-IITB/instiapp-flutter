@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
@@ -7,10 +8,8 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/placement_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
-import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'dart:core';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
 
@@ -239,9 +238,10 @@ class _PlacementBlogPageState extends State<PlacementBlogPage> {
                   }
                 },
                 customRender: (node, children) {
-                  if(node is dom.Element) {
-                    switch(node.localName) {
-                      case "img": return Text(node.attributes['href'] ?? "<img>");
+                  if (node is dom.Element) {
+                    switch (node.localName) {
+                      case "img":
+                        return Text(node.attributes['href'] ?? "<img>");
                     }
                   }
                 },

@@ -52,6 +52,7 @@ abstract class _$EventSerializer implements Serializer<Event> {
             model.eventGoing, (val) => _userSerializer.toMap(val as User)));
     setMapValue(ret, 'website_url', model.eventWebsiteURL);
     setMapValue(ret, 'user_ues', model.eventUserUes);
+    setMapValue(ret, 'eventBigImage', model.eventBigImage);
     return ret;
   }
 
@@ -79,6 +80,7 @@ abstract class _$EventSerializer implements Serializer<Event> {
         map['going'] as Iterable, (val) => _userSerializer.fromMap(val as Map));
     obj.eventWebsiteURL = map['website_url'] as String;
     obj.eventUserUes = map['user_ues'] as int;
+    obj.eventBigImage = map['eventBigImage'] as bool;
     return obj;
   }
 }
