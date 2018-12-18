@@ -7,6 +7,7 @@ import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/trainingblogpost.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
+import 'package:InstiApp/src/api/response/news_feed_response.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
 import 'package:InstiApp/src/api/model/user.dart';
@@ -40,4 +41,7 @@ JsonRepo standardSerializers = JsonRepo(serializers: [
   ComplaintSerializer(),
   TagUriSerializer(),
   CommentSerializer(),
+
+  // Responses
+  NewsFeedResponseSerializer(),
 ]);

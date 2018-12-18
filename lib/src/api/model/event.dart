@@ -53,6 +53,8 @@ class Event {
 
   @Alias("user_ues")
   int eventUserUes;
+
+  bool eventBigImage = false;
 }
 
 @GenSerializer()

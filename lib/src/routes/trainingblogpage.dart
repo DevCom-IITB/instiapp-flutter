@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
@@ -9,7 +10,6 @@ import 'package:InstiApp/src/blocs/training_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'dart:core';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
 

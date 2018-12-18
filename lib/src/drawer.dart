@@ -52,9 +52,13 @@ class DrawerOnly extends StatelessWidget {
           ),
           NavListTile(
             icon: OMIcons.dashboard,
+            selected: true,
             title: "Feed",
             onTap: () {
               // changeSelection(1, navList);
+              var navi = Navigator.of(context);
+              navi.pop();
+              navi.pushNamed('/feed');
             },
           ),
           NavListTile(

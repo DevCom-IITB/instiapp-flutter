@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:InstiApp/src/api/model/user.dart';
+import 'package:InstiApp/src/api/response/news_feed_response.dart';
 
 import 'api/model/mess.dart';
 import 'api/model/serializers.dart';
@@ -16,4 +17,10 @@ Session parseSession(String jsonStr) {
   final parsed = json.decode(jsonStr);
   final session = Map<String, dynamic>.from(parsed);
   return standardSerializers.oneFrom<Session>(session);
+}
+
+NewsFeedResponse parseEvents(String jsonStr) {
+  final parsed = json.decode(jsonStr);
+  final newsFeedResponse = Map<String, dynamic>.from(parsed);
+  return standardSerializers.oneFrom<NewsFeedResponse>(newsFeedResponse);
 }
