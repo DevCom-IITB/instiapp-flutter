@@ -1,3 +1,4 @@
+import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:InstiApp/src/routes/trainingblogpage.dart';
 import 'package:flutter/cupertino.dart';
@@ -39,14 +40,37 @@ class MyAppState extends State<MyApp> {
           fontFamily: "SourceSansPro",
           primarySwatch: Colors.deepPurple,
         ),
-        routes: {
-          "/": (_) => LoginPage(),
-          "/mess": (_) => MessPage(),
-          "/placeblog": (_) => PlacementBlogPage(),
-          "/trainblog": (_) => TrainingBlogPage(),
-          "/feed": (_) => FeedPage(),
+        // routes: {
+        //   "/": (_) => LoginPage(),
+        //   "/mess": (_) => MessPage(),
+        //   "/placeblog": (_) => PlacementBlogPage(),
+        //   "/trainblog": (_) => TrainingBlogPage(),
+        //   "/feed": (_) => FeedPage(),
+        //   "/event": (_) => EventPage(),
+        // },
+        onGenerateRoute: (RouteSettings settings) {
+          if (settings.name.startsWith("/event/") ) {
+            return _buildRoute(settings, EventPage(_bloc.getEvent(settings.name.split("/event/")[1])));
+          }
+          else {
+            switch (settings.name) {
+              case "/": return _buildRoute(settings, LoginPage());
+              case "/mess": return _buildRoute(settings, MessPage());
+              case "/placeblog": return _buildRoute(settings, PlacementBlogPage());
+              case "/trainblog": return _buildRoute(settings, TrainingBlogPage());
+              case "/feed": return _buildRoute(settings, FeedPage());
+            }
+          }
+          return _buildRoute(settings, MessPage());
         },
       ),
+    );
+  }
+
+  MaterialPageRoute _buildRoute(RouteSettings settings, Widget builder){
+    return new MaterialPageRoute(
+      settings: settings,
+      builder: (BuildContext context) => builder,
     );
   }
 }

@@ -87,64 +87,24 @@ class _FeedPageState extends State<FeedPage> {
     );
   }
 
-  String _formSubTitle(Event event) {
-    String subtitle = "";
-
-    DateTime startTime = DateTime.parse(event.eventStartTime);
-    DateTime endTime = DateTime.parse(event.eventEndTime);
-    DateTime timeNow = DateTime.now();
-    bool eventStarted = timeNow.compareTo(startTime) > 0;
-    bool eventEnded = timeNow.compareTo(endTime) > 0;
-
-    if (eventEnded)
-      subtitle += "Ended | ";
-    else if (eventStarted) {
-      int difference =
-          endTime.millisecondsSinceEpoch - timeNow.millisecondsSinceEpoch;
-      int minutes = difference ~/ (60 * 1000) % 60;
-      int hours = difference ~/ (60 * 60 * 1000) % 24;
-      int days = difference ~/ (24 * 60 * 60 * 1000);
-      String timeDiff = "";
-      if (days > 0) timeDiff += "${days}D ";
-      if (hours > 0) timeDiff += "${hours}H ";
-
-      timeDiff += "${minutes}M";
-
-      subtitle += "Ends in $timeDiff | ";
-    }
-
-    if (startTime != null) {
-      // TODO: Time Date Formatting
-      subtitle += startTime.toIso8601String();
-      // SimpleDateFormat simpleDateFormatDate = new SimpleDateFormat("dd MMM");
-      // SimpleDateFormat simpleDateFormatTime = new SimpleDateFormat("HH:mm");
-
-      // subtitle += simpleDateFormatDate.format(DateTime) + " | " + simpleDateFormatTime.format(DateTime);
-    }
-    String eventVenueName = "";
-    for (var venue in event.eventVenues) {
-      eventVenueName += ", ${venue.venueShortName}";
-    }
-    if (eventVenueName != "") {
-      subtitle += " | ${eventVenueName.substring(2)}";
-    }
-
-    return subtitle;
-  }
-
   Widget _buildEvent(Event event) {
     var theme = Theme.of(context);
 
     if (event.eventBigImage ?? false) {
       return InkWell(
-        onTap: () {},
+        onTap: () {
+          _openEventPage(event);
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Image.network(
-              event.eventImageURL ?? event.eventBodies[0].imageUrl,
-              fit: BoxFit.cover,
+            Ink.image(
+              child: Container(),
+              image: NetworkImage(
+                event.eventImageURL ?? event.eventBodies[0].imageUrl,
+              ),
               height: 200,
+              fit: BoxFit.cover,
             ),
             ListTile(
               contentPadding:
@@ -154,7 +114,7 @@ class _FeedPageState extends State<FeedPage> {
                 style: theme.textTheme.title,
               ),
               enabled: true,
-              subtitle: Text(_formSubTitle(event)),
+              subtitle: Text(event.getSubTitle()),
             )
           ],
         ),
@@ -171,9 +131,15 @@ class _FeedPageState extends State<FeedPage> {
           backgroundImage: NetworkImage(
               event.eventImageURL ?? event.eventBodies[0].imageUrl),
         ),
-        subtitle: Text(_formSubTitle(event)),
-        onTap: () {},
+        subtitle: Text(event.getSubTitle()),
+        onTap: () {
+          _openEventPage(event);
+        },
       );
     }
+  }
+
+  _openEventPage(Event event) {
+    Navigator.of(context).pushNamed("/event/${event.eventID}");
   }
 }

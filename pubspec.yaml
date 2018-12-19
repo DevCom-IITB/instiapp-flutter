@@ -31,6 +31,7 @@ dependencies:
   flutter_html: ^0.8.2
   markdown: ^2.0.2
   shared_preferences: ^0.4.3
+  date_format: ^1.0.5
 
 dev_dependencies:
   flutter_test:

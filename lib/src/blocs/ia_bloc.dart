@@ -66,10 +66,36 @@ class InstiAppBloc {
     _eventsSubject.add(UnmodifiableListView(_events));
   }
 
+  Event getEvent(String uuid) {
+    return _events?.firstWhere((event) => event.eventID == uuid);
+  }
+
   void updateSession(Session sess) {
     currSession = sess;
     _sessionSubject.add(sess);
     _persistSession(sess);
+  }
+
+  Future<void> updateUesEvent(Event e, int ues) async {
+    try {
+      print("updating Ues from ${e.eventUserUes} to $ues");
+      await client.updateUserEventStatus(getSessionIdHeader(), e.eventID, ues);
+      if (e.eventUserUes == 2) {
+        e.eventGoingCount--;
+      }
+      if (e.eventUserUes == 1) {
+        e.eventInterestedCount--;
+      }
+      if (ues == 1) {
+        e.eventInterestedCount++;
+      } else if (ues == 2) {
+        e.eventGoingCount++;
+      }
+      e.eventUserUes = ues;
+      print("updated Ues from ${e.eventUserUes} to $ues");
+    } catch (ex) {
+      print(ex);
+    }
   }
 
   void _persistSession(Session sess) async {
