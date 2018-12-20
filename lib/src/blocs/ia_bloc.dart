@@ -1,3 +1,4 @@
+import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/blocs/training_bloc.dart';
 import 'package:flutter/material.dart';
@@ -68,6 +69,10 @@ class InstiAppBloc {
 
   Event getEvent(String uuid) {
     return _events?.firstWhere((event) => event.eventID == uuid);
+  }
+
+  Body getBody(String uuid) {
+    // return Body();
   }
 
   void updateSession(Session sess) {
