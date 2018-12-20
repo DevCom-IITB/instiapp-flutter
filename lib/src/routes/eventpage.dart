@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
+import 'package:scrollable_bottom_sheet/scrollable_bottom_sheet.dart';
 
 class EventPage extends StatefulWidget {
   final Event event;
@@ -22,6 +23,8 @@ class _EventPageState extends State<EventPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   int loadingUes = 0;
 
+  bool _bottomSheetActive = false;
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -30,6 +33,7 @@ class _EventPageState extends State<EventPage> {
       buildUserStatusButton("Going", 2, theme, bloc),
       buildUserStatusButton("Interested", 1, theme, bloc),
     ];
+
     if ((widget.event.eventWebsiteURL ?? "") != "") {
       footerButtons.add(IconButton(
         tooltip: "Open website",
@@ -57,9 +61,6 @@ class _EventPageState extends State<EventPage> {
     }
     return Scaffold(
       key: _scaffoldKey,
-      // appBar: AppBar(
-      //   title: Text(widget.event.eventName),
-      // ),
       // bottomSheet: BottomSheet(
       //   onClosing: () {},
       //   builder: (context) => DrawerOnly(),
@@ -70,74 +71,98 @@ class _EventPageState extends State<EventPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: () {
-                showModalBottomSheet(context: context, builder: (context) {
-                  return DrawerOnly();
-                });
-              },
+              icon: Icon(
+                OMIcons.menu,
+                semanticLabel: "Show bottom sheet",
+              ),
+              onPressed: _bottomSheetActive
+                  ? null
+                  : () {
+                      setState(() {
+                        //disable button
+                        _bottomSheetActive = true;
+                      });
+                      _scaffoldKey.currentState
+                          .showBottomSheet((context) {
+                            return ScrollableBottomSheet(
+                              snapAbove: true,
+                              child: BottomDrawer(),
+                              initialHeight: 250.0,
+                            );
+                          })
+                          .closed
+                          .whenComplete(() {
+                            setState(() {
+                              _bottomSheetActive = false;
+                            });
+                          });
+                    },
             ),
-            // IconButton(
-            //   icon: Icon(Icons.search),
-            //   onPressed: () {},
-            // ),
           ],
         ),
       ),
       // bottomSheet: ,
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(28.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    widget.event.eventName,
-                    style: theme.textTheme.display2
-                        .copyWith(color: Colors.black, fontFamily: "Bitter"),
-                  ),
-                  SizedBox(height: 8.0),
-                  Text(widget.event.getSubTitle(),
-                      style: theme.textTheme.title),
-                ],
-              ),
+      body: ListView(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(28.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  widget.event.eventName,
+                  style: theme.textTheme.display2
+                      .copyWith(color: Colors.black, fontFamily: "Bitter"),
+                ),
+                SizedBox(height: 8.0),
+                Text(widget.event.getSubTitle(),
+                    style: theme.textTheme.title),
+              ],
             ),
-            Image.network(
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.network(
                 widget.event?.eventImageURL ??
                     widget.event?.eventBodies[0].imageUrl,
                 fit: BoxFit.fitWidth),
-            SizedBox(
-              height: 16.0,
+          ),
+          SizedBox(
+            height: 16.0,
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 28.0, vertical: 16.0),
+            child: Text(
+              widget.event?.eventDescription,
+              style: theme.textTheme.subhead,
             ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 28.0, vertical: 16.0),
-              child: Text(
-                widget.event?.eventDescription,
-                style: theme.textTheme.subhead,
-              ),
-            ),
-            SizedBox(
-              height: 16.0,
-            ),
+          ),
+          SizedBox(
+            height: 16.0,
+          ),
+          Divider(),
+        ]
+          ..addAll(widget.event.eventBodies
+              .map((b) => _buildBodyTile(b, theme.textTheme)))
+          ..addAll([
             Divider(),
             SizedBox(
-              height: 48.0,
+              height: 64.0,
             )
-          ],
-        ),
+          ]),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(OMIcons.share),
-        tooltip: "Share this event",
-        onPressed: () async {
-          await Share.share(
-              "Check this event: ${ShareURLMaker.getEventURL(widget.event)}");
-        },
-      ),
+
+      floatingActionButton: _bottomSheetActive
+          ? null
+          : FloatingActionButton(
+              child: Icon(OMIcons.share),
+              tooltip: "Share this event",
+              onPressed: () async {
+                await Share.share(
+                    "Check this event: ${ShareURLMaker.getEventURL(widget.event)}");
+              },
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       persistentFooterButtons: footerButtons,
     );
