@@ -3,8 +3,11 @@ import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:share/share.dart';
 
 class EventPage extends StatefulWidget {
   final Event event;
@@ -23,149 +26,120 @@ class _EventPageState extends State<EventPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
-
+    var footerButtons = <Widget>[
+      buildUserStatusButton("Going", 2, theme, bloc),
+      buildUserStatusButton("Interested", 1, theme, bloc),
+    ];
+    if ((widget.event.eventWebsiteURL ?? "") != "") {
+      footerButtons.add(IconButton(
+        tooltip: "Open website",
+        icon: Icon(OMIcons.language),
+        onPressed: () async {
+          if (await canLaunch(widget.event.eventWebsiteURL)) {
+            await launch(widget.event.eventWebsiteURL);
+          }
+        },
+      ));
+    }
+    if (widget.event.eventVenues.isNotEmpty &&
+        widget.event.eventVenues[0].venueLatitude != null) {
+      footerButtons.add(IconButton(
+        tooltip: "Navigate to event",
+        icon: Icon(OMIcons.navigation),
+        onPressed: () async {
+          String uri =
+              "google.navigation:q=${widget.event.eventVenues[0].venueLatitude},${widget.event.eventVenues[0].venueLongitude}";
+          if (await canLaunch(uri)) {
+            await launch(uri);
+          }
+        },
+      ));
+    }
     return Scaffold(
       key: _scaffoldKey,
-      drawer: DrawerOnly(),
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            leading: Material(
-              shape: BeveledRectangleBorder(
-                  borderRadius:
-                      BorderRadius.only(bottomRight: Radius.circular(15))),
-              color: theme.accentColor,
-              child: IconButton(
-                icon: Icon(
-                  OMIcons.menu,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  _scaffoldKey.currentState.openDrawer();
-                },
-              ),
+      // appBar: AppBar(
+      //   title: Text(widget.event.eventName),
+      // ),
+      // bottomSheet: BottomSheet(
+      //   onClosing: () {},
+      //   builder: (context) => DrawerOnly(),
+      // ),
+      bottomNavigationBar: BottomAppBar(
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () {
+                showModalBottomSheet(context: context, builder: (context) {
+                  return DrawerOnly();
+                });
+              },
             ),
-            actions: <Widget>[
-              Material(
-                shape: BeveledRectangleBorder(
-                    borderRadius:
-                        BorderRadius.only(bottomLeft: Radius.circular(15))),
-                color: theme.accentColor,
-                child: IconButton(
-                  tooltip: "Opens website",
-                  icon: Icon(OMIcons.language),
-                  onPressed: () {},
-                ),
-              ),
-              Material(
-                color: theme.accentColor,
-                child: IconButton(
-                  tooltip: "Navigate to event",
-                  icon: Icon(OMIcons.navigation),
-                  onPressed: () {},
-                ),
-              ),
-              Material(
-                color: theme.accentColor,
-                child: IconButton(
-                  tooltip: "Share",
-                  icon: Icon(OMIcons.share),
-                  onPressed: () {},
-                ),
-              ),
-            ],
-            expandedHeight: 300,
-            floating: false,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: false,
-              title: Text(
-                widget.event?.eventName,
-              ),
-              // title: Placeholder(),
-              // title: Container(
-              //     width: MediaQuery.of(context).size.width * 0.65,
-              //     padding:
-              //         const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              //     color: Color.fromRGBO(0, 0, 0, 0.2),
-              //     child: Text(
-              //       widget.event?.eventName,
-              //     )),
-              // title: Row(
-              //   mainAxisAlignment: MainAxisAlignment.start,
-              //   children: <Widget>,
-              // ),
-              // background: Image.network(
-              //     widget.event?.eventImageURL ??
-              //         widget.event?.eventBodies[0].imageUrl,
-              //     fit: BoxFit.fitWidth),
-              background: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  Image.network(
-                      widget.event?.eventImageURL ??
-                          widget.event?.eventBodies[0].imageUrl,
-                      fit: BoxFit.fitWidth),
-                  // This gradient ensures that the toolbar icons are distinct
-                  // against the background image.
-                  const DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment(0.0, -1.0),
-                        end: Alignment(0.0, -0.4),
-                        colors: <Color>[Color(0x60000000), Color(0x00000000)],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            // IconButton(
+            //   icon: Icon(Icons.search),
+            //   onPressed: () {},
+            // ),
+          ],
+        ),
+      ),
+      // bottomSheet: ,
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListView(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(28.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Center(
-                    child: Text(
-                      widget.event?.getSubTitle(),
-                      style: theme.textTheme.title,
-                    ),
-                  ),
-                  ButtonBar(
-                    mainAxisSize: MainAxisSize.max,
-                    alignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      buildUserStatusButton("Going", 2, theme, bloc),
-                      buildUserStatusButton("Interested", 1, theme, bloc),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 16.0,
-                  ),
                   Text(
-                    widget.event?.eventDescription,
-                    style: theme.textTheme.subhead,
+                    widget.event.eventName,
+                    style: theme.textTheme.display2
+                        .copyWith(color: Colors.black, fontFamily: "Bitter"),
                   ),
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  Divider(),
+                  SizedBox(height: 8.0),
+                  Text(widget.event.getSubTitle(),
+                      style: theme.textTheme.title),
                 ],
               ),
             ),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              widget.event.eventBodies
-                  .map((b) => _buildBodyTile(b, theme.textTheme))
-                  .toList(),
+            Image.network(
+                widget.event?.eventImageURL ??
+                    widget.event?.eventBodies[0].imageUrl,
+                fit: BoxFit.fitWidth),
+            SizedBox(
+              height: 16.0,
             ),
-          ),
-        ],
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 28.0, vertical: 16.0),
+              child: Text(
+                widget.event?.eventDescription,
+                style: theme.textTheme.subhead,
+              ),
+            ),
+            SizedBox(
+              height: 16.0,
+            ),
+            Divider(),
+            SizedBox(
+              height: 48.0,
+            )
+          ],
+        ),
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(OMIcons.share),
+        tooltip: "Share this event",
+        onPressed: () async {
+          await Share.share(
+              "Check this event: ${ShareURLMaker.getEventURL(widget.event)}");
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      persistentFooterButtons: footerButtons,
     );
   }
 

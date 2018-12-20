@@ -32,6 +32,7 @@ dependencies:
   markdown: ^2.0.2
   shared_preferences: ^0.4.3
   date_format: ^1.0.5
+  share: ^0.5.3
 
 dev_dependencies:
   flutter_test:
