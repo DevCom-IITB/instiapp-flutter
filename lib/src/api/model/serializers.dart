@@ -4,7 +4,6 @@ library serializers;
 import 'package:InstiApp/src/api/model/news_article.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
 import 'package:InstiApp/src/api/model/role.dart';
-import 'package:InstiApp/src/api/model/trainingblogpost.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
 import 'package:InstiApp/src/api/response/news_feed_response.dart';
@@ -14,7 +13,7 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
-import 'package:InstiApp/src/api/model/placementblogpost.dart';
+import 'package:InstiApp/src/api/model/blogpost.dart';
 
 JsonRepo standardSerializers = JsonRepo(serializers: [
   // Mess menu

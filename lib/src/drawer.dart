@@ -3,6 +3,7 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:scrollable_bottom_sheet/scrollable_bottom_sheet.dart';
 
 class DrawerOnly extends StatelessWidget {
   // For now not highlighting the current page in the drawer
@@ -177,157 +178,161 @@ class _BottomDrawerState extends State<BottomDrawer> {
   @override
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of(context).bloc;
-    return StreamBuilder<Session>(
-      stream: bloc.session,
-      builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
-        var theme = Theme.of(context);
-        var textStyle = TextStyle(fontWeight: FontWeight.bold);
-        List<Widget> navList;
-        navList = <Widget>[
-          SizedBox(
-            height: 18.0,
-          ),
-          // Divider(),
-          ListTile(
-            leading: snapshot.data?.profile?.profilePicUrl == null
-                ? CircleAvatar(child: Icon(OMIcons.person))
-                : CircleAvatar(
-                    backgroundImage:
-                        NetworkImage(snapshot.data?.profile?.profilePicUrl),
-                  ),
-            title: Text(
-              snapshot?.data?.profile?.name ?? 'Not Logged in',
-              style:
-                  theme.textTheme.body1.copyWith(fontWeight: FontWeight.bold),
+    return ScrollableBottomSheet(
+      snapAbove: true,
+      initialHeight: 300.0,
+      child: StreamBuilder<Session>(
+        stream: bloc.session,
+        builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
+          var theme = Theme.of(context);
+          var textStyle = TextStyle(fontWeight: FontWeight.bold);
+          List<Widget> navList;
+          navList = <Widget>[
+            SizedBox(
+              height: 18.0,
             ),
-            subtitle: snapshot.data != null
-                ? Text(snapshot.data?.profile?.rollNo,
-                    style: theme.textTheme.body1)
-                : RaisedButton(
-                    child: Text("Log in"),
-                    onPressed: () {
-                      Navigator.of(context).pushReplacementNamed('/');
-                    },
-                  ),
-          ),
-          Divider(),
-          NavListTile(
-            icon: OMIcons.dashboard,
-            selected: true,
-            title: "Feed",
-            onTap: () {
-              // changeSelection(1, navList);
-              var navi = Navigator.of(context);
-              navi.pop();
-              navi.pushNamed('/feed');
-            },
-          ),
-          NavListTile(
-            icon: OMIcons.rssFeed,
-            title: "News",
-            onTap: () {
-              // changeSelection(2, navList);
-            },
-          ),
-          NavListTile(
-            icon: OMIcons.search,
-            title: "Explore",
-            onTap: () {
-              // changeSelection(3, navList);
-            },
-          ),
-          NavListTile(
-            icon: OMIcons.restaurant,
-            title: "Mess Menu",
-            selected: true,
-            onTap: () {
-              // changeSelection(4, navList);
-              var navi = Navigator.of(context);
-              navi.pop();
-              navi.pushNamed('/mess');
-            },
-          ),
-          NavListTile(
-            icon: OMIcons.workOutline,
-            title: "Placement Blog",
-            selected: true,
-            onTap: () {
-              // changeSelection(5, navList);
-              var navi = Navigator.of(context);
-              navi.pop();
-              navi.pushNamed('/placeblog');
-            },
-          ),
-          NavListTile(
-            icon: OMIcons.workOutline,
-            title: "Internship Blog",
-            selected: true,
-            onTap: () {
-              // changeSelection(6, navList);
-              var navi = Navigator.of(context);
-              navi.pop();
-              navi.pushNamed('/trainblog');
-            },
-          ),
-          NavListTile(
-            icon: OMIcons.dateRange,
-            title: "Calender",
-            onTap: () {
-              // changeSelection(7, navList);
-            },
-          ),
-          NavListTile(
-            icon: OMIcons.map,
-            title: "Map",
-            onTap: () {
-              // changeSelection(8, navList);
-            },
-          ),
-          NavListTile(
-            icon: OMIcons.feedback,
-            title: "Complaints/Suggestions",
-            onTap: () {
-              // changeSelection(9, navList);
-            },
-          ),
-          NavListTile(
-            icon: OMIcons.link,
-            title: "Quick Links",
-            onTap: () {
-              // changeSelection(10, navList);
-            },
-          ),
-          NavListTile(
-            icon: OMIcons.settings,
-            title: "Settings",
-            onTap: () {
-              // changeSelection(11, navList);
-            },
-          ),
-        ];
-        if (snapshot.data?.sessionid != null) {
-          navList.add(NavListTile(
-            icon: OMIcons.exitToApp,
-            title: "Logout",
-            onTap: () {
-              bloc.logout();
-            },
-          ));
-        }
+            // Divider(),
+            ListTile(
+              leading: snapshot.data?.profile?.profilePicUrl == null
+                  ? CircleAvatar(child: Icon(OMIcons.person))
+                  : CircleAvatar(
+                      backgroundImage:
+                          NetworkImage(snapshot.data?.profile?.profilePicUrl),
+                    ),
+              title: Text(
+                snapshot?.data?.profile?.name ?? 'Not Logged in',
+                style:
+                    theme.textTheme.body1.copyWith(fontWeight: FontWeight.bold),
+              ),
+              subtitle: snapshot.data != null
+                  ? Text(snapshot.data?.profile?.rollNo,
+                      style: theme.textTheme.body1)
+                  : RaisedButton(
+                      child: Text("Log in"),
+                      onPressed: () {
+                        Navigator.of(context).pushReplacementNamed('/');
+                      },
+                    ),
+            ),
+            Divider(),
+            NavListTile(
+              icon: OMIcons.dashboard,
+              selected: true,
+              title: "Feed",
+              onTap: () {
+                // changeSelection(1, navList);
+                var navi = Navigator.of(context);
+                navi.pop();
+                navi.pushNamed('/feed');
+              },
+            ),
+            NavListTile(
+              icon: OMIcons.rssFeed,
+              title: "News",
+              onTap: () {
+                // changeSelection(2, navList);
+              },
+            ),
+            NavListTile(
+              icon: OMIcons.search,
+              title: "Explore",
+              onTap: () {
+                // changeSelection(3, navList);
+              },
+            ),
+            NavListTile(
+              icon: OMIcons.restaurant,
+              title: "Mess Menu",
+              selected: true,
+              onTap: () {
+                // changeSelection(4, navList);
+                var navi = Navigator.of(context);
+                navi.pop();
+                navi.pushNamed('/mess');
+              },
+            ),
+            NavListTile(
+              icon: OMIcons.workOutline,
+              title: "Placement Blog",
+              selected: true,
+              onTap: () {
+                // changeSelection(5, navList);
+                var navi = Navigator.of(context);
+                navi.pop();
+                navi.pushNamed('/placeblog');
+              },
+            ),
+            NavListTile(
+              icon: OMIcons.workOutline,
+              title: "Internship Blog",
+              selected: true,
+              onTap: () {
+                // changeSelection(6, navList);
+                var navi = Navigator.of(context);
+                navi.pop();
+                navi.pushNamed('/trainblog');
+              },
+            ),
+            NavListTile(
+              icon: OMIcons.dateRange,
+              title: "Calender",
+              onTap: () {
+                // changeSelection(7, navList);
+              },
+            ),
+            NavListTile(
+              icon: OMIcons.map,
+              title: "Map",
+              onTap: () {
+                // changeSelection(8, navList);
+              },
+            ),
+            NavListTile(
+              icon: OMIcons.feedback,
+              title: "Complaints/Suggestions",
+              onTap: () {
+                // changeSelection(9, navList);
+              },
+            ),
+            NavListTile(
+              icon: OMIcons.link,
+              title: "Quick Links",
+              onTap: () {
+                // changeSelection(10, navList);
+              },
+            ),
+            NavListTile(
+              icon: OMIcons.settings,
+              title: "Settings",
+              onTap: () {
+                // changeSelection(11, navList);
+              },
+            ),
+          ];
+          if (snapshot.data?.sessionid != null) {
+            navList.add(NavListTile(
+              icon: OMIcons.exitToApp,
+              title: "Logout",
+              onTap: () {
+                bloc.logout();
+              },
+            ));
+          }
 
-        // For now not highlighting the current page
-        // NavListTile a = navList[activeTile];
-        // a.setSelection(true);
+          // For now not highlighting the current page
+          // NavListTile a = navList[activeTile];
+          // a.setSelection(true);
 
-        return Material(
-          // elevation: 16.0,
-          // decoration: BoxDecoration(
-          //     border: Border(top: BorderSide(color: theme.disabledColor))),
-          child: Column(
-            children: navList,
-          ),
-        );
-      },
+          return Material(
+            // elevation: 16.0,
+            // decoration: BoxDecoration(
+            //     border: Border(top: BorderSide(color: theme.disabledColor))),
+            child: Column(
+              children: navList,
+            ),
+          );
+        },
+      ),
     );
   }
 }

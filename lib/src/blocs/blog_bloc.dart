@@ -1,17 +1,23 @@
 import 'dart:collection';
 
-import 'package:InstiApp/src/api/model/placementblogpost.dart';
+import 'package:flutter/foundation.dart';
+import 'package:InstiApp/src/api/model/blogpost.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'dart:math';
 
-class PlacementBlogBloc {
+enum BlogType{
+  Placement,
+  Training
+}
+
+class BlogBloc {
   // Streams
-  Stream<UnmodifiableListView<PlacementBlogPost>> get placementBlog =>
-      _placementBlogSubject.stream;
-  final _placementBlogSubject =
-      BehaviorSubject<UnmodifiableListView<PlacementBlogPost>>();
+  Stream<UnmodifiableListView<BlogPost>> get blog =>
+      _blogSubject.stream;
+  final _blogSubject =
+      BehaviorSubject<UnmodifiableListView<BlogPost>>();
 
   Sink<int> get inPostIndex => _indexController.sink;
   PublishSubject<int> _indexController = PublishSubject<int>();
@@ -23,7 +29,10 @@ class PlacementBlogBloc {
   // parent bloc
   InstiAppBloc bloc;
 
-  PlacementBlogBloc(this.bloc) {
+  // Training or Placement
+  final BlogType blogType;
+
+  BlogBloc(this.bloc, {@required this.blogType}) {
     _setIndexListener();
   }
 
@@ -34,7 +43,7 @@ class PlacementBlogBloc {
         .listen(_handleIndexes);
   }
 
-  final _fetchPages = <int, List<PlacementBlogPost>>{};
+  final _fetchPages = <int, List<BlogPost>>{};
 
   final _pagesBeingFetched = Set<int>();
 
@@ -58,9 +67,9 @@ class PlacementBlogBloc {
     return "${week[dt.weekday - 1]}, ${month[dt.month - 1]} ${dt.day.toString()}${dt.year == DateTime.now().year ? "" : dt.year.toString()}, ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}";
   }
 
-  Future<List<PlacementBlogPost>> getBlogPage(int page) async {
-    var sessId = bloc.getSessionIdHeader(); 
-    var posts = await bloc.client.getPlacementBlogFeed(bloc.getSessionIdHeader(),
+  Future<List<BlogPost>> getBlogPage(int page) async {
+    var httpGetFunc = blogType == BlogType.Placement ? bloc.client.getPlacementBlogFeed : bloc.client.getTrainingBlogFeed;
+    var posts = await httpGetFunc(bloc.getSessionIdHeader(),
         page * _noOfPostsPerPage, _noOfPostsPerPage, query);
     var tableParse = markdown.TableSyntax();
     posts.forEach((p) {
@@ -86,7 +95,7 @@ class PlacementBlogBloc {
           _pagesBeingFetched.add(pageIndex);
           // Fetch it
           getBlogPage(pageIndex)
-              .then((List<PlacementBlogPost> fetchedPage) =>
+              .then((List<BlogPost> fetchedPage) =>
                   _handleFetchedPage(fetchedPage, pageIndex));
         }
       }
@@ -98,7 +107,7 @@ class PlacementBlogBloc {
   /// 1) record it
   /// 2) notify everyone who might be interested in knowing it
   ///
-  void _handleFetchedPage(List<PlacementBlogPost> page, int pageIndex) {
+  void _handleFetchedPage(List<BlogPost> page, int pageIndex) {
     // Remember the page
     _fetchPages[pageIndex] = page;
     // Remove it from the ones being fetched
@@ -109,7 +118,7 @@ class PlacementBlogBloc {
     // which respect the sequence (since MovieCard are in sequence)
     // therefore, we need to iterate through the pages that are
     // actually fetched and stop if there is a gap.
-    List<PlacementBlogPost> posts = <PlacementBlogPost>[];
+    List<BlogPost> posts = <BlogPost>[];
     List<int> pageIndexes = _fetchPages.keys.toList();
 
     final int minPageIndex = pageIndexes.reduce(min);
@@ -130,7 +139,7 @@ class PlacementBlogBloc {
 
     // Only notify when there are posts
     if (posts.length > 0) {
-      _placementBlogSubject.add(UnmodifiableListView<PlacementBlogPost>(posts));
+      _blogSubject.add(UnmodifiableListView<BlogPost>(posts));
     }
   }
 
@@ -138,7 +147,7 @@ class PlacementBlogBloc {
     _indexController.close();
     _fetchPages.clear();
     _pagesBeingFetched.clear();
-    _placementBlogSubject.add(UnmodifiableListView([]));
+    _blogSubject.add(UnmodifiableListView([]));
 
     _indexController = PublishSubject<int>();
     _setIndexListener();
