@@ -61,10 +61,6 @@ class _EventPageState extends State<EventPage> {
     }
     return Scaffold(
       key: _scaffoldKey,
-      // bottomSheet: BottomSheet(
-      //   onClosing: () {},
-      //   builder: (context) => DrawerOnly(),
-      // ),
       bottomNavigationBar: BottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
@@ -84,11 +80,7 @@ class _EventPageState extends State<EventPage> {
                       });
                       _scaffoldKey.currentState
                           .showBottomSheet((context) {
-                            return ScrollableBottomSheet(
-                              snapAbove: true,
-                              child: BottomDrawer(),
-                              initialHeight: 250.0,
-                            );
+                            return BottomDrawer();
                           })
                           .closed
                           .whenComplete(() {

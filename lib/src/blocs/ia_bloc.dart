@@ -1,13 +1,12 @@
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
-import 'package:InstiApp/src/blocs/training_bloc.dart';
+import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
-import 'package:InstiApp/src/api/model/placementblogpost.dart';
+import 'package:InstiApp/src/api/model/blogpost.dart';
 import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/user.dart';
-import 'package:InstiApp/src/blocs/placement_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'dart:collection';
 import 'package:rxdart/rxdart.dart';
@@ -27,8 +26,8 @@ class InstiAppBloc {
   final _eventsSubject = BehaviorSubject<UnmodifiableListView<Event>>();
 
   // Sub Blocs
-  PlacementBlogBloc placementBloc;
-  TrainingBlogBloc trainingBloc;
+  BlogBloc placementBloc;
+  BlogBloc trainingBloc;
 
   // actual current state
   Session currSession;
@@ -43,8 +42,12 @@ class InstiAppBloc {
 
   InstiAppBloc() {
     globalClient = IOClient();
-    placementBloc = PlacementBlogBloc(this);
-    trainingBloc = TrainingBlogBloc(this);
+    placementBloc = BlogBloc(this, blogType: BlogType.Placement);
+    trainingBloc = BlogBloc(this, blogType: BlogType.Training);
+  }
+
+  BlogBloc getBlogBloc(BlogType blogType) {
+    return blogType == BlogType.Placement ? placementBloc : trainingBloc;
   }
 
   String getSessionIdHeader() {

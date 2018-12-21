@@ -66,11 +66,7 @@ class _MessPageState extends State<MessPage> {
                       });
                       _scaffoldKey.currentState
                           .showBottomSheet((context) {
-                            return ScrollableBottomSheet(
-                              snapAbove: true,
-                              child: BottomDrawer(),
-                              initialHeight: 250.0,
-                            );
+                            return BottomDrawer();
                           })
                           .closed
                           .whenComplete(() {
@@ -169,7 +165,6 @@ class _MessPageState extends State<MessPage> {
   }
 
   Widget _buildSingleDayMess(HostelMess mess) {
-    var theme = Theme.of(context);
     var localTheme = Theme.of(context).textTheme;
     return Material(
       child: Column(
