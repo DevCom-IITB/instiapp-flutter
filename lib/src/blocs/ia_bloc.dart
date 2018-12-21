@@ -1,6 +1,7 @@
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
+import 'package:InstiApp/src/blocs/drawer_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
@@ -28,6 +29,7 @@ class InstiAppBloc {
   // Sub Blocs
   BlogBloc placementBloc;
   BlogBloc trainingBloc;
+  DrawerBloc drawerState;
 
   // actual current state
   Session currSession;
@@ -44,6 +46,7 @@ class InstiAppBloc {
     globalClient = IOClient();
     placementBloc = BlogBloc(this, blogType: BlogType.Placement);
     trainingBloc = BlogBloc(this, blogType: BlogType.Training);
+    drawerState = DrawerBloc(homepageName, highlightPageIndexVal: 3);
   }
 
   BlogBloc getBlogBloc(BlogType blogType) {

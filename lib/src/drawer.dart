@@ -1,3 +1,6 @@
+import 'dart:collection';
+
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
@@ -170,6 +173,10 @@ class DrawerOnly extends StatelessWidget {
 }
 
 class BottomDrawer extends StatefulWidget {
+  static void setPageIndex(InstiAppBloc bloc, int pageIndex) {
+    bloc.drawerState.setPageIndex(pageIndex);
+  }
+
   @override
   _BottomDrawerState createState() => _BottomDrawerState();
 }
@@ -178,6 +185,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
   @override
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of(context).bloc;
+    var drawerState = bloc.drawerState;
     return ScrollableBottomSheet(
       snapAbove: true,
       initialHeight: 300.0,
@@ -186,199 +194,201 @@ class _BottomDrawerState extends State<BottomDrawer> {
         builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
           var theme = Theme.of(context);
           var textStyle = TextStyle(fontWeight: FontWeight.bold);
-          List<Widget> navList;
-          navList = <Widget>[
-            SizedBox(
-              height: 18.0,
-            ),
-            // Divider(),
-            ListTile(
-              leading: snapshot.data?.profile?.profilePicUrl == null
-                  ? CircleAvatar(child: Icon(OMIcons.person))
-                  : CircleAvatar(
-                      backgroundImage:
-                          NetworkImage(snapshot.data?.profile?.profilePicUrl),
-                    ),
-              title: Text(
-                snapshot?.data?.profile?.name ?? 'Not Logged in',
-                style:
-                    theme.textTheme.body1.copyWith(fontWeight: FontWeight.bold),
-              ),
-              subtitle: snapshot.data != null
-                  ? Text(snapshot.data?.profile?.rollNo,
-                      style: theme.textTheme.body1)
-                  : RaisedButton(
-                      child: Text("Log in"),
-                      onPressed: () {
-                        Navigator.of(context).pushReplacementNamed('/');
-                      },
-                    ),
-            ),
-            Divider(),
-            NavListTile(
-              icon: OMIcons.dashboard,
-              selected: true,
-              title: "Feed",
-              onTap: () {
-                // changeSelection(1, navList);
-                var navi = Navigator.of(context);
-                navi.pop();
-                navi.pushNamed('/feed');
-              },
-            ),
-            NavListTile(
-              icon: OMIcons.rssFeed,
-              title: "News",
-              onTap: () {
-                // changeSelection(2, navList);
-              },
-            ),
-            NavListTile(
-              icon: OMIcons.search,
-              title: "Explore",
-              onTap: () {
-                // changeSelection(3, navList);
-              },
-            ),
-            NavListTile(
-              icon: OMIcons.restaurant,
-              title: "Mess Menu",
-              selected: true,
-              onTap: () {
-                // changeSelection(4, navList);
-                var navi = Navigator.of(context);
-                navi.pop();
-                navi.pushNamed('/mess');
-              },
-            ),
-            NavListTile(
-              icon: OMIcons.workOutline,
-              title: "Placement Blog",
-              selected: true,
-              onTap: () {
-                // changeSelection(5, navList);
-                var navi = Navigator.of(context);
-                navi.pop();
-                navi.pushNamed('/placeblog');
-              },
-            ),
-            NavListTile(
-              icon: OMIcons.workOutline,
-              title: "Internship Blog",
-              selected: true,
-              onTap: () {
-                // changeSelection(6, navList);
-                var navi = Navigator.of(context);
-                navi.pop();
-                navi.pushNamed('/trainblog');
-              },
-            ),
-            NavListTile(
-              icon: OMIcons.dateRange,
-              title: "Calender",
-              onTap: () {
-                // changeSelection(7, navList);
-              },
-            ),
-            NavListTile(
-              icon: OMIcons.map,
-              title: "Map",
-              onTap: () {
-                // changeSelection(8, navList);
-              },
-            ),
-            NavListTile(
-              icon: OMIcons.feedback,
-              title: "Complaints/Suggestions",
-              onTap: () {
-                // changeSelection(9, navList);
-              },
-            ),
-            NavListTile(
-              icon: OMIcons.link,
-              title: "Quick Links",
-              onTap: () {
-                // changeSelection(10, navList);
-              },
-            ),
-            NavListTile(
-              icon: OMIcons.settings,
-              title: "Settings",
-              onTap: () {
-                // changeSelection(11, navList);
-              },
-            ),
-          ];
-          if (snapshot.data?.sessionid != null) {
-            navList.add(NavListTile(
-              icon: OMIcons.exitToApp,
-              title: "Logout",
-              onTap: () {
-                bloc.logout();
-              },
-            ));
-          }
 
-          // For now not highlighting the current page
-          // NavListTile a = navList[activeTile];
-          // a.setSelection(true);
+          return StreamBuilder<int>(
+              stream: drawerState.highlightPageIndex,
+              initialData: 0,
+              builder:
+                  (BuildContext context, AsyncSnapshot<int> indexSnapshot) {
+                Map<int, NavListTile> navMap = {
+                  0: NavListTile(
+                    icon: OMIcons.dashboard,
+                    selected: true,
+                    title: "Feed",
+                    onTap: () {
+                      // changeSelection(1, navList);
+                      var navi = Navigator.of(context);
+                      navi.pop();
+                      navi.pushNamed('/feed');
+                    },
+                  ),
+                  1: NavListTile(
+                    icon: OMIcons.rssFeed,
+                    title: "News",
+                    onTap: () {
+                      // changeSelection(2, navList);
+                    },
+                  ),
+                  2: NavListTile(
+                    icon: OMIcons.search,
+                    title: "Explore",
+                    onTap: () {
+                      // changeSelection(3, navList);
+                    },
+                  ),
+                  3: NavListTile(
+                    icon: OMIcons.restaurant,
+                    title: "Mess Menu",
+                    selected: true,
+                    onTap: () {
+                      // changeSelection(4, navList);
+                      var navi = Navigator.of(context);
+                      navi.pop();
+                      navi.pushNamed('/mess');
+                    },
+                  ),
+                  4: NavListTile(
+                    icon: OMIcons.workOutline,
+                    title: "Placement Blog",
+                    selected: true,
+                    onTap: () {
+                      // changeSelection(5, navList);
+                      var navi = Navigator.of(context);
+                      navi.pop();
+                      navi.pushNamed('/placeblog');
+                    },
+                  ),
+                  5: NavListTile(
+                    icon: OMIcons.workOutline,
+                    title: "Internship Blog",
+                    selected: true,
+                    onTap: () {
+                      // changeSelection(6, navList);
+                      var navi = Navigator.of(context);
+                      navi.pop();
+                      navi.pushNamed('/trainblog');
+                    },
+                  ),
+                  6: NavListTile(
+                    icon: OMIcons.dateRange,
+                    title: "Calender",
+                    onTap: () {
+                      // changeSelection(7, navList);
+                    },
+                  ),
+                  7: NavListTile(
+                    icon: OMIcons.map,
+                    title: "Map",
+                    onTap: () {
+                      // changeSelection(8, navList);
+                    },
+                  ),
+                  8: NavListTile(
+                    icon: OMIcons.feedback,
+                    title: "Complaints/Suggestions",
+                    onTap: () {
+                      // changeSelection(9, navList);
+                    },
+                  ),
+                  9: NavListTile(
+                    icon: OMIcons.link,
+                    title: "Quick Links",
+                    onTap: () {
+                      // changeSelection(10, navList);
+                    },
+                  ),
+                  10: NavListTile(
+                    icon: OMIcons.settings,
+                    title: "Settings",
+                    onTap: () {
+                      // changeSelection(11, navList);
+                    },
+                  ),
+                };
 
-          return Material(
-            // elevation: 16.0,
-            // decoration: BoxDecoration(
-            //     border: Border(top: BorderSide(color: theme.disabledColor))),
-            child: Column(
-              children: navList,
-            ),
-          );
+                List<Widget> navList;
+                navList = <Widget>[
+                  SizedBox(
+                    height: 18.0,
+                  ),
+                  // Divider(),
+                  ListTile(
+                    leading: snapshot.data?.profile?.profilePicUrl == null
+                        ? CircleAvatar(child: Icon(OMIcons.person))
+                        : CircleAvatar(
+                            backgroundImage: NetworkImage(
+                                snapshot.data?.profile?.profilePicUrl),
+                          ),
+                    title: Text(
+                      snapshot?.data?.profile?.name ?? 'Not Logged in',
+                      style: theme.textTheme.body1
+                          .copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: snapshot.data != null
+                        ? Text(snapshot.data?.profile?.rollNo,
+                            style: theme.textTheme.body1)
+                        : RaisedButton(
+                            child: Text("Log in"),
+                            onPressed: () {
+                              Navigator.of(context).pushReplacementNamed('/');
+                            },
+                          ),
+                  ),
+                  Divider(),
+                ];
+                navList.addAll(navMap.values);
+                if (snapshot.data?.sessionid != null) {
+                  navList.add(NavListTile(
+                    icon: OMIcons.exitToApp,
+                    title: "Logout",
+                    onTap: () {
+                      bloc.logout();
+                    },
+                  ));
+                }
+
+                // Selecting which NavListTile to highlight
+                navMap[indexSnapshot.data].setHighlighted(true);
+                
+                return Material(
+                  child: Column(
+                    children: navList,
+                  ),
+                );
+              });
         },
       ),
     );
   }
 }
 
-class NavListTile extends StatefulWidget {
+class NavListTile extends StatelessWidget {
   final IconData icon;
   final String title;
   final GestureTapCallback onTap;
   final bool selected;
+  bool highlight;
 
-  Stream<bool> get selectedStream => _selectedSubject.stream;
-  final _selectedSubject = BehaviorSubject<bool>();
-
-  void setSelection(bool selection) {
-    _selectedSubject.add(selection);
+  void setHighlighted(bool selection) {
+    highlight = selection;
   }
 
-  NavListTile({this.icon, this.title, this.onTap, this.selected = false});
-
-  @override
-  NavListTileState createState() {
-    return new NavListTileState(this.selected);
-  }
-}
-
-class NavListTileState extends State<NavListTile> {
-  bool selected;
-
-  NavListTileState(this.selected);
+  NavListTile(
+      {this.icon,
+      this.title,
+      this.onTap,
+      this.selected = false,
+      this.highlight = false});
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: widget.selectedStream,
-        initialData: selected,
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          return ListTile(
-            selected: snapshot.data,
-            enabled: true,
-            leading: Icon(this.widget.icon),
-            title: Text(
-              this.widget.title,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            onTap: this.widget.onTap,
-          );
-        });
+    var theme = Theme.of(context);
+    return Container(
+      decoration: !highlight
+          ? null
+          : BoxDecoration(
+              color: theme.accentColor.withAlpha(20),
+              borderRadius: BorderRadius.all(const Radius.circular(48.0))),
+      child: ListTile(
+        selected: selected,
+        enabled: true,
+        leading: Icon(this.icon),
+        title: Text(
+          this.title,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        onTap: this.onTap,
+      ),
+    );
   }
 }

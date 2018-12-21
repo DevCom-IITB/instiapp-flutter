@@ -14,6 +14,7 @@ class FeedPage extends StatefulWidget {
 
 class _FeedPageState extends State<FeedPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  bool _bottomSheetActive = false;
 
   @override
   Widget build(BuildContext context) {
@@ -22,68 +23,105 @@ class _FeedPageState extends State<FeedPage> {
 
     bloc.updateEvents();
 
+    var footerButtons = null;
+
     return Scaffold(
       key: _scaffoldKey,
-      drawer: DrawerOnly(),
-      body: RefreshIndicator(
-        onRefresh: () => bloc.updateEvents(),
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              leading: IconButton(
-                icon: Icon(
-                  OMIcons.menu,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  _scaffoldKey.currentState.openDrawer();
-                },
+      bottomNavigationBar: BottomAppBar(
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              tooltip: "Show bottom sheet",
+              icon: Icon(
+                OMIcons.menu,
+                semanticLabel: "Show bottom sheet",
               ),
-              title: Row(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: ImageIcon(
-                      AssetImage('assets/lotus.png'),
-                      color: Colors.white,
-                    ),
-                  ),
-                  Text("Feed",
-                      style: theme.textTheme.headline
-                          .copyWith(fontFamily: "Bitter", color: Colors.white)),
-                ],
-              ),
+              onPressed: _bottomSheetActive
+                  ? null
+                  : () {
+                      setState(() {
+                        //disable button
+                        _bottomSheetActive = true;
+                      });
+                      _scaffoldKey.currentState
+                          .showBottomSheet((context) {
+                            BottomDrawer.setPageIndex(bloc, 0);
+                            return BottomDrawer();
+                          })
+                          .closed
+                          .whenComplete(() {
+                            setState(() {
+                              _bottomSheetActive = false;
+                            });
+                          });
+                    },
             ),
-            StreamBuilder(
-              stream: bloc.events,
-              builder: (context,
-                  AsyncSnapshot<UnmodifiableListView<Event>> snapshot) {
-                if (snapshot.hasData) {
-                  if (snapshot.data.length > 0) {
-                    return SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                          (context, index) => _buildEvent(snapshot.data[index]),
-                          childCount: snapshot.data.length),
-                    );
-                  } else {
-                    return SliverToBoxAdapter(
-                      child: Center(
-                        child: Text("No upcoming events"),
-                      ),
-                    );
-                  }
-                } else {
-                  return SliverToBoxAdapter(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
-              },
-            )
           ],
         ),
       ),
+      body: AnimatedContainer(
+        duration: Duration(milliseconds: 500),
+        foregroundDecoration: _bottomSheetActive
+            ? BoxDecoration(
+                color: Color.fromRGBO(100, 100, 100, 12),
+              )
+            : null,
+        child: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: () => bloc.updateEvents(),
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          "Feed",
+                          style: theme.textTheme.display2.copyWith(
+                              color: Colors.black, fontFamily: "Bitter"),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                StreamBuilder(
+                  stream: bloc.events,
+                  builder: (context,
+                      AsyncSnapshot<UnmodifiableListView<Event>> snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data.length > 0) {
+                        return SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                              (context, index) =>
+                                  _buildEvent(snapshot.data[index]),
+                              childCount: snapshot.data.length),
+                        );
+                      } else {
+                        return SliverToBoxAdapter(
+                          child: Center(
+                            child: Text("No upcoming events"),
+                          ),
+                        );
+                      }
+                    } else {
+                      return SliverToBoxAdapter(
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                  },
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+      persistentFooterButtons: footerButtons,
     );
   }
 
