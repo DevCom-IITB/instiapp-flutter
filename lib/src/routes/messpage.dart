@@ -66,6 +66,7 @@ class _MessPageState extends State<MessPage> {
                       });
                       _scaffoldKey.currentState
                           .showBottomSheet((context) {
+                            BottomDrawer.setPageIndex(bloc, 3);
                             return BottomDrawer();
                           })
                           .closed
@@ -80,7 +81,7 @@ class _MessPageState extends State<MessPage> {
         ),
       ),
       body: AnimatedContainer(
-        duration: Duration(milliseconds: 100),
+        duration: Duration(milliseconds: 500),
         foregroundDecoration: _bottomSheetActive
             ? BoxDecoration(
                 color: Color.fromRGBO(100, 100, 100, 12),
