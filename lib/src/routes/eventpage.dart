@@ -61,36 +61,28 @@ class _EventPageState extends State<EventPage> {
     }
     return Scaffold(
       key: _scaffoldKey,
-      bottomNavigationBar: BottomAppBar(
-        child: new Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            IconButton(
-              icon: Icon(
-                OMIcons.menu,
-                semanticLabel: "Show bottom sheet",
+      bottomSheet: BottomDrawer(
+        child: BottomAppBar(
+          child: new Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(
+                  OMIcons.menu,
+                  semanticLabel: "Show bottom sheet",
+                ),
+                onPressed: _bottomSheetActive
+                    ? null
+                    : () {
+                        setState(() {
+                          //disable button
+                          _bottomSheetActive = true;
+                        });
+                      },
               ),
-              onPressed: _bottomSheetActive
-                  ? null
-                  : () {
-                      setState(() {
-                        //disable button
-                        _bottomSheetActive = true;
-                      });
-                      _scaffoldKey.currentState
-                          .showBottomSheet((context) {
-                            return BottomDrawer();
-                          })
-                          .closed
-                          .whenComplete(() {
-                            setState(() {
-                              _bottomSheetActive = false;
-                            });
-                          });
-                    },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       // bottomSheet: ,
@@ -107,8 +99,7 @@ class _EventPageState extends State<EventPage> {
                       .copyWith(color: Colors.black, fontFamily: "Bitter"),
                 ),
                 SizedBox(height: 8.0),
-                Text(widget.event.getSubTitle(),
-                    style: theme.textTheme.title),
+                Text(widget.event.getSubTitle(), style: theme.textTheme.title),
               ],
             ),
           ),

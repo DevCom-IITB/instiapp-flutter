@@ -46,37 +46,40 @@ class _MessPageState extends State<MessPage> {
 
     return Scaffold(
       key: _scaffoldKey,
-      bottomNavigationBar: BottomAppBar(
-        child: new Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            IconButton(
-              tooltip: "Show bottom sheet",
-              icon: Icon(
-                OMIcons.menu,
-                semanticLabel: "Show bottom sheet",
+      bottomSheet: BottomDrawer(
+        child: BottomAppBar(
+          elevation: 0.0,
+          child: new Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              IconButton(
+                tooltip: "Show bottom sheet",
+                icon: Icon(
+                  OMIcons.menu,
+                  semanticLabel: "Show bottom sheet",
+                ),
+                onPressed: _bottomSheetActive
+                    ? null
+                    : () {
+                        // setState(() {
+                        //   //disable button
+                        //   _bottomSheetActive = true;
+                        // });
+                        // _scaffoldKey.currentState
+                        //     .showBottomSheet((context) {
+                        //       return BottomDrawer();
+                        //     })
+                        //     .closed
+                        //     .whenComplete(() {
+                        //       setState(() {
+                        //         _bottomSheetActive = false;
+                        //       });
+                        //     });
+                      },
               ),
-              onPressed: _bottomSheetActive
-                  ? null
-                  : () {
-                      setState(() {
-                        //disable button
-                        _bottomSheetActive = true;
-                      });
-                      _scaffoldKey.currentState
-                          .showBottomSheet((context) {
-                            return BottomDrawer();
-                          })
-                          .closed
-                          .whenComplete(() {
-                            setState(() {
-                              _bottomSheetActive = false;
-                            });
-                          });
-                    },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       body: AnimatedContainer(

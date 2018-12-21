@@ -170,6 +170,9 @@ class DrawerOnly extends StatelessWidget {
 }
 
 class BottomDrawer extends StatefulWidget {
+  final Widget child;
+
+  BottomDrawer({@required this.child});
   @override
   _BottomDrawerState createState() => _BottomDrawerState();
 }
@@ -180,7 +183,8 @@ class _BottomDrawerState extends State<BottomDrawer> {
     var bloc = BlocProvider.of(context).bloc;
     return ScrollableBottomSheet(
       snapAbove: true,
-      initialHeight: 300.0,
+      minimumHeight: 60.0,
+      initialHeight: 60.0,
       child: StreamBuilder<Session>(
         stream: bloc.session,
         builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
@@ -188,6 +192,33 @@ class _BottomDrawerState extends State<BottomDrawer> {
           var textStyle = TextStyle(fontWeight: FontWeight.bold);
           List<Widget> navList;
           navList = <Widget>[
+            Container(
+              // decoration: BoxDecoration(
+              //   border: Border(top: BorderSide(width: 2)),
+              // ),
+              color: Colors.transparent,
+              child: SizedBox(
+                height: 12.0,
+                width: 24.0,
+                child: Icon(OMIcons.maximize, size: 24)
+              ),
+            ),
+            widget.child ??
+                BottomAppBar(
+                    child: new Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    IconButton(
+                      tooltip: "Show bottom sheet",
+                      icon: Icon(
+                        OMIcons.menu,
+                        semanticLabel: "Show bottom sheet",
+                      ),
+                      onPressed: () {},
+                    ),
+                  ],
+                )),
             SizedBox(
               height: 18.0,
             ),
@@ -222,7 +253,6 @@ class _BottomDrawerState extends State<BottomDrawer> {
               onTap: () {
                 // changeSelection(1, navList);
                 var navi = Navigator.of(context);
-                navi.pop();
                 navi.pushNamed('/feed');
               },
             ),
@@ -247,7 +277,6 @@ class _BottomDrawerState extends State<BottomDrawer> {
               onTap: () {
                 // changeSelection(4, navList);
                 var navi = Navigator.of(context);
-                navi.pop();
                 navi.pushNamed('/mess');
               },
             ),
@@ -258,7 +287,6 @@ class _BottomDrawerState extends State<BottomDrawer> {
               onTap: () {
                 // changeSelection(5, navList);
                 var navi = Navigator.of(context);
-                navi.pop();
                 navi.pushNamed('/placeblog');
               },
             ),
@@ -269,7 +297,6 @@ class _BottomDrawerState extends State<BottomDrawer> {
               onTap: () {
                 // changeSelection(6, navList);
                 var navi = Navigator.of(context);
-                navi.pop();
                 navi.pushNamed('/trainblog');
               },
             ),
