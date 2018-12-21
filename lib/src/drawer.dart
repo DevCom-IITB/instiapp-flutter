@@ -319,9 +319,10 @@ class _BottomDrawerState extends State<BottomDrawer> {
         // NavListTile a = navList[activeTile];
         // a.setSelection(true);
 
-        return Container(
-          decoration: BoxDecoration(
-              border: Border(top: BorderSide(color: theme.disabledColor))),
+        return Material(
+          // elevation: 16.0,
+          // decoration: BoxDecoration(
+          //     border: Border(top: BorderSide(color: theme.disabledColor))),
           child: Column(
             children: navList,
           ),

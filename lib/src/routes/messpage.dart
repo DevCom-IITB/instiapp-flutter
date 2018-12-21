@@ -4,6 +4,7 @@ import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:scrollable_bottom_sheet/scrollable_bottom_sheet.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -25,81 +26,116 @@ class _MessPageState extends State<MessPage> {
 
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
+  bool _bottomSheetActive = false;
+
   @override
   void initState() {
-    super.initState();     
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
-    
+
     bloc.updateHostels();
+
+    var footerButtons = [
+      buildDropdownButton(),
+    ];
 
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            OMIcons.menu,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            _scaffoldKey.currentState.openDrawer();
-          },
-        ),
-        title: Row(
+      bottomNavigationBar: BottomAppBar(
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: ImageIcon(
-                AssetImage('assets/lotus.png'),
-                color: Colors.white,
+            IconButton(
+              tooltip: "Show bottom sheet",
+              icon: Icon(
+                OMIcons.menu,
+                semanticLabel: "Show bottom sheet",
               ),
+              onPressed: _bottomSheetActive
+                  ? null
+                  : () {
+                      setState(() {
+                        //disable button
+                        _bottomSheetActive = true;
+                      });
+                      _scaffoldKey.currentState
+                          .showBottomSheet((context) {
+                            return ScrollableBottomSheet(
+                              snapAbove: true,
+                              child: BottomDrawer(),
+                              initialHeight: 250.0,
+                            );
+                          })
+                          .closed
+                          .whenComplete(() {
+                            setState(() {
+                              _bottomSheetActive = false;
+                            });
+                          });
+                    },
             ),
-            Text("Mess",
-                style: theme.textTheme.headline
-                    .copyWith(fontFamily: "Bitter", color: Colors.white)),
           ],
         ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(48.0),
-          child: Container(
-            color: Colors.white,
-            height: 48.0,
-            padding: EdgeInsets.only(left: 16.0),
-            alignment: Alignment.centerLeft,
-            child: buildDropdownButton(),
-          ),
+      ),
+      body: AnimatedContainer(
+        duration: Duration(milliseconds: 100),
+        foregroundDecoration: _bottomSheetActive
+            ? BoxDecoration(
+                color: Color.fromRGBO(100, 100, 100, 12),
+              )
+            : null,
+        child: ListView(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(28.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "Mess Menu",
+                    style: theme.textTheme.display2
+                        .copyWith(color: Colors.black, fontFamily: "Bitter"),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 28.0),
+              child: StreamBuilder<UnmodifiableListView<Hostel>>(
+                stream: bloc.hostels,
+                builder: (BuildContext context,
+                    AsyncSnapshot<UnmodifiableListView<Hostel>> hostels) {
+                  if (currHostel == "0")
+                    currHostel = bloc.currSession?.profile?.hostel ?? "1";
+                  if (hostels.hasData) {
+                    var currMess = hostels.data
+                        .firstWhere((h) => h.shortName == currHostel)
+                        .mess
+                      ..sort((h1, h2) => h1.compareTo(h2));
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: currMess.map(_buildSingleDayMess).toList(),
+                    );
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: theme.accentColor,
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
         ),
       ),
-      drawer: DrawerOnly(),
-      body: StreamBuilder<UnmodifiableListView<Hostel>>(
-        stream: bloc.hostels,
-        builder: (BuildContext context,
-            AsyncSnapshot<UnmodifiableListView<Hostel>> hostels) {
-          if (currHostel == "0")
-            currHostel = bloc.currSession?.profile?.hostel ?? "1";
-          if (hostels.hasData) {
-            var currMess = hostels.data
-                .firstWhere((h) => h.shortName == currHostel)
-                .mess
-              ..sort((h1, h2) => h1.compareTo(h2));
-            return ListView(
-              children: currMess.map(_buildSingleDayMess).toList(),
-              // children: <Widget>[],
-              physics: BouncingScrollPhysics(),
-            );
-          } else {
-            return Center(
-              child: CircularProgressIndicator(
-                backgroundColor: theme.accentColor,
-              ),
-            );
-          }
-        },
-      ),
+      persistentFooterButtons: footerButtons,
     );
   }
 
@@ -133,64 +169,57 @@ class _MessPageState extends State<MessPage> {
   }
 
   Widget _buildSingleDayMess(HostelMess mess) {
+    var theme = Theme.of(context);
     var localTheme = Theme.of(context).textTheme;
-    return Card(
-      child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                mess.getDayName(),
-                style: localTheme.display1,
-              ),
-              SizedBox(
-                height: 8.0,
-              ),
-              Text(
-                "Breakfast",
-                style: localTheme.headline,
-              ),
-              ContentText(mess.breakfast, context),
-              SizedBox(
-                height: 8.0,
-              ),
-              Text(
-                "Lunch",
-                style: localTheme.headline,
-              ),
-              ContentText(mess.lunch, context),
-              SizedBox(
-                height: 8.0,
-              ),
-              Text(
-                "Snacks",
-                style: localTheme.headline,
-              ),
-              ContentText(mess.snacks, context),
-              SizedBox(
-                height: 8.0,
-              ),
-              Text(
-                "Dinner",
-                style: localTheme.headline,
-              ),
-              ContentText(mess.dinner, context),
-              SizedBox(
-                height: 8.0,
-              ),
-            ],
-          )),
+    return Material(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            mess.getDayName(),
+            style: localTheme.display1,
+          ),
+          SizedBox(
+            height: 8.0,
+          ),
+          Text(
+            "Breakfast",
+            style: localTheme.headline,
+          ),
+          ContentText(mess.breakfast, context),
+          SizedBox(
+            height: 8.0,
+          ),
+          Text(
+            "Lunch",
+            style: localTheme.headline,
+          ),
+          ContentText(mess.lunch, context),
+          SizedBox(
+            height: 8.0,
+          ),
+          Text(
+            "Snacks",
+            style: localTheme.headline,
+          ),
+          ContentText(mess.snacks, context),
+          SizedBox(
+            height: 8.0,
+          ),
+          Text(
+            "Dinner",
+            style: localTheme.headline,
+          ),
+          ContentText(mess.dinner, context),
+          SizedBox(
+            height: 8.0,
+          ),
+          Divider(
+            height: 16.0,
+          ),
+        ],
+      ),
     );
-  }
-
-  _launchURL() async {
-    const url = 'https://flutter.io';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
   }
 }
 
