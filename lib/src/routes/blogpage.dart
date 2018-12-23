@@ -70,8 +70,9 @@ class _BlogPageState extends State<BlogPage> {
               child: TextField(
                 autofocus: true,
                 decoration: InputDecoration(
-                    prefixIcon: Icon(OMIcons.search),
-                    hintText: "Search...",),
+                  prefixIcon: Icon(OMIcons.search),
+                  hintText: "Search...",
+                ),
                 onChanged: (query) async {
                   if (query.length > 4) {
                     blogBloc.query = query;
@@ -88,86 +89,91 @@ class _BlogPageState extends State<BlogPage> {
         : null;
 
     return Scaffold(
+      resizeToAvoidBottomPadding: true,
       key: _scaffoldKey,
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          searchMode
-              ? Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: Divider.createBorderSide(context, width: 1.0),
-                    ),
-                  ),
-                  child: SafeArea(
-                    child: ButtonTheme.bar(
-                      child: SafeArea(
-                        top: false,
-                        child: Row(children: footerButtons),
+      bottomNavigationBar: Transform.translate(
+        offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            searchMode
+                ? Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border(
+                        top: Divider.createBorderSide(context, width: 1.0),
                       ),
                     ),
+                    child: SafeArea(
+                      child: ButtonTheme.bar(
+                        child: SafeArea(
+                          top: false,
+                          child: Row(children: footerButtons),
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(
+                    width: 0,
+                    height: 0,
                   ),
-                )
-              : Container(
-                  width: 0,
-                  height: 0,
-                ),
-          BottomAppBar(
-            child: new Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                IconButton(
-                  tooltip: "Show bottom sheet",
-                  icon: Icon(
-                    OMIcons.menu,
-                    semanticLabel: "Show bottom sheet",
-                  ),
-                  onPressed: _bottomSheetActive
-                      ? null
-                      : () {
-                          setState(() {
-                            //disable button
-                            _bottomSheetActive = true;
-                          });
-                          _scaffoldKey.currentState
-                              .showBottomSheet((context) {
-                                // BottomDrawer.setPageIndex(
-                                //     bloc,
-                                //     widget.blogType == BlogType.Placement
-                                //         ? 4
-                                //         : 5);
-                                return BottomDrawer();
-                              })
-                              .closed
-                              .whenComplete(() {
-                                setState(() {
-                                  _bottomSheetActive = false;
+            BottomAppBar(
+              child: new Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  IconButton(
+                    tooltip: "Show bottom sheet",
+                    icon: Icon(
+                      OMIcons.menu,
+                      semanticLabel: "Show bottom sheet",
+                    ),
+                    onPressed: _bottomSheetActive
+                        ? null
+                        : () {
+                            setState(() {
+                              //disable button
+                              _bottomSheetActive = true;
+                            });
+                            _scaffoldKey.currentState
+                                .showBottomSheet((context) {
+                                  // BottomDrawer.setPageIndex(
+                                  //     bloc,
+                                  //     widget.blogType == BlogType.Placement
+                                  //         ? 4
+                                  //         : 5);
+                                  return BottomDrawer();
+                                })
+                                .closed
+                                .whenComplete(() {
+                                  setState(() {
+                                    _bottomSheetActive = false;
+                                  });
                                 });
-                              });
-                        },
-                ),
-                IconButton(
-                  icon: Icon(actionIcon),
-                  onPressed: () {
-                    setState(() {
-                      if (searchMode) {
-                        actionIcon = OMIcons.search;
-                        blogBloc.query = "";
-                        blogBloc.refresh();
-                      } else {
-                        actionIcon = OMIcons.close;
-                      }
+                          },
+                  ),
+                  IconButton(
+                    icon: Icon(actionIcon),
+                    onPressed: () {
+                      setState(() {
+                        if (searchMode) {
+                          actionIcon = OMIcons.search;
+                          blogBloc.query = "";
+                          blogBloc.refresh();
+                        } else {
+                          actionIcon = OMIcons.close;
+                        }
 
-                      searchMode = !searchMode;
-                    });
-                  },
-                )
-              ],
+                        searchMode = !searchMode;
+                      });
+                    },
+                  )
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       body: AnimatedContainer(
         duration: Duration(milliseconds: 500),
