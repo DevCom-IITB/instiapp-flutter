@@ -47,7 +47,7 @@ class _FeedPageState extends State<FeedPage> {
                       });
                       _scaffoldKey.currentState
                           .showBottomSheet((context) {
-                            BottomDrawer.setPageIndex(bloc, 0);
+                            // BottomDrawer.setPageIndex(bloc, 0);
                             return BottomDrawer();
                           })
                           .closed

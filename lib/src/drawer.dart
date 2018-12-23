@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:InstiApp/src/blocs/drawer_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/user.dart';
@@ -182,6 +183,11 @@ class BottomDrawer extends StatefulWidget {
 }
 
 class _BottomDrawerState extends State<BottomDrawer> {
+  void changeSelection(int idx, DrawerBloc bloc) {
+    bloc.setPageIndex(idx);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of(context).bloc;
@@ -206,7 +212,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                     selected: true,
                     title: "Feed",
                     onTap: () {
-                      // changeSelection(1, navList);
+                      changeSelection(0, drawerState);
                       var navi = Navigator.of(context);
                       navi.pop();
                       navi.pushNamed('/feed');
@@ -216,14 +222,14 @@ class _BottomDrawerState extends State<BottomDrawer> {
                     icon: OMIcons.rssFeed,
                     title: "News",
                     onTap: () {
-                      // changeSelection(2, navList);
+                      changeSelection(1, drawerState);
                     },
                   ),
                   2: NavListTile(
                     icon: OMIcons.search,
                     title: "Explore",
                     onTap: () {
-                      // changeSelection(3, navList);
+                      changeSelection(2, drawerState);
                     },
                   ),
                   3: NavListTile(
@@ -231,7 +237,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                     title: "Mess Menu",
                     selected: true,
                     onTap: () {
-                      // changeSelection(4, navList);
+                      changeSelection(3, drawerState);
                       var navi = Navigator.of(context);
                       navi.pop();
                       navi.pushNamed('/mess');
@@ -242,7 +248,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                     title: "Placement Blog",
                     selected: true,
                     onTap: () {
-                      // changeSelection(5, navList);
+                      changeSelection(4, drawerState);
                       var navi = Navigator.of(context);
                       navi.pop();
                       navi.pushNamed('/placeblog');
@@ -253,7 +259,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                     title: "Internship Blog",
                     selected: true,
                     onTap: () {
-                      // changeSelection(6, navList);
+                      changeSelection(5, drawerState);
                       var navi = Navigator.of(context);
                       navi.pop();
                       navi.pushNamed('/trainblog');
@@ -263,35 +269,35 @@ class _BottomDrawerState extends State<BottomDrawer> {
                     icon: OMIcons.dateRange,
                     title: "Calender",
                     onTap: () {
-                      // changeSelection(7, navList);
+                      changeSelection(6, drawerState);
                     },
                   ),
                   7: NavListTile(
                     icon: OMIcons.map,
                     title: "Map",
                     onTap: () {
-                      // changeSelection(8, navList);
+                      changeSelection(7, drawerState);
                     },
                   ),
                   8: NavListTile(
                     icon: OMIcons.feedback,
                     title: "Complaints/Suggestions",
                     onTap: () {
-                      // changeSelection(9, navList);
+                      changeSelection(8, drawerState);
                     },
                   ),
                   9: NavListTile(
                     icon: OMIcons.link,
                     title: "Quick Links",
                     onTap: () {
-                      // changeSelection(10, navList);
+                      changeSelection(9, drawerState);
                     },
                   ),
                   10: NavListTile(
                     icon: OMIcons.settings,
                     title: "Settings",
                     onTap: () {
-                      // changeSelection(11, navList);
+                      changeSelection(10, drawerState);
                     },
                   ),
                 };
@@ -339,7 +345,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
 
                 // Selecting which NavListTile to highlight
                 navMap[indexSnapshot.data].setHighlighted(true);
-                
+
                 return Material(
                   child: Column(
                     children: navList,

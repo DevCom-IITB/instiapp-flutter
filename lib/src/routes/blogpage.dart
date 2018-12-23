@@ -30,6 +30,7 @@ class _BlogPageState extends State<BlogPage> {
       GlobalKey<RefreshIndicatorState>();
 
   ScrollController _hideButtonController;
+  bool _bottomSheetActive = false;
   double isFabVisible = 0;
 
   bool searchMode = false;
@@ -63,6 +64,174 @@ class _BlogPageState extends State<BlogPage> {
     var bloc = BlocProvider.of(context).bloc;
     var blogBloc = bloc.getBlogBloc(widget.blogType);
 
+    var footerButtons = searchMode
+        ? [
+            Expanded(
+              child: TextField(
+                autofocus: true,
+                decoration: InputDecoration(
+                    prefixIcon: Icon(OMIcons.search),
+                    hintText: "Search...",),
+                onChanged: (query) async {
+                  if (query.length > 4) {
+                    blogBloc.query = query;
+                    blogBloc.refresh();
+                  }
+                },
+                onSubmitted: (query) async {
+                  blogBloc.query = query;
+                  await blogBloc.refresh();
+                },
+              ),
+            ),
+          ]
+        : null;
+
+    return Scaffold(
+      key: _scaffoldKey,
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          searchMode
+              ? Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: Divider.createBorderSide(context, width: 1.0),
+                    ),
+                  ),
+                  child: SafeArea(
+                    child: ButtonTheme.bar(
+                      child: SafeArea(
+                        top: false,
+                        child: Row(children: footerButtons),
+                      ),
+                    ),
+                  ),
+                )
+              : Container(
+                  width: 0,
+                  height: 0,
+                ),
+          BottomAppBar(
+            child: new Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                IconButton(
+                  tooltip: "Show bottom sheet",
+                  icon: Icon(
+                    OMIcons.menu,
+                    semanticLabel: "Show bottom sheet",
+                  ),
+                  onPressed: _bottomSheetActive
+                      ? null
+                      : () {
+                          setState(() {
+                            //disable button
+                            _bottomSheetActive = true;
+                          });
+                          _scaffoldKey.currentState
+                              .showBottomSheet((context) {
+                                // BottomDrawer.setPageIndex(
+                                //     bloc,
+                                //     widget.blogType == BlogType.Placement
+                                //         ? 4
+                                //         : 5);
+                                return BottomDrawer();
+                              })
+                              .closed
+                              .whenComplete(() {
+                                setState(() {
+                                  _bottomSheetActive = false;
+                                });
+                              });
+                        },
+                ),
+                IconButton(
+                  icon: Icon(actionIcon),
+                  onPressed: () {
+                    setState(() {
+                      if (searchMode) {
+                        actionIcon = OMIcons.search;
+                        blogBloc.query = "";
+                        blogBloc.refresh();
+                      } else {
+                        actionIcon = OMIcons.close;
+                      }
+
+                      searchMode = !searchMode;
+                    });
+                  },
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+      body: AnimatedContainer(
+        duration: Duration(milliseconds: 500),
+        foregroundDecoration: _bottomSheetActive
+            ? BoxDecoration(
+                color: Color.fromRGBO(100, 100, 100, 12),
+              )
+            : null,
+        child: StreamBuilder(
+          stream: bloc.session,
+          builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              return StreamBuilder(
+                stream: blogBloc.blog,
+                builder: (BuildContext context,
+                    AsyncSnapshot<UnmodifiableListView<BlogPost>> snapshot) {
+                  return RefreshIndicator(
+                    key: _refreshIndicatorKey,
+                    onRefresh: _handleRefresh,
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemBuilder: (BuildContext context, int index) {
+                        if (index == 0) {
+                          return Padding(
+                            padding: const EdgeInsets.all(28.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  widget.title,
+                                  style: theme.textTheme.display2.copyWith(
+                                      color: Colors.black,
+                                      fontFamily: "Bitter"),
+                                ),
+                              ],
+                            ),
+                          );
+                        } else {
+                          return _buildBlogPost(
+                              blogBloc, index - 1, snapshot.data);
+                        }
+                      },
+                      itemCount:
+                          (snapshot.data == null ? 0 : snapshot.data.length) +
+                              2,
+                      controller: _hideButtonController,
+                    ),
+                  );
+                },
+              );
+            } else {
+              return Center(
+                child: Text(
+                  "You must be logged in to view ${widget.title}",
+                  style: theme.textTheme.title,
+                  textAlign: TextAlign.center,
+                ),
+              );
+            }
+          },
+        ),
+      ),
+      // persistentFooterButtons: footerButtons,
+    );
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
