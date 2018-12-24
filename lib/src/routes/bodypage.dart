@@ -1,27 +1,24 @@
 import 'package:InstiApp/src/api/model/body.dart';
-import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
-import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
-import 'package:scrollable_bottom_sheet/scrollable_bottom_sheet.dart';
 
-class EventPage extends StatefulWidget {
-  final Future<Event> _eventFuture;
+class BodyPage extends StatefulWidget {
+  final Future<Body> _bodyFuture;
 
-  EventPage(this._eventFuture);
+  BodyPage(this._bodyFuture);
 
   @override
-  _EventPageState createState() => _EventPageState();
+  _BodyPageState createState() => _BodyPageState();
 }
 
-class _EventPageState extends State<EventPage> {
+class _BodyPageState extends State<BodyPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  Event event;
+  Body body;
 
   int loadingUes = 0;
 
@@ -30,10 +27,10 @@ class _EventPageState extends State<EventPage> {
   @override
   void initState() {
     super.initState();
-    event = null;
-    widget._eventFuture.then((ev) {
+    body = null;
+    widget._bodyFuture.then((b) {
       setState(() {
-        event = ev;
+        body = b;
       });
     });
   }
@@ -43,33 +40,19 @@ class _EventPageState extends State<EventPage> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
     var footerButtons = <Widget>[];
-    if (event != null) {
-      footerButtons.addAll([
-        buildUserStatusButton("Going", 2, theme, bloc),
-        buildUserStatusButton("Interested", 1, theme, bloc),
-      ]);
+    if (body != null) {
+      // footerButtons.addAll([
+      // buildUserStatusButton("Going", 2, theme, bloc),
+      // buildUserStatusButton("Interested", 1, theme, bloc),
+      // ]);
 
-      if ((event.eventWebsiteURL ?? "") != "") {
+      if ((body.bodyWebsiteURL ?? "") != "") {
         footerButtons.add(IconButton(
           tooltip: "Open website",
           icon: Icon(OMIcons.language),
           onPressed: () async {
-            if (await canLaunch(event.eventWebsiteURL)) {
-              await launch(event.eventWebsiteURL);
-            }
-          },
-        ));
-      }
-      if (event.eventVenues.isNotEmpty &&
-          event.eventVenues[0].venueLatitude != null) {
-        footerButtons.add(IconButton(
-          tooltip: "Navigate to event",
-          icon: Icon(OMIcons.navigation),
-          onPressed: () async {
-            String uri =
-                "google.navigation:q=${event.eventVenues[0].venueLatitude},${event.eventVenues[0].venueLongitude}";
-            if (await canLaunch(uri)) {
-              await launch(uri);
+            if (await canLaunch(body.bodyWebsiteURL)) {
+              await launch(body.bodyWebsiteURL);
             }
           },
         ));
@@ -109,8 +92,7 @@ class _EventPageState extends State<EventPage> {
           ],
         ),
       ),
-      // bottomSheet: ,
-      body: event == null
+      body: body == null
           ? Center(
               child: CircularProgressIndicator(),
             )
@@ -122,21 +104,19 @@ class _EventPageState extends State<EventPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        event.eventName,
+                        body.bodyName,
                         style: theme.textTheme.display2.copyWith(
                             color: Colors.black, fontFamily: "Bitter"),
                       ),
                       SizedBox(height: 8.0),
-                      Text(event.getSubTitle(), style: theme.textTheme.title),
+                      Text(body.bodyShortDescription,
+                          style: theme.textTheme.title),
                     ],
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Image.network(
-                      event?.eventImageURL ??
-                          event?.eventBodies[0].bodyImageURL,
-                      fit: BoxFit.fitWidth),
+                  child: Image.network(body.bodyImageURL, fit: BoxFit.fitWidth),
                 ),
                 SizedBox(
                   height: 16.0,
@@ -145,7 +125,7 @@ class _EventPageState extends State<EventPage> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 28.0, vertical: 16.0),
                   child: Text(
-                    event?.eventDescription,
+                    body.bodyDescription,
                     style: theme.textTheme.subhead,
                   ),
                 ),
@@ -154,8 +134,11 @@ class _EventPageState extends State<EventPage> {
                 ),
                 Divider(),
               ]
-                ..addAll(event.eventBodies
-                    .map((b) => _buildBodyTile(b, theme.textTheme)))
+                ..addAll(body.bodyParents
+                    .map((b) => _buildBodyTile(b, theme.textTheme))
+                    .toList()
+                      ..insert(
+                          0, Text("Part of", style: theme.textTheme.subhead)))
                 ..addAll([
                   Divider(),
                   SizedBox(
@@ -164,14 +147,14 @@ class _EventPageState extends State<EventPage> {
                 ]),
             ),
 
-      floatingActionButton: _bottomSheetActive || event == null
+      floatingActionButton: _bottomSheetActive || body == null
           ? null
           : FloatingActionButton(
               child: Icon(OMIcons.share),
-              tooltip: "Share this event",
+              tooltip: "Share this body",
               onPressed: () async {
                 await Share.share(
-                    "Check this event: ${ShareURLMaker.getEventURL(event)}");
+                    "Check this Institute Body: ${ShareURLMaker.getBodyURL(body)}");
               },
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -189,57 +172,6 @@ class _EventPageState extends State<EventPage> {
       ),
       onTap: () {
         Navigator.of(context).pushNamed("/body/${body.bodyID}");
-      },
-    );
-  }
-
-  RaisedButton buildUserStatusButton(
-      String name, int id, ThemeData theme, InstiAppBloc bloc) {
-    return RaisedButton(
-      color: event?.eventUserUes == id ? theme.accentColor : Colors.white,
-      textColor: event?.eventUserUes == id ? Colors.white : null,
-      shape: RoundedRectangleBorder(
-          side: BorderSide(
-            color: theme.accentColor,
-          ),
-          borderRadius: BorderRadius.all(Radius.circular(4))),
-      child: Row(children: () {
-        var rowChildren = <Widget>[
-          Text(name),
-          SizedBox(
-            width: 8.0,
-          ),
-          Text(
-              "${id == 1 ? event?.eventInterestedCount : event?.eventGoingCount}"),
-        ];
-        if (loadingUes == id) {
-          rowChildren.insertAll(0, [
-            SizedBox(
-                height: 18,
-                width: 18,
-                child: CircularProgressIndicator(
-                  valueColor: new AlwaysStoppedAnimation<Color>(
-                      event?.eventUserUes == id
-                          ? Colors.white
-                          : theme.accentColor),
-                  strokeWidth: 2,
-                )),
-            SizedBox(
-              width: 8.0,
-            )
-          ]);
-        }
-        return rowChildren;
-      }()),
-      onPressed: () async {
-        setState(() {
-          loadingUes = id;
-        });
-        await bloc.updateUesEvent(event, event.eventUserUes == id ? 0 : id);
-        setState(() {
-          loadingUes = 0;
-          // event has changes
-        });
       },
     );
   }

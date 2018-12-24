@@ -139,7 +139,7 @@ class _FeedPageState extends State<FeedPage> {
             Ink.image(
               child: Container(),
               image: NetworkImage(
-                event.eventImageURL ?? event.eventBodies[0].imageUrl,
+                event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
               ),
               height: 200,
               fit: BoxFit.cover,
@@ -167,7 +167,7 @@ class _FeedPageState extends State<FeedPage> {
         enabled: true,
         leading: CircleAvatar(
           backgroundImage: NetworkImage(
-              event.eventImageURL ?? event.eventBodies[0].imageUrl),
+              event.eventImageURL ?? event.eventBodies[0].bodyImageURL),
         ),
         subtitle: Text(event.getSubTitle()),
         onTap: () {

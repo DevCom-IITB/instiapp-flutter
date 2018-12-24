@@ -1,3 +1,4 @@
+import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:InstiApp/src/routes/trainingblogpage.dart';
@@ -52,9 +53,9 @@ class MyAppState extends State<MyApp> {
           if (settings.name.startsWith("/event/") ) {
             return _buildRoute(settings, EventPage(_bloc.getEvent(settings.name.split("/event/")[1])));
           }
-          // else if (settings.name.startsWith("/body/")) {
-          //   return _buildRoute(settings, BodyPage(_bloc.getBody(settings.name.split("/body/")[1])));
-          // }
+          else if (settings.name.startsWith("/body/")) {
+            return _buildRoute(settings, BodyPage(_bloc.getBody(settings.name.split("/body/")[1])));
+          }
           else {
             switch (settings.name) {
               case "/": return _buildRoute(settings, LoginPage());
