@@ -1,26 +1,51 @@
+import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/role.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
 part 'body.jser.dart';
 
 class Body {
-  String id;
+  @Alias("id")
+  String bodyID;
 
-  @Alias('str_id')
-  String strId;
+  @Alias("str_id")
+  String bodyStrID;
 
-  String name;
+  @Alias("name")
+  String bodyName;
 
-  @Alias('short_description')
-  String shortDescription;
+  @Alias("short_description")
+  String bodyShortDescription;
 
-  @Alias('website_url')
-  String websiteUrl;
+  @Alias("description")
+  String bodyDescription;
 
-  @Alias('image_url')
-  String imageUrl;
+  @Alias("image_url")
+  String bodyImageURL;
 
-  @Alias('cover_url')
-  String coverUrl;
+  @Alias("children")
+  List<Body> bodyChildren;
+
+  @Alias("parents")
+  List<Body> bodyParents;
+
+  @Alias("events")
+  List<Event> bodyEvents;
+
+  @Alias("followers_count")
+  int bodyFollowersCount;
+
+  @Alias("website_url")
+  String bodyWebsiteURL;
+
+  @Alias("blog_url")
+  String bodyBlogURL;
+
+  @Alias("user_follows")
+  bool bodyUserFollows;
+
+  @Alias("roles")
+  List<Role> bodyRoles;
 }
 
 @GenSerializer()

@@ -225,12 +225,29 @@ class _BlogPageState extends State<BlogPage> {
                 },
               );
             } else {
-              return Center(
-                child: Text(
-                  "You must be logged in to view ${widget.title}",
-                  style: theme.textTheme.title,
-                  textAlign: TextAlign.center,
-                ),
+              return ListView(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          widget.title,
+                          style: theme.textTheme.display2.copyWith(
+                              color: Colors.black, fontFamily: "Bitter"),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Center(
+                    child: Text(
+                      "You must be logged in to view ${widget.title}",
+                      style: theme.textTheme.title,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
               );
             }
           },

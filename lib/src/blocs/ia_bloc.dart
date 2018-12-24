@@ -73,12 +73,13 @@ class InstiAppBloc {
     _eventsSubject.add(UnmodifiableListView(_events));
   }
 
-  Event getEvent(String uuid) {
-    return _events?.firstWhere((event) => event.eventID == uuid);
+  Future<Event> getEvent(String uuid) async {
+    return _events?.firstWhere((event) => event.eventID == uuid) ?? client.getEvent(getSessionIdHeader(), uuid);
+    // return client.getEvent(getSessionIdHeader(), uuid);
   }
 
-  Body getBody(String uuid) {
-    // return Body();
+  Future<Body> getBody(String uuid) async {
+    return client.getBody(getSessionIdHeader(), uuid);
   }
 
   void updateSession(Session sess) {

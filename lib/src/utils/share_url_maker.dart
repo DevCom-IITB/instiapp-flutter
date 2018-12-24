@@ -10,7 +10,7 @@ class ShareURLMaker {
     }
 
     static String getBodyURL(Body body) {
-        return WEB_HOST + "org/" + body.strId;
+        return WEB_HOST + "org/" + body.bodyStrID;
     }
 
     static String getUserURL(User user) {
