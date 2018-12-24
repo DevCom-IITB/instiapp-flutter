@@ -138,11 +138,11 @@ class _BlogPageState extends State<BlogPage> {
                             });
                             _scaffoldKey.currentState
                                 .showBottomSheet((context) {
-                                  // BottomDrawer.setPageIndex(
-                                  //     bloc,
-                                  //     widget.blogType == BlogType.Placement
-                                  //         ? 4
-                                  //         : 5);
+                                  BottomDrawer.setPageIndex(
+                                      bloc,
+                                      widget.blogType == BlogType.Placement
+                                          ? 4
+                                          : 5);
                                   return BottomDrawer();
                                 })
                                 .closed
@@ -253,132 +253,6 @@ class _BlogPageState extends State<BlogPage> {
           },
         ),
       ),
-      // persistentFooterButtons: footerButtons,
-    );
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            OMIcons.menu,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            _scaffoldKey.currentState.openDrawer();
-          },
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(actionIcon),
-            onPressed: () {
-              setState(() {
-                if (searchMode) {
-                  actionIcon = OMIcons.search;
-                  blogBloc.query = "";
-                  blogBloc.refresh();
-                } else {
-                  actionIcon = OMIcons.close;
-                }
-
-                searchMode = !searchMode;
-              });
-            },
-          )
-        ],
-        title: Row(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: ImageIcon(
-                AssetImage('assets/lotus.png'),
-                color: Colors.white,
-              ),
-            ),
-            Text(widget.title,
-                style: theme.textTheme.headline
-                    .copyWith(fontFamily: "Bitter", color: Colors.white)),
-          ],
-        ),
-        bottom: searchMode
-            ? PreferredSize(
-                preferredSize: Size.fromHeight(48.0),
-                child: TextField(
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                  decoration: InputDecoration(
-                      prefixIcon: Icon(OMIcons.search, color: Colors.white),
-                      hintText: "Search...",
-                      hintStyle: TextStyle(color: Colors.white)),
-                  onChanged: (query) async {
-                    if (query.length > 4) {
-                      blogBloc.query = query;
-                      blogBloc.refresh();
-                    }
-                  },
-                  onSubmitted: (query) async {
-                    blogBloc.query = query;
-                    await blogBloc.refresh();
-                  },
-                ),
-              )
-            : null,
-      ),
-      drawer: DrawerOnly(),
-      body: StreamBuilder(
-        stream: bloc.session,
-        builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
-          if (snapshot.hasData && snapshot.data != null) {
-            return StreamBuilder(
-              stream: blogBloc.blog,
-              builder: (BuildContext context,
-                  AsyncSnapshot<UnmodifiableListView<BlogPost>> snapshot) {
-                return RefreshIndicator(
-                  key: _refreshIndicatorKey,
-                  onRefresh: _handleRefresh,
-                  child: ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    itemBuilder: (BuildContext context, int index) {
-                      return _buildBlogPost(blogBloc, index, snapshot.data);
-                    },
-                    itemCount:
-                        (snapshot.data == null ? 0 : snapshot.data.length) + 1,
-                    controller: _hideButtonController,
-                  ),
-                );
-              },
-            );
-          } else {
-            return Center(
-              child: Text(
-                "You must be logged in to view ${widget.title}",
-                style: theme.textTheme.title,
-                textAlign: TextAlign.center,
-              ),
-            );
-          }
-        },
-      ),
-      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-      floatingActionButton: isFabVisible == 0
-          ? null
-          : FloatingActionButton(
-              onPressed: () {
-                _hideButtonController
-                    .animateTo(0.0,
-                        curve: Curves.fastOutSlowIn,
-                        duration: const Duration(milliseconds: 600))
-                    .then((_) {
-                  setState(() {
-                    isFabVisible = 0.0;
-                  });
-                });
-                setState(() {
-                  isFabVisible = 0.0;
-                });
-              },
-              child: Icon(OMIcons.keyboardArrowUp),
-            ),
     );
   }
 
