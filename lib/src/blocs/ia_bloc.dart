@@ -74,7 +74,13 @@ class InstiAppBloc {
   }
 
   Future<Event> getEvent(String uuid) async {
-    return _events?.firstWhere((event) => event.eventID == uuid) ?? client.getEvent(getSessionIdHeader(), uuid);
+    try {
+      return _events?.firstWhere((event) => event.eventID == uuid);
+    }
+    catch (ex) {
+      print(ex);
+      return client.getEvent(getSessionIdHeader(), uuid);
+    }
     // return client.getEvent(getSessionIdHeader(), uuid);
   }
 
@@ -105,6 +111,16 @@ class InstiAppBloc {
       }
       e.eventUserUes = ues;
       print("updated Ues from ${e.eventUserUes} to $ues");
+    } catch (ex) {
+      print(ex);
+    }
+  }
+
+  Future<void> updateFollowBody(Body b) async {
+    try {
+      await client.updateBodyFollowing(getSessionIdHeader(), b.bodyID, b.bodyUserFollows ? 0 : 1);
+      b.bodyUserFollows = !b.bodyUserFollows; 
+      b.bodyFollowersCount += b.bodyUserFollows ? 1 : -1;
     } catch (ex) {
       print(ex);
     }

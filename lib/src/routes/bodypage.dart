@@ -1,6 +1,10 @@
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -20,7 +24,7 @@ class _BodyPageState extends State<BodyPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   Body body;
 
-  int loadingUes = 0;
+  bool loadingFollow = false;
 
   bool _bottomSheetActive = false;
 
@@ -41,10 +45,9 @@ class _BodyPageState extends State<BodyPage> {
     var bloc = BlocProvider.of(context).bloc;
     var footerButtons = <Widget>[];
     if (body != null) {
-      // footerButtons.addAll([
-      // buildUserStatusButton("Going", 2, theme, bloc),
-      // buildUserStatusButton("Interested", 1, theme, bloc),
-      // ]);
+      footerButtons.addAll([
+        _buildFollowBody(theme, bloc),
+      ]);
 
       if ((body.bodyWebsiteURL ?? "") != "") {
         footerButtons.add(IconButton(
@@ -133,12 +136,58 @@ class _BodyPageState extends State<BodyPage> {
                   height: 16.0,
                 ),
                 Divider(),
-              ]
-                ..addAll(body.bodyParents
-                    .map((b) => _buildBodyTile(b, theme.textTheme))
-                    .toList()
-                      ..insert(
-                          0, Text("Part of", style: theme.textTheme.subhead)))
+              ] // Events
+                ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                    body.bodyEvents.map((e) => _buildEventTile(e, theme)).toList(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28.0, vertical: 16.0),
+                      child: Text(
+                        "Events",
+                        style: theme.textTheme.headline,
+                      ),
+                    )))
+                // Children
+                ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                    body.bodyChildren
+                        .map((b) => _buildBodyTile(b, theme.textTheme)).toList(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28.0, vertical: 16.0),
+                      child: Text(
+                        "Organizations",
+                        style: theme.textTheme.headline,
+                      ),
+                    )))
+                // People
+                ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                    body.bodyRoles.expand((r) {
+                      if (r.roleUsersDetail != null) {
+                        return r.roleUsersDetail
+                            .map((u) => u..currentRole = r.roleName)
+                            .toList();
+                      }
+                    }).map((u) => _buildUserTile(u, theme)).toList(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28.0, vertical: 16.0),
+                      child: Text(
+                        "People",
+                        style: theme.textTheme.headline,
+                      ),
+                    )))
+                // Parents
+                ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                    body.bodyParents
+                        .map((b) => _buildBodyTile(b, theme.textTheme)).toList(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28.0, vertical: 16.0),
+                      child: Text(
+                        "Part of",
+                        style: theme.textTheme.headline,
+                      ),
+                    )))
                 ..addAll([
                   Divider(),
                   SizedBox(
@@ -146,7 +195,6 @@ class _BodyPageState extends State<BodyPage> {
                   )
                 ]),
             ),
-
       floatingActionButton: _bottomSheetActive || body == null
           ? null
           : FloatingActionButton(
@@ -162,17 +210,101 @@ class _BodyPageState extends State<BodyPage> {
     );
   }
 
+  List<Widget> _nonEmptyListWithHeaderOrEmpty(
+      List<Widget> list, Widget header) {
+    return list.isNotEmpty ? (list..insert(0, header)) : <Widget>[];
+  }
+
+  RaisedButton _buildFollowBody(ThemeData theme, InstiAppBloc bloc) {
+    return RaisedButton(
+      color: body.bodyUserFollows ? theme.accentColor : Colors.white,
+      textColor: body.bodyUserFollows ? Colors.white : null,
+      shape: RoundedRectangleBorder(
+          side: BorderSide(
+            color: theme.accentColor,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(4))),
+      child: Row(children: () {
+        var rowChildren = <Widget>[
+          Text(body.bodyUserFollows ? "Following" : "Follow"),
+          SizedBox(
+            width: 8.0,
+          ),
+          Text("${body.bodyFollowersCount}"),
+        ];
+        if (loadingFollow) {
+          rowChildren.insertAll(0, [
+            SizedBox(
+                height: 18,
+                width: 18,
+                child: CircularProgressIndicator(
+                  valueColor: new AlwaysStoppedAnimation<Color>(
+                      body.bodyUserFollows ? Colors.white : theme.accentColor),
+                  strokeWidth: 2,
+                )),
+            SizedBox(
+              width: 8.0,
+            )
+          ]);
+        }
+        return rowChildren;
+      }()),
+      onPressed: () async {
+        setState(() {
+          loadingFollow = true;
+        });
+        await bloc.updateFollowBody(body);
+        setState(() {
+          loadingFollow = false;
+          // event has changes
+        });
+      },
+    );
+  }
+
   Widget _buildBodyTile(Body body, TextTheme theme) {
     return ListTile(
       title: Text(body.bodyName, style: theme.title),
       subtitle: Text(body.bodyShortDescription, style: theme.subtitle),
-      leading: CircleAvatar(
-        radius: 24,
-        backgroundImage: NetworkImage(body.bodyImageURL),
-      ),
+      leading: NullableCircleAvatar(body.bodyImageURL, OMIcons.peopleOutline),
       onTap: () {
         Navigator.of(context).pushNamed("/body/${body.bodyID}");
       },
     );
+  }
+
+  Widget _buildEventTile(Event event, ThemeData theme) {
+    return ListTile(
+      title: Text(
+        event.eventName,
+        style: theme.textTheme.title,
+      ),
+      enabled: true,
+      leading: NullableCircleAvatar(
+          event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+          OMIcons.event),
+      subtitle: Text(event.getSubTitle()),
+      onTap: () {
+        _openEventPage(event);
+      },
+    );
+  }
+
+  Widget _buildUserTile(User u, ThemeData theme) {
+    return ListTile(
+      leading: NullableCircleAvatar(u.profilePicUrl, OMIcons.person),
+      title: Text(
+        u.name,
+        style: theme.textTheme.title,
+      ),
+      subtitle: Text(u.getSubTitle()),
+      onTap: () {
+        // _openUserPage(u);
+      },
+    );
+  }
+
+  void _openEventPage(Event event) {
+    Navigator.of(context).pushNamed("/event/${event.eventID}");
   }
 }

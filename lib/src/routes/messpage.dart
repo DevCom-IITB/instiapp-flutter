@@ -66,7 +66,7 @@ class _MessPageState extends State<MessPage> {
                       });
                       _scaffoldKey.currentState
                           .showBottomSheet((context) {
-                            // BottomDrawer.setPageIndex(bloc, 3);
+                            BottomDrawer.setPageIndex(bloc, 3);
                             return BottomDrawer();
                           })
                           .closed

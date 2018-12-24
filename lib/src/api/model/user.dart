@@ -55,6 +55,12 @@ class User {
 
   @Alias('former_roles')
   List<Role> formerRoles;
+
+  String currentRole;
+
+  String getSubTitle() {
+    return currentRole ?? ldapId;
+  }
 }
 
 @GenSerializer(serializers: const [UserSerializer])

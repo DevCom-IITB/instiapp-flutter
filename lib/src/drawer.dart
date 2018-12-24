@@ -194,7 +194,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
     var drawerState = bloc.drawerState;
     return ScrollableBottomSheet(
       snapAbove: true,
-      initialHeight: 300.0,
+      initialHeight: MediaQuery.of(context).size.height / 2 - 20,
       child: StreamBuilder<Session>(
         stream: bloc.session,
         builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
