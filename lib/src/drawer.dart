@@ -289,8 +289,12 @@ class _BottomDrawerState extends State<BottomDrawer> {
                   9: NavListTile(
                     icon: OMIcons.link,
                     title: "Quick Links",
+                    selected: true,
                     onTap: () {
                       changeSelection(9, drawerState);
+                      var navi = Navigator.of(context);
+                      navi.pop();
+                      navi.pushNamed('/quicklinks');
                     },
                   ),
                   10: NavListTile(
