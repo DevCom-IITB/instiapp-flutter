@@ -56,7 +56,6 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
-    var footerButtons = <Widget>[];
 
     return Scaffold(
       key: _scaffoldKey,

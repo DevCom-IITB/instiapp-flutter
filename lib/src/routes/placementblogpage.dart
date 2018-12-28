@@ -8,7 +8,7 @@ class PlacementBlogPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlogPage(
-      blogType: BlogType.Placement,
+      postType: PostType.Placement,
       title: "Placement Blog",
     );
   }

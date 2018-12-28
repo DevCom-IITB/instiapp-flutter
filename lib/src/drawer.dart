@@ -221,8 +221,12 @@ class _BottomDrawerState extends State<BottomDrawer> {
                   1: NavListTile(
                     icon: OMIcons.rssFeed,
                     title: "News",
+                    selected: true,
                     onTap: () {
                       changeSelection(1, drawerState);
+                      var navi = Navigator.of(context);
+                      navi.pop();
+                      navi.pushNamed('/news');
                     },
                   ),
                   2: NavListTile(

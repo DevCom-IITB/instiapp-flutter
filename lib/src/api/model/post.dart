@@ -1,8 +1,9 @@
+import 'package:InstiApp/src/api/model/body.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-part 'blogpost.jser.dart';
+part 'post.jser.dart';
 
-class BlogPost {
+class Post {
     @Alias("id")
     String postID;
 
@@ -19,8 +20,17 @@ class BlogPost {
     String published;
 }
 
-class PlacementBlogPost extends BlogPost{}
-class TrainingBlogPost extends BlogPost{}
+class PlacementBlogPost extends Post{}
+class TrainingBlogPost extends Post{}
+
+
+class NewsArticle extends Post {
+  @Alias("body")
+  Body body;
+}
+
+@GenSerializer()
+class NewsArticleSerializer extends Serializer<NewsArticle> with _$NewsArticleSerializer {}
 
 @GenSerializer()
 class PlacementBlogPostSerializer extends Serializer<PlacementBlogPost> with _$PlacementBlogPostSerializer {}

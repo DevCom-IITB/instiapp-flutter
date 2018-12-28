@@ -24,8 +24,9 @@ class InstiAppBloc {
   final _eventsSubject = BehaviorSubject<UnmodifiableListView<Event>>();
 
   // Sub Blocs
-  BlogBloc placementBloc;
-  BlogBloc trainingBloc;
+  PostBloc placementBloc;
+  PostBloc trainingBloc;
+  PostBloc newsBloc;
   DrawerBloc drawerState;
 
   // actual current state
@@ -41,13 +42,18 @@ class InstiAppBloc {
 
   InstiAppBloc() {
     globalClient = IOClient();
-    placementBloc = BlogBloc(this, blogType: BlogType.Placement);
-    trainingBloc = BlogBloc(this, blogType: BlogType.Training);
+    placementBloc = PostBloc(this, postType: PostType.Placement);
+    trainingBloc = PostBloc(this, postType: PostType.Training);
+    newsBloc = PostBloc(this, postType: PostType.NewsArticle);
     drawerState = DrawerBloc(homepageName, highlightPageIndexVal: 3);
   }
 
-  BlogBloc getBlogBloc(BlogType blogType) {
-    return blogType == BlogType.Placement ? placementBloc : trainingBloc;
+  PostBloc getPostsBloc(PostType blogType) {
+    return {
+      PostType.Placement: placementBloc,
+      PostType.Training: trainingBloc,
+      PostType.NewsArticle: newsBloc,
+    }[blogType];
   }
 
   String getSessionIdHeader() {
