@@ -3,7 +3,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:InstiApp/src/api/model/blogpost.dart';
+import 'package:InstiApp/src/api/model/post.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
@@ -16,9 +16,9 @@ import 'package:flutter/foundation.dart';
 
 class BlogPage extends StatefulWidget {
   final String title;
-  final BlogType blogType;
+  final PostType postType;
 
-  BlogPage({@required this.blogType, this.title});
+  BlogPage({@required this.postType, this.title});
 
   @override
   _BlogPageState createState() => _BlogPageState();
@@ -62,7 +62,7 @@ class _BlogPageState extends State<BlogPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
-    var blogBloc = bloc.getBlogBloc(widget.blogType);
+    var blogBloc = bloc.getPostsBloc(widget.postType);
 
     var footerButtons = searchMode
         ? [
@@ -140,9 +140,11 @@ class _BlogPageState extends State<BlogPage> {
                                 .showBottomSheet((context) {
                                   BottomDrawer.setPageIndex(
                                       bloc,
-                                      widget.blogType == BlogType.Placement
-                                          ? 4
-                                          : 5);
+                                      {
+                                        PostType.Placement: 4,
+                                        PostType.Training: 5,
+                                        PostType.NewsArticle: 1,
+                                      }[widget.postType]);
                                   return BottomDrawer();
                                 })
                                 .closed
@@ -164,7 +166,6 @@ class _BlogPageState extends State<BlogPage> {
                         } else {
                           actionIcon = OMIcons.close;
                         }
-
                         searchMode = !searchMode;
                       });
                     },
@@ -186,10 +187,10 @@ class _BlogPageState extends State<BlogPage> {
           stream: bloc.session,
           builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
             if (snapshot.hasData && snapshot.data != null) {
-              return StreamBuilder(
+              return StreamBuilder<UnmodifiableListView<Post>>(
                 stream: blogBloc.blog,
                 builder: (BuildContext context,
-                    AsyncSnapshot<UnmodifiableListView<BlogPost>> snapshot) {
+                    AsyncSnapshot<UnmodifiableListView<Post>> snapshot) {
                   return RefreshIndicator(
                     key: _refreshIndicatorKey,
                     onRefresh: _handleRefresh,
@@ -212,8 +213,7 @@ class _BlogPageState extends State<BlogPage> {
                             ),
                           );
                         } else {
-                          return _buildBlogPost(
-                              blogBloc, index - 1, snapshot.data);
+                          return _buildPost(blogBloc, index - 1, snapshot.data);
                         }
                       },
                       itemCount:
@@ -253,18 +253,39 @@ class _BlogPageState extends State<BlogPage> {
           },
         ),
       ),
+      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+      floatingActionButton: isFabVisible == 0
+          ? null
+          : FloatingActionButton(
+              tooltip: "Go to the Top",
+              onPressed: () {
+                _hideButtonController
+                    .animateTo(0.0,
+                        curve: Curves.fastOutSlowIn,
+                        duration: const Duration(milliseconds: 600))
+                    .then((_) {
+                  setState(() {
+                    isFabVisible = 0.0;
+                  });
+                });
+                setState(() {
+                  isFabVisible = 0.0;
+                });
+              },
+              child: Icon(OMIcons.keyboardArrowUp),
+            ),
     );
   }
 
   Future<void> _handleRefresh() {
     var bloc = BlocProvider.of(context).bloc;
-    return bloc.getBlogBloc(widget.blogType).refresh();
+    return bloc.getPostsBloc(widget.postType).refresh();
   }
 
-  Widget _buildBlogPost(BlogBloc bloc, int index, List<BlogPost> posts) {
+  Widget _buildPost(PostBloc bloc, int index, List<Post> posts) {
     bloc.inPostIndex.add(index);
 
-    final BlogPost post =
+    final Post post =
         (posts != null && posts.length > index) ? posts[index] : null;
 
     if (post == null) {
@@ -280,49 +301,73 @@ class _BlogPageState extends State<BlogPage> {
     return _post(post);
   }
 
-  Widget _post(BlogPost post) {
+  Widget _post(Post post) {
     var theme = Theme.of(context);
     return Card(
         key: ValueKey(post.postID),
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                post.title,
-                textAlign: TextAlign.start,
-                style: theme.textTheme.headline,
-              ),
-              Text(
-                post.published,
-                textAlign: TextAlign.start,
-                style: theme.textTheme.body1,
-              ),
-              SizedBox(
-                height: 8.0,
-              ),
-              Html(
-                data: post.content,
-                defaultTextStyle: theme.textTheme.subhead,
-                onLinkTap: (link) async {
-                  print(link);
-                  if (await canLaunch(link)) {
-                    await launch(link);
-                  } else {
-                    throw "Couldn't launch $link";
-                  }
-                },
-                customRender: (node, children) {
-                  if (node is dom.Element) {
-                    switch (node.localName) {
-                      case "img":
-                        return Text(node.attributes['href'] ?? "<img>");
+        child: InkWell(
+          onTap: () async {
+            if (await canLaunch(post.link)) {
+              await launch(post.link);
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  post.title,
+                  textAlign: TextAlign.start,
+                  style: theme.textTheme.headline
+                      .copyWith(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  widget.postType == PostType.NewsArticle
+                      ? "${((post as NewsArticle).body.bodyName)} | ${post.published}"
+                      : post.published,
+                  textAlign: TextAlign.start,
+                  style: theme.textTheme.subhead,
+                ),
+                SizedBox(
+                  height: 8.0,
+                ),
+                Html(
+                  data: post.content,
+                  defaultTextStyle: theme.textTheme.subhead,
+                  onLinkTap: (link) async {
+                    print(link);
+                    if (await canLaunch(link)) {
+                      await launch(link);
+                    } else {
+                      throw "Couldn't launch $link";
                     }
-                  }
-                },
-              ),
-            ],
+                  },
+                  customRender: (node, children) {
+                    if (node is dom.Element) {
+                      switch (node.localName) {
+                        case "img":
+                          return Text(node.attributes['href'] ?? "<img>");
+                        case "a":
+                          return InkWell(
+                            onTap: () async {
+                              if (await canLaunch(node.attributes['href'])) {
+                                await launch(node.attributes['href']);
+                              }
+                            },
+                            child: Text(
+                              node.innerHtml,
+                              style: TextStyle(
+                                  color: Colors.lightBlue,
+                                  decoration: TextDecoration.underline),
+                            ),
+                          );
+                      }
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ));
   }

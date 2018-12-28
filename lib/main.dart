@@ -1,6 +1,7 @@
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
+import 'package:InstiApp/src/routes/newspage.dart';
 import 'package:InstiApp/src/routes/quicklinkspage.dart';
 import 'package:InstiApp/src/routes/trainingblogpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
@@ -68,6 +69,7 @@ class MyAppState extends State<MyApp> {
               case "/trainblog": return _buildRoute(settings, TrainingBlogPage());
               case "/feed": return _buildRoute(settings, FeedPage());
               case "/quicklinks": return _buildRoute(settings, QuickLinksPage());
+              case "/news": return _buildRoute(settings, NewsPage());
             }
           }
           return _buildRoute(settings, MessPage());

@@ -1,38 +1,33 @@
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
-import 'package:InstiApp/src/api/model/blogpost.dart';
+import 'package:InstiApp/src/api/model/post.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'dart:math';
 
-enum BlogType{
-  Placement,
-  Training
-}
+enum PostType { Placement, Training, NewsArticle }
 
-class BlogBloc {
+class PostBloc {
   // Streams
-  Stream<UnmodifiableListView<BlogPost>> get blog =>
-      _blogSubject.stream;
-  final _blogSubject =
-      BehaviorSubject<UnmodifiableListView<BlogPost>>();
+  Stream<UnmodifiableListView<Post>> get blog => _blogSubject.stream;
+  final _blogSubject = BehaviorSubject<UnmodifiableListView<Post>>();
 
   Sink<int> get inPostIndex => _indexController.sink;
   PublishSubject<int> _indexController = PublishSubject<int>();
 
   // Params
   int _noOfPostsPerPage = 20;
-  String query = ""; 
+  String query = "";
 
   // parent bloc
   InstiAppBloc bloc;
 
-  // Training or Placement
-  final BlogType blogType;
+  // Training or Placement or News Article
+  final PostType postType;
 
-  BlogBloc(this.bloc, {@required this.blogType}) {
+  PostBloc(this.bloc, {@required this.postType}) {
     _setIndexListener();
   }
 
@@ -43,7 +38,7 @@ class BlogBloc {
         .listen(_handleIndexes);
   }
 
-  final _fetchPages = <int, List<BlogPost>>{};
+  final _fetchPages = <int, List<Post>>{};
 
   final _pagesBeingFetched = Set<int>();
 
@@ -67,8 +62,12 @@ class BlogBloc {
     return "${week[dt.weekday - 1]}, ${month[dt.month - 1]} ${dt.day.toString()}${dt.year == DateTime.now().year ? "" : dt.year.toString()}, ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}";
   }
 
-  Future<List<BlogPost>> getBlogPage(int page) async {
-    var httpGetFunc = blogType == BlogType.Placement ? bloc.client.getPlacementBlogFeed : bloc.client.getTrainingBlogFeed;
+  Future<List<Post>> getBlogPage(int page) async {
+    var httpGetFunc = {
+      PostType.Placement: bloc.client.getPlacementBlogFeed,
+      PostType.Training: bloc.client.getTrainingBlogFeed,
+      PostType.NewsArticle: bloc.client.getNews
+    }[postType];
     var posts = await httpGetFunc(bloc.getSessionIdHeader(),
         page * _noOfPostsPerPage, _noOfPostsPerPage, query);
     var tableParse = markdown.TableSyntax();
@@ -94,9 +93,8 @@ class BlogBloc {
           // Remember that we are fetching it
           _pagesBeingFetched.add(pageIndex);
           // Fetch it
-          getBlogPage(pageIndex)
-              .then((List<BlogPost> fetchedPage) =>
-                  _handleFetchedPage(fetchedPage, pageIndex));
+          getBlogPage(pageIndex).then((List<Post> fetchedPage) =>
+              _handleFetchedPage(fetchedPage, pageIndex));
         }
       }
     });
@@ -107,7 +105,7 @@ class BlogBloc {
   /// 1) record it
   /// 2) notify everyone who might be interested in knowing it
   ///
-  void _handleFetchedPage(List<BlogPost> page, int pageIndex) {
+  void _handleFetchedPage(List<Post> page, int pageIndex) {
     // Remember the page
     _fetchPages[pageIndex] = page;
     // Remove it from the ones being fetched
@@ -118,7 +116,7 @@ class BlogBloc {
     // which respect the sequence (since MovieCard are in sequence)
     // therefore, we need to iterate through the pages that are
     // actually fetched and stop if there is a gap.
-    List<BlogPost> posts = <BlogPost>[];
+    List<Post> posts = <Post>[];
     List<int> pageIndexes = _fetchPages.keys.toList();
 
     final int minPageIndex = pageIndexes.reduce(min);
@@ -139,7 +137,7 @@ class BlogBloc {
 
     // Only notify when there are posts
     if (posts.length > 0) {
-      _blogSubject.add(UnmodifiableListView<BlogPost>(posts));
+      _blogSubject.add(UnmodifiableListView<Post>(posts));
     }
   }
 
