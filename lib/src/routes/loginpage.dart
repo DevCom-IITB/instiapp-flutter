@@ -40,6 +40,9 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     flutterWebviewPlugin.dispose();
     super.dispose();
+
+    onUrlChangedSub?.cancel();
+    onStateChangedSub?.cancel();
   }
 
   @override

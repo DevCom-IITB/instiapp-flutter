@@ -292,16 +292,20 @@ class _BodyPageState extends State<BodyPage> {
 
   Widget _buildUserTile(User u, ThemeData theme) {
     return ListTile(
-      leading: NullableCircleAvatar(u.profilePicUrl, OMIcons.person),
+      leading: NullableCircleAvatar(u.userProfilePictureUrl, OMIcons.person),
       title: Text(
-        u.name,
+        u.userName,
         style: theme.textTheme.title,
       ),
       subtitle: Text(u.getSubTitle()),
       onTap: () {
-        // _openUserPage(u);
+        _openUserPage(u);
       },
     );
+  }
+
+  void _openUserPage(User user) {
+    Navigator.of(context).pushNamed("/user/${user.userID}");
   }
 
   void _openEventPage(Event event) {

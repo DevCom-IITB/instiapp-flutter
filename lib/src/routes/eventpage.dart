@@ -3,12 +3,12 @@ import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
-import 'package:scrollable_bottom_sheet/scrollable_bottom_sheet.dart';
 
 class EventPage extends StatefulWidget {
   final Future<Event> _eventFuture;
@@ -133,9 +133,10 @@ class _EventPageState extends State<EventPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Image.network(
-                      event?.eventImageURL ??
-                          event?.eventBodies[0].bodyImageURL,
+                  child: PhotoViewableImage(
+                      NetworkImage(event?.eventImageURL ??
+                          event?.eventBodies[0].bodyImageURL),
+                      "${event.eventID}",
                       fit: BoxFit.fitWidth),
                 ),
                 SizedBox(

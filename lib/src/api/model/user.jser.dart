@@ -47,43 +47,49 @@ abstract class _$UserSerializer implements Serializer<User> {
   Map<String, dynamic> toMap(User model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
-    setMapValue(ret, 'id', model.id);
-    setMapValue(ret, 'name', model.name);
-    setMapValue(ret, 'profile_pic', model.profilePicUrl);
-    setMapValue(ret, 'email', model.email);
-    setMapValue(ret, 'roll_no', model.rollNo);
-    setMapValue(ret, 'hostel', model.hostel);
-    setMapValue(ret, 'contact_no', model.contactNo);
-    setMapValue(ret, 'about', model.about);
-    setMapValue(ret, 'website_url', model.websiteUrl);
-    setMapValue(ret, 'ldap_id', model.ldapId);
+    setMapValue(ret, 'id', model.userID);
+    setMapValue(ret, 'name', model.userName);
+    setMapValue(ret, 'profile_pic', model.userProfilePictureUrl);
     setMapValue(
         ret,
         'events_interested',
-        codeIterable(model.eventsInterested,
+        codeIterable(model.userInterestedEvents,
             (val) => _eventSerializer.toMap(val as Event)));
     setMapValue(
         ret,
         'events_going',
-        codeIterable(
-            model.eventsGoing, (val) => _eventSerializer.toMap(val as Event)));
+        codeIterable(model.userGoingEvents,
+            (val) => _eventSerializer.toMap(val as Event)));
+    setMapValue(ret, 'email', model.userEmail);
+    setMapValue(ret, 'roll_no', model.userRollNumber);
+    setMapValue(ret, 'contact_no', model.userContactNumber);
+    setMapValue(ret, 'about', model.userAbout);
     setMapValue(
         ret,
-        'followedBodies',
+        'followed_bodies',
+        codeIterable(model.userFollowedBodies,
+            (val) => _bodySerializer.toMap(val as Body)));
+    setMapValue(ret, 'followed_bodies_id',
+        codeIterable(model.userFollowedBodiesID, (val) => val as String));
+    setMapValue(
+        ret,
+        'roles',
         codeIterable(
-            model.followedBodies, (val) => _bodySerializer.toMap(val as Body)));
-    setMapValue(ret, 'roles',
-        codeIterable(model.roles, (val) => _roleSerializer.toMap(val as Role)));
+            model.userRoles, (val) => _roleSerializer.toMap(val as Role)));
     setMapValue(
         ret,
         'institute_roles',
-        codeIterable(
-            model.instituteRoles, (val) => _roleSerializer.toMap(val as Role)));
+        codeIterable(model.userInstituteRoles,
+            (val) => _roleSerializer.toMap(val as Role)));
     setMapValue(
         ret,
         'former_roles',
-        codeIterable(
-            model.formerRoles, (val) => _roleSerializer.toMap(val as Role)));
+        codeIterable(model.userFormerRoles,
+            (val) => _roleSerializer.toMap(val as Role)));
+    setMapValue(ret, 'website_url', model.userWebsiteURL);
+    setMapValue(ret, 'ldap_id', model.userLDAPId);
+    setMapValue(ret, 'hostel', model.hostel);
+    setMapValue(ret, 'currentRole', model.currentRole);
     return ret;
   }
 
@@ -91,29 +97,34 @@ abstract class _$UserSerializer implements Serializer<User> {
   User fromMap(Map map) {
     if (map == null) return null;
     final obj = new User();
-    obj.id = map['id'] as String;
-    obj.name = map['name'] as String;
-    obj.profilePicUrl = map['profile_pic'] as String;
-    obj.email = map['email'] as String;
-    obj.rollNo = map['roll_no'] as String;
-    obj.hostel = map['hostel'] as String;
-    obj.contactNo = map['contact_no'] as String;
-    obj.about = map['about'] as String;
-    obj.websiteUrl = map['website_url'] as String;
-    obj.ldapId = map['ldap_id'] as String;
-    obj.eventsInterested = codeIterable<Event>(
+    obj.userID = map['id'] as String;
+    obj.userName = map['name'] as String;
+    obj.userProfilePictureUrl = map['profile_pic'] as String;
+    obj.userInterestedEvents = codeIterable<Event>(
         map['events_interested'] as Iterable,
         (val) => _eventSerializer.fromMap(val as Map));
-    obj.eventsGoing = codeIterable<Event>(map['events_going'] as Iterable,
+    obj.userGoingEvents = codeIterable<Event>(map['events_going'] as Iterable,
         (val) => _eventSerializer.fromMap(val as Map));
-    obj.followedBodies = codeIterable<Body>(map['followedBodies'] as Iterable,
+    obj.userEmail = map['email'] as String;
+    obj.userRollNumber = map['roll_no'] as String;
+    obj.userContactNumber = map['contact_no'] as String;
+    obj.userAbout = map['about'] as String;
+    obj.userFollowedBodies = codeIterable<Body>(
+        map['followed_bodies'] as Iterable,
         (val) => _bodySerializer.fromMap(val as Map));
-    obj.roles = codeIterable<Role>(
+    obj.userFollowedBodiesID = codeIterable<String>(
+        map['followed_bodies_id'] as Iterable, (val) => val as String);
+    obj.userRoles = codeIterable<Role>(
         map['roles'] as Iterable, (val) => _roleSerializer.fromMap(val as Map));
-    obj.instituteRoles = codeIterable<Role>(map['institute_roles'] as Iterable,
+    obj.userInstituteRoles = codeIterable<Role>(
+        map['institute_roles'] as Iterable,
         (val) => _roleSerializer.fromMap(val as Map));
-    obj.formerRoles = codeIterable<Role>(map['former_roles'] as Iterable,
+    obj.userFormerRoles = codeIterable<Role>(map['former_roles'] as Iterable,
         (val) => _roleSerializer.fromMap(val as Map));
+    obj.userWebsiteURL = map['website_url'] as String;
+    obj.userLDAPId = map['ldap_id'] as String;
+    obj.hostel = map['hostel'] as String;
+    obj.currentRole = map['currentRole'] as String;
     return obj;
   }
 }

@@ -2,13 +2,10 @@ import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
-import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
-import 'package:InstiApp/src/api/model/blogpost.dart';
 import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/user.dart';
-import 'package:InstiApp/src/drawer.dart';
 import 'dart:collection';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/io_client.dart';
@@ -76,8 +73,7 @@ class InstiAppBloc {
   Future<Event> getEvent(String uuid) async {
     try {
       return _events?.firstWhere((event) => event.eventID == uuid);
-    }
-    catch (ex) {
+    } catch (ex) {
       print(ex);
       return client.getEvent(getSessionIdHeader(), uuid);
     }
@@ -86,6 +82,12 @@ class InstiAppBloc {
 
   Future<Body> getBody(String uuid) async {
     return client.getBody(getSessionIdHeader(), uuid);
+  }
+
+  Future<User> getUser(String uuid) async {
+    return uuid == "me"
+        ? (currSession?.profile ?? client.getUserMe(getSessionIdHeader()))
+        : client.getUser(getSessionIdHeader(), uuid);
   }
 
   void updateSession(Session sess) {
@@ -118,8 +120,9 @@ class InstiAppBloc {
 
   Future<void> updateFollowBody(Body b) async {
     try {
-      await client.updateBodyFollowing(getSessionIdHeader(), b.bodyID, b.bodyUserFollows ? 0 : 1);
-      b.bodyUserFollows = !b.bodyUserFollows; 
+      await client.updateBodyFollowing(
+          getSessionIdHeader(), b.bodyID, b.bodyUserFollows ? 0 : 1);
+      b.bodyUserFollows = !b.bodyUserFollows;
       b.bodyFollowersCount += b.bodyUserFollows ? 1 : -1;
     } catch (ex) {
       print(ex);

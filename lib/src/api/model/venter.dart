@@ -46,7 +46,7 @@ class Comment {
   @Alias("text")
   String text;
   @Alias("commented_by")
-  User commented_by;
+  User commentedBy;
 }
 
 @GenSerializer()
