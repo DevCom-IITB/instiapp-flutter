@@ -5,7 +5,7 @@ main() {
   test('Test json parsing of login session', () {
     var sess = parseSession(jsonStr);
     expect(sess.sessionid, "8ggfyzsgbvqbvivef5jh4tvmqa4fj4io");
-    expect(sess.profile.profilePicUrl, "https://img.insti.app/profile/6745b48d7cec45dda25b953fa9833a71.jpg");
+    expect(sess.profile.userProfilePictureUrl, "https://img.insti.app/profile/6745b48d7cec45dda25b953fa9833a71.jpg");
   });
 }
 

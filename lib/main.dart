@@ -2,9 +2,9 @@ import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:InstiApp/src/routes/trainingblogpage.dart';
+import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 
@@ -55,6 +55,9 @@ class MyAppState extends State<MyApp> {
           }
           else if (settings.name.startsWith("/body/")) {
             return _buildRoute(settings, BodyPage(_bloc.getBody(settings.name.split("/body/")[1])));
+          }
+          else if (settings.name.startsWith("/user/")) {
+            return _buildRoute(settings, UserPage(_bloc.getUser(settings.name.split("/user/")[1])));
           }
           else {
             switch (settings.name) {

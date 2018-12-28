@@ -1,13 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
-import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
-import 'package:scrollable_bottom_sheet/scrollable_bottom_sheet.dart';
-
-import 'package:url_launcher/url_launcher.dart';
-
 import 'package:InstiApp/src/api/model/mess.dart';
 
 import 'dart:collection';

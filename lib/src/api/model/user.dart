@@ -15,51 +15,61 @@ class Session {
 }
 
 class User {
-  String id;
-  String name;
-  
-  @Alias('profile_pic')
-  String profilePicUrl;
+  @Alias("id")
+  String userID;
 
-  String email;
-  
-  @Alias('roll_no')
-  String rollNo;
+  @Alias("name")
+  String userName;
 
+  @Alias("profile_pic")
+  String userProfilePictureUrl;
+
+  @Alias("events_interested")
+  List<Event> userInterestedEvents;
+
+  @Alias("events_going")
+  List<Event> userGoingEvents;
+
+  @Alias("email")
+  String userEmail;
+
+  @Alias("roll_no")
+  String userRollNumber;
+
+  @Alias("contact_no")
+  String userContactNumber;
+
+  @Alias("about")
+  String userAbout;
+
+  @Alias("followed_bodies")
+  List<Body> userFollowedBodies;
+
+  @Alias("followed_bodies_id")
+  List<String> userFollowedBodiesID;
+
+  @Alias("roles")
+  List<Role> userRoles;
+
+  @Alias("institute_roles")
+  List<Role> userInstituteRoles;
+
+  @Alias("former_roles")
+  List<Role> userFormerRoles;
+
+  @Alias("website_url")
+  String userWebsiteURL;
+
+  @Alias("ldap_id")
+  String userLDAPId;
+
+  @Alias("hostel")
   String hostel;
-  
-  @Alias('contact_no')
-  String contactNo;
-  String about;
-
-
-  @Alias('website_url')
-  String websiteUrl;
-  
-  @Alias('ldap_id')
-  String ldapId;
-
-  // TODO: Other misc. things
-
-  @Alias('events_interested')
-  List<Event> eventsInterested;
-
-  @Alias('events_going')
-  List<Event> eventsGoing;
-
-  List<Body> followedBodies;
-  List<Role> roles;
-  
-  @Alias('institute_roles')
-  List<Role> instituteRoles;
-
-  @Alias('former_roles')
-  List<Role> formerRoles;
 
   String currentRole;
 
   String getSubTitle() {
-    return currentRole ?? ldapId;
+    return currentRole ?? userLDAPId;
   }
 }
 

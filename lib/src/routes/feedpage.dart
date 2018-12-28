@@ -2,7 +2,6 @@ import 'dart:collection';
 
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
-import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -22,8 +21,6 @@ class _FeedPageState extends State<FeedPage> {
     var bloc = BlocProvider.of(context).bloc;
 
     bloc.updateEvents();
-
-    var footerButtons = null;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -121,7 +118,6 @@ class _FeedPageState extends State<FeedPage> {
           ),
         ),
       ),
-      persistentFooterButtons: footerButtons,
     );
   }
 

@@ -3,17 +3,17 @@ import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 
 class ShareURLMaker {
-    static final String WEB_HOST = "https://insti.app/";
+    static final String webHost = "https://insti.app/";
 
     static String getEventURL(Event event) {
-        return WEB_HOST + "event/" + event.eventStrID;
+        return webHost + "event/" + event.eventStrID;
     }
 
     static String getBodyURL(Body body) {
-        return WEB_HOST + "org/" + body.bodyStrID;
+        return webHost + "org/" + body.bodyStrID;
     }
 
     static String getUserURL(User user) {
-        return WEB_HOST + "user/" + user.ldapId;
+        return webHost + "user/" + user.userLDAPId;
     }
 }

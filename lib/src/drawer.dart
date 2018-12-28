@@ -1,14 +1,14 @@
-import 'dart:collection';
-
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:scrollable_bottom_sheet/scrollable_bottom_sheet.dart';
 
+// This is now not used
+// This was used in an earlier version of this app
+// A normal Side Navigation Drawer
 class DrawerOnly extends StatelessWidget {
   // For now not highlighting the current page in the drawer
   // void changeSelection(int pos, List<Widget> navList) {
@@ -26,23 +26,23 @@ class DrawerOnly extends StatelessWidget {
       stream: bloc.session,
       builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
         var theme = Theme.of(context);
-        var textStyle = TextStyle(fontWeight: FontWeight.bold);
         List<Widget> navList;
         navList = <Widget>[
           UserAccountsDrawerHeader(
-            currentAccountPicture: snapshot.data?.profile?.profilePicUrl == null
-                ? CircleAvatar(child: Icon(OMIcons.person))
-                : CircleAvatar(
-                    backgroundImage:
-                        NetworkImage(snapshot.data?.profile?.profilePicUrl),
-                  ),
+            currentAccountPicture:
+                snapshot.data?.profile?.userProfilePictureUrl == null
+                    ? CircleAvatar(child: Icon(OMIcons.person))
+                    : CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            snapshot.data?.profile?.userProfilePictureUrl),
+                      ),
             accountName: Text(
-              snapshot?.data?.profile?.name ?? 'Not Logged in',
+              snapshot?.data?.profile?.userName ?? 'Not Logged in',
               style: theme.textTheme.body1
                   .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
             ),
             accountEmail: snapshot.data != null
-                ? Text(snapshot.data?.profile?.rollNo,
+                ? Text(snapshot.data?.profile?.userRollNumber,
                     style: theme.textTheme.body1.copyWith(color: Colors.white))
                 : RaisedButton(
                     child: Text("Log in"),
@@ -173,6 +173,7 @@ class DrawerOnly extends StatelessWidget {
   }
 }
 
+// A Bottom Navigation Drawer
 class BottomDrawer extends StatefulWidget {
   static void setPageIndex(InstiAppBloc bloc, int pageIndex) {
     bloc.drawerState.setPageIndex(pageIndex);
@@ -199,7 +200,6 @@ class _BottomDrawerState extends State<BottomDrawer> {
         stream: bloc.session,
         builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
           var theme = Theme.of(context);
-          var textStyle = TextStyle(fontWeight: FontWeight.bold);
 
           return StreamBuilder<int>(
               stream: drawerState.highlightPageIndex,
@@ -309,19 +309,20 @@ class _BottomDrawerState extends State<BottomDrawer> {
                   ),
                   // Divider(),
                   ListTile(
-                    leading: snapshot.data?.profile?.profilePicUrl == null
+                    leading: snapshot.data?.profile?.userProfilePictureUrl ==
+                            null
                         ? CircleAvatar(child: Icon(OMIcons.person))
                         : CircleAvatar(
                             backgroundImage: NetworkImage(
-                                snapshot.data?.profile?.profilePicUrl),
+                                snapshot.data?.profile?.userProfilePictureUrl),
                           ),
                     title: Text(
-                      snapshot?.data?.profile?.name ?? 'Not Logged in',
+                      snapshot?.data?.profile?.userName ?? 'Not Logged in',
                       style: theme.textTheme.body1
                           .copyWith(fontWeight: FontWeight.bold),
                     ),
                     subtitle: snapshot.data != null
-                        ? Text(snapshot.data?.profile?.rollNo,
+                        ? Text(snapshot.data?.profile?.userRollNumber,
                             style: theme.textTheme.body1)
                         : RaisedButton(
                             child: Text("Log in"),
@@ -329,6 +330,9 @@ class _BottomDrawerState extends State<BottomDrawer> {
                               Navigator.of(context).pushReplacementNamed('/');
                             },
                           ),
+                    onTap: () {
+                      Navigator.of(context).pushNamed("/user/me");
+                    },
                   ),
                   Divider(),
                 ];
