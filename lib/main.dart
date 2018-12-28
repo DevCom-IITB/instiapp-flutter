@@ -1,6 +1,7 @@
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
+import 'package:InstiApp/src/routes/quicklinkspage.dart';
 import 'package:InstiApp/src/routes/trainingblogpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:flutter/cupertino.dart';
@@ -66,6 +67,7 @@ class MyAppState extends State<MyApp> {
               case "/placeblog": return _buildRoute(settings, PlacementBlogPage());
               case "/trainblog": return _buildRoute(settings, TrainingBlogPage());
               case "/feed": return _buildRoute(settings, FeedPage());
+              case "/quicklinks": return _buildRoute(settings, QuickLinksPage());
             }
           }
           return _buildRoute(settings, MessPage());
