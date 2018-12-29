@@ -101,175 +101,182 @@ class _UserPageState extends State<UserPage> {
           ),
         ),
         body: SafeArea(
-          child: user == null
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : NestedScrollView(
-                  headerSliverBuilder:
-                      (BuildContext context, bool innerBoxIsScrolled) {
-                    return <Widget>[
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 28.0, horizontal: 12.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              ListTile(
-                                leading: NullableCircleAvatar(
-                                  user.userProfilePictureUrl,
-                                  OMIcons.person,
-                                  radius: 48,
-                                  heroTag: "${user.userID}",
+          child: Container(
+            foregroundDecoration: _bottomSheetActive
+            ? BoxDecoration(
+                color: Color.fromRGBO(100, 100, 100, 12),
+              )
+            : null,
+            child: user == null
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : NestedScrollView(
+                    headerSliverBuilder:
+                        (BuildContext context, bool innerBoxIsScrolled) {
+                      return <Widget>[
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 28.0, horizontal: 12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                ListTile(
+                                  leading: NullableCircleAvatar(
+                                    user.userProfilePictureUrl,
+                                    OMIcons.person,
+                                    radius: 48,
+                                    heroTag: "${user.userID}",
+                                  ),
+                                  title: Text(
+                                    user.userName,
+                                    style: theme.textTheme.headline.copyWith(
+                                        color: Colors.black,
+                                        fontFamily: "Bitter"),
+                                  ),
+                                  subtitle: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(user.userRollNumber,
+                                          style: theme.textTheme.title),
+                                      InkWell(
+                                        onTap: _launchEmail,
+                                        child: Text(user.userEmail,
+                                            style: theme.textTheme.title.copyWith(
+                                                color: Colors.lightBlue)),
+                                      ),
+                                    ]..addAll(user.userContactNumber != null
+                                        ? [
+                                            InkWell(
+                                              onTap: _launchDialer,
+                                              child: Text(user.userContactNumber,
+                                                  style: theme.textTheme.title
+                                                      .copyWith(
+                                                          color:
+                                                              Colors.lightBlue)),
+                                            )
+                                          ]
+                                        : []),
+                                  ),
                                 ),
-                                title: Text(
-                                  user.userName,
-                                  style: theme.textTheme.headline.copyWith(
-                                      color: Colors.black,
-                                      fontFamily: "Bitter"),
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(user.userRollNumber,
-                                        style: theme.textTheme.title),
-                                    InkWell(
-                                      onTap: _launchEmail,
-                                      child: Text(user.userEmail,
-                                          style: theme.textTheme.title.copyWith(
-                                              color: Colors.lightBlue)),
-                                    ),
-                                  ]..addAll(user.userContactNumber != null
-                                      ? [
-                                          InkWell(
-                                            onTap: _launchDialer,
-                                            child: Text(user.userContactNumber,
-                                                style: theme.textTheme.title
-                                                    .copyWith(
-                                                        color:
-                                                            Colors.lightBlue)),
-                                          )
-                                        ]
-                                      : []),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      SliverPersistentHeader(
-                        floating: true,
-                        pinned: true,
-                        delegate: _SliverTabBarDelegate(
-                          child: PreferredSize(
-                            preferredSize: Size.fromHeight(72),
-                            child: Material(
-                              // color: Colors.white,
-                              elevation: 4.0,
-                              child: TabBar(
-                                labelColor: theme.accentColor,
-                                unselectedLabelColor: Colors.black,
-                                tabs: [
-                                  Tab(
-                                      text: "Associations",
-                                      icon: Icon(OMIcons.workOutline)),
-                                  Tab(
-                                      text: "Following",
-                                      icon: Icon(OMIcons.peopleOutline)),
-                                  Tab(
-                                      text: "Events",
-                                      icon: Icon(OMIcons.event)),
-                                ],
+                        SliverPersistentHeader(
+                          floating: true,
+                          pinned: true,
+                          delegate: _SliverTabBarDelegate(
+                            child: PreferredSize(
+                              preferredSize: Size.fromHeight(72),
+                              child: Material(
+                                // color: Colors.white,
+                                elevation: 4.0,
+                                child: TabBar(
+                                  labelColor: theme.accentColor,
+                                  unselectedLabelColor: Colors.black,
+                                  tabs: [
+                                    Tab(
+                                        text: "Associations",
+                                        icon: Icon(OMIcons.workOutline)),
+                                    Tab(
+                                        text: "Following",
+                                        icon: Icon(OMIcons.peopleOutline)),
+                                    Tab(
+                                        text: "Events",
+                                        icon: Icon(OMIcons.event)),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ];
-                  },
-                  body: TabBarView(
-                    // These are the contents of the tab views, below the tabs.
-                    children:
-                        ["Associations", "Following", "Events"].map((name) {
-                      return SafeArea(
-                        top: false,
-                        bottom: false,
-                        child: Builder(
-                          // This Builder is needed to provide a BuildContext that is "inside"
-                          // the NestedScrollView, so that sliverOverlapAbsorberHandleFor() can
-                          // find the NestedScrollView.
-                          builder: (BuildContext context) {
-                            var delegates = {
-                              "Associations": SliverChildBuilderDelegate(
-                                (BuildContext context, int index) {
-                                  return _buildRoleTile(
-                                      user.userRoles[index], theme.textTheme);
-                                },
-                                childCount: user.userRoles?.length ?? 0,
-                              ),
-                              "Following": SliverChildBuilderDelegate(
-                                (BuildContext context, int index) {
-                                  return _buildBodyTile(
-                                      user.userFollowedBodies[index],
-                                      theme.textTheme);
-                                },
-                                childCount:
-                                    user.userFollowedBodies?.length ?? 0,
-                              ),
-                              "Events": SliverChildBuilderDelegate(
-                                (BuildContext context, int index) {
-                                  return _buildEventTile(events[index], theme);
-                                },
-                                childCount: events.length,
-                              ),
-                            };
-                            return CustomScrollView(
-                              // The "controller" and "primary" members should be left
-                              // unset, so that the NestedScrollView can control this
-                              // inner scroll view.
-                              // If the "controller" property is set, then this scroll
-                              // view will not be associated with the NestedScrollView.
-                              // The PageStorageKey should be unique to this ScrollView;
-                              // it allows the list to remember its scroll position when
-                              // the tab view is not on the screen.
-                              key: PageStorageKey<String>(name),
-                              slivers: <Widget>[
-                                // SliverOverlapInjector(
-                                //   // This is the flip side of the SliverOverlapAbsorber above.
-                                //   handle: NestedScrollView
-                                //       .sliverOverlapAbsorberHandleFor(context),
-                                // ),
-                                SliverPadding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  // In this example, the inner scroll view has
-                                  // fixed-height list items, hence the use of
-                                  // SliverFixedExtentList. However, one could use any
-                                  // sliver widget here, e.g. SliverList or SliverGrid.
-                                  sliver: delegates[name].childCount == 0
-                                      ? SliverToBoxAdapter(
-                                          child: Center(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                "No $name",
+                      ];
+                    },
+                    body: TabBarView(
+                      // These are the contents of the tab views, below the tabs.
+                      children:
+                          ["Associations", "Following", "Events"].map((name) {
+                        return SafeArea(
+                          top: false,
+                          bottom: false,
+                          child: Builder(
+                            // This Builder is needed to provide a BuildContext that is "inside"
+                            // the NestedScrollView, so that sliverOverlapAbsorberHandleFor() can
+                            // find the NestedScrollView.
+                            builder: (BuildContext context) {
+                              var delegates = {
+                                "Associations": SliverChildBuilderDelegate(
+                                  (BuildContext context, int index) {
+                                    return _buildRoleTile(
+                                        user.userRoles[index], theme.textTheme);
+                                  },
+                                  childCount: user.userRoles?.length ?? 0,
+                                ),
+                                "Following": SliverChildBuilderDelegate(
+                                  (BuildContext context, int index) {
+                                    return _buildBodyTile(
+                                        user.userFollowedBodies[index],
+                                        theme.textTheme);
+                                  },
+                                  childCount:
+                                      user.userFollowedBodies?.length ?? 0,
+                                ),
+                                "Events": SliverChildBuilderDelegate(
+                                  (BuildContext context, int index) {
+                                    return _buildEventTile(events[index], theme);
+                                  },
+                                  childCount: events.length,
+                                ),
+                              };
+                              return CustomScrollView(
+                                // The "controller" and "primary" members should be left
+                                // unset, so that the NestedScrollView can control this
+                                // inner scroll view.
+                                // If the "controller" property is set, then this scroll
+                                // view will not be associated with the NestedScrollView.
+                                // The PageStorageKey should be unique to this ScrollView;
+                                // it allows the list to remember its scroll position when
+                                // the tab view is not on the screen.
+                                key: PageStorageKey<String>(name),
+                                slivers: <Widget>[
+                                  // SliverOverlapInjector(
+                                  //   // This is the flip side of the SliverOverlapAbsorber above.
+                                  //   handle: NestedScrollView
+                                  //       .sliverOverlapAbsorberHandleFor(context),
+                                  // ),
+                                  SliverPadding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    // In this example, the inner scroll view has
+                                    // fixed-height list items, hence the use of
+                                    // SliverFixedExtentList. However, one could use any
+                                    // sliver widget here, e.g. SliverList or SliverGrid.
+                                    sliver: delegates[name].childCount == 0
+                                        ? SliverToBoxAdapter(
+                                            child: Center(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  "No $name",
+                                                ),
                                               ),
                                             ),
+                                          )
+                                        : SliverList(
+                                            delegate: delegates[name],
                                           ),
-                                        )
-                                      : SliverList(
-                                          delegate: delegates[name],
-                                        ),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      );
-                    }).toList(),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ),
-                ),
+          ),
         ),
         floatingActionButton: _bottomSheetActive || user == null
             ? null

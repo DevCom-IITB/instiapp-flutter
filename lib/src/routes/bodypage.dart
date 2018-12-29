@@ -95,106 +95,113 @@ class _BodyPageState extends State<BodyPage> {
           ],
         ),
       ),
-      body: body == null
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : ListView(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(28.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        body.bodyName,
-                        style: theme.textTheme.display2.copyWith(
-                            color: Colors.black, fontFamily: "Bitter"),
-                      ),
-                      SizedBox(height: 8.0),
-                      Text(body.bodyShortDescription,
-                          style: theme.textTheme.title),
-                    ],
+      body: Container(
+        foregroundDecoration: _bottomSheetActive
+            ? BoxDecoration(
+                color: Color.fromRGBO(100, 100, 100, 12),
+              )
+            : null,
+        child: body == null
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : ListView(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          body.bodyName,
+                          style: theme.textTheme.display2.copyWith(
+                              color: Colors.black, fontFamily: "Bitter"),
+                        ),
+                        SizedBox(height: 8.0),
+                        Text(body.bodyShortDescription,
+                            style: theme.textTheme.title),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.network(body.bodyImageURL, fit: BoxFit.fitWidth),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 28.0, vertical: 16.0),
-                  child: Text(
-                    body.bodyDescription,
-                    style: theme.textTheme.subhead,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.network(body.bodyImageURL, fit: BoxFit.fitWidth),
                   ),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                Divider(),
-              ] // Events
-                ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                    body.bodyEvents.map((e) => _buildEventTile(e, theme)).toList(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 28.0, vertical: 16.0),
-                      child: Text(
-                        "Events",
-                        style: theme.textTheme.headline,
-                      ),
-                    )))
-                // Children
-                ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                    body.bodyChildren
-                        .map((b) => _buildBodyTile(b, theme.textTheme)).toList(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 28.0, vertical: 16.0),
-                      child: Text(
-                        "Organizations",
-                        style: theme.textTheme.headline,
-                      ),
-                    )))
-                // People
-                ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                    body.bodyRoles.expand((r) {
-                      if (r.roleUsersDetail != null) {
-                        return r.roleUsersDetail
-                            .map((u) => u..currentRole = r.roleName)
-                            .toList();
-                      }
-                    }).map((u) => _buildUserTile(u, theme)).toList(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 28.0, vertical: 16.0),
-                      child: Text(
-                        "People",
-                        style: theme.textTheme.headline,
-                      ),
-                    )))
-                // Parents
-                ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                    body.bodyParents
-                        .map((b) => _buildBodyTile(b, theme.textTheme)).toList(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 28.0, vertical: 16.0),
-                      child: Text(
-                        "Part of",
-                        style: theme.textTheme.headline,
-                      ),
-                    )))
-                ..addAll([
-                  Divider(),
                   SizedBox(
-                    height: 64.0,
-                  )
-                ]),
-            ),
+                    height: 16.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 28.0, vertical: 16.0),
+                    child: Text(
+                      body.bodyDescription,
+                      style: theme.textTheme.subhead,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.0,
+                  ),
+                  Divider(),
+                ] // Events
+                  ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                      body.bodyEvents.map((e) => _buildEventTile(e, theme)).toList(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 28.0, vertical: 16.0),
+                        child: Text(
+                          "Events",
+                          style: theme.textTheme.headline,
+                        ),
+                      )))
+                  // Children
+                  ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                      body.bodyChildren
+                          .map((b) => _buildBodyTile(b, theme.textTheme)).toList(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 28.0, vertical: 16.0),
+                        child: Text(
+                          "Organizations",
+                          style: theme.textTheme.headline,
+                        ),
+                      )))
+                  // People
+                  ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                      body.bodyRoles.expand((r) {
+                        if (r.roleUsersDetail != null) {
+                          return r.roleUsersDetail
+                              .map((u) => u..currentRole = r.roleName)
+                              .toList();
+                        }
+                      }).map((u) => _buildUserTile(u, theme)).toList(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 28.0, vertical: 16.0),
+                        child: Text(
+                          "People",
+                          style: theme.textTheme.headline,
+                        ),
+                      )))
+                  // Parents
+                  ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                      body.bodyParents
+                          .map((b) => _buildBodyTile(b, theme.textTheme)).toList(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 28.0, vertical: 16.0),
+                        child: Text(
+                          "Part of",
+                          style: theme.textTheme.headline,
+                        ),
+                      )))
+                  ..addAll([
+                    Divider(),
+                    SizedBox(
+                      height: 64.0,
+                    )
+                  ]),
+              ),
+      ),
       floatingActionButton: _bottomSheetActive || body == null
           ? null
           : FloatingActionButton(
