@@ -94,23 +94,30 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
       ),
       // bottomSheet: ,
       body: SafeArea(
-        child: ListView(
-            children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(28.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        child: Container(
+          foregroundDecoration: _bottomSheetActive
+            ? BoxDecoration(
+                color: Color.fromRGBO(100, 100, 100, 12),
+              )
+            : null,
+          child: ListView(
               children: <Widget>[
-                Text(
-                  "Quick Links",
-                  style: theme.textTheme.display2
-                      .copyWith(color: Colors.black, fontFamily: "Bitter"),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(28.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "Quick Links",
+                    style: theme.textTheme.display2
+                        .copyWith(color: Colors.black, fontFamily: "Bitter"),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Divider(),
-        ]..addAll(_parseLinks(widget.links))),
+            Divider(),
+          ]..addAll(_parseLinks(widget.links))),
+        ),
       ),
     );
   }

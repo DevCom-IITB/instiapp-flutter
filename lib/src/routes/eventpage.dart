@@ -110,60 +110,67 @@ class _EventPageState extends State<EventPage> {
         ),
       ),
       // bottomSheet: ,
-      body: event == null
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : ListView(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(28.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        event.eventName,
-                        style: theme.textTheme.display2.copyWith(
-                            color: Colors.black, fontFamily: "Bitter"),
-                      ),
-                      SizedBox(height: 8.0),
-                      Text(event.getSubTitle(), style: theme.textTheme.title),
-                    ],
+      body: Container(
+        foregroundDecoration: _bottomSheetActive
+            ? BoxDecoration(
+                color: Color.fromRGBO(100, 100, 100, 12),
+              )
+            : null,
+        child: event == null
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : ListView(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          event.eventName,
+                          style: theme.textTheme.display2.copyWith(
+                              color: Colors.black, fontFamily: "Bitter"),
+                        ),
+                        SizedBox(height: 8.0),
+                        Text(event.getSubTitle(), style: theme.textTheme.title),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: PhotoViewableImage(
-                      NetworkImage(event?.eventImageURL ??
-                          event?.eventBodies[0].bodyImageURL),
-                      "${event.eventID}",
-                      fit: BoxFit.fitWidth),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 28.0, vertical: 16.0),
-                  child: Text(
-                    event?.eventDescription,
-                    style: theme.textTheme.subhead,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: PhotoViewableImage(
+                        NetworkImage(event?.eventImageURL ??
+                            event?.eventBodies[0].bodyImageURL),
+                        "${event.eventID}",
+                        fit: BoxFit.fitWidth),
                   ),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                Divider(),
-              ]
-                ..addAll(event.eventBodies
-                    .map((b) => _buildBodyTile(b, theme.textTheme)))
-                ..addAll([
-                  Divider(),
                   SizedBox(
-                    height: 64.0,
-                  )
-                ]),
-            ),
+                    height: 16.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 28.0, vertical: 16.0),
+                    child: Text(
+                      event?.eventDescription,
+                      style: theme.textTheme.subhead,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.0,
+                  ),
+                  Divider(),
+                ]
+                  ..addAll(event.eventBodies
+                      .map((b) => _buildBodyTile(b, theme.textTheme)))
+                  ..addAll([
+                    Divider(),
+                    SizedBox(
+                      height: 64.0,
+                    )
+                  ]),
+              ),
+      ),
 
       floatingActionButton: _bottomSheetActive || event == null
           ? null
