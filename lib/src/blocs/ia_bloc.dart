@@ -57,14 +57,14 @@ class InstiAppBloc {
   }
 
   String getSessionIdHeader() {
-    return "sessionid=" + currSession?.sessionid ?? "";
+    return "sessionid=" + (currSession?.sessionid ?? "");
   }
 
   Future<Null> updateHostels() async {
     var hostels = await client.getHostelMess();
     hostels.sort((h1, h2) => h1.compareTo(h2));
     _hostels = hostels;
-    _hostelsSubject.add(UnmodifiableListView(_hostels));
+   _hostelsSubject.add(UnmodifiableListView(_hostels));
   }
 
   Future<Null> updateEvents() async {

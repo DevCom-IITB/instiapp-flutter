@@ -55,26 +55,29 @@ class _MessPageState extends State<MessPage> {
               onPressed: _bottomSheetActive
                   ? null
                   : () {
-                      setState(() {
-                        //disable button
-                        _bottomSheetActive = true;
-                      });
-                      _scaffoldKey.currentState
-                          .showBottomSheet((context) {
-                            BottomDrawer.setPageIndex(bloc, 3);
-                            return BottomDrawer();
-                          })
-                          .closed
-                          .whenComplete(() {
-                            setState(() {
-                              _bottomSheetActive = false;
-                            });
-                          });
+                    BottomDrawer.setPageIndex(bloc, 3);
+                    _scaffoldKey.currentState.openDrawer();
+                      // setState(() {
+                      //   //disable button
+                      //   _bottomSheetActive = true;
+                      // });
+                      // _scaffoldKey.currentState
+                      //     .showBottomSheet((context) {
+                      //       BottomDrawer.setPageIndex(bloc, 3);
+                      //       return BottomDrawer();
+                      //     })
+                      //     .closed
+                      //     .whenComplete(() {
+                      //       setState(() {
+                      //         _bottomSheetActive = false;
+                      //       });
+                      //     });
                     },
             ),
           ],
         ),
       ),
+      drawer: BottomDrawer(),
       body: AnimatedContainer(
         duration: Duration(milliseconds: 500),
         foregroundDecoration: _bottomSheetActive
@@ -103,6 +106,7 @@ class _MessPageState extends State<MessPage> {
                 stream: bloc.hostels,
                 builder: (BuildContext context,
                     AsyncSnapshot<UnmodifiableListView<Hostel>> hostels) {
+                  print("Rebuilding messmenu");
                   if (currHostel == "0")
                     currHostel = bloc.currSession?.profile?.hostel ?? "1";
                   if (hostels.hasData) {

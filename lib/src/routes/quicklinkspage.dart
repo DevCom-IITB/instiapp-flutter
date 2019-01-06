@@ -19,8 +19,8 @@ class QuickLinksPage extends StatefulWidget {
       "Internship Blog": "http://placements.iitb.ac.in/internship/login.jsp",
       "Central Library": "http://www.library.iitb.ac.in/",
     },
-    "Calender": {
-      "Academic Calender":
+    "Calendar": {
+      "Academic Calendar":
           "http://www.iitb.ac.in/newacadhome/toacadcalender.jsp",
       "Academic Timetable": "http://www.iitb.ac.in/newacadhome/timetable.jsp",
       "Holidays List":
@@ -59,6 +59,7 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
 
     return Scaffold(
       key: _scaffoldKey,
+      drawer: BottomDrawer(),
       bottomNavigationBar: BottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
@@ -72,21 +73,23 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
               onPressed: _bottomSheetActive
                   ? null
                   : () {
-                      setState(() {
-                        //disable button
-                        _bottomSheetActive = true;
-                      });
-                      _scaffoldKey.currentState
-                          .showBottomSheet((context) {
-                            BottomDrawer.setPageIndex(bloc, 9);
-                            return BottomDrawer();
-                          })
-                          .closed
-                          .whenComplete(() {
-                            setState(() {
-                              _bottomSheetActive = false;
-                            });
-                          });
+                      BottomDrawer.setPageIndex(bloc, 9);
+                      _scaffoldKey.currentState.openDrawer();
+                      // setState(() {
+                      //   //disable button
+                      //   _bottomSheetActive = true;
+                      // });
+                      // _scaffoldKey.currentState
+                      //     .showBottomSheet((context) {
+                      //       BottomDrawer.setPageIndex(bloc, 9);
+                      //       return BottomDrawer();
+                      //     })
+                      //     .closed
+                      //     .whenComplete(() {
+                      //       setState(() {
+                      //         _bottomSheetActive = false;
+                      //       });
+                      //     });
                     },
             ),
           ],
@@ -96,10 +99,10 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
       body: SafeArea(
         child: Container(
           foregroundDecoration: _bottomSheetActive
-            ? BoxDecoration(
-                color: Color.fromRGBO(100, 100, 100, 12),
-              )
-            : null,
+              ? BoxDecoration(
+                  color: Color.fromRGBO(100, 100, 100, 12),
+                )
+              : null,
           child: ListView(
               children: <Widget>[
             Padding(

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
-import 'package:scrollable_bottom_sheet/scrollable_bottom_sheet.dart';
+// import 'package:scrollable_bottom_sheet/scrollable_bottom_sheet.dart';
 
 // This is now not used
 // This was used in an earlier version of this app
@@ -114,7 +114,7 @@ class DrawerOnly extends StatelessWidget {
           ),
           NavListTile(
             icon: OMIcons.dateRange,
-            title: "Calender",
+            title: "Calendar",
             onTap: () {
               // changeSelection(7, navList);
             },
@@ -193,9 +193,9 @@ class _BottomDrawerState extends State<BottomDrawer> {
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of(context).bloc;
     var drawerState = bloc.drawerState;
-    return ScrollableBottomSheet(
-      snapAbove: true,
-      initialHeight: MediaQuery.of(context).size.height / 2 - 20,
+    return Drawer(
+      // snapAbove: true,
+      // initialHeight: MediaQuery.of(context).size.height / 2 - 20,
       child: StreamBuilder<Session>(
         stream: bloc.session,
         builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
@@ -271,7 +271,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                   ),
                   6: NavListTile(
                     icon: OMIcons.dateRange,
-                    title: "Calender",
+                    title: "Calendar",
                     onTap: () {
                       changeSelection(6, drawerState);
                     },
@@ -333,7 +333,8 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         ? Text(snapshot.data?.profile?.userRollNumber,
                             style: theme.textTheme.body1)
                         : RaisedButton(
-                            child: Text("Log in"),
+                            child: Text("Log in", style: TextStyle(color: Colors.white),),
+                            color: theme.accentColor,
                             onPressed: () {
                               Navigator.of(context).pushReplacementNamed('/');
                             },
@@ -358,10 +359,8 @@ class _BottomDrawerState extends State<BottomDrawer> {
                 // Selecting which NavListTile to highlight
                 navMap[indexSnapshot.data].setHighlighted(true);
 
-                return Material(
-                  child: Column(
-                    children: navList,
-                  ),
+                return ListView(
+                  children: navList,
                 );
               });
         },

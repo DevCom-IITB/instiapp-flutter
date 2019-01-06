@@ -8,6 +8,7 @@ class NewsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlogPage(
+      loginNeeded: false,
       postType: PostType.NewsArticle,
       title: "News",
     );

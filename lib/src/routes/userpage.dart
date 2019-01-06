@@ -68,6 +68,7 @@ class _UserPageState extends State<UserPage> {
       length: 3,
       child: Scaffold(
         key: _scaffoldKey,
+        drawer: BottomDrawer(),
         bottomNavigationBar: BottomAppBar(
           child: new Row(
             mainAxisSize: MainAxisSize.max,
@@ -81,20 +82,21 @@ class _UserPageState extends State<UserPage> {
                 onPressed: _bottomSheetActive
                     ? null
                     : () {
-                        setState(() {
-                          //disable button
-                          _bottomSheetActive = true;
-                        });
-                        _scaffoldKey.currentState
-                            .showBottomSheet((context) {
-                              return BottomDrawer();
-                            })
-                            .closed
-                            .whenComplete(() {
-                              setState(() {
-                                _bottomSheetActive = false;
-                              });
-                            });
+                        _scaffoldKey.currentState.openDrawer();
+                        // setState(() {
+                        //   //disable button
+                        //   _bottomSheetActive = true;
+                        // });
+                        // _scaffoldKey.currentState
+                        //     .showBottomSheet((context) {
+                        //       return BottomDrawer();
+                        //     })
+                        //     .closed
+                        //     .whenComplete(() {
+                        //       setState(() {
+                        //         _bottomSheetActive = false;
+                        //       });
+                        //     });
                       },
               ),
             ],
@@ -103,10 +105,10 @@ class _UserPageState extends State<UserPage> {
         body: SafeArea(
           child: Container(
             foregroundDecoration: _bottomSheetActive
-            ? BoxDecoration(
-                color: Color.fromRGBO(100, 100, 100, 12),
-              )
-            : null,
+                ? BoxDecoration(
+                    color: Color.fromRGBO(100, 100, 100, 12),
+                  )
+                : null,
             child: user == null
                 ? Center(
                     child: CircularProgressIndicator(),
@@ -136,25 +138,34 @@ class _UserPageState extends State<UserPage> {
                                         fontFamily: "Bitter"),
                                   ),
                                   subtitle: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(user.userRollNumber,
                                           style: theme.textTheme.title),
                                       InkWell(
                                         onTap: _launchEmail,
-                                        child: Text(user.userEmail,
-                                            style: theme.textTheme.title.copyWith(
-                                                color: Colors.lightBlue)),
+                                        child: Tooltip(
+                                          message: "E-mail this person",
+                                          child: Text(user.userEmail,
+                                              style: theme.textTheme.title
+                                                  .copyWith(
+                                                      color: Colors.lightBlue)),
+                                        ),
                                       ),
                                     ]..addAll(user.userContactNumber != null
                                         ? [
                                             InkWell(
                                               onTap: _launchDialer,
-                                              child: Text(user.userContactNumber,
-                                                  style: theme.textTheme.title
-                                                      .copyWith(
-                                                          color:
-                                                              Colors.lightBlue)),
+                                              child: Tooltip(
+                                                message: "Call this person",
+                                                child: Text(
+                                                    user.userContactNumber,
+                                                    style: theme.textTheme.title
+                                                        .copyWith(
+                                                            color: Colors
+                                                                .lightBlue)),
+                                              ),
                                             )
                                           ]
                                         : []),
@@ -225,7 +236,8 @@ class _UserPageState extends State<UserPage> {
                                 ),
                                 "Events": SliverChildBuilderDelegate(
                                   (BuildContext context, int index) {
-                                    return _buildEventTile(events[index], theme);
+                                    return _buildEventTile(
+                                        events[index], theme);
                                   },
                                   childCount: events.length,
                                 ),

@@ -24,6 +24,7 @@ class _FeedPageState extends State<FeedPage> {
 
     return Scaffold(
       key: _scaffoldKey,
+      drawer: BottomDrawer(),
       bottomNavigationBar: BottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
@@ -38,21 +39,23 @@ class _FeedPageState extends State<FeedPage> {
               onPressed: _bottomSheetActive
                   ? null
                   : () {
-                      setState(() {
-                        //disable button
-                        _bottomSheetActive = true;
-                      });
-                      _scaffoldKey.currentState
-                          .showBottomSheet((context) {
-                            BottomDrawer.setPageIndex(bloc, 0);
-                            return BottomDrawer();
-                          })
-                          .closed
-                          .whenComplete(() {
-                            setState(() {
-                              _bottomSheetActive = false;
-                            });
-                          });
+                      BottomDrawer.setPageIndex(bloc, 0);
+                      _scaffoldKey.currentState.openDrawer();
+                      // setState(() {
+                      //   //disable button
+                      //   _bottomSheetActive = true;
+                      // });
+                      // _scaffoldKey.currentState
+                      //     .showBottomSheet((context) {
+                      //       BottomDrawer.setPageIndex(bloc, 0);
+                      //       return BottomDrawer();
+                      //     })
+                      //     .closed
+                      //     .whenComplete(() {
+                      //       setState(() {
+                      //         _bottomSheetActive = false;
+                      //       });
+                      //     });
                     },
             ),
           ],

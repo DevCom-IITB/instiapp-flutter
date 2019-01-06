@@ -77,6 +77,7 @@ class _EventPageState extends State<EventPage> {
     }
     return Scaffold(
       key: _scaffoldKey,
+      drawer: BottomDrawer(),
       bottomNavigationBar: BottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
@@ -90,20 +91,21 @@ class _EventPageState extends State<EventPage> {
               onPressed: _bottomSheetActive
                   ? null
                   : () {
-                      setState(() {
-                        //disable button
-                        _bottomSheetActive = true;
-                      });
-                      _scaffoldKey.currentState
-                          .showBottomSheet((context) {
-                            return BottomDrawer();
-                          })
-                          .closed
-                          .whenComplete(() {
-                            setState(() {
-                              _bottomSheetActive = false;
-                            });
-                          });
+                      _scaffoldKey.currentState.openDrawer();
+                      // setState(() {
+                      //   //disable button
+                      //   _bottomSheetActive = true;
+                      // });
+                      // _scaffoldKey.currentState
+                      //     .showBottomSheet((context) {
+                      //       return BottomDrawer();
+                      //     })
+                      //     .closed
+                      //     .whenComplete(() {
+                      //       setState(() {
+                      //         _bottomSheetActive = false;
+                      //       });
+                      //     });
                     },
             ),
           ],
