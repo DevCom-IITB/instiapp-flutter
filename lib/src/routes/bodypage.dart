@@ -301,7 +301,7 @@ class _BodyPageState extends State<BodyPage> {
 
   Widget _buildUserTile(User u, ThemeData theme) {
     return ListTile(
-      leading: NullableCircleAvatar(u.userProfilePictureUrl, OMIcons.person),
+      leading: NullableCircleAvatar(u.userProfilePictureUrl, OMIcons.personOutline),
       title: Text(
         u.userName,
         style: theme.textTheme.title,

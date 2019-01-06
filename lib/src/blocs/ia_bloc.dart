@@ -6,6 +6,7 @@ import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
 import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/user.dart';
+import 'package:InstiApp/src/blocs/explore_bloc.dart';
 import 'dart:collection';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/io_client.dart';
@@ -27,6 +28,7 @@ class InstiAppBloc {
   PostBloc placementBloc;
   PostBloc trainingBloc;
   PostBloc newsBloc;
+  ExploreBloc exploreBloc;
   DrawerBloc drawerState;
 
   // actual current state
@@ -45,6 +47,7 @@ class InstiAppBloc {
     placementBloc = PostBloc(this, postType: PostType.Placement);
     trainingBloc = PostBloc(this, postType: PostType.Training);
     newsBloc = PostBloc(this, postType: PostType.NewsArticle);
+    exploreBloc = ExploreBloc(this);
     drawerState = DrawerBloc(homepageName, highlightPageIndexVal: 3);
   }
 

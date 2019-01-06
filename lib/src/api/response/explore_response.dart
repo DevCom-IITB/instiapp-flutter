@@ -12,6 +12,8 @@ class ExploreResponse {
   List<Event> events;
   @Alias("users")
   List<User> users;
+
+  ExploreResponse({this.bodies, this.events, this.users});
 }
 
 @GenSerializer()

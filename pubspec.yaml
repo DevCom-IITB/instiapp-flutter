@@ -33,7 +33,6 @@ dependencies:
   shared_preferences: ^0.4.3
   date_format: ^1.0.5
   share: ^0.5.3
-  scrollable_bottom_sheet: ^0.0.4
   photo_view: ^0.1.0
   
 dev_dependencies:

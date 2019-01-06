@@ -127,7 +127,7 @@ class _UserPageState extends State<UserPage> {
                                 ListTile(
                                   leading: NullableCircleAvatar(
                                     user.userProfilePictureUrl,
-                                    OMIcons.person,
+                                    OMIcons.personOutline,
                                     radius: 48,
                                     heroTag: "${user.userID}",
                                   ),

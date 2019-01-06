@@ -106,7 +106,6 @@ class _MessPageState extends State<MessPage> {
                 stream: bloc.hostels,
                 builder: (BuildContext context,
                     AsyncSnapshot<UnmodifiableListView<Hostel>> hostels) {
-                  print("Rebuilding messmenu");
                   if (currHostel == "0")
                     currHostel = bloc.currSession?.profile?.hostel ?? "1";
                   if (hostels.hasData) {
