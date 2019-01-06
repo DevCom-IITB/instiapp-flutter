@@ -37,6 +37,8 @@ class _BlogPageState extends State<BlogPage> {
   bool searchMode = false;
   IconData actionIcon = OMIcons.search;
 
+  bool firstBuild = true;
+
   @override
   void initState() {
     super.initState();
@@ -64,6 +66,12 @@ class _BlogPageState extends State<BlogPage> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
     var blogBloc = bloc.getPostsBloc(widget.postType);
+
+    if (firstBuild) {
+      blogBloc.query = "";
+      blogBloc.refresh();
+      firstBuild = false;
+    }
 
     var footerButtons = searchMode
         ? [

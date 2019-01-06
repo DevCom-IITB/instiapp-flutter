@@ -32,9 +32,9 @@ class ExploreBloc {
       }
       _push(ExploreResponse(bodies: allBodies));
 
-      return Future.delayed(Duration(milliseconds: 300));
     } else {
       _push(await bloc.client.search(bloc.getSessionIdHeader(), query));
     }
+    return Future.delayed(Duration(milliseconds: 300));
   }
 }
