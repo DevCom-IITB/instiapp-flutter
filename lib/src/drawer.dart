@@ -31,7 +31,7 @@ class DrawerOnly extends StatelessWidget {
           UserAccountsDrawerHeader(
             currentAccountPicture:
                 snapshot.data?.profile?.userProfilePictureUrl == null
-                    ? CircleAvatar(child: Icon(OMIcons.person))
+                    ? CircleAvatar(child: Icon(OMIcons.personOutline))
                     : CircleAvatar(
                         backgroundImage: NetworkImage(
                             snapshot.data?.profile?.userProfilePictureUrl),
@@ -232,8 +232,12 @@ class _BottomDrawerState extends State<BottomDrawer> {
                   2: NavListTile(
                     icon: OMIcons.search,
                     title: "Explore",
+                    selected: true,
                     onTap: () {
                       changeSelection(2, drawerState);
+                      var navi = Navigator.of(context);
+                      navi.pop();
+                      navi.pushNamed('/explore');
                     },
                   ),
                   3: NavListTile(
@@ -319,7 +323,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                   ListTile(
                     leading: snapshot.data?.profile?.userProfilePictureUrl ==
                             null
-                        ? CircleAvatar(child: Icon(OMIcons.person))
+                        ? CircleAvatar(child: Icon(OMIcons.personOutline))
                         : CircleAvatar(
                             backgroundImage: NetworkImage(
                                 snapshot.data?.profile?.userProfilePictureUrl),
