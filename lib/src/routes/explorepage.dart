@@ -25,6 +25,8 @@ class _ExplorePageState extends State<ExplorePage> {
   bool searchMode = false;
   IconData actionIcon = OMIcons.search;
 
+  bool firstBuild = true;
+
   @override
   void initState() {
     super.initState();
@@ -51,7 +53,11 @@ class _ExplorePageState extends State<ExplorePage> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
     var exploreBloc = bloc.exploreBloc;
-    exploreBloc.refresh();
+    if (firstBuild) {
+      exploreBloc.query = "";
+      exploreBloc.refresh();
+      firstBuild = false;
+    }
 
     var footerButtons = searchMode
         ? [
@@ -152,7 +158,7 @@ class _ExplorePageState extends State<ExplorePage> {
           return RefreshIndicator(
             key: _refreshIndicatorKey,
             onRefresh: () {
-              exploreBloc.refresh();
+              return exploreBloc.refresh();
             },
             child: ListView(
               scrollDirection: Axis.vertical,

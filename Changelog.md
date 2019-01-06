@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9-alpha
+
+* Implemented ExplorePage
+* Change back to Side Navigation Drawer
+* Fix few bugs
+
 ## v0.8.1-alpha
 
 * Implemented UserPage, NewsPage, QuickLinksPage
