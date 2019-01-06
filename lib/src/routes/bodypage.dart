@@ -63,6 +63,7 @@ class _BodyPageState extends State<BodyPage> {
     }
     return Scaffold(
       key: _scaffoldKey,
+      drawer: BottomDrawer(),
       bottomNavigationBar: BottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
@@ -76,20 +77,21 @@ class _BodyPageState extends State<BodyPage> {
               onPressed: _bottomSheetActive
                   ? null
                   : () {
-                      setState(() {
-                        //disable button
-                        _bottomSheetActive = true;
-                      });
-                      _scaffoldKey.currentState
-                          .showBottomSheet((context) {
-                            return BottomDrawer();
-                          })
-                          .closed
-                          .whenComplete(() {
-                            setState(() {
-                              _bottomSheetActive = false;
-                            });
-                          });
+                      _scaffoldKey.currentState.openDrawer();
+                      // setState(() {
+                      //   //disable button
+                      //   _bottomSheetActive = true;
+                      // });
+                      // _scaffoldKey.currentState
+                      //     .showBottomSheet((context) {
+                      //       return BottomDrawer();
+                      //     })
+                      //     .closed
+                      //     .whenComplete(() {
+                      //       setState(() {
+                      //         _bottomSheetActive = false;
+                      //       });
+                      //     });
                     },
             ),
           ],

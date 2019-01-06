@@ -17,8 +17,9 @@ import 'package:flutter/foundation.dart';
 class BlogPage extends StatefulWidget {
   final String title;
   final PostType postType;
+  final bool loginNeeded;
 
-  BlogPage({@required this.postType, this.title});
+  BlogPage({@required this.postType, this.title, this.loginNeeded = true});
 
   @override
   _BlogPageState createState() => _BlogPageState();
@@ -91,6 +92,7 @@ class _BlogPageState extends State<BlogPage> {
     return Scaffold(
       resizeToAvoidBottomPadding: true,
       key: _scaffoldKey,
+      drawer: BottomDrawer(),
       bottomNavigationBar: Transform.translate(
         offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),
         child: Column(
@@ -132,27 +134,35 @@ class _BlogPageState extends State<BlogPage> {
                     onPressed: _bottomSheetActive
                         ? null
                         : () {
-                            setState(() {
-                              //disable button
-                              _bottomSheetActive = true;
-                            });
-                            _scaffoldKey.currentState
-                                .showBottomSheet((context) {
-                                  BottomDrawer.setPageIndex(
-                                      bloc,
-                                      {
-                                        PostType.Placement: 4,
-                                        PostType.Training: 5,
-                                        PostType.NewsArticle: 1,
-                                      }[widget.postType]);
-                                  return BottomDrawer();
-                                })
-                                .closed
-                                .whenComplete(() {
-                                  setState(() {
-                                    _bottomSheetActive = false;
-                                  });
-                                });
+                            BottomDrawer.setPageIndex(
+                                bloc,
+                                {
+                                  PostType.Placement: 4,
+                                  PostType.Training: 5,
+                                  PostType.NewsArticle: 1,
+                                }[widget.postType]);
+                            _scaffoldKey.currentState.openDrawer();
+                            // setState(() {
+                            //   //disable button
+                            //   _bottomSheetActive = true;
+                            // });
+                            // _scaffoldKey.currentState
+                            //     .showBottomSheet((context) {
+                            //       BottomDrawer.setPageIndex(
+                            //           bloc,
+                            //           {
+                            //             PostType.Placement: 4,
+                            //             PostType.Training: 5,
+                            //             PostType.NewsArticle: 1,
+                            //           }[widget.postType]);
+                            //       return BottomDrawer();
+                            //     })
+                            //     .closed
+                            //     .whenComplete(() {
+                            //       setState(() {
+                            //         _bottomSheetActive = false;
+                            //       });
+                            //     });
                           },
                   ),
                   IconButton(
@@ -186,7 +196,7 @@ class _BlogPageState extends State<BlogPage> {
         child: StreamBuilder(
           stream: bloc.session,
           builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
-            if (snapshot.hasData && snapshot.data != null) {
+            if ((snapshot.hasData && snapshot.data != null) || !widget.loginNeeded) {
               return StreamBuilder<UnmodifiableListView<Post>>(
                 stream: blogBloc.blog,
                 builder: (BuildContext context,
