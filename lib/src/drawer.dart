@@ -276,8 +276,12 @@ class _BottomDrawerState extends State<BottomDrawer> {
                   6: NavListTile(
                     icon: OMIcons.dateRange,
                     title: "Calendar",
+                    selected: true,
                     onTap: () {
                       changeSelection(6, drawerState);
+                      var navi = Navigator.of(context);
+                      navi.pop();
+                      navi.pushNamed('/calendar');
                     },
                   ),
                   7: NavListTile(

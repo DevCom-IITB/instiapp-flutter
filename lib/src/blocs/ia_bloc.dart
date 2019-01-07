@@ -1,6 +1,7 @@
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
+import 'package:InstiApp/src/blocs/calendar_bloc.dart';
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
 import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
@@ -29,6 +30,7 @@ class InstiAppBloc {
   PostBloc trainingBloc;
   PostBloc newsBloc;
   ExploreBloc exploreBloc;
+  CalendarBloc calendarBloc;
   DrawerBloc drawerState;
 
   // actual current state
@@ -48,6 +50,7 @@ class InstiAppBloc {
     trainingBloc = PostBloc(this, postType: PostType.Training);
     newsBloc = PostBloc(this, postType: PostType.NewsArticle);
     exploreBloc = ExploreBloc(this);
+    calendarBloc = CalendarBloc(this);
     drawerState = DrawerBloc(homepageName, highlightPageIndexVal: 3);
   }
 

@@ -57,6 +57,8 @@ class Event {
 
   bool eventBigImage = false;
 
+  DateTime eventStartDate;
+
   String getSubTitle() {
     String subtitle = "";
 
