@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.10-alpha
+
+* Implemented CalendarPage
+* Shows all events in the month overview 
+
 ## v0.9-alpha
 
 * Implemented ExplorePage
