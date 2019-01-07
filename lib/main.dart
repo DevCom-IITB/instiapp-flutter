@@ -1,4 +1,5 @@
 import 'package:InstiApp/src/routes/bodypage.dart';
+import 'package:InstiApp/src/routes/calendarpage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
@@ -72,6 +73,7 @@ class MyAppState extends State<MyApp> {
               case "/quicklinks": return _buildRoute(settings, QuickLinksPage());
               case "/news": return _buildRoute(settings, NewsPage());
               case "/explore": return _buildRoute(settings, ExplorePage());
+              case "/calendar": return _buildRoute(settings, CalendarPage());
             }
           }
           return _buildRoute(settings, MessPage());
