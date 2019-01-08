@@ -1,5 +1,7 @@
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
+import 'package:InstiApp/src/routes/complaintpage.dart';
+import 'package:InstiApp/src/routes/complaintspage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
@@ -63,6 +65,9 @@ class MyAppState extends State<MyApp> {
           else if (settings.name.startsWith("/user/")) {
             return _buildRoute(settings, UserPage(_bloc.getUser(settings.name.split("/user/")[1])));
           }
+          else if (settings.name.startsWith("/complaint/")) {
+            return _buildRoute(settings, ComplaintPage(_bloc.getComplaint(settings.name.split("/complaint/")[1])));
+          }
           else {
             switch (settings.name) {
               case "/": return _buildRoute(settings, LoginPage());
@@ -74,6 +79,7 @@ class MyAppState extends State<MyApp> {
               case "/news": return _buildRoute(settings, NewsPage());
               case "/explore": return _buildRoute(settings, ExplorePage());
               case "/calendar": return _buildRoute(settings, CalendarPage());
+              case "/complaints": return _buildRoute(settings, ComplaintsPage());
             }
           }
           return _buildRoute(settings, MessPage());

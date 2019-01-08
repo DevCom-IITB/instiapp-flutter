@@ -294,8 +294,12 @@ class _BottomDrawerState extends State<BottomDrawer> {
                   8: NavListTile(
                     icon: OMIcons.feedback,
                     title: "Complaints/Suggestions",
+                    selected: true,
                     onTap: () {
                       changeSelection(8, drawerState);
+                      var navi = Navigator.of(context);
+                      navi.pop();
+                      navi.pushNamed('/complaints');
                     },
                   ),
                   9: NavListTile(

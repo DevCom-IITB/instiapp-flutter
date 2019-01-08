@@ -1,7 +1,9 @@
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
+import 'package:InstiApp/src/blocs/complaints_bloc.dart';
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
 import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
@@ -31,6 +33,7 @@ class InstiAppBloc {
   PostBloc newsBloc;
   ExploreBloc exploreBloc;
   CalendarBloc calendarBloc;
+  ComplaintsBloc complaintsBloc;
   DrawerBloc drawerState;
 
   // actual current state
@@ -51,6 +54,7 @@ class InstiAppBloc {
     newsBloc = PostBloc(this, postType: PostType.NewsArticle);
     exploreBloc = ExploreBloc(this);
     calendarBloc = CalendarBloc(this);
+    complaintsBloc = ComplaintsBloc(this);
     drawerState = DrawerBloc(homepageName, highlightPageIndexVal: 3);
   }
 
@@ -101,6 +105,11 @@ class InstiAppBloc {
         ? (currSession?.profile ?? client.getUserMe(getSessionIdHeader()))
         : client.getUser(getSessionIdHeader(), uuid);
   }
+
+  Future<Complaint> getComplaint(String uuid) async {
+    return await complaintsBloc.getComplaint(uuid);
+  }
+
 
   void updateSession(Session sess) {
     currSession = sess;
