@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.11-alpha
+
+* Implemented ComplaintsPage, ComplaintPage
+* Can upvote, comment on existing complaints
+
 ## v0.10-alpha
 
 * Implemented CalendarPage

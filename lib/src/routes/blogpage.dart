@@ -204,7 +204,8 @@ class _BlogPageState extends State<BlogPage> {
         child: StreamBuilder(
           stream: bloc.session,
           builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
-            if ((snapshot.hasData && snapshot.data != null) || !widget.loginNeeded) {
+            if ((snapshot.hasData && snapshot.data != null) ||
+                !widget.loginNeeded) {
               return StreamBuilder<UnmodifiableListView<Post>>(
                 stream: blogBloc.blog,
                 builder: (BuildContext context,
@@ -234,9 +235,13 @@ class _BlogPageState extends State<BlogPage> {
                           return _buildPost(blogBloc, index - 1, snapshot.data);
                         }
                       },
-                      itemCount:
-                          (snapshot.data == null ? 0 : snapshot.data.length) +
-                              2,
+                      itemCount: (snapshot.data == null
+                              ? 0
+                              : ((snapshot.data.isNotEmpty &&
+                                      snapshot.data.last.content == null)
+                                  ? snapshot.data.length - 1
+                                  : snapshot.data.length)) +
+                          2,
                       controller: _hideButtonController,
                     ),
                   );
@@ -312,6 +317,16 @@ class _BlogPageState extends State<BlogPage> {
         padding: const EdgeInsets.all(8.0),
         child: Center(
           child: CircularProgressIndicator(),
+        ),
+      ));
+    }
+
+    if (post.content == null) {
+      return Card(
+          child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Text("End of results"),
         ),
       ));
     }

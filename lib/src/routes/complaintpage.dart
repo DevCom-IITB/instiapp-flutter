@@ -11,6 +11,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart' as LocationManager;
+import 'package:flutter/services.dart';
 
 class ComplaintPage extends StatefulWidget {
   final String title = "Complaint";
@@ -33,7 +35,10 @@ class _ComplaintPageState extends State<ComplaintPage> {
   bool loadingUpvote = false;
   bool loadingComment = false;
 
+  // bool firstBuild = true;
+
   GoogleMapController _mapController;
+  LocationManager.Location _location;
 
   @override
   void initState() {
@@ -46,6 +51,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
     });
     _commentFocusNode = FocusNode();
     _commentController = TextEditingController();
+    _location = LocationManager.Location();
   }
 
   @override
@@ -62,6 +68,25 @@ class _ComplaintPageState extends State<ComplaintPage> {
     var complaintBloc = bloc.complaintsBloc;
     var fab;
     fab = null;
+
+    // if (firstBuild) {
+    //   setState(()  {
+    //     try {
+    //       _location.getLocation().catchError(() {});
+    //       // var v = await _location.hasPermission();
+    //       // if (v) {
+    //       //   _location.getLocation();
+    //       // }
+    //     } 
+    //     on PlatformException {
+          
+    //     }
+    //     catch (e ) {
+    //       print(e);
+    //     }
+    //   });
+    //   firstBuild = false;
+    // }
 
     if (complaint != null) {
       var userVoted = complaint.voteCount == 1;

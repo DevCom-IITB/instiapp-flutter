@@ -135,6 +135,10 @@ class PostBloc {
       }
     }
 
+    if (_fetchPages[maxPageIndex].length < _noOfPostsPerPage) {
+      posts.add(Post());
+    }
+
     // Only notify when there are posts
     if (posts.length > 0) {
       _blogSubject.add(UnmodifiableListView<Post>(posts));
