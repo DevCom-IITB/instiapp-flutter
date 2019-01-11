@@ -85,28 +85,6 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                     ),
                   ),
                 ),
-                // SliverToBoxAdapter(
-                //   child: StreamBuilder(
-                //       stream: bloc.session,
-                //       builder: (BuildContext context,
-                //           AsyncSnapshot<Session> snapshot) {
-                //         return (snapshot.hasData && snapshot.data != null)
-                //             ? Container(
-                //                 padding: EdgeInsets.fromLTRB(28, 0, 28, 28),
-                //                 child: RaisedButton(
-                //                   onPressed: () {},
-                //                   padding: EdgeInsets.symmetric(vertical: 8.0),
-                //                   color: theme.accentColor,
-                //                   child: Text("Vent your issue",
-                //                       style: theme.accentTextTheme.title),
-                //                 ),
-                //               )
-                //             : Container(
-                //                 width: 0,
-                //                 height: 0,
-                //               );
-                //       }),
-                // ),
                 StreamBuilder(
                   stream: bloc.session,
                   builder:
@@ -173,7 +151,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                           ? SliverToBoxAdapter(
                                               child: Center(
                                                 child: Text(
-                                                    "No more complaints",
+                                                    "No complaints",
                                                     style: theme.textTheme.title
                                                         .copyWith(
                                                             fontWeight:
@@ -212,7 +190,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                           ? SliverToBoxAdapter(
                                               child: Center(
                                                 child: Text(
-                                                    "No more complaints",
+                                                    "No complaints",
                                                     style: theme.textTheme.title
                                                         .copyWith(
                                                             fontWeight:
@@ -268,11 +246,13 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
             ),
           ),
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          label: Text("Vent"),
-          icon: Icon(OMIcons.feedback),
-          onPressed: () {},
-        ),
+        // floatingActionButton: FloatingActionButton.extended(
+        //   label: Text("Vent"),
+        //   icon: Icon(OMIcons.feedback),
+        //   onPressed: () {
+        //     Navigator.of(context).pushNamed("/newcomplaint");
+        //   },
+        // ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       ),
     );
