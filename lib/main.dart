@@ -5,6 +5,7 @@ import 'package:InstiApp/src/routes/complaintspage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
+import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
 import 'package:InstiApp/src/routes/quicklinkspage.dart';
 import 'package:InstiApp/src/routes/trainingblogpage.dart';
@@ -80,6 +81,7 @@ class MyAppState extends State<MyApp> {
               case "/explore": return _buildRoute(settings, ExplorePage());
               case "/calendar": return _buildRoute(settings, CalendarPage());
               case "/complaints": return _buildRoute(settings, ComplaintsPage());
+              case "/newcomplaint": return _buildRoute(settings, NewComplaintPage());
             }
           }
           return _buildRoute(settings, MessPage());
