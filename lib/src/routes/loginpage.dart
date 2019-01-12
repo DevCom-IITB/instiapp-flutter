@@ -53,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
       // If session already exists, continue to homepage with current session
       if (sess != null) {
         _bloc?.updateSession(sess);
+        _bloc?.reloadCurrentUser();
         Navigator.of(context).pushReplacementNamed(_bloc?.homepageName);
         return;
       }
