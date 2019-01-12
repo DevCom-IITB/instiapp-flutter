@@ -74,7 +74,7 @@ class InstiAppBloc {
     var hostels = await client.getHostelMess();
     hostels.sort((h1, h2) => h1.compareTo(h2));
     _hostels = hostels;
-   _hostelsSubject.add(UnmodifiableListView(_hostels));
+    _hostelsSubject.add(UnmodifiableListView(_hostels));
   }
 
   Future<Null> updateEvents() async {
@@ -110,6 +110,11 @@ class InstiAppBloc {
     return await complaintsBloc.getComplaint(uuid);
   }
 
+  void reloadCurrentUser() async {
+    var userMe = await client.getUserMe(getSessionIdHeader());
+    currSession.profile = userMe;
+    updateSession(currSession);
+  }
 
   void updateSession(Session sess) {
     currSession = sess;

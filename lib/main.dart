@@ -1,3 +1,4 @@
+import 'package:InstiApp/src/routes/addeventpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
 import 'package:InstiApp/src/routes/complaintpage.dart';
@@ -82,6 +83,7 @@ class MyAppState extends State<MyApp> {
               case "/calendar": return _buildRoute(settings, CalendarPage());
               case "/complaints": return _buildRoute(settings, ComplaintsPage());
               case "/newcomplaint": return _buildRoute(settings, NewComplaintPage());
+              case "/addevent": return _buildRoute(settings, AddEventPage());
             }
           }
           return _buildRoute(settings, MessPage());
