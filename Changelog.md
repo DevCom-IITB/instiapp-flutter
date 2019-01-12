@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.12-alpha
+
+* Implemented AddEventPage
+* Fix Blogs: search now shows when there are no more posts to show 
+* Creating Events is now working
+
 ## v0.11-alpha
 
 * Implemented ComplaintsPage, ComplaintPage
