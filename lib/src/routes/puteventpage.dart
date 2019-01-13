@@ -1,20 +1,27 @@
 import 'dart:async';
 
+import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 
-class AddEventPage extends StatefulWidget {
+class PutEventPage extends StatefulWidget {
+  final String eventID;
+  PutEventPage({this.eventID});
+
   @override
-  _AddEventPageState createState() => _AddEventPageState();
+  _PutEventPageState createState() => _PutEventPageState();
 }
 
-class _AddEventPageState extends State<AddEventPage> {
+class _PutEventPageState extends State<PutEventPage> {
   final flutterWebviewPlugin = FlutterWebviewPlugin();
 
-  final String addEventUrl = "https://insti.app/add-event?sandbox=true";
+  final String hostUrl = "https://insti.app/";
+  final String addEventStr = "add-event/";
+  final String editEventStr = "edit-event/";
+  final String sandboxTrueStr = "?sandbox=true";
 
   StreamSubscription<String> onUrlChangedSub;
 
@@ -36,19 +43,20 @@ class _AddEventPageState extends State<AddEventPage> {
   }
 
   @override
-    void dispose() {
-      onUrlChangedSub?.cancel();
-      flutterWebviewPlugin.dispose();
-      super.dispose();
-    }
+  void dispose() {
+    onUrlChangedSub?.cancel();
+    flutterWebviewPlugin.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
-
+    var url = "$hostUrl${widget.eventID == null ? addEventStr : (editEventStr + widget.eventID)}$sandboxTrueStr";
+    print("This is the URL: $url");
     return WebviewScaffold(
-      url: addEventUrl,
+      url: url,
       withJavascript: true,
       withLocalStorage: true,
       headers: {

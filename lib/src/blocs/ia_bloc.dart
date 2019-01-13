@@ -122,6 +122,12 @@ class InstiAppBloc {
     _persistSession(sess);
   }
 
+  bool editEventAccess(Event event) {
+    return currSession?.profile?.userRoles?.any((r) => r.roleBodies.any(
+            (b) => event.eventBodies.any((b1) => b.bodyID == b1.bodyID))) ??
+        false;
+  }
+
   Future<void> updateUesEvent(Event e, int ues) async {
     try {
       print("updating Ues from ${e.eventUserUes} to $ues");

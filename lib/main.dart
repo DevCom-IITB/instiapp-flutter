@@ -1,4 +1,3 @@
-import 'package:InstiApp/src/routes/addeventpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
 import 'package:InstiApp/src/routes/complaintpage.dart';
@@ -8,6 +7,7 @@ import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
+import 'package:InstiApp/src/routes/puteventpage.dart';
 import 'package:InstiApp/src/routes/quicklinkspage.dart';
 import 'package:InstiApp/src/routes/trainingblogpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
@@ -70,6 +70,9 @@ class MyAppState extends State<MyApp> {
           else if (settings.name.startsWith("/complaint/")) {
             return _buildRoute(settings, ComplaintPage(_bloc.getComplaint(settings.name.split("/complaint/")[1])));
           }
+          else if (settings.name.startsWith("/putevent/")) {
+            return _buildRoute(settings, PutEventPage(eventID: settings.name.split("/putevent/")[1]),);
+          }
           else {
             switch (settings.name) {
               case "/": return _buildRoute(settings, LoginPage());
@@ -83,7 +86,7 @@ class MyAppState extends State<MyApp> {
               case "/calendar": return _buildRoute(settings, CalendarPage());
               case "/complaints": return _buildRoute(settings, ComplaintsPage());
               case "/newcomplaint": return _buildRoute(settings, NewComplaintPage());
-              case "/addevent": return _buildRoute(settings, AddEventPage());
+              case "/putevent": return _buildRoute(settings, PutEventPage());
             }
           }
           return _buildRoute(settings, MessPage());
