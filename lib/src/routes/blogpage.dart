@@ -1,6 +1,7 @@
 import 'dart:core';
 import 'dart:collection';
 
+import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:InstiApp/src/api/model/post.dart';
@@ -365,39 +366,9 @@ class _BlogPageState extends State<BlogPage> {
                 SizedBox(
                   height: 8.0,
                 ),
-                Html(
+                CommonHtml(
                   data: post.content,
                   defaultTextStyle: theme.textTheme.subhead,
-                  onLinkTap: (link) async {
-                    print(link);
-                    if (await canLaunch(link)) {
-                      await launch(link);
-                    } else {
-                      throw "Couldn't launch $link";
-                    }
-                  },
-                  customRender: (node, children) {
-                    if (node is dom.Element) {
-                      switch (node.localName) {
-                        case "img":
-                          return Text(node.attributes['href'] ?? "<img>");
-                        case "a":
-                          return InkWell(
-                            onTap: () async {
-                              if (await canLaunch(node.attributes['href'])) {
-                                await launch(node.attributes['href']);
-                              }
-                            },
-                            child: Text(
-                              node.innerHtml,
-                              style: TextStyle(
-                                  color: Colors.lightBlue,
-                                  decoration: TextDecoration.underline),
-                            ),
-                          );
-                      }
-                    }
-                  },
                 ),
               ],
             ),

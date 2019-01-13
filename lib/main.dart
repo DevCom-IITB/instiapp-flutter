@@ -10,6 +10,7 @@ import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
 import 'package:InstiApp/src/routes/puteventpage.dart';
 import 'package:InstiApp/src/routes/quicklinkspage.dart';
+import 'package:InstiApp/src/routes/settingspage.dart';
 import 'package:InstiApp/src/routes/trainingblogpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:flutter/cupertino.dart';
@@ -76,7 +77,7 @@ class MyAppState extends State<MyApp> {
           }
           else {
             switch (settings.name) {
-              case "/": return _buildRoute(settings, LoginPage());
+              case "/": return _buildRoute(settings, LoginPage(_bloc));
               case "/mess": return _buildRoute(settings, MessPage());
               case "/placeblog": return _buildRoute(settings, PlacementBlogPage());
               case "/trainblog": return _buildRoute(settings, TrainingBlogPage());
@@ -89,6 +90,7 @@ class MyAppState extends State<MyApp> {
               case "/newcomplaint": return _buildRoute(settings, NewComplaintPage());
               case "/putevent": return _buildRoute(settings, PutEventPage());
               case "/map": return _buildRoute(settings, MapPage());
+              case "/settings": return _buildRoute(settings, SettingsPage());
             }
           }
           return _buildRoute(settings, MessPage());

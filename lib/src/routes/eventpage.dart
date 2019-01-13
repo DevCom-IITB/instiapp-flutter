@@ -6,9 +6,11 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
+import 'package:markdown/markdown.dart' as markdown;
 
 class EventPage extends StatefulWidget {
   final Future<Event> _eventFuture;
@@ -32,6 +34,14 @@ class _EventPageState extends State<EventPage> {
     super.initState();
     event = null;
     widget._eventFuture.then((ev) {
+      var tableParse = markdown.TableSyntax();
+      ev.eventDescription = markdown.markdownToHtml(
+          ev.eventDescription
+              .split('\n')
+              .map((s) => s.trimRight())
+              .toList()
+              .join('\n'),
+          blockSyntaxes: [tableParse]);
       setState(() {
         event = ev;
       });
@@ -166,9 +176,9 @@ class _EventPageState extends State<EventPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 28.0, vertical: 16.0),
-                    child: Text(
-                      event?.eventDescription,
-                      style: theme.textTheme.subhead,
+                    child: CommonHtml(
+                      data : event?.eventDescription,
+                      defaultTextStyle: theme.textTheme.subhead,
                     ),
                   ),
                   SizedBox(
@@ -265,6 +275,9 @@ class _EventPageState extends State<EventPage> {
         return rowChildren;
       }()),
       onPressed: () async {
+        if (bloc.currSession == null) {
+          return;
+        }
         setState(() {
           loadingUes = id;
         });
