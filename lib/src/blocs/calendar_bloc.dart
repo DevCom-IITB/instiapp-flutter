@@ -15,13 +15,19 @@ class CalendarBloc {
   Stream<Map<DateTime, List<ev.Event>>> get events => _eventsSubject.stream;
   final _eventsSubject = BehaviorSubject<Map<DateTime, List<ev.Event>>>();
 
+  Stream<bool> get loading => _loadingSubject.stream;
+  final _loadingSubject = BehaviorSubject<bool>();
+
   // State
   Map<DateTime, List<Event>> monthToEvents = {};
   Map<DateTime, List<ev.Event>> calEventsMap = {};
   Map<DateTime, List<Event>> eventsMap = {};
   List<DateTime> receivingMonths = [];
+  bool _loading = true;
 
-  CalendarBloc(this.bloc);
+  CalendarBloc(this.bloc) {
+    _loadingSubject.add(_loading);
+  }
 
   DateTime _getMonthStart(DateTime date) {
     return DateTime(date.year, date.month);
@@ -34,7 +40,11 @@ class CalendarBloc {
     }).toList();
   }
 
-  fetchEvents(DateTime currMonth, Widget icon) async {
+  void fetchEvents(DateTime currMonth, Widget icon) async {
+    if (!_loading) {
+      _loading = true;
+      _loadingSubject.add(_loading);
+    }
     var isoFormat = [yyyy, "-", mm, "-", dd, " ", HH, ":", nn, ":", ss];
 
     var currMonthStart = _getMonthStart(currMonth);
@@ -45,9 +55,12 @@ class CalendarBloc {
     var nextNextMonthStart =
         DateTime(currMonthStart.year, currMonthStart.month + 2);
 
-    var havePrev = monthToEvents.containsKey(prevMonthStart) || receivingMonths.contains(prevMonthStart);
-    var haveCurr = monthToEvents.containsKey(currMonthStart) || receivingMonths.contains(currMonthStart);
-    var haveNext = monthToEvents.containsKey(nextMonthStart) || receivingMonths.contains(nextMonthStart);
+    var havePrev = monthToEvents.containsKey(prevMonthStart) ||
+        receivingMonths.contains(prevMonthStart);
+    var haveCurr = monthToEvents.containsKey(currMonthStart) ||
+        receivingMonths.contains(currMonthStart);
+    var haveNext = monthToEvents.containsKey(nextMonthStart) ||
+        receivingMonths.contains(nextMonthStart);
     if (!(havePrev && haveCurr && haveNext)) {
       if (!havePrev) {
         receivingMonths.add(prevMonthStart);
@@ -58,7 +71,7 @@ class CalendarBloc {
       if (!haveNext) {
         receivingMonths.add(nextMonthStart);
       }
-      
+
       var newsFeedResp = await bloc.client.getEventsBetweenDates(
           bloc.getSessionIdHeader(),
           formatDate(
@@ -95,6 +108,10 @@ class CalendarBloc {
         eventsMap.putIfAbsent(e.eventStartDate, () => []).add(e);
       }
       _eventsSubject.add(calEventsMap);
+    }
+    if (_loading) {
+      _loading = false;
+      _loadingSubject.add(_loading);
     }
   }
 }

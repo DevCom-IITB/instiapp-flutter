@@ -92,14 +92,33 @@ class _CalendarPageState extends State<CalendarPage> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(28.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
                       widget.title,
                       style: theme.textTheme.display2
                           .copyWith(color: Colors.black, fontFamily: "Bitter"),
                     ),
+                    SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: StreamBuilder<bool>(
+                          stream: calBloc.loading,
+                          initialData: true,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<bool> snapshot) {
+                            return snapshot.data
+                                ? CircularProgressIndicator(
+                                    valueColor:
+                                        new AlwaysStoppedAnimation<Color>(
+                                            theme.accentColor),
+                                    strokeWidth: 2,
+                                  )
+                                : Container();
+                          },
+                        ))
                   ],
                 ),
               ),
