@@ -47,6 +47,21 @@ class InstiAppBloc {
   // default homepage
   String homepageName = "/mess";
 
+  // all pages
+  Map<String, int> pageToIndex = {
+    '/feed': 0,
+    '/news': 1,
+    '/explore': 2,
+    '/mess': 3,
+    '/placeblog': 4,
+    '/trainblog': 5,
+    '/calendar': 6,
+    '/map': 7,
+    '/complaints': 8,
+    '/quicklinks': 9,
+    '/settings': 10,
+  };
+
   InstiAppBloc() {
     globalClient = IOClient();
     placementBloc = PostBloc(this, postType: PostType.Placement);
@@ -58,6 +73,20 @@ class InstiAppBloc {
     drawerState = DrawerBloc(homepageName, highlightPageIndexVal: 3);
   }
 
+  Future<void> restorePrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getKeys().contains("session")) {
+      Session sess = standardSerializers.decodeOne(prefs.getString("session"));
+      if (sess?.sessionid != null) {
+        updateSession(sess);
+      }
+    }
+    if (prefs.getKeys().contains("homepage")) {
+      homepageName = prefs.getString("homepage") ?? homepageName;
+      drawerState.setPageIndex(pageToIndex[homepageName]);
+    }
+  }
+
   PostBloc getPostsBloc(PostType blogType) {
     return {
       PostType.Placement: placementBloc,
@@ -67,7 +96,9 @@ class InstiAppBloc {
   }
 
   String getSessionIdHeader() {
-    return "sessionid=" + (currSession?.sessionid ?? "");
+    return currSession?.sessionid != null
+        ? "sessionid=${currSession.sessionid}"
+        : "";
   }
 
   Future<Null> updateHostels() async {
@@ -168,5 +199,11 @@ class InstiAppBloc {
 
   void logout() {
     updateSession(null);
+  }
+
+  Future<void> updateHomepage(String s) async {
+    homepageName = s;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("homepage", s);
   }
 }

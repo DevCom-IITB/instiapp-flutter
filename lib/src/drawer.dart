@@ -320,8 +320,12 @@ class _BottomDrawerState extends State<BottomDrawer> {
                   10: NavListTile(
                     icon: OMIcons.settings,
                     title: "Settings",
+                    selected: true,
                     onTap: () {
                       changeSelection(10, drawerState);
+                      var navi = Navigator.of(context);
+                      navi.pop();
+                      navi.pushNamed('/settings');
                     },
                   ),
                 };

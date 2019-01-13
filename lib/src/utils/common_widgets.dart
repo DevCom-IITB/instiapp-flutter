@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:html/dom.dart' as dom;
 
 class NullableCircleAvatar extends StatelessWidget {
   final String url;
@@ -103,5 +106,50 @@ class PhotoViewableImage extends StatelessWidget {
             image: imageProvider,
           ),
         ));
+  }
+}
+
+class CommonHtml extends StatelessWidget {
+  final String data; 
+  final TextStyle defaultTextStyle;
+
+  CommonHtml({@required this.data, this.defaultTextStyle});
+
+  @override
+  Widget build(BuildContext context) {
+    return Html(
+      data: data,
+      defaultTextStyle: defaultTextStyle,
+      onLinkTap: (link) async {
+        print(link);
+        if (await canLaunch(link)) {
+          await launch(link);
+        } else {
+          throw "Couldn't launch $link";
+        }
+      },
+      customRender: (node, children) {
+        if (node is dom.Element) {
+          switch (node.localName) {
+            case "img":
+              return Text(node.attributes['href'] ?? "<img>");
+            case "a":
+              return InkWell(
+                onTap: () async {
+                  if (await canLaunch(node.attributes['href'])) {
+                    await launch(node.attributes['href']);
+                  }
+                },
+                child: Text(
+                  node.innerHtml,
+                  style: TextStyle(
+                      color: Colors.lightBlue,
+                      decoration: TextDecoration.underline),
+                ),
+              );
+          }
+        }
+      },
+    );
   }
 }

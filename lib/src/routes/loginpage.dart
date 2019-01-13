@@ -5,17 +5,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:InstiApp/src/api/apiclient.dart';
-import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 
 const String api = "https://api.insti.app/api";
 const String authority = "api.insti.app";
 
 class LoginPage extends StatefulWidget {
+  final InstiAppBloc bloc;
+  LoginPage(this.bloc);
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -48,11 +48,11 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    _bloc = widget.bloc;
 
     checkLogin().then((Session sess) {
       // If session already exists, continue to homepage with current session
       if (sess != null) {
-        _bloc?.updateSession(sess);
         _bloc?.reloadCurrentUser();
         Navigator.of(context).pushReplacementNamed(_bloc?.homepageName);
         return;
@@ -118,15 +118,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<Session> checkLogin() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getKeys().contains("session")) {
-      standardSerializers.decodeOne(prefs.getString("session"));
-      Session sess = standardSerializers.decodeOne(prefs.getString("session"));
-      if (sess?.sessionid != null) {
-        return sess;
-      }
-    }
-    return null;
+    await _bloc.restorePrefs();
+    return _bloc?.currSession;
   }
 
   @override

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
+import 'package:markdown/markdown.dart' as markdown;
 
 class BodyPage extends StatefulWidget {
   final Future<Body> _bodyFuture;
@@ -33,6 +34,14 @@ class _BodyPageState extends State<BodyPage> {
     super.initState();
     body = null;
     widget._bodyFuture.then((b) {
+      var tableParse = markdown.TableSyntax();
+      b.bodyDescription = markdown.markdownToHtml(
+          b.bodyDescription
+              .split('\n')
+              .map((s) => s.trimRight())
+              .toList()
+              .join('\n'),
+          blockSyntaxes: [tableParse]);
       setState(() {
         body = b;
       });
@@ -127,7 +136,8 @@ class _BodyPageState extends State<BodyPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Image.network(body.bodyImageURL, fit: BoxFit.fitWidth),
+                    child:
+                        Image.network(body.bodyImageURL, fit: BoxFit.fitWidth),
                   ),
                   SizedBox(
                     height: 16.0,
@@ -135,9 +145,9 @@ class _BodyPageState extends State<BodyPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 28.0, vertical: 16.0),
-                    child: Text(
-                      body.bodyDescription,
-                      style: theme.textTheme.subhead,
+                    child: CommonHtml(
+                      data: body.bodyDescription,
+                      defaultTextStyle: theme.textTheme.subhead,
                     ),
                   ),
                   SizedBox(
@@ -146,7 +156,9 @@ class _BodyPageState extends State<BodyPage> {
                   Divider(),
                 ] // Events
                   ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                      body.bodyEvents.map((e) => _buildEventTile(e, theme)).toList(),
+                      body.bodyEvents
+                          .map((e) => _buildEventTile(e, theme))
+                          .toList(),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 28.0, vertical: 16.0),
@@ -158,7 +170,8 @@ class _BodyPageState extends State<BodyPage> {
                   // Children
                   ..addAll(_nonEmptyListWithHeaderOrEmpty(
                       body.bodyChildren
-                          .map((b) => _buildBodyTile(b, theme.textTheme)).toList(),
+                          .map((b) => _buildBodyTile(b, theme.textTheme))
+                          .toList(),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 28.0, vertical: 16.0),
@@ -169,13 +182,16 @@ class _BodyPageState extends State<BodyPage> {
                       )))
                   // People
                   ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                      body.bodyRoles.expand((r) {
-                        if (r.roleUsersDetail != null) {
-                          return r.roleUsersDetail
-                              .map((u) => u..currentRole = r.roleName)
-                              .toList();
-                        }
-                      }).map((u) => _buildUserTile(u, theme)).toList(),
+                      body.bodyRoles
+                          .expand((r) {
+                            if (r.roleUsersDetail != null) {
+                              return r.roleUsersDetail
+                                  .map((u) => u..currentRole = r.roleName)
+                                  .toList();
+                            }
+                          })
+                          .map((u) => _buildUserTile(u, theme))
+                          .toList(),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 28.0, vertical: 16.0),
@@ -187,7 +203,8 @@ class _BodyPageState extends State<BodyPage> {
                   // Parents
                   ..addAll(_nonEmptyListWithHeaderOrEmpty(
                       body.bodyParents
-                          .map((b) => _buildBodyTile(b, theme.textTheme)).toList(),
+                          .map((b) => _buildBodyTile(b, theme.textTheme))
+                          .toList(),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 28.0, vertical: 16.0),
@@ -259,6 +276,9 @@ class _BodyPageState extends State<BodyPage> {
         return rowChildren;
       }()),
       onPressed: () async {
+        if (bloc.currSession == null) {
+          return;
+        }
         setState(() {
           loadingFollow = true;
         });
@@ -301,7 +321,8 @@ class _BodyPageState extends State<BodyPage> {
 
   Widget _buildUserTile(User u, ThemeData theme) {
     return ListTile(
-      leading: NullableCircleAvatar(u.userProfilePictureUrl, OMIcons.personOutline),
+      leading:
+          NullableCircleAvatar(u.userProfilePictureUrl, OMIcons.personOutline),
       title: Text(
         u.userName,
         style: theme.textTheme.title,
