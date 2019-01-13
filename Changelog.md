@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0-beta
+
+* Implemented SettingsPage, EventEditPage, MapPage
+* Event, Body pages now render markdown 
+* Can a specific page as the default homepage
+
 ## v0.12-alpha
 
 * Implemented AddEventPage
