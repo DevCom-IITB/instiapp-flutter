@@ -43,7 +43,9 @@ class _EventPageState extends State<EventPage> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
     var footerButtons = <Widget>[];
+    var editAccess = false;
     if (event != null) {
+      editAccess = bloc.editEventAccess(event);
       footerButtons.addAll([
         buildUserStatusButton("Going", 2, theme, bloc),
         buildUserStatusButton("Interested", 1, theme, bloc),
@@ -71,6 +73,17 @@ class _EventPageState extends State<EventPage> {
             if (await canLaunch(uri)) {
               await launch(uri);
             }
+          },
+        ));
+      }
+
+      if (editAccess) {
+        footerButtons.add(IconButton(
+          icon: Icon(OMIcons.share),
+          tooltip: "Share this event",
+          onPressed: () async {
+            await Share.share(
+                "Check this event: ${ShareURLMaker.getEventURL(event)}");
           },
         ));
       }
@@ -176,14 +189,24 @@ class _EventPageState extends State<EventPage> {
 
       floatingActionButton: _bottomSheetActive || event == null
           ? null
-          : FloatingActionButton(
-              child: Icon(OMIcons.share),
-              tooltip: "Share this event",
-              onPressed: () async {
-                await Share.share(
-                    "Check this event: ${ShareURLMaker.getEventURL(event)}");
-              },
-            ),
+          : editAccess
+              ? FloatingActionButton.extended(
+                  icon: Icon(OMIcons.edit),
+                  label: Text("Edit"),
+                  tooltip: "Edit this event",
+                  onPressed: () {
+                    Navigator.of(context)
+                        .pushNamed("/putevent/${event.eventID}");
+                  },
+                )
+              : FloatingActionButton(
+                  child: Icon(OMIcons.share),
+                  tooltip: "Share this event",
+                  onPressed: () async {
+                    await Share.share(
+                        "Check this event: ${ShareURLMaker.getEventURL(event)}");
+                  },
+                ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       persistentFooterButtons: footerButtons,
     );

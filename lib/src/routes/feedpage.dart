@@ -29,8 +29,7 @@ class _FeedPageState extends State<FeedPage> {
         icon: Icon(OMIcons.add),
         label: Text("Add Event"),
         onPressed: () {
-          // TODO: go to event add webview
-          Navigator.of(context).pushNamed("/addevent");
+          Navigator.of(context).pushNamed("/putevent");
         },
       );
     }
