@@ -5,6 +5,7 @@ import 'package:InstiApp/src/routes/complaintspage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
+import 'package:InstiApp/src/routes/mappage.dart';
 import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
 import 'package:InstiApp/src/routes/puteventpage.dart';
@@ -87,6 +88,7 @@ class MyAppState extends State<MyApp> {
               case "/complaints": return _buildRoute(settings, ComplaintsPage());
               case "/newcomplaint": return _buildRoute(settings, NewComplaintPage());
               case "/putevent": return _buildRoute(settings, PutEventPage());
+              case "/map": return _buildRoute(settings, MapPage());
             }
           }
           return _buildRoute(settings, MessPage());

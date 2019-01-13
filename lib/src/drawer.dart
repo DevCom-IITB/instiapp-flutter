@@ -287,8 +287,12 @@ class _BottomDrawerState extends State<BottomDrawer> {
                   7: NavListTile(
                     icon: OMIcons.map,
                     title: "Map",
+                    selected: true,
                     onTap: () {
                       changeSelection(7, drawerState);
+                      var navi = Navigator.of(context);
+                      navi.pop();
+                      navi.pushNamed('/map');
                     },
                   ),
                   8: NavListTile(

@@ -1,49 +1,50 @@
 import 'dart:async';
 
-import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
-import 'package:InstiApp/src/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 
-class PutEventPage extends StatefulWidget {
-  final String eventID;
-  PutEventPage({this.eventID});
-
+class MapPage extends StatefulWidget {
   @override
-  _PutEventPageState createState() => _PutEventPageState();
+  _MapPageState createState() => _MapPageState();
 }
 
-class _PutEventPageState extends State<PutEventPage> {
+class _MapPageState extends State<MapPage> {
   final flutterWebviewPlugin = FlutterWebviewPlugin();
 
-  final String hostUrl = "https://insti.app/";
-  final String addEventStr = "add-event/";
-  final String editEventStr = "edit-event/";
-  final String sandboxTrueStr = "?sandbox=true";
+  final String hostUrl = "https://insti.app";
+  final String mapUrl = "https://insti.app/map/?sandbox=true";
 
   StreamSubscription<String> onUrlChangedSub;
+  StreamSubscription<WebViewStateChanged> onStateChangedSub;
 
   @override
   void initState() {
     super.initState();
     onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {
       print("Changed URL: $url");
-      if (url.contains("/event/")) {
-        var uri = url.substring(url.lastIndexOf("/") + 1);
+      if (!url.contains(hostUrl)) {
+        flutterWebviewPlugin.reloadUrl(mapUrl);
+        flutterWebviewPlugin.hide();
+      }
+    });
 
-        Navigator.of(context).pushReplacementNamed("/event/$uri");
-      } else if (url.contains("/org/")) {
-        var uri = url.substring(url.lastIndexOf("/") + 1);
-
-        Navigator.of(context).pushReplacementNamed("/body/$uri");
+    onStateChangedSub =
+        flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged state) {
+      print(state.type);
+      if (state.type == WebViewState.finishLoad) {
+        if (state.url.startsWith(hostUrl)) {
+          print("onStateChanged: Showing Web View");
+          flutterWebviewPlugin.show();
+        }
       }
     });
   }
 
   @override
   void dispose() {
+    onStateChangedSub?.cancel();
     onUrlChangedSub?.cancel();
     flutterWebviewPlugin.dispose();
     super.dispose();
@@ -53,12 +54,11 @@ class _PutEventPageState extends State<PutEventPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
-    var url =
-        "$hostUrl${widget.eventID == null ? addEventStr : (editEventStr + widget.eventID)}$sandboxTrueStr";
-    print("This is the URL: $url");
+
+    print("This is the URL: $mapUrl");
     return SafeArea(
       child: WebviewScaffold(
-        url: url,
+        url: mapUrl,
         withJavascript: true,
         withLocalStorage: true,
         headers: {
@@ -73,10 +73,10 @@ class _PutEventPageState extends State<PutEventPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               IconButton(
-                tooltip: "Show bottom sheet",
+                tooltip: "Show navigation drawer",
                 icon: Icon(
                   OMIcons.menu,
-                  semanticLabel: "Show bottom sheet",
+                  semanticLabel: "Show navigation drawer",
                 ),
                 onPressed: null,
                 // onPressed: () {
