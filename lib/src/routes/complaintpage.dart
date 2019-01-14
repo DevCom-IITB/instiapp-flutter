@@ -13,6 +13,7 @@ import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as LocationManager;
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ComplaintPage extends StatefulWidget {
   final String title = "Complaint";
@@ -77,9 +78,9 @@ class _ComplaintPageState extends State<ComplaintPage> {
     //       // if (v) {
     //       //   _location.getLocation();
     //       // }
-    //     } 
+    //     }
     //     on PlatformException {
-          
+
     //     }
     //     catch (e ) {
     //       print(e);
@@ -269,25 +270,46 @@ class _ComplaintPageState extends State<ComplaintPage> {
                 SizedBox(
                   height: 16.0,
                 ),
-                SizedBox(
-                  height: 200,
-                  child: GoogleMap(
-                    gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>[
-                      Factory<OneSequenceGestureRecognizer>(
-                        () => HorizontalDragGestureRecognizer(),
+                defaultTargetPlatform == TargetPlatform.iOS
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 28.0),
+                        child: OutlineButton.icon(
+                          icon: Icon(OMIcons.navigation),
+                          label: Text("Location on Map"),
+                          onPressed: () async {
+                            String uri = defaultTargetPlatform ==
+                                    TargetPlatform.iOS
+                                ? "http://maps.apple.com/?ll=${complaint.latitude},${complaint.longitude}&z=20"
+                                : "google.navigation:q=${complaint.latitude},${complaint.longitude}";
+
+                            if (await canLaunch(uri)) {
+                              await launch(uri);
+                            } else {
+                              print("cannot launch");
+                            }
+                          },
+                        ),
+                      )
+                    : SizedBox(
+                        height: 200,
+                        child: GoogleMap(
+                          gestureRecognizers:
+                              <Factory<OneSequenceGestureRecognizer>>[
+                            Factory<OneSequenceGestureRecognizer>(
+                              () => HorizontalDragGestureRecognizer(),
+                            ),
+                          ].toSet(),
+                          onMapCreated: _onMapCreated,
+                          options: GoogleMapOptions(
+                            scrollGesturesEnabled: true,
+                            rotateGesturesEnabled: true,
+                            zoomGesturesEnabled: true,
+                            compassEnabled: true,
+                            myLocationEnabled: true,
+                            tiltGesturesEnabled: false,
+                          ),
+                        ),
                       ),
-                    ].toSet(),
-                    onMapCreated: _onMapCreated,
-                    options: GoogleMapOptions(
-                      scrollGesturesEnabled: true,
-                      rotateGesturesEnabled: true,
-                      zoomGesturesEnabled: true,
-                      compassEnabled: true,
-                      myLocationEnabled: true,
-                      tiltGesturesEnabled: false,
-                    ),
-                  ),
-                ),
                 // complaint.tags?.isNotEmpty ?? false
                 //     ? Padding(
                 //       padding: EdgeInsets.all(8.0),

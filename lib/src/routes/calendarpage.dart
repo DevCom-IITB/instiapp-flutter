@@ -127,7 +127,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    cal.CalendarCarousel(
+                    cal.CalendarCarousel<ev.Event>(
                       customGridViewPhysics: NeverScrollableScrollPhysics(),
                       onDayPressed: (DateTime date, List<ev.Event> evs) {
                         this.setState(() => _currentDate = date);

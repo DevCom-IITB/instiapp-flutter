@@ -5,6 +5,7 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -78,8 +79,9 @@ class _EventPageState extends State<EventPage> {
           tooltip: "Navigate to event",
           icon: Icon(OMIcons.navigation),
           onPressed: () async {
-            String uri =
-                "google.navigation:q=${event.eventVenues[0].venueLatitude},${event.eventVenues[0].venueLongitude}";
+            String uri = defaultTargetPlatform == TargetPlatform.iOS
+                ? "http://maps.apple.com/?ll=${event.eventVenues[0].venueLatitude},${event.eventVenues[0].venueLongitude}&z=20"
+                : "google.navigation:q=${event.eventVenues[0].venueLatitude},${event.eventVenues[0].venueLongitude}";
             if (await canLaunch(uri)) {
               await launch(uri);
             }
@@ -177,7 +179,7 @@ class _EventPageState extends State<EventPage> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 28.0, vertical: 16.0),
                     child: CommonHtml(
-                      data : event?.eventDescription,
+                      data: event?.eventDescription,
                       defaultTextStyle: theme.textTheme.subhead,
                     ),
                   ),
