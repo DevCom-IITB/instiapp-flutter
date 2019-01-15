@@ -93,8 +93,7 @@ class _FeedPageState extends State<FeedPage> {
                       children: <Widget>[
                         Text(
                           "Feed",
-                          style: theme.textTheme.display2.copyWith(
-                              color: Colors.black, fontFamily: "Bitter"),
+                          style: theme.textTheme.display2.copyWith(fontFamily: "Bitter"),
                         ),
                       ],
                     ),

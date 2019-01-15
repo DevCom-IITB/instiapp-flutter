@@ -5,6 +5,7 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -56,22 +57,22 @@ class _SettingsPageState extends State<SettingsPage> {
                     children: <Widget>[
                       Text(
                         "Settings",
-                        style: theme.textTheme.display2.copyWith(
-                            color: Colors.black, fontFamily: "Bitter"),
+                        style: theme.textTheme.display2
+                            .copyWith(fontFamily: "Bitter"),
                       ),
                     ],
                   ),
                 ),
 
                 Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 24.0),
-                    child: Text(
-                      "App settings",
-                      style: theme.textTheme.title
-                          .copyWith(fontWeight: FontWeight.bold),
-                    ),
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 24.0),
+                  child: Text(
+                    "App settings",
+                    style: theme.textTheme.title
+                        .copyWith(fontWeight: FontWeight.bold),
                   ),
-                
+                ),
+
                 Text(
                   "Default Homepage",
                   style: theme.textTheme.body1
@@ -102,6 +103,94 @@ class _SettingsPageState extends State<SettingsPage> {
                     setState(() {});
                   },
                   value: bloc.homepageName,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Text(
+                    "App Theme",
+                    style: theme.textTheme.body1
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                RadioListTile<Brightness>(
+                  title: const Text("Light"),
+                  value: Brightness.light,
+                  groupValue: bloc.brightness,
+                  onChanged: (v) {
+                    bloc.brightness = v;
+                  },
+                ),
+                RadioListTile<Brightness>(
+                  title: const Text("Dark"),
+                  value: Brightness.dark,
+                  groupValue: bloc.brightness,
+                  onChanged: (v) {
+                    bloc.brightness = v;
+                  },
+                ),
+                ListTile(
+                  title: Text("Primary Color"),
+                  subtitle: Text("Choose primary color of the app"),
+                  trailing: CircleColor(
+                    circleSize: 24,
+                    color: bloc.primaryColor,
+                  ),
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        barrierDismissible: true,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text("Select Primary Color"),
+                            content: MaterialColorPicker(
+                              onColorChange: (c) {
+                                bloc.primaryColor = c;
+                              },
+                              selectedColor: bloc.primaryColor,
+                            ),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text("Okay"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                  },
+                ),
+                ListTile(
+                  title: Text("Accent Color"),
+                  subtitle: Text("Choose accent color of the app"),
+                  trailing: CircleColor(
+                    circleSize: 24,
+                    color: bloc.accentColor,
+                  ),
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        barrierDismissible: true,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text("Select Accent Color"),
+                            content: MaterialColorPicker(
+                              onColorChange: (c) {
+                                bloc.accentColor = c;
+                              },
+                              selectedColor: bloc.accentColor,
+                            ),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text("Okay"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                  },
                 ),
                 ListTile(
                   leading: Icon(OMIcons.feedback),

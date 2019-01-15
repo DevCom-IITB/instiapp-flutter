@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<Session> checkLogin() async {
-    await _bloc.restorePrefs();
+    // await _bloc.restorePrefs();
     return _bloc?.currSession;
   }
 
@@ -162,7 +162,10 @@ class _LoginPageState extends State<LoginPage> {
     server.listen((HttpRequest request) async {
       print("URI: ${request.uri}");
       if (request.uri.toString() == '/') {
-        var html = await defAssets.loadString('assets/login.html');
+        var html = await defAssets.loadString(
+            _bloc.brightness == Brightness.dark
+                ? 'assets/login_dark.html'
+                : 'assets/login.html');
         request.response
           ..statusCode = 200
           ..headers.set("Content-Type", ContentType.html.mimeType)

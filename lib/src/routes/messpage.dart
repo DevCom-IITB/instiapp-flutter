@@ -95,7 +95,7 @@ class _MessPageState extends State<MessPage> {
                   Text(
                     "Mess Menu",
                     style: theme.textTheme.display2
-                        .copyWith(color: Colors.black, fontFamily: "Bitter"),
+                        .copyWith(fontFamily: "Bitter"),
                   ),
                 ],
               ),

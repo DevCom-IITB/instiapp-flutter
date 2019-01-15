@@ -22,9 +22,23 @@ import 'package:InstiApp/src/routes/messpage.dart';
 import 'package:InstiApp/src/routes/loginpage.dart';
 import 'package:InstiApp/src/routes/placementblogpage.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  GlobalKey<MyAppState> key = GlobalKey();
+  InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
+  await bloc.restorePrefs();
+
+  runApp(MyApp(
+    key: key,
+    bloc: bloc,
+  ));
+}
 
 class MyApp extends StatefulWidget {
+  final Key key;
+  final InstiAppBloc bloc;
+
+  MyApp({this.key, @required this.bloc}) : super(key: key);
+
   // This widget is the root of your application.
   @override
   MyAppState createState() {
@@ -33,67 +47,114 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  InstiAppBloc _bloc = InstiAppBloc();
+  void setTheme(VoidCallback a) {
+    setState(a);
+  }
 
   @override
-  void initState() {
-    super.initState();
-    _bloc = InstiAppBloc();
+  void dispose() {
+    // TODO: backup all state to disk
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      _bloc,
+      widget.bloc,
       child: MaterialApp(
         title: 'InstiApp',
         theme: ThemeData(
           fontFamily: "SourceSansPro",
-          primarySwatch: Colors.deepPurple,
+
+          primaryColor: widget.bloc.primaryColor,
+          accentColor: widget.bloc.accentColor,
+
+          toggleableActiveColor: widget.bloc.accentColor,
+          textSelectionHandleColor: widget.bloc.accentColor,
+
+          canvasColor:
+              widget.bloc.brightness == Brightness.dark ? Colors.black : null,
+          bottomAppBarColor: widget.bloc.brightness == Brightness.dark
+              ? Colors.grey[850]
+              : null,
+          // bottomAppBarColor: Color(0xFFA95551),
+          brightness: widget.bloc.brightness,
+
+          textTheme: TextTheme(
+              display2: TextStyle(
+            color: widget.bloc.brightness == Brightness.light
+                ? Colors.black
+                : Colors.white,
+          )),
         ),
-        // routes: {
-        //   "/": (_) => LoginPage(),
-        //   "/mess": (_) => MessPage(),
-        //   "/placeblog": (_) => PlacementBlogPage(),
-        //   "/trainblog": (_) => TrainingBlogPage(),
-        //   "/feed": (_) => FeedPage(),
-        //   "/event": (_) => EventPage(),
-        // },
         onGenerateRoute: (RouteSettings settings) {
-          if (settings.name.startsWith("/event/") ) {
-            return _buildRoute(settings, EventPage(_bloc.getEvent(settings.name.split("/event/")[1])));
-          }
-          else if (settings.name.startsWith("/body/")) {
-            return _buildRoute(settings, BodyPage(_bloc.getBody(settings.name.split("/body/")[1])));
-          }
-          else if (settings.name.startsWith("/user/")) {
-            return _buildRoute(settings, UserPage(_bloc.getUser(settings.name.split("/user/")[1])));
-          }
-          else if (settings.name.startsWith("/complaint/")) {
-            return _buildRoute(settings, ComplaintPage(_bloc.getComplaint(settings.name.split("/complaint/")[1])));
-          }
-          else if (settings.name.startsWith("/putentity/event/")) {
-            return _buildRoute(settings, PutEntityPage(entityID: settings.name.split("/putentity/event/")[1], cookie: _bloc.getSessionIdHeader()));
-          }
-          else if (settings.name.startsWith("/putentity/body/")) {
-            return _buildRoute(settings, PutEntityPage(isBody: true, entityID: settings.name.split("/putentity/body/")[1], cookie: _bloc.getSessionIdHeader()));
-          }
-          else {
+          if (settings.name.startsWith("/event/")) {
+            return _buildRoute(
+                settings,
+                EventPage(
+                    widget.bloc.getEvent(settings.name.split("/event/")[1])));
+          } else if (settings.name.startsWith("/body/")) {
+            return _buildRoute(
+                settings,
+                BodyPage(
+                    widget.bloc.getBody(settings.name.split("/body/")[1])));
+          } else if (settings.name.startsWith("/user/")) {
+            return _buildRoute(
+                settings,
+                UserPage(
+                    widget.bloc.getUser(settings.name.split("/user/")[1])));
+          } else if (settings.name.startsWith("/complaint/")) {
+            return _buildRoute(
+                settings,
+                ComplaintPage(widget.bloc
+                    .getComplaint(settings.name.split("/complaint/")[1])));
+          } else if (settings.name.startsWith("/putentity/event/")) {
+            return _buildRoute(
+                settings,
+                PutEntityPage(
+                    entityID: settings.name.split("/putentity/event/")[1],
+                    cookie: widget.bloc.getSessionIdHeader()));
+          } else if (settings.name.startsWith("/putentity/body/")) {
+            return _buildRoute(
+                settings,
+                PutEntityPage(
+                    isBody: true,
+                    entityID: settings.name.split("/putentity/body/")[1],
+                    cookie: widget.bloc.getSessionIdHeader()));
+          } else {
             switch (settings.name) {
-              case "/": return _buildRoute(settings, LoginPage(_bloc));
-              case "/mess": return _buildRoute(settings, MessPage());
-              case "/placeblog": return _buildRoute(settings, PlacementBlogPage());
-              case "/trainblog": return _buildRoute(settings, TrainingBlogPage());
-              case "/feed": return _buildRoute(settings, FeedPage());
-              case "/quicklinks": return _buildRoute(settings, QuickLinksPage());
-              case "/news": return _buildRoute(settings, NewsPage());
-              case "/explore": return _buildRoute(settings, ExplorePage());
-              case "/calendar": return _buildRoute(settings, CalendarPage());
-              case "/complaints": return _buildRoute(settings, ComplaintsPage());
-              case "/newcomplaint": return _buildRoute(settings, NewComplaintPage());
-              case "/putentity/event": return _buildRoute(settings, PutEntityPage(cookie: _bloc.getSessionIdHeader(),));
-              case "/map": return _buildRoute(settings, MapPage());
-              case "/settings": return _buildRoute(settings, SettingsPage());
+              case "/":
+                return _buildRoute(settings, LoginPage(widget.bloc));
+              case "/mess":
+                return _buildRoute(settings, MessPage());
+              case "/placeblog":
+                return _buildRoute(settings, PlacementBlogPage());
+              case "/trainblog":
+                return _buildRoute(settings, TrainingBlogPage());
+              case "/feed":
+                return _buildRoute(settings, FeedPage());
+              case "/quicklinks":
+                return _buildRoute(settings, QuickLinksPage());
+              case "/news":
+                return _buildRoute(settings, NewsPage());
+              case "/explore":
+                return _buildRoute(settings, ExplorePage());
+              case "/calendar":
+                return _buildRoute(settings, CalendarPage());
+              case "/complaints":
+                return _buildRoute(settings, ComplaintsPage());
+              case "/newcomplaint":
+                return _buildRoute(settings, NewComplaintPage());
+              case "/putentity/event":
+                return _buildRoute(
+                    settings,
+                    PutEntityPage(
+                      cookie: widget.bloc.getSessionIdHeader(),
+                    ));
+              case "/map":
+                return _buildRoute(settings, MapPage());
+              case "/settings":
+                return _buildRoute(settings, SettingsPage());
             }
           }
           return _buildRoute(settings, MessPage());
@@ -102,7 +163,7 @@ class MyAppState extends State<MyApp> {
     );
   }
 
-  MaterialPageRoute _buildRoute(RouteSettings settings, Widget builder){
+  MaterialPageRoute _buildRoute(RouteSettings settings, Widget builder) {
     return new MaterialPageRoute(
       settings: settings,
       builder: (BuildContext context) => builder,

@@ -138,8 +138,7 @@ class _BodyPageState extends State<BodyPage> {
                       children: <Widget>[
                         Text(
                           body.bodyName,
-                          style: theme.textTheme.display2.copyWith(
-                              color: Colors.black, fontFamily: "Bitter"),
+                          style: theme.textTheme.display2.copyWith( fontFamily: "Bitter"),
                         ),
                         SizedBox(height: 8.0),
                         Text(body.bodyShortDescription,
@@ -266,8 +265,8 @@ class _BodyPageState extends State<BodyPage> {
 
   RaisedButton _buildFollowBody(ThemeData theme, InstiAppBloc bloc) {
     return RaisedButton(
-      color: body.bodyUserFollows ? theme.accentColor : Colors.white,
-      textColor: body.bodyUserFollows ? Colors.white : null,
+      color: body.bodyUserFollows ? theme.accentColor : theme.bottomAppBarColor,
+      textColor: body.bodyUserFollows ? theme.textTheme.button.color : null,
       shape: RoundedRectangleBorder(
           side: BorderSide(
             color: theme.accentColor,
@@ -288,7 +287,7 @@ class _BodyPageState extends State<BodyPage> {
                 width: 18,
                 child: CircularProgressIndicator(
                   valueColor: new AlwaysStoppedAnimation<Color>(
-                      body.bodyUserFollows ? Colors.white : theme.accentColor),
+                      body.bodyUserFollows ? theme.textTheme.button.color : theme.accentColor),
                   strokeWidth: 2,
                 )),
             SizedBox(

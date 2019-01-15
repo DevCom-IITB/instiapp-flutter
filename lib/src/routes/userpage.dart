@@ -134,7 +134,6 @@ class _UserPageState extends State<UserPage> {
                                   title: Text(
                                     user.userName,
                                     style: theme.textTheme.headline.copyWith(
-                                        color: Colors.black,
                                         fontFamily: "Bitter"),
                                   ),
                                   subtitle: Column(
@@ -182,11 +181,10 @@ class _UserPageState extends State<UserPage> {
                             child: PreferredSize(
                               preferredSize: Size.fromHeight(72),
                               child: Material(
-                                // color: Colors.white,
                                 elevation: 4.0,
                                 child: TabBar(
                                   labelColor: theme.accentColor,
-                                  unselectedLabelColor: Colors.black,
+                                  unselectedLabelColor: theme.disabledColor,
                                   tabs: [
                                     Tab(
                                         text: "Associations",

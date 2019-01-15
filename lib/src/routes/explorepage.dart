@@ -96,7 +96,7 @@ class _ExplorePageState extends State<ExplorePage> {
             searchMode
                 ? Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: theme.bottomAppBarColor,
                       border: Border(
                         top: Divider.createBorderSide(context, width: 1.0),
                       ),
@@ -168,8 +168,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       padding: const EdgeInsets.all(28.0),
                       child: Text(
                         widget.title,
-                        style: theme.textTheme.display2.copyWith(
-                            color: Colors.black, fontFamily: "Bitter"),
+                        style: theme.textTheme.display2.copyWith(fontFamily: "Bitter"),
                       ),
                     )
                   ] +
