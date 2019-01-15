@@ -29,7 +29,7 @@ class _FeedPageState extends State<FeedPage> {
         icon: Icon(OMIcons.add),
         label: Text("Add Event"),
         onPressed: () {
-          Navigator.of(context).pushNamed("/putevent");
+          Navigator.of(context).pushNamed("/putentity/event");
         },
       );
     }

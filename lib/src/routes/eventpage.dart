@@ -208,7 +208,7 @@ class _EventPageState extends State<EventPage> {
                   tooltip: "Edit this event",
                   onPressed: () {
                     Navigator.of(context)
-                        .pushNamed("/putevent/${event.eventID}");
+                        .pushNamed("/putentity/event/${event.eventID}");
                   },
                 )
               : FloatingActionButton(

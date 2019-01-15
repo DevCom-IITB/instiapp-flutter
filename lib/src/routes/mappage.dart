@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -13,11 +14,14 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   final flutterWebviewPlugin = FlutterWebviewPlugin();
 
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   final String hostUrl = "https://insti.app";
   final String mapUrl = "https://insti.app/map/?sandbox=true";
 
   StreamSubscription<String> onUrlChangedSub;
   StreamSubscription<WebViewStateChanged> onStateChangedSub;
+  StreamSubscription<bool> onDrawerStateChanges;
 
   @override
   void initState() {
@@ -40,10 +44,21 @@ class _MapPageState extends State<MapPage> {
         }
       }
     });
+
+    onDrawerStateChanges = BottomDrawer.disposed.listen((opened) {
+      print("Drawer state: $opened");
+      if (opened) {
+        flutterWebviewPlugin.hide();
+      }
+      else {
+        flutterWebviewPlugin.show();
+      }
+    });
   }
 
   @override
   void dispose() {
+    onDrawerStateChanges?.cancel();
     onStateChangedSub?.cancel();
     onUrlChangedSub?.cancel();
     flutterWebviewPlugin.dispose();
@@ -58,6 +73,8 @@ class _MapPageState extends State<MapPage> {
     print("This is the URL: $mapUrl");
     return SafeArea(
       child: WebviewScaffold(
+        scaffoldKey: _scaffoldKey,
+        drawer: BottomDrawer(),
         url: mapUrl,
         withJavascript: true,
         withLocalStorage: true,
@@ -78,7 +95,9 @@ class _MapPageState extends State<MapPage> {
                   OMIcons.menu,
                   semanticLabel: "Show navigation drawer",
                 ),
-                onPressed: null,
+                onPressed: () {
+                  _scaffoldKey.currentState.openDrawer();
+                },
                 // onPressed: () {
                 //   flutterWebviewPlugin.evalJavascript(
                 //               'document.cookie = "${bloc.getSessionIdHeader()}";');

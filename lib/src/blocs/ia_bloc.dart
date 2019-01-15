@@ -159,6 +159,12 @@ class InstiAppBloc {
         false;
   }
 
+  bool editBodyAccess(Body body) {
+    return currSession?.profile?.userRoles
+            ?.any((r) => r.roleBodies.any((b) => b.bodyID == body.bodyID)) ??
+        false;
+  }
+
   Future<void> updateUesEvent(Event e, int ues) async {
     try {
       print("updating Ues from ${e.eventUserUes} to $ues");
