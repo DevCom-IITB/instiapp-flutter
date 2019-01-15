@@ -1,3 +1,4 @@
+import 'package:InstiApp/main.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
@@ -10,6 +11,7 @@ import 'package:InstiApp/src/api/model/mess.dart';
 import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
+import 'package:flutter/material.dart';
 import 'dart:collection';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/io_client.dart';
@@ -47,6 +49,44 @@ class InstiAppBloc {
   // default homepage
   String homepageName = "/mess";
 
+  // default theme
+  Brightness _brightness = Brightness.dark;
+  Color _primaryColor = Color.fromARGB(255, 63, 81, 181);
+  Color _accentColor = Color.fromARGB(255, 139, 195, 74);
+
+  Brightness get brightness => _brightness;
+
+  set brightness(Brightness newBrightness) {
+    if (newBrightness != _brightness) {
+      wholeAppKey.currentState.setTheme(() => _brightness = newBrightness);
+      SharedPreferences.getInstance().then((s) {
+        s.setInt("brightness", newBrightness.index);
+      });
+    }
+  }
+
+  Color get primaryColor => _primaryColor;
+
+  set primaryColor(Color newColor) {
+    if (newColor != _primaryColor) {
+      wholeAppKey.currentState.setTheme(() => _primaryColor = newColor);
+      SharedPreferences.getInstance().then((s) {
+        s.setInt("primaryColor", newColor.value);
+      });
+    }
+  }
+
+  Color get accentColor => _accentColor;
+
+  set accentColor(Color newColor) {
+    if (newColor != _accentColor) {
+      wholeAppKey.currentState.setTheme(() => _accentColor = newColor);
+      SharedPreferences.getInstance().then((s) {
+        s.setInt("accentColor", newColor.value);
+      });
+    }
+  }
+
   // all pages
   Map<String, int> pageToIndex = {
     '/feed': 0,
@@ -61,8 +101,11 @@ class InstiAppBloc {
     '/quicklinks': 9,
     '/settings': 10,
   };
+  
+  // MaterialApp reference
+  GlobalKey<MyAppState> wholeAppKey;
 
-  InstiAppBloc() {
+  InstiAppBloc({@required this.wholeAppKey}) {
     globalClient = IOClient();
     placementBloc = PostBloc(this, postType: PostType.Placement);
     trainingBloc = PostBloc(this, postType: PostType.Training);
@@ -84,6 +127,15 @@ class InstiAppBloc {
     if (prefs.getKeys().contains("homepage")) {
       homepageName = prefs.getString("homepage") ?? homepageName;
       drawerState.setPageIndex(pageToIndex[homepageName]);
+    }
+    if (prefs.getKeys().contains("brightness")) {
+      _brightness = Brightness.values[prefs.getInt("brightness")] ?? _brightness;
+    }
+    if (prefs.getKeys().contains("accentColor")) {
+      _accentColor = Color(prefs.getInt("accentColor")) ?? _accentColor;
+    }
+    if (prefs.getKeys().contains("primaryColor")) {
+      _primaryColor = Color(prefs.getInt("primaryColor")) ?? _primaryColor;
     }
   }
 

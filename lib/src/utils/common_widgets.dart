@@ -62,7 +62,12 @@ class HeroPhotoViewWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        automaticallyImplyLeading: true,
+      ),
+      body: Container(
         constraints: BoxConstraints.expand(
           height: MediaQuery.of(context).size.height,
         ),
@@ -73,7 +78,8 @@ class HeroPhotoViewWrapper extends StatelessWidget {
           minScale: minScale,
           maxScale: maxScale,
           heroTag: heroTag,
-        ));
+        )),
+    );
   }
 }
 

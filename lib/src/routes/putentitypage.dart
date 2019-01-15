@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
-import 'package:InstiApp/src/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -25,8 +23,9 @@ class _PutEntityPageState extends State<PutEntityPage> {
 
   final String hostUrl = "https://insti.app/";
   final String addEventStr = "add-event";
-  final String editEventStr = "edit-event/";
-  final String editBodyStr = "edit-body/";
+  final String editEventStr = "edit-event";
+  final String editBodyStr = "edit-body";
+  final String loginStr = "login";
   final String sandboxTrueStr = "?sandbox=true";
 
   bool firstBuild = true;
@@ -34,13 +33,14 @@ class _PutEntityPageState extends State<PutEntityPage> {
 
   StreamSubscription<String> onUrlChangedSub;
   StreamSubscription<WebViewStateChanged> onStateChangedSub;
-  StreamSubscription<bool> onDrawerStateChanges;
 
   @override
   void initState() {
     super.initState();
     var url =
         "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + widget.entityID)}$sandboxTrueStr";
+    var loginUrl =
+        "$hostUrl$loginStr$sandboxTrueStr";
     onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {
       print("Changed URL: $url");
       if (url.contains("/event/")) {
@@ -58,7 +58,7 @@ class _PutEntityPageState extends State<PutEntityPage> {
         flutterWebviewPlugin.onStateChanged.listen((state) async {
       print(state.type);
       if (state.type == WebViewState.finishLoad) {
-        if (state.url == url) {
+        if (state.url == loginUrl) {
           if (!addedCookie) {
             addedCookie = true;
             flutterWebviewPlugin.evalJavascript(
@@ -70,21 +70,10 @@ class _PutEntityPageState extends State<PutEntityPage> {
         }
       }
     });
-
-    onDrawerStateChanges = BottomDrawer.disposed.listen((opened) {
-      print("Drawer state: $opened");
-      if (opened) {
-        flutterWebviewPlugin.hide();
-      }
-      else {
-        flutterWebviewPlugin.show();
-      }
-    });
   }
 
   @override
   void dispose() {
-    onDrawerStateChanges?.cancel();
     onUrlChangedSub?.cancel();
     onStateChangedSub?.cancel();
     flutterWebviewPlugin.dispose();
@@ -97,11 +86,11 @@ class _PutEntityPageState extends State<PutEntityPage> {
     var bloc = BlocProvider.of(context).bloc;
     var url =
         "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + widget.entityID)}$sandboxTrueStr";
+    var loginUrl =
+        "$hostUrl$loginStr$sandboxTrueStr";
     return SafeArea(
       child: WebviewScaffold(
-        scaffoldKey: _scaffoldKey,
-        drawer: BottomDrawer(),
-        url: url,
+        url: addedCookie ? url : loginUrl,
         hidden: true,
         withJavascript: true,
         withLocalStorage: true,
@@ -117,14 +106,13 @@ class _PutEntityPageState extends State<PutEntityPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               IconButton(
-                tooltip: "Show bottom sheet",
+                tooltip: "Back",
                 icon: Icon(
-                  OMIcons.menu,
-                  semanticLabel: "Show bottom sheet",
+                  OMIcons.arrowBack,
+                  semanticLabel: "Go Back",
                 ),
-                onPressed: () async {
-                  flutterWebviewPlugin.hide();
-                  _scaffoldKey.currentState.openDrawer();
+                onPressed: () {
+                  Navigator.of(context).pop();
                 },
               ),
               IconButton(

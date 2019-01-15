@@ -156,8 +156,7 @@ class _EventPageState extends State<EventPage> {
                       children: <Widget>[
                         Text(
                           event.eventName,
-                          style: theme.textTheme.display2.copyWith(
-                              color: Colors.black, fontFamily: "Bitter"),
+                          style: theme.textTheme.display2.copyWith(fontFamily: "Bitter"),
                         ),
                         SizedBox(height: 8.0),
                         Text(event.getSubTitle(), style: theme.textTheme.title),
@@ -241,8 +240,8 @@ class _EventPageState extends State<EventPage> {
   RaisedButton buildUserStatusButton(
       String name, int id, ThemeData theme, InstiAppBloc bloc) {
     return RaisedButton(
-      color: event?.eventUserUes == id ? theme.accentColor : Colors.white,
-      textColor: event?.eventUserUes == id ? Colors.white : null,
+      color: event?.eventUserUes == id ? theme.accentColor : theme.bottomAppBarColor,
+      textColor: event?.eventUserUes == id ? theme.textTheme.button.color : null,
       shape: RoundedRectangleBorder(
           side: BorderSide(
             color: theme.accentColor,
@@ -265,7 +264,7 @@ class _EventPageState extends State<EventPage> {
                 child: CircularProgressIndicator(
                   valueColor: new AlwaysStoppedAnimation<Color>(
                       event?.eventUserUes == id
-                          ? Colors.white
+                          ? theme.textTheme.button.color
                           : theme.accentColor),
                   strokeWidth: 2,
                 )),

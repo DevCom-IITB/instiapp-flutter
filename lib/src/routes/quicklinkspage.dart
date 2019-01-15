@@ -113,7 +113,7 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
                   Text(
                     "Quick Links",
                     style: theme.textTheme.display2
-                        .copyWith(color: Colors.black, fontFamily: "Bitter"),
+                        .copyWith(fontFamily: "Bitter"),
                   ),
                 ],
               ),

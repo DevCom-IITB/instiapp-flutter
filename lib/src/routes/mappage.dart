@@ -21,7 +21,6 @@ class _MapPageState extends State<MapPage> {
 
   StreamSubscription<String> onUrlChangedSub;
   StreamSubscription<WebViewStateChanged> onStateChangedSub;
-  StreamSubscription<bool> onDrawerStateChanges;
 
   @override
   void initState() {
@@ -44,21 +43,10 @@ class _MapPageState extends State<MapPage> {
         }
       }
     });
-
-    onDrawerStateChanges = BottomDrawer.disposed.listen((opened) {
-      print("Drawer state: $opened");
-      if (opened) {
-        flutterWebviewPlugin.hide();
-      }
-      else {
-        flutterWebviewPlugin.show();
-      }
-    });
   }
 
   @override
   void dispose() {
-    onDrawerStateChanges?.cancel();
     onStateChangedSub?.cancel();
     onUrlChangedSub?.cancel();
     flutterWebviewPlugin.dispose();
@@ -73,8 +61,6 @@ class _MapPageState extends State<MapPage> {
     print("This is the URL: $mapUrl");
     return SafeArea(
       child: WebviewScaffold(
-        scaffoldKey: _scaffoldKey,
-        drawer: BottomDrawer(),
         url: mapUrl,
         withJavascript: true,
         withLocalStorage: true,
@@ -82,26 +68,20 @@ class _MapPageState extends State<MapPage> {
           "Cookie": bloc.getSessionIdHeader(),
         },
         primary: true,
-        // withZoom: true,
-        // enableAppScheme:true,
         bottomNavigationBar: BottomAppBar(
           child: new Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               IconButton(
-                tooltip: "Show navigation drawer",
+                tooltip: "Back",
                 icon: Icon(
-                  OMIcons.menu,
-                  semanticLabel: "Show navigation drawer",
+                  OMIcons.arrowBack,
+                  semanticLabel: "Go Back",
                 ),
                 onPressed: () {
-                  _scaffoldKey.currentState.openDrawer();
+                  Navigator.of(context).pop();
                 },
-                // onPressed: () {
-                //   flutterWebviewPlugin.evalJavascript(
-                //               'document.cookie = "${bloc.getSessionIdHeader()}";');
-                // },
               ),
               IconButton(
                 tooltip: "Refresh",

@@ -99,7 +99,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     Text(
                       widget.title,
                       style: theme.textTheme.display2
-                          .copyWith(color: Colors.black, fontFamily: "Bitter"),
+                          .copyWith(fontFamily: "Bitter"),
                     ),
                     SizedBox(
                         height: 18,
@@ -142,6 +142,11 @@ class _CalendarPageState extends State<CalendarPage> {
                         color: Colors.red[800],
                       ),
 
+                      headerTextStyle: theme.textTheme.title,
+
+                      daysTextStyle: theme.textTheme.subhead,
+                      
+
                       weekFormat: false,
                       markedDatesMap: el.EventList(events: snapshot.data ?? {}),
                       markedDateShowIcon: true,
@@ -163,7 +168,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       iconColor: theme.accentColor,
                       weekdayTextStyle: TextStyle(
                           // color: theme.accentColor.withOpacity(0.9),
-                          color: Colors.black45,
+                          color: Colors.grey,
                           fontWeight: FontWeight.bold),
                     ),
                     Center(

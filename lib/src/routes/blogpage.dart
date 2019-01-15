@@ -111,7 +111,7 @@ class _BlogPageState extends State<BlogPage> {
             searchMode
                 ? Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: theme.bottomAppBarColor,
                       border: Border(
                         top: Divider.createBorderSide(context, width: 1.0),
                       ),
@@ -226,7 +226,6 @@ class _BlogPageState extends State<BlogPage> {
                                 Text(
                                   widget.title,
                                   style: theme.textTheme.display2.copyWith(
-                                      color: Colors.black,
                                       fontFamily: "Bitter"),
                                 ),
                               ],
@@ -258,8 +257,7 @@ class _BlogPageState extends State<BlogPage> {
                       children: <Widget>[
                         Text(
                           widget.title,
-                          style: theme.textTheme.display2.copyWith(
-                              color: Colors.black, fontFamily: "Bitter"),
+                          style: theme.textTheme.display2.copyWith( fontFamily: "Bitter"),
                         ),
                       ],
                     ),

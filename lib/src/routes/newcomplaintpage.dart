@@ -143,7 +143,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                 Text(
                   widget.title,
                   style: theme.textTheme.display2
-                      .copyWith(color: Colors.black, fontFamily: "Bitter"),
+                      .copyWith(fontFamily: "Bitter"),
                 ),
                 // SizedBox(height: 8.0),
                 // Text(event.getSubTitle(), style: theme.textTheme.title),

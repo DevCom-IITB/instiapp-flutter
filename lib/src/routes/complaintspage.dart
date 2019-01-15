@@ -78,8 +78,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                       children: <Widget>[
                         Text(
                           widget.title,
-                          style: theme.textTheme.display2.copyWith(
-                              color: Colors.black, fontFamily: "Bitter"),
+                          style: theme.textTheme.display2.copyWith(fontFamily: "Bitter"),
                         ),
                       ],
                     ),
@@ -97,11 +96,10 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                               child: PreferredSize(
                                 preferredSize: Size.fromHeight(72),
                                 child: Material(
-                                  // color: Colors.white,
                                   elevation: 4.0,
                                   child: TabBar(
                                     labelColor: theme.accentColor,
-                                    unselectedLabelColor: Colors.black,
+                                    unselectedLabelColor: theme.disabledColor,
                                     tabs: [
                                       Tab(
                                           text: "Home",
