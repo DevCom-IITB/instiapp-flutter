@@ -8,7 +8,7 @@ import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:InstiApp/src/routes/mappage.dart';
 import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
-import 'package:InstiApp/src/routes/puteventpage.dart';
+import 'package:InstiApp/src/routes/putentitypage.dart';
 import 'package:InstiApp/src/routes/quicklinkspage.dart';
 import 'package:InstiApp/src/routes/settingspage.dart';
 import 'package:InstiApp/src/routes/trainingblogpage.dart';
@@ -72,8 +72,11 @@ class MyAppState extends State<MyApp> {
           else if (settings.name.startsWith("/complaint/")) {
             return _buildRoute(settings, ComplaintPage(_bloc.getComplaint(settings.name.split("/complaint/")[1])));
           }
-          else if (settings.name.startsWith("/putevent/")) {
-            return _buildRoute(settings, PutEventPage(eventID: settings.name.split("/putevent/")[1]),);
+          else if (settings.name.startsWith("/putentity/event/")) {
+            return _buildRoute(settings, PutEntityPage(entityID: settings.name.split("/putentity/event/")[1], cookie: _bloc.getSessionIdHeader()));
+          }
+          else if (settings.name.startsWith("/putentity/body/")) {
+            return _buildRoute(settings, PutEntityPage(isBody: true, entityID: settings.name.split("/putentity/body/")[1], cookie: _bloc.getSessionIdHeader()));
           }
           else {
             switch (settings.name) {
@@ -88,7 +91,7 @@ class MyAppState extends State<MyApp> {
               case "/calendar": return _buildRoute(settings, CalendarPage());
               case "/complaints": return _buildRoute(settings, ComplaintsPage());
               case "/newcomplaint": return _buildRoute(settings, NewComplaintPage());
-              case "/putevent": return _buildRoute(settings, PutEventPage());
+              case "/putentity/event": return _buildRoute(settings, PutEntityPage(cookie: _bloc.getSessionIdHeader(),));
               case "/map": return _buildRoute(settings, MapPage());
               case "/settings": return _buildRoute(settings, SettingsPage());
             }

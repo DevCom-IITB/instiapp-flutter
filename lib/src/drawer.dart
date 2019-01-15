@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:rxdart/rxdart.dart';
 // import 'package:scrollable_bottom_sheet/scrollable_bottom_sheet.dart';
 
 // This is now not used
@@ -175,6 +176,9 @@ class DrawerOnly extends StatelessWidget {
 
 // A Bottom Navigation Drawer
 class BottomDrawer extends StatefulWidget {
+  static Stream<bool> get disposed => _disposedSubject.stream;
+  static PublishSubject<bool> _disposedSubject = PublishSubject<bool>();
+
   static void setPageIndex(InstiAppBloc bloc, int pageIndex) {
     bloc.drawerState.setPageIndex(pageIndex);
   }
@@ -187,6 +191,18 @@ class _BottomDrawerState extends State<BottomDrawer> {
   void changeSelection(int idx, DrawerBloc bloc) {
     bloc.setPageIndex(idx);
     setState(() {});
+  }
+
+  @override
+  void dispose() {
+    BottomDrawer._disposedSubject.add(false);
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    BottomDrawer._disposedSubject.add(true);
   }
 
   @override
@@ -353,7 +369,10 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         ? Text(snapshot.data?.profile?.userRollNumber,
                             style: theme.textTheme.body1)
                         : RaisedButton(
-                            child: Text("Log in", style: TextStyle(color: Colors.white),),
+                            child: Text(
+                              "Log in",
+                              style: TextStyle(color: Colors.white),
+                            ),
                             color: theme.accentColor,
                             onPressed: () {
                               Navigator.of(context).pushReplacementNamed('/');

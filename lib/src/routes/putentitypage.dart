@@ -7,27 +7,40 @@ import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 
-class PutEventPage extends StatefulWidget {
-  final String eventID;
-  PutEventPage({this.eventID});
+class PutEntityPage extends StatefulWidget {
+  final String entityID;
+  final String cookie;
+  final bool isBody;
+
+  PutEntityPage({@required this.cookie, this.entityID, this.isBody = false});
 
   @override
-  _PutEventPageState createState() => _PutEventPageState();
+  _PutEntityPageState createState() => _PutEntityPageState();
 }
 
-class _PutEventPageState extends State<PutEventPage> {
+class _PutEntityPageState extends State<PutEntityPage> {
   final flutterWebviewPlugin = FlutterWebviewPlugin();
 
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   final String hostUrl = "https://insti.app/";
-  final String addEventStr = "add-event/";
+  final String addEventStr = "add-event";
   final String editEventStr = "edit-event/";
+  final String editBodyStr = "edit-body/";
   final String sandboxTrueStr = "?sandbox=true";
 
+  bool firstBuild = true;
+  bool addedCookie = false;
+
   StreamSubscription<String> onUrlChangedSub;
+  StreamSubscription<WebViewStateChanged> onStateChangedSub;
+  StreamSubscription<bool> onDrawerStateChanges;
 
   @override
   void initState() {
     super.initState();
+    var url =
+        "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + widget.entityID)}$sandboxTrueStr";
     onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {
       print("Changed URL: $url");
       if (url.contains("/event/")) {
@@ -40,11 +53,40 @@ class _PutEventPageState extends State<PutEventPage> {
         Navigator.of(context).pushReplacementNamed("/body/$uri");
       }
     });
+
+    onStateChangedSub =
+        flutterWebviewPlugin.onStateChanged.listen((state) async {
+      print(state.type);
+      if (state.type == WebViewState.finishLoad) {
+        if (state.url == url) {
+          if (!addedCookie) {
+            addedCookie = true;
+            flutterWebviewPlugin.evalJavascript(
+                'document.cookie = "${widget.cookie};domain=insti.app";');
+            // print("Cookie injected");
+            flutterWebviewPlugin.reloadUrl(url);
+            flutterWebviewPlugin.show();
+          }
+        }
+      }
+    });
+
+    onDrawerStateChanges = BottomDrawer.disposed.listen((opened) {
+      print("Drawer state: $opened");
+      if (opened) {
+        flutterWebviewPlugin.hide();
+      }
+      else {
+        flutterWebviewPlugin.show();
+      }
+    });
   }
 
   @override
   void dispose() {
+    onDrawerStateChanges?.cancel();
     onUrlChangedSub?.cancel();
+    onStateChangedSub?.cancel();
     flutterWebviewPlugin.dispose();
     super.dispose();
   }
@@ -54,11 +96,13 @@ class _PutEventPageState extends State<PutEventPage> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
     var url =
-        "$hostUrl${widget.eventID == null ? addEventStr : (editEventStr + widget.eventID)}$sandboxTrueStr";
-    print("This is the URL: $url");
+        "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + widget.entityID)}$sandboxTrueStr";
     return SafeArea(
       child: WebviewScaffold(
+        scaffoldKey: _scaffoldKey,
+        drawer: BottomDrawer(),
         url: url,
+        hidden: true,
         withJavascript: true,
         withLocalStorage: true,
         headers: {
@@ -78,11 +122,10 @@ class _PutEventPageState extends State<PutEventPage> {
                   OMIcons.menu,
                   semanticLabel: "Show bottom sheet",
                 ),
-                onPressed: null,
-                // onPressed: () {
-                //   flutterWebviewPlugin.evalJavascript(
-                //               'document.cookie = "${bloc.getSessionIdHeader()}";');
-                // },
+                onPressed: () async {
+                  flutterWebviewPlugin.hide();
+                  _scaffoldKey.currentState.openDrawer();
+                },
               ),
               IconButton(
                 tooltip: "Refresh",

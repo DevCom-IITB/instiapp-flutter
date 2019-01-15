@@ -53,7 +53,9 @@ class _BodyPageState extends State<BodyPage> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
     var footerButtons = <Widget>[];
+    var editAccess = false;
     if (body != null) {
+      editAccess = bloc.editBodyAccess(body);
       footerButtons.addAll([
         _buildFollowBody(theme, bloc),
       ]);
@@ -66,6 +68,17 @@ class _BodyPageState extends State<BodyPage> {
             if (await canLaunch(body.bodyWebsiteURL)) {
               await launch(body.bodyWebsiteURL);
             }
+          },
+        ));
+      }
+
+      if (editAccess) {
+        footerButtons.add(IconButton(
+          icon: Icon(OMIcons.share),
+          tooltip: "Share this body",
+          onPressed: () async {
+            await Share.share(
+                "Check this Institute Body: ${ShareURLMaker.getBodyURL(body)}");
           },
         ));
       }
@@ -223,14 +236,24 @@ class _BodyPageState extends State<BodyPage> {
       ),
       floatingActionButton: _bottomSheetActive || body == null
           ? null
-          : FloatingActionButton(
-              child: Icon(OMIcons.share),
-              tooltip: "Share this body",
-              onPressed: () async {
-                await Share.share(
-                    "Check this Institute Body: ${ShareURLMaker.getBodyURL(body)}");
-              },
-            ),
+          : editAccess
+              ? FloatingActionButton.extended(
+                  icon: Icon(OMIcons.edit),
+                  label: Text("Edit"),
+                  tooltip: "Edit this Body",
+                  onPressed: () {
+                    Navigator.of(context)
+                        .pushNamed("/putentity/body/${body.bodyID}");
+                  },
+                )
+              : FloatingActionButton(
+                  child: Icon(OMIcons.share),
+                  tooltip: "Share this body",
+                  onPressed: () async {
+                    await Share.share(
+                        "Check this Institute Body: ${ShareURLMaker.getBodyURL(body)}");
+                  },
+                ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       persistentFooterButtons: footerButtons,
     );
