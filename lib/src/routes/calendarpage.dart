@@ -63,21 +63,6 @@ class _CalendarPageState extends State<CalendarPage> {
               onPressed: () {
                 BottomDrawer.setPageIndex(bloc, 6);
                 _scaffoldKey.currentState.openDrawer();
-                // setState(() {
-                //   //disable button
-                //   _bottomSheetActive = true;
-                // });
-                // _scaffoldKey.currentState
-                //     .showBottomSheet((context) {
-                //       BottomDrawer.setPageIndex(bloc, 3);
-                //       return BottomDrawer();
-                //     })
-                //     .closed
-                //     .whenComplete(() {
-                //       setState(() {
-                //         _bottomSheetActive = false;
-                //       });
-                //     });
               },
             ),
           ],

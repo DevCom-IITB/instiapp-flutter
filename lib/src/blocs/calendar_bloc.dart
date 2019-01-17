@@ -23,7 +23,7 @@ class CalendarBloc {
   Map<DateTime, List<ev.Event>> calEventsMap = {};
   Map<DateTime, List<Event>> eventsMap = {};
   List<DateTime> receivingMonths = [];
-  bool _loading = true;
+  bool _loading = false;
 
   CalendarBloc(this.bloc) {
     _loadingSubject.add(_loading);
