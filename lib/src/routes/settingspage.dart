@@ -1,5 +1,6 @@
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
@@ -111,17 +112,25 @@ class _SettingsPageState extends State<SettingsPage> {
                         .copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),
-                RadioListTile<Brightness>(
+                RadioListTile<AppBrightness>(
                   title: const Text("Light"),
-                  value: Brightness.light,
+                  value: AppBrightness.light,
                   groupValue: bloc.brightness,
                   onChanged: (v) {
                     bloc.brightness = v;
                   },
                 ),
-                RadioListTile<Brightness>(
+                RadioListTile<AppBrightness>(
                   title: const Text("Dark"),
-                  value: Brightness.dark,
+                  value: AppBrightness.dark,
+                  groupValue: bloc.brightness,
+                  onChanged: (v) {
+                    bloc.brightness = v;
+                  },
+                ),
+                RadioListTile<AppBrightness>(
+                  title: const Text("Black"),
+                  value: AppBrightness.black,
                   groupValue: bloc.brightness,
                   onChanged: (v) {
                     bloc.brightness = v;

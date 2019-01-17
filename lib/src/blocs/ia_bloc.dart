@@ -18,6 +18,55 @@ import 'package:http/io_client.dart';
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Describes the contrast needs of a color.
+class AppBrightness {
+  final index;
+  const AppBrightness._internal(this.index);
+  toString() => 'AppBrightness.$index';
+
+  /// The color is dark and will require a light text color to achieve readable
+  /// contrast.
+  ///
+  /// For example, the color might be dark grey, requiring white text.
+
+  static const dark = const AppBrightness._internal(0);
+
+  /// The color is light and will require a dark text color to achieve readable
+  /// contrast.
+  ///
+  /// For example, the color might be bright white, requiring black text.
+
+  static const light = const AppBrightness._internal(1);
+
+  /// The color is black and will require a light text color to achieve readable
+  /// contrast.
+  ///
+  /// For example, the color might be black, requiring white text.
+  static const black = const AppBrightness._internal(2);
+
+  static const values = [dark, light, black];
+
+  Brightness toBrightness() {
+    return index == 2 ? Brightness.dark : Brightness.values[index];
+  }
+
+  // // You should generally implement operator == if you
+  // // override hashCode.
+  // @override
+  // bool operator ==(dynamic other) {
+  //   if (other is! AppBrightness) {
+  //     if (other is! Brightness) {
+  //       return false;
+  //     }
+  //     Brightness brightness = other;
+  //     return brightness.index == index || (index == 2 && brightness.index == 1); 
+  //   }
+  //   AppBrightness appBrightness = other;
+  //   return appBrightness.index == index;
+  // }
+
+}
+
 class InstiAppBloc {
   // Different Streams for the state
   Stream<UnmodifiableListView<Hostel>> get hostels => _hostelsSubject.stream;
@@ -50,15 +99,15 @@ class InstiAppBloc {
   String homepageName = "/mess";
 
   // default theme
-  Brightness _brightness = Brightness.light;
+  AppBrightness _brightness = AppBrightness.light;
   // Color _primaryColor = Color.fromARGB(255, 63, 81, 181);
   Color _primaryColor = Color.fromARGB(255, 0, 98, 255);
   Color _accentColor = Color.fromARGB(255, 239, 83, 80);
   // Color _accentColor = Color.fromARGB(255, 139, 195, 74);
 
-  Brightness get brightness => _brightness;
+  AppBrightness get brightness => _brightness;
 
-  set brightness(Brightness newBrightness) {
+  set brightness(AppBrightness newBrightness) {
     if (newBrightness != _brightness) {
       wholeAppKey.currentState.setTheme(() => _brightness = newBrightness);
       SharedPreferences.getInstance().then((s) {
@@ -103,7 +152,7 @@ class InstiAppBloc {
     '/quicklinks': 9,
     '/settings': 10,
   };
-  
+
   // MaterialApp reference
   GlobalKey<MyAppState> wholeAppKey;
 
@@ -131,7 +180,8 @@ class InstiAppBloc {
       drawerState.setPageIndex(pageToIndex[homepageName]);
     }
     if (prefs.getKeys().contains("brightness")) {
-      _brightness = Brightness.values[prefs.getInt("brightness")] ?? _brightness;
+      _brightness =
+          AppBrightness.values[prefs.getInt("brightness")] ?? _brightness;
     }
     if (prefs.getKeys().contains("accentColor")) {
       _accentColor = Color(prefs.getInt("accentColor")) ?? _accentColor;
