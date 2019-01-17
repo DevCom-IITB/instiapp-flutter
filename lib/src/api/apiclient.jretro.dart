@@ -230,7 +230,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
     return req.one(convert: serializers.oneFrom);
   }
 
-  Future<ComplaintCreateResponse> postComplaint(
+  Future<Complaint> postComplaint(
       String sessionId, ComplaintCreateRequest complaintCreateRequest) async {
     var req = base.post
         .path(basePath)

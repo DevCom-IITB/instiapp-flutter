@@ -187,9 +187,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         : RaisedButton(
                             child: Text(
                               "Log in",
-                              style: theme.accentTextTheme.button,
                             ),
-                            color: theme.accentColor,
                             onPressed: () {
                               Navigator.of(context).pushReplacementNamed('/');
                             },
@@ -207,6 +205,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                   navList.add(NavListTile(
                     icon: OMIcons.exitToApp,
                     title: "Logout",
+                    selected: true,
                     onTap: () {
                       bloc.logout();
                     },
@@ -216,8 +215,13 @@ class _BottomDrawerState extends State<BottomDrawer> {
                 // Selecting which NavListTile to highlight
                 navMap[indexSnapshot.data].setHighlighted(true);
 
-                return ListView(
-                  children: navList,
+                return ListTileTheme(
+                  selectedColor: theme.primaryColor,
+                  iconColor: theme.primaryColorDark,
+                  style: ListTileStyle.drawer,
+                  child: ListView(
+                    children: navList,
+                  ),
                 );
               });
         },
@@ -247,12 +251,15 @@ class NavListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
+    var listTileTheme = ListTileTheme.of(context);
     return Container(
       decoration: !highlight
           ? null
           : BoxDecoration(
-              color: theme.accentColor.withAlpha(20),
-              borderRadius: BorderRadius.all(const Radius.circular(48.0))),
+              color: listTileTheme.selectedColor.withAlpha(100),
+              borderRadius: BorderRadius.only(
+                  bottomRight: const Radius.circular(48.0),
+                  topRight: const Radius.circular(48.0))),
       child: ListTile(
         selected: selected,
         enabled: true,

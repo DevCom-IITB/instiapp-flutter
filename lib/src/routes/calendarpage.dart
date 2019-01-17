@@ -49,7 +49,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
     return Scaffold(
       key: _scaffoldKey,
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -98,8 +98,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   children: <Widget>[
                     Text(
                       widget.title,
-                      style: theme.textTheme.display2
-                          .copyWith(fontFamily: "Bitter"),
+                      style: theme.textTheme.display2,
                     ),
                     SizedBox(
                         height: 18,
@@ -145,7 +144,6 @@ class _CalendarPageState extends State<CalendarPage> {
                       headerTextStyle: theme.textTheme.title,
 
                       daysTextStyle: theme.textTheme.subhead,
-                      
 
                       weekFormat: false,
                       markedDatesMap: el.EventList(events: snapshot.data ?? {}),
@@ -212,9 +210,12 @@ class _CalendarPageState extends State<CalendarPage> {
         style: theme.textTheme.title,
       ),
       enabled: true,
-      leading: NullableCircleAvatar(
-          event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
-          OMIcons.event),
+      leading: Hero(
+        tag: event.eventID,
+        child: NullableCircleAvatar(
+            event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+            OMIcons.event),
+      ),
       subtitle: Text(event.getSubTitle()),
       onTap: () {
         _openEventPage(event);

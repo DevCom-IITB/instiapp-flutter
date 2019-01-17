@@ -4,6 +4,7 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/datetime.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -33,7 +34,8 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
       child: Scaffold(
         key: _scaffoldKey,
         drawer: BottomDrawer(),
-        bottomNavigationBar: BottomAppBar(
+        bottomNavigationBar: MyBottomAppBar(
+          shape: RoundedNotchedRectangle(),
           child: new Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -78,7 +80,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                       children: <Widget>[
                         Text(
                           widget.title,
-                          style: theme.textTheme.display2.copyWith(fontFamily: "Bitter"),
+                          style: theme.textTheme.display2,
                         ),
                       ],
                     ),
@@ -148,13 +150,17 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                               snapshot.data.isEmpty
                                           ? SliverToBoxAdapter(
                                               child: Center(
-                                                child: Text(
-                                                    "No complaints",
-                                                    style: theme.textTheme.title
-                                                        .copyWith(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold)),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      16.0),
+                                                  child: Text("No complaints",
+                                                      style: theme
+                                                          .textTheme.title
+                                                          .copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                ),
                                               ),
                                             )
                                           : SliverList(
@@ -167,8 +173,16 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                                         snapshot.data[index],
                                                         theme)
                                                     : Center(
-                                                        child:
-                                                            CircularProgressIndicator(),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(16.0),
+                                                          child:
+                                                              CircularProgressIndicatorExtended(
+                                                            label: Text(
+                                                                "Fetching all complaints"),
+                                                          ),
+                                                        ),
                                                       );
                                               },
                                               childCount: snapshot.hasData
@@ -187,13 +201,17 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                               snapshot.data.isEmpty
                                           ? SliverToBoxAdapter(
                                               child: Center(
-                                                child: Text(
-                                                    "No complaints",
-                                                    style: theme.textTheme.title
-                                                        .copyWith(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold)),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      16.0),
+                                                  child: Text("No complaints",
+                                                      style: theme
+                                                          .textTheme.title
+                                                          .copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                ),
                                               ),
                                             )
                                           : SliverList(
@@ -206,8 +224,16 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                                         snapshot.data[index],
                                                         theme)
                                                     : Center(
-                                                        child:
-                                                            CircularProgressIndicator(),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(16.0),
+                                                          child:
+                                                              CircularProgressIndicatorExtended(
+                                                            label: Text(
+                                                                "Fetching complaints made by you"),
+                                                          ),
+                                                        ),
                                                       );
                                               },
                                               childCount: snapshot.hasData
@@ -244,13 +270,13 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
             ),
           ),
         ),
-        // floatingActionButton: FloatingActionButton.extended(
-        //   label: Text("Vent"),
-        //   icon: Icon(OMIcons.feedback),
-        //   onPressed: () {
-        //     Navigator.of(context).pushNamed("/newcomplaint");
-        //   },
-        // ),
+        floatingActionButton: FloatingActionButton.extended(
+          label: Text("Vent"),
+          icon: Icon(OMIcons.feedback),
+          onPressed: () {
+            Navigator.of(context).pushNamed("/newcomplaint");
+          },
+        ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       ),
     );
@@ -297,9 +323,28 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                     ? Colors.yellow
                                     : Colors.green),
                         padding: EdgeInsets.all(0),
-                        child: Text(
-                          complaint.status,
-                          style: theme.textTheme.subhead,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              complaint.status,
+                              style: theme.textTheme.subhead,
+                            ),
+                          ]..insertAll(
+                              0,
+                              complaint.tags.isNotEmpty
+                                  ? [
+                                      Container(
+                                        color: theme.accentColor,
+                                        width: 4,
+                                        height: 4,
+                                      ),
+                                      SizedBox(
+                                        width: 4,
+                                      ),
+                                    ]
+                                  : []),
                         ),
                         onPressed: () {},
                       ),
@@ -313,7 +358,57 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                 SizedBox(
                   height: 16,
                 ),
-                Text(complaint.description, style: theme.textTheme.subtitle),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    complaint.suggestions.isNotEmpty ||
+                            complaint.suggestions.isNotEmpty
+                        ? Text(
+                          "Description: ",
+                          style: theme.textTheme.subhead,
+                        )
+                        : SizedBox(),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Text(
+                        complaint.description,
+                        style: theme.textTheme.subhead,
+                      ),
+                    ),
+                  ]
+                    ..addAll(complaint.suggestions.isNotEmpty
+                        ? [
+                            Text(
+                              "Suggestions: ",
+                              style: theme.textTheme.subhead,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 16.0),
+                              child: Text(
+                                complaint.suggestions,
+                                style: theme.textTheme.subhead,
+                              ),
+                            ),
+                          ]
+                        : [])
+                    ..addAll(complaint.locationDetails.isNotEmpty
+                        ? [
+                            Text(
+                              "Location Details: ",
+                              style: theme.textTheme.subhead,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 16.0),
+                              child: Text(
+                                complaint.locationDetails,
+                                style: theme.textTheme.subhead,
+                              ),
+                            ),
+                          ]
+                        : []),
+                ),
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: Container(
@@ -339,7 +434,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                 width: 8,
                               ),
                               Text(
-                                  "${complaint.comment.isEmpty ? "No" : complaint.comment.length} comment${complaint.comment.length == 1 ? "" : "s"}",
+                                  "${complaint.comments.isEmpty ? "No" : complaint.comments.length} comment${complaint.comments.length == 1 ? "" : "s"}",
                                   style: theme.textTheme.caption),
                             ],
                           ),

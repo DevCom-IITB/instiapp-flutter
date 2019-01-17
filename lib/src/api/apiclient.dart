@@ -129,7 +129,7 @@ class InstiAppApi extends _$InstiAppApiClient implements ApiClient {
   Future<Complaint> upVote(@Header("Cookie") String sessionId, @PathParam() String complaintId, @QueryParam("action") int count);
 
   @PostReq(path: "/venter/complaints")
-  Future<ComplaintCreateResponse> postComplaint(@Header("Cookie") String sessionId, @AsJson() ComplaintCreateRequest complaintCreateRequest);
+  Future<Complaint> postComplaint(@Header("Cookie") String sessionId, @AsJson() ComplaintCreateRequest complaintCreateRequest);
 
   @PostReq(path: "/venter/complaints/:complaintId/comments")
   Future<Comment> postComment(@Header("Cookie") String sessionId, @PathParam() String complaintId, @AsJson() CommentCreateRequest commentCreateRequest);

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -26,7 +27,7 @@ class _PutEntityPageState extends State<PutEntityPage> {
   final String editEventStr = "edit-event";
   final String editBodyStr = "edit-body";
   final String loginStr = "login";
-  final String sandboxTrueStr = "?sandbox=true";
+  final String sandboxTrueQParam = "sandbox=true";
 
   bool firstBuild = true;
   bool addedCookie = false;
@@ -37,10 +38,8 @@ class _PutEntityPageState extends State<PutEntityPage> {
   @override
   void initState() {
     super.initState();
-    var url =
-        "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + widget.entityID)}$sandboxTrueStr";
-    var loginUrl =
-        "$hostUrl$loginStr$sandboxTrueStr";
+    // var url =
+    //     "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + "/" + widget.entityID)}?${widget.cookie}&$sandboxTrueQParam";
     onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {
       print("Changed URL: $url");
       if (url.contains("/event/")) {
@@ -57,18 +56,18 @@ class _PutEntityPageState extends State<PutEntityPage> {
     onStateChangedSub =
         flutterWebviewPlugin.onStateChanged.listen((state) async {
       print(state.type);
-      if (state.type == WebViewState.finishLoad) {
-        if (state.url == loginUrl) {
-          if (!addedCookie) {
-            addedCookie = true;
-            flutterWebviewPlugin.evalJavascript(
-                'document.cookie = "${widget.cookie};domain=insti.app";');
-            // print("Cookie injected");
-            flutterWebviewPlugin.reloadUrl(url);
-            flutterWebviewPlugin.show();
-          }
-        }
-      }
+      // if (state.type == WebViewState.finishLoad) {
+      //   if (state.url == loginUrl) {
+      //     if (!addedCookie) {
+      //       addedCookie = true;
+      //       flutterWebviewPlugin.evalJavascript(
+      //           'document.cookie = "${widget.cookie};domain=insti.app";');
+      //       // print("Cookie injected");
+      //       flutterWebviewPlugin.reloadUrl(url);
+      //       flutterWebviewPlugin.show();
+      //     }
+      //   }
+      // }
     });
   }
 
@@ -85,22 +84,14 @@ class _PutEntityPageState extends State<PutEntityPage> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
     var url =
-        "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + widget.entityID)}$sandboxTrueStr";
-    var loginUrl =
-        "$hostUrl$loginStr$sandboxTrueStr";
+        "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + "/" + widget.entityID)}?${widget.cookie}&$sandboxTrueQParam";
     return SafeArea(
       child: WebviewScaffold(
-        url: addedCookie ? url : loginUrl,
-        hidden: true,
+        url: url,
         withJavascript: true,
         withLocalStorage: true,
-        headers: {
-          "Cookie": bloc.getSessionIdHeader(),
-        },
         primary: true,
-        // withZoom: true,
-        // enableAppScheme:true,
-        bottomNavigationBar: BottomAppBar(
+        bottomNavigationBar: MyBottomAppBar(
           child: new Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

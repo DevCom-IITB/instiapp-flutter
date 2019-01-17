@@ -27,8 +27,6 @@ class _BodyPageState extends State<BodyPage> {
 
   bool loadingFollow = false;
 
-  bool _bottomSheetActive = false;
-
   @override
   void initState() {
     super.initState();
@@ -86,7 +84,7 @@ class _BodyPageState extends State<BodyPage> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: BottomDrawer(),
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -96,144 +94,121 @@ class _BodyPageState extends State<BodyPage> {
                 OMIcons.menu,
                 semanticLabel: "Show bottom sheet",
               ),
-              onPressed: _bottomSheetActive
-                  ? null
-                  : () {
-                      _scaffoldKey.currentState.openDrawer();
-                      // setState(() {
-                      //   //disable button
-                      //   _bottomSheetActive = true;
-                      // });
-                      // _scaffoldKey.currentState
-                      //     .showBottomSheet((context) {
-                      //       return BottomDrawer();
-                      //     })
-                      //     .closed
-                      //     .whenComplete(() {
-                      //       setState(() {
-                      //         _bottomSheetActive = false;
-                      //       });
-                      //     });
-                    },
+              onPressed: () {
+                _scaffoldKey.currentState.openDrawer();
+              },
             ),
           ],
         ),
       ),
-      body: Container(
-        foregroundDecoration: _bottomSheetActive
-            ? BoxDecoration(
-                color: Color.fromRGBO(100, 100, 100, 12),
-              )
-            : null,
-        child: body == null
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : ListView(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(28.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          body.bodyName,
-                          style: theme.textTheme.display2.copyWith( fontFamily: "Bitter"),
-                        ),
-                        SizedBox(height: 8.0),
-                        Text(body.bodyShortDescription,
-                            style: theme.textTheme.title),
-                      ],
-                    ),
+      body: body == null
+          ? Center(
+              child: CircularProgressIndicatorExtended(
+              label: Text("Loading the body page"),
+            ))
+          : ListView(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(28.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        body.bodyName,
+                        style: theme.textTheme.display2,
+                      ),
+                      SizedBox(height: 8.0),
+                      Text(body.bodyShortDescription,
+                          style: theme.textTheme.title),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child:
-                        Image.network(body.bodyImageURL, fit: BoxFit.fitWidth),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: PhotoViewableImage(NetworkImage(body.bodyImageURL), body.bodyID,  fit: BoxFit.fitWidth),
+                ),
+                SizedBox(
+                  height: 16.0,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 28.0, vertical: 16.0),
+                  child: CommonHtml(
+                    data: body.bodyDescription,
+                    defaultTextStyle: theme.textTheme.subhead,
                   ),
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 28.0, vertical: 16.0),
-                    child: CommonHtml(
-                      data: body.bodyDescription,
-                      defaultTextStyle: theme.textTheme.subhead,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 16.0,
-                  ),
+                ),
+                SizedBox(
+                  height: 16.0,
+                ),
+                Divider(),
+              ] // Events
+                ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                    body.bodyEvents
+                        .map((e) => _buildEventTile(e, theme))
+                        .toList(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28.0, vertical: 16.0),
+                      child: Text(
+                        "Events",
+                        style: theme.textTheme.headline,
+                      ),
+                    )))
+                // Children
+                ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                    body.bodyChildren
+                        .map((b) => _buildBodyTile(b, theme.textTheme))
+                        .toList(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28.0, vertical: 16.0),
+                      child: Text(
+                        "Organizations",
+                        style: theme.textTheme.headline,
+                      ),
+                    )))
+                // People
+                ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                    body.bodyRoles
+                        .expand((r) {
+                          if (r.roleUsersDetail != null) {
+                            return r.roleUsersDetail
+                                .map((u) => u..currentRole = r.roleName)
+                                .toList();
+                          }
+                        })
+                        .map((u) => _buildUserTile(u, theme))
+                        .toList(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28.0, vertical: 16.0),
+                      child: Text(
+                        "People",
+                        style: theme.textTheme.headline,
+                      ),
+                    )))
+                // Parents
+                ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                    body.bodyParents
+                        .map((b) => _buildBodyTile(b, theme.textTheme))
+                        .toList(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28.0, vertical: 16.0),
+                      child: Text(
+                        "Part of",
+                        style: theme.textTheme.headline,
+                      ),
+                    )))
+                ..addAll([
                   Divider(),
-                ] // Events
-                  ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                      body.bodyEvents
-                          .map((e) => _buildEventTile(e, theme))
-                          .toList(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 28.0, vertical: 16.0),
-                        child: Text(
-                          "Events",
-                          style: theme.textTheme.headline,
-                        ),
-                      )))
-                  // Children
-                  ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                      body.bodyChildren
-                          .map((b) => _buildBodyTile(b, theme.textTheme))
-                          .toList(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 28.0, vertical: 16.0),
-                        child: Text(
-                          "Organizations",
-                          style: theme.textTheme.headline,
-                        ),
-                      )))
-                  // People
-                  ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                      body.bodyRoles
-                          .expand((r) {
-                            if (r.roleUsersDetail != null) {
-                              return r.roleUsersDetail
-                                  .map((u) => u..currentRole = r.roleName)
-                                  .toList();
-                            }
-                          })
-                          .map((u) => _buildUserTile(u, theme))
-                          .toList(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 28.0, vertical: 16.0),
-                        child: Text(
-                          "People",
-                          style: theme.textTheme.headline,
-                        ),
-                      )))
-                  // Parents
-                  ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                      body.bodyParents
-                          .map((b) => _buildBodyTile(b, theme.textTheme))
-                          .toList(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 28.0, vertical: 16.0),
-                        child: Text(
-                          "Part of",
-                          style: theme.textTheme.headline,
-                        ),
-                      )))
-                  ..addAll([
-                    Divider(),
-                    SizedBox(
-                      height: 64.0,
-                    )
-                  ]),
-              ),
-      ),
-      floatingActionButton: _bottomSheetActive || body == null
+                  SizedBox(
+                    height: 64.0,
+                  )
+                ]),
+            ),
+      floatingActionButton: body == null
           ? null
           : editAccess
               ? FloatingActionButton.extended(
@@ -265,8 +240,10 @@ class _BodyPageState extends State<BodyPage> {
 
   RaisedButton _buildFollowBody(ThemeData theme, InstiAppBloc bloc) {
     return RaisedButton(
-      color: body.bodyUserFollows ? theme.accentColor : theme.bottomAppBarColor,
-      textColor: body.bodyUserFollows ? theme.textTheme.button.color : null,
+      color: body.bodyUserFollows
+          ? theme.accentColor
+          : theme.scaffoldBackgroundColor,
+      textColor: body.bodyUserFollows ? theme.accentIconTheme.color : null,
       shape: RoundedRectangleBorder(
           side: BorderSide(
             color: theme.accentColor,
@@ -287,7 +264,9 @@ class _BodyPageState extends State<BodyPage> {
                 width: 18,
                 child: CircularProgressIndicator(
                   valueColor: new AlwaysStoppedAnimation<Color>(
-                      body.bodyUserFollows ? theme.textTheme.button.color : theme.accentColor),
+                      body.bodyUserFollows
+                          ? theme.accentIconTheme.color
+                          : theme.accentColor),
                   strokeWidth: 2,
                 )),
             SizedBox(
@@ -317,7 +296,9 @@ class _BodyPageState extends State<BodyPage> {
     return ListTile(
       title: Text(body.bodyName, style: theme.title),
       subtitle: Text(body.bodyShortDescription, style: theme.subtitle),
-      leading: NullableCircleAvatar(body.bodyImageURL, OMIcons.peopleOutline),
+      leading: Hero(
+        tag: body.bodyID,
+        child: NullableCircleAvatar(body.bodyImageURL, OMIcons.peopleOutline)),
       onTap: () {
         Navigator.of(context).pushNamed("/body/${body.bodyID}");
       },
@@ -331,9 +312,12 @@ class _BodyPageState extends State<BodyPage> {
         style: theme.textTheme.title,
       ),
       enabled: true,
-      leading: NullableCircleAvatar(
-          event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
-          OMIcons.event),
+      leading: Hero(
+        tag: event.eventID,
+        child: NullableCircleAvatar(
+            event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+            OMIcons.event),
+      ),
       subtitle: Text(event.getSubTitle()),
       onTap: () {
         _openEventPage(event);
@@ -343,8 +327,10 @@ class _BodyPageState extends State<BodyPage> {
 
   Widget _buildUserTile(User u, ThemeData theme) {
     return ListTile(
-      leading:
-          NullableCircleAvatar(u.userProfilePictureUrl, OMIcons.personOutline),
+      leading: Hero(
+          tag: u.userID,
+          child: NullableCircleAvatar(
+              u.userProfilePictureUrl, OMIcons.personOutline)),
       title: Text(
         u.userName,
         style: theme.textTheme.title,

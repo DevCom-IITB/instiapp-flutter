@@ -3,7 +3,9 @@ import 'dart:collection';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
+import 'package:InstiApp/src/api/request/image_upload_request.dart';
 import 'package:InstiApp/src/api/response/complaint_create_response.dart';
+import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -27,6 +29,15 @@ class ComplaintsBloc {
   // // //
 
   ComplaintsBloc(this.bloc);
+
+  Future<ImageUploadResponse> uploadBase64Image(String base64Image) async {
+    if (bloc.currSession != null) {
+      var tmp = ImageUploadRequest();
+      tmp.base64Image = base64Image;
+      return bloc.client.uploadImage(bloc.getSessionIdHeader(), tmp);
+    }
+    return Future.delayed(Duration(milliseconds: 300));
+  }
 
   Future<void> updateAllComplaints() async {
     if (bloc.currSession != null) {
@@ -86,13 +97,13 @@ class ComplaintsBloc {
     try {
       var comment = await bloc.client
           .postComment(bloc.getSessionIdHeader(), complaint.complaintID, req);
-      complaint.comment.add(comment);
+      complaint.comments.add(comment);
     } catch (ex) {
       print(ex);
     }
   }
 
-  Future<ComplaintCreateResponse> postComplaint(
+  Future<Complaint> postComplaint(
       ComplaintCreateRequest req) async {
     try {
       return bloc.client.postComplaint(bloc.getSessionIdHeader(), req);

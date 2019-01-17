@@ -5,6 +5,10 @@ part 'complaint_create_request.jser.dart';
 class ComplaintCreateRequest {
   @Alias("description")
   String complaintDescription;
+  @Alias("suggestions")
+  String complaintSuggestions;
+  @Alias("location_details")
+  String complaintLocationDetails;
   @Alias("location_description")
   String complaintLocation;
   @Alias("latitude")

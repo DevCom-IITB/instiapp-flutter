@@ -32,7 +32,6 @@ class _BlogPageState extends State<BlogPage> {
       GlobalKey<RefreshIndicatorState>();
 
   ScrollController _hideButtonController;
-  bool _bottomSheetActive = false;
   double isFabVisible = 0;
 
   bool searchMode = false;
@@ -80,7 +79,10 @@ class _BlogPageState extends State<BlogPage> {
               child: TextField(
                 autofocus: true,
                 decoration: InputDecoration(
-                  prefixIcon: Icon(OMIcons.search),
+                  prefixIcon: Icon(
+                    OMIcons.search,
+                    color: theme.colorScheme.onPrimary,
+                  ),
                   hintText: "Search...",
                 ),
                 onChanged: (query) async {
@@ -129,7 +131,7 @@ class _BlogPageState extends State<BlogPage> {
                     width: 0,
                     height: 0,
                   ),
-            BottomAppBar(
+            MyBottomAppBar(
               child: new Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -140,39 +142,16 @@ class _BlogPageState extends State<BlogPage> {
                       OMIcons.menu,
                       semanticLabel: "Show bottom sheet",
                     ),
-                    onPressed: _bottomSheetActive
-                        ? null
-                        : () {
-                            BottomDrawer.setPageIndex(
-                                bloc,
-                                {
-                                  PostType.Placement: 4,
-                                  PostType.Training: 5,
-                                  PostType.NewsArticle: 1,
-                                }[widget.postType]);
-                            _scaffoldKey.currentState.openDrawer();
-                            // setState(() {
-                            //   //disable button
-                            //   _bottomSheetActive = true;
-                            // });
-                            // _scaffoldKey.currentState
-                            //     .showBottomSheet((context) {
-                            //       BottomDrawer.setPageIndex(
-                            //           bloc,
-                            //           {
-                            //             PostType.Placement: 4,
-                            //             PostType.Training: 5,
-                            //             PostType.NewsArticle: 1,
-                            //           }[widget.postType]);
-                            //       return BottomDrawer();
-                            //     })
-                            //     .closed
-                            //     .whenComplete(() {
-                            //       setState(() {
-                            //         _bottomSheetActive = false;
-                            //       });
-                            //     });
-                          },
+                    onPressed: () {
+                      BottomDrawer.setPageIndex(
+                          bloc,
+                          {
+                            PostType.Placement: 4,
+                            PostType.Training: 5,
+                            PostType.NewsArticle: 1,
+                          }[widget.postType]);
+                      _scaffoldKey.currentState.openDrawer();
+                    },
                   ),
                   IconButton(
                     icon: Icon(actionIcon),
@@ -195,85 +174,77 @@ class _BlogPageState extends State<BlogPage> {
           ],
         ),
       ),
-      body: AnimatedContainer(
-        duration: Duration(milliseconds: 500),
-        foregroundDecoration: _bottomSheetActive
-            ? BoxDecoration(
-                color: Color.fromRGBO(100, 100, 100, 12),
-              )
-            : null,
-        child: StreamBuilder(
-          stream: bloc.session,
-          builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
-            if ((snapshot.hasData && snapshot.data != null) ||
-                !widget.loginNeeded) {
-              return StreamBuilder<UnmodifiableListView<Post>>(
-                stream: blogBloc.blog,
-                builder: (BuildContext context,
-                    AsyncSnapshot<UnmodifiableListView<Post>> snapshot) {
-                  return RefreshIndicator(
-                    key: _refreshIndicatorKey,
-                    onRefresh: _handleRefresh,
-                    child: ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (index == 0) {
-                          return Padding(
-                            padding: const EdgeInsets.all(28.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  widget.title,
-                                  style: theme.textTheme.display2.copyWith(
-                                      fontFamily: "Bitter"),
-                                ),
-                              ],
-                            ),
-                          );
-                        } else {
-                          return _buildPost(blogBloc, index - 1, snapshot.data);
-                        }
-                      },
-                      itemCount: (snapshot.data == null
-                              ? 0
-                              : ((snapshot.data.isNotEmpty &&
-                                      snapshot.data.last.content == null)
-                                  ? snapshot.data.length - 1
-                                  : snapshot.data.length)) +
-                          2,
-                      controller: _hideButtonController,
-                    ),
-                  );
-                },
-              );
-            } else {
-              return ListView(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(28.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          widget.title,
-                          style: theme.textTheme.display2.copyWith( fontFamily: "Bitter"),
-                        ),
-                      ],
-                    ),
+      body: StreamBuilder(
+        stream: bloc.session,
+        builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
+          if ((snapshot.hasData && snapshot.data != null) ||
+              !widget.loginNeeded) {
+            return StreamBuilder<UnmodifiableListView<Post>>(
+              stream: blogBloc.blog,
+              builder: (BuildContext context,
+                  AsyncSnapshot<UnmodifiableListView<Post>> snapshot) {
+                return RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  onRefresh: _handleRefresh,
+                  child: ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (BuildContext context, int index) {
+                      if (index == 0) {
+                        return Padding(
+                          padding: const EdgeInsets.all(28.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                widget.title,
+                                style: theme.textTheme.display2,
+                              ),
+                            ],
+                          ),
+                        );
+                      } else {
+                        return _buildPost(
+                            blogBloc, index - 1, snapshot.data, theme);
+                      }
+                    },
+                    itemCount: (snapshot.data == null
+                            ? 0
+                            : ((snapshot.data.isNotEmpty &&
+                                    snapshot.data.last.content == null)
+                                ? snapshot.data.length - 1
+                                : snapshot.data.length)) +
+                        2,
+                    controller: _hideButtonController,
                   ),
-                  Center(
-                    child: Text(
-                      "You must be logged in to view ${widget.title}",
-                      style: theme.textTheme.title,
-                      textAlign: TextAlign.center,
-                    ),
+                );
+              },
+            );
+          } else {
+            return ListView(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(28.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        widget.title,
+                        style: theme.textTheme.display2,
+                      ),
+                    ],
                   ),
-                ],
-              );
-            }
-          },
-        ),
+                ),
+                Center(
+                  child: Text(
+                    "You must be logged in to view ${widget.title}",
+                    style: theme.textTheme.title,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            );
+          }
+        },
       ),
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton: isFabVisible == 0
@@ -304,7 +275,8 @@ class _BlogPageState extends State<BlogPage> {
     return bloc.getPostsBloc(widget.postType).refresh();
   }
 
-  Widget _buildPost(PostBloc bloc, int index, List<Post> posts) {
+  Widget _buildPost(
+      PostBloc bloc, int index, List<Post> posts, ThemeData theme) {
     bloc.inPostIndex.add(index);
 
     final Post post =
@@ -315,8 +287,9 @@ class _BlogPageState extends State<BlogPage> {
           child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
-          child: CircularProgressIndicator(),
-        ),
+            child: CircularProgressIndicatorExtended(
+          label: Text("Getting ${widget.title} Posts"),
+        )),
       ));
     }
 

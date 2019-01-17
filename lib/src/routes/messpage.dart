@@ -1,3 +1,4 @@
+import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
@@ -35,106 +36,80 @@ class _MessPageState extends State<MessPage> {
 
     bloc.updateHostels();
 
-    var footerButtons = [
-      buildDropdownButton(),
+    var footerButtons = <Widget>[
+      buildDropdownButton(theme),
     ];
 
     return Scaffold(
       key: _scaffoldKey,
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             IconButton(
-              tooltip: "Show bottom sheet",
+              tooltip: "Show navigation drawer",
               icon: Icon(
                 OMIcons.menu,
-                semanticLabel: "Show bottom sheet",
+                semanticLabel: "Show navigation drawer",
               ),
-              onPressed: _bottomSheetActive
-                  ? null
-                  : () {
-                    BottomDrawer.setPageIndex(bloc, 3);
-                    _scaffoldKey.currentState.openDrawer();
-                      // setState(() {
-                      //   //disable button
-                      //   _bottomSheetActive = true;
-                      // });
-                      // _scaffoldKey.currentState
-                      //     .showBottomSheet((context) {
-                      //       BottomDrawer.setPageIndex(bloc, 3);
-                      //       return BottomDrawer();
-                      //     })
-                      //     .closed
-                      //     .whenComplete(() {
-                      //       setState(() {
-                      //         _bottomSheetActive = false;
-                      //       });
-                      //     });
-                    },
+              onPressed: () {
+                BottomDrawer.setPageIndex(bloc, 3);
+                _scaffoldKey.currentState.openDrawer();
+              },
             ),
           ],
         ),
       ),
       drawer: BottomDrawer(),
-      body: AnimatedContainer(
-        duration: Duration(milliseconds: 500),
-        foregroundDecoration: _bottomSheetActive
-            ? BoxDecoration(
-                color: Color.fromRGBO(100, 100, 100, 12),
-              )
-            : null,
-        child: ListView(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(28.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    "Mess Menu",
-                    style: theme.textTheme.display2
-                        .copyWith(fontFamily: "Bitter"),
-                  ),
-                ],
-              ),
+      body: ListView(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(28.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "Mess Menu",
+                  style: theme.textTheme.display2,
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28.0),
-              child: StreamBuilder<UnmodifiableListView<Hostel>>(
-                stream: bloc.hostels,
-                builder: (BuildContext context,
-                    AsyncSnapshot<UnmodifiableListView<Hostel>> hostels) {
-                  if (currHostel == "0")
-                    currHostel = bloc.currSession?.profile?.hostel ?? "1";
-                  if (hostels.hasData) {
-                    var currMess = hostels.data
-                        .firstWhere((h) => h.shortName == currHostel)
-                        .mess
-                      ..sort((h1, h2) => h1.compareTo(h2));
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: currMess.map(_buildSingleDayMess).toList(),
-                    );
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        backgroundColor: theme.accentColor,
-                      ),
-                    );
-                  }
-                },
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28.0),
+            child: StreamBuilder<UnmodifiableListView<Hostel>>(
+              stream: bloc.hostels,
+              builder: (BuildContext context,
+                  AsyncSnapshot<UnmodifiableListView<Hostel>> hostels) {
+                if (currHostel == "0")
+                  currHostel = bloc.currSession?.profile?.hostel ?? "1";
+                if (hostels.hasData) {
+                  var currMess = hostels.data
+                      .firstWhere((h) => h.shortName == currHostel)
+                      .mess
+                    ..sort((h1, h2) => h1.compareTo(h2));
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: currMess.map(_buildSingleDayMess).toList(),
+                  );
+                } else {
+                  return Center(
+                    child: CircularProgressIndicatorExtended(
+                      label: Text("Loading mess menu"),
+                    ),
+                  );
+                }
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       persistentFooterButtons: footerButtons,
     );
   }
 
-  Widget buildDropdownButton() {
+  Widget buildDropdownButton(ThemeData theme) {
     var bloc = BlocProvider.of(context).bloc;
     return StreamBuilder<UnmodifiableListView<Hostel>>(
       stream: bloc.hostels,
@@ -157,7 +132,14 @@ class _MessPageState extends State<MessPage> {
             },
           );
         } else {
-          return Center(child: CircularProgressIndicator());
+          return SizedBox(
+            width: 18,
+            height: 18,
+            child: CircularProgressIndicator(
+              valueColor: new AlwaysStoppedAnimation<Color>(theme.accentColor),
+              strokeWidth: 2,
+            ),
+          );
         }
       },
     );

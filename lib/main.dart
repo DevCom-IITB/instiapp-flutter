@@ -64,28 +64,56 @@ class MyAppState extends State<MyApp> {
       child: MaterialApp(
         title: 'InstiApp',
         theme: ThemeData(
-          fontFamily: "SourceSansPro",
+          // fontFamily: "SourceSansPro",
+          fontFamily: "IBMPlexSans",
 
           primaryColor: widget.bloc.primaryColor,
           accentColor: widget.bloc.accentColor,
+          primarySwatch: Colors.primaries.singleWhere((c) => c.value == widget.bloc.accentColor.value, orElse: () => null),
+
 
           toggleableActiveColor: widget.bloc.accentColor,
           textSelectionHandleColor: widget.bloc.accentColor,
 
+
           canvasColor:
               widget.bloc.brightness == Brightness.dark ? Colors.black : null,
-          bottomAppBarColor: widget.bloc.brightness == Brightness.dark
-              ? Colors.grey[850]
-              : null,
-          // bottomAppBarColor: Color(0xFFA95551),
+          // bottomAppBarColor: widget.bloc.brightness == Brightness.dark
+          //     ? Colors.grey[850]
+          //     : null,
+
+          
+          bottomAppBarColor: widget.bloc.primaryColor,
           brightness: widget.bloc.brightness,
 
           textTheme: TextTheme(
+              display1: TextStyle(
+                fontFamily: "SourceSansPro",
+                color: widget.bloc.brightness == Brightness.light
+                    ? Colors.black
+                    : Colors.white,
+              ),
               display2: TextStyle(
-            color: widget.bloc.brightness == Brightness.light
-                ? Colors.black
-                : Colors.white,
-          )),
+                fontFamily: "SourceSansPro",
+                color: widget.bloc.brightness == Brightness.light
+                    ? Colors.black
+                    : Colors.white,
+              ),
+              display3: TextStyle(
+                fontFamily: "SourceSansPro",
+                color: widget.bloc.brightness == Brightness.light
+                    ? Colors.black
+                    : Colors.white,
+              ),
+              display4: TextStyle(
+                fontFamily: "SourceSansPro",
+                color: widget.bloc.brightness == Brightness.light
+                    ? Colors.black
+                    : Colors.white,
+              ),
+              headline: TextStyle(
+                fontFamily: "SourceSansPro",
+              )),
         ),
         onGenerateRoute: (RouteSettings settings) {
           if (settings.name.startsWith("/event/")) {
@@ -146,11 +174,8 @@ class MyAppState extends State<MyApp> {
               case "/newcomplaint":
                 return _buildRoute(settings, NewComplaintPage());
               case "/putentity/event":
-                return _buildRoute(
-                    settings,
-                    PutEntityPage(
-                      cookie: widget.bloc.getSessionIdHeader(),
-                    ));
+                return _buildRoute(settings,
+                    PutEntityPage(cookie: widget.bloc.getSessionIdHeader()));
               case "/map":
                 return _buildRoute(settings, MapPage());
               case "/settings":

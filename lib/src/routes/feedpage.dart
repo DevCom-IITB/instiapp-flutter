@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 
@@ -13,7 +14,6 @@ class FeedPage extends StatefulWidget {
 
 class _FeedPageState extends State<FeedPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  bool _bottomSheetActive = false;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +25,7 @@ class _FeedPageState extends State<FeedPage> {
     var fab = null;
 
     if (bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false) {
+      // fab = FloatingActionButton(child: Icon(OMIcons.add), onPressed: () {},);
       fab = FloatingActionButton.extended(
         icon: Icon(OMIcons.add),
         label: Text("Add Event"),
@@ -37,7 +38,8 @@ class _FeedPageState extends State<FeedPage> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: BottomDrawer(),
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: MyBottomAppBar(
+        shape: RoundedNotchedRectangle(),
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -48,87 +50,64 @@ class _FeedPageState extends State<FeedPage> {
                 OMIcons.menu,
                 semanticLabel: "Show bottom sheet",
               ),
-              onPressed: _bottomSheetActive
-                  ? null
-                  : () {
-                      BottomDrawer.setPageIndex(bloc, 0);
-                      _scaffoldKey.currentState.openDrawer();
-                      // setState(() {
-                      //   //disable button
-                      //   _bottomSheetActive = true;
-                      // });
-                      // _scaffoldKey.currentState
-                      //     .showBottomSheet((context) {
-                      //       BottomDrawer.setPageIndex(bloc, 0);
-                      //       return BottomDrawer();
-                      //     })
-                      //     .closed
-                      //     .whenComplete(() {
-                      //       setState(() {
-                      //         _bottomSheetActive = false;
-                      //       });
-                      //     });
-                    },
+              onPressed: () {
+                BottomDrawer.setPageIndex(bloc, 0);
+                _scaffoldKey.currentState.openDrawer();
+              },
             ),
           ],
         ),
       ),
-      body: AnimatedContainer(
-        duration: Duration(milliseconds: 500),
-        foregroundDecoration: _bottomSheetActive
-            ? BoxDecoration(
-                color: Color.fromRGBO(100, 100, 100, 12),
-              )
-            : null,
-        child: SafeArea(
-          child: RefreshIndicator(
-            onRefresh: () => bloc.updateEvents(),
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(28.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          "Feed",
-                          style: theme.textTheme.display2.copyWith(fontFamily: "Bitter"),
-                        ),
-                      ],
-                    ),
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: () => bloc.updateEvents(),
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(28.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        "Feed",
+                        style: theme.textTheme.display2,
+                      ),
+                    ],
                   ),
                 ),
-                StreamBuilder(
-                  stream: bloc.events,
-                  builder: (context,
-                      AsyncSnapshot<UnmodifiableListView<Event>> snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data.length > 0) {
-                        return SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                              (context, index) =>
-                                  _buildEvent(snapshot.data[index]),
-                              childCount: snapshot.data.length),
-                        );
-                      } else {
-                        return SliverToBoxAdapter(
-                          child: Center(
-                            child: Text("No upcoming events"),
-                          ),
-                        );
-                      }
+              ),
+              StreamBuilder(
+                stream: bloc.events,
+                builder: (context,
+                    AsyncSnapshot<UnmodifiableListView<Event>> snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data.length > 0) {
+                      return SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                            (context, index) =>
+                                _buildEvent(snapshot.data[index]),
+                            childCount: snapshot.data.length),
+                      );
                     } else {
                       return SliverToBoxAdapter(
                         child: Center(
-                          child: CircularProgressIndicator(),
+                          child: Text("No upcoming events"),
                         ),
                       );
                     }
-                  },
-                )
-              ],
-            ),
+                  } else {
+                    return SliverToBoxAdapter(
+                      child: Center(
+                        child: CircularProgressIndicatorExtended(
+                          label: Text("Getting the latest events"),
+                        ),
+                      ),
+                    );
+                  }
+                },
+              )
+            ],
           ),
         ),
       ),
@@ -148,13 +127,16 @@ class _FeedPageState extends State<FeedPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Ink.image(
-              child: Container(),
-              image: NetworkImage(
-                event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+            Hero(
+              tag: event.eventID,
+              child: Ink.image(
+                child: Container(),
+                image: NetworkImage(
+                  event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+                ),
+                height: 200,
+                fit: BoxFit.cover,
               ),
-              height: 200,
-              fit: BoxFit.cover,
             ),
             ListTile(
               contentPadding:
@@ -175,11 +157,14 @@ class _FeedPageState extends State<FeedPage> {
           event.eventName,
           style: theme.textTheme.title,
         ),
-        contentPadding: EdgeInsets.all(8.0),
+        // contentPadding: EdgeInsets.all(8.0),  
         enabled: true,
-        leading: CircleAvatar(
-          backgroundImage: NetworkImage(
-              event.eventImageURL ?? event.eventBodies[0].bodyImageURL),
+        leading: Hero(
+          tag: event.eventID,
+          child: CircleAvatar(
+            backgroundImage: NetworkImage(
+                event.eventImageURL ?? event.eventBodies[0].bodyImageURL),
+          ),
         ),
         subtitle: Text(event.getSubTitle()),
         onTap: () {

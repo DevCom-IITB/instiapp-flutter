@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -68,7 +69,7 @@ class _MapPageState extends State<MapPage> {
           "Cookie": bloc.getSessionIdHeader(),
         },
         primary: true,
-        bottomNavigationBar: BottomAppBar(
+        bottomNavigationBar: MyBottomAppBar(
           child: new Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -43,8 +43,8 @@ class _ComplaintPageState extends State<ComplaintPage> {
 
   @override
   void initState() {
-    complaint = null;
     super.initState();
+    complaint = null;
     widget._complaintFuture.then((c) {
       setState(() {
         complaint = c;
@@ -69,25 +69,6 @@ class _ComplaintPageState extends State<ComplaintPage> {
     var complaintBloc = bloc.complaintsBloc;
     var fab;
     fab = null;
-
-    // if (firstBuild) {
-    //   setState(()  {
-    //     try {
-    //       _location.getLocation().catchError(() {});
-    //       // var v = await _location.hasPermission();
-    //       // if (v) {
-    //       //   _location.getLocation();
-    //       // }
-    //     }
-    //     on PlatformException {
-
-    //     }
-    //     catch (e ) {
-    //       print(e);
-    //     }
-    //   });
-    //   firstBuild = false;
-    // }
 
     if (complaint != null) {
       var userVoted = complaint.voteCount == 1;
@@ -121,7 +102,8 @@ class _ComplaintPageState extends State<ComplaintPage> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: BottomDrawer(),
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: MyBottomAppBar(
+        shape: RoundedNotchedRectangle(),
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -133,20 +115,6 @@ class _ComplaintPageState extends State<ComplaintPage> {
               ),
               onPressed: () {
                 _scaffoldKey.currentState.openDrawer();
-                // setState(() {
-                //   //disable button
-                //   _bottomSheetActive = true;
-                // });
-                // _scaffoldKey.currentState
-                //     .showBottomSheet((context) {
-                //       return BottomDrawer();
-                //     })
-                //     .closed
-                //     .whenComplete(() {
-                //       setState(() {
-                //         _bottomSheetActive = false;
-                //       });
-                //     });
               },
             ),
           ],
@@ -155,7 +123,9 @@ class _ComplaintPageState extends State<ComplaintPage> {
       // bottomSheet: ,
       body: complaint == null
           ? Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicatorExtended(
+                label: Text("Loading the complaint page"),
+              ),
             )
           : ListView(
               children: <Widget>[
@@ -166,7 +136,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                     children: <Widget>[
                       Text(
                         widget.title,
-                        style: theme.textTheme.display2.copyWith(fontFamily: "Bitter"),
+                        style: theme.textTheme.display2,
                       ),
                       // SizedBox(height: 8.0),
                       // Text(event.getSubTitle(), style: theme.textTheme.title),
@@ -239,9 +209,28 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                           ? Colors.yellow
                                           : Colors.green),
                               padding: EdgeInsets.all(0),
-                              child: Text(
-                                complaint.status,
-                                style: theme.textTheme.subhead,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    complaint.status,
+                                    style: theme.textTheme.subhead,
+                                  ),
+                                ]..insertAll(
+                                    0,
+                                    complaint.tags.isNotEmpty
+                                        ? [
+                                            Container(
+                                              color: theme.accentColor,
+                                              width: 4,
+                                              height: 4,
+                                            ),
+                                            SizedBox(
+                                              width: 4,
+                                            ),
+                                          ]
+                                        : []),
                               ),
                               onPressed: () {},
                             ),
@@ -258,13 +247,68 @@ class _ComplaintPageState extends State<ComplaintPage> {
                 SizedBox(
                   height: 16.0,
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 28.0, vertical: 16.0),
-                  child: Text(
-                    complaint.description,
-                    style: theme.textTheme.subhead,
-                  ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    complaint.suggestions.isNotEmpty ||
+                            complaint.suggestions.isNotEmpty
+                        ? Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 28.0),
+                            child: Text(
+                              "Description: ",
+                              style: theme.textTheme.subhead,
+                            ),
+                          )
+                        : SizedBox(),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 28.0, right: 28.0, bottom: 16.0),
+                      child: Text(
+                        complaint.description,
+                        style: theme.textTheme.subhead,
+                      ),
+                    ),
+                  ]
+                    ..addAll(complaint.suggestions.isNotEmpty
+                        ? [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 28.0),
+                              child: Text(
+                                "Suggestions: ",
+                                style: theme.textTheme.subhead,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 28.0, right: 28.0, bottom: 16.0),
+                              child: Text(
+                                complaint.suggestions,
+                                style: theme.textTheme.subhead,
+                              ),
+                            ),
+                          ]
+                        : [])
+                    ..addAll(complaint.locationDetails.isNotEmpty
+                        ? [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 28.0),
+                              child: Text(
+                                "Location Details: ",
+                                style: theme.textTheme.subhead,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 28.0, right: 28.0, bottom: 16.0),
+                              child: Text(
+                                complaint.locationDetails,
+                                style: theme.textTheme.subhead,
+                              ),
+                            ),
+                          ]
+                        : []),
                 ),
                 SizedBox(
                   height: 16.0,
@@ -309,34 +353,23 @@ class _ComplaintPageState extends State<ComplaintPage> {
                           ),
                         ),
                       ),
-                // complaint.tags?.isNotEmpty ?? false
-                //     ? Padding(
-                //       padding: EdgeInsets.all(8.0),
-                // child:Text(
-                //   "Tags",
-                //   style: theme.textTheme.headline,
-                // ),)
-                //     : SizedBox(height: 0,),
+                complaint.tags?.isNotEmpty ?? false
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 28.0, vertical: 8.0),
+                        child: Text(
+                          "Tags",
+                          style: theme.textTheme.headline,
+                        ),
+                      )
+                    : SizedBox(
+                        height: 0,
+                      ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    height: 48,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: (complaint.tags.isNotEmpty
-                              ? <Widget>[
-                                  Center(
-                                    child: Text(
-                                      "Tags: ",
-                                      style: theme.textTheme.title,
-                                    ),
-                                  )
-                                ]
-                              : <Widget>[]) +
-                          complaint.tags
-                              .map((t) => _buildTag(t, theme))
-                              .toList(),
-                    ),
+                  padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                  child: EditableChipList(
+                    editable: false,
+                    tags: Set.from(complaint.tags.map((t) => t.tagUri)),
                   ),
                 ),
                 Divider(),
@@ -355,12 +388,12 @@ class _ComplaintPageState extends State<ComplaintPage> {
                         width: 8,
                       ),
                       Text(
-                          "${complaint.comment.isEmpty ? "No" : complaint.comment.length} comment${complaint.comment.length == 1 ? "" : "s"}",
+                          "${complaint.comments.isEmpty ? "No" : complaint.comments.length} comment${complaint.comments.length == 1 ? "" : "s"}",
                           style: theme.textTheme.title),
                     ],
                   ),
                 ))
-                ..addAll(complaint.comment.map((v) => _buildComment(v, theme)))
+                ..addAll(complaint.comments.map((v) => _buildComment(v, theme)))
                 ..add(_buildCommentBox(bloc, theme))
                 ..addAll(<Widget>[
                   Divider(),
