@@ -77,37 +77,34 @@ class MyAppState extends State<MyApp> {
 
 
           canvasColor:
-              widget.bloc.brightness == Brightness.dark ? Colors.black : null,
-          // bottomAppBarColor: widget.bloc.brightness == Brightness.dark
-          //     ? Colors.grey[850]
-          //     : null,
+              widget.bloc.brightness == AppBrightness.black ? Colors.black : null,
 
           
           bottomAppBarColor: widget.bloc.primaryColor,
-          brightness: widget.bloc.brightness,
+          brightness: widget.bloc.brightness.toBrightness(),
 
           textTheme: TextTheme(
               display1: TextStyle(
                 fontFamily: "SourceSansPro",
-                color: widget.bloc.brightness == Brightness.light
+                color: widget.bloc.brightness == AppBrightness.light
                     ? Colors.black
                     : Colors.white,
               ),
               display2: TextStyle(
                 fontFamily: "SourceSansPro",
-                color: widget.bloc.brightness == Brightness.light
+                color: widget.bloc.brightness == AppBrightness.light
                     ? Colors.black
                     : Colors.white,
               ),
               display3: TextStyle(
                 fontFamily: "SourceSansPro",
-                color: widget.bloc.brightness == Brightness.light
+                color: widget.bloc.brightness == AppBrightness.light
                     ? Colors.black
                     : Colors.white,
               ),
               display4: TextStyle(
                 fontFamily: "SourceSansPro",
-                color: widget.bloc.brightness == Brightness.light
+                color: widget.bloc.brightness == AppBrightness.light
                     ? Colors.black
                     : Colors.white,
               ),

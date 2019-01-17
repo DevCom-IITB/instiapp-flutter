@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+ 
+* Nothing here
+
+## v1.2-beta
+
+* Now support dark and black themes, and also you can select the colors to theme the app as well
+* Implemented NewComplaintsPage (should debug image uploading though)
+* Tested on an iPad, everything works fine except the creating a new complaint. 
+
 ## v1.0-beta
 
 * Implemented SettingsPage, EventEditPage, MapPage
