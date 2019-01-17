@@ -51,8 +51,10 @@ class InstiAppBloc {
 
   // default theme
   Brightness _brightness = Brightness.dark;
-  Color _primaryColor = Color.fromARGB(255, 63, 81, 181);
-  Color _accentColor = Color.fromARGB(255, 139, 195, 74);
+  // Color _primaryColor = Color.fromARGB(255, 63, 81, 181);
+  Color _primaryColor = Color.fromARGB(255, 0, 98, 255);
+  Color _accentColor = Color.fromARGB(255, 239, 83, 80);
+  // Color _accentColor = Color.fromARGB(255, 139, 195, 74);
 
   Brightness get brightness => _brightness;
 

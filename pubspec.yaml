@@ -39,6 +39,8 @@ dependencies:
   flutter_google_places: ^0.1.4+1
   location: ^1.4.1
   flutter_material_color_picker: ^0.0.3+1
+  flutter_typeahead: ^0.5.1
+  image_picker: ^0.4.12
   
 dev_dependencies:
   flutter_test:
@@ -59,6 +61,21 @@ flutter:
   assets:
     - assets/
   fonts: 
+    - family: IBMPlexSans
+      fonts:
+        - asset: fonts/IBMPlexSans/IBMPlexSans-Regular.ttf
+        - asset: fonts/IBMPlexSans/IBMPlexSans-Italic.ttf
+          style: italic
+        - asset: fonts/IBMPlexSans/IBMPlexSans-Light.ttf
+          weight: 300
+        - asset: fonts/IBMPlexSans/IBMPlexSans-LightItalic.ttf
+          style: italic
+          weight: 300
+        - asset: fonts/IBMPlexSans/IBMPlexSans-Bold.ttf
+          weight: 700
+        - asset: fonts/IBMPlexSans/IBMPlexSans-BoldItalic.ttf
+          style: italic
+          weight: 700   
     - family: SourceSansPro
       fonts:
         - asset: fonts/SourceSansPro/SourceSansPro-Regular.ttf
@@ -73,11 +90,6 @@ flutter:
           weight: 700
         - asset: fonts/SourceSansPro/SourceSansPro-BoldItalic.ttf
           style: italic
-          weight: 700   
-    - family: Bitter
-      fonts:
-        - asset: fonts/Bitter/Bitter-Regular.ttf
-        - asset: fonts/Bitter/Bitter-Bold.ttf
           weight: 700
 
   # The following line ensures that the Material Icons font is

@@ -24,6 +24,8 @@ abstract class _$ComplaintSerializer implements Serializer<Complaint> {
     setMapValue(
         ret, 'created_by', _userSerializer.toMap(model.complaintCreatedBy));
     setMapValue(ret, 'description', model.description);
+    setMapValue(ret, 'suggestions', model.suggestions);
+    setMapValue(ret, 'location_details', model.locationDetails);
     setMapValue(ret, 'report_date', model.complaintReportDate);
     setMapValue(ret, 'status', model.status);
     setMapValue(ret, 'latitude', model.latitude);
@@ -36,16 +38,17 @@ abstract class _$ComplaintSerializer implements Serializer<Complaint> {
             model.tags, (val) => _tagUriSerializer.toMap(val as TagUri)));
     setMapValue(
         ret,
+        'comments',
+        codeIterable(
+            model.comments, (val) => _commentSerializer.toMap(val as Comment)));
+    setMapValue(
+        ret,
         'users_up_voted',
         codeIterable(
             model.usersUpVoted, (val) => _userSerializer.toMap(val as User)));
     setMapValue(
         ret, 'images', codeIterable(model.images, (val) => val as String));
-    setMapValue(
-        ret,
-        'comments',
-        codeIterable(
-            model.comment, (val) => _commentSerializer.toMap(val as Comment)));
+    setMapValue(ret, 'is_subscribed', model.isSubscribed);
     setMapValue(ret, 'voteCount', model.voteCount);
     return ret;
   }
@@ -57,6 +60,8 @@ abstract class _$ComplaintSerializer implements Serializer<Complaint> {
     obj.complaintID = map['id'] as String;
     obj.complaintCreatedBy = _userSerializer.fromMap(map['created_by'] as Map);
     obj.description = map['description'] as String;
+    obj.suggestions = map['suggestions'] as String;
+    obj.locationDetails = map['location_details'] as String;
     obj.complaintReportDate = map['report_date'] as String;
     obj.status = map['status'] as String;
     obj.latitude = map['latitude'] as double;
@@ -64,12 +69,13 @@ abstract class _$ComplaintSerializer implements Serializer<Complaint> {
     obj.locationDescription = map['location_description'] as String;
     obj.tags = codeIterable<TagUri>(map['tags'] as Iterable,
         (val) => _tagUriSerializer.fromMap(val as Map));
+    obj.comments = codeIterable<Comment>(map['comments'] as Iterable,
+        (val) => _commentSerializer.fromMap(val as Map));
     obj.usersUpVoted = codeIterable<User>(map['users_up_voted'] as Iterable,
         (val) => _userSerializer.fromMap(val as Map));
     obj.images =
         codeIterable<String>(map['images'] as Iterable, (val) => val as String);
-    obj.comment = codeIterable<Comment>(map['comments'] as Iterable,
-        (val) => _commentSerializer.fromMap(val as Map));
+    obj.isSubscribed = map['is_subscribed'] as bool;
     obj.voteCount = map['voteCount'] as int;
     return obj;
   }

@@ -53,9 +53,10 @@ class _EventPageState extends State<EventPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
-    var footerButtons = <Widget>[];
+    var footerButtons = null;
     var editAccess = false;
     if (event != null) {
+      footerButtons = <Widget>[];
       editAccess = bloc.editEventAccess(event);
       footerButtons.addAll([
         buildUserStatusButton("Going", 2, theme, bloc),
@@ -103,7 +104,7 @@ class _EventPageState extends State<EventPage> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: BottomDrawer(),
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -111,32 +112,15 @@ class _EventPageState extends State<EventPage> {
             IconButton(
               icon: Icon(
                 OMIcons.menu,
-                semanticLabel: "Show bottom sheet",
+                semanticLabel: "Show navigation drawer",
               ),
-              onPressed: _bottomSheetActive
-                  ? null
-                  : () {
-                      _scaffoldKey.currentState.openDrawer();
-                      // setState(() {
-                      //   //disable button
-                      //   _bottomSheetActive = true;
-                      // });
-                      // _scaffoldKey.currentState
-                      //     .showBottomSheet((context) {
-                      //       return BottomDrawer();
-                      //     })
-                      //     .closed
-                      //     .whenComplete(() {
-                      //       setState(() {
-                      //         _bottomSheetActive = false;
-                      //       });
-                      //     });
-                    },
+              onPressed: () {
+                _scaffoldKey.currentState.openDrawer();
+              },
             ),
           ],
         ),
       ),
-      // bottomSheet: ,
       body: Container(
         foregroundDecoration: _bottomSheetActive
             ? BoxDecoration(
@@ -145,8 +129,9 @@ class _EventPageState extends State<EventPage> {
             : null,
         child: event == null
             ? Center(
-                child: CircularProgressIndicator(),
-              )
+                child: CircularProgressIndicatorExtended(
+                label: Text("Loading the event page"),
+              ))
             : ListView(
                 children: <Widget>[
                   Padding(
@@ -156,7 +141,7 @@ class _EventPageState extends State<EventPage> {
                       children: <Widget>[
                         Text(
                           event.eventName,
-                          style: theme.textTheme.display2.copyWith(fontFamily: "Bitter"),
+                          style: theme.textTheme.display2,
                         ),
                         SizedBox(height: 8.0),
                         Text(event.getSubTitle(), style: theme.textTheme.title),
@@ -197,7 +182,6 @@ class _EventPageState extends State<EventPage> {
                   ]),
               ),
       ),
-
       floatingActionButton: _bottomSheetActive || event == null
           ? null
           : editAccess
@@ -227,9 +211,12 @@ class _EventPageState extends State<EventPage> {
     return ListTile(
       title: Text(body.bodyName, style: theme.title),
       subtitle: Text(body.bodyShortDescription, style: theme.subtitle),
-      leading: CircleAvatar(
-        radius: 24,
-        backgroundImage: NetworkImage(body.bodyImageURL),
+      leading: Hero(
+        tag: body.bodyID,
+        child: CircleAvatar(
+          radius: 24,
+          backgroundImage: NetworkImage(body.bodyImageURL),
+        ),
       ),
       onTap: () {
         Navigator.of(context).pushNamed("/body/${body.bodyID}");
@@ -240,8 +227,10 @@ class _EventPageState extends State<EventPage> {
   RaisedButton buildUserStatusButton(
       String name, int id, ThemeData theme, InstiAppBloc bloc) {
     return RaisedButton(
-      color: event?.eventUserUes == id ? theme.accentColor : theme.bottomAppBarColor,
-      textColor: event?.eventUserUes == id ? theme.textTheme.button.color : null,
+      color: event?.eventUserUes == id
+          ? theme.accentColor
+          : theme.scaffoldBackgroundColor,
+      textColor: event?.eventUserUes == id ? theme.accentIconTheme.color : null,
       shape: RoundedRectangleBorder(
           side: BorderSide(
             color: theme.accentColor,
@@ -264,7 +253,7 @@ class _EventPageState extends State<EventPage> {
                 child: CircularProgressIndicator(
                   valueColor: new AlwaysStoppedAnimation<Color>(
                       event?.eventUserUes == id
-                          ? theme.textTheme.button.color
+                          ? theme.accentIconTheme.color
                           : theme.accentColor),
                   strokeWidth: 2,
                 )),

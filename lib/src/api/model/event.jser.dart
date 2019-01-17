@@ -53,6 +53,8 @@ abstract class _$EventSerializer implements Serializer<Event> {
     setMapValue(ret, 'website_url', model.eventWebsiteURL);
     setMapValue(ret, 'user_ues', model.eventUserUes);
     setMapValue(ret, 'eventBigImage', model.eventBigImage);
+    setMapValue(ret, 'eventStartDate',
+        dateTimeUtcProcessor.serialize(model.eventStartDate));
     return ret;
   }
 
@@ -81,6 +83,8 @@ abstract class _$EventSerializer implements Serializer<Event> {
     obj.eventWebsiteURL = map['website_url'] as String;
     obj.eventUserUes = map['user_ues'] as int;
     obj.eventBigImage = map['eventBigImage'] as bool;
+    obj.eventStartDate =
+        dateTimeUtcProcessor.deserialize(map['eventStartDate'] as String);
     return obj;
   }
 }

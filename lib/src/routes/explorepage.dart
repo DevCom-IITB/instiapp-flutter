@@ -65,7 +65,10 @@ class _ExplorePageState extends State<ExplorePage> {
               child: TextField(
                 autofocus: true,
                 decoration: InputDecoration(
-                  prefixIcon: Icon(OMIcons.search),
+                  prefixIcon: Icon(
+                    OMIcons.search,
+                    color: theme.colorScheme.onPrimary,
+                  ),
                   hintText: "Search...",
                 ),
                 onChanged: (query) async {
@@ -114,7 +117,7 @@ class _ExplorePageState extends State<ExplorePage> {
                     width: 0,
                     height: 0,
                   ),
-            BottomAppBar(
+            MyBottomAppBar(
               child: new Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -168,7 +171,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       padding: const EdgeInsets.all(28.0),
                       child: Text(
                         widget.title,
-                        style: theme.textTheme.display2.copyWith(fontFamily: "Bitter"),
+                        style: theme.textTheme.display2,
                       ),
                     )
                   ] +
@@ -211,9 +214,7 @@ class _ExplorePageState extends State<ExplorePage> {
         return [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-            child: Text.rich(TextSpan(
-              style: theme.textTheme.title,
-              children: [
+            child: Text.rich(TextSpan(style: theme.textTheme.title, children: [
               TextSpan(text: "Nothing found for the query "),
               TextSpan(
                   text: "\"${exploreBloc.query}\"",
@@ -256,8 +257,9 @@ class _ExplorePageState extends State<ExplorePage> {
     } else {
       return [
         Center(
-          child: CircularProgressIndicator(),
-        )
+            child: CircularProgressIndicatorExtended(
+          label: Text("Loading the some default bodies"),
+        ))
       ];
     }
   }

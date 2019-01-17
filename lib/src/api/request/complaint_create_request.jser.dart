@@ -13,6 +13,8 @@ abstract class _$ComplaintCreateRequestSerializer
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
     setMapValue(ret, 'description', model.complaintDescription);
+    setMapValue(ret, 'suggestions', model.complaintSuggestions);
+    setMapValue(ret, 'location_details', model.complaintLocationDetails);
     setMapValue(ret, 'location_description', model.complaintLocation);
     setMapValue(ret, 'latitude', model.complaintLatitude);
     setMapValue(ret, 'longitude', model.complaintLongitude);
@@ -27,6 +29,8 @@ abstract class _$ComplaintCreateRequestSerializer
     if (map == null) return null;
     final obj = new ComplaintCreateRequest();
     obj.complaintDescription = map['description'] as String;
+    obj.complaintSuggestions = map['suggestions'] as String;
+    obj.complaintLocationDetails = map['location_details'] as String;
     obj.complaintLocation = map['location_description'] as String;
     obj.complaintLatitude = map['latitude'] as double;
     obj.complaintLongitude = map['longitude'] as double;

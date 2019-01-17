@@ -1,5 +1,6 @@
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -60,7 +61,7 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: BottomDrawer(),
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -112,8 +113,7 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
                 children: <Widget>[
                   Text(
                     "Quick Links",
-                    style: theme.textTheme.display2
-                        .copyWith(fontFamily: "Bitter"),
+                    style: theme.textTheme.display2,
                   ),
                 ],
               ),

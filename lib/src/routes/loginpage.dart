@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
@@ -38,11 +39,12 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
+    server?.close(force: true);
     flutterWebviewPlugin.dispose();
-    super.dispose();
 
     onUrlChangedSub?.cancel();
     onStateChangedSub?.cancel();
+    super.dispose();
   }
 
   @override
@@ -93,8 +95,6 @@ class _LoginPageState extends State<LoginPage> {
           print("onUrlChanged: Closing Web View");
           flutterWebviewPlugin.close();
 
-          server.close(force: true);
-
           Navigator.of(context).pushReplacementNamed(_bloc?.homepageName);
         } else if (url.startsWith(gymkhanaUrl)) {
           print("onUrlChanged: Hiding Web View");
@@ -142,13 +142,14 @@ class _LoginPageState extends State<LoginPage> {
               width: 250.0,
               fit: BoxFit.scaleDown,
             ),
-            CircularProgressIndicator(
-              backgroundColor: Theme.of(context).accentColor,
-            ),
+            
             Text(
               "InstiApp",
-              style: Theme.of(context).textTheme.display1.copyWith(
-                  fontFamily: "Bitter", color: Theme.of(context).accentColor),
+              style: Theme.of(context).textTheme.display1.copyWith(color: Theme.of(context).accentColor),
+            ),
+            CircularProgressIndicatorExtended(
+              label: Text("Initializing"),
+              // backgroundColor: Theme.of(context).accentColor,
             ),
           ],
         ),
@@ -181,7 +182,6 @@ class _LoginPageState extends State<LoginPage> {
       }
       await request.response.close();
       print("Served");
-      // await server.close(force: true);
     });
   }
 
@@ -195,7 +195,6 @@ class _LoginPageState extends State<LoginPage> {
       this.onStateChangedSub.cancel();
       print("login: Closing Web View");
       flutterWebviewPlugin.close();
-      server.close(force: true);
     } else {
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text("Authentication Failed"),

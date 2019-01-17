@@ -26,7 +26,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: BottomDrawer(),
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -57,8 +57,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     children: <Widget>[
                       Text(
                         "Settings",
-                        style: theme.textTheme.display2
-                            .copyWith(fontFamily: "Bitter"),
+                        style: theme.textTheme.display2,
                       ),
                     ],
                   ),
@@ -194,6 +193,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 ListTile(
                   leading: Icon(OMIcons.feedback),
+                  trailing: Icon(OMIcons.launch),
                   title: Text("Feedback"),
                   onTap: () async {
                     if (await canLaunch(feedbackUrl)) {
@@ -241,6 +241,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   ListTile(
                     leading: Icon(OMIcons.personOutline),
+                    trailing: Icon(OMIcons.launch),
                     title: Text("Update Profile"),
                     onTap: () async {
                       if (await canLaunch(updateProfileUrl)) {
