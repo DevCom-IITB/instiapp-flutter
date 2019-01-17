@@ -63,8 +63,12 @@ class _ExplorePageState extends State<ExplorePage> {
         ? [
             Expanded(
               child: TextField(
+                style: theme.primaryTextTheme.body1,
+                cursorColor: theme.colorScheme.onPrimary,
                 autofocus: true,
                 decoration: InputDecoration(
+                  labelStyle: theme.primaryTextTheme.body1,
+                  hintStyle: theme.primaryTextTheme.body1,
                   prefixIcon: Icon(
                     OMIcons.search,
                     color: theme.colorScheme.onPrimary,

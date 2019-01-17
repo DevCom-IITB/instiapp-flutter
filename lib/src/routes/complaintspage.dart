@@ -48,20 +48,6 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                 onPressed: () {
                   BottomDrawer.setPageIndex(bloc, 8);
                   _scaffoldKey.currentState.openDrawer();
-                  // setState(() {
-                  //   //disable button
-                  //   _bottomSheetActive = true;
-                  // });
-                  // _scaffoldKey.currentState
-                  //     .showBottomSheet((context) {
-                  //       return BottomDrawer();
-                  //     })
-                  //     .closed
-                  //     .whenComplete(() {
-                  //       setState(() {
-                  //         _bottomSheetActive = false;
-                  //       });
-                  //     });
                 },
               ),
             ],
@@ -270,11 +256,21 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
             ),
           ),
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          label: Text("Vent"),
-          icon: Icon(OMIcons.feedback),
-          onPressed: () {
-            Navigator.of(context).pushNamed("/newcomplaint");
+        floatingActionButton: StreamBuilder(
+          stream: bloc.session,
+          builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
+            return snapshot.hasData && snapshot.data != null
+                ? FloatingActionButton.extended(
+                    label: Text("Vent"),
+                    icon: Icon(OMIcons.feedback),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed("/newcomplaint");
+                    },
+                  )
+                : Container(
+                    width: 0,
+                    height: 0,
+                  );
           },
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
@@ -366,9 +362,9 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                     complaint.suggestions.isNotEmpty ||
                             complaint.suggestions.isNotEmpty
                         ? Text(
-                          "Description: ",
-                          style: theme.textTheme.subhead,
-                        )
+                            "Description: ",
+                            style: theme.textTheme.subhead,
+                          )
                         : SizedBox(),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),

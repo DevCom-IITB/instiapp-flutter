@@ -77,8 +77,13 @@ class _BlogPageState extends State<BlogPage> {
         ? [
             Expanded(
               child: TextField(
+                cursorColor: theme.primaryTextTheme.body1.color,
+                style: theme.primaryTextTheme.body1,
                 autofocus: true,
                 decoration: InputDecoration(
+                  labelStyle: theme.primaryTextTheme.body1,
+                  hintStyle: theme.primaryTextTheme.body1,
+
                   prefixIcon: Icon(
                     OMIcons.search,
                     color: theme.colorScheme.onPrimary,
