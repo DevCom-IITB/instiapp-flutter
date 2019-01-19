@@ -2,7 +2,7 @@
 
 ## Unreleased
  
-* Nothing here
+* Added Hero transitions everywhere possible
 
 ## v1.2-beta
 
