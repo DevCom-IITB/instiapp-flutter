@@ -6,18 +6,24 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
 import 'dart:math' as math;
 
+String thumbnailUrl(String url, {int dim = 200}) {
+  return url.replaceFirst(
+      "api.insti.app/static/", "img.insti.app/static/$dim/");
+}
+
 class NullableCircleAvatar extends StatelessWidget {
   final String url;
   final IconData fallbackIcon;
   final double radius;
   final String heroTag;
+  final bool photoViewable;
   NullableCircleAvatar(this.url, this.fallbackIcon,
-      {this.radius = 24, this.heroTag});
+      {this.radius = 24, this.heroTag, this.photoViewable = false});
 
   @override
   Widget build(BuildContext context) {
     return url != null
-        ? (heroTag != null
+        ? (photoViewable
             ? InkWell(
                 onTap: () {
                   Navigator.push(
@@ -31,17 +37,31 @@ class NullableCircleAvatar extends StatelessWidget {
                             ),
                       ));
                 },
-                child: Hero(
-                  tag: heroTag,
-                  child: CircleAvatar(
+                child: heroTag != null
+                    ? Hero(
+                        tag: heroTag,
+                        child: CircleAvatar(
+                          radius: radius,
+                          backgroundImage: NetworkImage(thumbnailUrl(url)),
+                        ),
+                      )
+                    : CircleAvatar(
+                        radius: radius,
+                        backgroundImage: NetworkImage(thumbnailUrl(url)),
+                      ),
+              )
+            : heroTag != null
+                ? Hero(
+                    tag: heroTag,
+                    child: CircleAvatar(
+                      radius: radius,
+                      backgroundImage: NetworkImage(thumbnailUrl(url)),
+                    ),
+                  )
+                : CircleAvatar(
                     radius: radius,
-                    backgroundImage: NetworkImage(url),
-                  ),
-                ))
-            : CircleAvatar(
-                radius: radius,
-                backgroundImage: NetworkImage(url),
-              ))
+                    backgroundImage: NetworkImage(thumbnailUrl(url)),
+                  ))
         : CircleAvatar(radius: radius, child: Icon(fallbackIcon, size: radius));
   }
 }

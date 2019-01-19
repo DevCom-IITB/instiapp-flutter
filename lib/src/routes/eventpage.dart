@@ -14,9 +14,10 @@ import 'package:share/share.dart';
 import 'package:markdown/markdown.dart' as markdown;
 
 class EventPage extends StatefulWidget {
+  final Event initialEvent;
   final Future<Event> _eventFuture;
 
-  EventPage(this._eventFuture);
+  EventPage(this._eventFuture, {this.initialEvent});
 
   @override
   _EventPageState createState() => _EventPageState();
@@ -33,7 +34,7 @@ class _EventPageState extends State<EventPage> {
   @override
   void initState() {
     super.initState();
-    event = null;
+    event = widget.initialEvent;
     widget._eventFuture.then((ev) {
       var tableParse = markdown.TableSyntax();
       ev.eventDescription = markdown.markdownToHtml(
@@ -145,10 +146,11 @@ class _EventPageState extends State<EventPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: PhotoViewableImage(
-                      NetworkImage(event?.eventImageURL ??
-                          event?.eventBodies[0].bodyImageURL),
-                      "${event.eventID}",
-                      fit: BoxFit.fitWidth),
+                    NetworkImage(event?.eventImageURL ??
+                        event?.eventBodies[0].bodyImageURL),
+                    event.eventID,
+                    fit: BoxFit.fitWidth,
+                  ),
                 ),
                 SizedBox(
                   height: 16.0,
@@ -204,12 +206,10 @@ class _EventPageState extends State<EventPage> {
     return ListTile(
       title: Text(body.bodyName, style: theme.title),
       subtitle: Text(body.bodyShortDescription, style: theme.subtitle),
-      leading: Hero(
-        tag: body.bodyID,
-        child: CircleAvatar(
-          radius: 24,
-          backgroundImage: NetworkImage(body.bodyImageURL),
-        ),
+      leading: NullableCircleAvatar(
+        body.bodyImageURL,
+        OMIcons.workOutline,
+        heroTag: body.bodyID,
       ),
       onTap: () {
         Navigator.of(context).pushNamed("/body/${body.bodyID}");

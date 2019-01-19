@@ -129,13 +129,16 @@ class _FeedPageState extends State<FeedPage> {
           children: <Widget>[
             Hero(
               tag: event.eventID,
-              child: Ink.image(
-                child: Container(),
-                image: NetworkImage(
-                  event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+              child: Material(
+                type: MaterialType.transparency,
+                child: Ink.image(
+                  child: Container(),
+                  image: NetworkImage(
+                    event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+                  ),
+                  height: 200,
+                  fit: BoxFit.cover,
                 ),
-                height: 200,
-                fit: BoxFit.cover,
               ),
             ),
             ListTile(
@@ -157,14 +160,11 @@ class _FeedPageState extends State<FeedPage> {
           event.eventName,
           style: theme.textTheme.title,
         ),
-        // contentPadding: EdgeInsets.all(8.0),  
         enabled: true,
-        leading: Hero(
-          tag: event.eventID,
-          child: CircleAvatar(
-            backgroundImage: NetworkImage(
-                event.eventImageURL ?? event.eventBodies[0].bodyImageURL),
-          ),
+        leading: NullableCircleAvatar(
+          event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+          OMIcons.event,
+          heroTag: event.eventID,
         ),
         subtitle: Text(event.getSubTitle()),
         onTap: () {

@@ -69,17 +69,17 @@ class MyAppState extends State<MyApp> {
 
           primaryColor: widget.bloc.primaryColor,
           accentColor: widget.bloc.accentColor,
-          primarySwatch: Colors.primaries.singleWhere((c) => c.value == widget.bloc.accentColor.value, orElse: () => null),
-
+          primarySwatch: Colors.primaries.singleWhere(
+              (c) => c.value == widget.bloc.accentColor.value,
+              orElse: () => null),
 
           toggleableActiveColor: widget.bloc.accentColor,
           textSelectionHandleColor: widget.bloc.accentColor,
 
+          canvasColor: widget.bloc.brightness == AppBrightness.black
+              ? Colors.black
+              : null,
 
-          canvasColor:
-              widget.bloc.brightness == AppBrightness.black ? Colors.black : null,
-
-          
           bottomAppBarColor: widget.bloc.primaryColor,
           brightness: widget.bloc.brightness.toBrightness(),
 
@@ -117,7 +117,8 @@ class MyAppState extends State<MyApp> {
             return _buildRoute(
                 settings,
                 EventPage(
-                    widget.bloc.getEvent(settings.name.split("/event/")[1])));
+                  widget.bloc.getEvent(settings.name.split("/event/")[1]),
+                ));
           } else if (settings.name.startsWith("/body/")) {
             return _buildRoute(
                 settings,

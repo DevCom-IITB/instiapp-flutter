@@ -158,8 +158,11 @@ class _ComplaintPageState extends State<ComplaintPage> {
                             scrollDirection: Axis.horizontal,
                             children: complaint.images.map((im) {
                               // TODO: test images
-                              return PhotoViewableImage(NetworkImage(im), "$im",
-                                  fit: BoxFit.scaleDown);
+                              return PhotoViewableImage(
+                                NetworkImage(im),
+                                "$im",
+                                fit: BoxFit.scaleDown,
+                              );
                             }).toList(),
                           ),
                         ))
@@ -264,7 +267,8 @@ class _ComplaintPageState extends State<ComplaintPage> {
                           )
                         : SizedBox(),
                     Padding(
-                      padding: const EdgeInsets.only(left: 28.0, right: 28.0, bottom: 16.0),
+                      padding: const EdgeInsets.only(
+                          left: 28.0, right: 28.0, bottom: 16.0),
                       child: Text(
                         complaint.description,
                         style: theme.textTheme.subhead,
@@ -282,7 +286,8 @@ class _ComplaintPageState extends State<ComplaintPage> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 28.0, right: 28.0, bottom: 16.0),
+                              padding: const EdgeInsets.only(
+                                  left: 28.0, right: 28.0, bottom: 16.0),
                               child: Text(
                                 complaint.suggestions,
                                 style: theme.textTheme.subhead,
@@ -301,7 +306,8 @@ class _ComplaintPageState extends State<ComplaintPage> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 28.0, right: 28.0, bottom: 16.0),
+                              padding: const EdgeInsets.only(
+                                  left: 28.0, right: 28.0, bottom: 16.0),
                               child: Text(
                                 complaint.locationDetails,
                                 style: theme.textTheme.subhead,
