@@ -24,7 +24,6 @@ class _UserPageState extends State<UserPage> {
   User user;
   Set<Event> sEvents = Set();
   List<Event> events = [];
-  bool _bottomSheetActive = false;
 
   @override
   void initState() {
@@ -77,26 +76,10 @@ class _UserPageState extends State<UserPage> {
               IconButton(
                 icon: Icon(
                   OMIcons.menu,
-                  semanticLabel: "Show bottom sheet",
+                  semanticLabel: "Show navigation drawer",
                 ),
-                onPressed: _bottomSheetActive
-                    ? null
-                    : () {
+                onPressed: () {
                         _scaffoldKey.currentState.openDrawer();
-                        // setState(() {
-                        //   //disable button
-                        //   _bottomSheetActive = true;
-                        // });
-                        // _scaffoldKey.currentState
-                        //     .showBottomSheet((context) {
-                        //       return BottomDrawer();
-                        //     })
-                        //     .closed
-                        //     .whenComplete(() {
-                        //       setState(() {
-                        //         _bottomSheetActive = false;
-                        //       });
-                        //     });
                       },
               ),
             ],
@@ -125,6 +108,7 @@ class _UserPageState extends State<UserPage> {
                                   OMIcons.personOutline,
                                   radius: 48,
                                   heroTag: user.userID,
+                                  photoViewable: true,
                                 ),
                                 title: Text(
                                   user.userName,
@@ -281,7 +265,7 @@ class _UserPageState extends State<UserPage> {
                   ),
                 ),
         ),
-        floatingActionButton: _bottomSheetActive || user == null
+        floatingActionButton: user == null
             ? null
             : FloatingActionButton(
                 child: Icon(OMIcons.share),

@@ -125,7 +125,11 @@ class _BodyPageState extends State<BodyPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: PhotoViewableImage(NetworkImage(body.bodyImageURL), body.bodyID,  fit: BoxFit.fitWidth),
+                  child: PhotoViewableImage(
+                    NetworkImage(body.bodyImageURL),
+                    body.bodyID,
+                    fit: BoxFit.fitWidth,
+                  ),
                 ),
                 SizedBox(
                   height: 16.0,
@@ -297,8 +301,9 @@ class _BodyPageState extends State<BodyPage> {
       title: Text(body.bodyName, style: theme.title),
       subtitle: Text(body.bodyShortDescription, style: theme.subtitle),
       leading: Hero(
-        tag: body.bodyID,
-        child: NullableCircleAvatar(body.bodyImageURL, OMIcons.peopleOutline)),
+          tag: body.bodyID,
+          child:
+              NullableCircleAvatar(body.bodyImageURL, OMIcons.peopleOutline)),
       onTap: () {
         Navigator.of(context).pushNamed("/body/${body.bodyID}");
       },

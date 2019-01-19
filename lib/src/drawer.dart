@@ -1,5 +1,6 @@
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
@@ -167,15 +168,12 @@ class _BottomDrawerState extends State<BottomDrawer> {
                   SizedBox(
                     height: 18.0,
                   ),
-                  // Divider(),
                   ListTile(
-                    leading: snapshot.data?.profile?.userProfilePictureUrl ==
-                            null
-                        ? CircleAvatar(child: Icon(OMIcons.personOutline))
-                        : CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                snapshot.data?.profile?.userProfilePictureUrl),
-                          ),
+                    leading: NullableCircleAvatar(
+                      snapshot.data?.profile?.userProfilePictureUrl,
+                      OMIcons.personOutline,
+                      heroTag: snapshot.data?.profile?.userID,
+                    ),
                     title: Text(
                       snapshot?.data?.profile?.userName ?? 'Not Logged in',
                       style: theme.textTheme.body1
