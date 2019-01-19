@@ -4,6 +4,7 @@ import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/datetime.dart';
 import 'package:flutter/foundation.dart';
@@ -17,9 +18,23 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ComplaintPage extends StatefulWidget {
   final String title = "Complaint";
-  final Future<Complaint> _complaintFuture;
+  final Complaint initialComplaint;
+  final Future<Complaint> complaintFuture;
 
-  ComplaintPage(this._complaintFuture);
+  ComplaintPage({this.complaintFuture, this.initialComplaint});
+
+  static void navigateWith(
+      BuildContext context, InstiAppBloc bloc, Complaint complaint) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ComplaintPage(
+              initialComplaint: complaint,
+              complaintFuture: bloc.getComplaint(complaint.complaintID),
+            ),
+      ),
+    );
+  }
 
   @override
   _ComplaintPageState createState() => _ComplaintPageState();
@@ -44,11 +59,15 @@ class _ComplaintPageState extends State<ComplaintPage> {
   @override
   void initState() {
     super.initState();
-    complaint = null;
-    widget._complaintFuture.then((c) {
-      setState(() {
+    complaint = widget.initialComplaint;
+    widget.complaintFuture.then((c) {
+      if (this.mounted) {
+        setState(() {
+          complaint = c;
+        });
+      } else {
         complaint = c;
-      });
+      }
     });
     _commentFocusNode = FocusNode();
     _commentController = TextEditingController();
@@ -186,58 +205,63 @@ class _ComplaintPageState extends State<ComplaintPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Container(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(complaint.complaintCreatedBy.userName,
-                                    style: theme.textTheme.title
-                                        .copyWith(fontWeight: FontWeight.bold)),
-                                Text(
-                                  DateTimeUtil.getDate(
-                                      complaint.complaintReportDate),
-                                  style: theme.textTheme.caption
-                                      .copyWith(fontSize: 14),
-                                ),
-                              ],
-                            ),
-                            OutlineButton(
-                              borderSide: BorderSide(
-                                  color: complaint.status == "Reported"
-                                      ? Colors.red
-                                      : complaint.status == "In Progress"
-                                          ? Colors.yellow
-                                          : Colors.green),
-                              padding: EdgeInsets.all(0),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.start,
+                        child: Hero(
+                          tag: complaint.complaintID,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
+                                  Text(complaint.complaintCreatedBy.userName,
+                                      style: theme.textTheme.title.copyWith(
+                                          fontWeight: FontWeight.bold)),
                                   Text(
-                                    complaint.status,
-                                    style: theme.textTheme.subhead,
+                                    DateTimeUtil.getDate(
+                                        complaint.complaintReportDate),
+                                    style: theme.textTheme.caption
+                                        .copyWith(fontSize: 14),
                                   ),
-                                ]..insertAll(
-                                    0,
-                                    complaint.tags.isNotEmpty
-                                        ? [
-                                            Container(
-                                              color: theme.accentColor,
-                                              width: 4,
-                                              height: 4,
-                                            ),
-                                            SizedBox(
-                                              width: 4,
-                                            ),
-                                          ]
-                                        : []),
+                                ],
                               ),
-                              onPressed: () {},
-                            ),
-                          ],
+                              OutlineButton(
+                                borderSide: BorderSide(
+                                    color: complaint.status.toLowerCase() ==
+                                            "Reported".toLowerCase()
+                                        ? Colors.red
+                                        : complaint.status.toLowerCase() ==
+                                                "In Progress".toLowerCase()
+                                            ? Colors.yellow
+                                            : Colors.green),
+                                padding: EdgeInsets.all(0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      capitalize(complaint.status),
+                                      style: theme.textTheme.subhead,
+                                    ),
+                                  ]..insertAll(
+                                      0,
+                                      complaint.tags.isNotEmpty
+                                          ? [
+                                              Container(
+                                                color: theme.accentColor,
+                                                width: 4,
+                                                height: 4,
+                                              ),
+                                              SizedBox(
+                                                width: 4,
+                                              ),
+                                            ]
+                                          : []),
+                                ),
+                                onPressed: () {},
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       Text(
@@ -399,7 +423,8 @@ class _ComplaintPageState extends State<ComplaintPage> {
                     ],
                   ),
                 ))
-                ..addAll(complaint.comments.map((v) => _buildComment(v, theme)))
+                ..addAll(complaint.comments
+                    .map((v) => _buildComment(bloc, theme, v)))
                 ..add(_buildCommentBox(bloc, theme))
                 ..addAll(<Widget>[
                   Divider(),
@@ -420,8 +445,8 @@ class _ComplaintPageState extends State<ComplaintPage> {
                     ),
                   ),
                 ])
-                ..addAll(
-                    complaint.usersUpVoted.map((u) => _buildUserTile(u, theme)))
+                ..addAll(complaint.usersUpVoted
+                    .map((u) => _buildUserTile(bloc, theme, u)))
                 ..addAll([
                   Divider(),
                   SizedBox(
@@ -435,7 +460,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
     );
   }
 
-  Widget _buildComment(Comment v, ThemeData theme) {
+  Widget _buildComment(InstiAppBloc bloc, ThemeData theme, Comment v) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Card(
@@ -444,12 +469,14 @@ class _ComplaintPageState extends State<ComplaintPage> {
           children: <Widget>[
             ListTile(
               onTap: () {
-                Navigator.of(context)
-                    .pushNamed("/user/${v.commentedBy.userID}");
+                UserPage.navigateWith(context, bloc, v.commentedBy);
               },
               contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
               leading: NullableCircleAvatar(
-                  v.commentedBy.userProfilePictureUrl, OMIcons.personOutline),
+                v.commentedBy.userProfilePictureUrl,
+                OMIcons.personOutline,
+                heroTag: v.commentedBy.userID,
+              ),
               title: Text(v.commentedBy.userName),
               subtitle: Text(DateTimeUtil.getDate(v.time)),
             ),
@@ -539,14 +566,17 @@ class _ComplaintPageState extends State<ComplaintPage> {
     );
   }
 
-  Widget _buildUserTile(User u, ThemeData theme) {
+  Widget _buildUserTile(InstiAppBloc bloc, ThemeData theme, User u) {
     return ListTile(
-      leading:
-          NullableCircleAvatar(u.userProfilePictureUrl, OMIcons.personOutline),
+      leading: NullableCircleAvatar(
+        u.userProfilePictureUrl,
+        OMIcons.personOutline,
+        heroTag: u.userID,
+      ),
       title: Text(u.userName),
       contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
       onTap: () {
-        Navigator.of(context).pushNamed("/user/${u.userID}");
+        UserPage.navigateWith(context, bloc, u);
       },
     );
   }

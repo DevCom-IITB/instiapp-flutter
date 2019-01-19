@@ -3,7 +3,9 @@ import 'dart:collection';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/routes/complaintpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/datetime.dart';
 import 'package:flutter/material.dart';
@@ -156,8 +158,9 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                                   int index) {
                                                 return snapshot.hasData
                                                     ? _buildComplaint(
-                                                        snapshot.data[index],
-                                                        theme)
+                                                        bloc,
+                                                        theme,
+                                                        snapshot.data[index])
                                                     : Center(
                                                         child: Padding(
                                                           padding:
@@ -207,8 +210,9 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                                   int index) {
                                                 return snapshot.hasData
                                                     ? _buildComplaint(
-                                                        snapshot.data[index],
-                                                        theme)
+                                                        bloc,
+                                                        theme,
+                                                        snapshot.data[index])
                                                     : Center(
                                                         child: Padding(
                                                           padding:
@@ -278,14 +282,14 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
     );
   }
 
-  Widget _buildComplaint(Complaint complaint, ThemeData theme) {
+  Widget _buildComplaint(
+      InstiAppBloc bloc, ThemeData theme, Complaint complaint) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
         child: InkWell(
           onTap: () {
-            Navigator.of(context)
-                .pushNamed("/complaint/${complaint.complaintID}");
+            ComplaintPage.navigateWith(context, bloc, complaint);
           },
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -294,57 +298,63 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(complaint.complaintCreatedBy.userName,
-                              style: theme.textTheme.title
-                                  .copyWith(fontWeight: FontWeight.bold)),
-                          Text(
-                            DateTimeUtil.getDate(complaint.complaintReportDate),
-                            style:
-                                theme.textTheme.caption.copyWith(fontSize: 14),
-                          ),
-                        ],
-                      ),
-                      OutlineButton(
-                        borderSide: BorderSide(
-                            color: complaint.status == "Reported"
-                                ? Colors.red
-                                : complaint.status == "In Progress"
-                                    ? Colors.yellow
-                                    : Colors.green),
-                        padding: EdgeInsets.all(0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
+                  child: Hero(
+                    tag: complaint.complaintID,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
+                            Text(complaint.complaintCreatedBy.userName,
+                                style: theme.textTheme.title
+                                    .copyWith(fontWeight: FontWeight.bold)),
                             Text(
-                              complaint.status,
-                              style: theme.textTheme.subhead,
+                              DateTimeUtil.getDate(
+                                  complaint.complaintReportDate),
+                              style: theme.textTheme.caption
+                                  .copyWith(fontSize: 14),
                             ),
-                          ]..insertAll(
-                              0,
-                              complaint.tags.isNotEmpty
-                                  ? [
-                                      Container(
-                                        color: theme.accentColor,
-                                        width: 4,
-                                        height: 4,
-                                      ),
-                                      SizedBox(
-                                        width: 4,
-                                      ),
-                                    ]
-                                  : []),
+                          ],
                         ),
-                        onPressed: () {},
-                      ),
-                    ],
+                        OutlineButton(
+                          borderSide: BorderSide(
+                              color: complaint.status.toLowerCase() ==
+                                      "Reported".toLowerCase()
+                                  ? Colors.red
+                                  : complaint.status.toLowerCase() ==
+                                          "In Progress".toLowerCase()
+                                      ? Colors.yellow
+                                      : Colors.green),
+                          padding: EdgeInsets.all(0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                capitalize(complaint.status),
+                                style: theme.textTheme.subhead,
+                              ),
+                            ]..insertAll(
+                                0,
+                                complaint.tags.isNotEmpty
+                                    ? [
+                                        Container(
+                                          color: theme.accentColor,
+                                          width: 4,
+                                          height: 4,
+                                        ),
+                                        SizedBox(
+                                          width: 4,
+                                        ),
+                                      ]
+                                    : []),
+                          ),
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Text(

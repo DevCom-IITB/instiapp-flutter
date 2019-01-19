@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/routes/complaintpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -231,8 +232,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
 
           var resp = await complaintsBloc.postComplaint(req);
           print(resp?.complaintID);
-          Navigator.of(context)
-              .pushReplacementNamed("/complaint/${resp.complaintID}");
+          ComplaintPage.navigateWith(context, bloc, resp);
         }
 
         setState(() {

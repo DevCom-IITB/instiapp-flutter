@@ -2,6 +2,9 @@ import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/routes/bodypage.dart';
+import 'package:InstiApp/src/routes/eventpage.dart';
+import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -230,31 +233,35 @@ class _ExplorePageState extends State<ExplorePage> {
       }
       return (bodies
                   ?.map((b) => _buildListTile(
+                      b.bodyID,
                       b.bodyName,
                       b.bodyShortDescription,
                       b.bodyImageURL,
                       OMIcons.peopleOutline,
-                      "/body/${b.bodyID}",
+                      () => BodyPage.navigateWith(context, exploreBloc.bloc, b),
                       theme))
                   ?.toList() ??
               []) +
           (events
                   ?.map((e) => _buildListTile(
+                      e.eventID,
                       e.eventName,
                       e.getSubTitle(),
                       e.eventImageURL ?? e.eventBodies[0]?.bodyImageURL,
                       OMIcons.event,
-                      "/event/${e.eventID}",
+                      () =>
+                          EventPage.navigateWith(context, exploreBloc.bloc, e),
                       theme))
                   ?.toList() ??
               []) +
           (users
                   ?.map((u) => _buildListTile(
+                      u.userID,
                       u.userName,
                       u.userLDAPId,
                       u.userProfilePictureUrl,
                       OMIcons.personOutline,
-                      "/user/${u.userID}",
+                      () => UserPage.navigateWith(context, exploreBloc.bloc, u),
                       theme))
                   ?.toList() ??
               []);
@@ -268,18 +275,20 @@ class _ExplorePageState extends State<ExplorePage> {
     }
   }
 
-  Widget _buildListTile(String title, String subtitle, String url,
-      IconData fallbackIcon, String routeOnClick, ThemeData theme) {
+  Widget _buildListTile(String id, String title, String subtitle, String url,
+      IconData fallbackIcon, VoidCallback onClick, ThemeData theme) {
     return ListTile(
-      leading: NullableCircleAvatar(url, fallbackIcon),
+      leading: NullableCircleAvatar(
+        url,
+        fallbackIcon,
+        heroTag: id,
+      ),
       title: Text(
         title,
         style: theme.textTheme.title,
       ),
       subtitle: Text(subtitle),
-      onTap: () {
-        Navigator.of(context).pushNamed(routeOnClick);
-      },
+      onTap: onClick,
     );
   }
 }

@@ -2,7 +2,11 @@ import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/user.dart';
+import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/routes/bodypage.dart';
+import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +15,22 @@ import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UserPage extends StatefulWidget {
-  final Future<User> _userFuture;
+  final User initialUser;
+  final Future<User> userFuture;
 
-  UserPage(this._userFuture);
+  UserPage({this.userFuture, this.initialUser});
+
+  static void navigateWith(BuildContext context, InstiAppBloc bloc, User user) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UserPage(
+              initialUser: user,
+              userFuture: bloc.getUser(user.userID),
+            ),
+      ),
+    );
+  }
 
   @override
   _UserPageState createState() => _UserPageState();
@@ -29,26 +46,30 @@ class _UserPageState extends State<UserPage> {
   void initState() {
     super.initState();
 
-    user = null;
-    widget._userFuture.then((u) {
-      setState(() {
+    user = widget.initialUser;
+    widget.userFuture.then((u) {
+      if (this.mounted) {
+        setState(() {
+          user = u;
+        });
+      } else {
         user = u;
-      });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context).bloc;
     var theme = Theme.of(context);
     var footerButtons = <Widget>[];
 
     if (user != null) {
       sEvents.clear();
-      sEvents.addAll(user.userGoingEvents);
-      sEvents.addAll(user.userInterestedEvents);
+      sEvents.addAll(user.userGoingEvents ?? []);
+      sEvents.addAll(user.userInterestedEvents ?? []);
 
-      events = sEvents.toList();
+      events = user.userGoingEvents != null ? sEvents.toList() : null;
 
       if ((user.userWebsiteURL ?? "") != "") {
         footerButtons.add(IconButton(
@@ -79,8 +100,8 @@ class _UserPageState extends State<UserPage> {
                   semanticLabel: "Show navigation drawer",
                 ),
                 onPressed: () {
-                        _scaffoldKey.currentState.openDrawer();
-                      },
+                  _scaffoldKey.currentState.openDrawer();
+                },
               ),
             ],
           ),
@@ -119,16 +140,29 @@ class _UserPageState extends State<UserPage> {
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Text(user.userRollNumber,
-                                        style: theme.textTheme.title),
+                                    user.userRollNumber != null
+                                        ? Text(user.userRollNumber,
+                                            style: theme.textTheme.title)
+                                        : CircularProgressIndicatorExtended(
+                                            size: 12,
+                                            label: Text("Loading Roll Number"),
+                                          ),
                                     InkWell(
-                                      onTap: _launchEmail,
+                                      onTap: user.userEmail != null
+                                          ? _launchEmail
+                                          : null,
                                       child: Tooltip(
                                         message: "E-mail this person",
-                                        child: Text(user.userEmail,
-                                            style: theme.textTheme.title
-                                                .copyWith(
-                                                    color: Colors.lightBlue)),
+                                        child: user.userEmail != null
+                                            ? Text(user.userEmail,
+                                                style: theme.textTheme.title
+                                                    .copyWith(
+                                                        color:
+                                                            Colors.lightBlue))
+                                            : CircularProgressIndicatorExtended(
+                                                size: 12,
+                                                label: Text("Loading email"),
+                                              ),
                                       ),
                                     ),
                                   ]..addAll(user.userContactNumber != null
@@ -197,25 +231,48 @@ class _UserPageState extends State<UserPage> {
                             var delegates = {
                               "Associations": SliverChildBuilderDelegate(
                                 (BuildContext context, int index) {
-                                  return _buildRoleTile(
-                                      user.userRoles[index], theme.textTheme);
+                                  return user.userRoles != null
+                                      ? _buildRoleTile(bloc, theme.textTheme,
+                                          user.userRoles[index])
+                                      : Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child:
+                                              CircularProgressIndicatorExtended(
+                                            label: Text("Loading associations"),
+                                          ));
                                 },
-                                childCount: user.userRoles?.length ?? 0,
+                                childCount: user.userRoles?.length ?? 1,
                               ),
                               "Following": SliverChildBuilderDelegate(
                                 (BuildContext context, int index) {
-                                  return _buildBodyTile(
-                                      user.userFollowedBodies[index],
-                                      theme.textTheme);
+                                  return user.userFollowedBodies != null
+                                      ? _buildBodyTile(bloc, theme.textTheme,
+                                          user.userFollowedBodies[index])
+                                      : Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child:
+                                              CircularProgressIndicatorExtended(
+                                            label: Text(
+                                                "Loading following bodies"),
+                                          ));
                                 },
                                 childCount:
-                                    user.userFollowedBodies?.length ?? 0,
+                                    user.userFollowedBodies?.length ?? 1,
                               ),
                               "Events": SliverChildBuilderDelegate(
                                 (BuildContext context, int index) {
-                                  return _buildEventTile(events[index], theme);
+                                  return events != null
+                                      ? _buildEventTile(
+                                          bloc, events[index], theme)
+                                      : Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child:
+                                              CircularProgressIndicatorExtended(
+                                            label: Text(
+                                                "Loading following events"),
+                                          ));
                                 },
-                                childCount: events.length,
+                                childCount: events?.length ?? 1,
                               ),
                             };
                             return CustomScrollView(
@@ -282,57 +339,53 @@ class _UserPageState extends State<UserPage> {
     );
   }
 
-  Widget _buildEventTile(Event event, ThemeData theme) {
+  Widget _buildEventTile(InstiAppBloc bloc, Event event, ThemeData theme) {
     return ListTile(
       title: Text(
         event.eventName,
         style: theme.textTheme.title,
       ),
       enabled: true,
-      leading: Hero(
-        tag: event.eventID,
-        child: NullableCircleAvatar(
-            event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
-            OMIcons.event),
+      leading: NullableCircleAvatar(
+        event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+        OMIcons.event,
+        heroTag: event.eventID,
       ),
       subtitle: Text(event.getSubTitle()),
       onTap: () {
-        _openEventPage(event);
+        EventPage.navigateWith(context, bloc, event);
       },
     );
   }
 
-  Widget _buildBodyTile(Body body, TextTheme theme) {
+  Widget _buildBodyTile(InstiAppBloc bloc, TextTheme theme, Body body) {
     return ListTile(
       title: Text(body.bodyName, style: theme.title),
       subtitle: Text(body.bodyShortDescription, style: theme.subtitle),
-      leading: Hero(
-          tag: body.bodyID,
-          child:
-              NullableCircleAvatar(body.bodyImageURL, OMIcons.peopleOutline)),
+      leading: NullableCircleAvatar(
+        body.bodyImageURL,
+        OMIcons.peopleOutline,
+        heroTag: body.bodyID,
+      ),
       onTap: () {
-        Navigator.of(context).pushNamed("/body/${body.bodyID}");
+        BodyPage.navigateWith(context, bloc, body);
       },
     );
   }
 
-  Widget _buildRoleTile(Role role, TextTheme theme) {
+  Widget _buildRoleTile(InstiAppBloc bloc, TextTheme theme, Role role) {
     return ListTile(
       title: Text(role.roleBodyDetails.bodyName, style: theme.title),
       subtitle: Text(role.roleName, style: theme.subtitle),
-      leading: Hero(
-        tag: role.roleBodyDetails.bodyID,
-        child: NullableCircleAvatar(
-            role.roleBodyDetails.bodyImageURL, OMIcons.peopleOutline),
+      leading: NullableCircleAvatar(
+        role.roleBodyDetails.bodyImageURL,
+        OMIcons.peopleOutline,
+        heroTag: role.roleBodyDetails.bodyID,
       ),
       onTap: () {
-        Navigator.of(context).pushNamed("/body/${role.roleBodyDetails.bodyID}");
+        BodyPage.navigateWith(context, bloc, role.roleBodyDetails);
       },
     );
-  }
-
-  void _openEventPage(Event event) {
-    Navigator.of(context).pushNamed("/event/${event.eventID}");
   }
 
   _launchEmail() async {

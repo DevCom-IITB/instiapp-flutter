@@ -117,23 +117,27 @@ class MyAppState extends State<MyApp> {
             return _buildRoute(
                 settings,
                 EventPage(
-                  widget.bloc.getEvent(settings.name.split("/event/")[1]),
+                  eventFuture:
+                      widget.bloc.getEvent(settings.name.split("/event/")[1]),
                 ));
           } else if (settings.name.startsWith("/body/")) {
             return _buildRoute(
                 settings,
                 BodyPage(
-                    widget.bloc.getBody(settings.name.split("/body/")[1])));
+                    bodyFuture:
+                        widget.bloc.getBody(settings.name.split("/body/")[1])));
           } else if (settings.name.startsWith("/user/")) {
             return _buildRoute(
                 settings,
                 UserPage(
-                    widget.bloc.getUser(settings.name.split("/user/")[1])));
+                    userFuture:
+                        widget.bloc.getUser(settings.name.split("/user/")[1])));
           } else if (settings.name.startsWith("/complaint/")) {
             return _buildRoute(
                 settings,
-                ComplaintPage(widget.bloc
-                    .getComplaint(settings.name.split("/complaint/")[1])));
+                ComplaintPage(
+                    complaintFuture: widget.bloc
+                        .getComplaint(settings.name.split("/complaint/")[1])));
           } else if (settings.name.startsWith("/putentity/event/")) {
             return _buildRoute(
                 settings,
@@ -187,7 +191,7 @@ class MyAppState extends State<MyApp> {
   }
 
   MaterialPageRoute _buildRoute(RouteSettings settings, Widget builder) {
-    return new MaterialPageRoute(
+    return MaterialPageRoute(
       settings: settings,
       builder: (BuildContext context) => builder,
     );

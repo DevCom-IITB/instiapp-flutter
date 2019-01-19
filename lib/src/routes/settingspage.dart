@@ -2,6 +2,7 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -237,14 +238,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       leading: NullableCircleAvatar(
                         snapshot.data.profile.userProfilePictureUrl,
                         OMIcons.personOutline,
+                        heroTag: snapshot.data.profile.userID,
                       ),
                       title: Text(
                         snapshot.data.profile.userName,
                         style: theme.textTheme.title,
                       ),
                       onTap: () {
-                        Navigator.of(context)
-                            .pushNamed("/user/${snapshot.data.profileId}");
+                        UserPage.navigateWith(context, bloc, snapshot.data.profile);
                       },
                     ),
                   ),

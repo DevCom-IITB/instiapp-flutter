@@ -2,7 +2,9 @@ import 'dart:collection';
 
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -86,7 +88,7 @@ class _FeedPageState extends State<FeedPage> {
                       return SliverList(
                         delegate: SliverChildBuilderDelegate(
                             (context, index) =>
-                                _buildEvent(snapshot.data[index]),
+                                _buildEvent(theme, bloc, snapshot.data[index]),
                             childCount: snapshot.data.length),
                       );
                     } else {
@@ -116,13 +118,11 @@ class _FeedPageState extends State<FeedPage> {
     );
   }
 
-  Widget _buildEvent(Event event) {
-    var theme = Theme.of(context);
-
+  Widget _buildEvent(ThemeData theme, InstiAppBloc bloc, Event event) {
     if (event.eventBigImage ?? false) {
       return InkWell(
         onTap: () {
-          _openEventPage(event);
+          _openEventPage(bloc, event);
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -168,13 +168,13 @@ class _FeedPageState extends State<FeedPage> {
         ),
         subtitle: Text(event.getSubTitle()),
         onTap: () {
-          _openEventPage(event);
+          _openEventPage(bloc, event);
         },
       );
     }
   }
 
-  _openEventPage(Event event) {
-    Navigator.of(context).pushNamed("/event/${event.eventID}");
+  _openEventPage(InstiAppBloc bloc, Event event) {
+    EventPage.navigateWith(context, bloc, event);
   }
 }

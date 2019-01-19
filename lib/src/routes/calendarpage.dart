@@ -3,7 +3,9 @@ import 'dart:collection';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -184,31 +186,26 @@ class _CalendarPageState extends State<CalendarPage> {
 
   Iterable<Widget> _buildEvents(CalendarBloc calBloc, ThemeData theme) {
     return calBloc.eventsMap[_currentDate]
-            ?.map((e) => _buildEventTile(e, theme)) ??
+            ?.map((e) => _buildEventTile(calBloc.bloc, theme, e)) ??
         [];
   }
 
-  Widget _buildEventTile(Event event, ThemeData theme) {
+  Widget _buildEventTile(InstiAppBloc bloc, ThemeData theme, Event event) {
     return ListTile(
       title: Text(
         event.eventName,
         style: theme.textTheme.title,
       ),
       enabled: true,
-      leading: Hero(
-        tag: event.eventID,
-        child: NullableCircleAvatar(
-            event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
-            OMIcons.event),
+      leading: NullableCircleAvatar(
+        event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+        OMIcons.event,
+        heroTag: event.eventID,
       ),
       subtitle: Text(event.getSubTitle()),
       onTap: () {
-        _openEventPage(event);
+        EventPage.navigateWith(context, bloc, event);
       },
     );
-  }
-
-  void _openEventPage(Event event) {
-    Navigator.of(context).pushNamed("/event/${event.eventID}");
   }
 }

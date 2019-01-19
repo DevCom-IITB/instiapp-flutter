@@ -38,8 +38,6 @@ class _PutEntityPageState extends State<PutEntityPage> {
   @override
   void initState() {
     super.initState();
-    // var url =
-    //     "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + "/" + widget.entityID)}?${widget.cookie}&$sandboxTrueQParam";
     onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {
       print("Changed URL: $url");
       if (url.contains("/event/")) {
