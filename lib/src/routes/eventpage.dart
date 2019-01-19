@@ -3,6 +3,7 @@ import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:flutter/foundation.dart';
@@ -15,9 +16,22 @@ import 'package:markdown/markdown.dart' as markdown;
 
 class EventPage extends StatefulWidget {
   final Event initialEvent;
-  final Future<Event> _eventFuture;
+  final Future<Event> eventFuture;
 
-  EventPage(this._eventFuture, {this.initialEvent});
+  EventPage({this.eventFuture, this.initialEvent});
+
+  static void navigateWith(
+      BuildContext context, InstiAppBloc bloc, Event event) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EventPage(
+              initialEvent: event,
+              eventFuture: bloc.getEvent(event.eventID),
+            ),
+      ),
+    );
+  }
 
   @override
   _EventPageState createState() => _EventPageState();
@@ -35,7 +49,7 @@ class _EventPageState extends State<EventPage> {
   void initState() {
     super.initState();
     event = widget.initialEvent;
-    widget._eventFuture.then((ev) {
+    widget?.eventFuture?.then((ev) {
       var tableParse = markdown.TableSyntax();
       ev.eventDescription = markdown.markdownToHtml(
           ev.eventDescription
@@ -44,9 +58,13 @@ class _EventPageState extends State<EventPage> {
               .toList()
               .join('\n'),
           blockSyntaxes: [tableParse]);
-      setState(() {
+      if (this.mounted) {
+        setState(() {
+          event = ev;
+        });
+      } else {
         event = ev;
-      });
+      }
     });
   }
 
@@ -169,7 +187,7 @@ class _EventPageState extends State<EventPage> {
                 Divider(),
               ]
                 ..addAll(event.eventBodies
-                    .map((b) => _buildBodyTile(b, theme.textTheme)))
+                    .map((b) => _buildBodyTile(bloc, theme.textTheme, b)))
                 ..addAll([
                   Divider(),
                   SizedBox(
@@ -202,7 +220,7 @@ class _EventPageState extends State<EventPage> {
     );
   }
 
-  Widget _buildBodyTile(Body body, TextTheme theme) {
+  Widget _buildBodyTile(InstiAppBloc bloc, TextTheme theme, Body body) {
     return ListTile(
       title: Text(body.bodyName, style: theme.title),
       subtitle: Text(body.bodyShortDescription, style: theme.subtitle),
@@ -212,7 +230,7 @@ class _EventPageState extends State<EventPage> {
         heroTag: body.bodyID,
       ),
       onTap: () {
-        Navigator.of(context).pushNamed("/body/${body.bodyID}");
+        BodyPage.navigateWith(context, bloc, body);
       },
     );
   }

@@ -6,6 +6,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
 import 'dart:math' as math;
 
+String capitalize(String name) {
+    assert(name != null && name.isNotEmpty);
+    return name.substring(0, 1).toUpperCase() + name.substring(1);
+  }
+
 String thumbnailUrl(String url, {int dim = 200}) {
   return url.replaceFirst(
       "api.insti.app/static/", "img.insti.app/static/$dim/");
@@ -42,12 +47,18 @@ class NullableCircleAvatar extends StatelessWidget {
                         tag: heroTag,
                         child: CircleAvatar(
                           radius: radius,
-                          backgroundImage: NetworkImage(thumbnailUrl(url)),
+                          backgroundImage: NetworkImage(
+                            // thumbnailUrl(url),
+                            url,
+                          ),
                         ),
                       )
                     : CircleAvatar(
                         radius: radius,
-                        backgroundImage: NetworkImage(thumbnailUrl(url)),
+                        backgroundImage: NetworkImage(
+                          // thumbnailUrl(url),
+                          url,
+                        ),
                       ),
               )
             : heroTag != null
@@ -55,14 +66,26 @@ class NullableCircleAvatar extends StatelessWidget {
                     tag: heroTag,
                     child: CircleAvatar(
                       radius: radius,
-                      backgroundImage: NetworkImage(thumbnailUrl(url)),
+                      backgroundImage: NetworkImage(
+                        // thumbnailUrl(url),
+                        url,
+                      ),
                     ),
                   )
                 : CircleAvatar(
                     radius: radius,
-                    backgroundImage: NetworkImage(thumbnailUrl(url)),
+                    backgroundImage: NetworkImage(
+                      // thumbnailUrl(url),
+                      url,
+                    ),
                   ))
-        : CircleAvatar(radius: radius, child: Icon(fallbackIcon, size: radius));
+        : heroTag != null
+            ? Hero(
+                tag: heroTag,
+                child: CircleAvatar(
+                    radius: radius, child: Icon(fallbackIcon, size: radius)))
+            : CircleAvatar(
+                radius: radius, child: Icon(fallbackIcon, size: radius));
   }
 }
 
@@ -154,40 +177,44 @@ class CommonHtml extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Html(
-      data: data,
-      defaultTextStyle: defaultTextStyle,
-      onLinkTap: (link) async {
-        print(link);
-        if (await canLaunch(link)) {
-          await launch(link);
-        } else {
-          throw "Couldn't launch $link";
-        }
-      },
-      customRender: (node, children) {
-        if (node is dom.Element) {
-          switch (node.localName) {
-            case "img":
-              return Text(node.attributes['href'] ?? "<img>");
-            case "a":
-              return InkWell(
-                onTap: () async {
-                  if (await canLaunch(node.attributes['href'])) {
-                    await launch(node.attributes['href']);
-                  }
-                },
-                child: Text(
-                  node.innerHtml,
-                  style: TextStyle(
-                      color: Colors.lightBlue,
-                      decoration: TextDecoration.underline),
-                ),
-              );
-          }
-        }
-      },
-    );
+    return data != null
+        ? Html(
+            data: data,
+            defaultTextStyle: defaultTextStyle,
+            onLinkTap: (link) async {
+              print(link);
+              if (await canLaunch(link)) {
+                await launch(link);
+              } else {
+                throw "Couldn't launch $link";
+              }
+            },
+            customRender: (node, children) {
+              if (node is dom.Element) {
+                switch (node.localName) {
+                  case "img":
+                    return Text(node.attributes['href'] ?? "<img>");
+                  case "a":
+                    return InkWell(
+                      onTap: () async {
+                        if (await canLaunch(node.attributes['href'])) {
+                          await launch(node.attributes['href']);
+                        }
+                      },
+                      child: Text(
+                        node.innerHtml,
+                        style: TextStyle(
+                            color: Colors.lightBlue,
+                            decoration: TextDecoration.underline),
+                      ),
+                    );
+                }
+              }
+            },
+          )
+        : CircularProgressIndicatorExtended(
+            label: Text("Loading content"),
+          );
   }
 }
 
@@ -394,9 +421,11 @@ class CircularProgressIndicatorExtended extends StatelessWidget {
   CircularProgressIndicatorExtended({
     Key key,
     this.label,
+    this.size = 18,
   }) : super(key: key);
 
   final Widget label;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
@@ -406,8 +435,8 @@ class CircularProgressIndicatorExtended extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         SizedBox(
-          height: 18,
-          width: 18,
+          height: size,
+          width: size,
           child: CircularProgressIndicator(
             valueColor: new AlwaysStoppedAnimation<Color>(theme.accentColor),
             strokeWidth: 2,

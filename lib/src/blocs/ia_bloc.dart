@@ -228,7 +228,6 @@ class InstiAppBloc {
       print(ex);
       return client.getEvent(getSessionIdHeader(), uuid);
     }
-    // return client.getEvent(getSessionIdHeader(), uuid);
   }
 
   Future<Body> getBody(String uuid) async {
@@ -242,7 +241,7 @@ class InstiAppBloc {
   }
 
   Future<Complaint> getComplaint(String uuid) async {
-    return await complaintsBloc.getComplaint(uuid);
+    return complaintsBloc.getComplaint(uuid);
   }
 
   void reloadCurrentUser() async {

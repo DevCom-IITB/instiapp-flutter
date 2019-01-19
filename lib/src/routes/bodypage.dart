@@ -4,6 +4,8 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/routes/eventpage.dart';
+import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:flutter/material.dart';
@@ -13,9 +15,22 @@ import 'package:share/share.dart';
 import 'package:markdown/markdown.dart' as markdown;
 
 class BodyPage extends StatefulWidget {
-  final Future<Body> _bodyFuture;
+  final Body initialBody;
+  final Future<Body> bodyFuture;
 
-  BodyPage(this._bodyFuture);
+  BodyPage({this.bodyFuture, this.initialBody});
+
+  static void navigateWith(BuildContext context, InstiAppBloc bloc, Body body) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BodyPage(
+              initialBody: body,
+              bodyFuture: bloc.getBody(body.bodyID),
+            ),
+      ),
+    );
+  }
 
   @override
   _BodyPageState createState() => _BodyPageState();
@@ -30,8 +45,8 @@ class _BodyPageState extends State<BodyPage> {
   @override
   void initState() {
     super.initState();
-    body = null;
-    widget._bodyFuture.then((b) {
+    body = widget.initialBody;
+    widget?.bodyFuture?.then((b) {
       var tableParse = markdown.TableSyntax();
       b.bodyDescription = markdown.markdownToHtml(
           b.bodyDescription
@@ -40,9 +55,13 @@ class _BodyPageState extends State<BodyPage> {
               .toList()
               .join('\n'),
           blockSyntaxes: [tableParse]);
-      setState(() {
+      if (this.mounted) {
+        setState(() {
+          body = b;
+        });
+      } else {
         body = b;
-      });
+      }
     });
   }
 
@@ -149,8 +168,8 @@ class _BodyPageState extends State<BodyPage> {
               ] // Events
                 ..addAll(_nonEmptyListWithHeaderOrEmpty(
                     body.bodyEvents
-                        .map((e) => _buildEventTile(e, theme))
-                        .toList(),
+                        ?.map((e) => _buildEventTile(bloc, theme, e))
+                        ?.toList(),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 28.0, vertical: 16.0),
@@ -162,8 +181,8 @@ class _BodyPageState extends State<BodyPage> {
                 // Children
                 ..addAll(_nonEmptyListWithHeaderOrEmpty(
                     body.bodyChildren
-                        .map((b) => _buildBodyTile(b, theme.textTheme))
-                        .toList(),
+                        ?.map((b) => _buildBodyTile(bloc, theme.textTheme, b))
+                        ?.toList(),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 28.0, vertical: 16.0),
@@ -175,15 +194,15 @@ class _BodyPageState extends State<BodyPage> {
                 // People
                 ..addAll(_nonEmptyListWithHeaderOrEmpty(
                     body.bodyRoles
-                        .expand((r) {
+                        ?.expand((r) {
                           if (r.roleUsersDetail != null) {
                             return r.roleUsersDetail
                                 .map((u) => u..currentRole = r.roleName)
                                 .toList();
                           }
                         })
-                        .map((u) => _buildUserTile(u, theme))
-                        .toList(),
+                        ?.map((u) => _buildUserTile(bloc, theme, u))
+                        ?.toList(),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 28.0, vertical: 16.0),
@@ -195,8 +214,8 @@ class _BodyPageState extends State<BodyPage> {
                 // Parents
                 ..addAll(_nonEmptyListWithHeaderOrEmpty(
                     body.bodyParents
-                        .map((b) => _buildBodyTile(b, theme.textTheme))
-                        .toList(),
+                        ?.map((b) => _buildBodyTile(bloc, theme.textTheme, b))
+                        ?.toList(),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 28.0, vertical: 16.0),
@@ -239,15 +258,22 @@ class _BodyPageState extends State<BodyPage> {
 
   List<Widget> _nonEmptyListWithHeaderOrEmpty(
       List<Widget> list, Widget header) {
-    return list.isNotEmpty ? (list..insert(0, header)) : <Widget>[];
+    return list != null
+        ? (list.isNotEmpty ? (list..insert(0, header)) : <Widget>[])
+        : [
+            CircularProgressIndicatorExtended(
+              label: header,
+            )
+          ];
   }
 
   RaisedButton _buildFollowBody(ThemeData theme, InstiAppBloc bloc) {
     return RaisedButton(
-      color: body.bodyUserFollows
+      color: body.bodyUserFollows ?? false
           ? theme.accentColor
           : theme.scaffoldBackgroundColor,
-      textColor: body.bodyUserFollows ? theme.accentIconTheme.color : null,
+      textColor:
+          body.bodyUserFollows ?? false ? theme.accentIconTheme.color : null,
       shape: RoundedRectangleBorder(
           side: BorderSide(
             color: theme.accentColor,
@@ -255,11 +281,22 @@ class _BodyPageState extends State<BodyPage> {
           borderRadius: BorderRadius.all(Radius.circular(4))),
       child: Row(children: () {
         var rowChildren = <Widget>[
-          Text(body.bodyUserFollows ? "Following" : "Follow"),
+          Text(body.bodyUserFollows ?? false ? "Following" : "Follow"),
           SizedBox(
             width: 8.0,
           ),
-          Text("${body.bodyFollowersCount}"),
+          body.bodyFollowersCount != null
+              ? Text("${body.bodyFollowersCount}")
+              : SizedBox(
+                  height: 18,
+                  width: 18,
+                  child: CircularProgressIndicator(
+                    valueColor: new AlwaysStoppedAnimation<Color>(
+                        body.bodyUserFollows ?? false
+                            ? theme.accentIconTheme.color
+                            : theme.accentColor),
+                    strokeWidth: 2,
+                  )),
         ];
         if (loadingFollow) {
           rowChildren.insertAll(0, [
@@ -268,7 +305,7 @@ class _BodyPageState extends State<BodyPage> {
                 width: 18,
                 child: CircularProgressIndicator(
                   valueColor: new AlwaysStoppedAnimation<Color>(
-                      body.bodyUserFollows
+                      body.bodyUserFollows ?? false
                           ? theme.accentIconTheme.color
                           : theme.accentColor),
                   strokeWidth: 2,
@@ -296,62 +333,55 @@ class _BodyPageState extends State<BodyPage> {
     );
   }
 
-  Widget _buildBodyTile(Body body, TextTheme theme) {
+  Widget _buildBodyTile(InstiAppBloc bloc, TextTheme theme, Body body) {
     return ListTile(
       title: Text(body.bodyName, style: theme.title),
       subtitle: Text(body.bodyShortDescription, style: theme.subtitle),
-      leading: Hero(
-          tag: body.bodyID,
-          child:
-              NullableCircleAvatar(body.bodyImageURL, OMIcons.peopleOutline)),
+      leading: NullableCircleAvatar(
+        body.bodyImageURL,
+        OMIcons.peopleOutline,
+        heroTag: body.bodyID,
+      ),
       onTap: () {
-        Navigator.of(context).pushNamed("/body/${body.bodyID}");
+        BodyPage.navigateWith(context, bloc, body);
       },
     );
   }
 
-  Widget _buildEventTile(Event event, ThemeData theme) {
+  Widget _buildEventTile(InstiAppBloc bloc, ThemeData theme, Event event) {
     return ListTile(
       title: Text(
         event.eventName,
         style: theme.textTheme.title,
       ),
       enabled: true,
-      leading: Hero(
-        tag: event.eventID,
-        child: NullableCircleAvatar(
-            event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
-            OMIcons.event),
+      leading: NullableCircleAvatar(
+        event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+        OMIcons.event,
+        heroTag: event.eventID,
       ),
       subtitle: Text(event.getSubTitle()),
       onTap: () {
-        _openEventPage(event);
+        EventPage.navigateWith(context, bloc, event);
       },
     );
   }
 
-  Widget _buildUserTile(User u, ThemeData theme) {
+  Widget _buildUserTile(InstiAppBloc bloc, ThemeData theme, User u) {
     return ListTile(
-      leading: Hero(
-          tag: u.userID,
-          child: NullableCircleAvatar(
-              u.userProfilePictureUrl, OMIcons.personOutline)),
+      leading: NullableCircleAvatar(
+        u.userProfilePictureUrl,
+        OMIcons.personOutline,
+        heroTag: u.userID,
+      ),
       title: Text(
         u.userName,
         style: theme.textTheme.title,
       ),
       subtitle: Text(u.getSubTitle()),
       onTap: () {
-        _openUserPage(u);
+        UserPage.navigateWith(context, bloc, u);
       },
     );
-  }
-
-  void _openUserPage(User user) {
-    Navigator.of(context).pushNamed("/user/${user.userID}");
-  }
-
-  void _openEventPage(Event event) {
-    Navigator.of(context).pushNamed("/event/${event.eventID}");
   }
 }

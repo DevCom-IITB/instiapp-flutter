@@ -1,5 +1,6 @@
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/user.dart';
@@ -172,7 +173,6 @@ class _BottomDrawerState extends State<BottomDrawer> {
                     leading: NullableCircleAvatar(
                       snapshot.data?.profile?.userProfilePictureUrl,
                       OMIcons.personOutline,
-                      heroTag: snapshot.data?.profile?.userID,
                     ),
                     title: Text(
                       snapshot?.data?.profile?.userName ?? 'Not Logged in',
@@ -192,7 +192,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                           ),
                     onTap: snapshot.data != null
                         ? () {
-                            Navigator.of(context).pushNamed("/user/me");
+                            UserPage.navigateWith(context, bloc, bloc.currSession.profile);
                           }
                         : null,
                   ),
