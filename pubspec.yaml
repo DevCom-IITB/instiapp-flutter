@@ -7,7 +7,7 @@ description: Flutter App for Indian Institute of Technology, Bombay
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 1.2.0+17
+version: 1.2.1+18
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
@@ -20,8 +20,6 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   outline_material_icons: ^0.1.0
-  # built_collection: '>=2.0.0 <5.0.0'
-  # built_value: '>=5.5.5 <7.0.0'
   url_launcher: ^4.0.1
   flutter_webview_plugin: ^0.3.0+2
   http: ^0.12.0
@@ -41,7 +39,6 @@ dependencies:
   flutter_material_color_picker: ^0.0.3+1
   flutter_typeahead: ^0.5.1
   image_picker: ^0.4.12
-  flutter_cache_manager: ^0.2.0+1
   firebase_messaging: ^2.1.0
 
 dev_dependencies:
@@ -51,7 +48,6 @@ dev_dependencies:
   jaguar_serializer_cli: ^2.2.4
   jaguar_retrofit_gen: ^2.5.10
   build_runner: ^1.0.0
-  # built_value_generator: ^6.1.6
   test: ^1.5.1
 
 
