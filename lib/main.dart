@@ -21,12 +21,14 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/routes/messpage.dart';
 import 'package:InstiApp/src/routes/loginpage.dart';
 import 'package:InstiApp/src/routes/placementblogpage.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   GlobalKey<MyAppState> key = GlobalKey();
   InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
-  await bloc.restorePrefs();
+  var temp = bloc.restorePrefs();
 
+  await temp;
   runApp(MyApp(
     key: key,
     bloc: bloc,
@@ -47,8 +49,40 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
   void setTheme(VoidCallback a) {
     setState(a);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+        // _showItemDialog(message);
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+        // _navigateToItemDetail(message);
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+        // _navigateToItemDetail(message);
+      },
+    );
+    _firebaseMessaging.requestNotificationPermissions(
+        const IosNotificationSettings(sound: true, badge: true, alert: true));
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings) {
+      print("Settings registered: $settings");
+    });
+    _firebaseMessaging.getToken().then((String token) {
+      assert(token != null);
+      print("Push Messaging token: $token");
+    });
   }
 
   @override

@@ -1,0 +1,107 @@
+{
+  "project_info": {
+    "project_number": "259853447628",
+    "firebase_url": "https://astral-theory-207617.firebaseio.com",
+    "project_id": "astral-theory-207617",
+    "storage_bucket": "astral-theory-207617.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:259853447628:android:efaea50ea28ccfec",
+        "android_client_info": {
+          "package_name": "app.insti"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "259853447628-m4op7gbphk9cmccn09u4acna6mjpg09e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.insti",
+            "certificate_hash": "7d2eee99e9a271b720a44eda5fa509cdc7760715"
+          }
+        },
+        {
+          "client_id": "259853447628-be3teletcqtfpfddj9qnk0bqj221h2mo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8B7N-3hnW_u4jOXHLRUzbMl6To3aDyJo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "259853447628-be3teletcqtfpfddj9qnk0bqj221h2mo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:259853447628:android:f20f3213a8e84433",
+        "android_client_info": {
+          "package_name": "app.insti.flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "259853447628-6hcftl72mg4ku9qvigs89f2etit8096f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.insti.flutter",
+            "certificate_hash": "895bc0dd6e5f88eb86efb8dc4730fcd21a6d085c"
+          }
+        },
+        {
+          "client_id": "259853447628-m9m7m0dtvlu5tjgrlh0u3jr6s6q12fsq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.insti.flutter",
+            "certificate_hash": "f188e22d6269ec606b3b2f4783488a6216f1a270"
+          }
+        },
+        {
+          "client_id": "259853447628-be3teletcqtfpfddj9qnk0bqj221h2mo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8B7N-3hnW_u4jOXHLRUzbMl6To3aDyJo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "259853447628-be3teletcqtfpfddj9qnk0bqj221h2mo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

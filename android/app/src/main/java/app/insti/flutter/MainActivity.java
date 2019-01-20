@@ -1,4 +1,4 @@
-package com.example.instiapp;
+package app.insti.flutter;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
