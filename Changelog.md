@@ -3,6 +3,9 @@
 ## Unreleased
  
 * Added Hero transitions everywhere possible
+* Renamed android package name to `app.insti.flutter`
+* Added key signing to the android apk
+* Add `FCM` to android part
 
 ## v1.2-beta
 
