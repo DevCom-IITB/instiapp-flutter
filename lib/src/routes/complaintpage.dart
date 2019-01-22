@@ -343,46 +343,25 @@ class _ComplaintPageState extends State<ComplaintPage> {
                 SizedBox(
                   height: 16.0,
                 ),
-                defaultTargetPlatform == TargetPlatform.iOS
-                    ? Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 28.0),
-                        child: OutlineButton.icon(
-                          icon: Icon(OMIcons.navigation),
-                          label: Text("Location on Map"),
-                          onPressed: () async {
-                            String uri = defaultTargetPlatform ==
-                                    TargetPlatform.iOS
-                                ? "http://maps.apple.com/?ll=${complaint.latitude},${complaint.longitude}&z=20"
-                                : "google.navigation:q=${complaint.latitude},${complaint.longitude}";
-
-                            if (await canLaunch(uri)) {
-                              await launch(uri);
-                            } else {
-                              print("cannot launch");
-                            }
-                          },
-                        ),
-                      )
-                    : SizedBox(
-                        height: 200,
-                        child: GoogleMap(
-                          gestureRecognizers:
-                              <Factory<OneSequenceGestureRecognizer>>[
-                            Factory<OneSequenceGestureRecognizer>(
-                              () => HorizontalDragGestureRecognizer(),
-                            ),
-                          ].toSet(),
-                          onMapCreated: _onMapCreated,
-                          options: GoogleMapOptions(
-                            scrollGesturesEnabled: true,
-                            rotateGesturesEnabled: true,
-                            zoomGesturesEnabled: true,
-                            compassEnabled: true,
-                            myLocationEnabled: true,
-                            tiltGesturesEnabled: false,
-                          ),
-                        ),
+                SizedBox(
+                  height: 200,
+                  child: GoogleMap(
+                    gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>[
+                      Factory<OneSequenceGestureRecognizer>(
+                        () => HorizontalDragGestureRecognizer(),
                       ),
+                    ].toSet(),
+                    onMapCreated: _onMapCreated,
+                    options: GoogleMapOptions(
+                      scrollGesturesEnabled: true,
+                      rotateGesturesEnabled: true,
+                      zoomGesturesEnabled: true,
+                      compassEnabled: true,
+                      myLocationEnabled: true,
+                      tiltGesturesEnabled: false,
+                    ),
+                  ),
+                ),
                 complaint.tags?.isNotEmpty ?? false
                     ? Padding(
                         padding: EdgeInsets.symmetric(
