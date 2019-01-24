@@ -7,6 +7,7 @@
 ## v1.3.1-beta
 
 * Fix users' name containing two spaces bug
+* Fix blogpage not showing loading when searching
 
 ## v1.3-beta
  
