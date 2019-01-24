@@ -8,6 +8,7 @@
 
 * Fix users' name containing two spaces bug
 * Fix blogpage not showing loading when searching
+* Add Color to statusBar and navigationBar
 
 ## v1.3-beta
  
