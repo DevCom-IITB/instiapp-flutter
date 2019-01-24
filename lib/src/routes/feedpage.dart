@@ -44,7 +44,7 @@ class _FeedPageState extends State<FeedPage> {
 
     return Scaffold(
       key: _scaffoldKey,
-      drawer: BottomDrawer(),
+      drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
         shape: RoundedNotchedRectangle(),
         child: new Row(
@@ -58,7 +58,7 @@ class _FeedPageState extends State<FeedPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                BottomDrawer.setPageIndex(bloc, 0);
+                NavDrawer.setPageIndex(bloc, 0);
                 _scaffoldKey.currentState.openDrawer();
               },
             ),

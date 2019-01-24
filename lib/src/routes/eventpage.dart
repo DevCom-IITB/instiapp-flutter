@@ -122,7 +122,7 @@ class _EventPageState extends State<EventPage> {
     }
     return Scaffold(
       key: _scaffoldKey,
-      drawer: BottomDrawer(),
+      drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,

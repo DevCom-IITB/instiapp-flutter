@@ -102,7 +102,7 @@ class _BodyPageState extends State<BodyPage> {
     }
     return Scaffold(
       key: _scaffoldKey,
-      drawer: BottomDrawer(),
+      drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,

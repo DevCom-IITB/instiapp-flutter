@@ -60,7 +60,7 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
 
     return Scaffold(
       key: _scaffoldKey,
-      drawer: BottomDrawer(),
+      drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
@@ -74,23 +74,8 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
               onPressed: _bottomSheetActive
                   ? null
                   : () {
-                      BottomDrawer.setPageIndex(bloc, 9);
+                      NavDrawer.setPageIndex(bloc, 9);
                       _scaffoldKey.currentState.openDrawer();
-                      // setState(() {
-                      //   //disable button
-                      //   _bottomSheetActive = true;
-                      // });
-                      // _scaffoldKey.currentState
-                      //     .showBottomSheet((context) {
-                      //       BottomDrawer.setPageIndex(bloc, 9);
-                      //       return BottomDrawer();
-                      //     })
-                      //     .closed
-                      //     .whenComplete(() {
-                      //       setState(() {
-                      //         _bottomSheetActive = false;
-                      //       });
-                      //     });
                     },
             ),
           ],

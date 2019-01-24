@@ -24,16 +24,17 @@ class ComplaintPage extends StatefulWidget {
   ComplaintPage({this.complaintFuture, this.initialComplaint});
 
   static void navigateWith(
-      BuildContext context, InstiAppBloc bloc, Complaint complaint) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ComplaintPage(
-              initialComplaint: complaint,
-              complaintFuture: bloc.getComplaint(complaint.complaintID),
-            ),
-      ),
+      BuildContext context, InstiAppBloc bloc, Complaint complaint,
+      {bool replace = false}) {
+    var route = MaterialPageRoute(
+      builder: (context) => ComplaintPage(
+            initialComplaint: complaint,
+            complaintFuture: bloc.getComplaint(complaint.complaintID),
+          ),
     );
+    replace
+        ? Navigator.pushReplacement(context, route)
+        : Navigator.push(context, route);
   }
 
   @override
@@ -120,7 +121,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
     }
     return Scaffold(
       key: _scaffoldKey,
-      drawer: BottomDrawer(),
+      drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
         shape: RoundedNotchedRectangle(),
         child: new Row(
@@ -177,11 +178,13 @@ class _ComplaintPageState extends State<ComplaintPage> {
                               padding: EdgeInsets.all(8.0),
                               scrollDirection: Axis.horizontal,
                               children: complaint.images.map((im) {
-                                // TODO: test images
-                                return PhotoViewableImage(
-                                  url: im,
-                                  heroTag: "$im",
-                                  fit: BoxFit.scaleDown,
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: PhotoViewableImage(
+                                    url: im,
+                                    heroTag: "$im",
+                                    fit: BoxFit.scaleDown,
+                                  ),
                                 );
                               }).toList(),
                             ),
@@ -393,7 +396,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                       children: <Widget>[
                         Icon(
                           OMIcons.comment,
-                          color: Colors.blueGrey,
+                          color: theme.accentColor,
                         ),
                         SizedBox(
                           width: 8,
@@ -415,7 +418,10 @@ class _ComplaintPageState extends State<ComplaintPage> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Icon(OMIcons.arrowUpward, color: Colors.blueGrey),
+                          Icon(
+                            OMIcons.arrowUpward,
+                            color: theme.accentColor,
+                          ),
                           SizedBox(
                             width: 8,
                           ),

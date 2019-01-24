@@ -88,7 +88,7 @@ class _UserPageState extends State<UserPage> {
       length: 3,
       child: Scaffold(
         key: _scaffoldKey,
-        drawer: BottomDrawer(),
+        drawer: NavDrawer(),
         bottomNavigationBar: MyBottomAppBar(
           shape: RoundedNotchedRectangle(),
           child: new Row(
