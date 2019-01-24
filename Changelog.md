@@ -9,6 +9,7 @@
 * Fix users' name containing two spaces bug
 * Fix blogpage not showing loading when searching
 * Add Color to statusBar and navigationBar
+* Fix NewComplaint image upload with compression to not go over the limit
 
 ## v1.3-beta
  
