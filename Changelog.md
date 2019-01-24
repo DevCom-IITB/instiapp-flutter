@@ -4,6 +4,10 @@
 
 * Nothing here yet
 
+## v1.3.1-beta
+
+* Fix users' name containing two spaces bug
+
 ## v1.3-beta
  
 * Added Hero transitions everywhere possible
