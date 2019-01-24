@@ -65,14 +65,14 @@ class _CalendarPageState extends State<CalendarPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                BottomDrawer.setPageIndex(bloc, 6);
+                NavDrawer.setPageIndex(bloc, 6);
                 _scaffoldKey.currentState.openDrawer();
               },
             ),
           ],
         ),
       ),
-      drawer: BottomDrawer(),
+      drawer: NavDrawer(),
       body: SafeArea(
         child: StreamBuilder<Map<DateTime, List<Event>>>(
           stream: calBloc.events,

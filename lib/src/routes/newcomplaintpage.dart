@@ -18,6 +18,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import 'dart:convert' as convert;
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
 
 class NewComplaintPage extends StatefulWidget {
   final String title = "New Complaint";
@@ -135,6 +137,9 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
 
   bool _uploadingImages = false;
 
+  String _uploadingStatus = "0/0";
+  String _encodingStatus = "0/0";
+
   @override
   void initState() {
     super.initState();
@@ -212,16 +217,33 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
             });
             await Future.delayed(Duration(milliseconds: 500));
 
+            var encNum = 0;
+            var uploadNum = 0;
+            var totNum = currRequest.images.length;
+
             req.images =
                 await Future.wait(currRequest.images.map((File f) async {
-              convert.base64Encode(await f.readAsBytes());
-            }).map(
-              (Future<String> base64Image) async {
-                return (await complaintsBloc
-                        .uploadBase64Image(await base64Image))
-                    .pictureURL;
-              },
-            ));
+              var s = convert
+                  .base64Encode(await FlutterImageCompress.compressWithFile(
+                f.path,
+                quality: 60,
+              ));
+
+              setState(() {
+                encNum++;
+                _encodingStatus = "$encNum/$totNum";
+              });
+              return s;
+            }).map((Future<String> base64Image) async {
+              var url =
+                  (await complaintsBloc.uploadBase64Image(await base64Image))
+                      .pictureURL;
+              setState(() {
+                uploadNum++;
+                _uploadingStatus = "$uploadNum/$totNum";
+              });
+              return url;
+            }));
 
             setState(() {
               _uploadingImages = false;
@@ -232,7 +254,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
 
           var resp = await complaintsBloc.postComplaint(req);
           print(resp?.complaintID);
-          ComplaintPage.navigateWith(context, bloc, resp);
+          ComplaintPage.navigateWith(context, bloc, resp, replace: true);
         }
 
         setState(() {
@@ -243,7 +265,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
 
     return Scaffold(
       key: _scaffoldKey,
-      drawer: BottomDrawer(),
+      drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
         shape: RoundedNotchedRectangle(),
         child: new Row(
@@ -283,14 +305,17 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                _uploadingImages
-                    ? CircularProgressIndicatorExtended(
-                        label: Text("Uploading Images"),
-                      )
-                    : Container(
-                        width: 0,
-                        height: 0,
-                      ),
+                Center(
+                  child: _uploadingImages
+                      ? CircularProgressIndicatorExtended(
+                          label: Text(
+                              "$_encodingStatus Encoding Images, $_uploadingStatus Uploading Images"),
+                        )
+                      : Container(
+                          width: 0,
+                          height: 0,
+                        ),
+                ),
                 currRequest.images?.isNotEmpty ?? false
                     ? Padding(
                         padding: const EdgeInsets.all(8.0),

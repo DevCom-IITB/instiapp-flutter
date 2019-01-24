@@ -96,7 +96,7 @@ class _ExplorePageState extends State<ExplorePage> {
     return Scaffold(
       resizeToAvoidBottomPadding: true,
       key: _scaffoldKey,
-      drawer: BottomDrawer(),
+      drawer: NavDrawer(),
       bottomNavigationBar: Transform.translate(
         offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),
         child: Column(
@@ -136,7 +136,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       semanticLabel: "Show bottom sheet",
                     ),
                     onPressed: () {
-                      BottomDrawer.setPageIndex(bloc, 2);
+                      NavDrawer.setPageIndex(bloc, 2);
                       _scaffoldKey.currentState.openDrawer();
                     },
                   ),

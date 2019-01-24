@@ -107,7 +107,7 @@ class _BlogPageState extends State<BlogPage> {
     return Scaffold(
       resizeToAvoidBottomPadding: true,
       key: _scaffoldKey,
-      drawer: BottomDrawer(),
+      drawer: NavDrawer(),
       bottomNavigationBar: Transform.translate(
         offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),
         child: Column(
@@ -147,7 +147,7 @@ class _BlogPageState extends State<BlogPage> {
                       semanticLabel: "Show bottom sheet",
                     ),
                     onPressed: () {
-                      BottomDrawer.setPageIndex(
+                      NavDrawer.setPageIndex(
                           bloc,
                           {
                             PostType.Placement: 4,

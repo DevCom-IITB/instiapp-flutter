@@ -27,7 +27,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       key: _scaffoldKey,
-      drawer: BottomDrawer(),
+      drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
@@ -40,7 +40,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 semanticLabel: "Show Navigation Drawer",
               ),
               onPressed: () {
-                BottomDrawer.setPageIndex(bloc, 10);
+                NavDrawer.setPageIndex(bloc, 10);
                 _scaffoldKey.currentState.openDrawer();
               },
             ),

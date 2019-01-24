@@ -39,7 +39,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
       length: 2,
       child: Scaffold(
         key: _scaffoldKey,
-        drawer: BottomDrawer(),
+        drawer: NavDrawer(),
         bottomNavigationBar: MyBottomAppBar(
           shape: RoundedNotchedRectangle(),
           child: new Row(
@@ -52,7 +52,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                   semanticLabel: "Show bottom sheet",
                 ),
                 onPressed: () {
-                  BottomDrawer.setPageIndex(bloc, 8);
+                  NavDrawer.setPageIndex(bloc, 8);
                   _scaffoldKey.currentState.openDrawer();
                 },
               ),
@@ -429,49 +429,42 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                         : []),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: Container(
-                    decoration: ShapeDecoration(
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20.0)),
-                            side: BorderSide(color: theme.accentColor))),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Icon(
-                                OMIcons.comment,
-                                color: Colors.blueGrey,
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Text(
-                                  "${complaint.comments.isEmpty ? "No" : complaint.comments.length} comment${complaint.comments.length == 1 ? "" : "s"}",
-                                  style: theme.textTheme.caption),
-                            ],
+                          Icon(
+                            OMIcons.comment,
+                            color: theme.accentColor,
                           ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Icon(OMIcons.arrowUpward, color: Colors.blueGrey),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Text(
-                                  "${complaint.usersUpVoted.isEmpty ? "No" : complaint.usersUpVoted.length} upvote${complaint.usersUpVoted.length == 1 ? "" : "s"}",
-                                  style: theme.textTheme.caption),
-                            ],
+                          SizedBox(
+                            width: 8,
                           ),
+                          Text(
+                              "${complaint.comments.isEmpty ? "No" : complaint.comments.length} comment${complaint.comments.length == 1 ? "" : "s"}",
+                              style: theme.textTheme.caption),
                         ],
                       ),
-                    ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(
+                            OMIcons.arrowUpward,
+                            color: theme.accentColor,
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                              "${complaint.usersUpVoted.isEmpty ? "No" : complaint.usersUpVoted.length} upvote${complaint.usersUpVoted.length == 1 ? "" : "s"}",
+                              style: theme.textTheme.caption),
+                        ],
+                      ),
+                    ],
                   ),
                 )
               ],

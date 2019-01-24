@@ -58,14 +58,14 @@ class _MessPageState extends State<MessPage> {
                 semanticLabel: "Show navigation drawer",
               ),
               onPressed: () {
-                BottomDrawer.setPageIndex(bloc, 3);
+                NavDrawer.setPageIndex(bloc, 3);
                 _scaffoldKey.currentState.openDrawer();
               },
             ),
           ],
         ),
       ),
-      drawer: BottomDrawer(),
+      drawer: NavDrawer(),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () => bloc.updateHostels(),
