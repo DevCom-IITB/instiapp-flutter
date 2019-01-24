@@ -19,6 +19,7 @@ class ComplaintsPage extends StatefulWidget {
 
 class _ComplaintsPageState extends State<ComplaintsPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  bool firstBuild = true;
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +28,11 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
     var complaintsBloc = bloc.complaintsBloc;
     var footerButtons = <Widget>[];
 
-    complaintsBloc.updateAllComplaints();
-    complaintsBloc.updateMyComplaints();
+    if (firstBuild) {
+      complaintsBloc.updateAllComplaints();
+      complaintsBloc.updateMyComplaints();
+      firstBuild = false;
+    }
 
     return DefaultTabController(
       initialIndex: 0,
@@ -119,130 +123,139 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                     ? TabBarView(
                         // These are the contents of the tab views, below the tabs.
                         children: ["Home", "Me"].map((name) {
-                          return SafeArea(
-                            top: false,
-                            bottom: false,
-                            child: Builder(
-                              // This Builder is needed to provide a BuildContext that is "inside"
-                              // the NestedScrollView, so that sliverOverlapAbsorberHandleFor() can
-                              // find the NestedScrollView.
-                              builder: (BuildContext context) {
-                                var lists = {
-                                  "Home": StreamBuilder(
-                                    stream: complaintsBloc.allComplaints,
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<
-                                                UnmodifiableListView<Complaint>>
-                                            snapshot) {
-                                      return snapshot.hasData &&
-                                              snapshot.data.isEmpty
-                                          ? SliverToBoxAdapter(
-                                              child: Center(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      16.0),
-                                                  child: Text("No complaints",
-                                                      style: theme
-                                                          .textTheme.title
-                                                          .copyWith(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
+                          return RefreshIndicator(
+                            onRefresh: () => name == "Home"
+                                ? complaintsBloc.updateAllComplaints()
+                                : complaintsBloc.updateMyComplaints(),
+                            child: SafeArea(
+                              top: false,
+                              bottom: false,
+                              child: Builder(
+                                // This Builder is needed to provide a BuildContext that is "inside"
+                                // the NestedScrollView, so that sliverOverlapAbsorberHandleFor() can
+                                // find the NestedScrollView.
+                                builder: (BuildContext context) {
+                                  var lists = {
+                                    "Home": StreamBuilder(
+                                      stream: complaintsBloc.allComplaints,
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<
+                                                  UnmodifiableListView<
+                                                      Complaint>>
+                                              snapshot) {
+                                        return snapshot.hasData &&
+                                                snapshot.data.isEmpty
+                                            ? SliverToBoxAdapter(
+                                                child: Center(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            16.0),
+                                                    child: Text("No complaints",
+                                                        style: theme
+                                                            .textTheme.title
+                                                            .copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold)),
+                                                  ),
                                                 ),
-                                              ),
-                                            )
-                                          : SliverList(
-                                              delegate:
-                                                  SliverChildBuilderDelegate(
-                                              (BuildContext context,
-                                                  int index) {
-                                                return snapshot.hasData
-                                                    ? _buildComplaint(
-                                                        bloc,
-                                                        theme,
-                                                        snapshot.data[index])
-                                                    : Center(
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(16.0),
-                                                          child:
-                                                              CircularProgressIndicatorExtended(
-                                                            label: Text(
-                                                                "Fetching all complaints"),
+                                              )
+                                            : SliverList(
+                                                delegate:
+                                                    SliverChildBuilderDelegate(
+                                                (BuildContext context,
+                                                    int index) {
+                                                  return snapshot.hasData
+                                                      ? _buildComplaint(
+                                                          bloc,
+                                                          theme,
+                                                          snapshot.data[index])
+                                                      : Center(
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(16.0),
+                                                            child:
+                                                                CircularProgressIndicatorExtended(
+                                                              label: Text(
+                                                                  "Fetching all complaints"),
+                                                            ),
                                                           ),
-                                                        ),
-                                                      );
-                                              },
-                                              childCount: snapshot.hasData
-                                                  ? snapshot.data.length
-                                                  : 1,
-                                            ));
-                                    },
-                                  ),
-                                  "Me": StreamBuilder(
-                                    stream: complaintsBloc.myComplaints,
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<
-                                                UnmodifiableListView<Complaint>>
-                                            snapshot) {
-                                      return snapshot.hasData &&
-                                              snapshot.data.isEmpty
-                                          ? SliverToBoxAdapter(
-                                              child: Center(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      16.0),
-                                                  child: Text("No complaints",
-                                                      style: theme
-                                                          .textTheme.title
-                                                          .copyWith(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
-                                                ),
-                                              ),
-                                            )
-                                          : SliverList(
-                                              delegate:
-                                                  SliverChildBuilderDelegate(
-                                              (BuildContext context,
-                                                  int index) {
-                                                return snapshot.hasData
-                                                    ? _buildComplaint(
-                                                        bloc,
-                                                        theme,
-                                                        snapshot.data[index])
-                                                    : Center(
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(16.0),
-                                                          child:
-                                                              CircularProgressIndicatorExtended(
-                                                            label: Text(
-                                                                "Fetching complaints made by you"),
-                                                          ),
-                                                        ),
-                                                      );
-                                              },
-                                              childCount: snapshot.hasData
-                                                  ? snapshot.data.length
-                                                  : 1,
-                                            ));
-                                    },
-                                  ),
-                                };
-                                return CustomScrollView(
-                                  key: PageStorageKey<String>(name),
-                                  slivers: <Widget>[
-                                    SliverPadding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      sliver: lists[name],
+                                                        );
+                                                },
+                                                childCount: snapshot.hasData
+                                                    ? snapshot.data.length
+                                                    : 1,
+                                              ));
+                                      },
                                     ),
-                                  ],
-                                );
-                              },
+                                    "Me": StreamBuilder(
+                                      stream: complaintsBloc.myComplaints,
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<
+                                                  UnmodifiableListView<
+                                                      Complaint>>
+                                              snapshot) {
+                                        return snapshot.hasData &&
+                                                snapshot.data.isEmpty
+                                            ? SliverToBoxAdapter(
+                                                child: Center(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            16.0),
+                                                    child: Text("No complaints",
+                                                        style: theme
+                                                            .textTheme.title
+                                                            .copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold)),
+                                                  ),
+                                                ),
+                                              )
+                                            : SliverList(
+                                                delegate:
+                                                    SliverChildBuilderDelegate(
+                                                (BuildContext context,
+                                                    int index) {
+                                                  return snapshot.hasData
+                                                      ? _buildComplaint(
+                                                          bloc,
+                                                          theme,
+                                                          snapshot.data[index])
+                                                      : Center(
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(16.0),
+                                                            child:
+                                                                CircularProgressIndicatorExtended(
+                                                              label: Text(
+                                                                  "Fetching complaints made by you"),
+                                                            ),
+                                                          ),
+                                                        );
+                                                },
+                                                childCount: snapshot.hasData
+                                                    ? snapshot.data.length
+                                                    : 1,
+                                              ));
+                                      },
+                                    ),
+                                  };
+                                  return CustomScrollView(
+                                    key: PageStorageKey<String>(name),
+                                    slivers: <Widget>[
+                                      SliverPadding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        sliver: lists[name],
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
                             ),
                           );
                         }).toList(),

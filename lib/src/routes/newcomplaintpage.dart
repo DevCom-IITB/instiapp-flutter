@@ -336,8 +336,8 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                                   );
                                 },
                                 child: PhotoViewableImage(
-                                  FileImage(im),
-                                  "${im.path}",
+                                  imageProvider: FileImage(im),
+                                  heroTag: "${im.path}",
                                   fit: BoxFit.scaleDown,
                                   customBorder: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.all(

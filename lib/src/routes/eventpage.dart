@@ -164,9 +164,9 @@ class _EventPageState extends State<EventPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: PhotoViewableImage(
-                    NetworkImage(event?.eventImageURL ??
-                        event?.eventBodies[0].bodyImageURL),
-                    event.eventID,
+                    url: event?.eventImageURL ??
+                        event?.eventBodies[0].bodyImageURL,
+                    heroTag: event.eventID,
                     fit: BoxFit.fitWidth,
                   ),
                 ),

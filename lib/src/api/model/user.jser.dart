@@ -48,7 +48,7 @@ abstract class _$UserSerializer implements Serializer<User> {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
     setMapValue(ret, 'id', model.userID);
-    setMapValue(ret, 'name', model.userName);
+    setMapValue(ret, 'name', model.name);
     setMapValue(ret, 'profile_pic', model.userProfilePictureUrl);
     setMapValue(
         ret,
@@ -90,6 +90,7 @@ abstract class _$UserSerializer implements Serializer<User> {
     setMapValue(ret, 'ldap_id', model.userLDAPId);
     setMapValue(ret, 'hostel', model.hostel);
     setMapValue(ret, 'currentRole', model.currentRole);
+    setMapValue(ret, 'userName', model.userName);
     return ret;
   }
 
@@ -98,7 +99,7 @@ abstract class _$UserSerializer implements Serializer<User> {
     if (map == null) return null;
     final obj = new User();
     obj.userID = map['id'] as String;
-    obj.userName = map['name'] as String;
+    obj.name = map['name'] as String;
     obj.userProfilePictureUrl = map['profile_pic'] as String;
     obj.userInterestedEvents = codeIterable<Event>(
         map['events_interested'] as Iterable,

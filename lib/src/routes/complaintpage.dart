@@ -178,8 +178,8 @@ class _ComplaintPageState extends State<ComplaintPage> {
                             children: complaint.images.map((im) {
                               // TODO: test images
                               return PhotoViewableImage(
-                                NetworkImage(im),
-                                "$im",
+                                url: im,
+                                heroTag: "$im",
                                 fit: BoxFit.scaleDown,
                               );
                             }).toList(),

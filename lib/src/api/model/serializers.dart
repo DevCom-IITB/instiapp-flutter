@@ -1,6 +1,7 @@
 // Copyright (c) 2015, Google Inc. Please see the AUTHORS file for details.
 library serializers;
 
+import 'package:InstiApp/src/api/model/datetime.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
 import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
@@ -39,6 +40,7 @@ JsonRepo standardSerializers = JsonRepo(serializers: [
   RoleSerializer(),
   NewsArticleSerializer(),
   NotificationSerializer(),
+  DateTimeSerializer(),
   
   // Blog
   PlacementBlogPostSerializer(),

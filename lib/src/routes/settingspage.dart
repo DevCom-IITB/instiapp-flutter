@@ -70,14 +70,14 @@ class _SettingsPageState extends State<SettingsPage> {
                   child: Text(
                     "App settings",
                     style: theme.textTheme.title
-                        .copyWith(fontWeight: FontWeight.bold),
+                        .copyWith(fontWeight: FontWeight.bold, color: theme.primaryColor),
                   ),
                 ),
 
                 Text(
                   "Default Homepage",
                   style: theme.textTheme.body1
-                      .copyWith(fontWeight: FontWeight.bold),
+                      .copyWith(fontWeight: FontWeight.bold, color: theme.accentColor),
                 ),
                 DropdownButton(
                   isExpanded: true,
@@ -110,7 +110,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   child: Text(
                     "App Theme",
                     style: theme.textTheme.body1
-                        .copyWith(fontWeight: FontWeight.bold),
+                        .copyWith(fontWeight: FontWeight.bold, color: theme.accentColor),
                   ),
                 ),
                 RadioListTile<AppBrightness>(
@@ -224,7 +224,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: Text(
                       "Profile settings",
                       style: theme.textTheme.title
-                          .copyWith(fontWeight: FontWeight.bold),
+                          .copyWith(fontWeight: FontWeight.bold, color: theme.primaryColor),
                     ),
                   ),
                   Container(

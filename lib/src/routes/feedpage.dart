@@ -6,6 +6,7 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 
@@ -17,12 +18,16 @@ class FeedPage extends StatefulWidget {
 class _FeedPageState extends State<FeedPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
+  bool firstBuild = true;
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
-
-    bloc.updateEvents();
+    if (firstBuild) {
+      bloc.updateEvents();
+      firstBuild = false;
+    }
 
     var fab = null;
 
@@ -108,6 +113,11 @@ class _FeedPageState extends State<FeedPage> {
                     );
                   }
                 },
+              ),
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 32,
+                ),
               )
             ],
           ),
@@ -133,7 +143,7 @@ class _FeedPageState extends State<FeedPage> {
                 type: MaterialType.transparency,
                 child: Ink.image(
                   child: Container(),
-                  image: NetworkImage(
+                  image: CachedNetworkImageProvider(
                     event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
                   ),
                   height: 200,
