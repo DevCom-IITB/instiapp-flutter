@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+* Nothing here yet
+
 ## v1.3-beta
  
 * Added Hero transitions everywhere possible

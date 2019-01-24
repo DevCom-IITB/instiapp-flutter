@@ -147,6 +147,8 @@ class _CalendarPageState extends State<CalendarPage> {
 
                       todayButtonColor: theme.accentColor.withOpacity(0.6),
                       selectedDayButtonColor: theme.accentColor,
+                      selectedDayTextStyle: theme.accentTextTheme.subhead,
+
                       height: 420.0,
                       selectedDateTime: _currentDate,
 
