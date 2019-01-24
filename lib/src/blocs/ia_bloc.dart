@@ -2,6 +2,7 @@ import 'package:InstiApp/main.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
+import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
 import 'package:InstiApp/src/blocs/complaints_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:InstiApp/src/api/model/mess.dart';
 import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'dart:collection';
 import 'package:rxdart/rxdart.dart';
@@ -59,7 +61,7 @@ class AppBrightness {
   //       return false;
   //     }
   //     Brightness brightness = other;
-  //     return brightness.index == index || (index == 2 && brightness.index == 1); 
+  //     return brightness.index == index || (index == 2 && brightness.index == 1);
   //   }
   //   AppBrightness appBrightness = other;
   //   return appBrightness.index == index;
@@ -68,6 +70,9 @@ class AppBrightness {
 }
 
 class InstiAppBloc {
+  // FCM handle
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+
   // Different Streams for the state
   Stream<UnmodifiableListView<Hostel>> get hostels => _hostelsSubject.stream;
   final _hostelsSubject = BehaviorSubject<UnmodifiableListView<Hostel>>();
@@ -244,8 +249,17 @@ class InstiAppBloc {
     return complaintsBloc.getComplaint(uuid);
   }
 
-  void reloadCurrentUser() async {
+  Future<void> reloadCurrentUser() async {
     var userMe = await client.getUserMe(getSessionIdHeader());
+    currSession.profile = userMe;
+    updateSession(currSession);
+  }
+
+  Future<void> patchFcmKey() async {
+    var req = UserFCMPatchRequest()
+      ..userAndroidVersion = 28
+      ..userFCMId = await firebaseMessaging.getToken();
+    var userMe = await client.patchUserMe(getSessionIdHeader(), req);
     currSession.profile = userMe;
     updateSession(currSession);
   }

@@ -8,10 +8,19 @@ For now, being tested on Android only. I will test it on iOS occasionally. Last 
 
 Go [here](Changelog.md)
 
-## Contributing
+# Contributing
 
 For help getting started with Flutter, view online
 [documentation](https://flutter.io/).
+
+## Getting Started
+
+1. Follow instructions at [Flutter Website](https://flutter.io/) to download and setup flutter and its dependencies 
+2. Clone this repo
+3. Run `flutter packages get` to get all the dependency packages
+4. Run `flutter packages pub run build_runner build` to generate code for JSON Serailizing and Retrofit ApiClient
+5. Run `flutter run` to run the app on any device/simulator/emulator.
+6. \[*Optional but recommended*\] Use either Visual Studio Code or Android Studio to code/debug.
 
 ## Useful links
 

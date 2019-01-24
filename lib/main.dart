@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:InstiApp/src/api/model/rich_notification.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
 import 'package:InstiApp/src/routes/complaintpage.dart';
@@ -17,11 +20,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:InstiApp/src/routes/messpage.dart';
 import 'package:InstiApp/src/routes/loginpage.dart';
 import 'package:InstiApp/src/routes/placementblogpage.dart';
-// import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 void main() async {
   GlobalKey<MyAppState> key = GlobalKey();
@@ -49,7 +55,9 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  // final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  // Notifications plugin to show rich notifications
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      new FlutterLocalNotificationsPlugin();
 
   void setTheme(VoidCallback a) {
     setState(a);
@@ -58,37 +66,7 @@ class MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
-    // _firebaseMessaging.configure(
-    //   onMessage: (Map<String, dynamic> message) async {
-    //     print("onMessage: $message");
-    //     // _showItemDialog(message);
-    //   },
-    //   onLaunch: (Map<String, dynamic> message) async {
-    //     print("onLaunch: $message");
-    //     // _navigateToItemDetail(message);
-    //   },
-    //   onResume: (Map<String, dynamic> message) async {
-    //     print("onResume: $message");
-    //     // _navigateToItemDetail(message);
-    //   },
-    // );
-    // _firebaseMessaging.requestNotificationPermissions(
-    //     const IosNotificationSettings(sound: true, badge: true, alert: true));
-    // _firebaseMessaging.onIosSettingsRegistered
-    //     .listen((IosNotificationSettings settings) {
-    //   print("Settings registered: $settings");
-    // });
-    // _firebaseMessaging.getToken().then((String token) {
-    //   assert(token != null);
-    //   print("Push Messaging token: $token");
-    // });
-  }
-
-  @override
-  void dispose() {
-    // TODO: backup all state to disk
-    super.dispose();
+    setupNotifications();
   }
 
   @override
@@ -229,5 +207,137 @@ class MyAppState extends State<MyApp> {
       settings: settings,
       builder: (BuildContext context) => builder,
     );
+  }
+
+  // Section
+  // Handling Notifications 
+
+  void setupNotifications() {
+    // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
+    var initializationSettingsAndroid =
+        new AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    var initializationSettingsIOS = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: onSelectNotification);
+
+    widget.bloc.firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+        var appDocDir = await getApplicationDocumentsDirectory();
+
+        String payload = jsonEncode(message['data']);
+
+        var notif = RichNotificationSerializer().fromMap(message['data']);
+
+        StyleInformation style;
+        AndroidNotificationStyle styleType;
+
+        if (notif.notificationImage != null) {
+          var bigPictureResponse = await http.get(notif.notificationImage);
+          var bigPicturePath =
+              '${appDocDir.path}/bigPicture-${notif.notificationID}';
+          var file = new File(bigPicturePath);
+          await file.writeAsBytes(bigPictureResponse.bodyBytes);
+
+          style = BigPictureStyleInformation(
+            bigPicturePath,
+            BitmapSource.FilePath,
+            summaryText: notif.notificationLargeContent,
+          );
+          styleType = AndroidNotificationStyle.BigPicture;
+        } else if (notif.notificationLargeContent != null) {
+          style = BigTextStyleInformation(
+            notif.notificationLargeContent,
+          );
+          styleType = AndroidNotificationStyle.BigText;
+        } else {
+          style = DefaultStyleInformation(false, false);
+          styleType = AndroidNotificationStyle.Default;
+        }
+
+        String largeIconPath;
+        BitmapSource largeIconSource;
+        if (notif.notificationLargeIcon != null) {
+          var largeIconResponse = await http.get(notif.notificationLargeIcon);
+          largeIconPath = '${appDocDir.path}/largeIcon-${notif.notificationID}';
+          var file = new File(largeIconPath);
+          await file.writeAsBytes(largeIconResponse.bodyBytes);
+        }
+
+        var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+          'Very Important',
+          'Placement Blog Notifications',
+          'All Placement Blog Notifications go here with high importance',
+          importance: Importance.Max,
+          priority: Priority.High,
+          largeIcon: largeIconPath,
+          largeIconBitmapSource: largeIconSource,
+          style: styleType,
+          styleInformation: style,
+        );
+        var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+        var platformChannelSpecifics = new NotificationDetails(
+            androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+
+        await flutterLocalNotificationsPlugin.show(
+          0,
+          notif.notificationTitle,
+          notif.notificationVerb,
+          platformChannelSpecifics,
+          payload: payload,
+        );
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+        navigateFromNotification(
+            RichNotificationSerializer().fromMap(message['data']));
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+        navigateFromNotification(
+            RichNotificationSerializer().fromMap(message['data']));
+      },
+    );
+    widget.bloc.firebaseMessaging.requestNotificationPermissions(
+        const IosNotificationSettings(sound: true, badge: true, alert: true));
+    widget.bloc.firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings) {
+      print("Settings registered: $settings");
+    });
+
+    widget.bloc.firebaseMessaging.getToken().then((String token) {
+      assert(token != null);
+      print("Push Messaging token: $token");
+    });
+  }
+
+  Future onSelectNotification(String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+    }
+    navigateFromNotification(
+        RichNotificationSerializer().fromMap(jsonDecode(payload)));
+  }
+
+  Future navigateFromNotification(RichNotification fromMap) async {
+    // TODO: Navigate to correct page
+    // Navigator.of(context).push(route)
+    var page = {
+      "blogentry": fromMap.notificationExtra?.contains("/trainingblog") ?? false
+          ? "/trainblog"
+          : "/placeblog",
+      "body": "/body/",
+      "event": "/event/",
+      "userprofile": "/user/",
+      "newsentry": "/news",
+    }[fromMap.notificationType];
+    debugPrint(fromMap.toString());
+    var routeName = "$page${fromMap.notificationType != "blogentry" ? fromMap.notificationID ?? "" : ""}";
+    print (Navigator.of(context));
+    var t = await Navigator.of(context).push(new MaterialPageRoute(builder: (context) => new TrainingBlogPage()));
+    print(t);
   }
 }

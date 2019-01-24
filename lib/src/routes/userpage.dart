@@ -90,6 +90,7 @@ class _UserPageState extends State<UserPage> {
         key: _scaffoldKey,
         drawer: BottomDrawer(),
         bottomNavigationBar: MyBottomAppBar(
+          shape: RoundedNotchedRectangle(),
           child: new Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -332,7 +333,7 @@ class _UserPageState extends State<UserPage> {
                       "Check this cool person: ${ShareURLMaker.getUserURL(user)}");
                 },
               ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        floatingActionButtonLocation: footerButtons.isEmpty ? FloatingActionButtonLocation.endDocked : FloatingActionButtonLocation.endFloat,
         persistentFooterButtons:
             footerButtons.isNotEmpty ? footerButtons : null,
       ),

@@ -10,9 +10,6 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 
-const String api = "https://api.insti.app/api";
-const String authority = "api.insti.app";
-
 class LoginPage extends StatefulWidget {
   final InstiAppBloc bloc;
   LoginPage(this.bloc);
@@ -55,7 +52,10 @@ class _LoginPageState extends State<LoginPage> {
     checkLogin().then((Session sess) {
       // If session already exists, continue to homepage with current session
       if (sess != null) {
-        _bloc?.reloadCurrentUser();
+        _bloc.patchFcmKey().then((_) {
+          _bloc?.reloadCurrentUser();
+        });
+
         Navigator.of(context).pushReplacementNamed(_bloc?.homepageName);
         return;
       }
@@ -142,10 +142,12 @@ class _LoginPageState extends State<LoginPage> {
               width: 250.0,
               fit: BoxFit.scaleDown,
             ),
-            
             Text(
               "InstiApp",
-              style: Theme.of(context).textTheme.display1.copyWith(color: Theme.of(context).accentColor),
+              style: Theme.of(context)
+                  .textTheme
+                  .display1
+                  .copyWith(color: Theme.of(context).accentColor),
             ),
             CircularProgressIndicatorExtended(
               label: Text("Initializing"),
@@ -189,6 +191,8 @@ class _LoginPageState extends State<LoginPage> {
     var response = await InstiAppApi().login(authCode, redirectUrl);
     if (response.sessionid != null) {
       _bloc.updateSession(response);
+      _bloc.patchFcmKey();
+
       Navigator.of(context).pushReplacementNamed(_bloc?.homepageName);
 
       this.onUrlChangedSub.cancel();
