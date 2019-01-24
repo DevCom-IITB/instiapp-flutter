@@ -1,5 +1,6 @@
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -92,14 +93,15 @@ class NullableCircleAvatar extends StatelessWidget {
   }
 }
 
-class HeroPhotoViewWrapper extends StatelessWidget {
+class HeroPhotoViewWrapper extends StatefulWidget {
   const HeroPhotoViewWrapper(
       {this.imageProvider,
       this.loadingChild,
       this.backgroundDecoration,
       this.minScale,
       this.maxScale,
-      this.heroTag});
+      this.heroTag,
+      this.theme});
 
   final ImageProvider imageProvider;
   final Widget loadingChild;
@@ -107,6 +109,35 @@ class HeroPhotoViewWrapper extends StatelessWidget {
   final dynamic minScale;
   final dynamic maxScale;
   final String heroTag;
+  final ThemeData theme;
+
+  @override
+  HeroPhotoViewWrapperState createState() {
+    return new HeroPhotoViewWrapperState();
+  }
+}
+
+class HeroPhotoViewWrapperState extends State<HeroPhotoViewWrapper> {
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+      systemNavigationBarColor: widget.theme.primaryColor,
+      systemNavigationBarIconBrightness: Brightness.values[1 -
+          ThemeData.estimateBrightnessForColor(widget.theme.primaryColor)
+              .index],
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness:
+          Brightness.values[1 - widget.theme.brightness.index],
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,12 +151,12 @@ class HeroPhotoViewWrapper extends StatelessWidget {
             height: MediaQuery.of(context).size.height,
           ),
           child: PhotoView(
-            imageProvider: imageProvider,
-            loadingChild: loadingChild,
-            backgroundDecoration: backgroundDecoration,
-            minScale: minScale,
-            maxScale: maxScale,
-            heroTag: heroTag,
+            imageProvider: widget.imageProvider,
+            loadingChild: widget.loadingChild,
+            backgroundDecoration: widget.backgroundDecoration,
+            minScale: widget.minScale,
+            maxScale: widget.maxScale,
+            heroTag: widget.heroTag,
           )),
     );
   }
@@ -150,6 +181,7 @@ class PhotoViewableImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return InkWell(
         customBorder: customBorder,
         onTap: () {
@@ -157,10 +189,12 @@ class PhotoViewableImage extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => HeroPhotoViewWrapper(
-                      imageProvider: imageProvider ?? CachedNetworkImageProvider(url),
+                      imageProvider:
+                          imageProvider ?? CachedNetworkImageProvider(url),
                       heroTag: heroTag,
                       minScale: PhotoViewComputedScale.contained * 0.9,
                       maxScale: PhotoViewComputedScale.contained * 2.0,
+                      theme: theme,
                     ),
               ));
         },
