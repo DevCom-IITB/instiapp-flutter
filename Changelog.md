@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v1.3-beta
  
 * Added Hero transitions everywhere possible
 * Renamed android package name to `app.insti.flutter`
