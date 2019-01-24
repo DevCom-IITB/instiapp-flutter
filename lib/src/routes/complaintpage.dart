@@ -140,299 +140,302 @@ class _ComplaintPageState extends State<ComplaintPage> {
         ),
       ),
       // bottomSheet: ,
-      body: complaint == null
-          ? Center(
-              child: CircularProgressIndicatorExtended(
-                label: Text("Loading the complaint page"),
-              ),
-            )
-          : ListView(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(28.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        widget.title,
-                        style: theme.textTheme.display2,
-                      ),
-                      // SizedBox(height: 8.0),
-                      // Text(event.getSubTitle(), style: theme.textTheme.title),
-                    ],
-                  ),
+      body: SafeArea(
+        child: complaint == null
+            ? Center(
+                child: CircularProgressIndicatorExtended(
+                  label: Text("Loading the complaint page"),
                 ),
-                complaint.images.isNotEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: theme.accentColor),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(6.0)),
-                          ),
-                          height: 200,
-                          child: ListView(
-                            padding: EdgeInsets.all(8.0),
-                            scrollDirection: Axis.horizontal,
-                            children: complaint.images.map((im) {
-                              // TODO: test images
-                              return PhotoViewableImage(
-                                url: im,
-                                heroTag: "$im",
-                                fit: BoxFit.scaleDown,
-                              );
-                            }).toList(),
-                          ),
-                        ))
-                    : Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 28),
-                        child: Text.rich(
-                          TextSpan(children: [
-                            TextSpan(text: "No "),
-                            TextSpan(
-                                text: "images ",
-                                style: theme.textTheme.body1
-                                    .copyWith(fontWeight: FontWeight.bold)),
-                            TextSpan(text: "uploaded."),
-                          ]),
-                        ),
-                      ),
-                Padding(
-                  padding: const EdgeInsets.all(28.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        child: Hero(
-                          tag: complaint.complaintID,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(complaint.complaintCreatedBy.userName,
-                                      style: theme.textTheme.title.copyWith(
-                                          fontWeight: FontWeight.bold)),
-                                  Text(
-                                    DateTimeUtil.getDate(
-                                        complaint.complaintReportDate),
-                                    style: theme.textTheme.caption
-                                        .copyWith(fontSize: 14),
-                                  ),
-                                ],
-                              ),
-                              OutlineButton(
-                                borderSide: BorderSide(
-                                    color: complaint.status.toLowerCase() ==
-                                            "Reported".toLowerCase()
-                                        ? Colors.red
-                                        : complaint.status.toLowerCase() ==
-                                                "In Progress".toLowerCase()
-                                            ? Colors.yellow
-                                            : Colors.green),
-                                padding: EdgeInsets.all(0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      capitalize(complaint.status),
-                                      style: theme.textTheme.subhead,
-                                    ),
-                                  ]..insertAll(
-                                      0,
-                                      complaint.tags.isNotEmpty
-                                          ? [
-                                              Container(
-                                                color: theme.accentColor,
-                                                width: 4,
-                                                height: 4,
-                                              ),
-                                              SizedBox(
-                                                width: 4,
-                                              ),
-                                            ]
-                                          : []),
-                                ),
-                                onPressed: () {},
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Text(
-                        complaint.locationDescription,
-                        style: theme.textTheme.caption.copyWith(fontSize: 14),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    complaint.suggestions.isNotEmpty ||
-                            complaint.suggestions.isNotEmpty
-                        ? Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 28.0),
-                            child: Text(
-                              "Description: ",
-                              style: theme.textTheme.subhead,
-                            ),
-                          )
-                        : SizedBox(),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 28.0, right: 28.0, bottom: 16.0),
-                      child: Text(
-                        complaint.description,
-                        style: theme.textTheme.subhead,
-                      ),
-                    ),
-                  ]
-                    ..addAll(complaint.suggestions.isNotEmpty
-                        ? [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 28.0),
-                              child: Text(
-                                "Suggestions: ",
-                                style: theme.textTheme.subhead,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 28.0, right: 28.0, bottom: 16.0),
-                              child: Text(
-                                complaint.suggestions,
-                                style: theme.textTheme.subhead,
-                              ),
-                            ),
-                          ]
-                        : [])
-                    ..addAll(complaint.locationDetails.isNotEmpty
-                        ? [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 28.0),
-                              child: Text(
-                                "Location Details: ",
-                                style: theme.textTheme.subhead,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 28.0, right: 28.0, bottom: 16.0),
-                              child: Text(
-                                complaint.locationDetails,
-                                style: theme.textTheme.subhead,
-                              ),
-                            ),
-                          ]
-                        : []),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                SizedBox(
-                  height: 200,
-                  child: GoogleMap(
-                    gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>[
-                      Factory<OneSequenceGestureRecognizer>(
-                        () => HorizontalDragGestureRecognizer(),
-                      ),
-                    ].toSet(),
-                    onMapCreated: _onMapCreated,
-                    options: GoogleMapOptions(
-                      scrollGesturesEnabled: true,
-                      rotateGesturesEnabled: true,
-                      zoomGesturesEnabled: true,
-                      compassEnabled: true,
-                      myLocationEnabled: true,
-                      tiltGesturesEnabled: false,
-                    ),
-                  ),
-                ),
-                complaint.tags?.isNotEmpty ?? false
-                    ? Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 28.0, vertical: 8.0),
-                        child: Text(
-                          "Tags",
-                          style: theme.textTheme.headline,
-                        ),
-                      )
-                    : SizedBox(
-                        height: 0,
-                      ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 28.0),
-                  child: EditableChipList(
-                    editable: false,
-                    tags: Set.from(complaint.tags.map((t) => t.tagUri)),
-                  ),
-                ),
-                Divider(),
-              ]
-                ..add(Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 28.0, vertical: 12.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Icon(
-                        OMIcons.comment,
-                        color: Colors.blueGrey,
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                          "${complaint.comments.isEmpty ? "No" : complaint.comments.length} comment${complaint.comments.length == 1 ? "" : "s"}",
-                          style: theme.textTheme.title),
-                    ],
-                  ),
-                ))
-                ..addAll(complaint.comments
-                    .map((v) => _buildComment(bloc, theme, v)))
-                ..add(_buildCommentBox(bloc, theme))
-                ..addAll(<Widget>[
-                  Divider(),
+              )
+            : ListView(
+                children: <Widget>[
                   Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          widget.title,
+                          style: theme.textTheme.display2,
+                        ),
+                        // SizedBox(height: 8.0),
+                        // Text(event.getSubTitle(), style: theme.textTheme.title),
+                      ],
+                    ),
+                  ),
+                  complaint.images.isNotEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: theme.accentColor),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(6.0)),
+                            ),
+                            height: 200,
+                            child: ListView(
+                              padding: EdgeInsets.all(8.0),
+                              scrollDirection: Axis.horizontal,
+                              children: complaint.images.map((im) {
+                                // TODO: test images
+                                return PhotoViewableImage(
+                                  url: im,
+                                  heroTag: "$im",
+                                  fit: BoxFit.scaleDown,
+                                );
+                              }).toList(),
+                            ),
+                          ))
+                      : Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 28),
+                          child: Text.rich(
+                            TextSpan(children: [
+                              TextSpan(text: "No "),
+                              TextSpan(
+                                  text: "images ",
+                                  style: theme.textTheme.body1
+                                      .copyWith(fontWeight: FontWeight.bold)),
+                              TextSpan(text: "uploaded."),
+                            ]),
+                          ),
+                        ),
+                  Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          child: Hero(
+                            tag: complaint.complaintID,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(complaint.complaintCreatedBy.userName,
+                                        style: theme.textTheme.title.copyWith(
+                                            fontWeight: FontWeight.bold)),
+                                    Text(
+                                      DateTimeUtil.getDate(
+                                          complaint.complaintReportDate),
+                                      style: theme.textTheme.caption
+                                          .copyWith(fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                                OutlineButton(
+                                  borderSide: BorderSide(
+                                      color: complaint.status.toLowerCase() ==
+                                              "Reported".toLowerCase()
+                                          ? Colors.red
+                                          : complaint.status.toLowerCase() ==
+                                                  "In Progress".toLowerCase()
+                                              ? Colors.yellow
+                                              : Colors.green),
+                                  padding: EdgeInsets.all(0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        capitalize(complaint.status),
+                                        style: theme.textTheme.subhead,
+                                      ),
+                                    ]..insertAll(
+                                        0,
+                                        complaint.tags.isNotEmpty
+                                            ? [
+                                                Container(
+                                                  color: theme.accentColor,
+                                                  width: 4,
+                                                  height: 4,
+                                                ),
+                                                SizedBox(
+                                                  width: 4,
+                                                ),
+                                              ]
+                                            : []),
+                                  ),
+                                  onPressed: () {},
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Text(
+                          complaint.locationDescription,
+                          style: theme.textTheme.caption.copyWith(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.0,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      complaint.suggestions.isNotEmpty ||
+                              complaint.suggestions.isNotEmpty
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 28.0),
+                              child: Text(
+                                "Description: ",
+                                style: theme.textTheme.subhead,
+                              ),
+                            )
+                          : SizedBox(),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 28.0, right: 28.0, bottom: 16.0),
+                        child: Text(
+                          complaint.description,
+                          style: theme.textTheme.subhead,
+                        ),
+                      ),
+                    ]
+                      ..addAll(complaint.suggestions.isNotEmpty
+                          ? [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 28.0),
+                                child: Text(
+                                  "Suggestions: ",
+                                  style: theme.textTheme.subhead,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 28.0, right: 28.0, bottom: 16.0),
+                                child: Text(
+                                  complaint.suggestions,
+                                  style: theme.textTheme.subhead,
+                                ),
+                              ),
+                            ]
+                          : [])
+                      ..addAll(complaint.locationDetails.isNotEmpty
+                          ? [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 28.0),
+                                child: Text(
+                                  "Location Details: ",
+                                  style: theme.textTheme.subhead,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 28.0, right: 28.0, bottom: 16.0),
+                                child: Text(
+                                  complaint.locationDetails,
+                                  style: theme.textTheme.subhead,
+                                ),
+                              ),
+                            ]
+                          : []),
+                  ),
+                  SizedBox(
+                    height: 16.0,
+                  ),
+                  SizedBox(
+                    height: 200,
+                    child: GoogleMap(
+                      gestureRecognizers:
+                          <Factory<OneSequenceGestureRecognizer>>[
+                        Factory<OneSequenceGestureRecognizer>(
+                          () => HorizontalDragGestureRecognizer(),
+                        ),
+                      ].toSet(),
+                      onMapCreated: _onMapCreated,
+                      options: GoogleMapOptions(
+                        scrollGesturesEnabled: true,
+                        rotateGesturesEnabled: true,
+                        zoomGesturesEnabled: true,
+                        compassEnabled: true,
+                        myLocationEnabled: true,
+                        tiltGesturesEnabled: false,
+                      ),
+                    ),
+                  ),
+                  complaint.tags?.isNotEmpty ?? false
+                      ? Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 28.0, vertical: 8.0),
+                          child: Text(
+                            "Tags",
+                            style: theme.textTheme.headline,
+                          ),
+                        )
+                      : SizedBox(
+                          height: 0,
+                        ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                    child: EditableChipList(
+                      editable: false,
+                      tags: Set.from(complaint.tags.map((t) => t.tagUri)),
+                    ),
+                  ),
+                  Divider(),
+                ]
+                  ..add(Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 28.0, vertical: 12.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Icon(OMIcons.arrowUpward, color: Colors.blueGrey),
+                        Icon(
+                          OMIcons.comment,
+                          color: Colors.blueGrey,
+                        ),
                         SizedBox(
                           width: 8,
                         ),
                         Text(
-                            "${complaint.usersUpVoted.isEmpty ? "No" : complaint.usersUpVoted.length} upvote${complaint.usersUpVoted.length == 1 ? "" : "s"}",
+                            "${complaint.comments.isEmpty ? "No" : complaint.comments.length} comment${complaint.comments.length == 1 ? "" : "s"}",
                             style: theme.textTheme.title),
                       ],
                     ),
-                  ),
-                ])
-                ..addAll(complaint.usersUpVoted
-                    .map((u) => _buildUserTile(bloc, theme, u)))
-                ..addAll([
-                  Divider(),
-                  SizedBox(
-                    height: 32.0,
-                  )
-                ]),
-            ),
+                  ))
+                  ..addAll(complaint.comments
+                      .map((v) => _buildComment(bloc, theme, v)))
+                  ..add(_buildCommentBox(bloc, theme))
+                  ..addAll(<Widget>[
+                    Divider(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28.0, vertical: 12.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(OMIcons.arrowUpward, color: Colors.blueGrey),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                              "${complaint.usersUpVoted.isEmpty ? "No" : complaint.usersUpVoted.length} upvote${complaint.usersUpVoted.length == 1 ? "" : "s"}",
+                              style: theme.textTheme.title),
+                        ],
+                      ),
+                    ),
+                  ])
+                  ..addAll(complaint.usersUpVoted
+                      .map((u) => _buildUserTile(bloc, theme, u)))
+                  ..addAll([
+                    Divider(),
+                    SizedBox(
+                      height: 32.0,
+                    )
+                  ]),
+              ),
+      ),
 
       floatingActionButton: fab,
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,

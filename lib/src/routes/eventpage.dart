@@ -140,61 +140,63 @@ class _EventPageState extends State<EventPage> {
           ],
         ),
       ),
-      body: event == null
-          ? Center(
-              child: CircularProgressIndicatorExtended(
-              label: Text("Loading the event page"),
-            ))
-          : ListView(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(28.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        event.eventName,
-                        style: theme.textTheme.display2,
-                      ),
-                      SizedBox(height: 8.0),
-                      Text(event.getSubTitle(), style: theme.textTheme.title),
-                    ],
+      body: SafeArea(
+        child: event == null
+            ? Center(
+                child: CircularProgressIndicatorExtended(
+                label: Text("Loading the event page"),
+              ))
+            : ListView(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          event.eventName,
+                          style: theme.textTheme.display2,
+                        ),
+                        SizedBox(height: 8.0),
+                        Text(event.getSubTitle(), style: theme.textTheme.title),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: PhotoViewableImage(
-                    url: event?.eventImageURL ??
-                        event?.eventBodies[0].bodyImageURL,
-                    heroTag: event.eventID,
-                    fit: BoxFit.fitWidth,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: PhotoViewableImage(
+                      url: event?.eventImageURL ??
+                          event?.eventBodies[0].bodyImageURL,
+                      heroTag: event.eventID,
+                      fit: BoxFit.fitWidth,
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 28.0, vertical: 16.0),
-                  child: CommonHtml(
-                    data: event?.eventDescription,
-                    defaultTextStyle: theme.textTheme.subhead,
-                  ),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                Divider(),
-              ]
-                ..addAll(event.eventBodies
-                    .map((b) => _buildBodyTile(bloc, theme.textTheme, b)))
-                ..addAll([
-                  Divider(),
                   SizedBox(
-                    height: 64.0,
-                  )
-                ]),
-            ),
+                    height: 16.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 28.0, vertical: 16.0),
+                    child: CommonHtml(
+                      data: event?.eventDescription,
+                      defaultTextStyle: theme.textTheme.subhead,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.0,
+                  ),
+                  Divider(),
+                ]
+                  ..addAll(event.eventBodies
+                      .map((b) => _buildBodyTile(bloc, theme.textTheme, b)))
+                  ..addAll([
+                    Divider(),
+                    SizedBox(
+                      height: 64.0,
+                    )
+                  ]),
+              ),
+      ),
       floatingActionButton: _bottomSheetActive || event == null
           ? null
           : editAccess

@@ -24,6 +24,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:InstiApp/src/routes/messpage.dart';
 import 'package:InstiApp/src/routes/loginpage.dart';
 import 'package:InstiApp/src/routes/placementblogpage.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
@@ -79,13 +80,22 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.suspending) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.suspending) {
       widget?.bloc?.saveToCache();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+      systemNavigationBarColor: widget.bloc.primaryColor,
+      systemNavigationBarIconBrightness: Brightness.values[1 -
+          ThemeData.estimateBrightnessForColor(widget.bloc.primaryColor).index],
+      statusBarColor: Colors.transparent, //or set color with: Color(0xFF0000FF)
+      statusBarIconBrightness: Brightness.values[1 - widget.bloc.brightness.toBrightness().index],
+    ));
+
     return BlocProvider(
       widget.bloc,
       child: MaterialApp(
@@ -225,7 +235,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   // Section
-  // Handling Notifications 
+  // Handling Notifications
 
   void setupNotifications() {
     // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
@@ -350,9 +360,11 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       "newsentry": "/news",
     }[fromMap.notificationType];
     debugPrint(fromMap.toString());
-    var routeName = "$page${fromMap.notificationType != "blogentry" ? fromMap.notificationID ?? "" : ""}";
-    print (Navigator.of(context));
-    var t = await Navigator.of(context).push(new MaterialPageRoute(builder: (context) => new TrainingBlogPage()));
+    var routeName =
+        "$page${fromMap.notificationType != "blogentry" ? fromMap.notificationID ?? "" : ""}";
+    print(Navigator.of(context));
+    var t = await Navigator.of(context).push(
+        new MaterialPageRoute(builder: (context) => new TrainingBlogPage()));
     print(t);
   }
 }

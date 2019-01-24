@@ -161,31 +161,33 @@ class _ExplorePageState extends State<ExplorePage> {
           ],
         ),
       ),
-      body: StreamBuilder<ExploreResponse>(
-        stream: exploreBloc.explore,
-        builder:
-            (BuildContext context, AsyncSnapshot<ExploreResponse> snapshot) {
-          return RefreshIndicator(
-            key: _refreshIndicatorKey,
-            onRefresh: () {
-              return exploreBloc.refresh();
-            },
-            child: ListView(
-              scrollDirection: Axis.vertical,
-              controller: _hideButtonController,
-              children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(28.0),
-                      child: Text(
-                        widget.title,
-                        style: theme.textTheme.display2,
-                      ),
-                    )
-                  ] +
-                  _buildContent(snapshot, theme, exploreBloc),
-            ),
-          );
-        },
+      body: SafeArea(
+        child: StreamBuilder<ExploreResponse>(
+          stream: exploreBloc.explore,
+          builder:
+              (BuildContext context, AsyncSnapshot<ExploreResponse> snapshot) {
+            return RefreshIndicator(
+              key: _refreshIndicatorKey,
+              onRefresh: () {
+                return exploreBloc.refresh();
+              },
+              child: ListView(
+                scrollDirection: Axis.vertical,
+                controller: _hideButtonController,
+                children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(28.0),
+                        child: Text(
+                          widget.title,
+                          style: theme.textTheme.display2,
+                        ),
+                      )
+                    ] +
+                    _buildContent(snapshot, theme, exploreBloc),
+              ),
+            );
+          },
+        ),
       ),
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton: isFabVisible == 0

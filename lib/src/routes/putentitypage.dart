@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 
@@ -35,6 +36,9 @@ class _PutEntityPageState extends State<PutEntityPage> {
   StreamSubscription<String> onUrlChangedSub;
   StreamSubscription<WebViewStateChanged> onStateChangedSub;
 
+  // Storing for dispose
+  ThemeData theme;
+
   @override
   void initState() {
     super.initState();
@@ -54,19 +58,12 @@ class _PutEntityPageState extends State<PutEntityPage> {
     onStateChangedSub =
         flutterWebviewPlugin.onStateChanged.listen((state) async {
       print(state.type);
-      // if (state.type == WebViewState.finishLoad) {
-      //   if (state.url == loginUrl) {
-      //     if (!addedCookie) {
-      //       addedCookie = true;
-      //       flutterWebviewPlugin.evalJavascript(
-      //           'document.cookie = "${widget.cookie};domain=insti.app";');
-      //       // print("Cookie injected");
-      //       flutterWebviewPlugin.reloadUrl(url);
-      //       flutterWebviewPlugin.show();
-      //     }
-      //   }
-      // }
     });
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+    ));
   }
 
   @override
@@ -74,12 +71,24 @@ class _PutEntityPageState extends State<PutEntityPage> {
     onUrlChangedSub?.cancel();
     onStateChangedSub?.cancel();
     flutterWebviewPlugin.dispose();
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+      systemNavigationBarColor: theme?.primaryColor ?? null,
+      systemNavigationBarIconBrightness: theme?.primaryColor != null
+          ? Brightness.values[1 -
+              ThemeData.estimateBrightnessForColor(theme.primaryColor).index]
+          : null,
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness:
+          Brightness.values[1 - (theme?.brightness?.index ?? 0)],
+    ));
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
+    theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
     var url =
         "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + "/" + widget.entityID)}?${widget.cookie}&$sandboxTrueQParam";

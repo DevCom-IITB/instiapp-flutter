@@ -83,7 +83,6 @@ class _BlogPageState extends State<BlogPage> {
                 decoration: InputDecoration(
                   labelStyle: theme.primaryTextTheme.body1,
                   hintStyle: theme.primaryTextTheme.body1,
-
                   prefixIcon: Icon(
                     OMIcons.search,
                     color: theme.colorScheme.onPrimary,
@@ -179,77 +178,79 @@ class _BlogPageState extends State<BlogPage> {
           ],
         ),
       ),
-      body: StreamBuilder(
-        stream: bloc.session,
-        builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
-          if ((snapshot.hasData && snapshot.data != null) ||
-              !widget.loginNeeded) {
-            return StreamBuilder<UnmodifiableListView<Post>>(
-              stream: blogBloc.blog,
-              builder: (BuildContext context,
-                  AsyncSnapshot<UnmodifiableListView<Post>> snapshot) {
-                return RefreshIndicator(
-                  key: _refreshIndicatorKey,
-                  onRefresh: _handleRefresh,
-                  child: ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (index == 0) {
-                        return Padding(
-                          padding: const EdgeInsets.all(28.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                widget.title,
-                                style: theme.textTheme.display2,
-                              ),
-                            ],
-                          ),
-                        );
-                      } else {
-                        return _buildPost(
-                            blogBloc, index - 1, snapshot.data, theme);
-                      }
-                    },
-                    itemCount: (snapshot.data == null
-                            ? 0
-                            : ((snapshot.data.isNotEmpty &&
-                                    snapshot.data.last.content == null)
-                                ? snapshot.data.length - 1
-                                : snapshot.data.length)) +
-                        2,
-                    controller: _hideButtonController,
+      body: SafeArea(
+        child: StreamBuilder(
+          stream: bloc.session,
+          builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
+            if ((snapshot.hasData && snapshot.data != null) ||
+                !widget.loginNeeded) {
+              return StreamBuilder<UnmodifiableListView<Post>>(
+                stream: blogBloc.blog,
+                builder: (BuildContext context,
+                    AsyncSnapshot<UnmodifiableListView<Post>> snapshot) {
+                  return RefreshIndicator(
+                    key: _refreshIndicatorKey,
+                    onRefresh: _handleRefresh,
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemBuilder: (BuildContext context, int index) {
+                        if (index == 0) {
+                          return Padding(
+                            padding: const EdgeInsets.all(28.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  widget.title,
+                                  style: theme.textTheme.display2,
+                                ),
+                              ],
+                            ),
+                          );
+                        } else {
+                          return _buildPost(
+                              blogBloc, index - 1, snapshot.data, theme);
+                        }
+                      },
+                      itemCount: (snapshot.data == null
+                              ? 0
+                              : ((snapshot.data.isNotEmpty &&
+                                      snapshot.data.last.content == null)
+                                  ? snapshot.data.length - 1
+                                  : snapshot.data.length)) +
+                          2,
+                      controller: _hideButtonController,
+                    ),
+                  );
+                },
+              );
+            } else {
+              return ListView(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          widget.title,
+                          style: theme.textTheme.display2,
+                        ),
+                      ],
+                    ),
                   ),
-                );
-              },
-            );
-          } else {
-            return ListView(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(28.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        widget.title,
-                        style: theme.textTheme.display2,
-                      ),
-                    ],
+                  Center(
+                    child: Text(
+                      "You must be logged in to view ${widget.title}",
+                      style: theme.textTheme.title,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
-                Center(
-                  child: Text(
-                    "You must be logged in to view ${widget.title}",
-                    style: theme.textTheme.title,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            );
-          }
-        },
+                ],
+              );
+            }
+          },
+        ),
       ),
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton: isFabVisible == 0
