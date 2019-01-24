@@ -163,7 +163,7 @@ class PostBloc {
       _fetchPages.clear();
       _pagesBeingFetched.clear();
     }
-    else if (_fetchPages.isNotEmpty) {
+    else if (_fetchPages.isNotEmpty && query.isEmpty) {
       List<int> pageIndexes = _fetchPages.keys.toList();
 
       final int minPageIndex = pageIndexes.reduce(min);
