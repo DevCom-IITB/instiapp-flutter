@@ -26,7 +26,7 @@ class User {
   String get userName {
     if (_userName == null) {
       _userName =
-          name.toLowerCase().splitMapJoin(" ", onNonMatch: (word) => capitalize(word.toLowerCase()));
+          name.toLowerCase().splitMapJoin(RegExp("\\s+"), onMatch: (m) => " ", onNonMatch: (word) => capitalize(word.toLowerCase()));
     }
     return _userName;
   }

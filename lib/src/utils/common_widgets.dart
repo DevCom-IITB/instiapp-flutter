@@ -8,8 +8,10 @@ import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
 
 String capitalize(String name) {
-  assert(name != null && name.isNotEmpty);
-  return name.substring(0, 1).toUpperCase() + name.substring(1);
+  if (name != null && name.isNotEmpty) {
+    return name.substring(0, 1).toUpperCase() + name.substring(1);
+  }
+  return name;
 }
 
 String thumbnailUrl(String url, {int dim = 200}) {
