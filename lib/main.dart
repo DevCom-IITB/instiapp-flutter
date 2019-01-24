@@ -54,7 +54,7 @@ class MyApp extends StatefulWidget {
   }
 }
 
-class MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   // Notifications plugin to show rich notifications
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       new FlutterLocalNotificationsPlugin();
@@ -67,6 +67,21 @@ class MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     setupNotifications();
+
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() async {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.suspending) {
+      widget?.bloc?.saveToCache();
+    }
   }
 
   @override

@@ -1,26 +1,34 @@
 import 'dart:collection';
 
 import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:flutter_calendar_carousel/classes/event.dart' as ev;
 import 'package:date_format/date_format.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class CalendarBloc {
+  // monthToEventMap StorageID
+  static String mteKeysStorageID = "monthToEventsKeys";
+  static String mteValuesStorageID = "monthToEventsValues";
+
+  // eventsMap StorageID
+  static String eventsMapKeysStorageID = "eventsMapKeys";
+  static String eventsMapValuesStorageID = "eventsMapValues";
   // parent bloc
   InstiAppBloc bloc;
 
   // Streams
-  Stream<Map<DateTime, List<ev.Event>>> get events => _eventsSubject.stream;
-  final _eventsSubject = BehaviorSubject<Map<DateTime, List<ev.Event>>>();
+  Stream<Map<DateTime, List<Event>>> get events => _eventsSubject.stream;
+  final _eventsSubject = BehaviorSubject<Map<DateTime, List<Event>>>();
 
   Stream<bool> get loading => _loadingSubject.stream;
   final _loadingSubject = BehaviorSubject<bool>();
 
   // State
   Map<DateTime, List<Event>> monthToEvents = {};
-  Map<DateTime, List<ev.Event>> calEventsMap = {};
   Map<DateTime, List<Event>> eventsMap = {};
   List<DateTime> receivingMonths = [];
   bool _loading = false;
@@ -103,15 +111,53 @@ class CalendarBloc {
         receivingMonths.remove(nextMonthStart);
       }
       for (Event e in evs) {
-        calEventsMap.putIfAbsent(e.eventStartDate, () => []).add(
-            ev.Event(date: e.eventStartDate, title: e.eventID, icon: icon));
         eventsMap.putIfAbsent(e.eventStartDate, () => []).add(e);
       }
-      _eventsSubject.add(calEventsMap);
+      _eventsSubject.add(eventsMap);
     }
     if (_loading) {
       _loading = false;
       _loadingSubject.add(_loading);
+    }
+  }
+
+  Future saveToCache({SharedPreferences sharedPrefs}) async {
+    var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
+    if (monthToEvents?.isNotEmpty ?? false) {
+      prefs.setString(
+          mteKeysStorageID, standardSerializers.encode(monthToEvents.keys));
+      prefs.setString(
+          mteValuesStorageID, standardSerializers.encode(monthToEvents.values));
+    }
+
+    if (eventsMap?.isNotEmpty ?? false) {
+      prefs.setString(
+          eventsMapKeysStorageID, standardSerializers.encode(eventsMap.keys));
+      prefs.setString(eventsMapValuesStorageID,
+          standardSerializers.encode(eventsMap.values));
+    }
+  }
+
+  Future restoreFromCache({SharedPreferences sharedPrefs}) async {
+    var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
+    if (prefs.getKeys().contains(mteKeysStorageID) &&
+        prefs.getKeys().contains(mteValuesStorageID)) {
+      var keys = standardSerializers
+          .decodeList<DateTime>(prefs.getString(mteKeysStorageID));
+
+      var values = (json.decode(prefs.getString(mteValuesStorageID)) as List)
+          .map((evs) => standardSerializers.listFrom<Event>(evs));
+      monthToEvents = Map.fromIterables(keys, values);
+    }
+
+    if (prefs.getKeys().contains(eventsMapKeysStorageID) &&
+        prefs.getKeys().contains(eventsMapValuesStorageID)) {
+      var keys = standardSerializers
+          .decodeList<DateTime>(prefs.getString(eventsMapKeysStorageID));
+      var values = (json.decode(prefs.getString(eventsMapValuesStorageID)) as List)
+          .map((evs) => standardSerializers.listFrom<Event>(evs));
+      eventsMap = Map.fromIterables(keys, values);
+      _eventsSubject.add(eventsMap);
     }
   }
 }

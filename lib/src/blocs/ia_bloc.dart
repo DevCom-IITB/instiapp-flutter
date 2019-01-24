@@ -51,25 +51,14 @@ class AppBrightness {
   Brightness toBrightness() {
     return index == 2 ? Brightness.dark : Brightness.values[index];
   }
-
-  // // You should generally implement operator == if you
-  // // override hashCode.
-  // @override
-  // bool operator ==(dynamic other) {
-  //   if (other is! AppBrightness) {
-  //     if (other is! Brightness) {
-  //       return false;
-  //     }
-  //     Brightness brightness = other;
-  //     return brightness.index == index || (index == 2 && brightness.index == 1);
-  //   }
-  //   AppBrightness appBrightness = other;
-  //   return appBrightness.index == index;
-  // }
-
 }
 
 class InstiAppBloc {
+  // Events StorageID
+  static String eventStorageID = "events";
+  // Mess StorageID
+  static String messStorageID = "mess";
+
   // FCM handle
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
@@ -172,30 +161,14 @@ class InstiAppBloc {
     drawerState = DrawerBloc(homepageName, highlightPageIndexVal: 3);
   }
 
-  Future<void> restorePrefs() async {
+  // Settings bloc
+  Future<void> updateHomepage(String s) async {
+    homepageName = s;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getKeys().contains("session")) {
-      Session sess = standardSerializers.decodeOne(prefs.getString("session"));
-      if (sess?.sessionid != null) {
-        updateSession(sess);
-      }
-    }
-    if (prefs.getKeys().contains("homepage")) {
-      homepageName = prefs.getString("homepage") ?? homepageName;
-      drawerState.setPageIndex(pageToIndex[homepageName]);
-    }
-    if (prefs.getKeys().contains("brightness")) {
-      _brightness =
-          AppBrightness.values[prefs.getInt("brightness")] ?? _brightness;
-    }
-    if (prefs.getKeys().contains("accentColor")) {
-      _accentColor = Color(prefs.getInt("accentColor")) ?? _accentColor;
-    }
-    if (prefs.getKeys().contains("primaryColor")) {
-      _primaryColor = Color(prefs.getInt("primaryColor")) ?? _primaryColor;
-    }
+    prefs.setString("homepage", s);
   }
 
+  // PostBloc helper function
   PostBloc getPostsBloc(PostType blogType) {
     return {
       PostType.Placement: placementBloc,
@@ -204,20 +177,16 @@ class InstiAppBloc {
     }[blogType];
   }
 
-  String getSessionIdHeader() {
-    return currSession?.sessionid != null
-        ? "sessionid=${currSession.sessionid}"
-        : "";
-  }
-
-  Future<Null> updateHostels() async {
+  // Mess bloc
+  Future<void> updateHostels() async {
     var hostels = await client.getHostelMess();
     hostels.sort((h1, h2) => h1.compareTo(h2));
     _hostels = hostels;
     _hostelsSubject.add(UnmodifiableListView(_hostels));
   }
 
-  Future<Null> updateEvents() async {
+  // Event bloc
+  Future<void> updateEvents() async {
     var newsFeedResponse = await client.getNewsFeed(getSessionIdHeader());
     _events = newsFeedResponse.events;
     if (_events.length >= 1) {
@@ -226,11 +195,12 @@ class InstiAppBloc {
     _eventsSubject.add(UnmodifiableListView(_events));
   }
 
+  // Section
+  // Navigator helper
   Future<Event> getEvent(String uuid) async {
     try {
       return _events?.firstWhere((event) => event.eventID == uuid);
     } catch (ex) {
-      print(ex);
       return client.getEvent(getSessionIdHeader(), uuid);
     }
   }
@@ -249,12 +219,8 @@ class InstiAppBloc {
     return complaintsBloc.getComplaint(uuid);
   }
 
-  Future<void> reloadCurrentUser() async {
-    var userMe = await client.getUserMe(getSessionIdHeader());
-    currSession.profile = userMe;
-    updateSession(currSession);
-  }
-
+  // Section
+  // Send FCM key
   Future<void> patchFcmKey() async {
     var req = UserFCMPatchRequest()
       ..userAndroidVersion = 28
@@ -264,24 +230,8 @@ class InstiAppBloc {
     updateSession(currSession);
   }
 
-  void updateSession(Session sess) {
-    currSession = sess;
-    _sessionSubject.add(sess);
-    _persistSession(sess);
-  }
-
-  bool editEventAccess(Event event) {
-    return currSession?.profile?.userRoles?.any((r) => r.roleBodies.any(
-            (b) => event.eventBodies.any((b1) => b.bodyID == b1.bodyID))) ??
-        false;
-  }
-
-  bool editBodyAccess(Body body) {
-    return currSession?.profile?.userRoles
-            ?.any((r) => r.roleBodies.any((b) => b.bodyID == body.bodyID)) ??
-        false;
-  }
-
+  // Section
+  // User/Body/Event updates
   Future<void> updateUesEvent(Event e, int ues) async {
     try {
       print("updating Ues from ${e.eventUserUes} to $ues");
@@ -315,18 +265,108 @@ class InstiAppBloc {
     }
   }
 
+  bool editEventAccess(Event event) {
+    return currSession?.profile?.userRoles?.any((r) => r.roleBodies.any(
+            (b) => event.eventBodies.any((b1) => b.bodyID == b1.bodyID))) ??
+        false;
+  }
+
+  bool editBodyAccess(Body body) {
+    return currSession?.profile?.userRoles
+            ?.any((r) => r.roleBodies.any((b) => b.bodyID == body.bodyID)) ??
+        false;
+  }
+
+  // Section
+  // Bloc state management
+  Future<void> restorePrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getKeys().contains("session")) {
+      Session sess = standardSerializers.decodeOne(prefs.getString("session"));
+      if (sess?.sessionid != null) {
+        updateSession(sess);
+      }
+    }
+    if (prefs.getKeys().contains("homepage")) {
+      homepageName = prefs.getString("homepage") ?? homepageName;
+      drawerState.setPageIndex(pageToIndex[homepageName]);
+    }
+    if (prefs.getKeys().contains("brightness")) {
+      _brightness =
+          AppBrightness.values[prefs.getInt("brightness")] ?? _brightness;
+    }
+    if (prefs.getKeys().contains("accentColor")) {
+      _accentColor = Color(prefs.getInt("accentColor")) ?? _accentColor;
+    }
+    if (prefs.getKeys().contains("primaryColor")) {
+      _primaryColor = Color(prefs.getInt("primaryColor")) ?? _primaryColor;
+    }
+
+    restoreFromCache(sharedPrefs: prefs);
+  }
+
+  // Section
+  // Session management
+  void updateSession(Session sess) {
+    currSession = sess;
+    _sessionSubject.add(sess);
+    _persistSession(sess);
+  }
+
   void _persistSession(Session sess) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("session", standardSerializers.encode(sess));
+  }
+
+  Future<void> reloadCurrentUser() async {
+    var userMe = await client.getUserMe(getSessionIdHeader());
+    currSession.profile = userMe;
+    updateSession(currSession);
+  }
+
+  String getSessionIdHeader() {
+    return currSession?.sessionid != null
+        ? "sessionid=${currSession.sessionid}"
+        : "";
   }
 
   void logout() {
     updateSession(null);
   }
 
-  Future<void> updateHomepage(String s) async {
-    homepageName = s;
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("homepage", s);
+  Future saveToCache({SharedPreferences sharedPrefs}) async {
+    var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
+    if (_hostels?.isNotEmpty ?? false) {
+      prefs.setString(messStorageID, standardSerializers.encode(_hostels));
+    }
+    if (_events?.isNotEmpty ?? false) {
+      prefs.setString(eventStorageID, standardSerializers.encode(_events));
+    }
+
+    exploreBloc?.saveToCache(sharedPrefs: prefs);
+    complaintsBloc?.saveToCache(sharedPrefs: prefs);
+    calendarBloc?.saveToCache(sharedPrefs: prefs);
+  }
+
+  Future restoreFromCache({SharedPreferences sharedPrefs}) async {
+    var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
+    if (prefs.getKeys().contains(messStorageID)) {
+      _hostels = standardSerializers
+          .decodeList<Hostel>(prefs.getString(messStorageID));
+      _hostelsSubject.add(UnmodifiableListView(_hostels));
+    }
+
+    if (prefs.getKeys().contains(eventStorageID)) {
+      _events = standardSerializers
+          .decodeList<Event>(prefs.getString(eventStorageID));
+      if (_events.length >= 1) {
+        _events[0].eventBigImage = true;
+      }
+      _eventsSubject.add(UnmodifiableListView(_events));
+    }
+
+    exploreBloc?.restoreFromCache(sharedPrefs: prefs);
+    complaintsBloc?.restoreFromCache(sharedPrefs: prefs);
+    calendarBloc?.restoreFromCache(sharedPrefs: prefs);
   }
 }

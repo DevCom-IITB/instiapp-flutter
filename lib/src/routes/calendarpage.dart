@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
     as cal;
-import 'package:flutter_calendar_carousel/classes/event.dart' as ev;
 import 'package:flutter_calendar_carousel/classes/event_list.dart' as el;
 
 class CalendarPage extends StatefulWidget {
@@ -28,6 +27,7 @@ class _CalendarPageState extends State<CalendarPage> {
       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
   static Widget _eventIcon;
+  bool firstBuild = true;
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +43,10 @@ class _CalendarPageState extends State<CalendarPage> {
         ),
       ),
     );
-
-    calBloc.fetchEvents(DateTime.now(), _eventIcon);
+    if (firstBuild) {
+      calBloc.fetchEvents(DateTime.now(), _eventIcon);
+      firstBuild = false;
+    }
 
     var footerButtons;
     footerButtons = null;
@@ -71,10 +73,10 @@ class _CalendarPageState extends State<CalendarPage> {
         ),
       ),
       drawer: BottomDrawer(),
-      body: StreamBuilder<Map<DateTime, List<ev.Event>>>(
+      body: StreamBuilder<Map<DateTime, List<Event>>>(
         stream: calBloc.events,
         builder: (BuildContext context,
-            AsyncSnapshot<Map<DateTime, List<ev.Event>>> snapshot) {
+            AsyncSnapshot<Map<DateTime, List<Event>>> snapshot) {
           return ListView(
             children: <Widget>[
               Padding(
@@ -113,9 +115,9 @@ class _CalendarPageState extends State<CalendarPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    cal.CalendarCarousel<ev.Event>(
+                    cal.CalendarCarousel<Event>(
                       customGridViewPhysics: NeverScrollableScrollPhysics(),
-                      onDayPressed: (DateTime date, List<ev.Event> evs) {
+                      onDayPressed: (DateTime date, List<Event> evs) {
                         this.setState(() => _currentDate = date);
                       },
                       onCalendarChanged: (date) {
@@ -147,9 +149,11 @@ class _CalendarPageState extends State<CalendarPage> {
                       selectedDayButtonColor: theme.accentColor,
                       height: 420.0,
                       selectedDateTime: _currentDate,
-                      daysHaveCircularBorder: null,
 
-                      /// null for not rendering any border, true for circular border, false for rectangular border
+                      // null for not rendering any border, true for circular border, false for rectangular border
+                      daysHaveCircularBorder: null,
+                      staticSixWeekFormat: true,
+
                       iconColor: theme.accentColor,
                       weekdayTextStyle: TextStyle(
                           // color: theme.accentColor.withOpacity(0.9),

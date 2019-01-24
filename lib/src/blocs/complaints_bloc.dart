@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
@@ -8,8 +9,13 @@ import 'package:InstiApp/src/api/response/complaint_create_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ComplaintsBloc {
+  // Unique ID for use in SharedPrefs
+  static String allStorageID = "allcomplaints";
+  static String myStorageID = "mycomplaints";
+
   // parent bloc
   InstiAppBloc bloc;
 
@@ -103,12 +109,37 @@ class ComplaintsBloc {
     }
   }
 
-  Future<Complaint> postComplaint(
-      ComplaintCreateRequest req) async {
+  Future<Complaint> postComplaint(ComplaintCreateRequest req) async {
     try {
       return bloc.client.postComplaint(bloc.getSessionIdHeader(), req);
     } catch (ex) {
       print(ex);
+    }
+  }
+
+  Future saveToCache({SharedPreferences sharedPrefs}) async {
+    var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
+    if (_allComplaints?.isNotEmpty ?? false) {
+      prefs.setString(allStorageID, standardSerializers.encode(_allComplaints));
+    }
+
+    if (_myComplaints?.isNotEmpty ?? false) {
+      prefs.setString(myStorageID, standardSerializers.encode(_myComplaints));
+    }
+  }
+
+  Future restoreFromCache({SharedPreferences sharedPrefs}) async {
+    var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
+    if (prefs.getKeys().contains(allStorageID)) {
+      _allComplaints = standardSerializers
+          .decodeList<Complaint>(prefs.getString(allStorageID));
+      _complaintsSubject.add(UnmodifiableListView(_allComplaints));
+    }
+
+    if (prefs.getKeys().contains(myStorageID)) {
+      _myComplaints = standardSerializers
+          .decodeList<Complaint>(prefs.getString(myStorageID));
+      _mycomplaintsSubject.add(UnmodifiableListView(_myComplaints));
     }
   }
 }

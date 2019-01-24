@@ -23,6 +23,7 @@ class _MessPageState extends State<MessPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   bool _bottomSheetActive = false;
+  bool firstBuild = true;
 
   @override
   void initState() {
@@ -34,7 +35,10 @@ class _MessPageState extends State<MessPage> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
 
-    bloc.updateHostels();
+    if (firstBuild) {
+      bloc.updateHostels();
+      firstBuild = false;
+    }
 
     var footerButtons = <Widget>[
       buildDropdownButton(theme),
@@ -62,48 +66,51 @@ class _MessPageState extends State<MessPage> {
         ),
       ),
       drawer: BottomDrawer(),
-      body: ListView(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(28.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  "Mess Menu",
-                  style: theme.textTheme.display2,
-                ),
-              ],
+      body: RefreshIndicator(
+        onRefresh: () => bloc.updateHostels(),
+        child: ListView(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(28.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "Mess Menu",
+                    style: theme.textTheme.display2,
+                  ),
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 28.0),
-            child: StreamBuilder<UnmodifiableListView<Hostel>>(
-              stream: bloc.hostels,
-              builder: (BuildContext context,
-                  AsyncSnapshot<UnmodifiableListView<Hostel>> hostels) {
-                if (currHostel == "0")
-                  currHostel = bloc.currSession?.profile?.hostel ?? "1";
-                if (hostels.hasData) {
-                  var currMess = hostels.data
-                      .firstWhere((h) => h.shortName == currHostel)
-                      .mess
-                    ..sort((h1, h2) => h1.compareTo(h2));
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: currMess.map(_buildSingleDayMess).toList(),
-                  );
-                } else {
-                  return Center(
-                    child: CircularProgressIndicatorExtended(
-                      label: Text("Loading mess menu"),
-                    ),
-                  );
-                }
-              },
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 28.0),
+              child: StreamBuilder<UnmodifiableListView<Hostel>>(
+                stream: bloc.hostels,
+                builder: (BuildContext context,
+                    AsyncSnapshot<UnmodifiableListView<Hostel>> hostels) {
+                  if (currHostel == "0")
+                    currHostel = bloc.currSession?.profile?.hostel ?? "1";
+                  if (hostels.hasData) {
+                    var currMess = hostels.data
+                        .firstWhere((h) => h.shortName == currHostel)
+                        .mess
+                      ..sort((h1, h2) => h1.compareTo(h2));
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: currMess.map(_buildSingleDayMess).toList(),
+                    );
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicatorExtended(
+                        label: Text("Loading mess menu"),
+                      ),
+                    );
+                  }
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       persistentFooterButtons: footerButtons,
     );
@@ -146,21 +153,22 @@ class _MessPageState extends State<MessPage> {
   }
 
   Widget _buildSingleDayMess(HostelMess mess) {
-    var localTheme = Theme.of(context).textTheme;
+    var theme = Theme.of(context);
+    var localTheme = theme.textTheme;
     return Material(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             mess.getDayName(),
-            style: localTheme.display1,
+            style: localTheme.headline.copyWith(fontWeight: FontWeight.bold),
           ),
           SizedBox(
             height: 8.0,
           ),
           Text(
             "Breakfast",
-            style: localTheme.headline,
+            style: localTheme.title.copyWith(color: theme.accentColor),
           ),
           ContentText(mess.breakfast, context),
           SizedBox(
@@ -168,7 +176,7 @@ class _MessPageState extends State<MessPage> {
           ),
           Text(
             "Lunch",
-            style: localTheme.headline,
+            style: localTheme.title.copyWith(color: theme.accentColor),
           ),
           ContentText(mess.lunch, context),
           SizedBox(
@@ -176,7 +184,7 @@ class _MessPageState extends State<MessPage> {
           ),
           Text(
             "Snacks",
-            style: localTheme.headline,
+            style: localTheme.title.copyWith(color: theme.accentColor),
           ),
           ContentText(mess.snacks, context),
           SizedBox(
@@ -184,7 +192,7 @@ class _MessPageState extends State<MessPage> {
           ),
           Text(
             "Dinner",
-            style: localTheme.headline,
+            style: localTheme.title.copyWith(color: theme.accentColor),
           ),
           ContentText(mess.dinner, context),
           SizedBox(

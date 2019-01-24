@@ -276,8 +276,8 @@ class _BlogPageState extends State<BlogPage> {
   }
 
   Future<void> _handleRefresh() {
-    var bloc = BlocProvider.of(context).bloc;
-    return bloc.getPostsBloc(widget.postType).refresh();
+    var blogbloc = BlocProvider.of(context).bloc.getPostsBloc(widget.postType);
+    return blogbloc.refresh(force: blogbloc.query.isEmpty);
   }
 
   Widget _buildPost(

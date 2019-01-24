@@ -6,6 +6,10 @@
 * Renamed android package name to `app.insti.flutter`
 * Added key signing to the android apk
 * Add `FCM` to android part
+* Add caching to all images and using smaller images for thumbnails
+* Also caching Feed, MessMenu, Explore, Complaints, Calendar
+* Redone Calendar BLoC
+* Not discarding fetched posts in Blogs when search is initiated
 
 ## v1.2-beta
 

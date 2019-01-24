@@ -1,12 +1,13 @@
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/role.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
 part 'user.jser.dart';
 
-class Session {  
-  String sessionid; 
+class Session {
+  String sessionid;
   String user;
 
   @Alias('profile_id')
@@ -19,7 +20,16 @@ class User {
   String userID;
 
   @Alias("name")
-  String userName;
+  String name;
+
+  String _userName;
+  String get userName {
+    if (_userName == null) {
+      _userName =
+          name.toLowerCase().splitMapJoin(" ", onNonMatch: (word) => capitalize(word.toLowerCase()));
+    }
+    return _userName;
+  }
 
   @Alias("profile_pic")
   String userProfilePictureUrl;

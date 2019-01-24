@@ -39,8 +39,10 @@ class PostBloc {
   }
 
   final _fetchPages = <int, List<Post>>{};
-
   final _pagesBeingFetched = Set<int>();
+
+  final _searchFetchPages = <int, List<Post>>{};
+  final _searchPagesBeingFetched = Set<int>();
 
   static final month = [
     "Jan",
@@ -59,7 +61,7 @@ class PostBloc {
   static final week = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"];
   String dateTimeFormatter(String pub) {
     var dt = DateTime.parse(pub).toLocal();
-    return "${week[dt.weekday - 1]}, ${month[dt.month - 1]} ${dt.day.toString()}${dt.year == DateTime.now().year ? "" : dt.year.toString()}, ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}";
+    return "${week[dt.weekday - 1]}, ${month[dt.month - 1]} ${dt.day.toString()}${dt.year == DateTime.now().year ? "" : (" " + dt.year.toString())}, ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}";
   }
 
   Future<List<Post>> getBlogPage(int page) async {
@@ -81,17 +83,19 @@ class PostBloc {
   }
 
   void _handleIndexes(List<int> indexes) {
+    var pages = query.isEmpty ? _fetchPages : _searchFetchPages;
+    var pagesBeingFetched = query.isEmpty ? _pagesBeingFetched : _searchPagesBeingFetched;
     indexes.forEach((int index) {
       final int pageIndex = ((index + 1) ~/ _noOfPostsPerPage);
 
       // check if the page has already been fetched
-      if (!_fetchPages.containsKey(pageIndex)) {
+      if (!pages.containsKey(pageIndex)) {
         // the page has NOT yet been fetched, so we need to
         // fetch it from Internet
         // (except if we are already currently fetching it)
-        if (!_pagesBeingFetched.contains(pageIndex)) {
+        if (!pagesBeingFetched.contains(pageIndex)) {
           // Remember that we are fetching it
-          _pagesBeingFetched.add(pageIndex);
+          pagesBeingFetched.add(pageIndex);
           // Fetch it
           getBlogPage(pageIndex).then((List<Post> fetchedPage) =>
               _handleFetchedPage(fetchedPage, pageIndex));
@@ -106,10 +110,13 @@ class PostBloc {
   /// 2) notify everyone who might be interested in knowing it
   ///
   void _handleFetchedPage(List<Post> page, int pageIndex) {
+    var pages = query.isEmpty ? _fetchPages : _searchFetchPages;
+    var pagesBeingFetched = query.isEmpty ? _pagesBeingFetched : _searchPagesBeingFetched;
+
     // Remember the page
-    _fetchPages[pageIndex] = page;
+    pages[pageIndex] = page;
     // Remove it from the ones being fetched
-    _pagesBeingFetched.remove(pageIndex);
+    pagesBeingFetched.remove(pageIndex);
 
     // Notify anyone interested in getting access to the content
     // of all pages... however, we need to only return the pages
@@ -117,7 +124,7 @@ class PostBloc {
     // therefore, we need to iterate through the pages that are
     // actually fetched and stop if there is a gap.
     List<Post> posts = <Post>[];
-    List<int> pageIndexes = _fetchPages.keys.toList();
+    List<int> pageIndexes = pages.keys.toList();
 
     final int minPageIndex = pageIndexes.reduce(min);
     final int maxPageIndex = pageIndexes.reduce(max);
@@ -126,16 +133,16 @@ class PostBloc {
     // and as soon as it will become available, it will be time to notify
     if (minPageIndex == 0) {
       for (int i = 0; i <= maxPageIndex; i++) {
-        if (!_fetchPages.containsKey(i)) {
+        if (!pages.containsKey(i)) {
           // As soon as there is a hole, stop
           break;
         }
         // Add the list of fetched posts to the list
-        posts.addAll(_fetchPages[i]);
+        posts.addAll(pages[i]);
       }
     }
 
-    if (_fetchPages[maxPageIndex].length < _noOfPostsPerPage) {
+    if (pages[maxPageIndex].length < _noOfPostsPerPage) {
       posts.add(Post());
     }
 
@@ -145,11 +152,35 @@ class PostBloc {
     }
   }
 
-  Future<void> refresh() {
+  Future<void> refresh({bool force = false}) {
     _indexController.close();
-    _fetchPages.clear();
-    _pagesBeingFetched.clear();
-    _blogSubject.add(UnmodifiableListView([]));
+
+    _searchFetchPages.clear();
+    _searchPagesBeingFetched.clear();
+    
+    List<Post> posts = <Post>[];
+    if (force) {
+      _fetchPages.clear();
+      _pagesBeingFetched.clear();
+    }
+    else if (_fetchPages.isNotEmpty) {
+      List<int> pageIndexes = _fetchPages.keys.toList();
+
+      final int minPageIndex = pageIndexes.reduce(min);
+      final int maxPageIndex = pageIndexes.reduce(max);
+
+      if (minPageIndex == 0) {
+        for (int i = 0; i <= maxPageIndex; i++) {
+          if (!_fetchPages.containsKey(i)) {
+            // As soon as there is a hole, stop
+            break;
+          }
+          posts.addAll(_fetchPages[i]);
+        }
+      }
+    }
+    
+    _blogSubject.add(UnmodifiableListView(posts));
 
     _indexController = PublishSubject<int>();
     _setIndexListener();

@@ -5,11 +5,12 @@ import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
 import 'dart:math' as math;
+import 'package:cached_network_image/cached_network_image.dart';
 
 String capitalize(String name) {
-    assert(name != null && name.isNotEmpty);
-    return name.substring(0, 1).toUpperCase() + name.substring(1);
-  }
+  assert(name != null && name.isNotEmpty);
+  return name.substring(0, 1).toUpperCase() + name.substring(1);
+}
 
 String thumbnailUrl(String url, {int dim = 200}) {
   return url.replaceFirst(
@@ -35,7 +36,7 @@ class NullableCircleAvatar extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => HeroPhotoViewWrapper(
-                              imageProvider: NetworkImage(url),
+                              imageProvider: CachedNetworkImageProvider(url),
                               heroTag: heroTag,
                               minScale: PhotoViewComputedScale.contained * 0.9,
                               maxScale: PhotoViewComputedScale.contained * 2.0,
@@ -47,17 +48,17 @@ class NullableCircleAvatar extends StatelessWidget {
                         tag: heroTag,
                         child: CircleAvatar(
                           radius: radius,
-                          backgroundImage: NetworkImage(
-                            // thumbnailUrl(url),
-                            url,
+                          backgroundImage: CachedNetworkImageProvider(
+                            thumbnailUrl(url),
+                            // url,
                           ),
                         ),
                       )
                     : CircleAvatar(
                         radius: radius,
-                        backgroundImage: NetworkImage(
-                          // thumbnailUrl(url),
-                          url,
+                        backgroundImage: CachedNetworkImageProvider(
+                          thumbnailUrl(url),
+                          // url,
                         ),
                       ),
               )
@@ -66,17 +67,17 @@ class NullableCircleAvatar extends StatelessWidget {
                     tag: heroTag,
                     child: CircleAvatar(
                       radius: radius,
-                      backgroundImage: NetworkImage(
-                        // thumbnailUrl(url),
-                        url,
+                      backgroundImage: CachedNetworkImageProvider(
+                        thumbnailUrl(url),
+                        // url,
                       ),
                     ),
                   )
                 : CircleAvatar(
                     radius: radius,
-                    backgroundImage: NetworkImage(
-                      // thumbnailUrl(url),
-                      url,
+                    backgroundImage: CachedNetworkImageProvider(
+                      thumbnailUrl(url),
+                      // url,
                     ),
                   ))
         : heroTag != null
@@ -129,6 +130,7 @@ class HeroPhotoViewWrapper extends StatelessWidget {
 }
 
 class PhotoViewableImage extends StatelessWidget {
+  final String url;
   final ImageProvider imageProvider;
   final String heroTag;
   final BoxFit fit;
@@ -136,12 +138,13 @@ class PhotoViewableImage extends StatelessWidget {
   // final double height;
   // final double width;
 
-  PhotoViewableImage(
+  PhotoViewableImage({
+    this.url,
     this.imageProvider,
-    this.heroTag, {
+    @required this.heroTag,
     this.fit,
     this.customBorder,
-  });
+  }) : assert(url != null || imageProvider != null);
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +155,7 @@ class PhotoViewableImage extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => HeroPhotoViewWrapper(
-                      imageProvider: imageProvider,
+                      imageProvider: imageProvider ?? CachedNetworkImageProvider(url),
                       heroTag: heroTag,
                       minScale: PhotoViewComputedScale.contained * 0.9,
                       maxScale: PhotoViewComputedScale.contained * 2.0,
@@ -161,10 +164,22 @@ class PhotoViewableImage extends StatelessWidget {
         },
         child: Hero(
           tag: heroTag,
-          child: Image(
-            image: imageProvider,
-            fit: fit,
-          ),
+          child: imageProvider != null
+              ? Image(
+                  image: imageProvider,
+                  fit: fit,
+                )
+              : CachedNetworkImage(
+                  imageUrl: url,
+                  placeholder: CachedNetworkImage(
+                    imageUrl: thumbnailUrl(url),
+                    fit: fit,
+                    placeholder: CircularProgressIndicatorExtended(),
+                  ),
+                  fit: fit,
+                  fadeInDuration: Duration(milliseconds: 0),
+                  fadeOutDuration: Duration(milliseconds: 0),
+                ),
         ));
   }
 }
@@ -445,8 +460,7 @@ class CircularProgressIndicatorExtended extends StatelessWidget {
         SizedBox(
           width: 12.0,
         ),
-        label,
-      ],
+      ]..addAll(label != null ? [label] : []),
     );
   }
 }

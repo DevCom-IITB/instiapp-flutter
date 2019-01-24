@@ -145,8 +145,8 @@ class _BodyPageState extends State<BodyPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: PhotoViewableImage(
-                    NetworkImage(body.bodyImageURL),
-                    body.bodyID,
+                    url: body.bodyImageURL,
+                    heroTag: body.bodyID,
                     fit: BoxFit.fitWidth,
                   ),
                 ),
