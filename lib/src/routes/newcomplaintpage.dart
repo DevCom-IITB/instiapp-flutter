@@ -262,315 +262,320 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
           ],
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(28.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      body: SafeArea(
+        child: Form(
+          key: _formKey,
+          child: ListView(children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(28.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    widget.title,
+                    style: theme.textTheme.display2,
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(
-                  widget.title,
-                  style: theme.textTheme.display2,
+                _uploadingImages
+                    ? CircularProgressIndicatorExtended(
+                        label: Text("Uploading Images"),
+                      )
+                    : Container(
+                        width: 0,
+                        height: 0,
+                      ),
+                currRequest.images?.isNotEmpty ?? false
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: theme.accentColor),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(6.0)),
+                          ),
+                          height: 200,
+                          child: ListView(
+                            padding: EdgeInsets.all(8.0),
+                            scrollDirection: Axis.horizontal,
+                            children: currRequest.images.map((im) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: InkWell(
+                                  onLongPress: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text("Delete selected image?"),
+                                          actions: <Widget>[
+                                            FlatButton.icon(
+                                              icon: Icon(OMIcons.cancel),
+                                              label: Text("Cancel"),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                            FlatButton.icon(
+                                              icon: Icon(OMIcons.deleteOutline),
+                                              label: Text("Delete"),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                                setState(() {
+                                                  currRequest.images.remove(im);
+                                                });
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: PhotoViewableImage(
+                                    imageProvider: FileImage(im),
+                                    heroTag: "${im.path}",
+                                    fit: BoxFit.scaleDown,
+                                    customBorder: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(6.0)),
+                                        side: BorderSide(
+                                          width: 2,
+                                          color: theme.accentColor,
+                                        )),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ))
+                    : Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 28),
+                        child: Text.rich(
+                          TextSpan(children: [
+                            TextSpan(text: "No "),
+                            TextSpan(
+                                text: "images ",
+                                style: theme.textTheme.body1
+                                    .copyWith(fontWeight: FontWeight.bold)),
+                            TextSpan(text: "selected."),
+                          ]),
+                        ),
+                      ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                  child: OutlineButton.icon(
+                    label: Text("Upload Images"),
+                    icon: Icon(OMIcons.image),
+                    onPressed: () async {
+                      File imageFile = await showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return SimpleDialog(
+                              children: <Widget>[
+                                SimpleDialogOption(
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Icon(OMIcons.photoCamera),
+                                      SizedBox(
+                                        width: 16,
+                                      ),
+                                      Text("From Camera"),
+                                    ],
+                                  ),
+                                  onPressed: () async {
+                                    Navigator.of(context).pop(
+                                        await ImagePicker.pickImage(
+                                            source: ImageSource.camera));
+                                  },
+                                ),
+                                SimpleDialogOption(
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Icon(OMIcons.image),
+                                      SizedBox(
+                                        width: 16,
+                                      ),
+                                      Text("From Gallery"),
+                                    ],
+                                  ),
+                                  onPressed: () async {
+                                    Navigator.of(context).pop(
+                                        await ImagePicker.pickImage(
+                                            source: ImageSource.gallery));
+                                  },
+                                ),
+                              ],
+                            );
+                          });
+                      if (imageFile != null) {
+                        currRequest.images = currRequest.images ?? [];
+                        setState(() {
+                          currRequest.images.add(imageFile);
+                        });
+                      }
+                    },
+                  ),
                 ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              _uploadingImages
-                  ? CircularProgressIndicatorExtended(
-                      label: Text("Uploading Images"),
-                    )
-                  : Container(
-                      width: 0,
-                      height: 0,
-                    ),
-              currRequest.images?.isNotEmpty ?? false
-                  ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: theme.accentColor),
-                          borderRadius: BorderRadius.all(Radius.circular(6.0)),
-                        ),
-                        height: 200,
-                        child: ListView(
-                          padding: EdgeInsets.all(8.0),
-                          scrollDirection: Axis.horizontal,
-                          children: currRequest.images.map((im) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: InkWell(
-                                onLongPress: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text("Delete selected image?"),
-                                        actions: <Widget>[
-                                          FlatButton.icon(
-                                            icon: Icon(OMIcons.cancel),
-                                            label: Text("Cancel"),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                          FlatButton.icon(
-                                            icon: Icon(OMIcons.deleteOutline),
-                                            label: Text("Delete"),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                              setState(() {
-                                                currRequest.images.remove(im);
-                                              });
-                                            },
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                child: PhotoViewableImage(
-                                  imageProvider: FileImage(im),
-                                  heroTag: "${im.path}",
-                                  fit: BoxFit.scaleDown,
-                                  customBorder: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(6.0)),
-                                      side: BorderSide(
-                                        width: 2,
-                                        color: theme.accentColor,
-                                      )),
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ))
-                  : Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 28),
-                      child: Text.rich(
-                        TextSpan(children: [
-                          TextSpan(text: "No "),
-                          TextSpan(
-                              text: "images ",
-                              style: theme.textTheme.body1
-                                  .copyWith(fontWeight: FontWeight.bold)),
-                          TextSpan(text: "selected."),
-                        ]),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
+              child: TextFormField(
+                maxLines: null,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: "Description*",
+                ),
+                autocorrect: true,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return "Please enter a description to your complaint/suggestion";
+                  }
+                  currRequest.description = value;
+                },
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
+              child: TextFormField(
+                maxLines: null,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: "Suggestions",
+                ),
+                autocorrect: true,
+                validator: (value) {
+                  currRequest.suggestions = value;
+                },
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
+              child: TextFormField(
+                maxLines: null,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: "Location Details",
+                ),
+                autocorrect: true,
+                validator: (value) {
+                  currRequest.locationDetail = value;
+                },
+              ),
+            ),
+            Divider(),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
+              child: EditableChipList(
+                key: _chipsKey,
+                editable: true,
+                preDefinedTags: NewComplaintPage.defaultTags.toSet(),
+                tags: Set.from([]),
+                controller: _tagController,
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
+              child: TypeAheadFormField(
+                getImmediateSuggestions: true,
+                onSuggestionSelected: (tag) {
+                  _tagController.text = tag;
+                  _textTagController.text = "";
+                },
+                suggestionsCallback: (q) {
+                  RegExp exp = RegExp(".*" + q.split("").join(".*") + ".*",
+                      caseSensitive: false);
+                  return NewComplaintPage.defaultTags
+                      .where((d) => exp.hasMatch(d))
+                      .toList();
+                },
+                itemBuilder: (context, suggestion) {
+                  return ListTile(
+                    title: Text(suggestion),
+                  );
+                },
+                textFieldConfiguration: TextFieldConfiguration(
+                    focusNode: _textTagFocusNode,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Tags",
+                      suffixIcon: IconButton(
+                        icon: (!_textTagFocusNode.hasFocus ||
+                                (_textTagController.text?.isNotEmpty ?? false))
+                            ? Icon(OMIcons.add)
+                            : Icon(OMIcons.close),
+                        onPressed: () {
+                          if (_textTagController.text?.isNotEmpty ?? false) {
+                            _tagController.text = _textTagController.text;
+                            _textTagController.text = "";
+                            _textTagFocusNode.unfocus();
+                          } else {
+                            _textTagFocusNode.unfocus();
+                          }
+                        },
                       ),
                     ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 28.0),
-                child: OutlineButton.icon(
-                  label: Text("Upload Images"),
-                  icon: Icon(OMIcons.image),
-                  onPressed: () async {
-                    File imageFile = await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return SimpleDialog(
-                            children: <Widget>[
-                              SimpleDialogOption(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Icon(OMIcons.photoCamera),
-                                    SizedBox(
-                                      width: 16,
-                                    ),
-                                    Text("From Camera"),
-                                  ],
-                                ),
-                                onPressed: () async {
-                                  Navigator.of(context).pop(
-                                      await ImagePicker.pickImage(
-                                          source: ImageSource.camera));
-                                },
-                              ),
-                              SimpleDialogOption(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Icon(OMIcons.image),
-                                    SizedBox(
-                                      width: 16,
-                                    ),
-                                    Text("From Gallery"),
-                                  ],
-                                ),
-                                onPressed: () async {
-                                  Navigator.of(context).pop(
-                                      await ImagePicker.pickImage(
-                                          source: ImageSource.gallery));
-                                },
-                              ),
-                            ],
-                          );
-                        });
-                    if (imageFile != null) {
-                      currRequest.images = currRequest.images ?? [];
-                      setState(() {
-                        currRequest.images.add(imageFile);
-                      });
-                    }
-                  },
-                ),
+                    controller: _textTagController,
+                    onSubmitted: (s) {
+                      _tagController.text = _textTagController.text;
+                      _textTagController.text = "";
+                    }),
               ),
-            ],
-          ),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-            child: TextFormField(
-              maxLines: null,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Description*",
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
+              child: OutlineButton.icon(
+                icon: Icon(OMIcons.search),
+                label: Text("Search Location"),
+                onPressed: () {
+                  _handlePressButton();
+                },
               ),
-              autocorrect: true,
-              validator: (value) {
-                if (value.isEmpty) {
-                  return "Please enter a description to your complaint/suggestion";
-                }
-                currRequest.description = value;
-              },
             ),
-          ),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-            child: TextFormField(
-              maxLines: null,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Suggestions",
-              ),
-              autocorrect: true,
-              validator: (value) {
-                currRequest.suggestions = value;
-              },
-            ),
-          ),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-            child: TextFormField(
-              maxLines: null,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Location Details",
-              ),
-              autocorrect: true,
-              validator: (value) {
-                currRequest.locationDetail = value;
-              },
-            ),
-          ),
-          Divider(),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-            child: EditableChipList(
-              key: _chipsKey,
-              editable: true,
-              preDefinedTags: NewComplaintPage.defaultTags.toSet(),
-              tags: Set.from([]),
-              controller: _tagController,
-            ),
-          ),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-            child: TypeAheadFormField(
-              getImmediateSuggestions: true,
-              onSuggestionSelected: (tag) {
-                _tagController.text = tag;
-                _textTagController.text = "";
-              },
-              suggestionsCallback: (q) {
-                RegExp exp = RegExp(".*" + q.split("").join(".*") + ".*",
-                    caseSensitive: false);
-                return NewComplaintPage.defaultTags
-                    .where((d) => exp.hasMatch(d))
-                    .toList();
-              },
-              itemBuilder: (context, suggestion) {
-                return ListTile(
-                  title: Text(suggestion),
-                );
-              },
-              textFieldConfiguration: TextFieldConfiguration(
-                  focusNode: _textTagFocusNode,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Tags",
-                    suffixIcon: IconButton(
-                      icon: (!_textTagFocusNode.hasFocus ||
-                              (_textTagController.text?.isNotEmpty ?? false))
-                          ? Icon(OMIcons.add)
-                          : Icon(OMIcons.close),
-                      onPressed: () {
-                        if (_textTagController.text?.isNotEmpty ?? false) {
-                          _tagController.text = _textTagController.text;
-                          _textTagController.text = "";
-                          _textTagFocusNode.unfocus();
-                        } else {
-                          _textTagFocusNode.unfocus();
-                        }
-                      },
-                    ),
+            SizedBox(
+              height: 300,
+              child: GoogleMap(
+                gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>[
+                  Factory<OneSequenceGestureRecognizer>(
+                    () => HorizontalDragGestureRecognizer(),
                   ),
-                  controller: _textTagController,
-                  onSubmitted: (s) {
-                    _tagController.text = _textTagController.text;
-                    _textTagController.text = "";
-                  }),
-            ),
-          ),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-            child: OutlineButton.icon(
-              icon: Icon(OMIcons.search),
-              label: Text("Search Location"),
-              onPressed: () {
-                _handlePressButton();
-              },
-            ),
-          ),
-          SizedBox(
-            height: 300,
-            child: GoogleMap(
-              gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>[
-                Factory<OneSequenceGestureRecognizer>(
-                  () => HorizontalDragGestureRecognizer(),
+                ].toSet(),
+                onMapCreated: _onMapCreated,
+                options: GoogleMapOptions(
+                  scrollGesturesEnabled: true,
+                  rotateGesturesEnabled: true,
+                  zoomGesturesEnabled: true,
+                  compassEnabled: true,
+                  myLocationEnabled: true,
+                  tiltGesturesEnabled: false,
                 ),
-              ].toSet(),
-              onMapCreated: _onMapCreated,
-              options: GoogleMapOptions(
-                scrollGesturesEnabled: true,
-                rotateGesturesEnabled: true,
-                zoomGesturesEnabled: true,
-                compassEnabled: true,
-                myLocationEnabled: true,
-                tiltGesturesEnabled: false,
               ),
             ),
-          ),
-          SizedBox(
-            height: 64,
-          )
-        ]),
+            SizedBox(
+              height: 64,
+            )
+          ]),
+        ),
       ),
       floatingActionButton: fab,
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,

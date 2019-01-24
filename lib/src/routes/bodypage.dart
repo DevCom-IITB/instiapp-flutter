@@ -120,117 +120,119 @@ class _BodyPageState extends State<BodyPage> {
           ],
         ),
       ),
-      body: body == null
-          ? Center(
-              child: CircularProgressIndicatorExtended(
-              label: Text("Loading the body page"),
-            ))
-          : ListView(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(28.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        body.bodyName,
-                        style: theme.textTheme.display2,
-                      ),
-                      SizedBox(height: 8.0),
-                      Text(body.bodyShortDescription,
-                          style: theme.textTheme.title),
-                    ],
+      body: SafeArea(
+        child: body == null
+            ? Center(
+                child: CircularProgressIndicatorExtended(
+                label: Text("Loading the body page"),
+              ))
+            : ListView(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          body.bodyName,
+                          style: theme.textTheme.display2,
+                        ),
+                        SizedBox(height: 8.0),
+                        Text(body.bodyShortDescription,
+                            style: theme.textTheme.title),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: PhotoViewableImage(
-                    url: body.bodyImageURL,
-                    heroTag: body.bodyID,
-                    fit: BoxFit.fitWidth,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: PhotoViewableImage(
+                      url: body.bodyImageURL,
+                      heroTag: body.bodyID,
+                      fit: BoxFit.fitWidth,
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 28.0, vertical: 16.0),
-                  child: CommonHtml(
-                    data: body.bodyDescription,
-                    defaultTextStyle: theme.textTheme.subhead,
-                  ),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                Divider(),
-              ] // Events
-                ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                    body.bodyEvents
-                        ?.map((e) => _buildEventTile(bloc, theme, e))
-                        ?.toList(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 28.0, vertical: 16.0),
-                      child: Text(
-                        "Events",
-                        style: theme.textTheme.headline,
-                      ),
-                    )))
-                // Children
-                ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                    body.bodyChildren
-                        ?.map((b) => _buildBodyTile(bloc, theme.textTheme, b))
-                        ?.toList(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 28.0, vertical: 16.0),
-                      child: Text(
-                        "Organizations",
-                        style: theme.textTheme.headline,
-                      ),
-                    )))
-                // People
-                ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                    body.bodyRoles
-                        ?.expand((r) {
-                          if (r.roleUsersDetail != null) {
-                            return r.roleUsersDetail
-                                .map((u) => u..currentRole = r.roleName)
-                                .toList();
-                          }
-                        })
-                        ?.map((u) => _buildUserTile(bloc, theme, u))
-                        ?.toList(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 28.0, vertical: 16.0),
-                      child: Text(
-                        "People",
-                        style: theme.textTheme.headline,
-                      ),
-                    )))
-                // Parents
-                ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                    body.bodyParents
-                        ?.map((b) => _buildBodyTile(bloc, theme.textTheme, b))
-                        ?.toList(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 28.0, vertical: 16.0),
-                      child: Text(
-                        "Part of",
-                        style: theme.textTheme.headline,
-                      ),
-                    )))
-                ..addAll([
-                  Divider(),
                   SizedBox(
-                    height: 64.0,
-                  )
-                ]),
-            ),
+                    height: 16.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 28.0, vertical: 16.0),
+                    child: CommonHtml(
+                      data: body.bodyDescription,
+                      defaultTextStyle: theme.textTheme.subhead,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.0,
+                  ),
+                  Divider(),
+                ] // Events
+                  ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                      body.bodyEvents
+                          ?.map((e) => _buildEventTile(bloc, theme, e))
+                          ?.toList(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 28.0, vertical: 16.0),
+                        child: Text(
+                          "Events",
+                          style: theme.textTheme.headline,
+                        ),
+                      )))
+                  // Children
+                  ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                      body.bodyChildren
+                          ?.map((b) => _buildBodyTile(bloc, theme.textTheme, b))
+                          ?.toList(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 28.0, vertical: 16.0),
+                        child: Text(
+                          "Organizations",
+                          style: theme.textTheme.headline,
+                        ),
+                      )))
+                  // People
+                  ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                      body.bodyRoles
+                          ?.expand((r) {
+                            if (r.roleUsersDetail != null) {
+                              return r.roleUsersDetail
+                                  .map((u) => u..currentRole = r.roleName)
+                                  .toList();
+                            }
+                          })
+                          ?.map((u) => _buildUserTile(bloc, theme, u))
+                          ?.toList(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 28.0, vertical: 16.0),
+                        child: Text(
+                          "People",
+                          style: theme.textTheme.headline,
+                        ),
+                      )))
+                  // Parents
+                  ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                      body.bodyParents
+                          ?.map((b) => _buildBodyTile(bloc, theme.textTheme, b))
+                          ?.toList(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 28.0, vertical: 16.0),
+                        child: Text(
+                          "Part of",
+                          style: theme.textTheme.headline,
+                        ),
+                      )))
+                  ..addAll([
+                    Divider(),
+                    SizedBox(
+                      height: 64.0,
+                    )
+                  ]),
+              ),
+      ),
       floatingActionButton: body == null
           ? null
           : editAccess

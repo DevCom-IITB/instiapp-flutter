@@ -73,118 +73,121 @@ class _CalendarPageState extends State<CalendarPage> {
         ),
       ),
       drawer: BottomDrawer(),
-      body: StreamBuilder<Map<DateTime, List<Event>>>(
-        stream: calBloc.events,
-        builder: (BuildContext context,
-            AsyncSnapshot<Map<DateTime, List<Event>>> snapshot) {
-          return ListView(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(28.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      widget.title,
-                      style: theme.textTheme.display2,
-                    ),
-                    SizedBox(
-                        height: 18,
-                        width: 18,
-                        child: StreamBuilder<bool>(
-                          stream: calBloc.loading,
-                          initialData: true,
-                          builder: (BuildContext context,
-                              AsyncSnapshot<bool> snapshot) {
-                            return snapshot.data
-                                ? CircularProgressIndicator(
-                                    valueColor:
-                                        new AlwaysStoppedAnimation<Color>(
-                                            theme.accentColor),
-                                    strokeWidth: 2,
-                                  )
-                                : Container();
-                          },
-                        ))
-                  ],
+      body: SafeArea(
+        child: StreamBuilder<Map<DateTime, List<Event>>>(
+          stream: calBloc.events,
+          builder: (BuildContext context,
+              AsyncSnapshot<Map<DateTime, List<Event>>> snapshot) {
+            return ListView(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(28.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        widget.title,
+                        style: theme.textTheme.display2,
+                      ),
+                      SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: StreamBuilder<bool>(
+                            stream: calBloc.loading,
+                            initialData: true,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<bool> snapshot) {
+                              return snapshot.data
+                                  ? CircularProgressIndicator(
+                                      valueColor:
+                                          new AlwaysStoppedAnimation<Color>(
+                                              theme.accentColor),
+                                      strokeWidth: 2,
+                                    )
+                                  : Container();
+                            },
+                          ))
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 28.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    cal.CalendarCarousel<Event>(
-                      customGridViewPhysics: NeverScrollableScrollPhysics(),
-                      onDayPressed: (DateTime date, List<Event> evs) {
-                        this.setState(() => _currentDate = date);
-                      },
-                      onCalendarChanged: (date) {
-                        print(
-                            "Fetching events around ${date.month}/${date.year}");
-                        calBloc.fetchEvents(
-                            DateTime(date.year, date.month, 1), _eventIcon);
-                      },
-                      weekendTextStyle: TextStyle(
-                        color: Colors.red[800],
-                      ),
-
-                      headerTextStyle: theme.textTheme.title,
-
-                      daysTextStyle: theme.textTheme.subhead,
-
-                      weekFormat: false,
-                      markedDatesMap: el.EventList(events: snapshot.data ?? {}),
-                      markedDateShowIcon: true,
-                      markedDateIconMaxShown: 0,
-
-                      markedDateMoreShowTotal: true,
-                      markedDateMoreCustomDecoration: BoxDecoration(
-                        color: theme.accentColor.withOpacity(1.0),
-                        shape: BoxShape.circle,
-                      ),
-
-                      todayButtonColor: theme.accentColor.withOpacity(0.6),
-                      selectedDayButtonColor: theme.accentColor,
-                      selectedDayTextStyle: theme.accentTextTheme.subhead,
-
-                      height: 420.0,
-                      selectedDateTime: _currentDate,
-
-                      // null for not rendering any border, true for circular border, false for rectangular border
-                      daysHaveCircularBorder: null,
-                      staticSixWeekFormat: true,
-
-                      iconColor: theme.accentColor,
-                      weekdayTextStyle: TextStyle(
-                          // color: theme.accentColor.withOpacity(0.9),
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Center(
-                      child: RawMaterialButton(
-                        fillColor: theme.accentColor,
-                        shape: StadiumBorder(),
-                        splashColor: theme.accentColor.withOpacity(0.8),
-                        onPressed: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                              snapshot.data != null &&
-                                      snapshot.data.containsKey(_currentDate)
-                                  ? "${snapshot.data[_currentDate].length} Events"
-                                  : "No events",
-                              style: theme.accentTextTheme.button),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      cal.CalendarCarousel<Event>(
+                        customGridViewPhysics: NeverScrollableScrollPhysics(),
+                        onDayPressed: (DateTime date, List<Event> evs) {
+                          this.setState(() => _currentDate = date);
+                        },
+                        onCalendarChanged: (date) {
+                          print(
+                              "Fetching events around ${date.month}/${date.year}");
+                          calBloc.fetchEvents(
+                              DateTime(date.year, date.month, 1), _eventIcon);
+                        },
+                        weekendTextStyle: TextStyle(
+                          color: Colors.red[800],
                         ),
+
+                        headerTextStyle: theme.textTheme.title,
+
+                        daysTextStyle: theme.textTheme.subhead,
+
+                        weekFormat: false,
+                        markedDatesMap:
+                            el.EventList(events: snapshot.data ?? {}),
+                        markedDateShowIcon: true,
+                        markedDateIconMaxShown: 0,
+
+                        markedDateMoreShowTotal: true,
+                        markedDateMoreCustomDecoration: BoxDecoration(
+                          color: theme.accentColor.withOpacity(1.0),
+                          shape: BoxShape.circle,
+                        ),
+
+                        todayButtonColor: theme.accentColor.withOpacity(0.6),
+                        selectedDayButtonColor: theme.accentColor,
+                        selectedDayTextStyle: theme.accentTextTheme.subhead,
+
+                        height: 420.0,
+                        selectedDateTime: _currentDate,
+
+                        // null for not rendering any border, true for circular border, false for rectangular border
+                        daysHaveCircularBorder: null,
+                        staticSixWeekFormat: true,
+
+                        iconColor: theme.accentColor,
+                        weekdayTextStyle: TextStyle(
+                            // color: theme.accentColor.withOpacity(0.9),
+                            color: Colors.grey,
+                            fontWeight: FontWeight.bold),
                       ),
-                    )
-                  ],
+                      Center(
+                        child: RawMaterialButton(
+                          fillColor: theme.accentColor,
+                          shape: StadiumBorder(),
+                          splashColor: theme.accentColor.withOpacity(0.8),
+                          onPressed: () {},
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                                snapshot.data != null &&
+                                        snapshot.data.containsKey(_currentDate)
+                                    ? "${snapshot.data[_currentDate].length} Events"
+                                    : "No events",
+                                style: theme.accentTextTheme.button),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ]..addAll(_buildEvents(calBloc, theme)),
-          );
-        },
+              ]..addAll(_buildEvents(calBloc, theme)),
+            );
+          },
+        ),
       ),
       persistentFooterButtons: footerButtons,
     );

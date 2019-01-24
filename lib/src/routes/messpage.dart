@@ -66,50 +66,52 @@ class _MessPageState extends State<MessPage> {
         ),
       ),
       drawer: BottomDrawer(),
-      body: RefreshIndicator(
-        onRefresh: () => bloc.updateHostels(),
-        child: ListView(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(28.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    "Mess Menu",
-                    style: theme.textTheme.display2,
-                  ),
-                ],
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: () => bloc.updateHostels(),
+          child: ListView(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(28.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "Mess Menu",
+                      style: theme.textTheme.display2,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28.0),
-              child: StreamBuilder<UnmodifiableListView<Hostel>>(
-                stream: bloc.hostels,
-                builder: (BuildContext context,
-                    AsyncSnapshot<UnmodifiableListView<Hostel>> hostels) {
-                  if (currHostel == "0")
-                    currHostel = bloc.currSession?.profile?.hostel ?? "1";
-                  if (hostels.hasData) {
-                    var currMess = hostels.data
-                        .firstWhere((h) => h.shortName == currHostel)
-                        .mess
-                      ..sort((h1, h2) => h1.compareTo(h2));
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: currMess.map(_buildSingleDayMess).toList(),
-                    );
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicatorExtended(
-                        label: Text("Loading mess menu"),
-                      ),
-                    );
-                  }
-                },
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                child: StreamBuilder<UnmodifiableListView<Hostel>>(
+                  stream: bloc.hostels,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<UnmodifiableListView<Hostel>> hostels) {
+                    if (currHostel == "0")
+                      currHostel = bloc.currSession?.profile?.hostel ?? "1";
+                    if (hostels.hasData) {
+                      var currMess = hostels.data
+                          .firstWhere((h) => h.shortName == currHostel)
+                          .mess
+                        ..sort((h1, h2) => h1.compareTo(h2));
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: currMess.map(_buildSingleDayMess).toList(),
+                      );
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicatorExtended(
+                          label: Text("Loading mess menu"),
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       persistentFooterButtons: footerButtons,
