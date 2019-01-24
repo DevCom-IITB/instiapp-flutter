@@ -265,7 +265,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
           builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
             return snapshot.hasData && snapshot.data != null
                 ? FloatingActionButton.extended(
-                    label: Text("Vent"),
+                    label: Text("New Complaint"),
                     icon: Icon(OMIcons.feedback),
                     onPressed: () {
                       Navigator.of(context).pushNamed("/newcomplaint");

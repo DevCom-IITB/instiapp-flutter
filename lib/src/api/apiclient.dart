@@ -7,6 +7,7 @@ import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
 import 'package:InstiApp/src/api/request/image_upload_request.dart';
+import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/response/complaint_create_response.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
@@ -26,7 +27,9 @@ part 'apiclient.jretro.dart';
 
 @GenApiClient()
 class InstiAppApi extends _$InstiAppApiClient implements ApiClient {
-  final resty.Route base = Route("https://api.insti.app/api");
+  // static String endpoint = "http://10.4.66.222:8000/api";
+  static String endpoint = "https://api.insti.app/api";
+  final resty.Route base = Route(endpoint);
   final SerializerRepo serializers = standardSerializers;
 
   static InstiAppApi _instance = InstiAppApi.internal();
@@ -38,11 +41,11 @@ class InstiAppApi extends _$InstiAppApiClient implements ApiClient {
   @GetReq(path: "/mess")
   Future<List<Hostel>> getHostelMess();
 
-  // @GetReq("pass-login")
-  // Future<LoginResponse> passwordLogin(@QueryParam("username") String username, @QueryParam("password") String password);
+  @GetReq(path: "/pass-login")
+  Future<Session> passwordLogin(@QueryParam("username") String username, @QueryParam("password") String password);
 
-  // @GetReq("pass-login")
-  // Future<LoginResponse> passwordLogin(@QueryParam("username") String username, @QueryParam("password") String password, @QueryParam("fcm_id") String fcmId);
+  @GetReq(path: "/pass-login")
+  Future<Session> passwordLoginFcm(@QueryParam("username") String username, @QueryParam("password") String password, @QueryParam("fcm_id") String fcmId);
 
   @GetReq(path: "/login")
   Future<Session> login(@QueryParam() String code, @QueryParam() String redir);
@@ -50,7 +53,7 @@ class InstiAppApi extends _$InstiAppApiClient implements ApiClient {
   @GetReq(path: "/placement-blog")
   Future<List<PlacementBlogPost>> getPlacementBlogFeed(@Header("Cookie") String sessionId, @QueryParam("from") int from, @QueryParam("num") int number, @QueryParam("query") String query);
 
-  @GetReq(path: "training-blog")
+  @GetReq(path: "/training-blog")
   Future<List<TrainingBlogPost>> getTrainingBlogFeed(@Header("Cookie") String sessionID, @QueryParam("from") int from, @QueryParam("num") int num, @QueryParam("query") String query);
 
 
@@ -96,8 +99,8 @@ class InstiAppApi extends _$InstiAppApiClient implements ApiClient {
   @GetReq(path: "/user-me/ues/:eventID")
   Future<void> updateUserEventStatus(@Header("Cookie") String sessionID, @PathParam() String eventID, @QueryParam("status") int status);
 
-  // @PatchReq(path: "/user-me")
-  // Future<User> patchUserMe(@Header("Cookie") String sessionID, @AsJson UserFCMPatchRequest userFCMPatchRequest);
+  @PatchReq(path: "/user-me")
+  Future<User> patchUserMe(@Header("Cookie") String sessionID, @AsJson() UserFCMPatchRequest userFCMPatchRequest);
 
   @GetReq(path: "/news")
   Future<List<NewsArticle>> getNews(@Header("Cookie") String sessionID, @QueryParam("from") int from, @QueryParam("num") int num, @QueryParam("query") String query);

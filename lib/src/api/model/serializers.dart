@@ -9,6 +9,7 @@ import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
 import 'package:InstiApp/src/api/request/image_upload_request.dart';
+import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/response/complaint_create_response.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
@@ -53,6 +54,7 @@ JsonRepo standardSerializers = JsonRepo(serializers: [
   EventCreateRequestSerializer(),
   ImageUploadRequestSerializer(),
   CommentCreateRequestSerializer(),
+  UserFCMPatchRequestSerializer(),
 
   // Responses
   NewsFeedResponseSerializer(),

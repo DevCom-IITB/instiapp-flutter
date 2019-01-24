@@ -13,6 +13,26 @@ abstract class _$InstiAppApiClient implements ApiClient {
     return req.list(convert: serializers.oneFrom);
   }
 
+  Future<Session> passwordLogin(String username, String password) async {
+    var req = base.get
+        .path(basePath)
+        .path("/pass-login")
+        .query("username", username)
+        .query("password", password);
+    return req.one(convert: serializers.oneFrom);
+  }
+
+  Future<Session> passwordLoginFcm(
+      String username, String password, String fcmId) async {
+    var req = base.get
+        .path(basePath)
+        .path("/pass-login")
+        .query("username", username)
+        .query("password", password)
+        .query("fcm_id", fcmId);
+    return req.one(convert: serializers.oneFrom);
+  }
+
   Future<Session> login(String code, String redir) async {
     var req = base.get
         .path(basePath)
@@ -38,7 +58,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
       String sessionID, int from, int num, String query) async {
     var req = base.get
         .path(basePath)
-        .path("training-blog")
+        .path("/training-blog")
         .query("from", from)
         .query("num", num)
         .query("query", query)
@@ -147,6 +167,16 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .query("status", status)
         .header("Cookie", sessionID);
     await req.go();
+  }
+
+  Future<User> patchUserMe(
+      String sessionID, UserFCMPatchRequest userFCMPatchRequest) async {
+    var req = base.patch
+        .path(basePath)
+        .path("/user-me")
+        .header("Cookie", sessionID)
+        .json(serializers.to(userFCMPatchRequest));
+    return req.one(convert: serializers.oneFrom);
   }
 
   Future<List<NewsArticle>> getNews(
