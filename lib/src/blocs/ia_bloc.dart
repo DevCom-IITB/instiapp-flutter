@@ -330,7 +330,8 @@ class InstiAppBloc {
         : "";
   }
 
-  void logout() {
+  Future<void> logout() async {
+    await client.logout(getSessionIdHeader());
     updateSession(null);
   }
 
