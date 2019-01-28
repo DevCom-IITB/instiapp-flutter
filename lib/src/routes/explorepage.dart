@@ -2,6 +2,7 @@ import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/routes/blogpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
@@ -35,9 +36,10 @@ class _ExplorePageState extends State<ExplorePage> {
     super.initState();
     _hideButtonController = ScrollController();
     _hideButtonController.addListener(() {
-      if (_hideButtonController.position.userScrollDirection ==
-              ScrollDirection.reverse &&
-          isFabVisible == 1) {
+      if ((_hideButtonController.position.userScrollDirection ==
+                  ScrollDirection.reverse &&
+              isFabVisible == 1) ||
+          _hideButtonController.offset < 100) {
         setState(() {
           isFabVisible = 0;
         });
@@ -62,134 +64,201 @@ class _ExplorePageState extends State<ExplorePage> {
       firstBuild = false;
     }
 
-    var footerButtons = searchMode
-        ? [
-            Expanded(
-              child: TextField(
-                style: theme.primaryTextTheme.body1,
-                cursorColor: theme.colorScheme.onPrimary,
-                autofocus: true,
-                decoration: InputDecoration(
-                  labelStyle: theme.primaryTextTheme.body1,
-                  hintStyle: theme.primaryTextTheme.body1,
-                  prefixIcon: Icon(
-                    OMIcons.search,
-                    color: theme.colorScheme.onPrimary,
-                  ),
-                  hintText: "Search...",
-                ),
-                onChanged: (query) async {
-                  if (query.length > 4) {
-                    exploreBloc.query = query;
-                    exploreBloc.refresh();
-                  }
-                },
-                onSubmitted: (query) async {
-                  exploreBloc.query = query;
-                  await exploreBloc.refresh();
-                },
-              ),
-            ),
-          ]
-        : null;
-
     return Scaffold(
       resizeToAvoidBottomPadding: true,
       key: _scaffoldKey,
       drawer: NavDrawer(),
-      bottomNavigationBar: Transform.translate(
-        offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.end,
+      bottomNavigationBar: MyBottomAppBar(
+        shape: RoundedNotchedRectangle(),
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            searchMode
-                ? Container(
-                    decoration: BoxDecoration(
-                      color: theme.bottomAppBarColor,
-                      border: Border(
-                        top: Divider.createBorderSide(context, width: 1.0),
-                      ),
-                    ),
-                    child: SafeArea(
-                      child: ButtonTheme.bar(
-                        child: SafeArea(
-                          top: false,
-                          child: Row(children: footerButtons),
-                        ),
-                      ),
-                    ),
-                  )
-                : Container(
-                    width: 0,
-                    height: 0,
-                  ),
-            MyBottomAppBar(
-              child: new Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  IconButton(
-                    tooltip: "Show bottom sheet",
-                    icon: Icon(
-                      OMIcons.menu,
-                      semanticLabel: "Show bottom sheet",
-                    ),
-                    onPressed: () {
-                      NavDrawer.setPageIndex(bloc, 2);
-                      _scaffoldKey.currentState.openDrawer();
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(actionIcon),
-                    onPressed: () {
-                      setState(() {
-                        if (searchMode) {
-                          actionIcon = OMIcons.search;
-                          exploreBloc.query = "";
-                          exploreBloc.refresh();
-                        } else {
-                          actionIcon = OMIcons.close;
-                        }
-                        searchMode = !searchMode;
-                      });
-                    },
-                  )
-                ],
+            IconButton(
+              tooltip: "Show bottom sheet",
+              icon: Icon(
+                OMIcons.menu,
+                semanticLabel: "Show bottom sheet",
               ),
+              onPressed: () {
+                NavDrawer.setPageIndex(bloc, 2);
+                _scaffoldKey.currentState.openDrawer();
+              },
             ),
           ],
         ),
       ),
       body: SafeArea(
-        child: StreamBuilder<ExploreResponse>(
-          stream: exploreBloc.explore,
-          builder:
-              (BuildContext context, AsyncSnapshot<ExploreResponse> snapshot) {
-            return RefreshIndicator(
-              key: _refreshIndicatorKey,
-              onRefresh: () {
-                return exploreBloc.refresh();
-              },
-              child: ListView(
-                scrollDirection: Axis.vertical,
-                controller: _hideButtonController,
-                children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(28.0),
+        child: NestedScrollView(
+          controller: _hideButtonController,
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(28.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
                         child: Text(
                           widget.title,
                           style: theme.textTheme.display2,
                         ),
-                      )
-                    ] +
-                    _buildContent(snapshot, theme, exploreBloc),
+                      ),
+                    ]..addAll(searchMode
+                        ? []
+                        : [
+                            AnimatedContainer(
+                              duration: Duration(milliseconds: 500),
+                              decoration: ShapeDecoration(
+                                  shape: CircleBorder(
+                                      side: BorderSide(
+                                          color: theme.primaryColor))),
+                              child: IconButton(
+                                tooltip: !searchMode
+                                    ? "Search ${widget.title}"
+                                    : "Clear search results",
+                                padding: EdgeInsets.all(16.0),
+                                icon: Icon(
+                                  actionIcon,
+                                  color: theme.primaryColor,
+                                ),
+                                color: theme.cardColor,
+                                onPressed: () {
+                                  setState(() {
+                                    if (searchMode) {
+                                      actionIcon = OMIcons.search;
+                                      exploreBloc.query = "";
+                                      exploreBloc.refresh();
+                                    } else {
+                                      actionIcon = OMIcons.close;
+                                    }
+                                    searchMode = !searchMode;
+                                  });
+                                },
+                              ),
+                            )
+                          ]),
+                  ),
+                ),
               ),
-            );
+            ]..addAll(!searchMode
+                ? []
+                : [
+                    SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 16.0,
+                      ),
+                    ),
+                    SliverPersistentHeader(
+                      floating: true,
+                      pinned: true,
+                      delegate: SliverSearchBarDelegate(
+                        child: PreferredSize(
+                          preferredSize: Size.fromHeight(72),
+                          child: AnimatedContainer(
+                            color: theme.cardColor,
+                            padding: EdgeInsets.all(8.0),
+                            duration: Duration(milliseconds: 500),
+                            child: TextField(
+                              cursorColor: theme.textTheme.body1.color,
+                              style: theme.textTheme.body1,
+                              autofocus: true,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30)),
+                                labelStyle: theme.textTheme.body1,
+                                hintStyle: theme.textTheme.body1,
+                                prefixIcon: Icon(
+                                  OMIcons.search,
+                                ),
+                                suffixIcon: IconButton(
+                                  tooltip: !searchMode
+                                      ? "Search events, bodies, users..."
+                                      : "Clear search results",
+                                  icon: Icon(
+                                    actionIcon,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      if (searchMode) {
+                                        actionIcon = OMIcons.search;
+                                        exploreBloc.query = "";
+                                        exploreBloc.refresh();
+                                      } else {
+                                        actionIcon = OMIcons.close;
+                                      }
+                                      searchMode = !searchMode;
+                                    });
+                                  },
+                                ),
+                                hintText: "Search events, bodies, users...",
+                              ),
+                              onChanged: (query) async {
+                                if (query.length > 4) {
+                                  exploreBloc.query = query;
+                                  exploreBloc.refresh();
+                                }
+                              },
+                              onSubmitted: (query) async {
+                                exploreBloc.query = query;
+                                await exploreBloc.refresh();
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ]);
           },
+          body: StreamBuilder<ExploreResponse>(
+            stream: exploreBloc.explore,
+            builder: (BuildContext context,
+                AsyncSnapshot<ExploreResponse> snapshot) {
+              return RefreshIndicator(
+                key: _refreshIndicatorKey,
+                onRefresh: () {
+                  return exploreBloc.refresh();
+                },
+                child: Builder(builder: (context) {
+                  return CustomScrollView(
+                    // The "controller" and "primary" members should be left
+                    // unset, so that the NestedScrollView can control this
+                    // inner scroll view.
+                    // If the "controller" property is set, then this scroll
+                    // view will not be associated with the NestedScrollView.
+                    // The PageStorageKey should be unique to this ScrollView;
+                    // it allows the list to remember its scroll position when
+                    // the tab view is not on the screen.
+                    slivers: <Widget>[
+                      // SliverOverlapInjector(
+                      //   // This is the flip side of the SliverOverlapAbsorber above.
+                      //   handle: NestedScrollView
+                      //       .sliverOverlapAbsorberHandleFor(context),
+                      // ),
+                      SliverPadding(
+                          padding: const EdgeInsets.all(8.0),
+                          // In this example, the inner scroll view has
+                          // fixed-height list items, hence the use of
+                          // SliverFixedExtentList. However, one could use any
+                          // sliver widget here, e.g. SliverList or SliverGrid.
+                          sliver: SliverList(
+                            delegate: SliverChildListDelegate(
+                              _buildContent(snapshot, theme, exploreBloc),
+                            ),
+                          )),
+                    ],
+                  );
+                }),
+              );
+            },
+          ),
         ),
       ),
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: isFabVisible == 0
           ? null
           : FloatingActionButton(

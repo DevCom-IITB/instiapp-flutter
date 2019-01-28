@@ -33,6 +33,9 @@ class NewsArticle extends Post {
 class NewsArticleSerializer extends Serializer<NewsArticle> with _$NewsArticleSerializer {}
 
 @GenSerializer()
+class PostSerializer extends Serializer<Post> with _$PostSerializer {}
+
+@GenSerializer()
 class PlacementBlogPostSerializer extends Serializer<PlacementBlogPost> with _$PlacementBlogPostSerializer {}
 
 @GenSerializer()

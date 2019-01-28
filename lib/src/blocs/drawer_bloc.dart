@@ -8,6 +8,8 @@ class DrawerBloc  {
   String currentRoute;
   int _highlightPageIndex;
 
+  bool reloadNotifications = true;
+
   DrawerBloc(this.currentRoute, {int highlightPageIndexVal = 0}) {
     setPageIndex(highlightPageIndexVal);
   }

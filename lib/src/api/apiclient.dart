@@ -111,6 +111,9 @@ class InstiAppApi extends _$InstiAppApiClient implements ApiClient {
   @GetReq(path: "/notifications/read/:notificationID")
   Future<void> markNotificationRead(@Header("Cookie") String sessionID, @PathParam() String notificationID);
 
+  @GetReq(path: "/notifications/read") 
+  Future<void> markAllNotificationsRead(@Header("Cookie") String sessionID);
+
   @GetReq(path: "/logout")
   Future<void> logout(@Header("Cookie") String sessionID);
 

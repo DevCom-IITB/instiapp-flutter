@@ -37,6 +37,32 @@ abstract class _$NewsArticleSerializer implements Serializer<NewsArticle> {
   }
 }
 
+abstract class _$PostSerializer implements Serializer<Post> {
+  @override
+  Map<String, dynamic> toMap(Post model) {
+    if (model == null) return null;
+    Map<String, dynamic> ret = <String, dynamic>{};
+    setMapValue(ret, 'id', model.postID);
+    setMapValue(ret, 'link', model.link);
+    setMapValue(ret, 'title', model.title);
+    setMapValue(ret, 'content', model.content);
+    setMapValue(ret, 'published', model.published);
+    return ret;
+  }
+
+  @override
+  Post fromMap(Map map) {
+    if (map == null) return null;
+    final obj = new Post();
+    obj.postID = map['id'] as String;
+    obj.link = map['link'] as String;
+    obj.title = map['title'] as String;
+    obj.content = map['content'] as String;
+    obj.published = map['published'] as String;
+    return obj;
+  }
+}
+
 abstract class _$PlacementBlogPostSerializer
     implements Serializer<PlacementBlogPost> {
   @override

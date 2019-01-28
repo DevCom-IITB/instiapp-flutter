@@ -124,8 +124,9 @@ class _MessPageState extends State<MessPage> {
       stream: bloc.hostels,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          var val = snapshot.data.indexWhere((h) => h.shortName == currHostel);
           return DropdownButton<int>(
-            value: snapshot.data.indexWhere((h) => h.shortName == currHostel),
+            value: val != -1 ? val : null,
             items: snapshot.data
                 .asMap()
                 .entries

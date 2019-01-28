@@ -46,7 +46,7 @@ class ExploreBloc {
     }
   }
 
-  Future<void> refresh() async {
+  Future refresh() async {
     if ((query ?? "") == "") {
       if (allBodies?.isEmpty ?? true) {
         allBodies = await bloc.client.getAllBodies(bloc.getSessionIdHeader());
@@ -55,6 +55,5 @@ class ExploreBloc {
     } else {
       _push(await bloc.client.search(bloc.getSessionIdHeader(), query));
     }
-    return Future.delayed(Duration(milliseconds: 300));
   }
 }

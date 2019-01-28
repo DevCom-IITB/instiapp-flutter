@@ -66,15 +66,16 @@ class _LoginPageState extends State<LoginPage> {
         print("Formed URL: $url");
         print("startLoginPageServer.then: Launching Web View");
         await Future.delayed(Duration(milliseconds: 300));
+        var mqdata = MediaQuery.of(context);
         flutterWebviewPlugin.launch(
           url,
           hidden: false,
           withJavascript: true,
           rect: Rect.fromLTWH(
-            0.0,
-            0.0,
-            MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height,
+            mqdata.padding.left,
+            mqdata.padding.top,
+            mqdata.size.width - mqdata.padding.right,
+            mqdata.size.height - mqdata.padding.bottom,
           ),
         );
       });
@@ -125,11 +126,13 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     _bloc = BlocProvider.of(context).bloc;
+    var mqdata = MediaQuery.of(context);
+
     flutterWebviewPlugin.resize(Rect.fromLTWH(
-      0.0,
-      0.0,
-      MediaQuery.of(context).size.width,
-      MediaQuery.of(context).size.height,
+      mqdata.padding.left,
+      mqdata.padding.top,
+      mqdata.size.width - mqdata.padding.right,
+      mqdata.size.height - mqdata.padding.bottom,
     ));
     return Material(
       child: Center(
@@ -166,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
       print("URI: ${request.uri}");
       if (request.uri.toString() == '/') {
         var html = await defAssets.loadString(
-            _bloc.brightness == Brightness.dark
+            _bloc.brightness.toBrightness() == Brightness.dark
                 ? 'assets/login_dark.html'
                 : 'assets/login.html');
         request.response

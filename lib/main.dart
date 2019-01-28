@@ -11,6 +11,7 @@ import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:InstiApp/src/routes/mappage.dart';
 import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
+import 'package:InstiApp/src/routes/notificationspage.dart';
 import 'package:InstiApp/src/routes/putentitypage.dart';
 import 'package:InstiApp/src/routes/quicklinkspage.dart';
 import 'package:InstiApp/src/routes/settingspage.dart';
@@ -60,6 +61,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       new FlutterLocalNotificationsPlugin();
 
+  GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
   void setTheme(VoidCallback a) {
     setState(a);
   }
@@ -93,7 +96,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       systemNavigationBarIconBrightness: Brightness.values[1 -
           ThemeData.estimateBrightnessForColor(widget.bloc.primaryColor).index],
       statusBarColor: Colors.transparent, //or set color with: Color(0xFF0000FF)
-      statusBarIconBrightness: Brightness.values[1 - widget.bloc.brightness.toBrightness().index],
+      statusBarIconBrightness:
+          Brightness.values[1 - widget.bloc.brightness.toBrightness().index],
     ));
 
     return BlocProvider(
@@ -219,6 +223,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 return _buildRoute(settings, MapPage());
               case "/settings":
                 return _buildRoute(settings, SettingsPage());
+              case "/notifications":
+                return _buildRoute(settings, NotificationsPage());
             }
           }
           return _buildRoute(settings, MessPage());
@@ -349,7 +355,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   Future navigateFromNotification(RichNotification fromMap) async {
     // TODO: Navigate to correct page
-    // Navigator.of(context).push(route)
+    // _navigatorKey.currentState.push(route)
     var page = {
       "blogentry": fromMap.notificationExtra?.contains("/trainingblog") ?? false
           ? "/trainblog"
@@ -362,9 +368,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     debugPrint(fromMap.toString());
     var routeName =
         "$page${fromMap.notificationType != "blogentry" ? fromMap.notificationID ?? "" : ""}";
-    print(Navigator.of(context));
-    var t = await Navigator.of(context).push(
-        new MaterialPageRoute(builder: (context) => new TrainingBlogPage()));
-    print(t);
+    print(_navigatorKey.currentState);
+    _navigatorKey.currentState.pushNamed(routeName);
   }
 }
