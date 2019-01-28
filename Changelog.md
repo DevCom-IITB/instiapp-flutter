@@ -2,7 +2,14 @@
 
 ## Unreleased
 
-* Nothing here yet
+* Nothing here
+
+## v1.4-beta
+
+* Added notifications page and notification indicator on the NavDrawer
+* Move search bars on Explore, Blog Pages to top
+* Fix Gallery/Camera permission on iOS
+* Made all screens notch compatible 
 
 ## v1.3.1-beta
 
