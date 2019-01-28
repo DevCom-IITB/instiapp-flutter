@@ -148,40 +148,53 @@ class _UserPageState extends State<UserPage> {
                                             size: 12,
                                             label: Text("Loading Roll Number"),
                                           ),
-                                    InkWell(
-                                      onTap: user.userEmail != null
-                                          ? _launchEmail
-                                          : null,
-                                      child: Tooltip(
-                                        message: "E-mail this person",
-                                        child: user.userEmail != null
-                                            ? Text(user.userEmail,
-                                                style: theme.textTheme.title
-                                                    .copyWith(
-                                                        color:
-                                                            Colors.lightBlue))
-                                            : CircularProgressIndicatorExtended(
-                                                size: 12,
-                                                label: Text("Loading email"),
+                                  ]
+                                    ..addAll(user.userEmail != null &&
+                                            !user.userEmail
+                                                .toLowerCase()
+                                                .contains("n/a")
+                                        ? [
+                                            InkWell(
+                                              onTap: user.userEmail != null
+                                                  ? _launchEmail
+                                                  : null,
+                                              child: Tooltip(
+                                                message: "E-mail this person",
+                                                child: user.userEmail != null
+                                                    ? Text(user.userEmail,
+                                                        style: theme
+                                                            .textTheme.title
+                                                            .copyWith(
+                                                                color: Colors
+                                                                    .lightBlue))
+                                                    : CircularProgressIndicatorExtended(
+                                                        size: 12,
+                                                        label: Text(
+                                                            "Loading email"),
+                                                      ),
                                               ),
-                                      ),
-                                    ),
-                                  ]..addAll(user.userContactNumber != null
-                                      ? [
-                                          InkWell(
-                                            onTap: _launchDialer,
-                                            child: Tooltip(
-                                              message: "Call this person",
-                                              child: Text(
-                                                  user.userContactNumber,
-                                                  style: theme.textTheme.title
-                                                      .copyWith(
-                                                          color: Colors
-                                                              .lightBlue)),
                                             ),
-                                          )
-                                        ]
-                                      : []),
+                                          ]
+                                        : [])
+                                    ..addAll(user.userContactNumber != null &&
+                                            !user.userContactNumber
+                                                .toLowerCase()
+                                                .contains("n/a")
+                                        ? [
+                                            InkWell(
+                                              onTap: _launchDialer,
+                                              child: Tooltip(
+                                                message: "Call this person",
+                                                child: Text(
+                                                    user.userContactNumber,
+                                                    style: theme.textTheme.title
+                                                        .copyWith(
+                                                            color: Colors
+                                                                .lightBlue)),
+                                              ),
+                                            )
+                                          ]
+                                        : []),
                                 ),
                               ),
                             ],
@@ -333,7 +346,9 @@ class _UserPageState extends State<UserPage> {
                       "Check this cool person: ${ShareURLMaker.getUserURL(user)}");
                 },
               ),
-        floatingActionButtonLocation: footerButtons.isEmpty ? FloatingActionButtonLocation.endDocked : FloatingActionButtonLocation.endFloat,
+        floatingActionButtonLocation: footerButtons.isEmpty
+            ? FloatingActionButtonLocation.endDocked
+            : FloatingActionButtonLocation.endFloat,
         persistentFooterButtons:
             footerButtons.isNotEmpty ? footerButtons : null,
       ),

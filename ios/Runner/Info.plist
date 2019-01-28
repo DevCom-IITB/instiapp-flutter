@@ -47,5 +47,11 @@
 	<string></string>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To upload photo from the gallery</string>
+	<key>NSCameraUsageDescription</key>
+	<string>To upload photo from the camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string></string>
 </dict>
 </plist>

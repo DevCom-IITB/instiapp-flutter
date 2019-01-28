@@ -16,6 +16,9 @@ abstract class _$NotificationSerializer implements Serializer<Notification> {
     setMapValue(ret, 'unread', model.notificationUnread);
     setMapValue(ret, 'actor_type', model.notificationActorType);
     setMapValue(ret, 'actor', passProcessor.serialize(model.notificationActor));
+    setMapValue(ret, 'isEvent', model.isEvent);
+    setMapValue(ret, 'isNews', model.isNews);
+    setMapValue(ret, 'isBlogPost', model.isBlogPost);
     return ret;
   }
 

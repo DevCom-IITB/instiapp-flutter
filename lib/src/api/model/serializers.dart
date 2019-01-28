@@ -43,6 +43,7 @@ JsonRepo standardSerializers = JsonRepo(serializers: [
   DateTimeSerializer(),
   
   // Blog
+  PostSerializer(),
   PlacementBlogPostSerializer(),
   TrainingBlogPostSerializer(),
   

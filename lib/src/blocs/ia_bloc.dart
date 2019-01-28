@@ -19,6 +19,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:http/io_client.dart';
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:InstiApp/src/api/model/notification.dart' as ntf;
 
 /// Describes the contrast needs of a color.
 class AppBrightness {
@@ -58,6 +59,8 @@ class InstiAppBloc {
   static String eventStorageID = "events";
   // Mess StorageID
   static String messStorageID = "mess";
+  // Notifications StorageID
+  static String notificationsStorageID = "notifications";
 
   // FCM handle
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
@@ -72,6 +75,11 @@ class InstiAppBloc {
   Stream<UnmodifiableListView<Event>> get events => _eventsSubject.stream;
   final _eventsSubject = BehaviorSubject<UnmodifiableListView<Event>>();
 
+  Stream<UnmodifiableListView<ntf.Notification>> get notifications =>
+      _notificationsSubject.stream;
+  final _notificationsSubject =
+      BehaviorSubject<UnmodifiableListView<ntf.Notification>>();
+
   // Sub Blocs
   PostBloc placementBloc;
   PostBloc trainingBloc;
@@ -85,6 +93,7 @@ class InstiAppBloc {
   Session currSession;
   var _hostels = <Hostel>[];
   var _events = <Event>[];
+  var _notifications = <ntf.Notification>[];
 
   // api functions
   final client = InstiAppApi();
@@ -193,6 +202,31 @@ class InstiAppBloc {
       _events[0].eventBigImage = true;
     }
     _eventsSubject.add(UnmodifiableListView(_events));
+  }
+
+  // Notifications bloc
+  Future<void> updateNotifications() async {
+    var notifs = await client.getNotifications(getSessionIdHeader());
+    _notifications = notifs;
+    _notificationsSubject.add(UnmodifiableListView(_notifications));
+  }
+
+  Future clearAllNotifications() async {
+    await client.markAllNotificationsRead(getSessionIdHeader());
+    _notifications = [];
+    _notificationsSubject.add(UnmodifiableListView(_notifications));
+  }
+
+  Future clearNotification(ntf.Notification notification) async {
+    await client.markNotificationRead(
+        getSessionIdHeader(), "${notification.notificationId}");
+    var idx = _notifications
+        .indexWhere((n) => n.notificationId == notification.notificationId);
+    print(idx);
+    if (idx != -1) {
+      _notifications.removeAt(idx);
+      _notificationsSubject.add(UnmodifiableListView(_notifications));
+    }
   }
 
   // Section
@@ -343,6 +377,10 @@ class InstiAppBloc {
     if (_events?.isNotEmpty ?? false) {
       prefs.setString(eventStorageID, standardSerializers.encode(_events));
     }
+    if (_notifications?.isNotEmpty ?? false) {
+      prefs.setString(
+          notificationsStorageID, standardSerializers.encode(_notifications));
+    }
 
     exploreBloc?.saveToCache(sharedPrefs: prefs);
     complaintsBloc?.saveToCache(sharedPrefs: prefs);
@@ -364,6 +402,12 @@ class InstiAppBloc {
         _events[0].eventBigImage = true;
       }
       _eventsSubject.add(UnmodifiableListView(_events));
+    }
+
+    if (prefs.getKeys().contains(notificationsStorageID)) {
+      _notifications = standardSerializers.decodeList<ntf.Notification>(
+          prefs.getString(notificationsStorageID));
+      _notificationsSubject.add(UnmodifiableListView(_notifications));
     }
 
     exploreBloc?.restoreFromCache(sharedPrefs: prefs);

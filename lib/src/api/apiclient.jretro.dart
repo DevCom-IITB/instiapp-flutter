@@ -209,6 +209,14 @@ abstract class _$InstiAppApiClient implements ApiClient {
     await req.go();
   }
 
+  Future<void> markAllNotificationsRead(String sessionID) async {
+    var req = base.get
+        .path(basePath)
+        .path("/notifications/read")
+        .header("Cookie", sessionID);
+    await req.go();
+  }
+
   Future<void> logout(String sessionID) async {
     var req =
         base.get.path(basePath).path("/logout").header("Cookie", sessionID);

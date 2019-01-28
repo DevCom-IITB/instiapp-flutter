@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
@@ -6,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:InstiApp/src/api/model/notification.dart' as ntf;
 
 // A Navigation Drawer
 class NavDrawer extends StatefulWidget {
@@ -27,6 +30,12 @@ class _NavDrawerState extends State<NavDrawer> {
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of(context).bloc;
     var drawerState = bloc.drawerState;
+
+    // if (drawerState.reloadNotifications ?? true) {
+      bloc.updateNotifications();
+      // drawerState.reloadNotifications = false;
+    // }
+
     return Drawer(
       child: SafeArea(
         child: StreamBuilder<Session>(
@@ -168,33 +177,106 @@ class _NavDrawerState extends State<NavDrawer> {
                     SizedBox(
                       height: 8.0,
                     ),
-                    ListTile(
-                      leading: NullableCircleAvatar(
-                        snapshot.data?.profile?.userProfilePictureUrl,
-                        OMIcons.personOutline,
-                      ),
-                      title: Text(
-                        snapshot?.data?.profile?.userName ?? 'Not Logged in',
-                        style: theme.textTheme.body1
-                            .copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: snapshot.data != null
-                          ? Text(snapshot.data?.profile?.userRollNumber,
-                              style: theme.textTheme.body1)
-                          : RaisedButton(
-                              child: Text(
-                                "Log in",
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pushReplacementNamed('/');
-                              },
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: ListTile(
+                            leading: NullableCircleAvatar(
+                              snapshot.data?.profile?.userProfilePictureUrl,
+                              OMIcons.personOutline,
                             ),
-                      onTap: snapshot.data != null
-                          ? () {
-                              UserPage.navigateWith(
-                                  context, bloc, bloc.currSession.profile);
-                            }
-                          : null,
+                            title: Text(
+                              snapshot?.data?.profile?.userName ??
+                                  'Not Logged in',
+                              style: theme.textTheme.body1
+                                  .copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: snapshot.data != null
+                                ? Text(snapshot.data?.profile?.userRollNumber,
+                                    style: theme.textTheme.body1)
+                                : RaisedButton(
+                                    child: Text(
+                                      "Log in",
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pushReplacementNamed('/');
+                                    },
+                                  ),
+                            onTap: snapshot.data != null
+                                ? () {
+                                    UserPage.navigateWith(context, bloc,
+                                        bloc.currSession.profile);
+                                  }
+                                : null,
+                          ),
+                        ),
+                      ]..addAll(snapshot.data != null
+                          ? [
+                              StreamBuilder(
+                                stream: bloc.notifications,
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<
+                                            UnmodifiableListView<
+                                                ntf.Notification>>
+                                        snapshot) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Stack(
+                                      children: <Widget>[
+                                        IconButton(
+                                          tooltip: "Notifications",
+                                          icon: Icon((snapshot.hasData &&
+                                                      snapshot
+                                                          .data.isNotEmpty) ||
+                                                  (!snapshot.hasData)
+                                              ? OMIcons.notificationsActive
+                                              : OMIcons.notificationsNone),
+                                          onPressed: () {
+                                            var navi = Navigator.of(context);
+                                            navi.pop();
+                                            navi.pushNamed('/notifications');
+                                          },
+                                        ),
+                                      ]..addAll((snapshot.hasData &&
+                                                  snapshot.data.isNotEmpty) ||
+                                              (!snapshot.hasData)
+                                          ? [
+                                              Positioned(
+                                                bottom: 0,
+                                                right: 0,
+                                                child: snapshot.hasData
+                                                    ? Container(
+                                                        padding:
+                                                            EdgeInsets.all(3.0),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              theme.accentColor,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                        ),
+                                                        child: Center(
+                                                          child: Text(
+                                                            "${snapshot.data.length}",
+                                                            style: theme
+                                                                .accentTextTheme
+                                                                .overline,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : CircularProgressIndicatorExtended(
+                                                        size: 12,
+                                                      ),
+                                              )
+                                            ]
+                                          : []),
+                                    ),
+                                  );
+                                },
+                              )
+                            ]
+                          : []),
                     ),
                     Divider(),
                   ];

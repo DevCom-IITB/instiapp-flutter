@@ -12,6 +12,7 @@ import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
     as cal;
 import 'package:flutter_calendar_carousel/classes/event_list.dart' as el;
+import 'dart:math';
 
 class CalendarPage extends StatefulWidget {
   final String title = "Calendar";
@@ -151,7 +152,10 @@ class _CalendarPageState extends State<CalendarPage> {
                         selectedDayButtonColor: theme.accentColor,
                         selectedDayTextStyle: theme.accentTextTheme.subhead,
 
+                        // height: min(MediaQuery.of(context).size.shortestSide, 600) * 1.6,
+                        // width: min(MediaQuery.of(context).size.shortestSide, 600),
                         height: 420.0,
+
                         selectedDateTime: _currentDate,
 
                         // null for not rendering any border, true for circular border, false for rectangular border
