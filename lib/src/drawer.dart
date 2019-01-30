@@ -23,7 +23,7 @@ class NavDrawer extends StatefulWidget {
 class _NavDrawerState extends State<NavDrawer> {
   void changeSelection(int idx, DrawerBloc bloc) {
     bloc.setPageIndex(idx);
-    setState(() {});
+    // setState(() {});
   }
 
   @override
@@ -166,35 +166,47 @@ class _NavDrawerState extends State<NavDrawer> {
                     Row(
                       children: <Widget>[
                         Expanded(
-                          child: ListTile(
-                            leading: NullableCircleAvatar(
-                              snapshot.data?.profile?.userProfilePictureUrl,
-                              OMIcons.personOutline,
-                            ),
-                            title: Text(
-                              snapshot?.data?.profile?.userName ??
-                                  'Not Logged in',
-                              style: theme.textTheme.body1
-                                  .copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: snapshot.data != null
-                                ? Text(snapshot.data?.profile?.userRollNumber,
-                                    style: theme.textTheme.body1)
-                                : RaisedButton(
-                                    child: Text(
-                                      "Log in",
-                                    ),
-                                    onPressed: () {
-                                      Navigator.of(context)
-                                          .pushReplacementNamed('/');
-                                    },
-                                  ),
-                            onTap: snapshot.data != null
-                                ? () {
-                                    UserPage.navigateWith(context, bloc,
-                                        bloc.currSession.profile);
-                                  }
+                          child: Container(
+                            decoration: snapshot.data != null &&
+                                    indexSnapshot.data == -2
+                                ? BoxDecoration(
+                                    color: theme.primaryColor.withAlpha(100),
+                                    borderRadius: BorderRadius.only(
+                                        bottomRight:
+                                            const Radius.circular(48.0),
+                                        topRight: const Radius.circular(48.0)))
                                 : null,
+                            child: ListTile(
+                              leading: NullableCircleAvatar(
+                                snapshot.data?.profile?.userProfilePictureUrl,
+                                OMIcons.personOutline,
+                              ),
+                              title: Text(
+                                snapshot?.data?.profile?.userName ??
+                                    'Not Logged in',
+                                style: theme.textTheme.body1
+                                    .copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: snapshot.data != null
+                                  ? Text(snapshot.data?.profile?.userRollNumber,
+                                      style: theme.textTheme.body1)
+                                  : RaisedButton(
+                                      child: Text(
+                                        "Log in",
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pushReplacementNamed('/');
+                                      },
+                                    ),
+                              onTap: snapshot.data != null
+                                  ? () {
+                                      changeSelection(-2, drawerState);
+                                      UserPage.navigateWith(context, bloc,
+                                          bloc.currSession.profile);
+                                    }
+                                  : null,
+                            ),
                           ),
                         ),
                       ]..addAll(snapshot.data != null
@@ -210,20 +222,37 @@ class _NavDrawerState extends State<NavDrawer> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Stack(
                                       children: <Widget>[
-                                        IconButton(
-                                          tooltip: "Notifications",
-                                          icon: Icon((snapshot.hasData &&
-                                                      snapshot
-                                                          .data.isNotEmpty) ||
-                                                  (!snapshot.hasData)
-                                              ? OMIcons.notificationsActive
-                                              : OMIcons.notificationsNone),
-                                          onPressed: () {
-                                            changeSelection(-1, drawerState);
-                                            var navi = Navigator.of(context);
-                                            navi.pop();
-                                            navi.pushNamed('/notifications');
-                                          },
+                                        ClipOval(
+                                          child: Container(
+                                            color: indexSnapshot.data == -1
+                                                ? theme.primaryColor
+                                                    .withAlpha(100)
+                                                : null,
+                                            child: IconButton(
+                                              tooltip: "Notifications",
+                                              icon: Icon(
+                                                (snapshot.hasData &&
+                                                            snapshot.data
+                                                                .isNotEmpty) ||
+                                                        (!snapshot.hasData)
+                                                    ? OMIcons
+                                                        .notificationsActive
+                                                    : OMIcons.notificationsNone,
+                                                color: indexSnapshot.data == -1
+                                                    ? theme.primaryColor
+                                                    : null,
+                                              ),
+                                              onPressed: () {
+                                                changeSelection(
+                                                    -1, drawerState);
+                                                var navi =
+                                                    Navigator.of(context);
+                                                navi.pop();
+                                                navi.pushNamed(
+                                                    '/notifications');
+                                              },
+                                            ),
+                                          ),
                                         ),
                                       ]..addAll((snapshot.hasData &&
                                                   snapshot.data.isNotEmpty) ||
@@ -279,15 +308,12 @@ class _NavDrawerState extends State<NavDrawer> {
                   }
 
                   // Selecting which NavListTile to highlight
-                  if (indexSnapshot.data == -1) {
-                    // TODO: highlight notifications button
-                  } else {
+                  if (indexSnapshot.data > -1) {
                     navMap[indexSnapshot.data].setHighlighted(true);
                   }
 
                   return ListTileTheme(
                     selectedColor: theme.primaryColor,
-                    // iconColor: theme.primaryColorDark,
                     style: ListTileStyle.drawer,
                     child: ListView(
                       children: navList,

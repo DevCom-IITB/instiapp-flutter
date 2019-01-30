@@ -11,9 +11,7 @@ import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:html/dom.dart' as dom;
 import 'package:flutter/foundation.dart';
 
 class BlogPage extends StatefulWidget {

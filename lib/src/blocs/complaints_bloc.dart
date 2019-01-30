@@ -5,7 +5,6 @@ import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/image_upload_request.dart';
-import 'package:InstiApp/src/api/response/complaint_create_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:rxdart/rxdart.dart';
@@ -112,6 +111,7 @@ class ComplaintsBloc {
       return bloc.client.postComplaint(bloc.getSessionIdHeader(), req);
     } catch (ex) {
       print(ex);
+      return null;
     }
   }
 

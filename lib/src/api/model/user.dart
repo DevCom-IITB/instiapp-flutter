@@ -1,7 +1,6 @@
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/role.dart';
-import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
 part 'user.jser.dart';

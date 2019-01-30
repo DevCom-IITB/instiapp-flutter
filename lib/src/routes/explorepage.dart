@@ -2,7 +2,6 @@ import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
-import 'package:InstiApp/src/routes/blogpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';

@@ -140,16 +140,22 @@ class _NotificationsPageState extends State<NotificationsPage> {
       background: Container(
         color: Colors.red,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Icon(
-                OMIcons.delete,
-                color: Colors.white,
-              ),
+              child: Icon(OMIcons.delete, color: Colors.white),
             ),
+          ],
+        ),
+      ),
+      secondaryBackground: Container(
+        color: Colors.red,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Icon(OMIcons.delete, color: Colors.white),

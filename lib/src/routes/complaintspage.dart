@@ -26,7 +26,6 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
     var bloc = BlocProvider.of(context).bloc;
     var theme = Theme.of(context);
     var complaintsBloc = bloc.complaintsBloc;
-    var footerButtons = <Widget>[];
 
     if (firstBuild) {
       complaintsBloc.updateAllComplaints();

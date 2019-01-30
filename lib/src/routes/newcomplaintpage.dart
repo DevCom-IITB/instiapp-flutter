@@ -16,10 +16,8 @@ import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
-import 'dart:math' as math;
 import 'dart:convert' as convert;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:path_provider/path_provider.dart';
 
 class NewComplaintPage extends StatefulWidget {
   final String title = "New Complaint";
@@ -55,48 +53,6 @@ class NewComplaintPage extends StatefulWidget {
     "Hostel common room complaints",
     "Hostel Stationary shop complaints"
   ];
-
-  /// Levenshtein distance
-  // source: https://github.com/kseo/edit_distance/blob/master/lib/src/levenshtein.dart
-  static int _distance(String s1, String s2) {
-    if (s1 == s2) {
-      return 0;
-    }
-
-    if (s1.length == 0) {
-      return s2.length;
-    }
-
-    if (s2.length == 0) {
-      return s1.length;
-    }
-
-    List<int> v0 = new List<int>(s2.length + 1);
-    List<int> v1 = new List<int>(s2.length + 1);
-    List<int> vtemp;
-
-    for (var i = 0; i < v0.length; i++) {
-      v0[i] = i;
-    }
-
-    for (var i = 0; i < s1.length; i++) {
-      v1[0] = i + 1;
-
-      for (var j = 0; j < s2.length; j++) {
-        int cost = 1;
-        if (s1.codeUnitAt(i) == s2.codeUnitAt(j)) {
-          cost = 0;
-        }
-        v1[j + 1] = math.min(v1[j] + 1, math.min(v0[j + 1] + 1, v0[j] + cost));
-      }
-
-      vtemp = v0;
-      v0 = v1;
-      v1 = vtemp;
-    }
-
-    return v0[s2.length];
-  }
 
   @override
   _NewComplaintPageState createState() => _NewComplaintPageState();
@@ -174,7 +130,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
     var bloc = BlocProvider.of(context).bloc;
     var theme = Theme.of(context);
     var complaintsBloc = bloc.complaintsBloc;
-    var fab = null;
+    var fab;
 
     fab = FloatingActionButton.extended(
       icon: _isSubmitting
@@ -221,7 +177,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
               _encodingStatus = "$encNum/$totNum";
               _uploadingStatus = "$uploadNum/$totNum";
             });
-            
+
             req.images =
                 await Future.wait(currRequest.images.map((File f) async {
               var s = convert
@@ -646,14 +602,13 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
     _mapController = controller;
 
     var currLocation = await getCurrLocation();
-    _currPos = currLocation ?? iitAreaLocation;
-    _currMarker = await _mapController.addMarker(MarkerOptions(
-      position: currLocation ?? iitAreaLocation,
+    _currPos = _currPos ?? currLocation ?? iitAreaLocation;
+    _currMarker = await _mapController.addMarker(_currMarker?.options ?? MarkerOptions(
+      position: _currPos,
       infoWindowText: InfoWindowText(
           currLocation == null ? "IIT Area" : "Your Location", null),
     ));
-    _mapController.animateCamera(
-        CameraUpdate.newLatLngZoom(currLocation ?? iitAreaLocation, 16));
+    _mapController.moveCamera(CameraUpdate.newLatLngZoom(_currPos, 16));
   }
 
   Future<LatLng> getCurrLocation() async {

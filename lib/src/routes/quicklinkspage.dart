@@ -1,4 +1,3 @@
-import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
@@ -53,8 +52,8 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
 
   @override
   Widget build(BuildContext context) {
+    // var bloc = BlocProvider.of(context).bloc;
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
 
     return Scaffold(
       key: _scaffoldKey,

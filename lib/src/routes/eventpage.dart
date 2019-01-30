@@ -8,7 +8,6 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
@@ -72,7 +71,7 @@ class _EventPageState extends State<EventPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
-    var footerButtons = null;
+    var footerButtons;
     var editAccess = false;
     if (event != null) {
       footerButtons = <Widget>[];

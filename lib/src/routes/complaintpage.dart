@@ -13,8 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as LocationManager;
-import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ComplaintPage extends StatefulWidget {
   final String title = "Complaint";
@@ -44,7 +42,7 @@ class ComplaintPage extends StatefulWidget {
 class _ComplaintPageState extends State<ComplaintPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   // GlobalKey<GoogleMapState> _mapsKey = GlobalKey();
-  LocalKey _mapsKey = Key("GoogleMapKey");
+  // LocalKey _mapsKey = Key("GoogleMapKey");
   Complaint complaint;
 
   FocusNode _commentFocusNode;
@@ -575,28 +573,16 @@ class _ComplaintPageState extends State<ComplaintPage> {
 
   void _onMapCreated(GoogleMapController controller) {
     var ltlng = LatLng(complaint.latitude, complaint.longitude);
-    // setState(() {
-    var alreadyAnimated = _mapController != null;
+    // var alreadyAnimated = _mapController != null;
     _mapController = controller;
     _mapController.addMarker(MarkerOptions(
       position: ltlng,
       infoWindowText: InfoWindowText("${complaint.locationDescription}", null),
     ));
-    if (alreadyAnimated) {
+    // if (alreadyAnimated) {
       _mapController.moveCamera(CameraUpdate.newLatLngZoom(ltlng, 16.0));
-    } else {
-      _mapController.animateCamera(CameraUpdate.newLatLngZoom(ltlng, 16.0));
-    }
-    // });
-  }
-
-  Widget _buildTag(TagUri t, ThemeData theme) {
-    return Chip(
-      backgroundColor: theme.accentColor,
-      label: Text(
-        t.tagUri,
-        style: theme.accentTextTheme.body1,
-      ),
-    );
+    // } else {
+    //   _mapController.animateCamera(CameraUpdate.newLatLngZoom(ltlng, 16.0));
+    // }
   }
 }

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:InstiApp/src/bloc_provider.dart';
-import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,8 +14,6 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   final flutterWebviewPlugin = FlutterWebviewPlugin();
-
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   final String hostUrl = "https://insti.app";
   final String mapUrl = "https://insti.app/map/?sandbox=true";

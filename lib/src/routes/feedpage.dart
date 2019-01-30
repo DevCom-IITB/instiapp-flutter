@@ -29,7 +29,7 @@ class _FeedPageState extends State<FeedPage> {
       firstBuild = false;
     }
 
-    var fab = null;
+    var fab;
 
     if (bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false) {
       // fab = FloatingActionButton(child: Icon(OMIcons.add), onPressed: () {},);
