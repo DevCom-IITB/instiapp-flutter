@@ -9,7 +9,6 @@ import 'package:InstiApp/src/api/request/event_create_request.dart';
 import 'package:InstiApp/src/api/request/image_upload_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
-import 'package:InstiApp/src/api/response/complaint_create_response.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';

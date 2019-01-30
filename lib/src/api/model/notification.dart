@@ -5,9 +5,9 @@ import 'package:jaguar_serializer/jaguar_serializer.dart';
 
 part 'notification.jser.dart';
 
-final String TYPE_EVENT = "event";
-final String TYPE_NEWSENTRY = "newsentry";
-final String TYPE_BLOG = "blogentry";
+const String TYPE_EVENT = "event";
+const String TYPE_NEWSENTRY = "newsentry";
+const String TYPE_BLOG = "blogentry";
 
 class Notification {
   @Alias("id")

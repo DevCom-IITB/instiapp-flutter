@@ -1,4 +1,3 @@
-import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -290,7 +289,6 @@ class RoundedNotchedRectangle implements NotchedShape {
   ///
   /// The notch is curve that smoothly connects the host's top edge and
   /// the guest circle.
-  // TODO(amirh): add an example diagram here.
   @override
   Path getOuterPath(Rect host, Rect guest) {
     if (!host.overlaps(guest)) return Path()..addRect(host);

@@ -39,6 +39,5 @@ class DateTimeUtil {
       return "A year ago";
     else
       return "${(days ~/ 365)} years ago";
-    return "";
   }
 }

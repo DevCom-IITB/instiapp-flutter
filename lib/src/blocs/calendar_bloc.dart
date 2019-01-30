@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';

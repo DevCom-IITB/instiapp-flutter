@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,8 +19,6 @@ class PutEntityPage extends StatefulWidget {
 
 class _PutEntityPageState extends State<PutEntityPage> {
   final flutterWebviewPlugin = FlutterWebviewPlugin();
-
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   final String hostUrl = "https://insti.app/";
   final String addEventStr = "add-event";
@@ -88,8 +85,8 @@ class _PutEntityPageState extends State<PutEntityPage> {
 
   @override
   Widget build(BuildContext context) {
+    // var bloc = BlocProvider.of(context).bloc;
     theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
     var url =
         "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + "/" + widget.entityID)}?${widget.cookie}&$sandboxTrueQParam";
     return SafeArea(

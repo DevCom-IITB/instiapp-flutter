@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
@@ -12,7 +10,6 @@ import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
     as cal;
 import 'package:flutter_calendar_carousel/classes/event_list.dart' as el;
-import 'dart:math';
 
 class CalendarPage extends StatefulWidget {
   final String title = "Calendar";

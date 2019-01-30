@@ -22,7 +22,6 @@ class _MessPageState extends State<MessPage> {
 
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  bool _bottomSheetActive = false;
   bool firstBuild = true;
 
   @override

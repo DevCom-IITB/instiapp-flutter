@@ -31,6 +31,8 @@ class _LoginPageState extends State<LoginPage> {
   StreamSubscription<String> onUrlChangedSub;
   StreamSubscription<WebViewStateChanged> onStateChangedSub;
 
+  String statusMessage = "Initializing";
+
   String url;
   Session currSession;
 
@@ -71,11 +73,12 @@ class _LoginPageState extends State<LoginPage> {
           url,
           hidden: false,
           withJavascript: true,
+          clearCookies: true,
           rect: Rect.fromLTWH(
             mqdata.padding.left,
             mqdata.padding.top,
-            mqdata.size.width - mqdata.padding.right,
-            mqdata.size.height - mqdata.padding.bottom,
+            mqdata.size.width - mqdata.padding.right - mqdata.padding.left,
+            mqdata.size.height - mqdata.padding.bottom - mqdata.padding.top,
           ),
         );
       });
@@ -96,23 +99,43 @@ class _LoginPageState extends State<LoginPage> {
           print("onUrlChanged: Closing Web View");
           flutterWebviewPlugin.close();
 
-          Navigator.of(context).pushReplacementNamed(_bloc?.homepageName);
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil(_bloc?.homepageName, (r) => false);
+          // Navigator.of(context).pushReplacementNamed(_bloc?.homepageName);
         } else if (url.startsWith(gymkhanaUrl)) {
           print("onUrlChanged: Hiding Web View");
           flutterWebviewPlugin.hide();
         } else if (url.startsWith(httpGymkhanaUrl)) {
           print("onUrlChanged: http gymkhana");
           flutterWebviewPlugin.reloadUrl(url.replaceFirst("http", "https"));
+        } else if (!url.startsWith("http://${server.address.host}")) {
+          print("Going to unintented website");
+          flutterWebviewPlugin
+              .reloadUrl("http://${server.address.host}:${server.port}/");
         }
       });
       onStateChangedSub = flutterWebviewPlugin.onStateChanged
-          .listen((WebViewStateChanged state) {
+          .listen((WebViewStateChanged state) async {
         print(state.type);
-        if (state.type == WebViewState.finishLoad) {
+        if (state.type == WebViewState.startLoad) {
           if (state.url.startsWith(gymkhanaUrl)) {
-            print("onStateChanged: Showing Web View");
-            flutterWebviewPlugin.show();
+            setState(() {
+              statusMessage = "Loading IITB SSO";
+            });
           }
+          print("onStateChanged: Hide Web View");
+          flutterWebviewPlugin.hide();
+          print("onStateChanged: Hiding Web View");
+        } else if (state.type == WebViewState.finishLoad) {
+          if (state.url.startsWith(successUrl)) {
+            return;
+          }
+          print("onStateChanged: Show Web View");
+          flutterWebviewPlugin.show();
+          setState(() {
+            statusMessage = "Loaded IITB SSO";
+          });
+          print("onStateChanged: Showing Web View");
         }
       });
     });
@@ -131,8 +154,8 @@ class _LoginPageState extends State<LoginPage> {
     flutterWebviewPlugin.resize(Rect.fromLTWH(
       mqdata.padding.left,
       mqdata.padding.top,
-      mqdata.size.width - mqdata.padding.right,
-      mqdata.size.height - mqdata.padding.bottom,
+      mqdata.size.width - mqdata.padding.right - mqdata.padding.left,
+      mqdata.size.height - mqdata.padding.bottom - mqdata.padding.top,
     ));
     return Material(
       child: Center(
@@ -153,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                   .copyWith(color: Theme.of(context).accentColor),
             ),
             CircularProgressIndicatorExtended(
-              label: Text("Initializing"),
+              label: Text(statusMessage),
               // backgroundColor: Theme.of(context).accentColor,
             ),
           ],
@@ -191,9 +214,18 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   login(final String authCode, final String redirectUrl) async {
-    var response = await InstiAppApi().login(authCode, redirectUrl);
-    if (response.sessionid != null) {
+    setState(() {
+      statusMessage = "Logging you in";
+    });
+    var response;
+    try {
+      response = await InstiAppApi().login(authCode, redirectUrl);
+    } catch (e) {}
+    if (response?.sessionid != null) {
       _bloc.updateSession(response);
+      setState(() {
+        statusMessage = "Logged in";
+      });
       _bloc.patchFcmKey();
 
       Navigator.of(context).pushReplacementNamed(_bloc?.homepageName);
@@ -203,10 +235,12 @@ class _LoginPageState extends State<LoginPage> {
       print("login: Closing Web View");
       flutterWebviewPlugin.close();
     } else {
+      setState(() {
+        statusMessage = "Log in failed. Reinitializing.";
+      });
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text("Authentication Failed"),
       ));
-
       print("login: Showing Web View");
       flutterWebviewPlugin.show();
       print("login: Launching Web View");
