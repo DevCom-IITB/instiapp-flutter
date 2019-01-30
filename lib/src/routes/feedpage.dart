@@ -58,7 +58,6 @@ class _FeedPageState extends State<FeedPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                NavDrawer.setPageIndex(bloc, 0);
                 _scaffoldKey.currentState.openDrawer();
               },
             ),

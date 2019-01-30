@@ -51,8 +51,6 @@ class QuickLinksPage extends StatefulWidget {
 class _QuickLinksPageState extends State<QuickLinksPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  bool _bottomSheetActive = false;
-
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -71,41 +69,30 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
                 OMIcons.menu,
                 semanticLabel: "Show bottom sheet",
               ),
-              onPressed: _bottomSheetActive
-                  ? null
-                  : () {
-                      NavDrawer.setPageIndex(bloc, 9);
-                      _scaffoldKey.currentState.openDrawer();
-                    },
+              onPressed: () {
+                _scaffoldKey.currentState.openDrawer();
+              },
             ),
           ],
         ),
       ),
-      // bottomSheet: ,
       body: SafeArea(
-        child: Container(
-          foregroundDecoration: _bottomSheetActive
-              ? BoxDecoration(
-                  color: Color.fromRGBO(100, 100, 100, 12),
-                )
-              : null,
-          child: ListView(
+        child: ListView(
+            children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(28.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(28.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    "Quick Links",
-                    style: theme.textTheme.display2,
-                  ),
-                ],
-              ),
+                Text(
+                  "Quick Links",
+                  style: theme.textTheme.display2,
+                ),
+              ],
             ),
-            Divider(),
-          ]..addAll(_parseLinks(widget.links))),
-        ),
+          ),
+          Divider(),
+        ]..addAll(_parseLinks(widget.links))),
       ),
     );
   }

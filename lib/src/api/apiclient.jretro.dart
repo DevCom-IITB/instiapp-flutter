@@ -169,13 +169,23 @@ abstract class _$InstiAppApiClient implements ApiClient {
     await req.go();
   }
 
-  Future<User> patchUserMe(
+  Future<User> patchFCMUserMe(
       String sessionID, UserFCMPatchRequest userFCMPatchRequest) async {
     var req = base.patch
         .path(basePath)
         .path("/user-me")
         .header("Cookie", sessionID)
         .json(serializers.to(userFCMPatchRequest));
+    return req.one(convert: serializers.oneFrom);
+  }
+
+  Future<User> patchSCNUserMe(
+      String sessionID, UserSCNPatchRequest userSCNPatchRequest) async {
+    var req = base.patch
+        .path(basePath)
+        .path("/user-me")
+        .header("Cookie", sessionID)
+        .json(serializers.to(userSCNPatchRequest));
     return req.one(convert: serializers.oneFrom);
   }
 

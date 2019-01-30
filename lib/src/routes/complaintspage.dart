@@ -52,7 +52,6 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                   semanticLabel: "Show bottom sheet",
                 ),
                 onPressed: () {
-                  NavDrawer.setPageIndex(bloc, 8);
                   _scaffoldKey.currentState.openDrawer();
                 },
               ),
@@ -86,7 +85,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                         ? SliverPersistentHeader(
                             floating: true,
                             pinned: true,
-                            delegate: _SliverTabBarDelegate(
+                            delegate: SliverHeaderDelegate(
                               child: PreferredSize(
                                 preferredSize: Size.fromHeight(72),
                                 child: Material(
@@ -317,19 +316,21 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(complaint.complaintCreatedBy.userName,
-                                style: theme.textTheme.title
-                                    .copyWith(fontWeight: FontWeight.bold)),
-                            Text(
-                              DateTimeUtil.getDate(
-                                  complaint.complaintReportDate),
-                              style: theme.textTheme.caption
-                                  .copyWith(fontSize: 14),
-                            ),
-                          ],
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(complaint.complaintCreatedBy.userName,
+                                  style: theme.textTheme.title
+                                      .copyWith(fontWeight: FontWeight.bold)),
+                              Text(
+                                DateTimeUtil.getDate(
+                                    complaint.complaintReportDate),
+                                style: theme.textTheme.caption
+                                    .copyWith(fontSize: 14),
+                              ),
+                            ],
+                          ),
                         ),
                         OutlineButton(
                           borderSide: BorderSide(
@@ -473,28 +474,5 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
         ),
       ),
     );
-  }
-}
-
-class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
-  final PreferredSize child;
-
-  _SliverTabBarDelegate({this.child});
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return child;
-  }
-
-  @override
-  double get maxExtent => child.preferredSize.height;
-
-  @override
-  double get minExtent => child.preferredSize.height;
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-    return false;
   }
 }

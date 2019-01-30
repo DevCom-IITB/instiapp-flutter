@@ -3,6 +3,7 @@ import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
+import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
 import 'package:InstiApp/src/blocs/complaints_bloc.dart';
@@ -177,6 +178,13 @@ class InstiAppBloc {
     prefs.setString("homepage", s);
   }
 
+  Future<void> patchUserShowContactNumber(bool userShowContactNumber) async {
+    var userMe = await client.patchSCNUserMe(getSessionIdHeader(),
+        UserSCNPatchRequest()..userShowContactNumber = userShowContactNumber);
+    currSession.profile = userMe;
+    updateSession(currSession);
+  }
+
   // PostBloc helper function
   PostBloc getPostsBloc(PostType blogType) {
     return {
@@ -218,8 +226,7 @@ class InstiAppBloc {
   }
 
   Future clearNotification(ntf.Notification notification) async {
-    await client.markNotificationRead(
-        getSessionIdHeader(), "${notification.notificationId}");
+    await clearNotificationUsingID("${notification.notificationId}");
     var idx = _notifications
         .indexWhere((n) => n.notificationId == notification.notificationId);
     print(idx);
@@ -227,6 +234,10 @@ class InstiAppBloc {
       _notifications.removeAt(idx);
       _notificationsSubject.add(UnmodifiableListView(_notifications));
     }
+  }
+
+  Future clearNotificationUsingID(String notificationId) async {
+    return client.markNotificationRead(getSessionIdHeader(), notificationId);
   }
 
   // Section
@@ -259,7 +270,7 @@ class InstiAppBloc {
     var req = UserFCMPatchRequest()
       ..userAndroidVersion = 28
       ..userFCMId = await firebaseMessaging.getToken();
-    var userMe = await client.patchUserMe(getSessionIdHeader(), req);
+    var userMe = await client.patchFCMUserMe(getSessionIdHeader(), req);
     currSession.profile = userMe;
     updateSession(currSession);
   }

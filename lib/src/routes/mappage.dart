@@ -49,8 +49,8 @@ class _MapPageState extends State<MapPage> {
       }
     });
 
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-      statusBarColor: Colors.transparent,
+    SystemChrome.setSystemUIOverlayStyle(SystemChrome.latestStyle.copyWith(
+      statusBarColor: Colors.black,
       statusBarIconBrightness: Brightness.light,
     ));
   }
@@ -60,7 +60,7 @@ class _MapPageState extends State<MapPage> {
     onStateChangedSub?.cancel();
     onUrlChangedSub?.cancel();
     flutterWebviewPlugin.dispose();
-
+    
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
       systemNavigationBarColor: theme?.primaryColor ?? null,
       systemNavigationBarIconBrightness: theme?.primaryColor != null

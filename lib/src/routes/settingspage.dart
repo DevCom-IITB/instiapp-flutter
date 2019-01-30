@@ -20,6 +20,8 @@ class _SettingsPageState extends State<SettingsPage> {
   final String updateProfileUrl = "https://gymkhana.iitb.ac.in/sso/user";
   final String feedbackUrl = "https://insti.app/feedback";
 
+  bool updatingSCN = false;
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -40,7 +42,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 semanticLabel: "Show Navigation Drawer",
               ),
               onPressed: () {
-                NavDrawer.setPageIndex(bloc, 10);
                 _scaffoldKey.currentState.openDrawer();
               },
             ),
@@ -64,20 +65,94 @@ class _SettingsPageState extends State<SettingsPage> {
                     ],
                   ),
                 ),
+              ];
+              if (snapshot.data != null) {
+                children.addAll([
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24.0),
+                    child: Text(
+                      "Profile settings",
+                      style: theme.textTheme.title.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.primaryColor),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(6.0)),
+                      border: Border.all(color: theme.accentColor),
+                    ),
+                    child: ListTile(
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                      leading: NullableCircleAvatar(
+                        snapshot.data.profile.userProfilePictureUrl,
+                        OMIcons.personOutline,
+                        heroTag: snapshot.data.profile.userID,
+                      ),
+                      title: Text(
+                        snapshot.data.profile.userName,
+                        style: theme.textTheme.title,
+                      ),
+                      onTap: () {
+                        UserPage.navigateWith(
+                            context, bloc, snapshot.data.profile);
+                      },
+                    ),
+                  ),
+                  SwitchListTile(
+                    secondary: updatingSCN
+                        ? CircularProgressIndicatorExtended()
+                        : Icon(OMIcons.contactPhone),
+                    title: Text("Show contact number"),
 
+                    // subtitle: Text("This decides whether to show your contact number on your user page"),
+                    value: snapshot.data.profile.userShowContactNumber,
+                    onChanged: updatingSCN
+                        ? null
+                        : (bool showContactNumber) async {
+                            setState(() {
+                              updatingSCN = true;
+                            });
+                            await bloc
+                                .patchUserShowContactNumber(showContactNumber);
+                            setState(() {
+                              updatingSCN = false;
+                            });
+                          },
+                  ),
+                  ListTile(
+                    leading: Icon(OMIcons.personOutline),
+                    trailing: Icon(OMIcons.launch),
+                    title: Text("Update Profile"),
+                    onTap: () async {
+                      if (await canLaunch(updateProfileUrl)) {
+                        await launch(updateProfileUrl);
+                      }
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(OMIcons.exitToApp),
+                    title: Text("Logout"),
+                    onTap: () {
+                      bloc.logout();
+                    },
+                  ),
+                ]);
+              }
+              children.addAll([
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0, bottom: 24.0),
                   child: Text(
                     "App settings",
-                    style: theme.textTheme.title
-                        .copyWith(fontWeight: FontWeight.bold, color: theme.primaryColor),
+                    style: theme.textTheme.title.copyWith(
+                        fontWeight: FontWeight.bold, color: theme.primaryColor),
                   ),
                 ),
-
                 Text(
                   "Default Homepage",
-                  style: theme.textTheme.body1
-                      .copyWith(fontWeight: FontWeight.bold, color: theme.accentColor),
+                  style: theme.textTheme.body1.copyWith(
+                      fontWeight: FontWeight.bold, color: theme.accentColor),
                 ),
                 DropdownButton(
                   isExpanded: true,
@@ -91,7 +166,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     "/explore": "Explore",
                     "/calendar": "Calendar",
                     "/complaints": "Complaints/Suggestions",
-                    "/map": "Insti Map",
+                    // "/map": "Insti Map",
                     // "/settings": "Settings",
                   }.entries.map((entry) {
                     return DropdownMenuItem<String>(
@@ -109,8 +184,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   padding: const EdgeInsets.only(top: 16.0),
                   child: Text(
                     "App Theme",
-                    style: theme.textTheme.body1
-                        .copyWith(fontWeight: FontWeight.bold, color: theme.accentColor),
+                    style: theme.textTheme.body1.copyWith(
+                        fontWeight: FontWeight.bold, color: theme.accentColor),
                   ),
                 ),
                 RadioListTile<AppBrightness>(
@@ -215,59 +290,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   leading: Icon(OMIcons.info),
                   title: Text("About"),
                 ),
-              ];
-
-              if (snapshot.data != null) {
-                children.addAll([
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24.0),
-                    child: Text(
-                      "Profile settings",
-                      style: theme.textTheme.title
-                          .copyWith(fontWeight: FontWeight.bold, color: theme.primaryColor),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(6.0)),
-                      border: Border.all(color: theme.accentColor),
-                    ),
-                    child: ListTile(
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                      leading: NullableCircleAvatar(
-                        snapshot.data.profile.userProfilePictureUrl,
-                        OMIcons.personOutline,
-                        heroTag: snapshot.data.profile.userID,
-                      ),
-                      title: Text(
-                        snapshot.data.profile.userName,
-                        style: theme.textTheme.title,
-                      ),
-                      onTap: () {
-                        UserPage.navigateWith(context, bloc, snapshot.data.profile);
-                      },
-                    ),
-                  ),
-                  ListTile(
-                    leading: Icon(OMIcons.personOutline),
-                    trailing: Icon(OMIcons.launch),
-                    title: Text("Update Profile"),
-                    onTap: () async {
-                      if (await canLaunch(updateProfileUrl)) {
-                        await launch(updateProfileUrl);
-                      }
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(OMIcons.exitToApp),
-                    title: Text("Logout"),
-                    onTap: () {
-                      bloc.logout();
-                    },
-                  ),
-                ]);
-              }
+              ]);
 
               return ListView(
                 children: children

@@ -47,7 +47,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                NavDrawer.setPageIndex(bloc, 2);
                 _scaffoldKey.currentState.openDrawer();
               },
             ),

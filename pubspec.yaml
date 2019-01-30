@@ -68,31 +68,11 @@ flutter:
         - asset: fonts/IBMPlexSans/IBMPlexSans-Regular.ttf
         - asset: fonts/IBMPlexSans/IBMPlexSans-Italic.ttf
           style: italic
-        - asset: fonts/IBMPlexSans/IBMPlexSans-Light.ttf
-          weight: 300
-        - asset: fonts/IBMPlexSans/IBMPlexSans-LightItalic.ttf
-          style: italic
-          weight: 300
         - asset: fonts/IBMPlexSans/IBMPlexSans-Bold.ttf
           weight: 700
         - asset: fonts/IBMPlexSans/IBMPlexSans-BoldItalic.ttf
           style: italic
-          weight: 700   
-    - family: SourceSansPro
-      fonts:
-        - asset: fonts/SourceSansPro/SourceSansPro-Regular.ttf
-        - asset: fonts/SourceSansPro/SourceSansPro-Italic.ttf
-          style: italic
-        - asset: fonts/SourceSansPro/SourceSansPro-Light.ttf
-          weight: 300
-        - asset: fonts/SourceSansPro/SourceSansPro-LightItalic.ttf
-          style: italic
-          weight: 300
-        - asset: fonts/SourceSansPro/SourceSansPro-Bold.ttf
-          weight: 700
-        - asset: fonts/SourceSansPro/SourceSansPro-BoldItalic.ttf
-          style: italic
-          weight: 700
+          weight: 700 
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

@@ -31,18 +31,15 @@ class _NavDrawerState extends State<NavDrawer> {
     var bloc = BlocProvider.of(context).bloc;
     var drawerState = bloc.drawerState;
 
-    // if (drawerState.reloadNotifications ?? true) {
-      bloc.updateNotifications();
-      // drawerState.reloadNotifications = false;
-    // }
-
     return Drawer(
       child: SafeArea(
         child: StreamBuilder<Session>(
           stream: bloc.session,
           builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
             var theme = Theme.of(context);
-
+            if (snapshot.hasData && snapshot.data != null) {
+              bloc.updateNotifications();
+            }
             return StreamBuilder<int>(
                 stream: drawerState.highlightPageIndex,
                 initialData: 0,
@@ -51,7 +48,6 @@ class _NavDrawerState extends State<NavDrawer> {
                   Map<int, NavListTile> navMap = {
                     0: NavListTile(
                       icon: OMIcons.dashboard,
-                      selected: true,
                       title: "Feed",
                       onTap: () {
                         changeSelection(0, drawerState);
@@ -63,7 +59,6 @@ class _NavDrawerState extends State<NavDrawer> {
                     1: NavListTile(
                       icon: OMIcons.rssFeed,
                       title: "News",
-                      selected: true,
                       onTap: () {
                         changeSelection(1, drawerState);
                         var navi = Navigator.of(context);
@@ -74,7 +69,6 @@ class _NavDrawerState extends State<NavDrawer> {
                     2: NavListTile(
                       icon: OMIcons.search,
                       title: "Explore",
-                      selected: true,
                       onTap: () {
                         changeSelection(2, drawerState);
                         var navi = Navigator.of(context);
@@ -85,7 +79,6 @@ class _NavDrawerState extends State<NavDrawer> {
                     3: NavListTile(
                       icon: OMIcons.restaurant,
                       title: "Mess Menu",
-                      selected: true,
                       onTap: () {
                         changeSelection(3, drawerState);
                         var navi = Navigator.of(context);
@@ -96,7 +89,6 @@ class _NavDrawerState extends State<NavDrawer> {
                     4: NavListTile(
                       icon: OMIcons.workOutline,
                       title: "Placement Blog",
-                      selected: true,
                       onTap: () {
                         changeSelection(4, drawerState);
                         var navi = Navigator.of(context);
@@ -107,7 +99,6 @@ class _NavDrawerState extends State<NavDrawer> {
                     5: NavListTile(
                       icon: OMIcons.workOutline,
                       title: "Internship Blog",
-                      selected: true,
                       onTap: () {
                         changeSelection(5, drawerState);
                         var navi = Navigator.of(context);
@@ -118,7 +109,6 @@ class _NavDrawerState extends State<NavDrawer> {
                     6: NavListTile(
                       icon: OMIcons.dateRange,
                       title: "Calendar",
-                      selected: true,
                       onTap: () {
                         changeSelection(6, drawerState);
                         var navi = Navigator.of(context);
@@ -129,7 +119,6 @@ class _NavDrawerState extends State<NavDrawer> {
                     7: NavListTile(
                       icon: OMIcons.map,
                       title: "Map",
-                      selected: true,
                       onTap: () {
                         changeSelection(7, drawerState);
                         var navi = Navigator.of(context);
@@ -140,7 +129,6 @@ class _NavDrawerState extends State<NavDrawer> {
                     8: NavListTile(
                       icon: OMIcons.feedback,
                       title: "Complaints/Suggestions",
-                      selected: true,
                       onTap: () {
                         changeSelection(8, drawerState);
                         var navi = Navigator.of(context);
@@ -151,7 +139,6 @@ class _NavDrawerState extends State<NavDrawer> {
                     9: NavListTile(
                       icon: OMIcons.link,
                       title: "Quick Links",
-                      selected: true,
                       onTap: () {
                         changeSelection(9, drawerState);
                         var navi = Navigator.of(context);
@@ -162,7 +149,6 @@ class _NavDrawerState extends State<NavDrawer> {
                     10: NavListTile(
                       icon: OMIcons.settings,
                       title: "Settings",
-                      selected: true,
                       onTap: () {
                         changeSelection(10, drawerState);
                         var navi = Navigator.of(context);
@@ -233,6 +219,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                               ? OMIcons.notificationsActive
                                               : OMIcons.notificationsNone),
                                           onPressed: () {
+                                            changeSelection(-1, drawerState);
                                             var navi = Navigator.of(context);
                                             navi.pop();
                                             navi.pushNamed('/notifications');
@@ -285,7 +272,6 @@ class _NavDrawerState extends State<NavDrawer> {
                     navList.add(NavListTile(
                       icon: OMIcons.exitToApp,
                       title: "Logout",
-                      selected: true,
                       onTap: () {
                         bloc.logout();
                       },
@@ -293,11 +279,15 @@ class _NavDrawerState extends State<NavDrawer> {
                   }
 
                   // Selecting which NavListTile to highlight
-                  navMap[indexSnapshot.data].setHighlighted(true);
+                  if (indexSnapshot.data == -1) {
+                    // TODO: highlight notifications button
+                  } else {
+                    navMap[indexSnapshot.data].setHighlighted(true);
+                  }
 
                   return ListTileTheme(
                     selectedColor: theme.primaryColor,
-                    iconColor: theme.primaryColorDark,
+                    // iconColor: theme.primaryColorDark,
                     style: ListTileStyle.drawer,
                     child: ListView(
                       children: navList,
@@ -315,11 +305,12 @@ class NavListTile extends StatelessWidget {
   final IconData icon;
   final String title;
   final GestureTapCallback onTap;
-  final bool selected;
+  bool selected;
   bool highlight;
 
   void setHighlighted(bool selection) {
     highlight = selection;
+    selected = selection;
   }
 
   NavListTile(
@@ -345,12 +336,86 @@ class NavListTile extends StatelessWidget {
         selected: selected,
         enabled: true,
         leading: Icon(this.icon),
+        dense: true,
         title: Text(
           this.title,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: _iconAndTextColor(theme, listTileTheme)),
         ),
         onTap: this.onTap,
       ),
     );
+  }
+
+  Color _iconAndTextColor(ThemeData theme, ListTileTheme tileTheme) {
+    if (selected && tileTheme?.selectedColor != null)
+      return tileTheme.selectedColor;
+
+    if (!selected && tileTheme?.iconColor != null) return tileTheme.iconColor;
+
+    switch (theme.brightness) {
+      case Brightness.light:
+        return selected ? theme.primaryColor : Colors.black54;
+      case Brightness.dark:
+        return selected
+            ? theme.accentColor
+            : null; // null - use current icon theme color
+    }
+    assert(theme.brightness != null);
+    return null;
+  }
+}
+
+class MNavigatorObserver extends NavigatorObserver {
+  InstiAppBloc bloc;
+
+  MNavigatorObserver(this.bloc);
+
+  static Map<String, int> routeToNavPos = {
+    "/mess": 3,
+    "/placeblog": 4,
+    "/trainblog": 5,
+    "/feed": 0,
+    "/quicklinks": 9,
+    "/news": 1,
+    "/explore": 2,
+    "/calendar": 6,
+    "/complaints": 8,
+    "/newcomplaint": 8,
+    "/putentity/event": 0,
+    "/map": 7,
+    "/settings": 10,
+    "/notifications": -1,
+  };
+
+  @override
+  void didPush(Route route, Route previousRoute) {
+    int pageIndex = routeToNavPos[route.settings.name];
+    if (pageIndex == null) {
+      return;
+    }
+
+    NavDrawer.setPageIndex(bloc, pageIndex ?? -1);
+  }
+
+  @override
+  void didPop(Route route, Route previousRoute) {
+    int pageIndex = routeToNavPos[previousRoute.settings.name];
+    if (pageIndex == null) {
+      return;
+    }
+
+    NavDrawer.setPageIndex(bloc, pageIndex ?? -1);
+  }
+
+  @override
+  void didReplace({Route newRoute, Route oldRoute}) {
+    int pageIndex = routeToNavPos[newRoute.settings.name];
+    if (pageIndex == null) {
+      return;
+    }
+
+    NavDrawer.setPageIndex(bloc, pageIndex ?? -1);
   }
 }

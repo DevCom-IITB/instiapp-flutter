@@ -20,16 +20,7 @@ class User {
   String userID;
 
   @Alias("name")
-  String name;
-
-  String _userName;
-  String get userName {
-    if (_userName == null) {
-      _userName =
-          name.toLowerCase().splitMapJoin(RegExp("\\s+"), onMatch: (m) => " ", onNonMatch: (word) => capitalize(word.toLowerCase()));
-    }
-    return _userName;
-  }
+  String userName;
 
   @Alias("profile_pic")
   String userProfilePictureUrl;
@@ -48,6 +39,9 @@ class User {
 
   @Alias("contact_no")
   String userContactNumber;
+
+  @Alias("show_contact_no")
+  bool userShowContactNumber;
 
   @Alias("about")
   String userAbout;

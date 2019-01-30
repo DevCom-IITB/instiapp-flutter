@@ -8,6 +8,7 @@ import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
 import 'package:InstiApp/src/api/request/image_upload_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
+import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/api/response/complaint_create_response.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
@@ -100,7 +101,10 @@ class InstiAppApi extends _$InstiAppApiClient implements ApiClient {
   Future<void> updateUserEventStatus(@Header("Cookie") String sessionID, @PathParam() String eventID, @QueryParam("status") int status);
 
   @PatchReq(path: "/user-me")
-  Future<User> patchUserMe(@Header("Cookie") String sessionID, @AsJson() UserFCMPatchRequest userFCMPatchRequest);
+  Future<User> patchFCMUserMe(@Header("Cookie") String sessionID, @AsJson() UserFCMPatchRequest userFCMPatchRequest);
+
+  @PatchReq(path: "/user-me")
+  Future<User> patchSCNUserMe(@Header("Cookie") String sessionID, @AsJson() UserSCNPatchRequest userSCNPatchRequest);
 
   @GetReq(path: "/news")
   Future<List<NewsArticle>> getNews(@Header("Cookie") String sessionID, @QueryParam("from") int from, @QueryParam("num") int num, @QueryParam("query") String query);

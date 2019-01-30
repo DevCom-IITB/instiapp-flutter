@@ -152,7 +152,7 @@ class PostBloc {
     }
   }
 
-  Future<void> refresh({bool force = false}) {
+  Future refresh({bool force = false}) async {
     _indexController.close();
 
     _searchFetchPages.clear();
@@ -184,7 +184,5 @@ class PostBloc {
 
     _indexController = PublishSubject<int>();
     _setIndexListener();
-
-    return Future.delayed(Duration(milliseconds: 300));
   }
 }

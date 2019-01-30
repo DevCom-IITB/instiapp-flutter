@@ -13,9 +13,9 @@ abstract class _$RichNotificationSerializer
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
     setMapValue(ret, 'type', model.notificationType);
-    setMapValue(ret, 'id', model.notificationID);
+    setMapValue(ret, 'id', model.notificationObjectID);
     setMapValue(ret, 'extra', model.notificationExtra);
-    setMapValue(ret, 'notification_id', model.notificationTypeID);
+    setMapValue(ret, 'notification_id', model.notificationID);
     setMapValue(ret, 'title', model.notificationTitle);
     setMapValue(ret, 'verb', model.notificationVerb);
     setMapValue(ret, 'large_icon', model.notificationLargeIcon);
@@ -29,9 +29,9 @@ abstract class _$RichNotificationSerializer
     if (map == null) return null;
     final obj = new RichNotification();
     obj.notificationType = map['type'] as String;
-    obj.notificationID = map['id'] as String;
+    obj.notificationObjectID = map['id'] as String;
     obj.notificationExtra = map['extra'] as String;
-    obj.notificationTypeID = map['notification_id'] as String;
+    obj.notificationID = map['notification_id'] as String;
     obj.notificationTitle = map['title'] as String;
     obj.notificationVerb = map['verb'] as String;
     obj.notificationLargeIcon = map['large_icon'] as String;

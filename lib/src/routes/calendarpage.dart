@@ -66,7 +66,6 @@ class _CalendarPageState extends State<CalendarPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                NavDrawer.setPageIndex(bloc, 6);
                 _scaffoldKey.currentState.openDrawer();
               },
             ),

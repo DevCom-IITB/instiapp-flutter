@@ -81,7 +81,6 @@ class _ExplorePageState extends State<ExplorePage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                NavDrawer.setPageIndex(bloc, 2);
                 _scaffoldKey.currentState.openDrawer();
               },
             ),
@@ -155,11 +154,11 @@ class _ExplorePageState extends State<ExplorePage> {
                     SliverPersistentHeader(
                       floating: true,
                       pinned: true,
-                      delegate: SliverSearchBarDelegate(
+                      delegate: SliverHeaderDelegate(
                         child: PreferredSize(
                           preferredSize: Size.fromHeight(72),
                           child: AnimatedContainer(
-                            color: theme.cardColor,
+                            color: theme.canvasColor,
                             padding: EdgeInsets.all(8.0),
                             duration: Duration(milliseconds: 500),
                             child: TextField(

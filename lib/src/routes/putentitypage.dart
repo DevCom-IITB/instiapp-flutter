@@ -60,8 +60,8 @@ class _PutEntityPageState extends State<PutEntityPage> {
       print(state.type);
     });
 
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-      statusBarColor: Colors.transparent,
+    SystemChrome.setSystemUIOverlayStyle(SystemChrome.latestStyle.copyWith(
+      statusBarColor: Colors.black,
       statusBarIconBrightness: Brightness.light,
     ));
   }
