@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:InstiApp/src/api/model/rich_notification.dart';
+import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
 import 'package:InstiApp/src/routes/complaintpage.dart';
@@ -103,6 +104,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return BlocProvider(
       widget.bloc,
       child: MaterialApp(
+        navigatorKey: _navigatorKey,
         title: 'InstiApp',
         theme: ThemeData(
           // fontFamily: "SourceSansPro",
@@ -126,31 +128,26 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
           textTheme: TextTheme(
               display1: TextStyle(
-                fontFamily: "SourceSansPro",
                 color: widget.bloc.brightness == AppBrightness.light
                     ? Colors.black
                     : Colors.white,
               ),
               display2: TextStyle(
-                fontFamily: "SourceSansPro",
                 color: widget.bloc.brightness == AppBrightness.light
                     ? Colors.black
                     : Colors.white,
               ),
               display3: TextStyle(
-                fontFamily: "SourceSansPro",
                 color: widget.bloc.brightness == AppBrightness.light
                     ? Colors.black
                     : Colors.white,
               ),
               display4: TextStyle(
-                fontFamily: "SourceSansPro",
                 color: widget.bloc.brightness == AppBrightness.light
                     ? Colors.black
                     : Colors.white,
               ),
               headline: TextStyle(
-                fontFamily: "SourceSansPro",
               )),
         ),
         onGenerateRoute: (RouteSettings settings) {
@@ -229,6 +226,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           }
           return _buildRoute(settings, MessPage());
         },
+        navigatorObservers: [MNavigatorObserver(widget.bloc)],
       ),
     );
   }
@@ -242,7 +240,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   // Section
   // Handling Notifications
-
   void setupNotifications() {
     // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
     var initializationSettingsAndroid =
@@ -259,9 +256,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         print("onMessage: $message");
         var appDocDir = await getApplicationDocumentsDirectory();
 
-        String payload = jsonEncode(message['data']);
+        String payload = jsonEncode(message["data"]);
 
-        var notif = RichNotificationSerializer().fromMap(message['data']);
+        var notif = RichNotificationSerializer().fromMap(message["data"]);
 
         StyleInformation style;
         AndroidNotificationStyle styleType;
@@ -323,13 +320,11 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       },
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
-        navigateFromNotification(
-            RichNotificationSerializer().fromMap(message['data']));
+        navigateFromNotification(RichNotificationSerializer().fromMap(message));
       },
       onResume: (Map<String, dynamic> message) async {
         print("onResume: $message");
-        navigateFromNotification(
-            RichNotificationSerializer().fromMap(message['data']));
+        navigateFromNotification(RichNotificationSerializer().fromMap(message));
       },
     );
     widget.bloc.firebaseMessaging.requestNotificationPermissions(
@@ -354,8 +349,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future navigateFromNotification(RichNotification fromMap) async {
-    // TODO: Navigate to correct page
-    // _navigatorKey.currentState.push(route)
+    // Navigating to correct page
     var page = {
       "blogentry": fromMap.notificationExtra?.contains("/trainingblog") ?? false
           ? "/trainblog"
@@ -365,10 +359,16 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       "userprofile": "/user/",
       "newsentry": "/news",
     }[fromMap.notificationType];
-    debugPrint(fromMap.toString());
-    var routeName =
-        "$page${fromMap.notificationType != "blogentry" ? fromMap.notificationID ?? "" : ""}";
-    print(_navigatorKey.currentState);
+    
+    var routeAdditionalParam = (fromMap.notificationType != "blogentry" && fromMap.notificationType != "newsentry")
+        ? fromMap.notificationObjectID ?? ""
+        : "";
+
+    var routeName = "$page$routeAdditionalParam";
+
     _navigatorKey.currentState.pushNamed(routeName);
+    
+    // marking the notification as read
+    widget.bloc.clearNotificationUsingID(fromMap.notificationID);
   }
 }

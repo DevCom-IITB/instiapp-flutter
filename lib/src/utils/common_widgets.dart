@@ -244,7 +244,10 @@ class CommonHtml extends StatelessWidget {
               if (node is dom.Element) {
                 switch (node.localName) {
                   case "img":
-                    return Text(node.attributes['href'] ?? "<img>");
+                    // return CachedNetworkImage(
+                    //   imageUrl: node.attributes['href'] ?? node.attributes['src'],
+                    // );
+                    return Text(node.attributes['src'] ?? node.attributes['href'] ?? "<img>");
                   case "a":
                     return InkWell(
                       onTap: () async {
@@ -613,5 +616,28 @@ class EditableChipListState extends State<EditableChipList> {
   String _capitalize(String name) {
     assert(name != null && name.isNotEmpty);
     return name.substring(0, 1).toUpperCase() + name.substring(1);
+  }
+}
+
+class SliverHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final PreferredSize child;
+
+  SliverHeaderDelegate({this.child});
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return child;
+  }
+
+  @override
+  double get maxExtent => child.preferredSize.height;
+
+  @override
+  double get minExtent => child.preferredSize.height;
+
+  @override
+  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
   }
 }

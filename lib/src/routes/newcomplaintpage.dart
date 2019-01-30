@@ -212,15 +212,16 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
 
           req.tags = _chipsKey.currentState.tags.toList();
           if (currRequest?.images?.isNotEmpty ?? false) {
-            setState(() {
-              _uploadingImages = true;
-            });
-            await Future.delayed(Duration(milliseconds: 500));
-
             var encNum = 0;
             var uploadNum = 0;
             var totNum = currRequest.images.length;
 
+            setState(() {
+              _uploadingImages = true;
+              _encodingStatus = "$encNum/$totNum";
+              _uploadingStatus = "$uploadNum/$totNum";
+            });
+            
             req.images =
                 await Future.wait(currRequest.images.map((File f) async {
               var s = convert
@@ -330,50 +331,54 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                             padding: EdgeInsets.all(8.0),
                             scrollDirection: Axis.horizontal,
                             children: currRequest.images.map((im) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: InkWell(
-                                  onLongPress: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: Text("Delete selected image?"),
-                                          actions: <Widget>[
-                                            FlatButton.icon(
-                                              icon: Icon(OMIcons.cancel),
-                                              label: Text("Cancel"),
+                              return InkWell(
+                                onLongPress: () {
+                                  showRemoveImageDialog(context, im);
+                                },
+                                child: Stack(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: PhotoViewableImage(
+                                        imageProvider: FileImage(im),
+                                        heroTag: "${im.path}",
+                                        fit: BoxFit.scaleDown,
+                                        customBorder: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(6.0)),
+                                            side: BorderSide(
+                                              width: 2,
+                                              color: theme.accentColor,
+                                            )),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: SizedBox(
+                                        height: 24,
+                                        width: 24,
+                                        child: ClipOval(
+                                          child: Container(
+                                            color: theme.accentColor,
+                                            child: IconButton(
+                                              padding: EdgeInsets.all(0),
                                               onPressed: () {
-                                                Navigator.of(context).pop();
+                                                showRemoveImageDialog(
+                                                    context, im);
                                               },
+                                              icon: Icon(
+                                                OMIcons.close,
+                                                color:
+                                                    theme.accentIconTheme.color,
+                                              ),
+                                              iconSize: 12.0,
                                             ),
-                                            FlatButton.icon(
-                                              icon: Icon(OMIcons.deleteOutline),
-                                              label: Text("Delete"),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                                setState(() {
-                                                  currRequest.images.remove(im);
-                                                });
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: PhotoViewableImage(
-                                    imageProvider: FileImage(im),
-                                    heroTag: "${im.path}",
-                                    fit: BoxFit.scaleDown,
-                                    customBorder: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(6.0)),
-                                        side: BorderSide(
-                                          width: 2,
-                                          color: theme.accentColor,
-                                        )),
-                                  ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 ),
                               );
                             }).toList(),
@@ -604,6 +609,36 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
       ),
       floatingActionButton: fab,
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+    );
+  }
+
+  void showRemoveImageDialog(BuildContext context, File im) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Delete selected image?"),
+          actions: <Widget>[
+            FlatButton.icon(
+              icon: Icon(OMIcons.cancel),
+              label: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton.icon(
+              icon: Icon(OMIcons.deleteOutline),
+              label: Text("Delete"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  currRequest.images.remove(im);
+                });
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 

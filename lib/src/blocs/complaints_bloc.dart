@@ -42,7 +42,7 @@ class ComplaintsBloc {
       tmp.base64Image = base64Image;
       return bloc.client.uploadImage(bloc.getSessionIdHeader(), tmp);
     }
-    return Future.delayed(Duration(milliseconds: 300));
+    return null;
   }
 
   Future<void> updateAllComplaints() async {
@@ -51,7 +51,6 @@ class ComplaintsBloc {
           await bloc.client.getAllComplaints(bloc.getSessionIdHeader());
       _complaintsSubject.add(UnmodifiableListView(_allComplaints));
     }
-    return Future.delayed(Duration(milliseconds: 300));
   }
 
   Future<void> updateMyComplaints() async {
@@ -60,12 +59,11 @@ class ComplaintsBloc {
           await bloc.client.getUserComplaints(bloc.getSessionIdHeader());
       _mycomplaintsSubject.add(UnmodifiableListView(_myComplaints));
     }
-    return Future.delayed(Duration(milliseconds: 300));
   }
 
   Future<Complaint> getComplaint(String uuid) async {
     if (bloc.currSession == null) {
-      return Future.delayed(Duration(milliseconds: 100));
+      return null;
     }
 
     Complaint c;

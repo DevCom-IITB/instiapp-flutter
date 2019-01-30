@@ -65,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
         url = "http://${server.address.host}:${server.port}/";
         print("Formed URL: $url");
         print("startLoginPageServer.then: Launching Web View");
-        await Future.delayed(Duration(milliseconds: 300));
+        // await Future.delayed(Duration(milliseconds: 200));
         var mqdata = MediaQuery.of(context);
         flutterWebviewPlugin.launch(
           url,

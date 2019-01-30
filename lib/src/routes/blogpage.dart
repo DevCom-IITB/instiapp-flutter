@@ -93,13 +93,6 @@ class _BlogPageState extends State<BlogPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                NavDrawer.setPageIndex(
-                    bloc,
-                    {
-                      PostType.Placement: 4,
-                      PostType.Training: 5,
-                      PostType.NewsArticle: 1,
-                    }[widget.postType]);
                 _scaffoldKey.currentState.openDrawer();
               },
             ),
@@ -179,12 +172,12 @@ class _BlogPageState extends State<BlogPage> {
                           SliverPersistentHeader(
                             floating: true,
                             pinned: true,
-                            delegate: SliverSearchBarDelegate(
+                            delegate: SliverHeaderDelegate(
                               child: PreferredSize(
                                 preferredSize: Size.fromHeight(72),
                                 child: AnimatedContainer(
                                   key: _containerKey,
-                                  color: theme.cardColor,
+                                  color: theme.canvasColor,
                                   padding: EdgeInsets.all(8.0),
                                   duration: Duration(milliseconds: 500),
                                   child: TextField(
@@ -421,28 +414,5 @@ class _BlogPageState extends State<BlogPage> {
             ),
           ),
         ));
-  }
-}
-
-class SliverSearchBarDelegate extends SliverPersistentHeaderDelegate {
-  final PreferredSize child;
-
-  SliverSearchBarDelegate({this.child});
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return child;
-  }
-
-  @override
-  double get maxExtent => child.preferredSize.height;
-
-  @override
-  double get minExtent => child.preferredSize.height;
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-    return false;
   }
 }

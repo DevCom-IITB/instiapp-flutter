@@ -6,11 +6,11 @@ class RichNotification {
   @Alias("type")
   String notificationType;
   @Alias("id")
-  String notificationID;
+  String notificationObjectID;
   @Alias("extra")
   String notificationExtra;
   @Alias("notification_id")
-  String notificationTypeID;
+  String notificationID;
   @Alias("title")
   String notificationTitle;
   @Alias("verb")

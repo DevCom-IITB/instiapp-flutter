@@ -58,7 +58,6 @@ class _MessPageState extends State<MessPage> {
                 semanticLabel: "Show navigation drawer",
               ),
               onPressed: () {
-                NavDrawer.setPageIndex(bloc, 3);
                 _scaffoldKey.currentState.openDrawer();
               },
             ),

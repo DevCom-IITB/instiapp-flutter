@@ -215,19 +215,23 @@ class _ComplaintPageState extends State<ComplaintPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(complaint.complaintCreatedBy.userName,
-                                        style: theme.textTheme.title.copyWith(
-                                            fontWeight: FontWeight.bold)),
-                                    Text(
-                                      DateTimeUtil.getDate(
-                                          complaint.complaintReportDate),
-                                      style: theme.textTheme.caption
-                                          .copyWith(fontSize: 14),
-                                    ),
-                                  ],
+                                Flexible(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                          complaint.complaintCreatedBy.userName,
+                                          style: theme.textTheme.title.copyWith(
+                                              fontWeight: FontWeight.bold)),
+                                      Text(
+                                        DateTimeUtil.getDate(
+                                            complaint.complaintReportDate),
+                                        style: theme.textTheme.caption
+                                            .copyWith(fontSize: 14),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 OutlineButton(
                                   borderSide: BorderSide(
