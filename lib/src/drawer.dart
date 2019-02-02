@@ -158,7 +158,7 @@ class _NavDrawerState extends State<NavDrawer> {
                     ),
                   };
 
-                  List<Widget> navList;
+                  List<Widget> navList, navDownList = <Widget>[];
                   navList = <Widget>[
                     SizedBox(
                       height: 8.0,
@@ -296,9 +296,10 @@ class _NavDrawerState extends State<NavDrawer> {
                     ),
                     Divider(),
                   ];
-                  navList.addAll(navMap.values);
+                  navList.addAll(navMap.values.take(10));
+                  navDownList.addAll(navMap.values.skip(10));
                   if (snapshot.data?.sessionid != null) {
-                    navList.add(NavListTile(
+                    navDownList.add(NavListTile(
                       icon: OMIcons.exitToApp,
                       title: "Logout",
                       onTap: () {
@@ -316,8 +317,24 @@ class _NavDrawerState extends State<NavDrawer> {
                     selectedColor: theme.primaryColor,
                     style: ListTileStyle.drawer,
                     child: ListView(
-                      children: navList,
-                    ),
+                      children: navList + navDownList,
+                    )
+                    // Column(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   mainAxisSize: MainAxisSize.max,
+                    //   crossAxisAlignment: CrossAxisAlignment.center,
+                    //   children: <Widget>[
+                    //     ListView(
+                    //       children: navList,
+                    //       shrinkWrap: true,
+                          
+                    //     ),
+                    //     ListView(
+                    //       shrinkWrap: true,
+                    //       children: navDownList,
+                    //     ),
+                    //   ],
+                    // ),
                   );
                 });
           },
