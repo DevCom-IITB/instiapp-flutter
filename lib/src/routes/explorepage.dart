@@ -22,6 +22,7 @@ class _ExplorePageState extends State<ExplorePage> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
+  FocusNode _focusNode = FocusNode();
   ScrollController _hideButtonController;
   double isFabVisible = 0;
 
@@ -87,98 +88,48 @@ class _ExplorePageState extends State<ExplorePage> {
         ),
       ),
       body: SafeArea(
-        child: NestedScrollView(
-          controller: _hideButtonController,
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(28.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          widget.title,
-                          style: theme.textTheme.display2,
+        child: GestureDetector(
+          onTap: () {
+            _focusNode.unfocus();
+          },
+          child: NestedScrollView(
+            controller: _hideButtonController,
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(
+                            widget.title,
+                            style: theme.textTheme.display2,
+                          ),
                         ),
-                      ),
-                    ]..addAll(searchMode
-                        ? []
-                        : [
-                            AnimatedContainer(
-                              duration: Duration(milliseconds: 500),
-                              decoration: ShapeDecoration(
-                                  shape: CircleBorder(
-                                      side: BorderSide(
-                                          color: theme.primaryColor))),
-                              child: IconButton(
-                                tooltip: !searchMode
-                                    ? "Search ${widget.title}"
-                                    : "Clear search results",
-                                padding: EdgeInsets.all(16.0),
-                                icon: Icon(
-                                  actionIcon,
-                                  color: theme.primaryColor,
-                                ),
-                                color: theme.cardColor,
-                                onPressed: () {
-                                  setState(() {
-                                    if (searchMode) {
-                                      actionIcon = OMIcons.search;
-                                      exploreBloc.query = "";
-                                      exploreBloc.refresh();
-                                    } else {
-                                      actionIcon = OMIcons.close;
-                                    }
-                                    searchMode = !searchMode;
-                                  });
-                                },
-                              ),
-                            )
-                          ]),
-                  ),
-                ),
-              ),
-            ]..addAll(!searchMode
-                ? []
-                : [
-                    SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: 16.0,
-                      ),
-                    ),
-                    SliverPersistentHeader(
-                      floating: true,
-                      pinned: true,
-                      delegate: SliverHeaderDelegate(
-                        child: PreferredSize(
-                          preferredSize: Size.fromHeight(72),
-                          child: AnimatedContainer(
-                            color: theme.canvasColor,
-                            padding: EdgeInsets.all(8.0),
-                            duration: Duration(milliseconds: 500),
-                            child: TextField(
-                              cursorColor: theme.textTheme.body1.color,
-                              style: theme.textTheme.body1,
-                              autofocus: true,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30)),
-                                labelStyle: theme.textTheme.body1,
-                                hintStyle: theme.textTheme.body1,
-                                prefixIcon: Icon(
-                                  OMIcons.search,
-                                ),
-                                suffixIcon: IconButton(
+                      ]..addAll(searchMode
+                          ? []
+                          : [
+                              AnimatedContainer(
+                                duration: Duration(milliseconds: 500),
+                                decoration: ShapeDecoration(
+                                    shape: CircleBorder(
+                                        side: BorderSide(
+                                            color: theme.primaryColor))),
+                                child: IconButton(
                                   tooltip: !searchMode
-                                      ? "Search events, bodies, users..."
+                                      ? "Search ${widget.title}"
                                       : "Clear search results",
+                                  padding: EdgeInsets.all(16.0),
                                   icon: Icon(
                                     actionIcon,
+                                    color: theme.primaryColor,
                                   ),
+                                  color: theme.cardColor,
                                   onPressed: () {
                                     setState(() {
                                       if (searchMode) {
@@ -192,66 +143,123 @@ class _ExplorePageState extends State<ExplorePage> {
                                     });
                                   },
                                 ),
-                                hintText: "Search events, bodies, users...",
-                              ),
-                              onChanged: (query) async {
-                                if (query.length > 4) {
+                              )
+                            ]),
+                    ),
+                  ),
+                ),
+              ]..addAll(!searchMode
+                  ? []
+                  : [
+                      SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: 16.0,
+                        ),
+                      ),
+                      SliverPersistentHeader(
+                        floating: true,
+                        pinned: true,
+                        delegate: SliverHeaderDelegate(
+                          child: PreferredSize(
+                            preferredSize: Size.fromHeight(72),
+                            child: AnimatedContainer(
+                              color: theme.canvasColor,
+                              padding: EdgeInsets.all(8.0),
+                              duration: Duration(milliseconds: 500),
+                              child: TextField(
+                                cursorColor: theme.textTheme.body1.color,
+                                style: theme.textTheme.body1,
+                                autofocus: true,
+                                focusNode: _focusNode,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30)),
+                                  labelStyle: theme.textTheme.body1,
+                                  hintStyle: theme.textTheme.body1,
+                                  prefixIcon: Icon(
+                                    OMIcons.search,
+                                  ),
+                                  suffixIcon: IconButton(
+                                    tooltip: !searchMode
+                                        ? "Search events, bodies, users..."
+                                        : "Clear search results",
+                                    icon: Icon(
+                                      actionIcon,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        if (searchMode) {
+                                          actionIcon = OMIcons.search;
+                                          exploreBloc.query = "";
+                                          exploreBloc.refresh();
+                                        } else {
+                                          actionIcon = OMIcons.close;
+                                        }
+                                        searchMode = !searchMode;
+                                      });
+                                    },
+                                  ),
+                                  hintText: "Search events, bodies, users...",
+                                ),
+                                onChanged: (query) async {
+                                  if (query.length > 4) {
+                                    exploreBloc.query = query;
+                                    exploreBloc.refresh();
+                                  }
+                                },
+                                onSubmitted: (query) async {
                                   exploreBloc.query = query;
-                                  exploreBloc.refresh();
-                                }
-                              },
-                              onSubmitted: (query) async {
-                                exploreBloc.query = query;
-                                await exploreBloc.refresh();
-                              },
+                                  await exploreBloc.refresh();
+                                },
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    )
-                  ]);
-          },
-          body: StreamBuilder<ExploreResponse>(
-            stream: exploreBloc.explore,
-            builder: (BuildContext context,
-                AsyncSnapshot<ExploreResponse> snapshot) {
-              return RefreshIndicator(
-                key: _refreshIndicatorKey,
-                onRefresh: () {
-                  return exploreBloc.refresh();
-                },
-                child: Builder(builder: (context) {
-                  return CustomScrollView(
-                    // The "controller" and "primary" members should be left
-                    // unset, so that the NestedScrollView can control this
-                    // inner scroll view.
-                    // If the "controller" property is set, then this scroll
-                    // view will not be associated with the NestedScrollView.
-                    // The PageStorageKey should be unique to this ScrollView;
-                    // it allows the list to remember its scroll position when
-                    // the tab view is not on the screen.
-                    slivers: <Widget>[
-                      // SliverOverlapInjector(
-                      //   // This is the flip side of the SliverOverlapAbsorber above.
-                      //   handle: NestedScrollView
-                      //       .sliverOverlapAbsorberHandleFor(context),
-                      // ),
-                      SliverPadding(
-                          padding: const EdgeInsets.all(8.0),
-                          // In this example, the inner scroll view has
-                          // fixed-height list items, hence the use of
-                          // SliverFixedExtentList. However, one could use any
-                          // sliver widget here, e.g. SliverList or SliverGrid.
-                          sliver: SliverList(
-                            delegate: SliverChildListDelegate(
-                              _buildContent(snapshot, theme, exploreBloc),
-                            ),
-                          )),
-                    ],
-                  );
-                }),
-              );
+                      )
+                    ]);
             },
+            body: StreamBuilder<ExploreResponse>(
+              stream: exploreBloc.explore,
+              builder: (BuildContext context,
+                  AsyncSnapshot<ExploreResponse> snapshot) {
+                return RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  onRefresh: () {
+                    return exploreBloc.refresh();
+                  },
+                  child: Builder(builder: (context) {
+                    return CustomScrollView(
+                      // The "controller" and "primary" members should be left
+                      // unset, so that the NestedScrollView can control this
+                      // inner scroll view.
+                      // If the "controller" property is set, then this scroll
+                      // view will not be associated with the NestedScrollView.
+                      // The PageStorageKey should be unique to this ScrollView;
+                      // it allows the list to remember its scroll position when
+                      // the tab view is not on the screen.
+                      slivers: <Widget>[
+                        // SliverOverlapInjector(
+                        //   // This is the flip side of the SliverOverlapAbsorber above.
+                        //   handle: NestedScrollView
+                        //       .sliverOverlapAbsorberHandleFor(context),
+                        // ),
+                        SliverPadding(
+                            padding: const EdgeInsets.all(8.0),
+                            // In this example, the inner scroll view has
+                            // fixed-height list items, hence the use of
+                            // SliverFixedExtentList. However, one could use any
+                            // sliver widget here, e.g. SliverList or SliverGrid.
+                            sliver: SliverList(
+                              delegate: SliverChildListDelegate(
+                                _buildContent(snapshot, theme, exploreBloc),
+                              ),
+                            )),
+                      ],
+                    );
+                  }),
+                );
+              },
+            ),
           ),
         ),
       ),
