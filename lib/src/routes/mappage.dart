@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
@@ -45,11 +46,6 @@ class _MapPageState extends State<MapPage> {
         }
       }
     });
-
-    SystemChrome.setSystemUIOverlayStyle(SystemChrome.latestStyle.copyWith(
-      statusBarColor: Colors.black,
-      statusBarIconBrightness: Brightness.light,
-    ));
   }
 
   @override
@@ -57,17 +53,6 @@ class _MapPageState extends State<MapPage> {
     onStateChangedSub?.cancel();
     onUrlChangedSub?.cancel();
     flutterWebviewPlugin.dispose();
-    
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-      systemNavigationBarColor: theme?.primaryColor ?? null,
-      systemNavigationBarIconBrightness: theme?.primaryColor != null
-          ? Brightness.values[1 -
-              ThemeData.estimateBrightnessForColor(theme.primaryColor).index]
-          : null,
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness:
-          Brightness.values[1 - (theme?.brightness?.index ?? 0)],
-    ));
 
     super.dispose();
   }
@@ -75,45 +60,44 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     theme = Theme.of(context);
+    print(theme.canvasColor);
     var bloc = BlocProvider.of(context).bloc;
 
     print("This is the URL: $mapUrl");
-    return SafeArea(
-      child: WebviewScaffold(
-        url: mapUrl,
-        withJavascript: true,
-        withLocalStorage: true,
-        headers: {
-          "Cookie": bloc.getSessionIdHeader(),
-        },
-        primary: true,
-        bottomNavigationBar: MyBottomAppBar(
-          child: new Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              IconButton(
-                tooltip: "Back",
-                icon: Icon(
-                  OMIcons.arrowBack,
-                  semanticLabel: "Go Back",
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+    return SafeWebviewScaffold(
+      url: mapUrl,
+      withJavascript: true,
+      withLocalStorage: true,
+      headers: {
+        "Cookie": bloc.getSessionIdHeader(),
+      },
+      primary: true,
+      bottomNavigationBar: MyBottomAppBar(
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              tooltip: "Back",
+              icon: Icon(
+                OMIcons.arrowBack,
+                semanticLabel: "Go Back",
               ),
-              IconButton(
-                tooltip: "Refresh",
-                icon: Icon(
-                  OMIcons.refresh,
-                  semanticLabel: "Refresh",
-                ),
-                onPressed: () {
-                  flutterWebviewPlugin.reload();
-                },
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            IconButton(
+              tooltip: "Refresh",
+              icon: Icon(
+                OMIcons.refresh,
+                semanticLabel: "Refresh",
               ),
-            ],
-          ),
+              onPressed: () {
+                flutterWebviewPlugin.reload();
+              },
+            ),
+          ],
         ),
       ),
     );
