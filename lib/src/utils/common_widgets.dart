@@ -132,9 +132,10 @@ class HeroPhotoViewWrapperState extends State<HeroPhotoViewWrapper> {
       systemNavigationBarIconBrightness: Brightness.values[1 -
           ThemeData.estimateBrightnessForColor(widget.theme.primaryColor)
               .index],
-      statusBarColor: Colors.transparent,
+      statusBarColor: widget.theme.canvasColor,
       statusBarIconBrightness:
           Brightness.values[1 - widget.theme.brightness.index],
+      statusBarBrightness: Brightness.values[widget.theme.brightness.index],
     ));
   }
 

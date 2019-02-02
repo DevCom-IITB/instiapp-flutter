@@ -48,10 +48,20 @@ class AppBrightness {
   /// For example, the color might be black, requiring white text.
   static const black = const AppBrightness._internal(2);
 
+  static const brightnessToCanvasColor = {
+    light: Colors.white,
+    dark: Color(0xff303030),
+    black: Colors.black,
+  };
+
   static const values = [dark, light, black];
 
   Brightness toBrightness() {
     return index == 2 ? Brightness.dark : Brightness.values[index];
+  }
+
+  Color toColor() {
+    return brightnessToCanvasColor[this];
   }
 }
 
