@@ -231,7 +231,7 @@ class _EventPageState extends State<EventPage> {
         heroTag: body.bodyID,
       ),
       onTap: () {
-        BodyPage.navigateWith(context, bloc, body);
+        BodyPage.navigateWith(context, bloc, body: body);
       },
     );
   }

@@ -117,26 +117,19 @@ class HeroPhotoViewWrapper extends StatefulWidget {
 }
 
 class HeroPhotoViewWrapperState extends State<HeroPhotoViewWrapper> {
+  SystemUiOverlayStyle saveStyle;
+
   @override
   void initState() {
     super.initState();
+    saveStyle = SystemChrome.latestStyle;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
   }
 
   @override
   void dispose() {
     super.dispose();
-
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-      systemNavigationBarColor: widget.theme.primaryColor,
-      systemNavigationBarIconBrightness: Brightness.values[1 -
-          ThemeData.estimateBrightnessForColor(widget.theme.primaryColor)
-              .index],
-      statusBarColor: widget.theme.canvasColor,
-      statusBarIconBrightness:
-          Brightness.values[1 - widget.theme.brightness.index],
-      statusBarBrightness: Brightness.values[widget.theme.brightness.index],
-    ));
+    SystemChrome.setSystemUIOverlayStyle(saveStyle);
   }
 
   @override
