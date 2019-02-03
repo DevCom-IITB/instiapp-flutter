@@ -2,7 +2,16 @@
 
 ## Unreleased
 
-* Nothing here
+## v1.5-beta
+
+* Calendar switch to heatmap of events
+* Fix navDrawer selected tile
+* Notifications on Android working
+* Option to hide user's contact number on profile
+* LoginPage made more expressive
+* \[iOS\] rename bundle id to `app.insti.ios`
+* Fix status bar, navigation bar colors on both OS
+* SettingsPage options made more verbose
 
 ## v1.4-beta
 
