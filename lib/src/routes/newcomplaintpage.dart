@@ -222,7 +222,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
 
     return Scaffold(
       key: _scaffoldKey,
-      drawer: NavDrawer(),
+      // drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
         shape: RoundedNotchedRectangle(),
         child: new Row(

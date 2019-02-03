@@ -63,7 +63,7 @@ class _MessPageState extends State<MessPage> {
           ],
         ),
       ),
-      drawer: NavDrawer(),
+      // drawer: NavDrawer(),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () => bloc.updateHostels(),

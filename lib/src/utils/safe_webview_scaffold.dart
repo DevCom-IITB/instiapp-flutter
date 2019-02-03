@@ -97,6 +97,9 @@ class _SafeWebviewScaffoldState extends State<SafeWebviewScaffold> {
       body: SafeArea(
         child: _WebviewPlaceholder(
           onRectChanged: (Rect value) {
+            var mqdata = MediaQuery.of(context);
+            value = value.shift(Offset(mqdata.size.width - value.width, 0));
+            print(value);
             if (_rect == null) {
               _rect = value;
               webviewReference.launch(
@@ -169,6 +172,7 @@ class _WebviewPlaceholderRender extends RenderProxyBox {
   Rect _rect;
 
   Rect get rect => _rect;
+  MediaQueryData mediaQueryData;
 
   set onRectChanged(ValueChanged<Rect> callback) {
     if (callback != _callback) {
@@ -187,6 +191,7 @@ class _WebviewPlaceholderRender extends RenderProxyBox {
   void paint(PaintingContext context, Offset offset) {
     super.paint(context, offset);
     final rect = offset & size;
+
     if (_rect != rect) {
       _rect = rect;
       notifyRect();

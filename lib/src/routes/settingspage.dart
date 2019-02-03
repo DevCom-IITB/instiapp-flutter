@@ -30,7 +30,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       key: _scaffoldKey,
-      drawer: NavDrawer(),
+      // drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,

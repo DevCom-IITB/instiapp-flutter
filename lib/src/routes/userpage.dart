@@ -20,16 +20,28 @@ class UserPage extends StatefulWidget {
 
   UserPage({this.userFuture, this.initialUser});
 
-  static void navigateWith(BuildContext context, InstiAppBloc bloc, User user) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => UserPage(
-              initialUser: user,
-              userFuture: bloc.getUser(user.userID),
-            ),
-      ),
-    );
+  static void navigateWith(BuildContext context, InstiAppBloc bloc, User user,
+      {NavigatorState navigatorState}) {
+    if (navigatorState != null) {
+      navigatorState.push(
+        MaterialPageRoute(
+          builder: (context) => UserPage(
+                initialUser: user,
+                userFuture: bloc.getUser(user.userID),
+              ),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UserPage(
+                initialUser: user,
+                userFuture: bloc.getUser(user.userID),
+              ),
+        ),
+      );
+    }
   }
 
   @override
@@ -88,7 +100,7 @@ class _UserPageState extends State<UserPage> {
       length: 3,
       child: Scaffold(
         key: _scaffoldKey,
-        drawer: NavDrawer(),
+        // drawer: NavDrawer(),
         bottomNavigationBar: MyBottomAppBar(
           shape: RoundedNotchedRectangle(),
           child: new Row(

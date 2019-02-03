@@ -69,7 +69,7 @@ class _CalendarPageState extends State<CalendarPage> {
           ],
         ),
       ),
-      drawer: NavDrawer(),
+      //drawer: NavDrawer(),
       body: SafeArea(
         child: StreamBuilder<Map<DateTime, List<Event>>>(
           stream: calBloc.events,

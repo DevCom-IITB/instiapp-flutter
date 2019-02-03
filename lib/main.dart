@@ -31,6 +31,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:ui' as ui;
 
 void main() async {
   GlobalKey<MyAppState> key = GlobalKey();
@@ -96,135 +97,177 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       systemNavigationBarColor: widget.bloc.primaryColor,
       systemNavigationBarIconBrightness: Brightness.values[1 -
           ThemeData.estimateBrightnessForColor(widget.bloc.primaryColor).index],
-      statusBarColor: widget.bloc.brightness.toColor(), //or set color with: Color(0xFF0000FF)
-      statusBarIconBrightness: Brightness.values[1 - widget.bloc.brightness.toBrightness().index],
-      statusBarBrightness: Brightness.values[widget.bloc.brightness.toBrightness().index],
+      statusBarColor: widget.bloc.brightness
+          .toColor(), //or set color with: Color(0xFF0000FF)
+      statusBarIconBrightness:
+          Brightness.values[1 - widget.bloc.brightness.toBrightness().index],
+      statusBarBrightness:
+          Brightness.values[widget.bloc.brightness.toBrightness().index],
     ));
+    var themeData = ThemeData(
+      // fontFamily: "SourceSansPro",
+      fontFamily: "IBMPlexSans",
+
+      primaryColor: widget.bloc.primaryColor,
+      accentColor: widget.bloc.accentColor,
+      primarySwatch: Colors.primaries.singleWhere(
+          (c) => c.value == widget.bloc.accentColor.value,
+          orElse: () => null),
+
+      toggleableActiveColor: widget.bloc.accentColor,
+      textSelectionHandleColor: widget.bloc.accentColor,
+
+      canvasColor: widget.bloc.brightness.toColor(),
+
+      bottomAppBarColor: widget.bloc.primaryColor,
+      brightness: widget.bloc.brightness.toBrightness(),
+
+      textTheme: TextTheme(
+          display1: TextStyle(
+            color: widget.bloc.brightness == AppBrightness.light
+                ? Colors.black
+                : Colors.white,
+          ),
+          display2: TextStyle(
+            color: widget.bloc.brightness == AppBrightness.light
+                ? Colors.black
+                : Colors.white,
+          ),
+          display3: TextStyle(
+            color: widget.bloc.brightness == AppBrightness.light
+                ? Colors.black
+                : Colors.white,
+          ),
+          display4: TextStyle(
+            color: widget.bloc.brightness == AppBrightness.light
+                ? Colors.black
+                : Colors.white,
+          ),
+          headline: TextStyle()),
+    );
 
     return BlocProvider(
       widget.bloc,
-      child: MaterialApp(
-        navigatorKey: _navigatorKey,
-        title: 'InstiApp',
-        theme: ThemeData(
-          // fontFamily: "SourceSansPro",
-          fontFamily: "IBMPlexSans",
-
-          primaryColor: widget.bloc.primaryColor,
-          accentColor: widget.bloc.accentColor,
-          primarySwatch: Colors.primaries.singleWhere(
-              (c) => c.value == widget.bloc.accentColor.value,
-              orElse: () => null),
-
-          toggleableActiveColor: widget.bloc.accentColor,
-          textSelectionHandleColor: widget.bloc.accentColor,
-
-          canvasColor: widget.bloc.brightness.toColor(),
-
-          bottomAppBarColor: widget.bloc.primaryColor,
-          brightness: widget.bloc.brightness.toBrightness(),
-
-          textTheme: TextTheme(
-              display1: TextStyle(
-                color: widget.bloc.brightness == AppBrightness.light
-                    ? Colors.black
-                    : Colors.white,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        textDirection: TextDirection.ltr,
+        children: <Widget>[
+          SizedBox(
+            width: MediaQueryData.fromWindow(ui.window).size.width * 0.30,
+            child: MaterialApp(
+              theme: themeData,
+              home: NavDrawer(
+                navigatorKey: _navigatorKey,
               ),
-              display2: TextStyle(
-                color: widget.bloc.brightness == AppBrightness.light
-                    ? Colors.black
-                    : Colors.white,
+            ),
+          ),
+          SizedBox(
+            width: 1,
+            child: Center(
+              child: Container(
+                height: 0.0,
+                // margin: EdgeInsetsDirectional.only(top: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border(
+                    right: BorderSide(
+                      color: themeData.dividerColor,
+                      width: 1.0,
+                    ),
+                  ),
+                ),
               ),
-              display3: TextStyle(
-                color: widget.bloc.brightness == AppBrightness.light
-                    ? Colors.black
-                    : Colors.white,
-              ),
-              display4: TextStyle(
-                color: widget.bloc.brightness == AppBrightness.light
-                    ? Colors.black
-                    : Colors.white,
-              ),
-              headline: TextStyle(
-              )),
-        ),
-        onGenerateRoute: (RouteSettings settings) {
-          if (settings.name.startsWith("/event/")) {
-            return _buildRoute(
-                settings,
-                EventPage(
-                  eventFuture:
-                      widget.bloc.getEvent(settings.name.split("/event/")[1]),
-                ));
-          } else if (settings.name.startsWith("/body/")) {
-            return _buildRoute(
-                settings,
-                BodyPage(
-                    bodyFuture:
-                        widget.bloc.getBody(settings.name.split("/body/")[1])));
-          } else if (settings.name.startsWith("/user/")) {
-            return _buildRoute(
-                settings,
-                UserPage(
-                    userFuture:
-                        widget.bloc.getUser(settings.name.split("/user/")[1])));
-          } else if (settings.name.startsWith("/complaint/")) {
-            return _buildRoute(
-                settings,
-                ComplaintPage(
-                    complaintFuture: widget.bloc
-                        .getComplaint(settings.name.split("/complaint/")[1])));
-          } else if (settings.name.startsWith("/putentity/event/")) {
-            return _buildRoute(
-                settings,
-                PutEntityPage(
-                    entityID: settings.name.split("/putentity/event/")[1],
-                    cookie: widget.bloc.getSessionIdHeader()));
-          } else if (settings.name.startsWith("/putentity/body/")) {
-            return _buildRoute(
-                settings,
-                PutEntityPage(
-                    isBody: true,
-                    entityID: settings.name.split("/putentity/body/")[1],
-                    cookie: widget.bloc.getSessionIdHeader()));
-          } else {
-            switch (settings.name) {
-              case "/":
-                return _buildRoute(settings, LoginPage(widget.bloc));
-              case "/mess":
+            ),
+          ),
+          Expanded(
+            child: MaterialApp(
+              navigatorKey: _navigatorKey,
+              title: 'InstiApp',
+              theme: themeData,
+              onGenerateRoute: (RouteSettings settings) {
+                if (settings.name.startsWith("/event/")) {
+                  return _buildRoute(
+                      settings,
+                      EventPage(
+                        eventFuture: widget.bloc
+                            .getEvent(settings.name.split("/event/")[1]),
+                      ));
+                } else if (settings.name.startsWith("/body/")) {
+                  return _buildRoute(
+                      settings,
+                      BodyPage(
+                          bodyFuture: widget.bloc
+                              .getBody(settings.name.split("/body/")[1])));
+                } else if (settings.name.startsWith("/user/")) {
+                  return _buildRoute(
+                      settings,
+                      UserPage(
+                          userFuture: widget.bloc
+                              .getUser(settings.name.split("/user/")[1])));
+                } else if (settings.name.startsWith("/complaint/")) {
+                  return _buildRoute(
+                      settings,
+                      ComplaintPage(
+                          complaintFuture: widget.bloc.getComplaint(
+                              settings.name.split("/complaint/")[1])));
+                } else if (settings.name.startsWith("/putentity/event/")) {
+                  return _buildRoute(
+                      settings,
+                      PutEntityPage(
+                          entityID: settings.name.split("/putentity/event/")[1],
+                          cookie: widget.bloc.getSessionIdHeader()));
+                } else if (settings.name.startsWith("/putentity/body/")) {
+                  return _buildRoute(
+                      settings,
+                      PutEntityPage(
+                          isBody: true,
+                          entityID: settings.name.split("/putentity/body/")[1],
+                          cookie: widget.bloc.getSessionIdHeader()));
+                } else {
+                  switch (settings.name) {
+                    case "/":
+                      return _buildRoute(settings, LoginPage(widget.bloc));
+                    case "/mess":
+                      return _buildRoute(settings, MessPage());
+                    case "/placeblog":
+                      return _buildRoute(settings, PlacementBlogPage());
+                    case "/trainblog":
+                      return _buildRoute(settings, TrainingBlogPage());
+                    case "/feed":
+                      return _buildRoute(settings, FeedPage());
+                    case "/quicklinks":
+                      return _buildRoute(settings, QuickLinksPage());
+                    case "/news":
+                      return _buildRoute(settings, NewsPage());
+                    case "/explore":
+                      return _buildRoute(settings, ExplorePage());
+                    case "/calendar":
+                      return _buildRoute(settings, CalendarPage());
+                    case "/complaints":
+                      return _buildRoute(settings, ComplaintsPage());
+                    case "/newcomplaint":
+                      return _buildRoute(settings, NewComplaintPage());
+                    case "/putentity/event":
+                      return _buildRoute(
+                          settings,
+                          PutEntityPage(
+                              cookie: widget.bloc.getSessionIdHeader()));
+                    case "/map":
+                      return _buildRoute(settings, MapPage());
+                    case "/settings":
+                      return _buildRoute(settings, SettingsPage());
+                    case "/notifications":
+                      return _buildRoute(settings, NotificationsPage());
+                  }
+                }
                 return _buildRoute(settings, MessPage());
-              case "/placeblog":
-                return _buildRoute(settings, PlacementBlogPage());
-              case "/trainblog":
-                return _buildRoute(settings, TrainingBlogPage());
-              case "/feed":
-                return _buildRoute(settings, FeedPage());
-              case "/quicklinks":
-                return _buildRoute(settings, QuickLinksPage());
-              case "/news":
-                return _buildRoute(settings, NewsPage());
-              case "/explore":
-                return _buildRoute(settings, ExplorePage());
-              case "/calendar":
-                return _buildRoute(settings, CalendarPage());
-              case "/complaints":
-                return _buildRoute(settings, ComplaintsPage());
-              case "/newcomplaint":
-                return _buildRoute(settings, NewComplaintPage());
-              case "/putentity/event":
-                return _buildRoute(settings,
-                    PutEntityPage(cookie: widget.bloc.getSessionIdHeader()));
-              case "/map":
-                return _buildRoute(settings, MapPage());
-              case "/settings":
-                return _buildRoute(settings, SettingsPage());
-              case "/notifications":
-                return _buildRoute(settings, NotificationsPage());
-            }
-          }
-          return _buildRoute(settings, MessPage());
-        },
-        navigatorObservers: [MNavigatorObserver(widget.bloc)],
+              },
+              navigatorObservers: [MNavigatorObserver(widget.bloc)],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -357,15 +400,16 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       "userprofile": "/user/",
       "newsentry": "/news",
     }[fromMap.notificationType];
-    
-    var routeAdditionalParam = (fromMap.notificationType != "blogentry" && fromMap.notificationType != "newsentry")
+
+    var routeAdditionalParam = (fromMap.notificationType != "blogentry" &&
+            fromMap.notificationType != "newsentry")
         ? fromMap.notificationObjectID ?? ""
         : "";
 
     var routeName = "$page$routeAdditionalParam";
 
     _navigatorKey.currentState.pushNamed(routeName);
-    
+
     // marking the notification as read
     widget.bloc.clearNotificationUsingID(fromMap.notificationID);
   }

@@ -78,7 +78,7 @@ class _BlogPageState extends State<BlogPage> {
     return Scaffold(
       resizeToAvoidBottomPadding: true,
       key: _scaffoldKey,
-      drawer: NavDrawer(),
+      //drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
         shape: RoundedNotchedRectangle(),
         child: new Row(

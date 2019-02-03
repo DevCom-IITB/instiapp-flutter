@@ -12,6 +12,9 @@ import 'package:InstiApp/src/api/model/notification.dart' as ntf;
 
 // A Navigation Drawer
 class NavDrawer extends StatefulWidget {
+  final GlobalKey<NavigatorState> navigatorKey;
+  NavDrawer({@required this.navigatorKey});
+
   static void setPageIndex(InstiAppBloc bloc, int pageIndex) {
     bloc.drawerState.setPageIndex(pageIndex);
   }
@@ -39,7 +42,9 @@ class _NavDrawerState extends State<NavDrawer> {
           stream: bloc.session,
           builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
             var theme = Theme.of(context);
-            if (snapshot.hasData && snapshot.data != null && !loggingOutLoading) {
+            if (snapshot.hasData &&
+                snapshot.data != null &&
+                !loggingOutLoading) {
               bloc.updateNotifications();
             }
             return StreamBuilder<int>(
@@ -53,8 +58,8 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "Feed",
                       onTap: () {
                         changeSelection(0, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pop();
+                        var navi = widget.navigatorKey.currentState;
+                        if (indexSnapshot.data == 7) navi.pop();
                         navi.pushNamed('/feed');
                       },
                     ),
@@ -63,8 +68,8 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "News",
                       onTap: () {
                         changeSelection(1, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pop();
+                        var navi = widget.navigatorKey.currentState;
+                        if (indexSnapshot.data == 7) navi.pop();
                         navi.pushNamed('/news');
                       },
                     ),
@@ -73,8 +78,8 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "Explore",
                       onTap: () {
                         changeSelection(2, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pop();
+                        var navi = widget.navigatorKey.currentState;
+                        if (indexSnapshot.data == 7) navi.pop();
                         navi.pushNamed('/explore');
                       },
                     ),
@@ -83,8 +88,8 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "Mess Menu",
                       onTap: () {
                         changeSelection(3, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pop();
+                        var navi = widget.navigatorKey.currentState;
+                        if (indexSnapshot.data == 7) navi.pop();
                         navi.pushNamed('/mess');
                       },
                     ),
@@ -93,8 +98,8 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "Placement Blog",
                       onTap: () {
                         changeSelection(4, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pop();
+                        var navi = widget.navigatorKey.currentState;
+                        if (indexSnapshot.data == 7) navi.pop();
                         navi.pushNamed('/placeblog');
                       },
                     ),
@@ -103,8 +108,8 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "Internship Blog",
                       onTap: () {
                         changeSelection(5, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pop();
+                        var navi = widget.navigatorKey.currentState;
+                        if (indexSnapshot.data == 7) navi.pop();
                         navi.pushNamed('/trainblog');
                       },
                     ),
@@ -113,8 +118,8 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "Calendar",
                       onTap: () {
                         changeSelection(6, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pop();
+                        var navi = widget.navigatorKey.currentState;
+                        if (indexSnapshot.data == 7) navi.pop();
                         navi.pushNamed('/calendar');
                       },
                     ),
@@ -123,8 +128,8 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "Map",
                       onTap: () {
                         changeSelection(7, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pop();
+                        var navi = widget.navigatorKey.currentState;
+                        if (indexSnapshot.data == 7) navi.pop();
                         navi.pushNamed('/map');
                       },
                     ),
@@ -133,8 +138,8 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "Complaints/Suggestions",
                       onTap: () {
                         changeSelection(8, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pop();
+                        var navi = widget.navigatorKey.currentState;
+                        if (indexSnapshot.data == 7) navi.pop();
                         navi.pushNamed('/complaints');
                       },
                     ),
@@ -143,8 +148,8 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "Quick Links",
                       onTap: () {
                         changeSelection(9, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pop();
+                        var navi = widget.navigatorKey.currentState;
+                        if (indexSnapshot.data == 7) navi.pop();
                         navi.pushNamed('/quicklinks');
                       },
                     ),
@@ -153,8 +158,8 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "Settings",
                       onTap: () {
                         changeSelection(10, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pop();
+                        var navi = widget.navigatorKey.currentState;
+                        if (indexSnapshot.data == 7) navi.pop();
                         navi.pushNamed('/settings');
                       },
                     ),
@@ -197,7 +202,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                         "Log in",
                                       ),
                                       onPressed: () {
-                                        Navigator.of(context)
+                                        widget.navigatorKey.currentState
                                             .pushReplacementNamed('/');
                                       },
                                     ),
@@ -205,7 +210,9 @@ class _NavDrawerState extends State<NavDrawer> {
                                   ? () {
                                       changeSelection(-2, drawerState);
                                       UserPage.navigateWith(context, bloc,
-                                          bloc.currSession.profile);
+                                          bloc.currSession.profile,
+                                          navigatorState:
+                                              widget.navigatorKey.currentState);
                                     }
                                   : null,
                             ),
@@ -247,9 +254,10 @@ class _NavDrawerState extends State<NavDrawer> {
                                               onPressed: () {
                                                 changeSelection(
                                                     -1, drawerState);
-                                                var navi =
-                                                    Navigator.of(context);
-                                                navi.pop();
+                                                var navi = widget
+                                                    .navigatorKey.currentState;
+                                                if (indexSnapshot.data == 7)
+                                                  navi.pop();
                                                 navi.pushNamed(
                                                     '/notifications');
                                               },
