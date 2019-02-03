@@ -70,7 +70,7 @@ class _SettingsPageState extends State<SettingsPage> {
               if (snapshot.data != null) {
                 children.addAll([
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24.0),
+                    padding: const EdgeInsets.only(top: 12.0, bottom: 12.0),
                     child: Text(
                       "Profile settings",
                       style: theme.textTheme.title.copyWith(
@@ -306,6 +306,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   leading: Icon(OMIcons.info),
                   title: Text("About"),
                   subtitle: Text("The InstiApp Team"),
+                  enabled: false,
                 ),
               ]);
 
