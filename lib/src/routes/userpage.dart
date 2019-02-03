@@ -385,7 +385,7 @@ class _UserPageState extends State<UserPage> {
         heroTag: body.bodyID,
       ),
       onTap: () {
-        BodyPage.navigateWith(context, bloc, body);
+        BodyPage.navigateWith(context, bloc, body: body);
       },
     );
   }
@@ -397,10 +397,10 @@ class _UserPageState extends State<UserPage> {
       leading: NullableCircleAvatar(
         role.roleBodyDetails.bodyImageURL,
         OMIcons.peopleOutline,
-        heroTag: role.roleBodyDetails.bodyID,
+        heroTag: role.roleID ?? role.roleBodyDetails.bodyID,
       ),
       onTap: () {
-        BodyPage.navigateWith(context, bloc, role.roleBodyDetails);
+        BodyPage.navigateWith(context, bloc, role: role);
       },
     );
   }

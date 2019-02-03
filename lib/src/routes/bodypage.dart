@@ -1,5 +1,6 @@
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
@@ -17,16 +18,19 @@ import 'package:markdown/markdown.dart' as markdown;
 class BodyPage extends StatefulWidget {
   final Body initialBody;
   final Future<Body> bodyFuture;
+  final String heroTag;
 
-  BodyPage({this.bodyFuture, this.initialBody});
+  BodyPage({this.bodyFuture, this.initialBody, this.heroTag});
 
-  static void navigateWith(BuildContext context, InstiAppBloc bloc, Body body) {
+  static void navigateWith(BuildContext context, InstiAppBloc bloc,
+      {Body body, Role role}) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => BodyPage(
-              initialBody: body,
-              bodyFuture: bloc.getBody(body.bodyID),
+              initialBody: role?.roleBodyDetails ?? body,
+              bodyFuture: bloc.getBody((role?.roleBodyDetails ?? body).bodyID),
+              heroTag: role?.roleID ?? body?.bodyID,
             ),
       ),
     );
@@ -147,7 +151,7 @@ class _BodyPageState extends State<BodyPage> {
                     padding: const EdgeInsets.all(8.0),
                     child: PhotoViewableImage(
                       url: body.bodyImageURL,
-                      heroTag: body.bodyID,
+                      heroTag: widget.heroTag ?? body.bodyID,
                       fit: BoxFit.fitWidth,
                     ),
                   ),
@@ -345,7 +349,7 @@ class _BodyPageState extends State<BodyPage> {
         heroTag: body.bodyID,
       ),
       onTap: () {
-        BodyPage.navigateWith(context, bloc, body);
+        BodyPage.navigateWith(context, bloc, body: body);
       },
     );
   }
