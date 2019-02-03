@@ -21,6 +21,7 @@ class _SettingsPageState extends State<SettingsPage> {
   final String feedbackUrl = "https://insti.app/feedback";
 
   bool updatingSCN = false;
+  bool loggingOutLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -134,9 +135,20 @@ class _SettingsPageState extends State<SettingsPage> {
                   ListTile(
                     leading: Icon(OMIcons.exitToApp),
                     title: Text("Logout"),
-                    onTap: () {
-                      bloc.logout();
-                    },
+                    onTap: loggingOutLoading
+                        ? null
+                        : () async {
+                            setState(() {
+                              loggingOutLoading = true;
+                            });
+                            await bloc.logout();
+                            setState(() {
+                              loggingOutLoading = false;
+                            });
+                          },
+                    trailing: loggingOutLoading
+                        ? CircularProgressIndicatorExtended()
+                        : null,
                   ),
                 ]);
               }

@@ -495,10 +495,9 @@ class CircularProgressIndicatorExtended extends StatelessWidget {
             strokeWidth: 2,
           ),
         ),
-        SizedBox(
+      ]..addAll(label != null ? [SizedBox(
           width: 12.0,
-        ),
-      ]..addAll(label != null ? [label] : []),
+        ),label] : []),
     );
   }
 }
