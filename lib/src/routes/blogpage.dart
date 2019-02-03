@@ -395,7 +395,7 @@ class _BlogPageState extends State<BlogPage> {
                     ? InkWell(
                         onTap: () async {
                           var p = (post as NewsArticle);
-                          BodyPage.navigateWith(context, bloc.bloc, p.body);
+                          BodyPage.navigateWith(context, bloc.bloc, body: p.body);
                         },
                         child: Text(
                           "${((post as NewsArticle).body.bodyName)} | ${post.published}",
