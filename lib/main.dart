@@ -96,9 +96,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       systemNavigationBarColor: widget.bloc.primaryColor,
       systemNavigationBarIconBrightness: Brightness.values[1 -
           ThemeData.estimateBrightnessForColor(widget.bloc.primaryColor).index],
-      statusBarColor: Colors.transparent, //or set color with: Color(0xFF0000FF)
-      statusBarIconBrightness:
-          Brightness.values[1 - widget.bloc.brightness.toBrightness().index],
+      statusBarColor: widget.bloc.brightness.toColor(), //or set color with: Color(0xFF0000FF)
+      statusBarIconBrightness: Brightness.values[1 - widget.bloc.brightness.toBrightness().index],
+      statusBarBrightness: Brightness.values[widget.bloc.brightness.toBrightness().index],
     ));
 
     return BlocProvider(
@@ -119,9 +119,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           toggleableActiveColor: widget.bloc.accentColor,
           textSelectionHandleColor: widget.bloc.accentColor,
 
-          canvasColor: widget.bloc.brightness == AppBrightness.black
-              ? Colors.black
-              : null,
+          canvasColor: widget.bloc.brightness.toColor(),
 
           bottomAppBarColor: widget.bloc.primaryColor,
           brightness: widget.bloc.brightness.toBrightness(),

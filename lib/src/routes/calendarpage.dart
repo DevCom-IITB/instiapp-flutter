@@ -139,6 +139,9 @@ class _CalendarPageState extends State<CalendarPage> {
                         markedDateIconMaxShown: 0,
 
                         markedDateMoreShowTotal: true,
+                        markedDateMoreCustomTextStyle:
+                            theme.accentTextTheme.body1.copyWith(
+                                fontSize: 9.0, fontWeight: FontWeight.normal),
                         markedDateMoreCustomDecoration: BoxDecoration(
                           color: theme.accentColor.withOpacity(1.0),
                           shape: BoxShape.circle,
