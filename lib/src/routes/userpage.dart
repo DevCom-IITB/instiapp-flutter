@@ -156,7 +156,7 @@ class _UserPageState extends State<UserPage> {
                                         ? [
                                             InkWell(
                                               onTap: user.userEmail != null
-                                                  ? _launchEmail
+                                                  ? () => _launchEmail(context)
                                                   : null,
                                               child: Tooltip(
                                                 message: "E-mail this person",
@@ -182,7 +182,8 @@ class _UserPageState extends State<UserPage> {
                                                 .contains("n/a")
                                         ? [
                                             InkWell(
-                                              onTap: _launchDialer,
+                                              onTap: () =>
+                                                  _launchDialer(context),
                                               child: Tooltip(
                                                 message: "Call this person",
                                                 child: Text(
@@ -404,17 +405,33 @@ class _UserPageState extends State<UserPage> {
     );
   }
 
-  _launchEmail() async {
+  _launchEmail(BuildContext context) async {
     var url = "mailto:${user.userEmail}?subject=Let's Have Coffee";
     if (await canLaunch(url)) {
       await launch(url);
+    } else {
+      Scaffold.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text("Mail app failed to open"),
+          ),
+        );
     }
   }
 
-  _launchDialer() async {
+  _launchDialer(BuildContext context) async {
     var url = "tel:${user.userContactNumber}";
     if (await canLaunch(url)) {
       await launch(url);
+    } else {
+      Scaffold.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text("Phone app failed to open"),
+          ),
+        );
     }
   }
 }

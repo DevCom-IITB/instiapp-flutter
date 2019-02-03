@@ -69,7 +69,7 @@ class ComplaintsBloc {
     try {
       c = _allComplaints?.firstWhere((c) => c.complaintID == uuid);
     } catch (ex) {
-      print(ex);
+      // print(ex);
       c = await bloc.client.getComplaint(bloc.getSessionIdHeader(), uuid);
     }
     c.voteCount =

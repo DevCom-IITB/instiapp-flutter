@@ -21,6 +21,8 @@ class NavDrawer extends StatefulWidget {
 }
 
 class _NavDrawerState extends State<NavDrawer> {
+  bool loggingOutLoading = false;
+
   void changeSelection(int idx, DrawerBloc bloc) {
     bloc.setPageIndex(idx);
     // setState(() {});
@@ -37,7 +39,7 @@ class _NavDrawerState extends State<NavDrawer> {
           stream: bloc.session,
           builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
             var theme = Theme.of(context);
-            if (snapshot.hasData && snapshot.data != null) {
+            if (snapshot.hasData && snapshot.data != null && !loggingOutLoading) {
               bloc.updateNotifications();
             }
             return StreamBuilder<int>(
@@ -158,7 +160,7 @@ class _NavDrawerState extends State<NavDrawer> {
                     ),
                   };
 
-                  List<Widget> navList;
+                  List<Widget> navList, navDownList = <Widget>[];
                   navList = <Widget>[
                     SizedBox(
                       height: 8.0,
@@ -296,14 +298,26 @@ class _NavDrawerState extends State<NavDrawer> {
                     ),
                     Divider(),
                   ];
-                  navList.addAll(navMap.values);
+                  navList.addAll(navMap.values.take(10));
+                  navDownList.addAll(navMap.values.skip(10));
                   if (snapshot.data?.sessionid != null) {
-                    navList.add(NavListTile(
+                    navDownList.add(NavListTile(
                       icon: OMIcons.exitToApp,
                       title: "Logout",
-                      onTap: () {
-                        bloc.logout();
-                      },
+                      onTap: loggingOutLoading
+                          ? null
+                          : () async {
+                              setState(() {
+                                loggingOutLoading = true;
+                              });
+                              await bloc.logout();
+                              setState(() {
+                                loggingOutLoading = false;
+                              });
+                            },
+                      trailing: loggingOutLoading
+                          ? CircularProgressIndicatorExtended()
+                          : null,
                     ));
                   }
 
@@ -313,12 +327,28 @@ class _NavDrawerState extends State<NavDrawer> {
                   }
 
                   return ListTileTheme(
-                    selectedColor: theme.primaryColor,
-                    style: ListTileStyle.drawer,
-                    child: ListView(
-                      children: navList,
-                    ),
-                  );
+                      selectedColor: theme.primaryColor,
+                      style: ListTileStyle.drawer,
+                      child: ListView(
+                        children: navList + navDownList,
+                      )
+                      // Column(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   mainAxisSize: MainAxisSize.max,
+                      //   crossAxisAlignment: CrossAxisAlignment.center,
+                      //   children: <Widget>[
+                      //     ListView(
+                      //       children: navList,
+                      //       shrinkWrap: true,
+
+                      //     ),
+                      //     ListView(
+                      //       shrinkWrap: true,
+                      //       children: navDownList,
+                      //     ),
+                      //   ],
+                      // ),
+                      );
                 });
           },
         ),
@@ -333,6 +363,7 @@ class NavListTile extends StatelessWidget {
   final GestureTapCallback onTap;
   bool selected;
   bool highlight;
+  final Widget trailing;
 
   void setHighlighted(bool selection) {
     highlight = selection;
@@ -344,7 +375,8 @@ class NavListTile extends StatelessWidget {
       this.title,
       this.onTap,
       this.selected = false,
-      this.highlight = false});
+      this.highlight = false,
+      this.trailing});
 
   @override
   Widget build(BuildContext context) {
@@ -370,6 +402,7 @@ class NavListTile extends StatelessWidget {
               color: _iconAndTextColor(theme, listTileTheme)),
         ),
         onTap: this.onTap,
+        trailing: this.trailing,
       ),
     );
   }
