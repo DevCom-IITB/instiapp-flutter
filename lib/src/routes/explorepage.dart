@@ -315,7 +315,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       b.bodyShortDescription,
                       b.bodyImageURL,
                       OMIcons.peopleOutline,
-                      () => BodyPage.navigateWith(context, exploreBloc.bloc, b),
+                      () => BodyPage.navigateWith(context, exploreBloc.bloc, body: b),
                       theme))
                   ?.toList() ??
               []) +
