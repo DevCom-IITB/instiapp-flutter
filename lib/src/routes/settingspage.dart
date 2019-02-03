@@ -78,36 +78,36 @@ class _SettingsPageState extends State<SettingsPage> {
                           color: theme.primaryColor),
                     ),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(6.0)),
-                      border: Border.all(color: theme.accentColor),
-                    ),
-                    child: ListTile(
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                      leading: NullableCircleAvatar(
-                        snapshot.data.profile.userProfilePictureUrl,
-                        OMIcons.personOutline,
-                        heroTag: snapshot.data.profile.userID,
-                      ),
-                      title: Text(
-                        snapshot.data.profile.userName,
-                        style: theme.textTheme.title,
-                      ),
-                      onTap: () {
-                        UserPage.navigateWith(
-                            context, bloc, snapshot.data.profile);
-                      },
-                    ),
-                  ),
+                  // Container(
+                  //   decoration: BoxDecoration(
+                  //     borderRadius: BorderRadius.all(Radius.circular(6.0)),
+                  //     border: Border.all(color: theme.accentColor),
+                  //   ),
+                  //   child: ListTile(
+                  //     contentPadding:
+                  //         EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                  //     leading: NullableCircleAvatar(
+                  //       snapshot.data.profile.userProfilePictureUrl,
+                  //       OMIcons.personOutline,
+                  //       heroTag: snapshot.data.profile.userID,
+                  //     ),
+                  //     title: Text(
+                  //       snapshot.data.profile.userName,
+                  //       style: theme.textTheme.title,
+                  //     ),
+                  //     subtitle: Text(snapshot.data.profile.getSubTitle()),
+                  //     onTap: () {
+                  //       UserPage.navigateWith(
+                  //           context, bloc, snapshot.data.profile);
+                  //     },
+                  //   ),
+                  // ),
                   SwitchListTile(
                     secondary: updatingSCN
                         ? CircularProgressIndicatorExtended()
                         : Icon(OMIcons.contactPhone),
                     title: Text("Show contact number"),
-
-                    // subtitle: Text("This decides whether to show your contact number on your user page"),
+                    subtitle: Text("Toggle visibility on your profile"),
                     value: snapshot.data.profile.userShowContactNumber,
                     onChanged: updatingSCN
                         ? null
@@ -126,6 +126,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     leading: Icon(OMIcons.personOutline),
                     trailing: Icon(OMIcons.launch),
                     title: Text("Update Profile"),
+                    subtitle: Text("Update personal details on SSO"),
                     onTap: () async {
                       if (await canLaunch(updateProfileUrl)) {
                         await launch(updateProfileUrl);
@@ -135,6 +136,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ListTile(
                     leading: Icon(OMIcons.exitToApp),
                     title: Text("Logout"),
+                    subtitle: Text("Sign out of InstiApp"),
                     onTap: loggingOutLoading
                         ? null
                         : () async {
@@ -292,6 +294,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   leading: Icon(OMIcons.feedback),
                   trailing: Icon(OMIcons.launch),
                   title: Text("Feedback"),
+                  subtitle:
+                      Text("Report technical issues or suggest new features"),
                   onTap: () async {
                     if (await canLaunch(feedbackUrl)) {
                       await launch(feedbackUrl);
@@ -301,6 +305,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ListTile(
                   leading: Icon(OMIcons.info),
                   title: Text("About"),
+                  subtitle: Text("The InstiApp Team"),
                 ),
               ]);
 
