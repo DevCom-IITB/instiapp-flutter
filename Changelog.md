@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Nothing here
+
 ## v1.5-beta
 
 * Calendar switch to heatmap of events
@@ -12,6 +14,7 @@
 * \[iOS\] rename bundle id to `app.insti.ios`
 * Fix status bar, navigation bar colors on both OS
 * SettingsPage options made more verbose
+* Generated both 32/64-bit apks
 
 ## v1.4-beta
 
