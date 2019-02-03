@@ -1,14 +1,14 @@
 import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
+import 'package:InstiApp/src/utils/calendar_carousel.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
-import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
-    as cal;
 import 'package:flutter_calendar_carousel/classes/event_list.dart' as el;
 
 class CalendarPage extends StatefulWidget {
@@ -46,12 +46,10 @@ class _CalendarPageState extends State<CalendarPage> {
       firstBuild = false;
     }
 
-    var footerButtons;
-    footerButtons = null;
-
     return Scaffold(
       key: _scaffoldKey,
       bottomNavigationBar: MyBottomAppBar(
+        shape: RoundedNotchedRectangle(),
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -109,11 +107,11 @@ class _CalendarPageState extends State<CalendarPage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 14.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      cal.CalendarCarousel<Event>(
+                      MyCalendarCarousel<Event>(
                         customGridViewPhysics: NeverScrollableScrollPhysics(),
                         onDayPressed: (DateTime date, List<Event> evs) {
                           this.setState(() => _currentDate = date);
@@ -124,36 +122,57 @@ class _CalendarPageState extends State<CalendarPage> {
                           calBloc.fetchEvents(
                               DateTime(date.year, date.month, 1), _eventIcon);
                         },
-                        weekendTextStyle: TextStyle(
-                          color: Colors.red[800],
-                        ),
 
                         headerTextStyle: theme.textTheme.title,
 
-                        daysTextStyle: theme.textTheme.subhead,
+                        weekendTextStyle: theme.textTheme.title
+                            .copyWith(fontSize: 18)
+                            .copyWith(color: Colors.red[800]),
+                        daysTextStyle:
+                            theme.textTheme.title.copyWith(fontSize: 18),
+                        inactiveDaysTextStyle:
+                            theme.textTheme.title.copyWith(fontSize: 18),
+                        nextDaysTextStyle: theme.textTheme.title
+                            .copyWith(fontSize: 18)
+                            .copyWith(
+                                color:
+                                    theme.colorScheme.onSurface.withAlpha(150)),
+                        prevDaysTextStyle: theme.textTheme.title
+                            .copyWith(fontSize: 18)
+                            .copyWith(
+                                color:
+                                    theme.colorScheme.onSurface.withAlpha(150)),
 
                         weekFormat: false,
                         markedDatesMap:
                             el.EventList(events: snapshot.data ?? {}),
                         markedDateShowIcon: true,
-                        markedDateIconMaxShown: 0,
+                        markedDateIconMaxShown: 10,
+                        markedDateIconOffset: 0,
 
-                        markedDateMoreShowTotal: true,
-                        markedDateMoreCustomTextStyle:
-                            theme.accentTextTheme.body1.copyWith(
-                                fontSize: 9.0, fontWeight: FontWeight.normal),
-                        markedDateMoreCustomDecoration: BoxDecoration(
-                          color: theme.accentColor.withOpacity(1.0),
-                          shape: BoxShape.circle,
-                        ),
+                        markedDateIconBuilder: (e) => Container(
+                                decoration: BoxDecoration(
+                              color: theme.accentColor.withOpacity(0.2),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(1000.0)),
+                            )),
+
+                        // markedDateMoreShowTotal: true,
+                        // markedDateMoreCustomTextStyle:
+                        //     theme.accentTextTheme.body1.copyWith(
+                        //         fontSize: 9.0, fontWeight: FontWeight.normal),
+                        // markedDateMoreCustomDecoration: BoxDecoration(
+                        //   color: theme.accentColor.withOpacity(1.0),
+                        //   shape: BoxShape.circle,
+                        // ),
 
                         todayButtonColor: theme.accentColor.withOpacity(0.6),
                         selectedDayButtonColor: theme.accentColor,
-                        selectedDayTextStyle: theme.accentTextTheme.subhead,
+                        selectedDayTextStyle: theme.accentTextTheme.title,
 
                         // height: min(MediaQuery.of(context).size.shortestSide, 600) * 1.6,
                         // width: min(MediaQuery.of(context).size.shortestSide, 600),
-                        height: 420.0,
+                        height: 440.0,
 
                         selectedDateTime: _currentDate,
 
@@ -187,12 +206,26 @@ class _CalendarPageState extends State<CalendarPage> {
                     ],
                   ),
                 ),
-              ]..addAll(_buildEvents(calBloc, theme)),
+              ]
+                ..addAll(_buildEvents(calBloc, theme))
+                ..add(SizedBox(
+                  height: 48,
+                )),
             );
           },
         ),
       ),
-      persistentFooterButtons: footerButtons,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+      floatingActionButton:
+          (bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false)
+              ? FloatingActionButton(
+                  child: Icon(OMIcons.add),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed("/putentity/event");
+                  },
+                )
+              : null,
     );
   }
 
