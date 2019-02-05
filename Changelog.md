@@ -2,7 +2,10 @@
 
 ## Unreleased
 
-* Nothing here
+* Add back buttons on every page for iOS
+* Add launcher/app icons for iOS
+* Move dropdown button to FAB in Mess Menu
+* Fix multiple roles (Hero animation) bug
 
 ## v1.5-beta
 

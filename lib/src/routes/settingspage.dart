@@ -3,6 +3,7 @@ import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/switch_list_tile.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -97,7 +98,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   //     },
                   //   ),
                   // ),
-                  SwitchListTile(
+                  MySwitchListTile(
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 28.0),
                     secondary: updatingSCN
                         ? CircularProgressIndicatorExtended()
                         : Icon(OMIcons.contactPhone),
@@ -118,6 +121,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           },
                   ),
                   ListTile(
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 28.0),
                     leading: Icon(OMIcons.personOutline),
                     trailing: Icon(OMIcons.launch),
                     title: Text("Update Profile"),
@@ -129,6 +134,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     },
                   ),
                   ListTile(
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 28.0),
                     leading: Icon(OMIcons.exitToApp),
                     title: Text("Logout"),
                     subtitle: Text("Sign out of InstiApp"),
@@ -197,8 +204,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.only(top: 16.0, bottom: 12.0, left: 28.0, right: 28.0),
+                  padding: const EdgeInsets.only(
+                      top: 16.0, bottom: 12.0, left: 28.0, right: 28.0),
                   child: Text(
                     "App Theme",
                     style: theme.textTheme.body1.copyWith(
@@ -296,6 +303,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   },
                 ),
                 ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 28.0),
                   leading: Icon(OMIcons.feedback),
                   trailing: Icon(OMIcons.launch),
                   title: Text("Feedback"),
@@ -308,6 +316,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   },
                 ),
                 ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 28.0),
                   leading: Icon(OMIcons.info),
                   title: Text("About"),
                   subtitle: Text("The InstiApp Team"),
