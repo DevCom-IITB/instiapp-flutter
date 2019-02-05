@@ -3,6 +3,7 @@ import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -53,23 +54,18 @@ class _SettingsPageState extends State<SettingsPage> {
             stream: bloc.session,
             builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
               var children = <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 28.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "Settings",
-                        style: theme.textTheme.display2,
-                      ),
-                    ],
+                TitleWithBackButton(
+                  child: Text(
+                    "Settings",
+                    style: theme.textTheme.display2,
                   ),
-                ),
+                )
               ];
               if (snapshot.data != null) {
                 children.addAll([
                   Padding(
-                    padding: const EdgeInsets.only(top: 12.0, bottom: 12.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 28.0, vertical: 12.0),
                     child: Text(
                       "Profile settings",
                       style: theme.textTheme.title.copyWith(
@@ -155,46 +151,54 @@ class _SettingsPageState extends State<SettingsPage> {
               }
               children.addAll([
                 Padding(
-                  padding: const EdgeInsets.only(top: 8.0, bottom: 24.0),
+                  padding: const EdgeInsets.only(
+                      left: 28.0, right: 28.0, top: 8.0, bottom: 24.0),
                   child: Text(
                     "App settings",
                     style: theme.textTheme.title.copyWith(
                         fontWeight: FontWeight.bold, color: theme.primaryColor),
                   ),
                 ),
-                Text(
-                  "Default Homepage",
-                  style: theme.textTheme.body1.copyWith(
-                      fontWeight: FontWeight.bold, color: theme.accentColor),
-                ),
-                DropdownButton(
-                  isExpanded: true,
-                  items: {
-                    "/mess": "Mess",
-                    "/placeblog": "Placement Blog",
-                    "/trainblog": "Internship Blog",
-                    "/feed": "Feed",
-                    "/quicklinks": "Quick Links",
-                    "/news": "News",
-                    "/explore": "Explore",
-                    "/calendar": "Calendar",
-                    "/complaints": "Complaints/Suggestions",
-                    // "/map": "Insti Map",
-                    // "/settings": "Settings",
-                  }.entries.map((entry) {
-                    return DropdownMenuItem<String>(
-                      value: entry.key,
-                      child: Text(entry.value),
-                    );
-                  }).toList(),
-                  onChanged: (String s) {
-                    bloc.updateHomepage(s);
-                    setState(() {});
-                  },
-                  value: bloc.homepageName,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                  child: Text(
+                    "Default Homepage",
+                    style: theme.textTheme.body1.copyWith(
+                        fontWeight: FontWeight.bold, color: theme.accentColor),
+                  ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                  child: DropdownButton(
+                    isExpanded: true,
+                    items: {
+                      "/mess": "Mess",
+                      "/placeblog": "Placement Blog",
+                      "/trainblog": "Internship Blog",
+                      "/feed": "Feed",
+                      "/quicklinks": "Quick Links",
+                      "/news": "News",
+                      "/explore": "Explore",
+                      "/calendar": "Calendar",
+                      "/complaints": "Complaints/Suggestions",
+                      // "/map": "Insti Map",
+                      // "/settings": "Settings",
+                    }.entries.map((entry) {
+                      return DropdownMenuItem<String>(
+                        value: entry.key,
+                        child: Text(entry.value),
+                      );
+                    }).toList(),
+                    onChanged: (String s) {
+                      bloc.updateHomepage(s);
+                      setState(() {});
+                    },
+                    value: bloc.homepageName,
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: 16.0, bottom: 12.0, left: 28.0, right: 28.0),
                   child: Text(
                     "App Theme",
                     style: theme.textTheme.body1.copyWith(
@@ -226,6 +230,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   },
                 ),
                 ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 28.0),
                   title: Text("Primary Color"),
                   subtitle: Text("Choose primary color of the app"),
                   trailing: CircleColor(
@@ -258,6 +263,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   },
                 ),
                 ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 28.0),
                   title: Text("Accent Color"),
                   subtitle: Text("Choose accent color of the app"),
                   trailing: CircleColor(
@@ -310,11 +316,12 @@ class _SettingsPageState extends State<SettingsPage> {
               ]);
 
               return ListView(
-                children: children
-                    .map((c) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 28),
-                        child: c))
-                    .toList(),
+                children: children,
+                // .map((c) => Padding(
+                //     padding: const EdgeInsets.symmetric(horizontal: 28),
+                //     child: c) as Widget)
+                // .toList()
+                //   ..insert(0, titleWidget),
               );
             }),
       ),

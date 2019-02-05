@@ -1,5 +1,6 @@
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -78,16 +79,10 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
       body: SafeArea(
         child: ListView(
             children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(28.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  "Quick Links",
-                  style: theme.textTheme.display2,
-                ),
-              ],
+          TitleWithBackButton(
+            child: Text(
+              "Quick Links",
+              style: theme.textTheme.display2,
             ),
           ),
           Divider(),

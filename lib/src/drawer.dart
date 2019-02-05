@@ -9,6 +9,7 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:InstiApp/src/api/model/notification.dart' as ntf;
+import 'package:rxdart/rxdart.dart';
 
 // A Navigation Drawer
 class NavDrawer extends StatefulWidget {
@@ -39,7 +40,9 @@ class _NavDrawerState extends State<NavDrawer> {
           stream: bloc.session,
           builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
             var theme = Theme.of(context);
-            if (snapshot.hasData && snapshot.data != null && !loggingOutLoading) {
+            if (snapshot.hasData &&
+                snapshot.data != null &&
+                !loggingOutLoading) {
               bloc.updateNotifications();
             }
             return StreamBuilder<int>(
@@ -204,6 +207,7 @@ class _NavDrawerState extends State<NavDrawer> {
                               onTap: snapshot.data != null
                                   ? () {
                                       changeSelection(-2, drawerState);
+                                      Navigator.pop(context);
                                       UserPage.navigateWith(context, bloc,
                                           bloc.currSession.profile);
                                     }
@@ -429,8 +433,6 @@ class NavListTile extends StatelessWidget {
 class MNavigatorObserver extends NavigatorObserver {
   InstiAppBloc bloc;
 
-  MNavigatorObserver(this.bloc);
-
   static Map<String, int> routeToNavPos = {
     "/mess": 3,
     "/placeblog": 4,
@@ -448,8 +450,54 @@ class MNavigatorObserver extends NavigatorObserver {
     "/notifications": -1,
   };
 
+  static Map<String, String> routeToName = {
+    "/mess": "Mess",
+    "/placeblog": "Placement Blog",
+    "/trainblog": "Internship Blog",
+    "/feed": "Feed",
+    "/quicklinks": "Quick Links",
+    "/news": "News",
+    "/explore": "Explore",
+    "/calendar": "Calendar",
+    "/complaints": "Complaints",
+    "/newcomplaint": "New Complaint",
+    "/putentity/event": "New Event",
+    "/map": "Map",
+    "/settings": "Settings",
+    "/notifications": "Notifications",
+    "n/a": "",
+  };
+
+  String startsWith(String routeName) {
+    if (routeName.startsWith("/event/")) {
+      return "Event";
+    } else if (routeName.startsWith("/body/")) {
+      return "Body";
+    } else if (routeName.startsWith("/user/")) {
+      return "User";
+    } else if (routeName.startsWith("/complaint/")) {
+      return "Complaint";
+    } else if (routeName.startsWith("/putentity/event/")) {
+      return "New Event";
+    }
+    return "";
+  }
+
+  Queue<String> navStack = Queue<String>();
+  MNavigatorObserver(this.bloc);
+
+  Stream<String> get secondTopRouteName => _secondTopRouteNameSubject.stream;
+  final _secondTopRouteNameSubject = BehaviorSubject<String>();
+
   @override
   void didPush(Route route, Route previousRoute) {
+    navStack.addLast(route?.settings?.name ?? "n/a");
+    try {
+      var el = navStack.elementAt(navStack.length - 2);
+      _secondTopRouteNameSubject.add(routeToName[el] ?? startsWith(el));
+    } catch (e) {
+      _secondTopRouteNameSubject.add("");
+    }
     int pageIndex = routeToNavPos[route.settings.name];
     if (pageIndex == null) {
       return;
@@ -460,6 +508,15 @@ class MNavigatorObserver extends NavigatorObserver {
 
   @override
   void didPop(Route route, Route previousRoute) {
+    try {
+      navStack.removeLast();
+    } catch (e) {}
+    try {
+      var el = navStack.elementAt(navStack.length - 2);
+      _secondTopRouteNameSubject.add(routeToName[el] ?? startsWith(el));
+    } catch (e) {
+      _secondTopRouteNameSubject.add("");
+    }
     int pageIndex = routeToNavPos[previousRoute.settings.name];
     if (pageIndex == null) {
       return;
@@ -470,11 +527,37 @@ class MNavigatorObserver extends NavigatorObserver {
 
   @override
   void didReplace({Route newRoute, Route oldRoute}) {
+    try {
+      navStack.removeLast();
+    } catch (e) {}
+    navStack.addLast(newRoute?.settings?.name ?? "n/a");
+    try {
+      var el = navStack.elementAt(navStack.length - 2);
+      _secondTopRouteNameSubject.add(routeToName[el] ?? startsWith(el));
+    } catch (e) {
+      _secondTopRouteNameSubject.add("");
+    }
+
     int pageIndex = routeToNavPos[newRoute.settings.name];
     if (pageIndex == null) {
       return;
     }
 
     NavDrawer.setPageIndex(bloc, pageIndex ?? -1);
+  }
+
+  @override
+  void didStartUserGesture(Route route, Route previousRoute) {
+    _secondTopRouteNameSubject.add(null);
+  }
+
+  @override
+  void didStopUserGesture() {
+    try {
+      var el = navStack.elementAt(navStack.length - 2);
+      _secondTopRouteNameSubject.add(routeToName[el] ?? startsWith(el));
+    } catch (e) {
+      _secondTopRouteNameSubject.add("");
+    }
   }
 }

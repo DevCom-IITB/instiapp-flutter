@@ -7,6 +7,7 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/datetime.dart';
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,9 @@ class ComplaintPage extends StatefulWidget {
       BuildContext context, InstiAppBloc bloc, Complaint complaint,
       {bool replace = false}) {
     var route = MaterialPageRoute(
+      settings: RouteSettings(
+        name: "/complaint/${complaint?.complaintID ?? ""}",
+      ),
       builder: (context) => ComplaintPage(
             initialComplaint: complaint,
             complaintFuture: bloc.getComplaint(complaint.complaintID),
@@ -148,18 +152,10 @@ class _ComplaintPageState extends State<ComplaintPage> {
               )
             : ListView(
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(28.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          widget.title,
-                          style: theme.textTheme.display2,
-                        ),
-                        // SizedBox(height: 8.0),
-                        // Text(event.getSubTitle(), style: theme.textTheme.title),
-                      ],
+                  TitleWithBackButton(
+                    child: Text(
+                      widget.title,
+                      style: theme.textTheme.display2,
                     ),
                   ),
                   complaint.images.isNotEmpty
@@ -580,7 +576,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
       infoWindowText: InfoWindowText("${complaint.locationDescription}", null),
     ));
     // if (alreadyAnimated) {
-      _mapController.moveCamera(CameraUpdate.newLatLngZoom(ltlng, 16.0));
+    _mapController.moveCamera(CameraUpdate.newLatLngZoom(ltlng, 16.0));
     // } else {
     //   _mapController.animateCamera(CameraUpdate.newLatLngZoom(ltlng, 16.0));
     // }

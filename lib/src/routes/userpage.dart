@@ -9,6 +9,7 @@ import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:share/share.dart';
@@ -24,6 +25,9 @@ class UserPage extends StatefulWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
+        settings: RouteSettings(
+          name: "/user/${user?.userID ?? ""}",
+        ),
         builder: (context) => UserPage(
               initialUser: user,
               userFuture: bloc.getUser(user.userID),
@@ -118,8 +122,8 @@ class _UserPageState extends State<UserPage> {
                       (BuildContext context, bool innerBoxIsScrolled) {
                     return <Widget>[
                       SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
+                        child: TitleWithBackButton(
+                          contentPadding: const EdgeInsets.symmetric(
                               vertical: 28.0, horizontal: 12.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

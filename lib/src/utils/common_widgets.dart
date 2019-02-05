@@ -240,7 +240,9 @@ class CommonHtml extends StatelessWidget {
                     // return CachedNetworkImage(
                     //   imageUrl: node.attributes['href'] ?? node.attributes['src'],
                     // );
-                    return Text(node.attributes['src'] ?? node.attributes['href'] ?? "<img>");
+                    return Text(node.attributes['src'] ??
+                        node.attributes['href'] ??
+                        "<img>");
                   case "a":
                     return InkWell(
                       onTap: () async {
@@ -488,9 +490,14 @@ class CircularProgressIndicatorExtended extends StatelessWidget {
             strokeWidth: 2,
           ),
         ),
-      ]..addAll(label != null ? [SizedBox(
-          width: 12.0,
-        ),label] : []),
+      ]..addAll(label != null
+          ? [
+              SizedBox(
+                width: 12.0,
+              ),
+              label
+            ]
+          : []),
     );
   }
 }

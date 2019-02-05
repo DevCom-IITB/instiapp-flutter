@@ -13,6 +13,7 @@ import 'package:InstiApp/src/api/model/mess.dart';
 import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
+import 'package:InstiApp/src/drawer.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'dart:collection';
@@ -119,6 +120,9 @@ class InstiAppBloc {
   Color _accentColor = Color.fromARGB(255, 239, 83, 80);
   // Color _accentColor = Color.fromARGB(255, 139, 195, 74);
 
+  // Navigator Stack
+  MNavigatorObserver navigatorObserver;
+
   AppBrightness get brightness => _brightness;
 
   set brightness(AppBrightness newBrightness) {
@@ -179,6 +183,7 @@ class InstiAppBloc {
     calendarBloc = CalendarBloc(this);
     complaintsBloc = ComplaintsBloc(this);
     drawerState = DrawerBloc(homepageName, highlightPageIndexVal: 3);
+    navigatorObserver = MNavigatorObserver(this);
   }
 
   // Settings bloc

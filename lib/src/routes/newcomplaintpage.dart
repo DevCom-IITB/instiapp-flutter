@@ -5,6 +5,7 @@ import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/complaintpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -245,16 +246,10 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
         child: Form(
           key: _formKey,
           child: ListView(children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(28.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    widget.title,
-                    style: theme.textTheme.display2,
-                  ),
-                ],
+            TitleWithBackButton(
+              child: Text(
+                widget.title,
+                style: theme.textTheme.display2,
               ),
             ),
             Column(
@@ -603,11 +598,12 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
 
     var currLocation = await getCurrLocation();
     _currPos = _currPos ?? currLocation ?? iitAreaLocation;
-    _currMarker = await _mapController.addMarker(_currMarker?.options ?? MarkerOptions(
-      position: _currPos,
-      infoWindowText: InfoWindowText(
-          currLocation == null ? "IIT Area" : "Your Location", null),
-    ));
+    _currMarker = await _mapController.addMarker(_currMarker?.options ??
+        MarkerOptions(
+          position: _currPos,
+          infoWindowText: InfoWindowText(
+              currLocation == null ? "IIT Area" : "Your Location", null),
+        ));
     _mapController.moveCamera(CameraUpdate.newLatLngZoom(_currPos, 16));
   }
 

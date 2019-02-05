@@ -6,6 +6,7 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/calendar_carousel.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart' as el;
@@ -74,8 +75,7 @@ class _CalendarPageState extends State<CalendarPage> {
               AsyncSnapshot<Map<DateTime, List<Event>>> snapshot) {
             return ListView(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(28.0),
+                TitleWithBackButton(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
