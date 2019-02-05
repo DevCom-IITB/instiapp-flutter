@@ -4,6 +4,7 @@
 
 * Add back buttons on every page for iOS
 * Add launcher/app icons for iOS
+* Complaint subscription added
 * Move dropdown button to FAB in Mess Menu
 * Fix multiple roles (Hero animation) bug
 

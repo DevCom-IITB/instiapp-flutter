@@ -137,6 +137,9 @@ class InstiAppApi extends _$InstiAppApiClient implements ApiClient {
   @GetReq(path: "/venter/complaints/:complaintId/upvote")
   Future<Complaint> upVote(@Header("Cookie") String sessionId, @PathParam() String complaintId, @QueryParam("action") int count);
 
+  @GetReq(path: "/venter/complaints/:complaintId/subscribe")
+  Future<Complaint> subscribleToComplaint(@Header("Cookie") String sessionId, @PathParam() String complaintId, @QueryParam("action") int count);
+
   @PostReq(path: "/venter/complaints")
   Future<Complaint> postComplaint(@Header("Cookie") String sessionId, @AsJson() ComplaintCreateRequest complaintCreateRequest);
 

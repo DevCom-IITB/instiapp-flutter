@@ -54,7 +54,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
   bool loadingUpvote = false;
   bool loadingComment = false;
 
-  // bool firstBuild = true;
+  bool loadingSubs = false;
 
   GoogleMapController _mapController;
   LocationManager.Location _location;
@@ -227,40 +227,71 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                     ],
                                   ),
                                 ),
-                                OutlineButton(
-                                  borderSide: BorderSide(
-                                      color: complaint.status.toLowerCase() ==
-                                              "Reported".toLowerCase()
-                                          ? Colors.red
-                                          : complaint.status.toLowerCase() ==
-                                                  "In Progress".toLowerCase()
-                                              ? Colors.yellow
-                                              : Colors.green),
-                                  padding: EdgeInsets.all(0),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        capitalize(complaint.status),
-                                        style: theme.textTheme.subhead,
+                                Row(
+                                  children: <Widget>[
+                                    IconButton(
+                                      icon: loadingSubs
+                                          ? CircularProgressIndicatorExtended()
+                                          : Icon((complaint.isSubscribed
+                                              ? OMIcons.notificationsActive
+                                              : OMIcons.notificationsOff)),
+                                      onPressed: () async {
+                                        setState(() {
+                                          loadingSubs = true;
+                                        });
+                                        await bloc.complaintsBloc.updateSubs(
+                                            complaint,
+                                            complaint.isSubscribed ? 0 : 1);
+                                        setState(() {
+                                          loadingSubs = false;
+                                        });
+                                        _scaffoldKey.currentState
+                                          ..hideCurrentSnackBar()
+                                          ..showSnackBar(SnackBar(
+                                              content: Text(
+                                                  "You are now ${complaint.isSubscribed ? "" : "un"}subscribed to this complaint")));
+                                      },
+                                    ),
+                                    OutlineButton(
+                                      borderSide: BorderSide(
+                                          color:
+                                              complaint.status.toLowerCase() ==
+                                                      "Reported".toLowerCase()
+                                                  ? Colors.red
+                                                  : complaint.status
+                                                              .toLowerCase() ==
+                                                          "In Progress"
+                                                              .toLowerCase()
+                                                      ? Colors.yellow
+                                                      : Colors.green),
+                                      padding: EdgeInsets.all(0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            capitalize(complaint.status),
+                                            style: theme.textTheme.subhead,
+                                          ),
+                                        ]..insertAll(
+                                            0,
+                                            complaint.tags.isNotEmpty
+                                                ? [
+                                                    Container(
+                                                      color: theme.accentColor,
+                                                      width: 4,
+                                                      height: 4,
+                                                    ),
+                                                    SizedBox(
+                                                      width: 4,
+                                                    ),
+                                                  ]
+                                                : []),
                                       ),
-                                    ]..insertAll(
-                                        0,
-                                        complaint.tags.isNotEmpty
-                                            ? [
-                                                Container(
-                                                  color: theme.accentColor,
-                                                  width: 4,
-                                                  height: 4,
-                                                ),
-                                                SizedBox(
-                                                  width: 4,
-                                                ),
-                                              ]
-                                            : []),
-                                  ),
-                                  onPressed: () {},
+                                      onPressed: () {},
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

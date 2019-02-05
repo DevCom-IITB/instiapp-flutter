@@ -95,6 +95,16 @@ class ComplaintsBloc {
     }
   }
 
+  Future<void> updateSubs(Complaint complaint, int subsCount) async {
+    try {
+      await bloc.client
+          .subscribleToComplaint(bloc.getSessionIdHeader(), complaint.complaintID, subsCount);
+      complaint.isSubscribed = subsCount == 1;
+    } catch (ex) {
+      print(ex);
+    }
+  }
+
   Future<void> postComment(
       Complaint complaint, CommentCreateRequest req) async {
     try {
