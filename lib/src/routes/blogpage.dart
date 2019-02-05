@@ -376,51 +376,87 @@ class _BlogPageState extends State<BlogPage> {
     var theme = Theme.of(context);
     return Card(
         key: ValueKey(post.postID),
-        child: InkWell(
-          onTap: () async {
-            if (await canLaunch(post.link)) {
-              await launch(post.link);
-            }
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  post.title,
-                  textAlign: TextAlign.start,
-                  style: theme.textTheme.headline
-                      .copyWith(fontWeight: FontWeight.bold),
-                ),
-                widget.postType == PostType.NewsArticle
-                    ? InkWell(
-                        onTap: () async {
-                          var p = (post as NewsArticle);
-                          BodyPage.navigateWith(context, bloc.bloc,
-                              body: p.body);
-                        },
-                        child: Text(
-                          "${((post as NewsArticle).body.bodyName)} | ${post.published}",
-                          style: theme.textTheme.subhead
-                              .copyWith(color: Colors.lightBlue),
-                        ),
-                      )
-                    : Text(
-                        post.published,
-                        textAlign: TextAlign.start,
-                        style: theme.textTheme.subhead,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            InkWell(
+              onTap: () async {
+                if (await canLaunch(post.link)) {
+                  await launch(post.link);
+                }
+              },
+              child: Stack(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 12.0,
+                      top: 12.0,
+                      right: 12.0,
+                    ),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            post.title,
+                            textAlign: TextAlign.start,
+                            style: theme.textTheme.headline
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          widget.postType == PostType.NewsArticle
+                              ? InkWell(
+                                  onTap: () async {
+                                    var p = (post as NewsArticle);
+                                    BodyPage.navigateWith(context, bloc.bloc,
+                                        body: p.body);
+                                  },
+                                  child: Text(
+                                    "${((post as NewsArticle).body.bodyName)} | ${post.published}",
+                                    style: theme.textTheme.subhead
+                                        .copyWith(color: Colors.lightBlue),
+                                  ),
+                                )
+                              : Text(
+                                  post.published,
+                                  textAlign: TextAlign.start,
+                                  style: theme.textTheme.subhead,
+                                ),
+                          SizedBox(
+                            height: 4.0,
+                          ),
+                        ],
                       ),
-                SizedBox(
-                  height: 8.0,
-                ),
-                CommonHtml(
-                  data: post.content,
-                  defaultTextStyle: theme.textTheme.subhead,
-                ),
-              ],
+                    ),
+                  ),
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: Icon(
+                      OMIcons.launch,
+                      size: 16,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+            SizedBox(
+              height: 4.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 12.0,
+                bottom: 12.0,
+                right: 12.0,
+              ),
+              child: CommonHtml(
+                data: post.content,
+                defaultTextStyle: theme.textTheme.subhead,
+              ),
+            ),
+          ],
         ));
   }
 }
