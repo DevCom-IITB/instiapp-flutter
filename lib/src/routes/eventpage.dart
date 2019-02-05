@@ -6,6 +6,7 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -24,6 +25,9 @@ class EventPage extends StatefulWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
+        settings: RouteSettings(
+          name: "/event/${event?.eventID ?? ""}",
+        ),
         builder: (context) => EventPage(
               initialEvent: event,
               eventFuture: bloc.getEvent(event.eventID),
@@ -147,8 +151,7 @@ class _EventPageState extends State<EventPage> {
               ))
             : ListView(
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(28.0),
+                  TitleWithBackButton(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[

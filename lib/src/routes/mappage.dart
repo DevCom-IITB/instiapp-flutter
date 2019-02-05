@@ -76,16 +76,7 @@ class _MapPageState extends State<MapPage> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            IconButton(
-              tooltip: "Back",
-              icon: Icon(
-                OMIcons.arrowBack,
-                semanticLabel: "Go Back",
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
+            BackButton(),
             IconButton(
               tooltip: "Refresh",
               icon: Icon(

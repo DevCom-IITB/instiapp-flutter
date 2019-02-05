@@ -8,6 +8,7 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/complaintpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/datetime.dart';
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 
@@ -63,16 +64,10 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                 (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
                 SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(28.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          widget.title,
-                          style: theme.textTheme.display2,
-                        ),
-                      ],
+                  child: TitleWithBackButton(
+                    child: Text(
+                      widget.title,
+                      style: theme.textTheme.display2,
                     ),
                   ),
                 ),

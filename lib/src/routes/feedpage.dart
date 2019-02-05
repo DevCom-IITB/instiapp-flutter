@@ -6,6 +6,7 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -70,16 +71,10 @@ class _FeedPageState extends State<FeedPage> {
           child: CustomScrollView(
             slivers: [
               SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(28.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "Feed",
-                        style: theme.textTheme.display2,
-                      ),
-                    ],
+                child: TitleWithBackButton(
+                  child: Text(
+                    "Feed",
+                    style: theme.textTheme.display2,
                   ),
                 ),
               ),

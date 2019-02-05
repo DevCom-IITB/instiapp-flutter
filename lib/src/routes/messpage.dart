@@ -1,4 +1,5 @@
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
@@ -66,16 +67,10 @@ class _MessPageState extends State<MessPage> {
           onRefresh: () => bloc.updateHostels(),
           child: ListView(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(28.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "Mess Menu",
-                      style: theme.textTheme.display2,
-                    ),
-                  ],
+              TitleWithBackButton(
+                child: Text(
+                  "Mess Menu",
+                  style: theme.textTheme.display2,
                 ),
               ),
               Padding(

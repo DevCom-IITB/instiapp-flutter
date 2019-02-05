@@ -5,6 +5,7 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -66,8 +67,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               child: ListView(
                 scrollDirection: Axis.vertical,
                 children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(28.0),
+                      TitleWithBackButton(
                         child: Text(
                           widget.title,
                           style: theme.textTheme.display2,

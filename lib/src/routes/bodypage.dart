@@ -9,6 +9,7 @@ import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -27,6 +28,9 @@ class BodyPage extends StatefulWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
+        settings: RouteSettings(
+          name: "/body/${(role?.roleBodyDetails ?? body).bodyID}",
+        ),
         builder: (context) => BodyPage(
               initialBody: role?.roleBodyDetails ?? body,
               bodyFuture: bloc.getBody((role?.roleBodyDetails ?? body).bodyID),
@@ -132,8 +136,7 @@ class _BodyPageState extends State<BodyPage> {
               ))
             : ListView(
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(28.0),
+                  TitleWithBackButton(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[

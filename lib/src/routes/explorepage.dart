@@ -6,6 +6,7 @@ import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -98,8 +99,7 @@ class _ExplorePageState extends State<ExplorePage> {
                 (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
                 SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(28.0),
+                  child: TitleWithBackButton(
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -315,7 +315,8 @@ class _ExplorePageState extends State<ExplorePage> {
                       b.bodyShortDescription,
                       b.bodyImageURL,
                       OMIcons.peopleOutline,
-                      () => BodyPage.navigateWith(context, exploreBloc.bloc, body: b),
+                      () => BodyPage.navigateWith(context, exploreBloc.bloc,
+                          body: b),
                       theme))
                   ?.toList() ??
               []) +

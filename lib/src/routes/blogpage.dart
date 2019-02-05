@@ -3,6 +3,7 @@ import 'dart:collection';
 
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:InstiApp/src/api/model/post.dart';
@@ -114,8 +115,7 @@ class _BlogPageState extends State<BlogPage> {
                       (BuildContext context, bool innerBoxIsScrolled) {
                     return <Widget>[
                       SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.all(28.0),
+                        child: TitleWithBackButton(
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -293,8 +293,7 @@ class _BlogPageState extends State<BlogPage> {
             } else {
               return ListView(
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(28.0),
+                  TitleWithBackButton(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -306,10 +305,13 @@ class _BlogPageState extends State<BlogPage> {
                     ),
                   ),
                   Center(
-                    child: Text(
-                      "You must be logged in to view ${widget.title}",
-                      style: theme.textTheme.title,
-                      textAlign: TextAlign.center,
+                    child: Padding(
+                      padding: const EdgeInsets.all(28.0),
+                      child: Text(
+                        "You must be logged in to view ${widget.title}",
+                        style: theme.textTheme.title,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
                 ],
@@ -395,7 +397,8 @@ class _BlogPageState extends State<BlogPage> {
                     ? InkWell(
                         onTap: () async {
                           var p = (post as NewsArticle);
-                          BodyPage.navigateWith(context, bloc.bloc, body: p.body);
+                          BodyPage.navigateWith(context, bloc.bloc,
+                              body: p.body);
                         },
                         child: Text(
                           "${((post as NewsArticle).body.bodyName)} | ${post.published}",
