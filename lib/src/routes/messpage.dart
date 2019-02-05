@@ -39,13 +39,10 @@ class _MessPageState extends State<MessPage> {
       firstBuild = false;
     }
 
-    var footerButtons = <Widget>[
-      buildDropdownButton(theme),
-    ];
-
     return Scaffold(
       key: _scaffoldKey,
       bottomNavigationBar: MyBottomAppBar(
+        shape: RoundedNotchedRectangle(),
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -112,7 +109,19 @@ class _MessPageState extends State<MessPage> {
           ),
         ),
       ),
-      persistentFooterButtons: footerButtons,
+      floatingActionButton: FloatingActionButton.extended(
+        elevation: 8.0,
+        backgroundColor: theme.colorScheme.surface,
+        foregroundColor: theme.accentColor,
+        icon: Icon(
+          OMIcons.home,
+          // color: theme.accentColor,
+        ),
+        label: buildDropdownButton(theme),
+        onPressed: () {},
+        tooltip: "Change hostel",
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 
@@ -124,15 +133,19 @@ class _MessPageState extends State<MessPage> {
         if (snapshot.hasData) {
           var val = snapshot.data.indexWhere((h) => h.shortName == currHostel);
           return DropdownButton<int>(
+            hint: Text("Reload"),
             value: val != -1 ? val : null,
             items: snapshot.data
                 .asMap()
                 .entries
                 .map((entry) => DropdownMenuItem<int>(
-                      child: Text(entry.value.name),
+                      child: Text(
+                        entry.value.name,
+                      ),
                       value: entry.key,
                     ))
                 .toList(),
+            style: theme.textTheme.subhead.copyWith(color: theme.accentColor),
             onChanged: (h) {
               setState(() {
                 currHostel = snapshot.data[h].shortName;
