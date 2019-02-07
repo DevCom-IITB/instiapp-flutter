@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:InstiApp/src/api/model/rich_notification.dart';
@@ -30,6 +31,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:uni_links/uni_links.dart';
 
 void main() async {
   GlobalKey<MyAppState> key = GlobalKey();
@@ -62,6 +64,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       new FlutterLocalNotificationsPlugin();
 
   GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  StreamSubscription _appLinksSub;
 
   void setTheme(VoidCallback a) {
     setState(a);
@@ -71,12 +74,14 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     setupNotifications();
+    initAppLinksState();
 
     WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() async {
+    _appLinksSub?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -369,5 +374,37 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     // marking the notification as read
     widget.bloc.clearNotificationUsingID(fromMap.notificationID);
+  }
+
+  void handleAppLink(Uri uri) {
+    if (uri == null) return;
+    var routeName = {
+      "user": "/user/${uri.pathSegments[1] ?? ""}",
+      "event": "/event/${uri.pathSegments[1] ?? ""}",
+      "map": "/map",
+      "org": "/body/${uri.pathSegments[1] ?? ""}",
+    }[uri.pathSegments[0]];
+    _navigatorKey.currentState.pushNamed(routeName);
+  }
+
+  Future initAppLinksState() async {
+    _appLinksSub = getUriLinksStream().listen((Uri uri) {
+      if (!mounted) return;
+      handleAppLink(uri);
+    }, onError: (err) {
+      if (!mounted) return;
+      print('Failed to get latest link: $err.');
+    });
+    try {
+      Uri initialUri = await getInitialUri();
+      // Parse the link and warn the user, if it is not correct,
+      // but keep in mind it could be `null`.
+      handleAppLink(initialUri);
+    } on PlatformException {
+      // Handle exception by warning the user their action did not succeed
+      // return?
+    } on FormatException {
+      print('Bad parse the initial link as Uri.');
+    }
   }
 }

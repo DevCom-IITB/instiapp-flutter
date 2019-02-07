@@ -1,0 +1,11 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appID": "<teamID>.app.insti.ios",
+                "paths": [ "/map*", "/event/*", "/org/*", "/user/*"]
+            },
+        ]
+    }
+}
