@@ -199,6 +199,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
             EventPage.navigateWith(context, bloc, notification.getEvent());
           } else if (notification.isNews) {
             Navigator.of(context).pushNamed("/news");
+          } else if (notification.isComplaintComment) {
+            Navigator.of(context).pushNamed(
+                "/complaint/${notification.getComment().complaintID}?reload=true");
           }
 
           bloc.client.markNotificationRead(

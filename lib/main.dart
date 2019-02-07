@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:InstiApp/src/api/model/rich_notification.dart';
-import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
 import 'package:InstiApp/src/routes/complaintpage.dart';
@@ -96,9 +95,12 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       systemNavigationBarColor: widget.bloc.primaryColor,
       systemNavigationBarIconBrightness: Brightness.values[1 -
           ThemeData.estimateBrightnessForColor(widget.bloc.primaryColor).index],
-      statusBarColor: widget.bloc.brightness.toColor(), //or set color with: Color(0xFF0000FF)
-      statusBarIconBrightness: Brightness.values[1 - widget.bloc.brightness.toBrightness().index],
-      statusBarBrightness: Brightness.values[widget.bloc.brightness.toBrightness().index],
+      statusBarColor: widget.bloc.brightness
+          .toColor(), //or set color with: Color(0xFF0000FF)
+      statusBarIconBrightness:
+          Brightness.values[1 - widget.bloc.brightness.toBrightness().index],
+      statusBarBrightness:
+          Brightness.values[widget.bloc.brightness.toBrightness().index],
     ));
 
     return BlocProvider(
@@ -145,8 +147,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                     ? Colors.black
                     : Colors.white,
               ),
-              headline: TextStyle(
-              )),
+              headline: TextStyle()),
         ),
         onGenerateRoute: (RouteSettings settings) {
           if (settings.name.startsWith("/event/")) {
@@ -169,11 +170,15 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                     userFuture:
                         widget.bloc.getUser(settings.name.split("/user/")[1])));
           } else if (settings.name.startsWith("/complaint/")) {
+            Uri uri = Uri.parse(settings.name);
+
             return _buildRoute(
                 settings,
                 ComplaintPage(
-                    complaintFuture: widget.bloc
-                        .getComplaint(settings.name.split("/complaint/")[1])));
+                    complaintFuture: widget.bloc.getComplaint(
+                        uri.pathSegments[1],
+                        reload: uri.queryParameters.containsKey("reload") &&
+                            uri.queryParameters["reload"] == "true")));
           } else if (settings.name.startsWith("/putentity/event/")) {
             return _buildRoute(
                 settings,
@@ -348,24 +353,20 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   Future navigateFromNotification(RichNotification fromMap) async {
     // Navigating to correct page
-    var page = {
+    var routeName = {
       "blogentry": fromMap.notificationExtra?.contains("/trainingblog") ?? false
           ? "/trainblog"
           : "/placeblog",
-      "body": "/body/",
-      "event": "/event/",
-      "userprofile": "/user/",
+      "body": "/body/${fromMap.notificationObjectID ?? ""}",
+      "event": "/event/${fromMap.notificationObjectID ?? ""}",
+      "userprofile": "/user/${fromMap.notificationObjectID ?? ""}",
       "newsentry": "/news",
+      "complaintcomment":
+          "/complaint/${fromMap.notificationExtra ?? ""}?reload=true",
     }[fromMap.notificationType];
-    
-    var routeAdditionalParam = (fromMap.notificationType != "blogentry" && fromMap.notificationType != "newsentry")
-        ? fromMap.notificationObjectID ?? ""
-        : "";
-
-    var routeName = "$page$routeAdditionalParam";
 
     _navigatorKey.currentState.pushNamed(routeName);
-    
+
     // marking the notification as read
     widget.bloc.clearNotificationUsingID(fromMap.notificationID);
   }

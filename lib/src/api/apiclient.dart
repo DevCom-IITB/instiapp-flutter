@@ -150,5 +150,5 @@ class InstiAppApi extends _$InstiAppApiClient implements ApiClient {
   Future<Comment> updateComment(@Header("Cookie") String sessionId, @PathParam() String commentId, @AsJson() CommentCreateRequest commentCreateRequest);
 
   @DeleteReq(path: "/venter/comments/:commentId")
-  Future<String> deleteComment(@Header("Cookie") String sessionId, @PathParam() String commentId);
+  Future<void> deleteComment(@Header("Cookie") String sessionId, @PathParam() String commentId);
 }

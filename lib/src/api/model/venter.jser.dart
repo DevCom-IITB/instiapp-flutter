@@ -113,6 +113,7 @@ abstract class _$CommentSerializer implements Serializer<Comment> {
     setMapValue(ret, 'time', model.time);
     setMapValue(ret, 'text', model.text);
     setMapValue(ret, 'commented_by', _userSerializer.toMap(model.commentedBy));
+    setMapValue(ret, 'complaint', model.complaintID);
     return ret;
   }
 
@@ -124,6 +125,7 @@ abstract class _$CommentSerializer implements Serializer<Comment> {
     obj.time = map['time'] as String;
     obj.text = map['text'] as String;
     obj.commentedBy = _userSerializer.fromMap(map['commented_by'] as Map);
+    obj.complaintID = map['complaint'] as String;
     return obj;
   }
 }

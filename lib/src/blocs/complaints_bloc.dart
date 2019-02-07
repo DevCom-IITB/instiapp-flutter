@@ -60,16 +60,17 @@ class ComplaintsBloc {
     }
   }
 
-  Future<Complaint> getComplaint(String uuid) async {
+  Future<Complaint> getComplaint(String uuid, {bool reload = false}) async {
     if (bloc.currSession == null) {
       return null;
     }
 
     Complaint c;
     try {
-      c = _allComplaints?.firstWhere((c) => c.complaintID == uuid);
+      c = reload
+          ? await bloc.client.getComplaint(bloc.getSessionIdHeader(), uuid)
+          : _allComplaints?.firstWhere((c) => c.complaintID == uuid);
     } catch (ex) {
-      // print(ex);
       c = await bloc.client.getComplaint(bloc.getSessionIdHeader(), uuid);
     }
     c.voteCount =
@@ -97,8 +98,8 @@ class ComplaintsBloc {
 
   Future<void> updateSubs(Complaint complaint, int subsCount) async {
     try {
-      await bloc.client
-          .subscribleToComplaint(bloc.getSessionIdHeader(), complaint.complaintID, subsCount);
+      await bloc.client.subscribleToComplaint(
+          bloc.getSessionIdHeader(), complaint.complaintID, subsCount);
       complaint.isSubscribed = subsCount == 1;
     } catch (ex) {
       print(ex);
@@ -111,6 +112,28 @@ class ComplaintsBloc {
       var comment = await bloc.client
           .postComment(bloc.getSessionIdHeader(), complaint.complaintID, req);
       complaint.comments.add(comment);
+    } catch (ex) {
+      print(ex);
+    }
+  }
+
+  Future<void> updateComment(
+      Complaint complaint, Comment mComment, CommentCreateRequest req) async {
+    try {
+      var comment = await bloc.client
+          .updateComment(bloc.getSessionIdHeader(), mComment.id, req);
+      var idx = complaint.comments.indexWhere((c) => c.id == comment.id);
+      complaint.comments[idx].text = comment.text;
+      complaint.comments[idx].time = comment.time;
+    } catch (ex) {
+      print(ex);
+    }
+  }
+
+  Future<void> deleteComment(Complaint complaint, Comment comment) async {
+    try {
+      await bloc.client.deleteComment(bloc.getSessionIdHeader(), comment.id);
+      complaint.comments.removeWhere((c) => c.id == comment.id);
     } catch (ex) {
       print(ex);
     }

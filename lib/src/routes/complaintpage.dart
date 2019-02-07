@@ -59,6 +59,13 @@ class _ComplaintPageState extends State<ComplaintPage> {
   GoogleMapController _mapController;
   LocationManager.Location _location;
 
+  Comment deletingComment;
+
+  bool loadingEditComment = false;
+  Comment editingComment;
+  FocusNode _editingCommentFocusNode;
+  TextEditingController _editingCommentController;
+
   @override
   void initState() {
     super.initState();
@@ -74,13 +81,17 @@ class _ComplaintPageState extends State<ComplaintPage> {
     });
     _commentFocusNode = FocusNode();
     _commentController = TextEditingController();
+    _editingCommentController = TextEditingController();
+    _editingCommentFocusNode = FocusNode();
     _location = LocationManager.Location();
   }
 
   @override
   void dispose() {
     _commentFocusNode.dispose();
+    _editingCommentFocusNode.dispose();
     _commentController.dispose();
+    _editingCommentController.dispose();
     super.dispose();
   }
 
@@ -150,325 +161,340 @@ class _ComplaintPageState extends State<ComplaintPage> {
                   label: Text("Loading the complaint page"),
                 ),
               )
-            : ListView(
-                children: <Widget>[
-                  TitleWithBackButton(
-                    child: Text(
-                      widget.title,
-                      style: theme.textTheme.display2,
+            : GestureDetector(
+                onTap: () {
+                  _commentFocusNode.unfocus();
+                  if (editingComment != null) {
+                    _editingCommentFocusNode.unfocus();
+                  }
+                },
+                child: ListView(
+                  children: <Widget>[
+                    TitleWithBackButton(
+                      child: Text(
+                        widget.title,
+                        style: theme.textTheme.display2,
+                      ),
                     ),
-                  ),
-                  complaint.images.isNotEmpty
-                      ? Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: theme.accentColor),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(6.0)),
+                    complaint.images.isNotEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: theme.accentColor),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(6.0)),
+                              ),
+                              height: 200,
+                              child: ListView(
+                                padding: EdgeInsets.all(8.0),
+                                scrollDirection: Axis.horizontal,
+                                children: complaint.images.map((im) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: PhotoViewableImage(
+                                      url: im,
+                                      heroTag: "$im",
+                                      fit: BoxFit.scaleDown,
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ))
+                        : Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 28),
+                            child: Text.rich(
+                              TextSpan(children: [
+                                TextSpan(text: "No "),
+                                TextSpan(
+                                    text: "images ",
+                                    style: theme.textTheme.body1
+                                        .copyWith(fontWeight: FontWeight.bold)),
+                                TextSpan(text: "uploaded."),
+                              ]),
                             ),
-                            height: 200,
-                            child: ListView(
-                              padding: EdgeInsets.all(8.0),
-                              scrollDirection: Axis.horizontal,
-                              children: complaint.images.map((im) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: PhotoViewableImage(
-                                    url: im,
-                                    heroTag: "$im",
-                                    fit: BoxFit.scaleDown,
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ))
-                      : Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 28),
-                          child: Text.rich(
-                            TextSpan(children: [
-                              TextSpan(text: "No "),
-                              TextSpan(
-                                  text: "images ",
-                                  style: theme.textTheme.body1
-                                      .copyWith(fontWeight: FontWeight.bold)),
-                              TextSpan(text: "uploaded."),
-                            ]),
                           ),
-                        ),
-                  Padding(
-                    padding: const EdgeInsets.all(28.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          child: Hero(
+                    Padding(
+                      padding: const EdgeInsets.all(28.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Hero(
                             tag: complaint.complaintID,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Flexible(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                            child: Material(
+                              type: MaterialType.transparency,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Flexible(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                            complaint
+                                                .complaintCreatedBy.userName,
+                                            style: theme.textTheme.title
+                                                .copyWith(
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                        Text(
+                                          DateTimeUtil.getDate(
+                                              complaint.complaintReportDate),
+                                          style: theme.textTheme.caption
+                                              .copyWith(fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
                                     children: <Widget>[
-                                      Text(
-                                          complaint.complaintCreatedBy.userName,
-                                          style: theme.textTheme.title.copyWith(
-                                              fontWeight: FontWeight.bold)),
-                                      Text(
-                                        DateTimeUtil.getDate(
-                                            complaint.complaintReportDate),
-                                        style: theme.textTheme.caption
-                                            .copyWith(fontSize: 14),
+                                      IconButton(
+                                        icon: loadingSubs
+                                            ? CircularProgressIndicatorExtended()
+                                            : Icon((complaint.isSubscribed
+                                                ? OMIcons.notificationsActive
+                                                : OMIcons.notificationsOff)),
+                                        onPressed: () async {
+                                          setState(() {
+                                            loadingSubs = true;
+                                          });
+                                          await bloc.complaintsBloc.updateSubs(
+                                              complaint,
+                                              complaint.isSubscribed ? 0 : 1);
+                                          setState(() {
+                                            loadingSubs = false;
+                                          });
+                                          _scaffoldKey.currentState
+                                            ..hideCurrentSnackBar()
+                                            ..showSnackBar(SnackBar(
+                                                content: Text(
+                                                    "You are now ${complaint.isSubscribed ? "" : "un"}subscribed to this complaint")));
+                                        },
+                                      ),
+                                      OutlineButton(
+                                        borderSide: BorderSide(
+                                            color: complaint.status
+                                                        .toLowerCase() ==
+                                                    "Reported".toLowerCase()
+                                                ? Colors.red
+                                                : complaint.status
+                                                            .toLowerCase() ==
+                                                        "In Progress"
+                                                            .toLowerCase()
+                                                    ? Colors.yellow
+                                                    : Colors.green),
+                                        padding: EdgeInsets.all(0),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              capitalize(complaint.status),
+                                              style: theme.textTheme.subhead,
+                                            ),
+                                          ]..insertAll(
+                                              0,
+                                              complaint.tags.isNotEmpty
+                                                  ? [
+                                                      Container(
+                                                        color:
+                                                            theme.accentColor,
+                                                        width: 4,
+                                                        height: 4,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 4,
+                                                      ),
+                                                    ]
+                                                  : []),
+                                        ),
+                                        onPressed: () {},
                                       ),
                                     ],
                                   ),
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    IconButton(
-                                      icon: loadingSubs
-                                          ? CircularProgressIndicatorExtended()
-                                          : Icon((complaint.isSubscribed
-                                              ? OMIcons.notificationsActive
-                                              : OMIcons.notificationsOff)),
-                                      onPressed: () async {
-                                        setState(() {
-                                          loadingSubs = true;
-                                        });
-                                        await bloc.complaintsBloc.updateSubs(
-                                            complaint,
-                                            complaint.isSubscribed ? 0 : 1);
-                                        setState(() {
-                                          loadingSubs = false;
-                                        });
-                                        _scaffoldKey.currentState
-                                          ..hideCurrentSnackBar()
-                                          ..showSnackBar(SnackBar(
-                                              content: Text(
-                                                  "You are now ${complaint.isSubscribed ? "" : "un"}subscribed to this complaint")));
-                                      },
-                                    ),
-                                    OutlineButton(
-                                      borderSide: BorderSide(
-                                          color:
-                                              complaint.status.toLowerCase() ==
-                                                      "Reported".toLowerCase()
-                                                  ? Colors.red
-                                                  : complaint.status
-                                                              .toLowerCase() ==
-                                                          "In Progress"
-                                                              .toLowerCase()
-                                                      ? Colors.yellow
-                                                      : Colors.green),
-                                      padding: EdgeInsets.all(0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text(
-                                            capitalize(complaint.status),
-                                            style: theme.textTheme.subhead,
-                                          ),
-                                        ]..insertAll(
-                                            0,
-                                            complaint.tags.isNotEmpty
-                                                ? [
-                                                    Container(
-                                                      color: theme.accentColor,
-                                                      width: 4,
-                                                      height: 4,
-                                                    ),
-                                                    SizedBox(
-                                                      width: 4,
-                                                    ),
-                                                  ]
-                                                : []),
-                                      ),
-                                      onPressed: () {},
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        Text(
-                          complaint.locationDescription,
-                          style: theme.textTheme.caption.copyWith(fontSize: 14),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      complaint.suggestions.isNotEmpty ||
-                              complaint.suggestions.isNotEmpty
-                          ? Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 28.0),
-                              child: Text(
-                                "Description: ",
-                                style: theme.textTheme.subhead,
-                              ),
-                            )
-                          : SizedBox(),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 28.0, right: 28.0, bottom: 16.0),
-                        child: Text(
-                          complaint.description,
-                          style: theme.textTheme.subhead,
-                        ),
-                      ),
-                    ]
-                      ..addAll(complaint.suggestions.isNotEmpty
-                          ? [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 28.0),
-                                child: Text(
-                                  "Suggestions: ",
-                                  style: theme.textTheme.subhead,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 28.0, right: 28.0, bottom: 16.0),
-                                child: Text(
-                                  complaint.suggestions,
-                                  style: theme.textTheme.subhead,
-                                ),
-                              ),
-                            ]
-                          : [])
-                      ..addAll(complaint.locationDetails.isNotEmpty
-                          ? [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 28.0),
-                                child: Text(
-                                  "Location Details: ",
-                                  style: theme.textTheme.subhead,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 28.0, right: 28.0, bottom: 16.0),
-                                child: Text(
-                                  complaint.locationDetails,
-                                  style: theme.textTheme.subhead,
-                                ),
-                              ),
-                            ]
-                          : []),
-                  ),
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  SizedBox(
-                    height: 200,
-                    child: GoogleMap(
-                      gestureRecognizers:
-                          <Factory<OneSequenceGestureRecognizer>>[
-                        Factory<OneSequenceGestureRecognizer>(
-                          () => HorizontalDragGestureRecognizer(),
-                        ),
-                      ].toSet(),
-                      onMapCreated: _onMapCreated,
-                      options: GoogleMapOptions(
-                        scrollGesturesEnabled: true,
-                        rotateGesturesEnabled: true,
-                        zoomGesturesEnabled: true,
-                        compassEnabled: true,
-                        myLocationEnabled: true,
-                        tiltGesturesEnabled: false,
-                      ),
-                    ),
-                  ),
-                  complaint.tags?.isNotEmpty ?? false
-                      ? Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 28.0, vertical: 8.0),
-                          child: Text(
-                            "Tags",
-                            style: theme.textTheme.headline,
+                          Text(
+                            complaint.locationDescription,
+                            style:
+                                theme.textTheme.caption.copyWith(fontSize: 14),
                           ),
-                        )
-                      : SizedBox(
-                          height: 0,
-                        ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 28.0),
-                    child: EditableChipList(
-                      editable: false,
-                      tags: Set.from(complaint.tags.map((t) => t.tagUri)),
+                        ],
+                      ),
                     ),
-                  ),
-                  Divider(),
-                ]
-                  ..add(Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 28.0, vertical: 12.0),
-                    child: Row(
+                    SizedBox(
+                      height: 16.0,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Icon(
-                          OMIcons.comment,
-                          color: theme.accentColor,
+                        complaint.suggestions.isNotEmpty ||
+                                complaint.suggestions.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 28.0),
+                                child: Text(
+                                  "Description: ",
+                                  style: theme.textTheme.subhead,
+                                ),
+                              )
+                            : SizedBox(),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 28.0, right: 28.0, bottom: 16.0),
+                          child: Text(
+                            complaint.description,
+                            style: theme.textTheme.subhead,
+                          ),
                         ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                            "${complaint.comments.isEmpty ? "No" : complaint.comments.length} comment${complaint.comments.length == 1 ? "" : "s"}",
-                            style: theme.textTheme.title),
-                      ],
+                      ]
+                        ..addAll(complaint.suggestions.isNotEmpty
+                            ? [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 28.0),
+                                  child: Text(
+                                    "Suggestions: ",
+                                    style: theme.textTheme.subhead,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 28.0, right: 28.0, bottom: 16.0),
+                                  child: Text(
+                                    complaint.suggestions,
+                                    style: theme.textTheme.subhead,
+                                  ),
+                                ),
+                              ]
+                            : [])
+                        ..addAll(complaint.locationDetails.isNotEmpty
+                            ? [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 28.0),
+                                  child: Text(
+                                    "Location Details: ",
+                                    style: theme.textTheme.subhead,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 28.0, right: 28.0, bottom: 16.0),
+                                  child: Text(
+                                    complaint.locationDetails,
+                                    style: theme.textTheme.subhead,
+                                  ),
+                                ),
+                              ]
+                            : []),
                     ),
-                  ))
-                  ..addAll(complaint.comments
-                      .map((v) => _buildComment(bloc, theme, v)))
-                  ..add(_buildCommentBox(bloc, theme))
-                  ..addAll(<Widget>[
-                    Divider(),
+                    SizedBox(
+                      height: 16.0,
+                    ),
+                    SizedBox(
+                      height: 200,
+                      child: GoogleMap(
+                        gestureRecognizers:
+                            <Factory<OneSequenceGestureRecognizer>>[
+                          Factory<OneSequenceGestureRecognizer>(
+                            () => HorizontalDragGestureRecognizer(),
+                          ),
+                        ].toSet(),
+                        onMapCreated: _onMapCreated,
+                        options: GoogleMapOptions(
+                          scrollGesturesEnabled: true,
+                          rotateGesturesEnabled: true,
+                          zoomGesturesEnabled: true,
+                          compassEnabled: true,
+                          myLocationEnabled: true,
+                          tiltGesturesEnabled: false,
+                        ),
+                      ),
+                    ),
+                    complaint.tags?.isNotEmpty ?? false
+                        ? Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 28.0, vertical: 8.0),
+                            child: Text(
+                              "Tags",
+                              style: theme.textTheme.headline,
+                            ),
+                          )
+                        : SizedBox(
+                            height: 0,
+                          ),
                     Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                      child: EditableChipList(
+                        editable: false,
+                        tags: Set.from(complaint.tags.map((t) => t.tagUri)),
+                      ),
+                    ),
+                    Divider(),
+                  ]
+                    ..add(Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 28.0, vertical: 12.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Icon(
-                            OMIcons.arrowUpward,
+                            OMIcons.comment,
                             color: theme.accentColor,
                           ),
                           SizedBox(
                             width: 8,
                           ),
                           Text(
-                              "${complaint.usersUpVoted.isEmpty ? "No" : complaint.usersUpVoted.length} upvote${complaint.usersUpVoted.length == 1 ? "" : "s"}",
+                              "${complaint.comments.isEmpty ? "No" : complaint.comments.length} comment${complaint.comments.length == 1 ? "" : "s"}",
                               style: theme.textTheme.title),
                         ],
                       ),
-                    ),
-                  ])
-                  ..addAll(complaint.usersUpVoted
-                      .map((u) => _buildUserTile(bloc, theme, u)))
-                  ..addAll([
-                    Divider(),
-                    SizedBox(
-                      height: 32.0,
-                    )
-                  ]),
+                    ))
+                    ..addAll(complaint.comments
+                        .map((v) => _buildComment(bloc, theme, v)))
+                    ..add(_buildCommentBox(bloc, theme))
+                    ..addAll(<Widget>[
+                      Divider(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 28.0, vertical: 12.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              OMIcons.arrowUpward,
+                              color: theme.accentColor,
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Text(
+                                "${complaint.usersUpVoted.isEmpty ? "No" : complaint.usersUpVoted.length} upvote${complaint.usersUpVoted.length == 1 ? "" : "s"}",
+                                style: theme.textTheme.title),
+                          ],
+                        ),
+                      ),
+                    ])
+                    ..addAll(complaint.usersUpVoted
+                        .map((u) => _buildUserTile(bloc, theme, u)))
+                    ..addAll([
+                      Divider(),
+                      SizedBox(
+                        height: 32.0,
+                      )
+                    ]),
+                ),
               ),
       ),
 
@@ -492,10 +518,52 @@ class _ComplaintPageState extends State<ComplaintPage> {
               leading: NullableCircleAvatar(
                 v.commentedBy.userProfilePictureUrl,
                 OMIcons.personOutline,
-                heroTag: v.commentedBy.userID,
+                heroTag: v.id,
               ),
               title: Text(v.commentedBy.userName),
               subtitle: Text(DateTimeUtil.getDate(v.time)),
+              trailing: (deletingComment?.id?.compareTo(v.id) ?? -1) != 0
+                  ? (v.commentedBy.userID == bloc?.currSession?.profile?.userID
+                      ? PopupMenuButton<String>(
+                          onSelected: (s) async {
+                            if (s == "Edit") {
+                              _editingCommentController.text = v.text;
+                              setState(() {
+                                editingComment = v;
+                              });
+                            } else if (s == "Delete") {
+                              setState(() {
+                                deletingComment = v;
+                              });
+                              await bloc.complaintsBloc
+                                  .deleteComment(complaint, v);
+                              setState(() {
+                                deletingComment = null;
+                              });
+                              _scaffoldKey.currentState
+                                ..hideCurrentSnackBar()
+                                ..showSnackBar(SnackBar(
+                                  content:
+                                      Text("Your comment has been deleted"),
+                                ));
+                            }
+                          },
+                          itemBuilder: (BuildContext context) =>
+                              <PopupMenuItem<String>>[
+                                const PopupMenuItem<String>(
+                                    value: 'Edit', child: Text('Edit')),
+                                const PopupMenuItem<String>(
+                                    value: 'Delete', child: Text('Delete')),
+                              ],
+                        )
+                      : null)
+                  : SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                      ),
+                    ),
             ),
             InkWell(
               onTap: () {
@@ -507,7 +575,65 @@ class _ComplaintPageState extends State<ComplaintPage> {
               },
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
-                child: Text(v.text, style: theme.textTheme.subhead),
+                child: (editingComment == null || editingComment.id != v.id)
+                    ? Text(v.text, style: theme.textTheme.subhead)
+                    : TextField(
+                        focusNode: _editingCommentFocusNode,
+                        controller: _editingCommentController,
+                        maxLines: null,
+                        autofocus: false,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 6.0, horizontal: 8.0),
+                          border: OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: loadingEditComment
+                                ? SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Icon(OMIcons.send),
+                            onPressed: () async {
+                              if (loadingEditComment) {
+                                return;
+                              }
+                              setState(() {
+                                loadingEditComment = true;
+                              });
+                              if (_editingCommentController.text.isNotEmpty) {
+                                CommentCreateRequest req =
+                                    CommentCreateRequest();
+                                req.text = _editingCommentController.text;
+                                await bloc.complaintsBloc
+                                    .updateComment(complaint, v, req);
+
+                                setState(() {
+                                  editingComment = null;
+                                });
+                                _scaffoldKey.currentState
+                                  ..hideCurrentSnackBar()
+                                  ..showSnackBar(SnackBar(
+                                    content:
+                                        Text("Your comment has been updated"),
+                                  ));
+                              } else {
+                                _scaffoldKey.currentState
+                                  ..hideCurrentSnackBar()
+                                  ..showSnackBar(SnackBar(
+                                    content: Text("Comment empty"),
+                                  ));
+                              }
+                              setState(() {
+                                loadingEditComment = false;
+                              });
+                            },
+                          ),
+                          labelText: "Editing Comment",
+                        ),
+                      ),
               ),
             ),
           ],
@@ -565,9 +691,11 @@ class _ComplaintPageState extends State<ComplaintPage> {
                         _commentController.text = "";
                       });
                     } else {
-                      _scaffoldKey.currentState.showSnackBar(SnackBar(
-                        content: Text("Comment empty"),
-                      ));
+                      _scaffoldKey.currentState
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(SnackBar(
+                          content: Text("Comment empty"),
+                        ));
                     }
                     setState(() {
                       loadingComment = false;

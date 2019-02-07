@@ -81,6 +81,8 @@ class Comment {
   String text;
   @Alias("commented_by")
   User commentedBy;
+  @Alias("complaint")
+  String complaintID;
 }
 
 @GenSerializer()
