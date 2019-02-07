@@ -306,9 +306,10 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Container(
-                  child: Hero(
-                    tag: complaint.complaintID,
+                Hero(
+                  tag: complaint.complaintID,
+                  child: Material(
+                    type: MaterialType.transparency,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -345,7 +346,8 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                   loadingComplaint = complaint;
                                 });
                                 await bloc.complaintsBloc.updateSubs(
-                                    complaint, complaint.isSubscribed ? 0 : 1);
+                                    complaint,
+                                    complaint.isSubscribed ? 0 : 1);
                                 setState(() {
                                   loadingSubs = false;
                                   loadingComplaint = null;

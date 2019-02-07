@@ -321,12 +321,12 @@ abstract class _$InstiAppApiClient implements ApiClient {
     return req.one(convert: serializers.oneFrom);
   }
 
-  Future<String> deleteComment(String sessionId, String commentId) async {
+  Future<void> deleteComment(String sessionId, String commentId) async {
     var req = base.delete
         .path(basePath)
         .path("/venter/comments/:commentId")
         .pathParams("commentId", commentId)
         .header("Cookie", sessionId);
-    return req.one();
+    await req.go();
   }
 }

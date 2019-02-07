@@ -19,6 +19,7 @@ abstract class _$NotificationSerializer implements Serializer<Notification> {
     setMapValue(ret, 'isEvent', model.isEvent);
     setMapValue(ret, 'isNews', model.isNews);
     setMapValue(ret, 'isBlogPost', model.isBlogPost);
+    setMapValue(ret, 'isComplaintComment', model.isComplaintComment);
     return ret;
   }
 
