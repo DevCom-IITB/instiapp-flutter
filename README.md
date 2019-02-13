@@ -2,8 +2,6 @@
 
 Flutter App for Indian Institute of Technology, Bombay (for iOS support)
 
-For now, being tested on Android only. I will test it on iOS occasionally. Last tested [commit](https://github.com/tastelessjolt/instiapp-flutter/commit/e951d89a95b9cc1e163b585dfdc1cb92af378835) on iOS. 
-
 ## Changelog
 
 Go [here](Changelog.md)

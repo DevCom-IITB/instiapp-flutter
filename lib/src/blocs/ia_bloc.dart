@@ -14,57 +14,16 @@ import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/utils/app_brightness.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dynamic_icon/flutter_dynamic_icon.dart';
 import 'dart:collection';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/io_client.dart';
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:InstiApp/src/api/model/notification.dart' as ntf;
-
-/// Describes the contrast needs of a color.
-class AppBrightness {
-  final index;
-  const AppBrightness._internal(this.index);
-  toString() => 'AppBrightness.$index';
-
-  /// The color is dark and will require a light text color to achieve readable
-  /// contrast.
-  ///
-  /// For example, the color might be dark grey, requiring white text.
-
-  static const dark = const AppBrightness._internal(0);
-
-  /// The color is light and will require a dark text color to achieve readable
-  /// contrast.
-  ///
-  /// For example, the color might be bright white, requiring black text.
-
-  static const light = const AppBrightness._internal(1);
-
-  /// The color is black and will require a light text color to achieve readable
-  /// contrast.
-  ///
-  /// For example, the color might be black, requiring white text.
-  static const black = const AppBrightness._internal(2);
-
-  static const brightnessToCanvasColor = {
-    light: Colors.white,
-    dark: Color(0xff303030),
-    black: Colors.black,
-  };
-
-  static const values = [dark, light, black];
-
-  Brightness toBrightness() {
-    return index == 2 ? Brightness.dark : Brightness.values[index];
-  }
-
-  Color toColor() {
-    return brightnessToCanvasColor[this];
-  }
-}
 
 class InstiAppBloc {
   // Events StorageID
@@ -111,7 +70,7 @@ class InstiAppBloc {
   final client = InstiAppApi();
 
   // default homepage
-  String homepageName = "/mess";
+  String homepageName = "/feed";
 
   // default theme
   AppBrightness _brightness = AppBrightness.light;
@@ -182,8 +141,10 @@ class InstiAppBloc {
     exploreBloc = ExploreBloc(this);
     calendarBloc = CalendarBloc(this);
     complaintsBloc = ComplaintsBloc(this);
-    drawerState = DrawerBloc(homepageName, highlightPageIndexVal: 3);
+    drawerState = DrawerBloc(homepageName, highlightPageIndexVal: 0);
     navigatorObserver = MNavigatorObserver(this);
+
+    _initNotificationBatch();
   }
 
   // Settings bloc
@@ -393,6 +354,7 @@ class InstiAppBloc {
   Future<void> logout() async {
     await client.logout(getSessionIdHeader());
     updateSession(null);
+    _notificationsSubject.add(UnmodifiableListView([]));
   }
 
   Future saveToCache({SharedPreferences sharedPrefs}) async {
@@ -439,5 +401,11 @@ class InstiAppBloc {
     exploreBloc?.restoreFromCache(sharedPrefs: prefs);
     complaintsBloc?.restoreFromCache(sharedPrefs: prefs);
     calendarBloc?.restoreFromCache(sharedPrefs: prefs);
+  }
+  
+  void _initNotificationBatch() {
+    notifications.listen((notifs) async {
+      await FlutterDynamicIcon.setApplicationIconBadgeNumber(notifs.length);
+    });
   }
 }

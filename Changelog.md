@@ -9,6 +9,8 @@
 * Fix multiple roles (Hero animation) bug
 * Add InstiApp launcher icon on Android
 * Can edit/delete comments on a Complaint
+* App links for Android part work
+* Add Batch number on App Icon as Unread Notification Number on iOS
 
 ## v1.5-beta
 
