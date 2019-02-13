@@ -11,7 +11,8 @@ class QuickLinksPage extends StatefulWidget {
       "CMS": "https://gymkhana.iitb.ac.in/cms_new/",
       "CMS - Maintenance": "https://support.iitb.ac.in",
       "CMS - Network": "https://help-cc.iitb.ac.in/",
-      "Insti Eateries Feedback": "https://gymkhana.iitb.ac.in/feedback/eateries/",
+      "Insti Eateries Feedback":
+          "https://gymkhana.iitb.ac.in/feedback/eateries/",
     },
     "Academics": {
       "ASC": "https://asc.iitb.ac.in",
@@ -42,8 +43,6 @@ class QuickLinksPage extends StatefulWidget {
       "Hospital": "http://www.iitb.ac.in/hospital/",
       "VPN Guide":
           "https://www.cc.iitb.ac.in/engservices/engaccessingiitffromoutside/19-vpn",
-      "Telephone Directory":
-          "https://portal.iitb.ac.in/TelephoneDirectory/",
     },
   };
 
