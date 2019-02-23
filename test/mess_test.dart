@@ -6,7 +6,6 @@ import 'package:test/test.dart';
 import 'package:http/io_client.dart';
 
 void main() {
-
   test("Network mess test", () async {
     globalClient = IOClient();
     final client = InstiAppApi();

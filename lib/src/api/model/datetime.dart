@@ -1,7 +1,5 @@
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-
-
 class DateTimeSerializer extends Serializer<DateTime>
     with _$DateTimeSerializer {}
 

@@ -10,4 +10,5 @@ class ImageUploadResponse {
 }
 
 @GenSerializer()
-class ImageUploadResponseSerializer extends Serializer<ImageUploadResponse> with _$ImageUploadResponseSerializer {}
+class ImageUploadResponseSerializer extends Serializer<ImageUploadResponse>
+    with _$ImageUploadResponseSerializer {}

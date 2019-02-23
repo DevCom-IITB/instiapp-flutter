@@ -14,10 +14,8 @@ class MapBloc {
   InstiAppBloc bloc;
 
   // Streams
-  Stream<UnmodifiableListView<Venue>> get locations =>
-      _locationsSubject.stream;
-  final _locationsSubject =
-      BehaviorSubject<UnmodifiableListView<Venue>>();
+  Stream<UnmodifiableListView<Venue>> get locations => _locationsSubject.stream;
+  final _locationsSubject = BehaviorSubject<UnmodifiableListView<Venue>>();
 
   // State
   List<Venue> _locations;
@@ -32,7 +30,8 @@ class MapBloc {
   Future saveToCache({SharedPreferences sharedPrefs}) async {
     var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
     if (_locations?.isNotEmpty ?? false) {
-      prefs.setString(locationsStorageID, standardSerializers.encode(_locations));
+      prefs.setString(
+          locationsStorageID, standardSerializers.encode(_locations));
     }
   }
 
@@ -44,4 +43,4 @@ class MapBloc {
       _locationsSubject.add(UnmodifiableListView(_locations));
     }
   }
-} 
+}

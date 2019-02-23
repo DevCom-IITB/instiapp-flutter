@@ -22,4 +22,5 @@ class EventCreateRequest {
 }
 
 @GenSerializer()
-class EventCreateRequestSerializer extends Serializer<EventCreateRequest> with _$EventCreateRequestSerializer {}
+class EventCreateRequestSerializer extends Serializer<EventCreateRequest>
+    with _$EventCreateRequestSerializer {}

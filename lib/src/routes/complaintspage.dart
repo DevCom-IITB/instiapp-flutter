@@ -346,8 +346,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                   loadingComplaint = complaint;
                                 });
                                 await bloc.complaintsBloc.updateSubs(
-                                    complaint,
-                                    complaint.isSubscribed ? 0 : 1);
+                                    complaint, complaint.isSubscribed ? 0 : 1);
                                 setState(() {
                                   loadingSubs = false;
                                   loadingComplaint = null;

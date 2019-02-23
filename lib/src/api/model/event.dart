@@ -86,7 +86,8 @@ class Event {
     }
 
     if (startTime != null) {
-      subtitle += formatDate(startTime.toLocal(), [dd, " ", M, " | ", HH, ":", nn]);
+      subtitle +=
+          formatDate(startTime.toLocal(), [dd, " ", M, " | ", HH, ":", nn]);
     }
     String eventVenueName = "";
     for (var venue in eventVenues) {

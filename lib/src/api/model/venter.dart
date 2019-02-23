@@ -86,7 +86,8 @@ class Comment {
 }
 
 @GenSerializer()
-class ComplaintSerializer extends Serializer<Complaint> with _$ComplaintSerializer {}
+class ComplaintSerializer extends Serializer<Complaint>
+    with _$ComplaintSerializer {}
 
 @GenSerializer()
 class TagUriSerializer extends Serializer<TagUri> with _$TagUriSerializer {}

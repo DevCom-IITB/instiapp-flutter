@@ -504,7 +504,6 @@ class _CalendarState<T> extends State<MyCalendarCarousel<T>> {
                               ),
                             ),
                           ),
-                          
                         ],
                       ),
                     ),

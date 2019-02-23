@@ -89,12 +89,12 @@ class MySwitchListTile extends StatelessWidget {
     this.secondary,
     this.selected = false,
     this.contentPadding,
-  }) : _switchListTileType = _SwitchListTileType.material,
-       assert(value != null),
-       assert(isThreeLine != null),
-       assert(!isThreeLine || subtitle != null),
-       assert(selected != null),
-       super(key: key);
+  })  : _switchListTileType = _SwitchListTileType.material,
+        assert(value != null),
+        assert(isThreeLine != null),
+        assert(!isThreeLine || subtitle != null),
+        assert(selected != null),
+        super(key: key);
 
   /// Creates the wrapped switch with [Switch.adaptive].
   ///
@@ -121,12 +121,12 @@ class MySwitchListTile extends StatelessWidget {
     this.secondary,
     this.selected = false,
     this.contentPadding,
-  }) : _switchListTileType = _SwitchListTileType.adaptive,
-       assert(value != null),
-       assert(isThreeLine != null),
-       assert(!isThreeLine || subtitle != null),
-       assert(selected != null),
-       super(key: key);
+  })  : _switchListTileType = _SwitchListTileType.adaptive,
+        assert(value != null),
+        assert(isThreeLine != null),
+        assert(!isThreeLine || subtitle != null),
+        assert(selected != null),
+        super(key: key);
 
   /// Whether this switch is checked.
   ///
@@ -280,7 +280,11 @@ class MySwitchListTile extends StatelessWidget {
           isThreeLine: isThreeLine,
           dense: dense,
           enabled: onChanged != null,
-          onTap: onChanged != null ? () { onChanged(!value); } : null,
+          onTap: onChanged != null
+              ? () {
+                  onChanged(!value);
+                }
+              : null,
           selected: selected,
           contentPadding: contentPadding,
         ),

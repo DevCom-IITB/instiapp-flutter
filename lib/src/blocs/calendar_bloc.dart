@@ -152,8 +152,9 @@ class CalendarBloc {
         prefs.getKeys().contains(eventsMapValuesStorageID)) {
       var keys = standardSerializers
           .decodeList<DateTime>(prefs.getString(eventsMapKeysStorageID));
-      var values = (json.decode(prefs.getString(eventsMapValuesStorageID)) as List)
-          .map((evs) => standardSerializers.listFrom<Event>(evs));
+      var values =
+          (json.decode(prefs.getString(eventsMapValuesStorageID)) as List)
+              .map((evs) => standardSerializers.listFrom<Event>(evs));
       eventsMap = Map.fromIterables(keys, values);
       _eventsSubject.add(eventsMap);
     }

@@ -22,4 +22,6 @@ class ComplaintCreateRequest {
 }
 
 @GenSerializer()
-class ComplaintCreateRequestSerializer extends Serializer<ComplaintCreateRequest> with _$ComplaintCreateRequestSerializer {}
+class ComplaintCreateRequestSerializer
+    extends Serializer<ComplaintCreateRequest>
+    with _$ComplaintCreateRequestSerializer {}

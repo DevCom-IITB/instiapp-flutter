@@ -8,4 +8,6 @@ class ComplaintCreateResponse {
 }
 
 @GenSerializer()
-class ComplaintCreateResponseSerializer extends Serializer<ComplaintCreateResponse> with _$ComplaintCreateResponseSerializer {}
+class ComplaintCreateResponseSerializer
+    extends Serializer<ComplaintCreateResponse>
+    with _$ComplaintCreateResponseSerializer {}
