@@ -6,6 +6,8 @@ import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:jaguar/jaguar.dart' as jag;
+import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
 
 class MapPage extends StatefulWidget {
   @override
@@ -15,8 +17,11 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   final flutterWebviewPlugin = FlutterWebviewPlugin();
 
-  final String hostUrl = "https://insti.app";
-  final String mapUrl = "https://insti.app/map/?sandbox=true";
+  jag.Jaguar server;
+
+  final String hostUrl = "127.0.0.1:9999";
+  // final String mapUrl = "https://insti.app/map/?sandbox=true";
+  final String mapUrl = "http://127.0.0.1:9999/";
 
   StreamSubscription<String> onUrlChangedSub;
   StreamSubscription<WebViewStateChanged> onStateChangedSub;
@@ -27,6 +32,11 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
+    startMapServerIfNotStarted().then((_) {
+      flutterWebviewPlugin.reloadUrl(mapUrl);
+      flutterWebviewPlugin.hide();
+    });
+
     onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {
       print("Changed URL: $url");
       if (!url.contains(hostUrl)) {
@@ -52,6 +62,7 @@ class _MapPageState extends State<MapPage> {
     onStateChangedSub?.cancel();
     onUrlChangedSub?.cancel();
     flutterWebviewPlugin.dispose();
+    server?.close();
 
     super.dispose();
   }
@@ -65,6 +76,9 @@ class _MapPageState extends State<MapPage> {
     print("This is the URL: $mapUrl");
     return SafeWebviewScaffold(
       url: mapUrl,
+      hidden: true,
+      withZoom: false,
+      scrollBar: false,
       withJavascript: true,
       withLocalStorage: true,
       headers: {
@@ -91,5 +105,15 @@ class _MapPageState extends State<MapPage> {
         ),
       ),
     );
+  }
+
+  Future startMapServerIfNotStarted() {
+    try {
+      server = jag.Jaguar(port: 9999);
+      server.addRoute(serveFlutterAssets(prefix: "map/"));
+      return server.serve();
+    } catch (e) {
+      // Already server running
+    }
   }
 }

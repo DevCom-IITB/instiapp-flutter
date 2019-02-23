@@ -227,7 +227,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 return _buildRoute(settings,
                     PutEntityPage(cookie: widget.bloc.getSessionIdHeader()));
               case "/map":
-                return _buildRoute(settings, NativeMapPage());
+                // return _buildRoute(settings, NativeMapPage());
+                return _buildRoute(settings, MapPage());
               case "/settings":
                 return _buildRoute(settings, SettingsPage());
               case "/notifications":
