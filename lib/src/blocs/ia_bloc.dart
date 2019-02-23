@@ -13,6 +13,7 @@ import 'package:InstiApp/src/api/model/mess.dart';
 import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
+import 'package:InstiApp/src/blocs/map_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -59,6 +60,7 @@ class InstiAppBloc {
   CalendarBloc calendarBloc;
   ComplaintsBloc complaintsBloc;
   DrawerBloc drawerState;
+  MapBloc mapBloc;
 
   // actual current state
   Session currSession;
@@ -143,7 +145,7 @@ class InstiAppBloc {
     complaintsBloc = ComplaintsBloc(this);
     drawerState = DrawerBloc(homepageName, highlightPageIndexVal: 0);
     navigatorObserver = MNavigatorObserver(this);
-
+    mapBloc = MapBloc(this);
     _initNotificationBatch();
   }
 
@@ -373,6 +375,7 @@ class InstiAppBloc {
     exploreBloc?.saveToCache(sharedPrefs: prefs);
     complaintsBloc?.saveToCache(sharedPrefs: prefs);
     calendarBloc?.saveToCache(sharedPrefs: prefs);
+    mapBloc?.saveToCache(sharedPrefs: prefs);
   }
 
   Future restoreFromCache({SharedPreferences sharedPrefs}) async {
@@ -401,6 +404,7 @@ class InstiAppBloc {
     exploreBloc?.restoreFromCache(sharedPrefs: prefs);
     complaintsBloc?.restoreFromCache(sharedPrefs: prefs);
     calendarBloc?.restoreFromCache(sharedPrefs: prefs);
+    mapBloc?.restoreFromCache(sharedPrefs: prefs);
   }
   
   void _initNotificationBatch() {
