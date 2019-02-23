@@ -11,4 +11,5 @@ class UserFCMPatchRequest {
 }
 
 @GenSerializer()
-class UserFCMPatchRequestSerializer extends Serializer<UserFCMPatchRequest> with _$UserFCMPatchRequestSerializer {}
+class UserFCMPatchRequestSerializer extends Serializer<UserFCMPatchRequest>
+    with _$UserFCMPatchRequestSerializer {}

@@ -7,8 +7,9 @@ class NewsFeedResponse {
   @Alias("data")
   List<Event> events;
   @Alias("count")
-  int count;  
+  int count;
 }
 
 @GenSerializer()
-class NewsFeedResponseSerializer extends Serializer<NewsFeedResponse> with _$NewsFeedResponseSerializer {}
+class NewsFeedResponseSerializer extends Serializer<NewsFeedResponse>
+    with _$NewsFeedResponseSerializer {}

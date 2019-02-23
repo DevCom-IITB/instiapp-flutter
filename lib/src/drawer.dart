@@ -180,7 +180,15 @@ class _NavDrawerState extends State<NavDrawer> {
                                         bottomRight:
                                             const Radius.circular(48.0),
                                         topRight: const Radius.circular(48.0)))
-                                : null,
+                                : snapshot?.data?.profile?.userName != null
+                                    ? BoxDecoration(
+                                        color: theme.primaryColor.withAlpha(60),
+                                        borderRadius: BorderRadius.only(
+                                            bottomRight:
+                                                const Radius.circular(48.0),
+                                            topRight:
+                                                const Radius.circular(48.0)))
+                                    : null,
                             child: ListTile(
                               leading: NullableCircleAvatar(
                                 snapshot.data?.profile?.userProfilePictureUrl,
@@ -335,24 +343,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       style: ListTileStyle.drawer,
                       child: ListView(
                         children: navList + navDownList,
-                      )
-                      // Column(
-                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //   mainAxisSize: MainAxisSize.max,
-                      //   crossAxisAlignment: CrossAxisAlignment.center,
-                      //   children: <Widget>[
-                      //     ListView(
-                      //       children: navList,
-                      //       shrinkWrap: true,
-
-                      //     ),
-                      //     ListView(
-                      //       shrinkWrap: true,
-                      //       children: navDownList,
-                      //     ),
-                      //   ],
-                      // ),
-                      );
+                      ));
                 });
           },
         ),

@@ -23,6 +23,6 @@ class RichNotification {
   String notificationImage;
 }
 
-
 @GenSerializer()
-class RichNotificationSerializer extends Serializer<RichNotification> with _$RichNotificationSerializer {}
+class RichNotificationSerializer extends Serializer<RichNotification>
+    with _$RichNotificationSerializer {}

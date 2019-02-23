@@ -2,7 +2,6 @@ import 'package:InstiApp/src/json_parsing.dart';
 import 'package:test/test.dart';
 
 void main() {
-
   // test("Network mess test", () async {
   //   globalClient = IOClient();
   //   final client = InstiAppApi();
@@ -12,7 +11,8 @@ void main() {
   test("Test feed.json parsing", () {
     final newFeedResponse = parseEvents(eventsJsonString);
     expect(newFeedResponse.count, 4);
-    expect(newFeedResponse.events[0].eventID, "4a1e5163-53a1-4b1f-852a-a777628eaff8");
+    expect(newFeedResponse.events[0].eventID,
+        "4a1e5163-53a1-4b1f-852a-a777628eaff8");
   }, timeout: Timeout.parse("10s"));
 }
 

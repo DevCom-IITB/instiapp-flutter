@@ -2,16 +2,16 @@ import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'dart:core';
 part 'mess.jser.dart';
 
-class Hostel{
+class Hostel {
   String id;
   String name;
-  
+
   @Alias('short_name')
   String shortName;
 
   @Alias('long_name')
   String longName;
-  
+
   List<HostelMess> mess;
 
   int compareTo(Hostel h) {
@@ -40,8 +40,8 @@ class HostelMess {
     final now = DateTime.now();
     int today = now.weekday;
 
-    int x = (this.day - today) + (this.day - today < 0 ? 7 : 0); 
-    int y = (h.day - today) + (h.day - today < 0 ? 7 : 0); 
+    int x = (this.day - today) + (this.day - today < 0 ? 7 : 0);
+    int y = (h.day - today) + (h.day - today < 0 ? 7 : 0);
 
     return x.compareTo(y);
   }
@@ -63,4 +63,5 @@ class HostelMess {
 class HostelSerializer extends Serializer<Hostel> with _$HostelSerializer {}
 
 @GenSerializer()
-class HostelMessSerializer extends Serializer<HostelMess> with _$HostelMessSerializer {}
+class HostelMessSerializer extends Serializer<HostelMess>
+    with _$HostelMessSerializer {}

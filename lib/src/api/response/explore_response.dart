@@ -17,4 +17,5 @@ class ExploreResponse {
 }
 
 @GenSerializer()
-class ExploreResponseSerializer extends Serializer<ExploreResponse> with _$ExploreResponseSerializer {}
+class ExploreResponseSerializer extends Serializer<ExploreResponse>
+    with _$ExploreResponseSerializer {}

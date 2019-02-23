@@ -1,10 +1,9 @@
 import 'package:rxdart/rxdart.dart';
 
-class DrawerBloc  {
+class DrawerBloc {
   Stream<int> get highlightPageIndex => _pageIndexSubject.stream;
   final _pageIndexSubject = BehaviorSubject<int>();
 
-  
   String currentRoute;
   int _highlightPageIndex;
 

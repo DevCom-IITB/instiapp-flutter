@@ -4,25 +4,25 @@ import 'package:jaguar_serializer/jaguar_serializer.dart';
 part 'post.jser.dart';
 
 class Post {
-    @Alias("id")
-    String postID;
+  @Alias("id")
+  String postID;
 
-    @Alias("link")
-    String link;
+  @Alias("link")
+  String link;
 
-    @Alias("title")
-    String title;
+  @Alias("title")
+  String title;
 
-    @Alias("content")
-    String content;
+  @Alias("content")
+  String content;
 
-    @Alias("published")
-    String published;
+  @Alias("published")
+  String published;
 }
 
-class PlacementBlogPost extends Post{}
-class TrainingBlogPost extends Post{}
+class PlacementBlogPost extends Post {}
 
+class TrainingBlogPost extends Post {}
 
 class NewsArticle extends Post {
   @Alias("body")
@@ -30,13 +30,16 @@ class NewsArticle extends Post {
 }
 
 @GenSerializer()
-class NewsArticleSerializer extends Serializer<NewsArticle> with _$NewsArticleSerializer {}
+class NewsArticleSerializer extends Serializer<NewsArticle>
+    with _$NewsArticleSerializer {}
 
 @GenSerializer()
 class PostSerializer extends Serializer<Post> with _$PostSerializer {}
 
 @GenSerializer()
-class PlacementBlogPostSerializer extends Serializer<PlacementBlogPost> with _$PlacementBlogPostSerializer {}
+class PlacementBlogPostSerializer extends Serializer<PlacementBlogPost>
+    with _$PlacementBlogPostSerializer {}
 
 @GenSerializer()
-class TrainingBlogPostSerializer extends Serializer<TrainingBlogPost> with _$TrainingBlogPostSerializer {}
+class TrainingBlogPostSerializer extends Serializer<TrainingBlogPost>
+    with _$TrainingBlogPostSerializer {}

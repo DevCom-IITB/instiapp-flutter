@@ -84,7 +84,8 @@ class PostBloc {
 
   void _handleIndexes(List<int> indexes) {
     var pages = query.isEmpty ? _fetchPages : _searchFetchPages;
-    var pagesBeingFetched = query.isEmpty ? _pagesBeingFetched : _searchPagesBeingFetched;
+    var pagesBeingFetched =
+        query.isEmpty ? _pagesBeingFetched : _searchPagesBeingFetched;
     indexes.forEach((int index) {
       final int pageIndex = ((index + 1) ~/ _noOfPostsPerPage);
 
@@ -111,7 +112,8 @@ class PostBloc {
   ///
   void _handleFetchedPage(List<Post> page, int pageIndex) {
     var pages = query.isEmpty ? _fetchPages : _searchFetchPages;
-    var pagesBeingFetched = query.isEmpty ? _pagesBeingFetched : _searchPagesBeingFetched;
+    var pagesBeingFetched =
+        query.isEmpty ? _pagesBeingFetched : _searchPagesBeingFetched;
 
     // Remember the page
     pages[pageIndex] = page;
@@ -157,13 +159,12 @@ class PostBloc {
 
     _searchFetchPages.clear();
     _searchPagesBeingFetched.clear();
-    
+
     List<Post> posts = <Post>[];
     if (force) {
       _fetchPages.clear();
       _pagesBeingFetched.clear();
-    }
-    else if (_fetchPages.isNotEmpty && query.isEmpty) {
+    } else if (_fetchPages.isNotEmpty && query.isEmpty) {
       List<int> pageIndexes = _fetchPages.keys.toList();
 
       final int minPageIndex = pageIndexes.reduce(min);
@@ -179,7 +180,7 @@ class PostBloc {
         }
       }
     }
-    
+
     _blogSubject.add(UnmodifiableListView(posts));
 
     _indexController = PublishSubject<int>();

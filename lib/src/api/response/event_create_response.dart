@@ -8,4 +8,5 @@ class EventCreateResponse {
 }
 
 @GenSerializer()
-class EventCreateResponseSerializer extends Serializer<EventCreateResponse> with _$EventCreateResponseSerializer {}
+class EventCreateResponseSerializer extends Serializer<EventCreateResponse>
+    with _$EventCreateResponseSerializer {}

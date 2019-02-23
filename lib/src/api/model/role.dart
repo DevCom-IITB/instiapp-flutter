@@ -5,32 +5,32 @@ import 'package:jaguar_serializer/jaguar_serializer.dart';
 part 'role.jser.dart';
 
 class Role {
-    @Alias("id")
-    String roleID;
+  @Alias("id")
+  String roleID;
 
-    @Alias("name")
-    String roleName;
+  @Alias("name")
+  String roleName;
 
-    @Alias("inheritable")
-    bool roleInheritable;
+  @Alias("inheritable")
+  bool roleInheritable;
 
-    @Alias("body")
-    String roleBody;
+  @Alias("body")
+  String roleBody;
 
-    @Alias("body_detail")
-    Body roleBodyDetails;
+  @Alias("body_detail")
+  Body roleBodyDetails;
 
-    @Alias("bodies")
-    List<Body> roleBodies;
+  @Alias("bodies")
+  List<Body> roleBodies;
 
-    @Alias("permissions")
-    List<String> rolePermissions;
+  @Alias("permissions")
+  List<String> rolePermissions;
 
-    @Alias("users")
-    List<String> roleUsers;
+  @Alias("users")
+  List<String> roleUsers;
 
-    @Alias("users_detail")
-    List<User> roleUsersDetail;
+  @Alias("users_detail")
+  List<User> roleUsersDetail;
 }
 
 @GenSerializer()

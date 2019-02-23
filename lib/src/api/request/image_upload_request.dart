@@ -8,4 +8,5 @@ class ImageUploadRequest {
 }
 
 @GenSerializer()
-class ImageUploadRequestSerializer extends Serializer<ImageUploadRequest> with _$ImageUploadRequestSerializer {}
+class ImageUploadRequestSerializer extends Serializer<ImageUploadRequest>
+    with _$ImageUploadRequestSerializer {}

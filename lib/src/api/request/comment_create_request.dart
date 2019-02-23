@@ -8,4 +8,5 @@ class CommentCreateRequest {
 }
 
 @GenSerializer()
-class CommentCreateRequestSerializer extends Serializer<CommentCreateRequest> with _$CommentCreateRequestSerializer {}
+class CommentCreateRequestSerializer extends Serializer<CommentCreateRequest>
+    with _$CommentCreateRequestSerializer {}

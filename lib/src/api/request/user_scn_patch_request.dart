@@ -8,4 +8,5 @@ class UserSCNPatchRequest {
 }
 
 @GenSerializer()
-class UserSCNPatchRequestSerializer extends Serializer<UserSCNPatchRequest> with _$UserSCNPatchRequestSerializer {}
+class UserSCNPatchRequestSerializer extends Serializer<UserSCNPatchRequest>
+    with _$UserSCNPatchRequestSerializer {}
