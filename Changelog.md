@@ -2,15 +2,20 @@
 
 ## Unreleased
 
-* Add back buttons on every page for iOS
-* Add launcher/app icons for iOS
+* Nothing here yet
+
+## v1.6-beta
+
 * Complaint subscription added and comments notifications work
 * Move dropdown button to FAB in Mess Menu
 * Fix multiple roles (Hero animation) bug
 * Add InstiApp launcher icon on Android
 * Can edit/delete comments on a Complaint
 * App links for Android part work
+* Add back buttons on every page for iOS
+* Add launcher/app icons for iOS
 * Add Batch number on App Icon as Unread Notification Number on iOS
+* Change map url to standalone map url for smaller js file
 
 ## v1.5-beta
 
