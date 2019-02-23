@@ -74,6 +74,9 @@ class InstiAppApi extends _$InstiAppApiClient implements ApiClient {
   @GetReq(path: "/locations")
   Future<List<Venue>> getAllVenues();
 
+  @GetReq(path: "/locations/:id")
+  Future<List<Venue>> getVenue(@QueryParam("id") String id);
+
   // Users
   @GetReq(path: "/users/:uuid")
   Future<User> getUser(@Header("Cookie") String sessionId, @PathParam() String uuid);

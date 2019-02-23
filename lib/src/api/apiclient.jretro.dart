@@ -107,6 +107,11 @@ abstract class _$InstiAppApiClient implements ApiClient {
     return req.list(convert: serializers.oneFrom);
   }
 
+  Future<List<Venue>> getVenue(String id) async {
+    var req = base.get.path(basePath).path("/locations/:id").query("id", id);
+    return req.list(convert: serializers.oneFrom);
+  }
+
   Future<User> getUser(String sessionId, String uuid) async {
     var req = base.get
         .path(basePath)

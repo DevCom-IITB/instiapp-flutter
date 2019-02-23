@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<head>
+    <title> InstiMap </title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="index.css" />
+</head>
+
+<body>
+    <div class="loading-fader">
+        <img class="p1" src="assets/petal.svg">
+        <img class="p2" src="assets/petal.svg">
+        <img class="p3" src="assets/petal.svg">
+        <img class="p4" src="assets/petal.svg">
+        <img class="p5" src="assets/petal.svg">
+        <img class="p6" src="assets/petal.svg">
+        <img class="p7" src="assets/petal.svg">
+    </div>
+
+    <div id="map" class="map"></div>
+    <img id="marker" src="assets/map/marker_blue_s.png">
+    <img id="user-marker" src="assets/map/marker_red_s.png">
+
+    <div id="locfab" class="shadow hide-till-load">
+        <img src="locate.png" class="locate" />
+    </div>
+
+    <div id="infobox" class="shadow">
+        <div id="locname"></div>
+        <div id="locdesc"></div>
+    </div>
+
+    <div id="searchbox" class="shadow hide-till-load">
+        <input type="search" id="search" placeholder="Search" />
+    </div>
+
+    <script src="bundle.min.js"></script>
+</body>

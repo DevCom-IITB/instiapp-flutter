@@ -1,0 +1,187 @@
+body, html {
+    margin: 0;
+    overflow: hidden;
+}
+
+#marker, #user-marker {
+    height: 60px;
+    transform: translateY(6px);
+    display: none;
+}
+
+.ol-overlay-container img {
+    display: block !important;
+}
+
+.hide-till-load {
+    opacity: 0;
+}
+
+.map {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    z-index: -100;
+    position: fixed;
+    top: 0; left: 0;
+}
+
+#searchbox {
+    position: fixed;
+    right: 40px; top: 40px;
+    background: white;
+    z-index: -1;
+}
+
+.shadow {
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+}
+
+#search {
+    padding: 15px 20px;
+    border: none;
+    width: 300px;
+}
+
+#infobox {
+    padding: 15px 20px;
+    box-sizing: border-box;
+    position: fixed;
+    right: 40px; top: 100px;
+    background: white;
+    width: 300px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 200ms ease;
+    display: none;
+}
+
+#locfab {
+    position: fixed;
+    height: 50px; width: 50px;
+    right: 20px; bottom: 20px;
+    background: #ffd740;
+    border-radius: 50%;
+    transition: all 200ms ease;
+    padding: 0; margin: 0;
+    z-index: 0;
+    vertical-align: middle;
+    cursor: pointer;
+
+    -webkit-user-select: none; /* Safari 3.1+ */
+    -moz-user-select: none; /* Firefox 2+ */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Standard syntax */
+}
+
+.locate {
+    margin: 15.5px;
+    height: 20px;
+}
+
+#locname {
+    font-size: 1.3em;
+    margin-bottom: 0.2em;
+}
+
+.algolia-autocomplete {
+    width: 100%;
+    z-index: 20;
+}
+.algolia-autocomplete .aa-input, .algolia-autocomplete .aa-hint {
+    width: 100%;
+}
+.algolia-autocomplete .aa-hint {
+    display: none;
+}
+.algolia-autocomplete .aa-dropdown-menu {
+    width: 100%;
+    background-color: #fff;
+    border-top: none;
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 0 0 0 white, 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    z-index: 20;
+}
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+    cursor: pointer;
+    padding: 5px 10px;
+}
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+    background-color: #eee;
+}
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion em {
+    font-weight: bold;
+    font-style: normal;
+}
+
+@media (max-width: 600px) {
+    #searchbox {
+        top: 20px;
+        width: 90vw;
+        right: 5vw;
+    }
+
+    #search {
+        width: 100vw;
+    }
+
+    #infobox {
+        width: 100vw;
+        right: 0vw;
+        top: calc(100% - 80px);
+        min-height: 100vh;
+        transition: all 200ms ease;
+        z-index: 1;
+    }
+
+    #infobox.expanded {
+        transform: translateY(calc(-100% + 180px));
+    }
+
+    #locfab.translate {
+        transform: translateY(-80px);
+    }
+}
+
+/* Loading spinner */
+.loading-fader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 120px;
+    width: 40px;
+    transform: translate(-50%, calc(-50%));
+    z-index: 100;
+}
+
+.loading-fader > img {
+    height: 88px;
+    transform-origin: bottom;
+    opacity: 0.15;
+    position: absolute;
+    -webkit-animation: spinner 2s infinite ease-in-out;
+    animation: spinner 2s infinite ease-in-out;
+}
+
+.p1 { transform: rotate(67deg); }
+.p2 { transform: rotate(45deg); }
+.p3 { transform: rotate(20deg); }
+.p4 { transform: rotate(00deg); }
+.p5 { transform: rotate(-20deg); }
+.p6 { transform: rotate(-45deg); }
+.p7 { transform: rotate(-67deg); }
+
+.loading-fader .p7 { -webkit-animation-delay: 0.09s; animation-delay: 0.09s; }
+.loading-fader .p6 { -webkit-animation-delay: 0.18s; animation-delay: 0.18s; }
+.loading-fader .p5 { -webkit-animation-delay: 0.27s; animation-delay: 0.27s; }
+.loading-fader .p4 { -webkit-animation-delay: 0.36s; animation-delay: 0.36s; }
+.loading-fader .p3 { -webkit-animation-delay: 0.45s; animation-delay: 0.45s; }
+.loading-fader .p2 { -webkit-animation-delay: 0.54s; animation-delay: 0.54s; }
+.loading-fader .p1 { -webkit-animation-delay: 0.63s; animation-delay: 0.63s; }
+
+@keyframes spinner {
+0% { opacity: 0.15;}
+25% { opacity: 0.55; }
+50% { opacity: 0.4; }
+70% { opacity: 0.15; }
+100% { opacity: 0.15; }
+}

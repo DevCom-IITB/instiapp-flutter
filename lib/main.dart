@@ -10,6 +10,7 @@ import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:InstiApp/src/routes/mappage.dart';
+import 'package:InstiApp/src/routes/nativemappage.dart';
 import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
 import 'package:InstiApp/src/routes/notificationspage.dart';
@@ -226,7 +227,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 return _buildRoute(settings,
                     PutEntityPage(cookie: widget.bloc.getSessionIdHeader()));
               case "/map":
-                return _buildRoute(settings, MapPage());
+                return _buildRoute(settings, NativeMapPage());
               case "/settings":
                 return _buildRoute(settings, SettingsPage());
               case "/notifications":
