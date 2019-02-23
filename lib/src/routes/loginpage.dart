@@ -9,6 +9,8 @@ import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:jaguar/jaguar.dart' as jag;
+import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
 
 class LoginPage extends StatefulWidget {
   final InstiAppBloc bloc;
@@ -20,9 +22,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final flutterWebviewPlugin = FlutterWebviewPlugin();
-  HttpServer server;
+  jag.Jaguar server;
 
-  int port;
   final String successUrl = "https://redirecturi";
   final String guestUrl = "https://guesturi";
   final String gymkhanaUrl = "https://gymkhana.iitb.ac.in";
@@ -33,12 +34,12 @@ class _LoginPageState extends State<LoginPage> {
 
   String statusMessage = "Initializing";
 
-  String url;
+  String loginurl;
   Session currSession;
 
   @override
   void dispose() {
-    server?.close(force: true);
+    server?.close();
     flutterWebviewPlugin.dispose();
 
     onUrlChangedSub?.cancel();
@@ -50,6 +51,13 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     _bloc = widget.bloc;
+
+    // Creating login url
+    loginurl = "http://127.0.0.1:9399/" +
+        ((_bloc.brightness.toBrightness() == Brightness.dark)
+            ? "login_dark.html"
+            : "login.html");
+    print("Formed URL: $loginurl");
 
     checkLogin().then((Session sess) {
       // If session already exists, continue to homepage with current session
@@ -64,13 +72,11 @@ class _LoginPageState extends State<LoginPage> {
 
       // No stored session found
       startLoginPageServer().then((_) async {
-        url = "http://${server.address.host}:${server.port}/";
-        print("Formed URL: $url");
         print("startLoginPageServer.then: Launching Web View");
         // await Future.delayed(Duration(milliseconds: 200));
         var mqdata = MediaQuery.of(context);
         flutterWebviewPlugin.launch(
-          url,
+          loginurl,
           hidden: false,
           withJavascript: true,
           clearCookies: true,
@@ -101,17 +107,15 @@ class _LoginPageState extends State<LoginPage> {
 
           Navigator.of(context)
               .pushNamedAndRemoveUntil(_bloc?.homepageName, (r) => false);
-          // Navigator.of(context).pushReplacementNamed(_bloc?.homepageName);
         } else if (url.startsWith(gymkhanaUrl)) {
           print("onUrlChanged: Hiding Web View");
           flutterWebviewPlugin.hide();
         } else if (url.startsWith(httpGymkhanaUrl)) {
           print("onUrlChanged: http gymkhana");
           flutterWebviewPlugin.reloadUrl(url.replaceFirst("http", "https"));
-        } else if (!url.startsWith("http://${server.address.host}")) {
+        } else if (!url.startsWith("http://127.0.0.1")) {
           print("Going to unintented website");
-          flutterWebviewPlugin
-              .reloadUrl("http://${server.address.host}:${server.port}/");
+          flutterWebviewPlugin.reloadUrl(loginurl);
         }
       });
       onStateChangedSub = flutterWebviewPlugin.onStateChanged
@@ -164,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
           children: <Widget>[
             Image(
               color: Theme.of(context).accentColor,
-              image: AssetImage('assets/lotus.png'),
+              image: AssetImage('assets/login/lotus.png'),
               width: 250.0,
               fit: BoxFit.scaleDown,
             ),
@@ -186,31 +190,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> startLoginPageServer() async {
-    var defAssets = DefaultAssetBundle.of(context);
-    server = await HttpServer.bind(InternetAddress.loopbackIPv4, 9399);
-    server.listen((HttpRequest request) async {
-      print("URI: ${request.uri}");
-      if (request.uri.toString() == '/') {
-        var html = await defAssets.loadString(
-            _bloc.brightness.toBrightness() == Brightness.dark
-                ? 'assets/login_dark.html'
-                : 'assets/login.html');
-        request.response
-          ..statusCode = 200
-          ..headers.set("Content-Type", ContentType.html.mimeType)
-          ..write(html);
-      } else if (request.uri.toString().contains('lotus')) {
-        var binary = await defAssets.load('assets/lotus.png');
-        request.response
-          ..statusCode = 200
-          ..headers.set("Content-Type", "image/png")
-          ..add(binary.buffer.asUint8List());
-      } else {
-        request.response..statusCode = 404;
-      }
-      await request.response.close();
-      print("Served");
-    });
+    server = jag.Jaguar(port: 9399);
+    server.addRoute(serveFlutterAssets(prefix: "login/"));
+    return server.serve();
   }
 
   login(final String authCode, final String redirectUrl) async {
@@ -244,7 +226,7 @@ class _LoginPageState extends State<LoginPage> {
       print("login: Showing Web View");
       flutterWebviewPlugin.show();
       print("login: Launching Web View");
-      flutterWebviewPlugin.launch(url);
+      flutterWebviewPlugin.launch(loginurl);
     }
   }
 }
