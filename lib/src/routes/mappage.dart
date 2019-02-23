@@ -19,9 +19,14 @@ class _MapPageState extends State<MapPage> {
 
   jag.Jaguar server;
 
-  final String hostUrl = "127.0.0.1:9999";
+  // final String hostUrl = "insti.app";
   // final String mapUrl = "https://insti.app/map/?sandbox=true";
-  final String mapUrl = "http://127.0.0.1:9999/";
+
+  // final String hostUrl = "127.0.0.1:9999";
+  // final String mapUrl = "http://127.0.0.1:9999/";
+
+  final String hostUrl = "pulsejet.github.io";
+  final String mapUrl = "https://pulsejet.github.io/instimapweb-standalone/";
 
   StreamSubscription<String> onUrlChangedSub;
   StreamSubscription<WebViewStateChanged> onStateChangedSub;
@@ -32,10 +37,11 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
-    startMapServerIfNotStarted().then((_) {
-      flutterWebviewPlugin.reloadUrl(mapUrl);
-      flutterWebviewPlugin.hide();
-    });
+
+    // startMapServerIfNotStarted().then((_) {
+    //   flutterWebviewPlugin.reloadUrl(mapUrl);
+    //   flutterWebviewPlugin.hide();
+    // });
 
     onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {
       print("Changed URL: $url");
@@ -114,6 +120,7 @@ class _MapPageState extends State<MapPage> {
       return server.serve();
     } catch (e) {
       // Already server running
+      return Future.delayed(Duration.zero);
     }
   }
 }
