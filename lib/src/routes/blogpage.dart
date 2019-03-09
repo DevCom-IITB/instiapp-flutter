@@ -307,7 +307,6 @@ class _BlogPageState extends State<BlogPage> {
             Padding(
               padding: const EdgeInsets.only(
                 left: 12.0,
-                bottom: 12.0,
                 right: 12.0,
               ),
               child: CommonHtml(
@@ -315,6 +314,145 @@ class _BlogPageState extends State<BlogPage> {
                 defaultTextStyle: theme.textTheme.subhead,
               ),
             ),
+            widget.postType == PostType.NewsArticle
+                ? Builder(builder: (BuildContext context) {
+                    const Map<String, String> reactionToEmoji = {
+                      "0": "👍",
+                      "1": "❤️",
+                      "2": "😂",
+                      "3": "😯",
+                      "4": "😢",
+                      "5": "😡",
+                    };
+
+                    const Map<String, String> reactionToName = {
+                      "0": "Like",
+                      "1": "Love",
+                      "2": "Haha",
+                      "3": "Wow",
+                      "4": "Sad",
+                      "5": "Angry",
+                    };
+
+                    var article = (post as NewsArticle);
+                    var totalNumberOfReactions = article?.reactionCount?.values
+                        ?.reduce((i1, i2) => i1 + i2);
+
+                    var nonZeroReactions = article?.reactionCount?.keys
+                        ?.where((s) => (article?.reactionCount[s] > 0))
+                        ?.toList();
+                    nonZeroReactions?.sort((s1, s2) =>
+                        ((article?.reactionCount[s1])
+                            .compareTo(article?.reactionCount[s2])));
+                    var numberOfPeopleOtherThanYou =
+                        (totalNumberOfReactions ?? 0) -
+                            ((article?.userReaction ?? -1) >= 0 ? 1 : 0);
+
+                    if (nonZeroReactions != null) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Divider(
+                            height: 0.0,
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              var sel = await showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(100.0),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: reactionToEmoji.keys.map((s) {
+                                        return RawMaterialButton(
+                                          shape: CircleBorder(),
+                                          constraints: const BoxConstraints(
+                                              minWidth: 36.0, minHeight: 12.0),
+                                          fillColor:
+                                              "${article.userReaction}" == s
+                                                  ? theme.accentColor
+                                                  : theme.cardColor,
+                                          child: Text(
+                                            reactionToEmoji[s],
+                                            style: theme.textTheme.headline,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .pop(s);
+                                          },
+                                        );
+                                      }).toList(),
+                                    ),
+                                  );
+                                },
+                              );
+
+                              if (sel == null) {
+                                return;
+                              }
+
+                              final reaction = int.parse(sel);
+                              if (article.userReaction == -1) {
+                                setState(() {
+                                  article.userReaction = reaction;
+                                  article.reactionCount[sel] += 1;
+                                });
+                              } else if (article.userReaction != reaction) {
+                                setState(() {
+                                  article.reactionCount[
+                                      "${article.userReaction}"] -= 1;
+                                  article.userReaction = reaction;
+                                  article.reactionCount[sel] += 1;
+                                });
+                              } else {
+                                setState(() {
+                                  article.userReaction = -1;
+                                  article.reactionCount[sel] -= 1;
+                                });
+                              }
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: totalNumberOfReactions > 0
+                                  ? Text.rich(
+                                      TextSpan(children: [
+                                        TextSpan(
+                                            text:
+                                                "${nonZeroReactions?.map((s) => reactionToEmoji[s])?.join()} ",
+                                            style: theme.textTheme.headline),
+                                        TextSpan(
+                                            text:
+                                                " ${((article?.userReaction ?? -1) < 0) ? "" : "You "}${((article?.userReaction ?? -1) >= 0 && totalNumberOfReactions > 1) ? "and " : ""}${numberOfPeopleOtherThanYou > 0 ? (numberOfPeopleOtherThanYou.toString() + " other " + (numberOfPeopleOtherThanYou > 1 ? "people " : "person ")) : ""}reacted"),
+                                      ]),
+                                      textAlign: TextAlign.center,
+                                    )
+                                  : Center(
+                                      child: Text.rich(
+                                      TextSpan(children: [
+                                        TextSpan(
+                                            text: "👍 ",
+                                            style: theme.textTheme.headline),
+                                        TextSpan(text: " Like"),
+                                      ]),
+                                    )),
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return SizedBox();
+                    }
+                  })
+                : SizedBox(),
           ],
         ));
   }

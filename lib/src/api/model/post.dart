@@ -7,6 +7,9 @@ class Post {
   @Alias("id")
   String postID;
 
+  @Alias("guid")
+  String guid;
+
   @Alias("link")
   String link;
 
@@ -27,6 +30,12 @@ class TrainingBlogPost extends Post {}
 class NewsArticle extends Post {
   @Alias("body")
   Body body;
+
+  @Alias("reactions_count")
+  Map<String, int> reactionCount;
+
+  @Alias("user_reaction")
+  int userReaction;
 }
 
 @GenSerializer()

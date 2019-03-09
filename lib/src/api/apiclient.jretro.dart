@@ -174,6 +174,17 @@ abstract class _$InstiAppApiClient implements ApiClient {
     await req.go();
   }
 
+  Future<void> updateUserNewsReaction(
+      String sessionID, String postID, int status) async {
+    var req = base.get
+        .path(basePath)
+        .path("/user-me/unr/:postID")
+        .pathParams("postID", postID)
+        .query("status", status)
+        .header("Cookie", sessionID);
+    await req.go();
+  }
+
   Future<User> patchFCMUserMe(
       String sessionID, UserFCMPatchRequest userFCMPatchRequest) async {
     var req = base.patch
