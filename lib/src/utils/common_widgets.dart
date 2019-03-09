@@ -226,6 +226,7 @@ class CommonHtml extends StatelessWidget {
         ? Html(
             data: data,
             defaultTextStyle: defaultTextStyle,
+            useRichText: true,
             onLinkTap: (link) async {
               print(link);
               if (await canLaunch(link)) {
@@ -238,9 +239,6 @@ class CommonHtml extends StatelessWidget {
               if (node is dom.Element) {
                 switch (node.localName) {
                   case "img":
-                    // return CachedNetworkImage(
-                    //   imageUrl: node.attributes['href'] ?? node.attributes['src'],
-                    // );
                     return Text(node.attributes['src'] ??
                         node.attributes['href'] ??
                         "<img>");
