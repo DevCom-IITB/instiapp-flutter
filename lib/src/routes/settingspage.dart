@@ -1,6 +1,5 @@
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
-import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
@@ -75,30 +74,6 @@ class _SettingsPageState extends State<SettingsPage> {
                           color: theme.primaryColor),
                     ),
                   ),
-                  // Container(
-                  //   decoration: BoxDecoration(
-                  //     borderRadius: BorderRadius.all(Radius.circular(6.0)),
-                  //     border: Border.all(color: theme.accentColor),
-                  //   ),
-                  //   child: ListTile(
-                  //     contentPadding:
-                  //         EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                  //     leading: NullableCircleAvatar(
-                  //       snapshot.data.profile.userProfilePictureUrl,
-                  //       OMIcons.personOutline,
-                  //       heroTag: snapshot.data.profile.userID,
-                  //     ),
-                  //     title: Text(
-                  //       snapshot.data.profile.userName,
-                  //       style: theme.textTheme.title,
-                  //     ),
-                  //     subtitle: Text(snapshot.data.profile.getSubTitle()),
-                  //     onTap: () {
-                  //       UserPage.navigateWith(
-                  //           context, bloc, snapshot.data.profile);
-                  //     },
-                  //   ),
-                  // ),
                   MySwitchListTile(
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 28.0),
