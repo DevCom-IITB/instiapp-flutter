@@ -15,7 +15,11 @@ abstract class _$NewsArticleSerializer implements Serializer<NewsArticle> {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
     setMapValue(ret, 'body', _bodySerializer.toMap(model.body));
+    setMapValue(ret, 'reactions_count',
+        codeMap(model.reactionCount, (val) => val as int));
+    setMapValue(ret, 'user_reaction', model.userReaction);
     setMapValue(ret, 'postID', model.postID);
+    setMapValue(ret, 'guid', model.guid);
     setMapValue(ret, 'link', model.link);
     setMapValue(ret, 'title', model.title);
     setMapValue(ret, 'content', model.content);
@@ -28,7 +32,11 @@ abstract class _$NewsArticleSerializer implements Serializer<NewsArticle> {
     if (map == null) return null;
     final obj = new NewsArticle();
     obj.body = _bodySerializer.fromMap(map['body'] as Map);
+    obj.reactionCount =
+        codeMap<int>(map['reactions_count'] as Map, (val) => val as int);
+    obj.userReaction = map['user_reaction'] as int;
     obj.postID = map['postID'] as String;
+    obj.guid = map['guid'] as String;
     obj.link = map['link'] as String;
     obj.title = map['title'] as String;
     obj.content = map['content'] as String;
@@ -43,6 +51,7 @@ abstract class _$PostSerializer implements Serializer<Post> {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
     setMapValue(ret, 'id', model.postID);
+    setMapValue(ret, 'guid', model.guid);
     setMapValue(ret, 'link', model.link);
     setMapValue(ret, 'title', model.title);
     setMapValue(ret, 'content', model.content);
@@ -55,6 +64,7 @@ abstract class _$PostSerializer implements Serializer<Post> {
     if (map == null) return null;
     final obj = new Post();
     obj.postID = map['id'] as String;
+    obj.guid = map['guid'] as String;
     obj.link = map['link'] as String;
     obj.title = map['title'] as String;
     obj.content = map['content'] as String;
@@ -70,6 +80,7 @@ abstract class _$PlacementBlogPostSerializer
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
     setMapValue(ret, 'postID', model.postID);
+    setMapValue(ret, 'guid', model.guid);
     setMapValue(ret, 'link', model.link);
     setMapValue(ret, 'title', model.title);
     setMapValue(ret, 'content', model.content);
@@ -82,6 +93,7 @@ abstract class _$PlacementBlogPostSerializer
     if (map == null) return null;
     final obj = new PlacementBlogPost();
     obj.postID = map['postID'] as String;
+    obj.guid = map['guid'] as String;
     obj.link = map['link'] as String;
     obj.title = map['title'] as String;
     obj.content = map['content'] as String;
@@ -97,6 +109,7 @@ abstract class _$TrainingBlogPostSerializer
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
     setMapValue(ret, 'postID', model.postID);
+    setMapValue(ret, 'guid', model.guid);
     setMapValue(ret, 'link', model.link);
     setMapValue(ret, 'title', model.title);
     setMapValue(ret, 'content', model.content);
@@ -109,6 +122,7 @@ abstract class _$TrainingBlogPostSerializer
     if (map == null) return null;
     final obj = new TrainingBlogPost();
     obj.postID = map['postID'] as String;
+    obj.guid = map['guid'] as String;
     obj.link = map['link'] as String;
     obj.title = map['title'] as String;
     obj.content = map['content'] as String;
