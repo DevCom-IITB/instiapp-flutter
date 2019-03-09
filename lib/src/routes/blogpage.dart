@@ -33,6 +33,7 @@ class _BlogPageState extends State<BlogPage> {
       GlobalKey<RefreshIndicatorState>();
 
   FocusNode _focusNode = FocusNode();
+  TextEditingController _searchFieldController;
   ScrollController _hideButtonController;
   double isFabVisible = 0;
 
@@ -44,24 +45,26 @@ class _BlogPageState extends State<BlogPage> {
   @override
   void initState() {
     super.initState();
-
+    _searchFieldController = TextEditingController();
     _hideButtonController = ScrollController();
     _hideButtonController.addListener(() {
-      if ((_hideButtonController.position.userScrollDirection ==
-                  ScrollDirection.reverse &&
-              isFabVisible == 1) ||
-          (_hideButtonController.offset < 100)) {
+      if (isFabVisible == 1 && _hideButtonController.offset < 100) {
         setState(() {
           isFabVisible = 0;
         });
-      } else if (_hideButtonController.position.userScrollDirection ==
-              ScrollDirection.forward &&
-          isFabVisible == 0) {
+      } else if (isFabVisible == 0 && _hideButtonController.offset > 100) {
         setState(() {
           isFabVisible = 1;
         });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _searchFieldController.dispose();
+    _hideButtonController.dispose();
+    super.dispose();
   }
 
   @override
@@ -109,184 +112,34 @@ class _BlogPageState extends State<BlogPage> {
                 onTap: () {
                   _focusNode.unfocus();
                 },
-                child: NestedScrollView(
-                  controller: _hideButtonController,
-                  headerSliverBuilder:
-                      (BuildContext context, bool innerBoxIsScrolled) {
-                    return <Widget>[
-                      SliverToBoxAdapter(
-                        child: TitleWithBackButton(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Expanded(
-                                child: Text(
-                                  widget.title,
-                                  style: theme.textTheme.display2,
-                                ),
-                              ),
-                            ]..addAll(searchMode
-                                ? []
-                                : [
-                                    AnimatedContainer(
-                                      duration: Duration(milliseconds: 500),
-                                      decoration: ShapeDecoration(
-                                          shape: CircleBorder(
-                                              side: BorderSide(
-                                                  color: theme.primaryColor))),
-                                      child: IconButton(
-                                        tooltip: !searchMode
-                                            ? "Search ${widget.title}"
-                                            : "Clear search results",
-                                        padding: EdgeInsets.all(16.0),
-                                        icon: Icon(
-                                          actionIcon,
-                                          color: theme.primaryColor,
-                                        ),
-                                        color: theme.cardColor,
-                                        onPressed: () {
-                                          setState(() {
-                                            if (searchMode) {
-                                              actionIcon = OMIcons.search;
-                                              blogBloc.query = "";
-                                              blogBloc.refresh();
-                                            } else {
-                                              actionIcon = OMIcons.close;
-                                            }
-                                            searchMode = !searchMode;
-                                          });
-                                        },
-                                      ),
-                                    )
-                                  ]),
-                          ),
-                        ),
-                      ),
-                    ]..addAll(!searchMode
-                        ? []
-                        : [
-                            SliverToBoxAdapter(
-                              child: SizedBox(
-                                height: 16.0,
-                              ),
-                            ),
-                            SliverPersistentHeader(
-                              floating: true,
-                              pinned: true,
-                              delegate: SliverHeaderDelegate(
-                                child: PreferredSize(
-                                  preferredSize: Size.fromHeight(72),
-                                  child: AnimatedContainer(
-                                    key: _containerKey,
-                                    color: theme.canvasColor,
-                                    padding: EdgeInsets.all(8.0),
-                                    duration: Duration(milliseconds: 500),
-                                    child: TextField(
-                                      cursorColor: theme.textTheme.body1.color,
-                                      style: theme.textTheme.body1,
-                                      autofocus: true,
-                                      focusNode: _focusNode,
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(30)),
-                                        labelStyle: theme.textTheme.body1,
-                                        hintStyle: theme.textTheme.body1,
-                                        prefixIcon: Icon(
-                                          OMIcons.search,
-                                        ),
-                                        suffixIcon: IconButton(
-                                          tooltip: !searchMode
-                                              ? "Search ${widget.title}"
-                                              : "Clear search results",
-                                          icon: Icon(
-                                            actionIcon,
-                                          ),
-                                          onPressed: () {
-                                            setState(() {
-                                              if (searchMode) {
-                                                actionIcon = OMIcons.search;
-                                                blogBloc.query = "";
-                                                blogBloc.refresh();
-                                              } else {
-                                                actionIcon = OMIcons.close;
-                                              }
-                                              searchMode = !searchMode;
-                                            });
-                                          },
-                                        ),
-                                        hintText: "Search...",
-                                      ),
-                                      onChanged: (query) async {
-                                        if (query.length > 4) {
-                                          blogBloc.query = query;
-                                          blogBloc.refresh();
-                                        }
-                                      },
-                                      onSubmitted: (query) async {
-                                        blogBloc.query = query;
-                                        await blogBloc.refresh();
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          ]);
-                  },
-                  body: StreamBuilder<UnmodifiableListView<Post>>(
-                    stream: blogBloc.blog,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<UnmodifiableListView<Post>> snapshot) {
-                      return RefreshIndicator(
-                        key: _refreshIndicatorKey,
-                        onRefresh: _handleRefresh,
-                        child: Builder(builder: (context) {
-                          return CustomScrollView(
-                            // The "controller" and "primary" members should be left
-                            // unset, so that the NestedScrollView can control this
-                            // inner scroll view.
-                            // If the "controller" property is set, then this scroll
-                            // view will not be associated with the NestedScrollView.
-                            // The PageStorageKey should be unique to this ScrollView;
-                            // it allows the list to remember its scroll position when
-                            // the tab view is not on the screen.
-                            slivers: <Widget>[
-                              // SliverOverlapInjector(
-                              //   // This is the flip side of the SliverOverlapAbsorber above.
-                              //   handle: NestedScrollView
-                              //       .sliverOverlapAbsorberHandleFor(context),
-                              // ),
-                              SliverPadding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  // In this example, the inner scroll view has
-                                  // fixed-height list items, hence the use of
-                                  // SliverFixedExtentList. However, one could use any
-                                  // sliver widget here, e.g. SliverList or SliverGrid.
-                                  sliver: SliverList(
-                                    delegate: SliverChildBuilderDelegate(
-                                      (BuildContext context, int index) {
-                                        return _buildPost(blogBloc, index,
-                                            snapshot.data, theme);
-                                      },
-                                      childCount: (snapshot.data == null
-                                              ? 0
-                                              : ((snapshot.data.isNotEmpty &&
-                                                      snapshot.data.last
-                                                              .content ==
-                                                          null)
-                                                  ? snapshot.data.length - 1
-                                                  : snapshot.data.length)) +
-                                          1,
-                                    ),
-                                  )),
-                            ],
+                child: RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  onRefresh: _handleRefresh,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: StreamBuilder<UnmodifiableListView<Post>>(
+                        stream: blogBloc.blog,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<UnmodifiableListView<Post>>
+                                snapshot) {
+                          return ListView.builder(
+                            controller: _hideButtonController,
+                            itemBuilder: (BuildContext context, int index) {
+                              if (index == 0) {
+                                return _blogHeader(context, blogBloc);
+                              }
+                              return _buildPost(
+                                  blogBloc, index - 1, snapshot.data, theme);
+                            },
+                            itemCount: (snapshot.data == null
+                                    ? 0
+                                    : ((snapshot.data.isNotEmpty &&
+                                            snapshot.data.last.content == null)
+                                        ? snapshot.data.length - 1
+                                        : snapshot.data.length)) +
+                                2,
                           );
                         }),
-                      );
-                    },
                   ),
                 ),
               );
@@ -464,5 +317,104 @@ class _BlogPageState extends State<BlogPage> {
             ),
           ],
         ));
+  }
+
+  Widget _blogHeader(BuildContext context, PostBloc blogBloc) {
+    var theme = Theme.of(context);
+    return Column(
+      children: <Widget>[
+        TitleWithBackButton(
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  widget.title,
+                  style: theme.textTheme.display2,
+                ),
+              ),
+              AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                width: searchMode ? 0.0 : null,
+                height: searchMode ? 0.0 : null,
+                decoration: ShapeDecoration(
+                    shape: CircleBorder(
+                        side: BorderSide(color: theme.primaryColor))),
+                child: searchMode
+                    ? SizedBox()
+                    : IconButton(
+                        tooltip: "Search ${widget.title}",
+                        padding: EdgeInsets.all(16.0),
+                        icon: Icon(
+                          actionIcon,
+                          color: theme.primaryColor,
+                        ),
+                        color: theme.cardColor,
+                        onPressed: () {
+                          setState(() {
+                            actionIcon = OMIcons.close;
+                            searchMode = !searchMode;
+                          });
+                        },
+                      ),
+              )
+            ],
+          ),
+        ),
+        !searchMode
+            ? SizedBox()
+            : PreferredSize(
+                preferredSize: Size.fromHeight(72),
+                child: AnimatedContainer(
+                  key: _containerKey,
+                  color: theme.canvasColor,
+                  padding: EdgeInsets.all(8.0),
+                  duration: Duration(milliseconds: 500),
+                  child: TextField(
+                    controller: _searchFieldController,
+                    cursorColor: theme.textTheme.body1.color,
+                    style: theme.textTheme.body1,
+                    focusNode: _focusNode,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30)),
+                      labelStyle: theme.textTheme.body1,
+                      hintStyle: theme.textTheme.body1,
+                      prefixIcon: Icon(
+                        OMIcons.search,
+                      ),
+                      suffixIcon: IconButton(
+                        tooltip: "Clear search results",
+                        icon: Icon(
+                          actionIcon,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            actionIcon = OMIcons.search;
+                            blogBloc.query = "";
+                            blogBloc.refresh();
+                            searchMode = !searchMode;
+                          });
+                        },
+                      ),
+                      hintText: "Search...",
+                    ),
+                    onChanged: (query) async {
+                      if (query.length > 4) {
+                        blogBloc.query = query;
+                        blogBloc.refresh();
+                      }
+                    },
+                    onSubmitted: (query) async {
+                      blogBloc.query = query;
+                      await blogBloc.refresh();
+                    },
+                  ),
+                ),
+              ),
+      ],
+    );
   }
 }

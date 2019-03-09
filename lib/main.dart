@@ -10,7 +10,6 @@ import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:InstiApp/src/routes/mappage.dart';
-import 'package:InstiApp/src/routes/nativemappage.dart';
 import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
 import 'package:InstiApp/src/routes/notificationspage.dart';

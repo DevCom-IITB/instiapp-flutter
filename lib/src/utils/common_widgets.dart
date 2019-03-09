@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
 import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:ui' show Brightness;
 
 String capitalize(String name) {
   if (name != null && name.isNotEmpty) {
@@ -14,7 +15,7 @@ String capitalize(String name) {
   return name;
 }
 
-String thumbnailUrl(String url, {int dim = 200}) {
+String thumbnailUrl(String url, {int dim = 100}) {
   return url.replaceFirst(
       "api.insti.app/static/", "img.insti.app/static/$dim/");
 }
@@ -287,11 +288,21 @@ class RoundedNotchedRectangle implements NotchedShape {
   /// the guest circle.
   @override
   Path getOuterPath(Rect host, Rect guest) {
-    if (!host.overlaps(guest)) return Path()..addRect(host);
+    if (guest == null || !host.overlaps(guest)) return Path()..addRect(host);
 
     // The guest's shape is a circle bounded by the guest rectangle.
     // So the guest's radius is half the guest width.
     final double notchRadius = guest.height / 2.0;
+
+    // if (notchRadius - padding) is zero, basically no widget, then no notch
+    if (notchRadius <= 4.0) {
+      return Path()
+        ..moveTo(host.left, host.top)
+        ..lineTo(host.right, host.top)
+        ..lineTo(host.right, host.bottom)
+        ..lineTo(host.left, host.bottom)
+        ..close();
+    }
 
     // We build a path for the notch from 3 segments:
     // Segment A - a Bezier curve from the host's top edge to segment B.
