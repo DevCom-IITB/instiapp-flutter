@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-* Nothing here yet
+* Now, you can react to news post
+* Fix inconsistent markdown/html rendering all throughout the app
 
 ## v1.6-beta
 
