@@ -316,7 +316,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           style: styleType,
           styleInformation: style,
         );
-        var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+        var iOSPlatformChannelSpecifics = new IOSNotificationDetails(presentAlert: true);
         var platformChannelSpecifics = new NotificationDetails(
             androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 

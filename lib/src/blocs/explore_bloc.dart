@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
