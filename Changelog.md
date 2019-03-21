@@ -3,7 +3,9 @@
 ## Unreleased
 
 * Now, you can react to news post
+* Decrease thumbnail size to 100px to fix jank
 * Fix inconsistent markdown/html rendering all throughout the app
+* Fix go to top button on iOS
 
 ## v1.6-beta
 
