@@ -86,9 +86,9 @@ class Notification {
     if (isEvent) {
       return getEvent().eventID;
     } else if (isNews) {
-      return getNews().postID;
+      return getNews().id;
     } else if (isBlogPost) {
-      return getBlogPost().postID;
+      return getBlogPost().id;
     } else if (isComplaintComment) {
       return getComment().id;
     }

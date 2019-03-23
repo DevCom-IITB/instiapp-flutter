@@ -42,6 +42,7 @@ class _BlogPageState extends State<BlogPage> {
   IconData actionIcon = OMIcons.search;
 
   bool firstBuild = true;
+  String loadingReaction;
 
   @override
   void initState() {
@@ -229,7 +230,7 @@ class _BlogPageState extends State<BlogPage> {
   Widget _post(Post post, PostBloc bloc) {
     var theme = Theme.of(context);
     return Card(
-        key: ValueKey(post.postID),
+        key: ValueKey(post.id),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -357,94 +358,107 @@ class _BlogPageState extends State<BlogPage> {
                             height: 0.0,
                           ),
                           InkWell(
-                            onTap: () async {
-                              var sel = await showDialog<String>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Dialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(100.0),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: reactionToEmoji.keys.map((s) {
-                                        return RawMaterialButton(
-                                          shape: CircleBorder(),
-                                          constraints: const BoxConstraints(
-                                              minWidth: 36.0, minHeight: 12.0),
-                                          fillColor:
-                                              "${article.userReaction}" == s
-                                                  ? theme.accentColor
-                                                  : theme.cardColor,
-                                          child: Text(
-                                            reactionToEmoji[s],
-                                            style: theme.textTheme.headline,
+                            onTap: (loadingReaction != null &&
+                                    loadingReaction == article.id)
+                                ? null
+                                : () async {
+                                    setState(() {
+                                      loadingReaction = article.id;
+                                    });
+
+                                    var sel = await showDialog<String>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Dialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(100.0),
                                           ),
-                                          onPressed: () {
-                                            Navigator.of(context,
-                                                    rootNavigator: true)
-                                                .pop(s);
-                                          },
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children:
+                                                reactionToEmoji.keys.map((s) {
+                                              return RawMaterialButton(
+                                                shape: CircleBorder(),
+                                                constraints:
+                                                    const BoxConstraints(
+                                                        minWidth: 36.0,
+                                                        minHeight: 12.0),
+                                                fillColor:
+                                                    "${article.userReaction}" ==
+                                                            s
+                                                        ? theme.accentColor
+                                                        : theme.cardColor,
+                                                child: Text(
+                                                  reactionToEmoji[s],
+                                                  style:
+                                                      theme.textTheme.headline,
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop(s);
+                                                },
+                                              );
+                                            }).toList(),
+                                          ),
                                         );
-                                      }).toList(),
-                                    ),
-                                  );
-                                },
-                              );
+                                      },
+                                    );
 
-                              if (sel == null) {
-                                return;
-                              }
+                                    if (sel != null) {
+                                      final reaction = int.parse(sel);
+                                      await bloc.updateUserReaction(
+                                          article, reaction);
+                                    }
 
-                              final reaction = int.parse(sel);
-                              if (article.userReaction == -1) {
-                                setState(() {
-                                  article.userReaction = reaction;
-                                  article.reactionCount[sel] += 1;
-                                });
-                              } else if (article.userReaction != reaction) {
-                                setState(() {
-                                  article.reactionCount[
-                                      "${article.userReaction}"] -= 1;
-                                  article.userReaction = reaction;
-                                  article.reactionCount[sel] += 1;
-                                });
-                              } else {
-                                setState(() {
-                                  article.userReaction = -1;
-                                  article.reactionCount[sel] -= 1;
-                                });
-                              }
-                            },
+                                    setState(() {
+                                      loadingReaction = null;
+                                    });
+                                  },
                             child: Padding(
                               padding: const EdgeInsets.all(12.0),
-                              child: totalNumberOfReactions > 0
-                                  ? Text.rich(
-                                      TextSpan(children: [
-                                        TextSpan(
-                                            text:
-                                                "${nonZeroReactions?.map((s) => reactionToEmoji[s])?.join()} ",
-                                            style: theme.textTheme.headline),
-                                        TextSpan(
-                                            text:
-                                                " ${((article?.userReaction ?? -1) < 0) ? "" : "You "}${((article?.userReaction ?? -1) >= 0 && totalNumberOfReactions > 1) ? "and " : ""}${numberOfPeopleOtherThanYou > 0 ? (numberOfPeopleOtherThanYou.toString() + " other " + (numberOfPeopleOtherThanYou > 1 ? "people " : "person ")) : ""}reacted"),
-                                      ]),
-                                      textAlign: TextAlign.center,
-                                    )
-                                  : Center(
-                                      child: Text.rich(
-                                      TextSpan(children: [
-                                        TextSpan(
-                                            text: "👍 ",
-                                            style: theme.textTheme.headline),
-                                        TextSpan(text: " Like"),
-                                      ]),
-                                    )),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  totalNumberOfReactions > 0
+                                      ? Text.rich(
+                                          TextSpan(children: [
+                                            TextSpan(
+                                                text:
+                                                    "${nonZeroReactions?.map((s) => reactionToEmoji[s])?.join()} ",
+                                                style:
+                                                    theme.textTheme.headline),
+                                            TextSpan(
+                                                text:
+                                                    " ${((article?.userReaction ?? -1) < 0) ? "" : "You "}${((article?.userReaction ?? -1) >= 0 && totalNumberOfReactions > 1) ? "and " : ""}${numberOfPeopleOtherThanYou > 0 ? (numberOfPeopleOtherThanYou.toString() + " other " + (numberOfPeopleOtherThanYou > 1 ? "people " : "person ")) : ""}reacted"),
+                                          ]),
+                                          textAlign: TextAlign.center,
+                                        )
+                                      : Center(
+                                          child: Text.rich(
+                                          TextSpan(children: [
+                                            TextSpan(
+                                                text: "👍 ",
+                                                style:
+                                                    theme.textTheme.headline),
+                                            TextSpan(text: " Like"),
+                                          ]),
+                                        )),
+                                ]..addAll(loadingReaction != null &&
+                                        loadingReaction == article.id
+                                    ? [
+                                        SizedBox(width: 8),
+                                        CircularProgressIndicatorExtended()
+                                      ]
+                                    : []),
+                              ),
                             ),
                           ),
                         ],
@@ -532,6 +546,7 @@ class _BlogPageState extends State<BlogPage> {
                         onPressed: () {
                           setState(() {
                             actionIcon = OMIcons.search;
+                            _searchFieldController.text = "";
                             blogBloc.query = "";
                             blogBloc.refresh();
                             searchMode = !searchMode;

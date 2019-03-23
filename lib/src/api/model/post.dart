@@ -5,7 +5,7 @@ part 'post.jser.dart';
 
 class Post {
   @Alias("id")
-  String postID;
+  String id;
 
   @Alias("guid")
   String guid;
@@ -39,10 +39,6 @@ class NewsArticle extends Post {
 }
 
 @GenSerializer()
-class NewsArticleSerializer extends Serializer<NewsArticle>
-    with _$NewsArticleSerializer {}
-
-@GenSerializer()
 class PostSerializer extends Serializer<Post> with _$PostSerializer {}
 
 @GenSerializer()
@@ -52,3 +48,7 @@ class PlacementBlogPostSerializer extends Serializer<PlacementBlogPost>
 @GenSerializer()
 class TrainingBlogPostSerializer extends Serializer<TrainingBlogPost>
     with _$TrainingBlogPostSerializer {}
+
+@GenSerializer()
+class NewsArticleSerializer extends Serializer<NewsArticle>
+    with _$NewsArticleSerializer {}

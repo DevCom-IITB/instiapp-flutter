@@ -187,4 +187,22 @@ class PostBloc {
     _indexController = PublishSubject<int>();
     _setIndexListener();
   }
+
+  Future updateUserReaction(NewsArticle article, int reaction) async {
+    String sel = "$reaction";
+    int sendReaction = article.userReaction == reaction ? -1 : reaction;
+    await bloc.client.updateUserNewsReaction(bloc.getSessionIdHeader(), article.id, sendReaction);
+    if (article.userReaction == -1) {
+      article.userReaction = sendReaction;
+      article.reactionCount[sel] += 1;
+    } else if (article.userReaction != reaction) {
+      article.reactionCount["${article.userReaction}"] -= 1;
+      article.userReaction = sendReaction;
+      article.reactionCount[sel] += 1;
+    } else {
+      article.userReaction = -1;
+      article.reactionCount[sel] -= 1;
+    }
+    return Future.delayed(Duration(milliseconds: 0));
+  }
 }
