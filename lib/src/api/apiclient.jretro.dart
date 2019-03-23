@@ -175,12 +175,12 @@ abstract class _$InstiAppApiClient implements ApiClient {
   }
 
   Future<void> updateUserNewsReaction(
-      String sessionID, String postID, int status) async {
+      String sessionID, String postID, int reaction) async {
     var req = base.get
         .path(basePath)
         .path("/user-me/unr/:postID")
         .pathParams("postID", postID)
-        .query("status", status)
+        .query("reaction", reaction)
         .header("Cookie", sessionID);
     await req.go();
   }
