@@ -2,11 +2,15 @@
 
 ## Unreleased
 
+* Nothing here yet (https://github.com/tastelessjolt/instiapp-flutter/projects/1)
+
+## v1.7-beta
+
 * Now, you can react to news post
 * Decrease thumbnail size to 100px to fix jank
-* Fix All Complaints list so that it fetches the list in part
 * Fix inconsistent markdown/html rendering all throughout the app
 * Fix go to top button on iOS
+* Fix All Complaints list so that it fetches the list in part
 
 ## v1.6-beta
 
