@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
@@ -29,12 +30,35 @@ class ComplaintsBloc {
   final _mycomplaintsSubject =
       BehaviorSubject<UnmodifiableListView<Complaint>>();
 
+  Sink<int> get inComplaintIndex => _indexController.sink;
+  PublishSubject<int> _indexController = PublishSubject<int>();
+
+  // Params
+  int _noOfComplaintsPerPage = 20;
+  String query = "";
+
   // State
   List<Complaint> _allComplaints;
   List<Complaint> _myComplaints;
   // // //
 
-  ComplaintsBloc(this.bloc);
+  final _fetchPages = <int, List<Complaint>>{};
+  final _pagesBeingFetched = Set<int>();
+
+  final _searchFetchPages = <int, List<Complaint>>{};
+  final _searchPagesBeingFetched = Set<int>();
+
+  ComplaintsBloc(this.bloc) {
+    _setIndexListener();
+  }
+
+  void _setIndexListener() {
+    _indexController.stream
+        .bufferTime(Duration(milliseconds: 500))
+        .where((batch) => batch.isNotEmpty)
+        .listen(_handleIndexes);
+  }
+
 
   Future<ImageUploadResponse> uploadBase64Image(String base64Image) async {
     if (bloc.currSession != null) {
@@ -45,12 +69,115 @@ class ComplaintsBloc {
     return null;
   }
 
-  Future<void> updateAllComplaints() async {
-    if (bloc.currSession != null) {
-      _allComplaints =
-          await bloc.client.getAllComplaints(bloc.getSessionIdHeader());
-      _complaintsSubject.add(UnmodifiableListView(_allComplaints));
+  Future<List<Complaint>> getAllComplaintsPage(int page) async {
+    var allComplaints = await bloc.client.getAllComplaints(bloc.getSessionIdHeader(),
+        page * _noOfComplaintsPerPage, _noOfComplaintsPerPage, query);
+    return allComplaints;
+  }
+
+  void _handleIndexes(List<int> indexes) {
+    var pages = query.isEmpty ? _fetchPages : _searchFetchPages;
+    var pagesBeingFetched =
+        query.isEmpty ? _pagesBeingFetched : _searchPagesBeingFetched;
+    indexes.forEach((int index) {
+      final int pageIndex = ((index + 1) ~/ _noOfComplaintsPerPage);
+
+      // check if the page has already been fetched
+      if (!pages.containsKey(pageIndex)) {
+        // the page has NOT yet been fetched, so we need to
+        // fetch it from Internet
+        // (except if we are already currently fetching it)
+        if (!pagesBeingFetched.contains(pageIndex)) {
+          // Remember that we are fetching it
+          pagesBeingFetched.add(pageIndex);
+          // Fetch it
+          getAllComplaintsPage(pageIndex).then((List<Complaint> fetchedPage) =>
+              _handleFetchedPage(fetchedPage, pageIndex));
+        }
+      }
+    });
+  }
+
+  ///
+  /// Once a page has been fetched from Internet, we need to
+  /// 1) record it
+  /// 2) notify everyone who might be interested in knowing it
+  ///
+  void _handleFetchedPage(List<Complaint> page, int pageIndex) {
+    var pages = query.isEmpty ? _fetchPages : _searchFetchPages;
+    var pagesBeingFetched =
+        query.isEmpty ? _pagesBeingFetched : _searchPagesBeingFetched;
+
+    // Remember the page
+    pages[pageIndex] = page;
+    // Remove it from the ones being fetched
+    pagesBeingFetched.remove(pageIndex);
+
+    // Notify anyone interested in getting access to the content
+    // of all pages... however, we need to only return the pages
+    // which respect the sequence (since MovieCard are in sequence)
+    // therefore, we need to iterate through the pages that are
+    // actually fetched and stop if there is a gap.
+    List<Complaint> complaints = <Complaint>[];
+    List<int> pageIndexes = pages.keys.toList();
+
+    final int minPageIndex = pageIndexes.reduce(min);
+    final int maxPageIndex = pageIndexes.reduce(max);
+
+    // If the first page being fetched does not correspond to the first one, skip
+    // and as soon as it will become available, it will be time to notify
+    if (minPageIndex == 0) {
+      for (int i = 0; i <= maxPageIndex; i++) {
+        if (!pages.containsKey(i)) {
+          // As soon as there is a hole, stop
+          break;
+        }
+        // Add the list of fetched complaints to the list
+        complaints.addAll(pages[i]);
+      }
     }
+
+    if (pages[maxPageIndex].length < _noOfComplaintsPerPage) {
+      complaints.add(Complaint());
+    }
+
+    // Only notify when there are complaints
+    if (complaints.length > 0) {
+      _complaintsSubject.add(UnmodifiableListView<Complaint>(complaints));
+    }
+  }
+
+  Future refreshAllComplaints({bool force = false}) async {
+    _indexController.close();
+
+    _searchFetchPages.clear();
+    _searchPagesBeingFetched.clear();
+
+    List<Complaint> complaints = <Complaint>[];
+    if (force) {
+      _fetchPages.clear();
+      _pagesBeingFetched.clear();
+    } else if (_fetchPages.isNotEmpty && query.isEmpty) {
+      List<int> pageIndexes = _fetchPages.keys.toList();
+
+      final int minPageIndex = pageIndexes.reduce(min);
+      final int maxPageIndex = pageIndexes.reduce(max);
+
+      if (minPageIndex == 0) {
+        for (int i = 0; i <= maxPageIndex; i++) {
+          if (!_fetchPages.containsKey(i)) {
+            // As soon as there is a hole, stop
+            break;
+          }
+          complaints.addAll(_fetchPages[i]);
+        }
+      }
+    }
+
+    _complaintsSubject.add(UnmodifiableListView(complaints));
+
+    _indexController = PublishSubject<int>();
+    _setIndexListener();
   }
 
   Future<void> updateMyComplaints() async {

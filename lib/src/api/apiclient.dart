@@ -165,7 +165,8 @@ class InstiAppApi extends _$InstiAppApiClient implements ApiClient {
 
   // Venter
   @GetReq(path: "/venter/complaints")
-  Future<List<Complaint>> getAllComplaints(@Header("Cookie") String sessionId);
+  Future<List<Complaint>> getAllComplaints(@Header("Cookie") String sessionId,
+      @QueryParam("from") int from, @QueryParam("num") int number, @QueryParam("search") String query);
 
   @GetReq(path: "/venter/complaints?filter=me")
   Future<List<Complaint>> getUserComplaints(@Header("Cookie") String sessionId);
