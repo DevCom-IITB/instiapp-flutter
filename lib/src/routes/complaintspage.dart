@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/blocs/complaints_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/complaintpage.dart';
@@ -32,7 +33,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
     var complaintsBloc = bloc.complaintsBloc;
 
     if (firstBuild) {
-      complaintsBloc.updateAllComplaints();
+      complaintsBloc.refreshAllComplaints();
       complaintsBloc.updateMyComplaints();
       firstBuild = false;
     }
@@ -121,7 +122,8 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                         children: ["Home", "Me"].map((name) {
                           return RefreshIndicator(
                             onRefresh: () => name == "Home"
-                                ? complaintsBloc.updateAllComplaints()
+                                ? complaintsBloc.refreshAllComplaints(
+                                    force: true) // TODO: for now always force
                                 : complaintsBloc.updateMyComplaints(),
                             child: SafeArea(
                               top: false,
@@ -139,51 +141,27 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                                   UnmodifiableListView<
                                                       Complaint>>
                                               snapshot) {
-                                        return snapshot.hasData &&
-                                                snapshot.data.isEmpty
-                                            ? SliverToBoxAdapter(
-                                                child: Center(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            16.0),
-                                                    child: Text("No complaints",
-                                                        style: theme
-                                                            .textTheme.title
-                                                            .copyWith(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold)),
-                                                  ),
-                                                ),
-                                              )
-                                            : SliverList(
-                                                delegate:
-                                                    SliverChildBuilderDelegate(
-                                                (BuildContext context,
-                                                    int index) {
-                                                  return snapshot.hasData
-                                                      ? _buildComplaint(
-                                                          bloc,
-                                                          theme,
-                                                          snapshot.data[index])
-                                                      : Center(
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(16.0),
-                                                            child:
-                                                                CircularProgressIndicatorExtended(
-                                                              label: Text(
-                                                                  "Fetching all complaints"),
-                                                            ),
-                                                          ),
-                                                        );
-                                                },
-                                                childCount: snapshot.hasData
-                                                    ? snapshot.data.length
-                                                    : 1,
-                                              ));
+                                        return SliverList(
+                                            delegate:
+                                                SliverChildBuilderDelegate(
+                                          (BuildContext context, int index) {
+                                            return _buildInfiniteScrollComplaint(
+                                                complaintsBloc,
+                                                index,
+                                                snapshot.data,
+                                                theme);
+                                          },
+                                          childCount: (snapshot.data == null
+                                                  ? 0
+                                                  : ((snapshot.data
+                                                              .isNotEmpty &&
+                                                          snapshot.data.last
+                                                                  .complaintID ==
+                                                              null)
+                                                      ? snapshot.data.length - 1
+                                                      : snapshot.data.length)) +
+                                              1,
+                                        ));
                                       },
                                     ),
                                     "Me": StreamBuilder(
@@ -289,6 +267,39 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       ),
     );
+  }
+
+  Widget _buildInfiniteScrollComplaint(ComplaintsBloc bloc, int index,
+      List<Complaint> complaints, ThemeData theme) {
+    bloc.inComplaintIndex.add(index);
+
+    final Complaint complaint =
+        (complaints != null && complaints.length > index)
+            ? complaints[index]
+            : null;
+
+    if (complaint == null) {
+      return Card(
+          child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+            child: CircularProgressIndicatorExtended(
+          label: Text("Getting ${widget.title}"),
+        )),
+      ));
+    }
+
+    if (complaint.complaintID == null) {
+      return Card(
+          child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Text("End of results"),
+        ),
+      ));
+    }
+
+    return _buildComplaint(bloc.bloc, theme, complaint);
   }
 
   Widget _buildComplaint(

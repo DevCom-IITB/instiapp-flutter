@@ -258,10 +258,14 @@ abstract class _$InstiAppApiClient implements ApiClient {
     return req.one(convert: serializers.oneFrom);
   }
 
-  Future<List<Complaint>> getAllComplaints(String sessionId) async {
+  Future<List<Complaint>> getAllComplaints(
+      String sessionId, int from, int number, String query) async {
     var req = base.get
         .path(basePath)
         .path("/venter/complaints")
+        .query("from", from)
+        .query("num", number)
+        .query("search", query)
         .header("Cookie", sessionId);
     return req.list(convert: serializers.oneFrom);
   }
