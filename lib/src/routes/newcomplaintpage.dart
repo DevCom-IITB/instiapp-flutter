@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
-import 'package:location/location.dart' as LocationManager;
+import 'package:location/location.dart' as loc;
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:image_picker/image_picker.dart';
@@ -157,7 +157,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
           _isSubmitting = true;
         });
 
-        var finalPos = _currPos ?? iitAreaLocation;
+        var finalPos = _currPos ?? (await getCurrLocation()) ?? iitAreaLocation;
         if (_formKey.currentState.validate()) {
           var req = ComplaintCreateRequest();
           req.complaintDescription = currRequest.description;
@@ -478,6 +478,8 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
               child: TypeAheadFormField(
+                autoFlipDirection: true,
+                hideSuggestionsOnKeyboardHide: false,
                 getImmediateSuggestions: true,
                 onSuggestionSelected: (tag) {
                   _tagController.text = tag;
@@ -543,14 +545,15 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                   ),
                 ].toSet(),
                 onMapCreated: _onMapCreated,
-                options: GoogleMapOptions(
-                  scrollGesturesEnabled: true,
-                  rotateGesturesEnabled: true,
-                  zoomGesturesEnabled: true,
-                  compassEnabled: true,
-                  myLocationEnabled: true,
-                  tiltGesturesEnabled: false,
-                ),
+                initialCameraPosition:
+                    CameraPosition(target: iitAreaLocation, zoom: 16),
+                markers: _currMarker != null ? Set.from([_currMarker]) : null,
+                scrollGesturesEnabled: true,
+                rotateGesturesEnabled: true,
+                zoomGesturesEnabled: true,
+                compassEnabled: true,
+                myLocationEnabled: true,
+                tiltGesturesEnabled: false,
               ),
             ),
             SizedBox(
@@ -599,24 +602,25 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
 
     var currLocation = await getCurrLocation();
     _currPos = _currPos ?? currLocation ?? iitAreaLocation;
-    _currMarker = await _mapController.addMarker(_currMarker?.options ??
-        MarkerOptions(
-          position: _currPos,
-          infoWindowText: InfoWindowText(
-              currLocation == null ? "IIT Area" : "Your Location", null),
-        ));
-    _mapController.moveCamera(CameraUpdate.newLatLngZoom(_currPos, 16));
+    setState(() {
+      _currMarker = Marker(
+        markerId: MarkerId("$_currPos"),
+        position: _currPos,
+        infoWindow: InfoWindow(
+          title: currLocation == null ? "IIT Area" : "Your Location",
+        ),
+      );
+    });
+    controller.moveCamera(CameraUpdate.newLatLngZoom(_currPos, 16));
   }
 
   Future<LatLng> getCurrLocation() async {
-    var currentLocation = <String, double>{};
-    final location = LocationManager.Location();
+    // var currentLocation = <String, double>{};
+    loc.LocationData currentLocation;
+    final location = loc.Location();
     try {
       currentLocation = await location.getLocation();
-      final lat = currentLocation["latitude"];
-      final lng = currentLocation["longitude"];
-      final center = LatLng(lat, lng);
-      return center;
+      return LatLng(currentLocation.latitude, currentLocation.longitude);
     } on PlatformException {
       currentLocation = null;
       return null;
@@ -642,18 +646,22 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
 
       var selLocation = LatLng(detail.result.geometry.location.lat,
           detail.result.geometry.location.lng);
-      await _mapController?.removeMarker(_currMarker);
       _currPos = selLocation;
       currRequest.locationDescription = detail.result.name;
 
-      _currMarker = await _mapController?.addMarker(MarkerOptions(
-        position: selLocation,
-        visible: true,
-        alpha: 1.0,
-        infoWindowText:
-            InfoWindowText(detail.result.name, detail.result.formattedAddress),
-      ));
-      _mapController.animateCamera(CameraUpdate.newLatLngZoom(selLocation, 16));
+      setState(() {
+        _currMarker = Marker(
+          markerId: MarkerId("$selLocation"),
+          position: selLocation,
+          visible: true,
+          infoWindow: InfoWindow(
+            title: detail.result.name,
+            snippet: detail.result.formattedAddress,
+          ),
+        );
+      });
+      _mapController
+          ?.animateCamera(CameraUpdate.newLatLngZoom(selLocation, 16));
     } catch (e) {
       return;
     }

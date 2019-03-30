@@ -3,34 +3,6 @@ import 'package:jaguar_serializer/jaguar_serializer.dart';
 
 part 'venter.jser.dart';
 
-class ComplaintCompat {
-  @Alias("id")
-  String complaintID;
-  @Alias("created_by")
-  User complaintCreatedBy;
-  @Alias("description")
-  String description;
-  @Alias("report_date")
-  String complaintReportDate;
-  @Alias("status")
-  String status;
-  @Alias("latitude")
-  double latitude;
-  @Alias("longitude")
-  double longitude;
-  @Alias("location_description")
-  String locationDescription;
-  @Alias("tags")
-  List<TagUri> tags;
-  @Alias("users_up_voted")
-  List<User> usersUpVoted;
-  @Alias("images")
-  List<String> images;
-  @Alias("comments")
-  List<Comment> comment;
-  int voteCount;
-}
-
 class Complaint {
   @Alias("id")
   String complaintID;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
@@ -201,11 +202,16 @@ class PhotoViewableImage extends StatelessWidget {
                 )
               : CachedNetworkImage(
                   imageUrl: url,
-                  placeholder: CachedNetworkImage(
-                    imageUrl: thumbnailUrl(url),
-                    fit: fit,
-                    placeholder: CircularProgressIndicatorExtended(),
-                  ),
+                  placeholder: (context, url) => CachedNetworkImage(
+                        imageUrl: thumbnailUrl(url),
+                        fit: fit,
+                        placeholder: (context, url) =>
+                            CircularProgressIndicatorExtended(),
+                        errorWidget: (context, url, error) =>
+                            new Icon(OMIcons.errorOutline),
+                      ),
+                  errorWidget: (context, url, error) =>
+                      new Icon(OMIcons.errorOutline),
                   fit: fit,
                   fadeInDuration: Duration(milliseconds: 0),
                   fadeOutDuration: Duration(milliseconds: 0),

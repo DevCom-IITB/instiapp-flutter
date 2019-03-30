@@ -69,52 +69,30 @@ class CalendarBloc {
         receivingMonths.contains(currMonthStart);
     var haveNext = monthToEvents.containsKey(nextMonthStart) ||
         receivingMonths.contains(nextMonthStart);
-    if (!(havePrev && haveCurr && haveNext)) {
-      if (!havePrev) {
-        receivingMonths.add(prevMonthStart);
-      }
-      if (!haveCurr) {
-        receivingMonths.add(currMonthStart);
-      }
-      if (!haveNext) {
-        receivingMonths.add(nextMonthStart);
-      }
+    receivingMonths.add(prevMonthStart);
+    receivingMonths.add(currMonthStart);
+    receivingMonths.add(nextMonthStart);
 
-      var newsFeedResp = await bloc.client.getEventsBetweenDates(
-          bloc.getSessionIdHeader(),
-          formatDate(
-              havePrev
-                  ? (haveCurr ? nextMonthStart : currMonthStart)
-                  : prevMonthStart,
-              isoFormat),
-          formatDate(
-              haveNext
-                  ? (haveCurr ? currMonth : nextMonthStart)
-                  : nextNextMonthStart,
-              isoFormat));
-      var evs = newsFeedResp.events;
-      evs.forEach((e) {
-        var time = DateTime.parse(e.eventStartTime);
-        e.eventStartDate = DateTime(time.year, time.month, time.day);
-      });
+    var newsFeedResp = await bloc.client.getEventsBetweenDates(
+        bloc.getSessionIdHeader(),
+        formatDate(prevMonthStart, isoFormat),
+        formatDate(nextNextMonthStart, isoFormat));
+    var evs = newsFeedResp.events;
+    evs.forEach((e) {
+      var time = DateTime.parse(e.eventStartTime);
+      e.eventStartDate = DateTime(time.year, time.month, time.day);
+    });
 
-      if (!havePrev) {
-        monthToEvents[prevMonthStart] = _getEventsOfMonth(evs, prevMonthStart);
-        receivingMonths.remove(prevMonthStart);
-      }
-      if (!haveCurr) {
-        monthToEvents[currMonthStart] = _getEventsOfMonth(evs, currMonthStart);
-        receivingMonths.remove(currMonthStart);
-      }
-      if (!haveNext) {
-        monthToEvents[nextMonthStart] = _getEventsOfMonth(evs, nextMonthStart);
-        receivingMonths.remove(nextMonthStart);
-      }
-      for (Event e in evs) {
-        eventsMap.putIfAbsent(e.eventStartDate, () => []).add(e);
-      }
-      _eventsSubject.add(eventsMap);
+    monthToEvents[prevMonthStart] = _getEventsOfMonth(evs, prevMonthStart);
+    receivingMonths.remove(prevMonthStart);
+    monthToEvents[currMonthStart] = _getEventsOfMonth(evs, currMonthStart);
+    receivingMonths.remove(currMonthStart);
+    monthToEvents[nextMonthStart] = _getEventsOfMonth(evs, nextMonthStart);
+    receivingMonths.remove(nextMonthStart);
+    for (Event e in evs) {
+      eventsMap.putIfAbsent(e.eventStartDate, () => []).add(e);
     }
+    _eventsSubject.add(eventsMap);
     if (_loading) {
       _loading = false;
       _loadingSubject.add(_loading);

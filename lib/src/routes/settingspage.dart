@@ -228,6 +228,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           return AlertDialog(
                             title: Text("Select Primary Color"),
                             content: MaterialColorPicker(
+                              allowShades: true,
                               onColorChange: (c) {
                                 bloc.primaryColor = c;
                               },
@@ -277,6 +278,17 @@ class _SettingsPageState extends State<SettingsPage> {
                           );
                         });
                   },
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 28.0),
+                  child: OutlineButton.icon(
+                    icon: Icon(OMIcons.restore),
+                    label: Text("Restore Default Theme"),
+                    onPressed: () {
+                      bloc.primaryColor = bloc.defaultThemes[0][0];
+                      bloc.accentColor = bloc.defaultThemes[0][1];
+                    },
+                  ),
                 ),
                 ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 28.0),

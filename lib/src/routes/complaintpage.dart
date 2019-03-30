@@ -58,7 +58,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
 
   bool loadingSubs = false;
 
-  GoogleMapController _mapController;
+  // Completer<GoogleMapController> _mapController = Completer();
   LocationManager.Location _location;
 
   Comment deletingComment;
@@ -412,15 +412,19 @@ class _ComplaintPageState extends State<ComplaintPage> {
                             () => HorizontalDragGestureRecognizer(),
                           ),
                         ].toSet(),
-                        onMapCreated: _onMapCreated,
-                        options: GoogleMapOptions(
-                          scrollGesturesEnabled: true,
-                          rotateGesturesEnabled: true,
-                          zoomGesturesEnabled: true,
-                          compassEnabled: true,
-                          myLocationEnabled: true,
-                          tiltGesturesEnabled: false,
-                        ),
+                        onMapCreated: null,
+                        initialCameraPosition: CameraPosition(target: LatLng(complaint.latitude, complaint.longitude), zoom: 16.0),
+                        markers: Set.from([Marker(
+                          markerId: MarkerId(complaint.complaintID),
+                          infoWindow: InfoWindow(title: "${complaint.locationDescription}"),
+                          position: LatLng(complaint.latitude, complaint.longitude),
+                        )]),
+                        compassEnabled: true,
+                        scrollGesturesEnabled: true,
+                        rotateGesturesEnabled: true,
+                        zoomGesturesEnabled: true,
+                        myLocationEnabled: true,
+                        tiltGesturesEnabled: false,
                       ),
                     ),
                     complaint.tags?.isNotEmpty ?? false
@@ -728,18 +732,18 @@ class _ComplaintPageState extends State<ComplaintPage> {
     );
   }
 
-  void _onMapCreated(GoogleMapController controller) {
-    var ltlng = LatLng(complaint.latitude, complaint.longitude);
-    // var alreadyAnimated = _mapController != null;
-    _mapController = controller;
-    _mapController.addMarker(MarkerOptions(
-      position: ltlng,
-      infoWindowText: InfoWindowText("${complaint.locationDescription}", null),
-    ));
-    // if (alreadyAnimated) {
-    _mapController.moveCamera(CameraUpdate.newLatLngZoom(ltlng, 16.0));
-    // } else {
-    //   _mapController.animateCamera(CameraUpdate.newLatLngZoom(ltlng, 16.0));
-    // }
-  }
+//   void _onMapCreated(GoogleMapController controller) {
+//   //   var ltlng = LatLng(complaint.latitude, complaint.longitude);
+//   //   // var alreadyAnimated = _mapController != null;
+//   //   _mapController.complete(controller);
+//   //   controller.addMarker(MarkerOptions(
+//   //     position: ltlng,
+//   //     infoWindowText: InfoWindowText("${complaint.locationDescription}", null),
+//   //   ));
+//   //   // if (alreadyAnimated) {
+//   //   controller.moveCamera(CameraUpdate.newLatLngZoom(ltlng, 16.0));
+//   //   // } else {
+//   //   //   _mapController.animateCamera(CameraUpdate.newLatLngZoom(ltlng, 16.0));
+//   //   // }
+//   // }
 }
