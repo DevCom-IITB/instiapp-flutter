@@ -90,7 +90,9 @@ class CalendarBloc {
     monthToEvents[nextMonthStart] = _getEventsOfMonth(evs, nextMonthStart);
     receivingMonths.remove(nextMonthStart);
     for (Event e in evs) {
-      eventsMap.putIfAbsent(e.eventStartDate, () => []).add(e);
+      var dateList = eventsMap.putIfAbsent(e.eventStartDate, () => []);
+      dateList.removeWhere((e1) => e1.eventID == e.eventID);
+      dateList.add(e);
     }
     _eventsSubject.add(eventsMap);
     if (_loading) {
