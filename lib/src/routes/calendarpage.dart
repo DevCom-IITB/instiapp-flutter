@@ -10,6 +10,7 @@ import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart' as el;
+import 'dart:math';
 
 class CalendarPage extends StatefulWidget {
   final String title = "Calendar";
@@ -32,6 +33,8 @@ class _CalendarPageState extends State<CalendarPage> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
     var calBloc = bloc.calendarBloc;
+
+    print("Width: ${MediaQuery.of(context).size.width}");
 
     _eventIcon = Material(
       type: MaterialType.transparency,
@@ -110,80 +113,82 @@ class _CalendarPageState extends State<CalendarPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      MyCalendarCarousel<Event>(
-                        customGridViewPhysics: NeverScrollableScrollPhysics(),
-                        onDayPressed: (DateTime date, List<Event> evs) {
-                          this.setState(() => _currentDate = date);
-                        },
-                        onCalendarChanged: (date) {
-                          print(
-                              "Fetching events around ${date.month}/${date.year}");
-                          calBloc.fetchEvents(
-                              DateTime(date.year, date.month, 1), _eventIcon);
-                        },
+                      Center(
+                        child: MyCalendarCarousel<Event>(
+                          customGridViewPhysics: NeverScrollableScrollPhysics(),
+                          onDayPressed: (DateTime date, List<Event> evs) {
+                            this.setState(() => _currentDate = date);
+                          },
+                          onCalendarChanged: (date) {
+                            print(
+                                "Fetching events around ${date.month}/${date.year}");
+                            calBloc.fetchEvents(
+                                DateTime(date.year, date.month, 1), _eventIcon);
+                          },
 
-                        headerTextStyle: theme.textTheme.title,
+                          headerTextStyle: theme.textTheme.title,
 
-                        weekendTextStyle: theme.textTheme.title
-                            .copyWith(fontSize: 18)
-                            .copyWith(color: Colors.red[800]),
-                        daysTextStyle:
-                            theme.textTheme.title.copyWith(fontSize: 18),
-                        inactiveDaysTextStyle:
-                            theme.textTheme.title.copyWith(fontSize: 18),
-                        nextDaysTextStyle: theme.textTheme.title
-                            .copyWith(fontSize: 18)
-                            .copyWith(
-                                color:
-                                    theme.colorScheme.onSurface.withAlpha(150)),
-                        prevDaysTextStyle: theme.textTheme.title
-                            .copyWith(fontSize: 18)
-                            .copyWith(
-                                color:
-                                    theme.colorScheme.onSurface.withAlpha(150)),
+                          weekendTextStyle: theme.textTheme.title
+                              .copyWith(fontSize: 18)
+                              .copyWith(color: Colors.red[800]),
+                          daysTextStyle:
+                              theme.textTheme.title.copyWith(fontSize: 18),
+                          inactiveDaysTextStyle:
+                              theme.textTheme.title.copyWith(fontSize: 18),
+                          nextDaysTextStyle: theme.textTheme.title
+                              .copyWith(fontSize: 18)
+                              .copyWith(
+                                  color: theme.colorScheme.onSurface
+                                      .withAlpha(150)),
+                          prevDaysTextStyle: theme.textTheme.title
+                              .copyWith(fontSize: 18)
+                              .copyWith(
+                                  color: theme.colorScheme.onSurface
+                                      .withAlpha(150)),
 
-                        weekFormat: false,
-                        markedDatesMap:
-                            el.EventList(events: snapshot.data ?? {}),
-                        markedDateShowIcon: true,
-                        markedDateIconMaxShown: 10,
-                        markedDateIconOffset: 0,
+                          weekFormat: false,
+                          markedDatesMap:
+                              el.EventList(events: snapshot.data ?? {}),
+                          markedDateShowIcon: true,
+                          markedDateIconMaxShown: 10,
+                          markedDateIconOffset: 0,
 
-                        markedDateIconBuilder: (e) => Container(
-                                decoration: BoxDecoration(
-                              color: theme.accentColor.withOpacity(0.2),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(1000.0)),
-                            )),
+                          markedDateIconBuilder: (e) => Container(
+                                  decoration: BoxDecoration(
+                                color: theme.accentColor.withOpacity(0.2),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(1000.0)),
+                              )),
 
-                        // markedDateMoreShowTotal: true,
-                        // markedDateMoreCustomTextStyle:
-                        //     theme.accentTextTheme.body1.copyWith(
-                        //         fontSize: 9.0, fontWeight: FontWeight.normal),
-                        // markedDateMoreCustomDecoration: BoxDecoration(
-                        //   color: theme.accentColor.withOpacity(1.0),
-                        //   shape: BoxShape.circle,
-                        // ),
+                          // markedDateMoreShowTotal: true,
+                          // markedDateMoreCustomTextStyle:
+                          //     theme.accentTextTheme.body1.copyWith(
+                          //         fontSize: 9.0, fontWeight: FontWeight.normal),
+                          // markedDateMoreCustomDecoration: BoxDecoration(
+                          //   color: theme.accentColor.withOpacity(1.0),
+                          //   shape: BoxShape.circle,
+                          // ),
 
-                        todayButtonColor: theme.accentColor.withOpacity(0.6),
-                        selectedDayButtonColor: theme.accentColor,
-                        selectedDayTextStyle: theme.accentTextTheme.title,
+                          todayButtonColor: theme.accentColor.withOpacity(0.6),
+                          selectedDayButtonColor: theme.accentColor,
+                          selectedDayTextStyle: theme.accentTextTheme.title,
 
-                        // height: min(MediaQuery.of(context).size.shortestSide, 600) * 1.6,
-                        // width: min(MediaQuery.of(context).size.shortestSide, 600),
-                        height: 440.0,
+                          // height: min(MediaQuery.of(context).size.shortestSide, 600) * 1.6,
+                          height: 440.0,
+                          width: min(MediaQuery.of(context).size.width, 400),
 
-                        selectedDateTime: _currentDate,
+                          selectedDateTime: _currentDate,
 
-                        // null for not rendering any border, true for circular border, false for rectangular border
-                        daysHaveCircularBorder: null,
-                        staticSixWeekFormat: true,
+                          // null for not rendering any border, true for circular border, false for rectangular border
+                          daysHaveCircularBorder: null,
+                          staticSixWeekFormat: true,
 
-                        iconColor: theme.accentColor,
-                        weekdayTextStyle: TextStyle(
-                            // color: theme.accentColor.withOpacity(0.9),
-                            color: Colors.grey,
-                            fontWeight: FontWeight.bold),
+                          iconColor: theme.accentColor,
+                          weekdayTextStyle: TextStyle(
+                              // color: theme.accentColor.withOpacity(0.9),
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold),
+                        ),
                       ),
                       Center(
                         child: RawMaterialButton(
