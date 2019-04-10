@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:InstiApp/src/api/model/rich_notification.dart';
+import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
 import 'package:InstiApp/src/routes/complaintpage.dart';
@@ -232,6 +233,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 return _buildRoute(settings, SettingsPage());
               case "/notifications":
                 return _buildRoute(settings, NotificationsPage());
+              case "/about":
+                return _buildRoute(settings, AboutPage());
             }
           }
           return _buildRoute(settings, MessPage());

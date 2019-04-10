@@ -27,8 +27,12 @@ class NullableCircleAvatar extends StatelessWidget {
   final double radius;
   final String heroTag;
   final bool photoViewable;
+  final Color backgroundColor;
   NullableCircleAvatar(this.url, this.fallbackIcon,
-      {this.radius = 24, this.heroTag, this.photoViewable = false});
+      {this.radius = 24,
+      this.heroTag,
+      this.photoViewable = false,
+      this.backgroundColor});
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +60,7 @@ class NullableCircleAvatar extends StatelessWidget {
                             thumbnailUrl(url),
                             // url,
                           ),
+                          backgroundColor: backgroundColor,
                         ),
                       )
                     : CircleAvatar(
@@ -64,6 +69,7 @@ class NullableCircleAvatar extends StatelessWidget {
                           thumbnailUrl(url),
                           // url,
                         ),
+                        backgroundColor: backgroundColor,
                       ),
               )
             : heroTag != null
@@ -75,6 +81,7 @@ class NullableCircleAvatar extends StatelessWidget {
                         thumbnailUrl(url),
                         // url,
                       ),
+                      backgroundColor: backgroundColor,
                     ),
                   )
                 : CircleAvatar(
@@ -83,14 +90,21 @@ class NullableCircleAvatar extends StatelessWidget {
                       thumbnailUrl(url),
                       // url,
                     ),
+                    backgroundColor: backgroundColor,
                   ))
         : heroTag != null
             ? Hero(
                 tag: heroTag,
                 child: CircleAvatar(
-                    radius: radius, child: Icon(fallbackIcon, size: radius)))
+                  radius: radius,
+                  child: Icon(fallbackIcon, size: radius),
+                  backgroundColor: backgroundColor,
+                ))
             : CircleAvatar(
-                radius: radius, child: Icon(fallbackIcon, size: radius));
+                radius: radius,
+                child: Icon(fallbackIcon, size: radius),
+                backgroundColor: backgroundColor,
+              );
   }
 }
 
