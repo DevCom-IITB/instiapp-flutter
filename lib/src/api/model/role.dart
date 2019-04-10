@@ -31,6 +31,9 @@ class Role {
 
   @Alias("users_detail")
   List<User> roleUsersDetail;
+
+  @Alias("year")
+  String year;
 }
 
 @GenSerializer()

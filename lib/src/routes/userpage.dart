@@ -253,8 +253,17 @@ class _UserPageState extends State<UserPage> {
                               "Associations": SliverChildBuilderDelegate(
                                 (BuildContext context, int index) {
                                   return user.userRoles != null
-                                      ? _buildRoleTile(bloc, theme.textTheme,
-                                          user.userRoles[index])
+                                      ? (index >= (user.userRoles?.length ?? 0)
+                                          ? _buildFormerRoleTile(
+                                              bloc,
+                                              theme.textTheme,
+                                              user.userFormerRoles[index -
+                                                  (user.userRoles?.length ??
+                                                      0)])
+                                          : _buildRoleTile(
+                                              bloc,
+                                              theme.textTheme,
+                                              user.userRoles[index]))
                                       : Padding(
                                           padding: EdgeInsets.all(8.0),
                                           child:
@@ -262,7 +271,8 @@ class _UserPageState extends State<UserPage> {
                                             label: Text("Loading associations"),
                                           ));
                                 },
-                                childCount: user.userRoles?.length ?? 1,
+                                childCount: (user.userRoles?.length ?? 1) +
+                                    (user.userFormerRoles?.length ?? 0),
                               ),
                               "Following": SliverChildBuilderDelegate(
                                 (BuildContext context, int index) {
@@ -400,6 +410,22 @@ class _UserPageState extends State<UserPage> {
     return ListTile(
       title: Text(role.roleBodyDetails.bodyName, style: theme.title),
       subtitle: Text(role.roleName, style: theme.subtitle),
+      leading: NullableCircleAvatar(
+        role.roleBodyDetails.bodyImageURL,
+        OMIcons.peopleOutline,
+        heroTag: role.roleID ?? role.roleBodyDetails.bodyID,
+      ),
+      onTap: () {
+        BodyPage.navigateWith(context, bloc, role: role);
+      },
+    );
+  }
+
+  Widget _buildFormerRoleTile(InstiAppBloc bloc, TextTheme theme, Role role) {
+    return ListTile(
+      title: Text(role.roleBodyDetails.bodyName, style: theme.title),
+      subtitle: Text("Former ${role.roleName} ${role.year ?? ""}",
+          style: theme.subtitle),
       leading: NullableCircleAvatar(
         role.roleBodyDetails.bodyImageURL,
         OMIcons.peopleOutline,
