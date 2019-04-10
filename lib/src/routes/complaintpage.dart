@@ -413,12 +413,19 @@ class _ComplaintPageState extends State<ComplaintPage> {
                           ),
                         ].toSet(),
                         onMapCreated: null,
-                        initialCameraPosition: CameraPosition(target: LatLng(complaint.latitude, complaint.longitude), zoom: 16.0),
-                        markers: Set.from([Marker(
-                          markerId: MarkerId(complaint.complaintID),
-                          infoWindow: InfoWindow(title: "${complaint.locationDescription}"),
-                          position: LatLng(complaint.latitude, complaint.longitude),
-                        )]),
+                        initialCameraPosition: CameraPosition(
+                            target:
+                                LatLng(complaint.latitude, complaint.longitude),
+                            zoom: 16.0),
+                        markers: Set.from([
+                          Marker(
+                            markerId: MarkerId(complaint.complaintID),
+                            infoWindow: InfoWindow(
+                                title: "${complaint.locationDescription}"),
+                            position:
+                                LatLng(complaint.latitude, complaint.longitude),
+                          )
+                        ]),
                         compassEnabled: true,
                         scrollGesturesEnabled: true,
                         rotateGesturesEnabled: true,

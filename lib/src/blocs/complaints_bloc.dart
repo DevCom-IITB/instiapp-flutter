@@ -59,7 +59,6 @@ class ComplaintsBloc {
         .listen(_handleIndexes);
   }
 
-
   Future<ImageUploadResponse> uploadBase64Image(String base64Image) async {
     if (bloc.currSession != null) {
       var tmp = ImageUploadRequest();
@@ -70,8 +69,11 @@ class ComplaintsBloc {
   }
 
   Future<List<Complaint>> getAllComplaintsPage(int page) async {
-    var allComplaints = await bloc.client.getAllComplaints(bloc.getSessionIdHeader(),
-        page * _noOfComplaintsPerPage, _noOfComplaintsPerPage, query);
+    var allComplaints = await bloc.client.getAllComplaints(
+        bloc.getSessionIdHeader(),
+        page * _noOfComplaintsPerPage,
+        _noOfComplaintsPerPage,
+        query);
     return allComplaints;
   }
 
@@ -206,6 +208,15 @@ class ComplaintsBloc {
             ? 1
             : 0;
     return c;
+  }
+
+  Future<List<TagUri>> getAllTags() async {
+    try {
+      return await bloc.client.getAllTags(bloc.getSessionIdHeader());
+    } catch (ex) {
+      print(ex);
+      return Future.delayed(Duration(seconds: 0));
+    }
   }
 
   Future<void> updateUpvote(Complaint complaint, int voteCount) async {

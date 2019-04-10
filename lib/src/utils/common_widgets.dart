@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -547,7 +550,7 @@ class EditableChipList extends StatefulWidget {
   /// Useful when [editable] is true
   ///
   /// Uses these tags to search
-  final Set<String> preDefinedTags;
+  final FutureOr<List<String>> preDefinedTags;
 
   /// Tags to be shown initially
   final Set<String> tags;
@@ -573,9 +576,14 @@ class EditableChipListState extends State<EditableChipList> {
     }
   }
 
-  void _onCreate() {
+  void _onCreate() async {
     String newTag;
-    if (widget.preDefinedTags.contains(widget.controller.text)) {
+    if ((widget.preDefinedTags is List<String> &&
+            (widget.preDefinedTags as List<String>)
+                .contains(widget.controller.text)) ||
+        (widget.preDefinedTags is Future<List<String>> &&
+            (await (widget.preDefinedTags as Future<List<String>>))
+                .contains(widget.controller.text))) {
       newTag = widget.controller.text;
     } else {
       newTag = "${widget.controller.text} (U)";

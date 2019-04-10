@@ -165,8 +165,11 @@ class InstiAppApi extends _$InstiAppApiClient implements ApiClient {
 
   // Venter
   @GetReq(path: "/venter/complaints")
-  Future<List<Complaint>> getAllComplaints(@Header("Cookie") String sessionId,
-      @QueryParam("from") int from, @QueryParam("num") int number, @QueryParam("search") String query);
+  Future<List<Complaint>> getAllComplaints(
+      @Header("Cookie") String sessionId,
+      @QueryParam("from") int from,
+      @QueryParam("num") int number,
+      @QueryParam("search") String query);
 
   @GetReq(path: "/venter/complaints?filter=me")
   Future<List<Complaint>> getUserComplaints(@Header("Cookie") String sessionId);
@@ -202,4 +205,7 @@ class InstiAppApi extends _$InstiAppApiClient implements ApiClient {
   @DeleteReq(path: "/venter/comments/:commentId")
   Future<void> deleteComment(
       @Header("Cookie") String sessionId, @PathParam() String commentId);
+
+  @GetReq(path: "/venter/tags")
+  Future<List<TagUri>> getAllTags(@Header("Cookie") String sessionId);
 }

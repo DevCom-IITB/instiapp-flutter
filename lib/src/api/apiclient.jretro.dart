@@ -349,4 +349,12 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .header("Cookie", sessionId);
     await req.go();
   }
+
+  Future<List<TagUri>> getAllTags(String sessionId) async {
+    var req = base.get
+        .path(basePath)
+        .path("/venter/tags")
+        .header("Cookie", sessionId);
+    return req.list(convert: serializers.oneFrom);
+  }
 }

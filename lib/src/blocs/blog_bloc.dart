@@ -191,7 +191,8 @@ class PostBloc {
   Future updateUserReaction(NewsArticle article, int reaction) async {
     String sel = "$reaction";
     int sendReaction = article.userReaction == reaction ? -1 : reaction;
-    await bloc.client.updateUserNewsReaction(bloc.getSessionIdHeader(), article.id, sendReaction);
+    await bloc.client.updateUserNewsReaction(
+        bloc.getSessionIdHeader(), article.id, sendReaction);
     if (article.userReaction == -1) {
       article.userReaction = sendReaction;
       article.reactionCount[sel] += 1;
