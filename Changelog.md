@@ -2,7 +2,10 @@
 
 ## Unreleased
 
-* Nothing here yet (https://github.com/tastelessjolt/instiapp-flutter/projects/1)
+<!-- * Nothing here yet (https://github.com/tastelessjolt/instiapp-flutter/projects/1) -->
+* Added About us page in the Settings
+* Fix not showing Former Roles in User Page
+
 
 ## v1.7-beta
 

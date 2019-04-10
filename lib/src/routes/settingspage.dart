@@ -308,7 +308,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   leading: Icon(OMIcons.info),
                   title: Text("About"),
                   subtitle: Text("The InstiApp Team"),
-                  enabled: false,
+                  onTap: () {
+                    Navigator.pushNamed(context, '/about');
+                  },
                 ),
               ]);
 
