@@ -91,6 +91,7 @@ class _MapPageState extends State<MapPage> {
         "Cookie": bloc.getSessionIdHeader(),
       },
       primary: true,
+      geolocationEnabled: true,
       bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,

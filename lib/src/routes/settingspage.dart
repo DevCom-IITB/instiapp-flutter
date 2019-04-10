@@ -314,11 +314,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
               return ListView(
                 children: children,
-                // .map((c) => Padding(
-                //     padding: const EdgeInsets.symmetric(horizontal: 28),
-                //     child: c) as Widget)
-                // .toList()
-                //   ..insert(0, titleWidget),
               );
             }),
       ),
