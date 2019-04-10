@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
@@ -25,37 +26,6 @@ class NewComplaintPage extends StatefulWidget {
   final String title = "New Complaint";
   final String apiKey = "AIzaSyAryoUjEhGTWvgrInX1rDAR3D3DEXD5Z7M";
 
-  static List<String> defaultTags = [
-    "Used Flexes",
-    "Plastic Bottles (in Hostel messes)",
-    "Placards on Trees",
-    "Request for donation of clothes",
-    "Other donations",
-    "Cattle Issues",
-    "Autorickshaws",
-    "Potholes in Roads",
-    "Broken stormwater drains",
-    "Desilting - lakes",
-    "Flooding of roads and footpaths",
-    "Damaged footbaths",
-    "Garbage issues",
-    "Illegal posters and boardings",
-    "Manholes",
-    "Streetlights issues",
-    "Sewage drains issues",
-    "Toilets infrastructural issues",
-    "Fencing issues",
-    "Security issues",
-    "Infrastructural defaults in the academic area",
-    "Cycle pooling issues",
-    "Water coolers & Aqua Guards",
-    "Mess menu complaints",
-    "PHO cleaning complaints",
-    "PHO cleaning complaints",
-    "Hostel common room complaints",
-    "Hostel Stationary shop complaints"
-  ];
-
   @override
   _NewComplaintPageState createState() => _NewComplaintPageState();
 }
@@ -76,6 +46,8 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
   final _formKey = GlobalKey<FormState>();
   final _chipsKey = GlobalKey<EditableChipListState>();
 
+  Completer<List<TagUri>> _tagListCompleter = Completer();
+
   static LatLng iitAreaLocation = LatLng(19.133810, 72.913257);
 
   GoogleMapController _mapController;
@@ -94,6 +66,8 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
   bool _isSubmitting = false;
 
   bool _uploadingImages = false;
+
+  bool firstBuild = true;
 
   String _uploadingStatus = "0/0";
   String _encodingStatus = "0/0";
@@ -133,6 +107,11 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
     var theme = Theme.of(context);
     var complaintsBloc = bloc.complaintsBloc;
     var fab;
+
+    if (firstBuild) {
+      _tagListCompleter.complete(complaintsBloc.getAllTags());
+      firstBuild = false;
+    }
 
     fab = FloatingActionButton.extended(
       icon: _isSubmitting
@@ -469,7 +448,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
               child: EditableChipList(
                 key: _chipsKey,
                 editable: true,
-                preDefinedTags: NewComplaintPage.defaultTags.toSet(),
+                preDefinedTags: _extractTagUris(_tagListCompleter.future),
                 tags: Set.from([]),
                 controller: _tagController,
               ),
@@ -481,20 +460,20 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                 autoFlipDirection: true,
                 hideSuggestionsOnKeyboardHide: false,
                 getImmediateSuggestions: true,
-                onSuggestionSelected: (tag) {
-                  _tagController.text = tag;
+                onSuggestionSelected: (TagUri tag) {
+                  _tagController.text = tag.tagUri;
                   _textTagController.text = "";
                 },
-                suggestionsCallback: (q) {
+                suggestionsCallback: (q) async {
                   RegExp exp = RegExp(".*" + q.split("").join(".*") + ".*",
                       caseSensitive: false);
-                  return NewComplaintPage.defaultTags
-                      .where((d) => exp.hasMatch(d))
+                  return (await _tagListCompleter.future)
+                      .where((t) => exp.hasMatch(t.tagUri))
                       .toList();
                 },
-                itemBuilder: (context, suggestion) {
+                itemBuilder: (context, TagUri suggestion) {
                   return ListTile(
-                    title: Text(suggestion),
+                    title: Text(suggestion.tagUri),
                   );
                 },
                 textFieldConfiguration: TextFieldConfiguration(
@@ -665,5 +644,9 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
     } catch (e) {
       return;
     }
+  }
+
+  Future<List<String>> _extractTagUris(Future<List<TagUri>> future) async {
+    return (await future).map((t) => t.tagUri).toList();
   }
 }
