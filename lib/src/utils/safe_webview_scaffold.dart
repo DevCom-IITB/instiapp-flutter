@@ -29,6 +29,7 @@ class SafeWebviewScaffold extends StatefulWidget {
     this.hidden = false,
     this.initialChild,
     this.allowFileURLs,
+    this.geolocationEnabled = false,
   }) : super(key: key);
 
   final PreferredSizeWidget appBar;
@@ -51,6 +52,7 @@ class SafeWebviewScaffold extends StatefulWidget {
   final bool hidden;
   final Widget initialChild;
   final bool allowFileURLs;
+  final bool geolocationEnabled;
 
   @override
   _SafeWebviewScaffoldState createState() => _SafeWebviewScaffoldState();
@@ -115,6 +117,7 @@ class _SafeWebviewScaffoldState extends State<SafeWebviewScaffold> {
                 supportMultipleWindows: widget.supportMultipleWindows,
                 appCacheEnabled: widget.appCacheEnabled,
                 allowFileURLs: widget.allowFileURLs,
+                geolocationEnabled: widget.geolocationEnabled,
               );
             } else {
               if (_rect != value) {
