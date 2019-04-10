@@ -37,6 +37,7 @@ abstract class _$RoleSerializer implements Serializer<Role> {
         'users_detail',
         codeIterable(model.roleUsersDetail,
             (val) => _userSerializer.toMap(val as User)));
+    setMapValue(ret, 'year', model.year);
     return ret;
   }
 
@@ -57,6 +58,7 @@ abstract class _$RoleSerializer implements Serializer<Role> {
         codeIterable<String>(map['users'] as Iterable, (val) => val as String);
     obj.roleUsersDetail = codeIterable<User>(map['users_detail'] as Iterable,
         (val) => _userSerializer.fromMap(val as Map));
+    obj.year = map['year'] as String;
     return obj;
   }
 }
