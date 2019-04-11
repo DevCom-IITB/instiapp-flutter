@@ -6,6 +6,7 @@
 * Added About us page in the Settings
 * Fix not showing Former Roles in User Page
 * Fetch the list of tags in New Complaint Page from backend rather than hard coding tags
+* You can add Events to your device calendars (if you select a gmail linked calendar, it syncs across that gmail account) (Android for now)
 * Notifications now work in iOS
 
 ## v1.7-beta
