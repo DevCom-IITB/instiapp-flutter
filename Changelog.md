@@ -2,12 +2,15 @@
 
 ## Unreleased
 
-<!-- * Nothing here yet (https://github.com/tastelessjolt/instiapp-flutter/projects/1) -->
+* Nothing here yet (https://github.com/tastelessjolt/instiapp-flutter/projects/1)
+
+## v1.8-beta
+
 * Added About us page in the Settings
-* Fix not showing Former Roles in User Page
-* Fetch the list of tags in New Complaint Page from backend rather than hard coding tags
 * You can add Events to your device calendars (if you select a gmail linked calendar, it syncs across that gmail account) (Android for now)
+* Fix not showing Former Roles in User Page
 * Notifications now work in iOS
+* Fetch the list of tags in New Complaint Page from backend rather than hard coding tags
 
 ## v1.7-beta
 
