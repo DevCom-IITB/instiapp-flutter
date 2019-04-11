@@ -15,6 +15,7 @@ import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
 import 'package:markdown/markdown.dart' as markdown;
+import 'package:device_calendar/device_calendar.dart' as cal;
 
 class EventPage extends StatefulWidget {
   final Event initialEvent;
@@ -295,7 +296,246 @@ class _EventPageState extends State<EventPage> {
           loadingUes = UES.NotGoing;
           // event has changes
         });
+
+        if (event.eventUserUes != UES.NotGoing) {
+          // Add to calendar (or not)
+          _addEventToCalendar(theme, bloc);
+        }
       },
+    );
+  }
+
+  bool lastCheck = false;
+
+  void _addEventToCalendar(ThemeData theme, InstiAppBloc bloc) async {
+    lastCheck = false;
+    if (bloc.addToCalendarSetting == AddToCalendar.AlwaysAsk) {
+      bool addToCal = await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text("Add to Calendar?"),
+                content: DialogContent(
+                  parent: this,
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("No"),
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                      if (lastCheck ?? false) {
+                        bloc.addToCalendarSetting = AddToCalendar.No;
+                      }
+                    },
+                  ),
+                  FlatButton(
+                    child: Text("Yes"),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                  ),
+                ],
+              ));
+      if (addToCal == null) {
+        return;
+      }
+
+      if (lastCheck) {
+        bloc.addToCalendarSetting =
+            addToCal ? AddToCalendar.Yes : AddToCalendar.No;
+      }
+
+      if (addToCal) {
+        _actualAddEventToDeviceCalendar(bloc);
+      }
+    } else if (bloc.addToCalendarSetting == AddToCalendar.Yes) {
+      _actualAddEventToDeviceCalendar(bloc);
+    }
+  }
+
+  List<bool> selector;
+  void _actualAddEventToDeviceCalendar(InstiAppBloc bloc) async {
+    // Init Device Calendar plugin
+    cal.DeviceCalendarPlugin calendarPlugin = cal.DeviceCalendarPlugin();
+
+    // Get Calendar Permissions
+    var permissionsGranted = await calendarPlugin.hasPermissions();
+    if (permissionsGranted.isSuccess && !permissionsGranted.data) {
+      permissionsGranted = await calendarPlugin.requestPermissions();
+      if (!permissionsGranted.isSuccess || !permissionsGranted.data) {
+        return;
+      }
+    }
+
+    // Get All Calendars
+    final calendarsResult = await calendarPlugin.retrieveCalendars();
+    if (calendarsResult?.data != null) {
+      lastCheck = false;
+      // Get Calendar Permissions
+      if (bloc.defaultCalendarsSetting?.isEmpty ?? true) {
+        bool toContinue = await showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text("Select which calendars to add to?"),
+                content: CalendarList(calendarsResult.data, parent: this),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("Cancel"),
+                    onPressed: () {
+                      Navigator.pop(context, false);
+                    },
+                  ),
+                  FlatButton(
+                    child: Text("Yes"),
+                    onPressed: () {
+                      Navigator.pop(context, true);
+                    },
+                  ),
+                ],
+              );
+            });
+        if (!(toContinue ?? false)) {
+          return;
+        }
+
+        if (lastCheck) {
+          bloc.defaultCalendarsSetting =
+              calendarsResult.data.asMap().entries.expand((entry) {
+            if (selector[entry.key]) {
+              return <String>[entry.value.id];
+            }
+            return <String>[];
+          }).toList();
+        }
+      }
+
+      if (!lastCheck && bloc.defaultCalendarsSetting.isNotEmpty) {
+        selector = calendarsResult.data
+            .map((calen) => bloc.defaultCalendarsSetting.contains(calen.id))
+            .toList();
+      }
+
+      List<Future<cal.Result<String>>> futures =
+          calendarsResult.data.asMap().entries.expand((entry) {
+        if (selector[entry.key]) {
+          cal.Event ev = cal.Event(
+            entry.value.id,
+            description: event.eventDescription,
+            eventId: event.eventID,
+            title: event.eventName,
+            start: DateTime.parse(event.eventStartTime),
+            end: DateTime.parse(event.eventEndTime),
+          );
+          return <Future<cal.Result<String>>>[
+            calendarPlugin.createOrUpdateEvent(ev)
+          ];
+        }
+        return <Future<cal.Result<String>>>[];
+      }).toList();
+
+      if ((await Future.wait(futures)).every((res) {
+        print(res.data);
+        return res.isSuccess;
+      })) {
+        showDialog<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Success"),
+                content: Text(
+                    'Successfully added to ${futures.length} calendar${futures.length > 1 ? "s" : ""}'),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Ok'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            });
+      }
+    }
+  }
+}
+
+class CalendarList extends StatefulWidget {
+  final List<cal.Calendar> calendarsResult;
+  final _EventPageState parent;
+  final List<bool> defaultSelector;
+
+  CalendarList(this.calendarsResult, {this.parent, this.defaultSelector});
+
+  @override
+  _CalendarListState createState() => _CalendarListState();
+}
+
+class _CalendarListState extends State<CalendarList> {
+  List<bool> selector;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.parent.selector = widget.defaultSelector ??
+        List.filled(widget.calendarsResult.length, false);
+    selector = widget.parent.selector;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[]
+        ..addAll(widget.calendarsResult
+            .asMap()
+            .entries
+            .where((entry) => !entry.value.isReadOnly)
+            .map((calEntry) => CheckboxListTile(
+                  title: Text(calEntry.value.name),
+                  dense: true,
+                  value: selector[calEntry.key],
+                  onChanged: (val) {
+                    setState(() {
+                      selector[calEntry.key] = val;
+                    });
+                  },
+                )))
+        ..add(DialogContent(
+          parent: widget.parent,
+        )),
+    );
+  }
+}
+
+class DialogContent extends StatefulWidget {
+  final _EventPageState parent;
+  DialogContent({this.parent});
+
+  @override
+  _DialogContentState createState() => _DialogContentState();
+}
+
+class _DialogContentState extends State<DialogContent> {
+  bool lastCheck = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        Checkbox(
+          value: lastCheck,
+          onChanged: (val) {
+            setState(() {
+              lastCheck = val;
+              widget.parent?.lastCheck = val;
+            });
+          },
+        ),
+        Text("Do not ask again?"),
+      ],
     );
   }
 }

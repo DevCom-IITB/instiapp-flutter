@@ -29,6 +29,8 @@ import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:InstiApp/src/api/model/notification.dart' as ntf;
 
+enum AddToCalendar { AlwaysAsk, Yes, No }
+
 class InstiAppBloc {
   // Events StorageID
   static String eventStorageID = "events";
@@ -91,6 +93,34 @@ class InstiAppBloc {
       Color.fromARGB(255, 239, 83, 80),
     ]
   ];
+
+  // Default Add To Calendar
+  AddToCalendar _addToCalendarSetting = AddToCalendar.AlwaysAsk;
+
+  AddToCalendar get addToCalendarSetting => _addToCalendarSetting;
+
+  set addToCalendarSetting(AddToCalendar mAddToCalendarSetting) {
+    if (mAddToCalendarSetting != _addToCalendarSetting) {
+      _addToCalendarSetting = mAddToCalendarSetting;
+      SharedPreferences.getInstance().then((s) {
+        s.setInt("addToCalendarSetting", _addToCalendarSetting.index);
+      });
+    }
+  }
+
+  // Default Calendars to add
+  List<String> _defaultCalendarsSetting = <String>[];
+
+  List<String> get defaultCalendarsSetting => _defaultCalendarsSetting;
+
+  set defaultCalendarsSetting(List<String> mDefaultCalendarsSetting) {
+    if (mDefaultCalendarsSetting != _defaultCalendarsSetting) {
+      _defaultCalendarsSetting = mDefaultCalendarsSetting;
+      SharedPreferences.getInstance().then((s) {
+        s.setStringList("defaultCalendarsSetting", _defaultCalendarsSetting);
+      });
+    }
+  }
 
   // Navigator Stack
   MNavigatorObserver navigatorObserver;
@@ -335,6 +365,16 @@ class InstiAppBloc {
     }
     if (prefs.getKeys().contains("primaryColor")) {
       _primaryColor = Color(prefs.getInt("primaryColor")) ?? _primaryColor;
+    }
+    if (prefs.getKeys().contains("addToCalendarSetting")) {
+      _addToCalendarSetting =
+          AddToCalendar.values[prefs.getInt("addToCalendarSetting")] ??
+              _addToCalendarSetting;
+    }
+    if (prefs.getKeys().contains("defaultCalendarsSetting")) {
+      _defaultCalendarsSetting =
+          prefs.getStringList("defaultCalendarsSetting") ??
+              _defaultCalendarsSetting;
     }
 
     restoreFromCache(sharedPrefs: prefs);
