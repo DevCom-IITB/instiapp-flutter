@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:io' show Platform;
 import 'package:InstiApp/main.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
@@ -69,7 +69,7 @@ class InstiAppBloc {
   Session currSession;
   var _hostels = <Hostel>[];
   var _events = <Event>[];
-  var _notifications = <ntf.Notification>[];
+  var _notifications;
 
   // api functions
   final client = InstiAppApi();
@@ -266,23 +266,24 @@ class InstiAppBloc {
 
   // Section
   // User/Body/Event updates
-  Future<void> updateUesEvent(Event e, int ues) async {
+  Future<void> updateUesEvent(Event e, UES ues) async {
     try {
       print("updating Ues from ${e.eventUserUes} to $ues");
-      await client.updateUserEventStatus(getSessionIdHeader(), e.eventID, ues);
-      if (e.eventUserUes == 2) {
+      await client.updateUserEventStatus(
+          getSessionIdHeader(), e.eventID, ues.index);
+      if (e.eventUserUes == UES.Going) {
         e.eventGoingCount--;
       }
-      if (e.eventUserUes == 1) {
+      if (e.eventUserUes == UES.Interested) {
         e.eventInterestedCount--;
       }
-      if (ues == 1) {
+      if (ues == UES.Interested) {
         e.eventInterestedCount++;
-      } else if (ues == 2) {
+      } else if (ues == UES.Going) {
         e.eventGoingCount++;
       }
-      e.eventUserUes = ues;
       print("updated Ues from ${e.eventUserUes} to $ues");
+      e.eventUserUes = ues;
     } catch (ex) {
       print(ex);
     }
@@ -378,7 +379,7 @@ class InstiAppBloc {
     if (_events?.isNotEmpty ?? false) {
       prefs.setString(eventStorageID, standardSerializers.encode(_events));
     }
-    if (_notifications?.isNotEmpty ?? false) {
+    if (_notifications != null) {
       prefs.setString(
           notificationsStorageID, standardSerializers.encode(_notifications));
     }
@@ -420,10 +421,12 @@ class InstiAppBloc {
 
   // Set batch number on icon for iOS
   void _initNotificationBatch() {
-    notifications.listen((notifs) async {
-      try {
-        await FlutterDynamicIcon.setApplicationIconBadgeNumber(notifs.length);
-      } on PlatformException {}
-    });
+    if (Platform.isIOS) {
+      notifications.listen((notifs) async {
+        try {
+          await FlutterDynamicIcon.setApplicationIconBadgeNumber(notifs.length);
+        } on PlatformException {}
+      });
+    }
   }
 }
