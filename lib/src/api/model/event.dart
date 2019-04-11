@@ -6,6 +6,13 @@ import 'package:date_format/date_format.dart';
 
 part 'event.jser.dart';
 
+// UserEventStatus
+enum UES {
+  NotGoing,
+  Interested,
+  Going,
+}
+
 class Event {
   @Alias("id")
   String eventID;
@@ -53,8 +60,17 @@ class Event {
   String eventWebsiteURL;
 
   @Alias("user_ues")
-  int eventUserUes;
+  int eventUserUesInt;
 
+  @Ignore()
+  UES get eventUserUes => UES.values[eventUserUesInt];
+
+  @Ignore()
+  set eventUserUes(UES ues) {
+    eventUserUesInt = ues.index;
+  }
+
+  @Ignore()
   bool eventBigImage = false;
 
   DateTime eventStartDate;

@@ -5,7 +5,8 @@
 <!-- * Nothing here yet (https://github.com/tastelessjolt/instiapp-flutter/projects/1) -->
 * Added About us page in the Settings
 * Fix not showing Former Roles in User Page
-
+* Fetch the list of tags in New Complaint Page from backend rather than hard coding tags
+* Notifications now work in iOS
 
 ## v1.7-beta
 

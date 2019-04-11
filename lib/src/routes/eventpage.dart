@@ -46,7 +46,7 @@ class _EventPageState extends State<EventPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   Event event;
 
-  int loadingUes = 0;
+  UES loadingUes = UES.NotGoing;
 
   bool _bottomSheetActive = false;
 
@@ -83,8 +83,8 @@ class _EventPageState extends State<EventPage> {
       footerButtons = <Widget>[];
       editAccess = bloc.editEventAccess(event);
       footerButtons.addAll([
-        buildUserStatusButton("Going", 2, theme, bloc),
-        buildUserStatusButton("Interested", 1, theme, bloc),
+        buildUserStatusButton("Going", UES.Going, theme, bloc),
+        buildUserStatusButton("Interested", UES.Interested, theme, bloc),
       ]);
 
       if ((event.eventWebsiteURL ?? "") != "") {
@@ -242,12 +242,13 @@ class _EventPageState extends State<EventPage> {
   }
 
   RaisedButton buildUserStatusButton(
-      String name, int id, ThemeData theme, InstiAppBloc bloc) {
+      String name, UES uesButton, ThemeData theme, InstiAppBloc bloc) {
     return RaisedButton(
-      color: event?.eventUserUes == id
+      color: event?.eventUserUes == uesButton
           ? theme.accentColor
           : theme.scaffoldBackgroundColor,
-      textColor: event?.eventUserUes == id ? theme.accentIconTheme.color : null,
+      textColor:
+          event?.eventUserUes == uesButton ? theme.accentIconTheme.color : null,
       shape: RoundedRectangleBorder(
           side: BorderSide(
             color: theme.accentColor,
@@ -260,16 +261,16 @@ class _EventPageState extends State<EventPage> {
             width: 8.0,
           ),
           Text(
-              "${id == 1 ? event?.eventInterestedCount : event?.eventGoingCount}"),
+              "${uesButton == UES.Interested ? event?.eventInterestedCount : event?.eventGoingCount}"),
         ];
-        if (loadingUes == id) {
+        if (loadingUes == uesButton) {
           rowChildren.insertAll(0, [
             SizedBox(
                 height: 18,
                 width: 18,
                 child: CircularProgressIndicator(
                   valueColor: new AlwaysStoppedAnimation<Color>(
-                      event?.eventUserUes == id
+                      event?.eventUserUes == uesButton
                           ? theme.accentIconTheme.color
                           : theme.accentColor),
                   strokeWidth: 2,
@@ -286,11 +287,12 @@ class _EventPageState extends State<EventPage> {
           return;
         }
         setState(() {
-          loadingUes = id;
+          loadingUes = uesButton;
         });
-        await bloc.updateUesEvent(event, event.eventUserUes == id ? 0 : id);
+        await bloc.updateUesEvent(
+            event, event.eventUserUes == uesButton ? UES.NotGoing : uesButton);
         setState(() {
-          loadingUes = 0;
+          loadingUes = UES.NotGoing;
           // event has changes
         });
       },
