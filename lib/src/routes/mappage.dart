@@ -25,8 +25,8 @@ class _MapPageState extends State<MapPage> {
   // final String hostUrl = "127.0.0.1:9999";
   // final String mapUrl = "http://127.0.0.1:9999/";
 
-  final String hostUrl = "pulsejet.github.io";
-  final String mapUrl = "https://pulsejet.github.io/instimapweb-standalone/";
+  final String hostUrl = "map.insti.app";
+  final String mapUrl = "https://map.insti.app/";
 
   StreamSubscription<String> onUrlChangedSub;
   StreamSubscription<WebViewStateChanged> onStateChangedSub;
