@@ -32,6 +32,8 @@
 	<string></string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>To upload photo from the gallery</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>To add your interested/going events to your phone calendar</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

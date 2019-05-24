@@ -10,7 +10,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
   final String basePath = "";
   Future<List<Hostel>> getHostelMess() async {
     var req = base.get.path(basePath).path("/mess");
-    return req.list(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeList);
   }
 
   Future<Session> passwordLogin(String username, String password) async {
@@ -19,7 +19,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path("/pass-login")
         .query("username", username)
         .query("password", password);
-    return req.one(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<Session> passwordLoginFcm(
@@ -30,7 +30,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .query("username", username)
         .query("password", password)
         .query("fcm_id", fcmId);
-    return req.one(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<Session> login(String code, String redir) async {
@@ -39,7 +39,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path("/login")
         .query("code", code)
         .query("redir", redir);
-    return req.one(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<List<PlacementBlogPost>> getPlacementBlogFeed(
@@ -51,7 +51,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .query("num", number)
         .query("query", query)
         .header("Cookie", sessionId);
-    return req.list(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeList);
   }
 
   Future<List<TrainingBlogPost>> getTrainingBlogFeed(
@@ -63,7 +63,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .query("num", num)
         .query("query", query)
         .header("Cookie", sessionID);
-    return req.list(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeList);
   }
 
   Future<Event> getEvent(String sessionId, String uuid) async {
@@ -72,13 +72,13 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path("/events/:uuid")
         .pathParams("uuid", uuid)
         .header("Cookie", sessionId);
-    return req.one(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<NewsFeedResponse> getNewsFeed(String sessionId) async {
     var req =
         base.get.path(basePath).path("/events").header("Cookie", sessionId);
-    return req.one(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<NewsFeedResponse> getEventsBetweenDates(
@@ -89,7 +89,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .query("start", start)
         .query("end", end)
         .header("Cookie", sessionId);
-    return req.one(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<EventCreateResponse> createEvent(
@@ -98,18 +98,18 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path(basePath)
         .path("/events")
         .header("Cookie", sessionId)
-        .json(serializers.to(eventCreateRequest));
-    return req.one(convert: serializers.oneFrom);
+        .json(jsonConverter.to(eventCreateRequest));
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<List<Venue>> getAllVenues() async {
     var req = base.get.path(basePath).path("/locations");
-    return req.list(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeList);
   }
 
   Future<List<Venue>> getVenue(String id) async {
     var req = base.get.path(basePath).path("/locations/:id").query("id", id);
-    return req.list(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeList);
   }
 
   Future<User> getUser(String sessionId, String uuid) async {
@@ -118,7 +118,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path("/users/:uuid")
         .pathParams("uuid", uuid)
         .header("Cookie", sessionId);
-    return req.one(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<Body> getBody(String sessionId, String uuid) async {
@@ -127,13 +127,13 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path("/bodies/:uuid")
         .pathParams("uuid", uuid)
         .header("Cookie", sessionId);
-    return req.one(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<List<Body>> getAllBodies(String sessionId) async {
     var req =
         base.get.path(basePath).path("/bodies").header("Cookie", sessionId);
-    return req.list(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeList);
   }
 
   Future<void> updateBodyFollowing(
@@ -144,7 +144,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .pathParams("bodyID", eventID)
         .query("action", action)
         .header("Cookie", sessionID);
-    await req.go();
+    await req.go(throwOnErr: true);
   }
 
   Future<ImageUploadResponse> uploadImage(
@@ -153,14 +153,14 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path(basePath)
         .path("/upload")
         .header("Cookie", sessionID)
-        .json(serializers.to(imageUploadRequest));
-    return req.one(convert: serializers.oneFrom);
+        .json(jsonConverter.to(imageUploadRequest));
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<User> getUserMe(String sessionID) async {
     var req =
         base.get.path(basePath).path("/user-me").header("Cookie", sessionID);
-    return req.one(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<void> updateUserEventStatus(
@@ -171,7 +171,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .pathParams("eventID", eventID)
         .query("status", status)
         .header("Cookie", sessionID);
-    await req.go();
+    await req.go(throwOnErr: true);
   }
 
   Future<void> updateUserNewsReaction(
@@ -182,7 +182,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .pathParams("postID", postID)
         .query("reaction", reaction)
         .header("Cookie", sessionID);
-    await req.go();
+    await req.go(throwOnErr: true);
   }
 
   Future<User> patchFCMUserMe(
@@ -191,8 +191,8 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path(basePath)
         .path("/user-me")
         .header("Cookie", sessionID)
-        .json(serializers.to(userFCMPatchRequest));
-    return req.one(convert: serializers.oneFrom);
+        .json(jsonConverter.to(userFCMPatchRequest));
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<User> patchSCNUserMe(
@@ -201,8 +201,8 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path(basePath)
         .path("/user-me")
         .header("Cookie", sessionID)
-        .json(serializers.to(userSCNPatchRequest));
-    return req.one(convert: serializers.oneFrom);
+        .json(jsonConverter.to(userSCNPatchRequest));
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<List<NewsArticle>> getNews(
@@ -214,7 +214,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .query("num", num)
         .query("query", query)
         .header("Cookie", sessionID);
-    return req.list(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeList);
   }
 
   Future<List<Notification>> getNotifications(String sessionID) async {
@@ -222,7 +222,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path(basePath)
         .path("/notifications")
         .header("Cookie", sessionID);
-    return req.list(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeList);
   }
 
   Future<void> markNotificationRead(
@@ -232,7 +232,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path("/notifications/read/:notificationID")
         .pathParams("notificationID", notificationID)
         .header("Cookie", sessionID);
-    await req.go();
+    await req.go(throwOnErr: true);
   }
 
   Future<void> markAllNotificationsRead(String sessionID) async {
@@ -240,13 +240,13 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path(basePath)
         .path("/notifications/read")
         .header("Cookie", sessionID);
-    await req.go();
+    await req.go(throwOnErr: true);
   }
 
   Future<void> logout(String sessionID) async {
     var req =
         base.get.path(basePath).path("/logout").header("Cookie", sessionID);
-    await req.go();
+    await req.go(throwOnErr: true);
   }
 
   Future<ExploreResponse> search(String sessionID, String query) async {
@@ -255,7 +255,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path("/search")
         .query("query", query)
         .header("Cookie", sessionID);
-    return req.one(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<List<Complaint>> getAllComplaints(
@@ -267,7 +267,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .query("num", number)
         .query("search", query)
         .header("Cookie", sessionId);
-    return req.list(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeList);
   }
 
   Future<List<Complaint>> getUserComplaints(String sessionId) async {
@@ -275,7 +275,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path(basePath)
         .path("/venter/complaints?filter=me")
         .header("Cookie", sessionId);
-    return req.list(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeList);
   }
 
   Future<Complaint> getComplaint(String sessionId, String complaintId) async {
@@ -284,7 +284,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path("/venter/complaints/:complaintId")
         .pathParams("complaintId", complaintId)
         .header("Cookie", sessionId);
-    return req.one(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<Complaint> upVote(
@@ -295,7 +295,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .pathParams("complaintId", complaintId)
         .query("action", count)
         .header("Cookie", sessionId);
-    return req.one(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<Complaint> subscribleToComplaint(
@@ -306,7 +306,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .pathParams("complaintId", complaintId)
         .query("action", count)
         .header("Cookie", sessionId);
-    return req.one(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<Complaint> postComplaint(
@@ -315,8 +315,8 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path(basePath)
         .path("/venter/complaints")
         .header("Cookie", sessionId)
-        .json(serializers.to(complaintCreateRequest));
-    return req.one(convert: serializers.oneFrom);
+        .json(jsonConverter.to(complaintCreateRequest));
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<Comment> postComment(String sessionId, String complaintId,
@@ -326,8 +326,8 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path("/venter/complaints/:complaintId/comments")
         .pathParams("complaintId", complaintId)
         .header("Cookie", sessionId)
-        .json(serializers.to(commentCreateRequest));
-    return req.one(convert: serializers.oneFrom);
+        .json(jsonConverter.to(commentCreateRequest));
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<Comment> updateComment(String sessionId, String commentId,
@@ -337,8 +337,8 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path("/venter/comments/:commentId")
         .pathParams("commentId", commentId)
         .header("Cookie", sessionId)
-        .json(serializers.to(commentCreateRequest));
-    return req.one(convert: serializers.oneFrom);
+        .json(jsonConverter.to(commentCreateRequest));
+    return req.go(throwOnErr: true).map(decodeOne);
   }
 
   Future<void> deleteComment(String sessionId, String commentId) async {
@@ -347,7 +347,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path("/venter/comments/:commentId")
         .pathParams("commentId", commentId)
         .header("Cookie", sessionId);
-    await req.go();
+    await req.go(throwOnErr: true);
   }
 
   Future<List<TagUri>> getAllTags(String sessionId) async {
@@ -355,6 +355,6 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path(basePath)
         .path("/venter/tags")
         .header("Cookie", sessionId);
-    return req.list(convert: serializers.oneFrom);
+    return req.go(throwOnErr: true).map(decodeList);
   }
 }
