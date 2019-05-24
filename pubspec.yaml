@@ -23,8 +23,8 @@ dependencies:
   url_launcher: ^4.0.1
   flutter_webview_plugin: ^0.3.3
   http: ^0.12.0
-  jaguar_retrofit: 2.5.12
-  jaguar_serializer: ^2.2.12
+  jaguar_retrofit: 2.8.6
+  jaguar_serializer: 2.2.12
   rxdart: ^0.20.0
   flutter_html: ^0.9.6
   markdown: ^2.0.2
@@ -53,11 +53,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   
-  jaguar_serializer_cli: ^2.2.4
-  jaguar_retrofit_gen: ^2.5.10
+  jaguar_serializer_cli: 2.2.5
+  jaguar_retrofit_gen: 2.8.6
   build_runner: ^1.0.0
-  test: ^1.5.1
-
+  # test: 1.6.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

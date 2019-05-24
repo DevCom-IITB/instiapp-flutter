@@ -28,15 +28,17 @@ import 'package:InstiApp/src/api/model/serializers.dart';
 part 'apiclient.jretro.dart';
 
 @GenApiClient()
-class InstiAppApi extends _$InstiAppApiClient implements ApiClient {
+class InstiAppApi extends ApiClient with _$InstiAppApiClient {
   // static String endpoint = "http://10.4.66.222:8000/api";
   static String endpoint = "https://api.insti.app/api";
   final resty.Route base = Route(endpoint);
-  final SerializerRepo serializers = standardSerializers;
+  // final JsonRepo jsonConverter = standardSerializers;
+  // final SerializerRepo serializers = standardSerializers;
 
   static InstiAppApi _instance = InstiAppApi.internal();
   InstiAppApi.internal() {
     globalClient = IOClient();
+    jsonConverter = standardSerializers;
   }
   factory InstiAppApi() => _instance;
 
