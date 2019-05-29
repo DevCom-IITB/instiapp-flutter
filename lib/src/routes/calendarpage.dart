@@ -4,10 +4,10 @@ import 'package:InstiApp/src/blocs/calendar_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
-import 'package:InstiApp/src/utils/calendar_carousel.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart' as el;
 import 'dart:math';
@@ -114,7 +114,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       Center(
-                        child: MyCalendarCarousel<Event>(
+                        child: CalendarCarousel<Event>(
                           customGridViewPhysics: NeverScrollableScrollPhysics(),
                           onDayPressed: (DateTime date, List<Event> evs) {
                             this.setState(() => _currentDate = date);
@@ -169,7 +169,7 @@ class _CalendarPageState extends State<CalendarPage> {
                           //   shape: BoxShape.circle,
                           // ),
 
-                          todayButtonColor: theme.accentColor.withOpacity(0.6),
+                          todayButtonColor: theme.primaryColor.withOpacity(0.3),
                           selectedDayButtonColor: theme.accentColor,
                           selectedDayTextStyle: theme.accentTextTheme.title,
 
