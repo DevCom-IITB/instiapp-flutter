@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:InstiApp/main.dart';
+import 'package:InstiApp/src/android_app.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
@@ -129,7 +130,8 @@ class InstiAppBloc {
 
   set brightness(AppBrightness newBrightness) {
     if (newBrightness != _brightness) {
-      wholeAppKey.currentState.setTheme(() => _brightness = newBrightness);
+      // TODO: fix this warning later
+      wholeAppKey.currentState.setState(() => _brightness = newBrightness);
       SharedPreferences.getInstance().then((s) {
         s.setInt("brightness", newBrightness.index);
       });
@@ -140,7 +142,7 @@ class InstiAppBloc {
 
   set primaryColor(Color newColor) {
     if (newColor != _primaryColor) {
-      wholeAppKey.currentState.setTheme(() => _primaryColor = newColor);
+      wholeAppKey.currentState.setState(() => _primaryColor = newColor);
       SharedPreferences.getInstance().then((s) {
         s.setInt("primaryColor", newColor.value);
       });
@@ -151,7 +153,7 @@ class InstiAppBloc {
 
   set accentColor(Color newColor) {
     if (newColor != _accentColor) {
-      wholeAppKey.currentState.setTheme(() => _accentColor = newColor);
+      wholeAppKey.currentState.setState(() => _accentColor = newColor);
       SharedPreferences.getInstance().then((s) {
         s.setInt("accentColor", newColor.value);
       });
@@ -174,7 +176,7 @@ class InstiAppBloc {
   };
 
   // MaterialApp reference
-  GlobalKey<MyAppState> wholeAppKey;
+  GlobalKey<State> wholeAppKey;
 
   InstiAppBloc({@required this.wholeAppKey}) {
     globalClient = IOClient();

@@ -162,6 +162,16 @@ class _NavDrawerState extends State<NavDrawer> {
                         navi.pushNamed('/settings');
                       },
                     ),
+                    11: NavListTile(
+                      icon: OMIcons.textRotationDown,
+                      title: "TestPage",
+                      onTap: () {
+                        changeSelection(11, drawerState);
+                        var navi = Navigator.of(context);
+                        navi.pop();
+                        navi.pushNamed('/test');
+                      },
+                    ),
                   };
 
                   List<Widget> navList, navDownList = <Widget>[];
