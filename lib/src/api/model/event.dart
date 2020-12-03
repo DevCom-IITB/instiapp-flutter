@@ -63,7 +63,7 @@ class Event {
   int eventUserUesInt;
 
   @Ignore()
-  UES get eventUserUes => UES.values[eventUserUesInt];
+  UES get eventUserUes => UES.values[eventUserUesInt ?? 0];
 
   @Ignore()
   set eventUserUes(UES ues) {

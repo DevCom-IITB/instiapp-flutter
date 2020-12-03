@@ -8,7 +8,6 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:InstiApp/src/api/model/notification.dart' as ntf;
 
 class NotificationsPage extends StatefulWidget {
@@ -44,7 +43,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
             IconButton(
               tooltip: "Show bottom sheet",
               icon: Icon(
-                OMIcons.menu,
+                Icons.menu_outlined,
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
@@ -102,7 +101,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       theme.colorScheme.onPrimary),
                 ),
               )
-            : Icon(OMIcons.clearAll),
+            : Icon(Icons.clear_all_outlined),
         label: Text("Clear All"),
       ),
     );
@@ -145,7 +144,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Icon(OMIcons.delete, color: Colors.white),
+              child: Icon(Icons.delete_outlined, color: Colors.white),
             ),
           ],
         ),
@@ -158,7 +157,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Icon(OMIcons.delete, color: Colors.white),
+              child: Icon(Icons.delete_outlined, color: Colors.white),
             ),
           ],
         ),
@@ -186,7 +185,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
         subtitle: Text(notification.getSubtitle()),
         leading: NullableCircleAvatar(
           notification.getAvatarUrl(),
-          OMIcons.notifications,
+          Icons.notifications_outlined,
           heroTag: notification.getID(),
         ),
         onTap: () {

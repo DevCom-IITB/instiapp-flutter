@@ -3,7 +3,6 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatefulWidget {
@@ -129,7 +128,7 @@ class _AboutPageState extends State<AboutPage> {
             IconButton(
               tooltip: "Show Navigation Drawer",
               icon: Icon(
-                OMIcons.menu,
+                Icons.menu_outlined,
                 semanticLabel: "Show Navigation Drawer",
               ),
               onPressed: () {
@@ -192,7 +191,7 @@ class _AboutPageState extends State<AboutPage> {
                           children: <Widget>[
                             NullableCircleAvatar(
                               nameEntry.value["img"],
-                              OMIcons.personOutline,
+                              Icons.person_outline_outlined,
                               radius: 48,
                               backgroundColor: Colors.transparent,
                             ),

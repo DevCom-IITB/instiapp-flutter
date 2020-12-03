@@ -13,7 +13,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:location/location.dart' as loc;
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -124,7 +123,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                     AlwaysStoppedAnimation<Color>(theme.colorScheme.onPrimary),
               ),
             )
-          : Icon(OMIcons.send),
+          : Icon(Icons.send_outlined),
       label: Text("Submit"),
       onPressed: () async {
         if (_isSubmitting) {
@@ -212,7 +211,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
           children: <Widget>[
             IconButton(
               icon: Icon(
-                OMIcons.menu,
+                Icons.menu_outlined,
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
@@ -299,7 +298,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                                                     context, im);
                                               },
                                               icon: Icon(
-                                                OMIcons.close,
+                                                Icons.close_outlined,
                                                 color:
                                                     theme.accentIconTheme.color,
                                               ),
@@ -332,7 +331,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 28.0),
                   child: OutlineButton.icon(
                     label: Text("Upload Images"),
-                    icon: Icon(OMIcons.image),
+                    icon: Icon(Icons.image_outlined),
                     onPressed: () async {
                       File imageFile = await showDialog(
                           context: context,
@@ -346,7 +345,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
-                                      Icon(OMIcons.photoCamera),
+                                      Icon(Icons.photo_camera_outlined),
                                       SizedBox(
                                         width: 16,
                                       ),
@@ -366,7 +365,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
-                                      Icon(OMIcons.image),
+                                      Icon(Icons.image_outlined),
                                       SizedBox(
                                         width: 16,
                                       ),
@@ -484,8 +483,8 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                       suffixIcon: IconButton(
                         icon: (!_textTagFocusNode.hasFocus ||
                                 (_textTagController.text?.isNotEmpty ?? false))
-                            ? Icon(OMIcons.add)
-                            : Icon(OMIcons.close),
+                            ? Icon(Icons.add_outlined)
+                            : Icon(Icons.close_outlined),
                         onPressed: () {
                           if (_textTagController.text?.isNotEmpty ?? false) {
                             _tagController.text = _textTagController.text;
@@ -508,7 +507,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
               child: OutlineButton.icon(
-                icon: Icon(OMIcons.search),
+                icon: Icon(Icons.search_outlined),
                 label: Text("Search Location"),
                 onPressed: () {
                   _handlePressButton();
@@ -554,14 +553,14 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
           title: Text("Delete selected image?"),
           actions: <Widget>[
             FlatButton.icon(
-              icon: Icon(OMIcons.cancel),
+              icon: Icon(Icons.cancel_outlined),
               label: Text("Cancel"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             FlatButton.icon(
-              icon: Icon(OMIcons.deleteOutline),
+              icon: Icon(Icons.delete_outline_outlined),
               label: Text("Delete"),
               onPressed: () {
                 Navigator.of(context).pop();

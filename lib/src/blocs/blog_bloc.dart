@@ -12,7 +12,7 @@ enum PostType { Placement, Training, NewsArticle }
 
 class PostBloc {
   // Streams
-  Stream<UnmodifiableListView<Post>> get blog => _blogSubject.stream;
+  ValueStream<UnmodifiableListView<Post>> get blog => _blogSubject.stream;
   final _blogSubject = BehaviorSubject<UnmodifiableListView<Post>>();
 
   Sink<int> get inPostIndex => _indexController.sink;

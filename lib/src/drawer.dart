@@ -8,7 +8,6 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:InstiApp/src/api/model/notification.dart' as ntf;
 import 'package:rxdart/rxdart.dart';
 
@@ -53,7 +52,7 @@ class _NavDrawerState extends State<NavDrawer> {
                     (BuildContext context, AsyncSnapshot<int> indexSnapshot) {
                   Map<int, NavListTile> navMap = {
                     0: NavListTile(
-                      icon: OMIcons.dashboard,
+                      icon: Icons.dashboard_outlined,
                       title: "Feed",
                       onTap: () {
                         changeSelection(0, drawerState);
@@ -63,7 +62,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                     ),
                     1: NavListTile(
-                      icon: OMIcons.rssFeed,
+                      icon: Icons.rss_feed_outlined,
                       title: "News",
                       onTap: () {
                         changeSelection(1, drawerState);
@@ -73,7 +72,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                     ),
                     2: NavListTile(
-                      icon: OMIcons.search,
+                      icon: Icons.search_outlined,
                       title: "Explore",
                       onTap: () {
                         changeSelection(2, drawerState);
@@ -83,7 +82,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                     ),
                     3: NavListTile(
-                      icon: OMIcons.restaurant,
+                      icon: Icons.restaurant_outlined,
                       title: "Mess Menu",
                       onTap: () {
                         changeSelection(3, drawerState);
@@ -93,7 +92,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                     ),
                     4: NavListTile(
-                      icon: OMIcons.workOutline,
+                      icon: Icons.work_outline,
                       title: "Placement Blog",
                       onTap: () {
                         changeSelection(4, drawerState);
@@ -103,7 +102,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                     ),
                     5: NavListTile(
-                      icon: OMIcons.workOutline,
+                      icon: Icons.work_outline,
                       title: "Internship Blog",
                       onTap: () {
                         changeSelection(5, drawerState);
@@ -113,7 +112,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                     ),
                     6: NavListTile(
-                      icon: OMIcons.dateRange,
+                      icon: Icons.date_range_outlined,
                       title: "Calendar",
                       onTap: () {
                         changeSelection(6, drawerState);
@@ -123,7 +122,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                     ),
                     7: NavListTile(
-                      icon: OMIcons.map,
+                      icon: Icons.map_outlined,
                       title: "Map",
                       onTap: () {
                         changeSelection(7, drawerState);
@@ -133,7 +132,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                     ),
                     8: NavListTile(
-                      icon: OMIcons.feedback,
+                      icon: Icons.feedback_outlined,
                       title: "Complaints/Suggestions",
                       onTap: () {
                         changeSelection(8, drawerState);
@@ -143,7 +142,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                     ),
                     9: NavListTile(
-                      icon: OMIcons.link,
+                      icon: Icons.link_outlined,
                       title: "Quick Links",
                       onTap: () {
                         changeSelection(9, drawerState);
@@ -153,7 +152,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                     ),
                     10: NavListTile(
-                      icon: OMIcons.settings,
+                      icon: Icons.settings_outlined,
                       title: "Settings",
                       onTap: () {
                         changeSelection(10, drawerState);
@@ -193,7 +192,7 @@ class _NavDrawerState extends State<NavDrawer> {
                             child: ListTile(
                               leading: NullableCircleAvatar(
                                 snapshot.data?.profile?.userProfilePictureUrl,
-                                OMIcons.personOutline,
+                                Icons.person_outline_outlined,
                               ),
                               title: Text(
                                 snapshot?.data?.profile?.userName ??
@@ -250,9 +249,10 @@ class _NavDrawerState extends State<NavDrawer> {
                                                             snapshot.data
                                                                 .isNotEmpty) ||
                                                         (!snapshot.hasData)
-                                                    ? OMIcons
-                                                        .notificationsActive
-                                                    : OMIcons.notificationsNone,
+                                                    ? Icons
+                                                        .notifications_active_outlined
+                                                    : Icons
+                                                        .notifications_none_outlined,
                                                 color: indexSnapshot.data == -1
                                                     ? theme.primaryColor
                                                     : null,
@@ -315,7 +315,7 @@ class _NavDrawerState extends State<NavDrawer> {
                   navDownList.addAll(navMap.values.skip(10));
                   if (snapshot.data?.sessionid != null) {
                     navDownList.add(NavListTile(
-                      icon: OMIcons.exitToApp,
+                      icon: Icons.exit_to_app_outlined,
                       title: "Logout",
                       onTap: loggingOutLoading
                           ? null
@@ -478,7 +478,8 @@ class MNavigatorObserver extends NavigatorObserver {
   Queue<String> navStack = Queue<String>();
   MNavigatorObserver(this.bloc);
 
-  Stream<String> get secondTopRouteName => _secondTopRouteNameSubject.stream;
+  ValueStream<String> get secondTopRouteName =>
+      _secondTopRouteNameSubject.stream;
   final _secondTopRouteNameSubject = BehaviorSubject<String>();
 
   @override

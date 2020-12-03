@@ -2,7 +2,6 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class QuickLinksPage extends StatefulWidget {
@@ -68,7 +67,7 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
           children: <Widget>[
             IconButton(
               icon: Icon(
-                OMIcons.menu,
+                Icons.menu_outlined,
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {

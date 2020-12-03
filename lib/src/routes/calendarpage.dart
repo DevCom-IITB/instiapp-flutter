@@ -8,7 +8,6 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart' as el;
 import 'dart:math';
 
@@ -60,7 +59,7 @@ class _CalendarPageState extends State<CalendarPage> {
             IconButton(
               tooltip: "Show bottom sheet",
               icon: Icon(
-                OMIcons.menu,
+                Icons.menu_outlined,
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
@@ -154,11 +153,11 @@ class _CalendarPageState extends State<CalendarPage> {
                           markedDateIconOffset: 0,
 
                           markedDateIconBuilder: (e) => Container(
-                                  decoration: BoxDecoration(
-                                color: theme.accentColor.withOpacity(0.2),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(1000.0)),
-                              )),
+                              decoration: BoxDecoration(
+                            color: theme.accentColor.withOpacity(0.2),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(1000.0)),
+                          )),
 
                           // markedDateMoreShowTotal: true,
                           // markedDateMoreCustomTextStyle:
@@ -224,7 +223,7 @@ class _CalendarPageState extends State<CalendarPage> {
       floatingActionButton:
           (bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false)
               ? FloatingActionButton(
-                  child: Icon(OMIcons.add),
+                  child: Icon(Icons.add_outlined),
                   onPressed: () {
                     Navigator.of(context).pushNamed("/putentity/event");
                   },
@@ -248,7 +247,7 @@ class _CalendarPageState extends State<CalendarPage> {
       enabled: true,
       leading: NullableCircleAvatar(
         event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
-        OMIcons.event,
+        Icons.event_outlined,
         heroTag: event.eventID,
       ),
       subtitle: Text(event.getSubTitle()),

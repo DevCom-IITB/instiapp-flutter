@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
 
 import 'dart:collection';
@@ -51,7 +50,7 @@ class _MessPageState extends State<MessPage> {
             IconButton(
               tooltip: "Show navigation drawer",
               icon: Icon(
-                OMIcons.menu,
+                Icons.menu_outlined,
                 semanticLabel: "Show navigation drawer",
               ),
               onPressed: () {
@@ -109,7 +108,7 @@ class _MessPageState extends State<MessPage> {
         backgroundColor: theme.colorScheme.surface,
         foregroundColor: theme.accentColor,
         icon: Icon(
-          OMIcons.home,
+          Icons.home_outlined,
           // color: theme.accentColor,
         ),
         label: buildDropdownButton(theme),

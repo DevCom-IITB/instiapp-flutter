@@ -13,7 +13,6 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
 import 'package:markdown/markdown.dart' as markdown;
@@ -34,10 +33,10 @@ class BodyPage extends StatefulWidget {
           name: "/body/${(role?.roleBodyDetails ?? body).bodyID}",
         ),
         builder: (context) => BodyPage(
-              initialBody: role?.roleBodyDetails ?? body,
-              bodyFuture: bloc.getBody((role?.roleBodyDetails ?? body).bodyID),
-              heroTag: role?.roleID ?? body?.bodyID,
-            ),
+          initialBody: role?.roleBodyDetails ?? body,
+          bodyFuture: bloc.getBody((role?.roleBodyDetails ?? body).bodyID),
+          heroTag: role?.roleID ?? body?.bodyID,
+        ),
       ),
     );
   }
@@ -90,7 +89,7 @@ class _BodyPageState extends State<BodyPage> {
       if ((body.bodyWebsiteURL ?? "") != "") {
         footerButtons.add(IconButton(
           tooltip: "Open website",
-          icon: Icon(OMIcons.language),
+          icon: Icon(Icons.language_outlined),
           onPressed: () async {
             if (await canLaunch(body.bodyWebsiteURL)) {
               await launch(body.bodyWebsiteURL);
@@ -101,7 +100,7 @@ class _BodyPageState extends State<BodyPage> {
 
       if (editAccess) {
         footerButtons.add(IconButton(
-          icon: Icon(OMIcons.share),
+          icon: Icon(Icons.share_outlined),
           tooltip: "Share this body",
           onPressed: () async {
             await Share.share(
@@ -120,7 +119,7 @@ class _BodyPageState extends State<BodyPage> {
           children: <Widget>[
             IconButton(
               icon: Icon(
-                OMIcons.menu,
+                Icons.menu_outlined,
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
@@ -246,7 +245,7 @@ class _BodyPageState extends State<BodyPage> {
           ? null
           : editAccess
               ? FloatingActionButton.extended(
-                  icon: Icon(OMIcons.edit),
+                  icon: Icon(Icons.edit_outlined),
                   label: Text("Edit"),
                   tooltip: "Edit this Body",
                   onPressed: () {
@@ -255,7 +254,7 @@ class _BodyPageState extends State<BodyPage> {
                   },
                 )
               : FloatingActionButton(
-                  child: Icon(OMIcons.share),
+                  child: Icon(Icons.share_outlined),
                   tooltip: "Share this body",
                   onPressed: () async {
                     await Share.share(
@@ -350,7 +349,7 @@ class _BodyPageState extends State<BodyPage> {
       subtitle: Text(body.bodyShortDescription, style: theme.subtitle),
       leading: NullableCircleAvatar(
         body.bodyImageURL,
-        OMIcons.peopleOutline,
+        Icons.people_outline_outlined,
         heroTag: body.bodyID,
       ),
       onTap: () {
@@ -368,7 +367,7 @@ class _BodyPageState extends State<BodyPage> {
       enabled: true,
       leading: NullableCircleAvatar(
         event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
-        OMIcons.event,
+        Icons.event_outlined,
         heroTag: event.eventID,
       ),
       subtitle: Text(event.getSubTitle()),
@@ -382,7 +381,7 @@ class _BodyPageState extends State<BodyPage> {
     return ListTile(
       leading: NullableCircleAvatar(
         u.userProfilePictureUrl,
-        OMIcons.personOutline,
+        Icons.person_outline_outlined,
         heroTag: u.userID,
       ),
       title: Text(

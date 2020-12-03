@@ -90,3 +90,5 @@ unlinked_spec.ds
 # Local files
 login_response.json
 
+.flutter-plugins-dependencies
+ios/Flutter/flutter_export_environment.sh

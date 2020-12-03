@@ -11,7 +11,6 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/datetime.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 
 class ComplaintsPage extends StatefulWidget {
   final String title = "Complaints/Suggestions";
@@ -52,7 +51,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
             children: <Widget>[
               IconButton(
                 icon: Icon(
-                  OMIcons.menu,
+                  Icons.menu_outlined,
                   semanticLabel: "Show bottom sheet",
                 ),
                 onPressed: () {
@@ -94,10 +93,11 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                     tabs: [
                                       Tab(
                                           text: "Home",
-                                          icon: Icon(OMIcons.home)),
+                                          icon: Icon(Icons.home_outlined)),
                                       Tab(
                                           text: "Me",
-                                          icon: Icon(OMIcons.personOutline)),
+                                          icon: Icon(
+                                              Icons.person_outline_outlined)),
                                     ],
                                   ),
                                 ),
@@ -253,7 +253,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
             return snapshot.hasData && snapshot.data != null
                 ? FloatingActionButton.extended(
                     label: Text("New Complaint"),
-                    icon: Icon(OMIcons.feedback),
+                    icon: Icon(Icons.feedback_outlined),
                     onPressed: () {
                       Navigator.of(context).pushNamed("/newcomplaint");
                     },
@@ -349,8 +349,8 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                           loadingComplaint.complaintID)
                                   ? CircularProgressIndicatorExtended()
                                   : Icon((complaint.isSubscribed
-                                      ? OMIcons.notificationsActive
-                                      : OMIcons.notificationsOff)),
+                                      ? Icons.notifications_active_outlined
+                                      : Icons.notifications_off_outlined)),
                               onPressed: () async {
                                 setState(() {
                                   loadingSubs = true;
@@ -478,7 +478,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Icon(
-                            OMIcons.comment,
+                            Icons.comment_outlined,
                             color: theme.accentColor,
                           ),
                           SizedBox(
@@ -493,7 +493,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Icon(
-                            OMIcons.arrowUpward,
+                            Icons.arrow_upward_outlined,
                             color: theme.accentColor,
                           ),
                           SizedBox(

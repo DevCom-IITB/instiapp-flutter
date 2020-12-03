@@ -15,7 +15,7 @@ class ExploreBloc {
   InstiAppBloc bloc;
 
   // Streams
-  Stream<ExploreResponse> get explore => _exploreSubject.stream;
+  ValueStream<ExploreResponse> get explore => _exploreSubject.stream;
   final _exploreSubject = BehaviorSubject<ExploreResponse>();
 
   // Params
