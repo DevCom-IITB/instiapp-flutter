@@ -38,6 +38,7 @@ import 'package:uni_links/uni_links.dart';
 void main() async {
   GlobalKey<MyAppState> key = GlobalKey();
   InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
+  WidgetsFlutterBinding.ensureInitialized();
   var temp = bloc.restorePrefs();
 
   await temp;
@@ -91,7 +92,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.suspending) {
+        state == AppLifecycleState.detached) {
       widget?.bloc?.saveToCache();
     }
   }
@@ -134,27 +135,27 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           brightness: widget.bloc.brightness.toBrightness(),
 
           textTheme: TextTheme(
-              display1: TextStyle(
+              headline4: TextStyle(
                 color: widget.bloc.brightness == AppBrightness.light
                     ? Colors.black
                     : Colors.white,
               ),
-              display2: TextStyle(
+              headline3: TextStyle(
                 color: widget.bloc.brightness == AppBrightness.light
                     ? Colors.black
                     : Colors.white,
               ),
-              display3: TextStyle(
+              headline2: TextStyle(
                 color: widget.bloc.brightness == AppBrightness.light
                     ? Colors.black
                     : Colors.white,
               ),
-              display4: TextStyle(
+              headline1: TextStyle(
                 color: widget.bloc.brightness == AppBrightness.light
                     ? Colors.black
                     : Colors.white,
               ),
-              headline: TextStyle()),
+              headline5: TextStyle()),
         ),
         onGenerateRoute: (RouteSettings settings) {
           if (settings.name.startsWith("/event/")) {

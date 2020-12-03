@@ -21,10 +21,10 @@ class CalendarBloc {
   InstiAppBloc bloc;
 
   // Streams
-  Stream<Map<DateTime, List<Event>>> get events => _eventsSubject.stream;
+  ValueStream<Map<DateTime, List<Event>>> get events => _eventsSubject.stream;
   final _eventsSubject = BehaviorSubject<Map<DateTime, List<Event>>>();
 
-  Stream<bool> get loading => _loadingSubject.stream;
+  ValueStream<bool> get loading => _loadingSubject.stream;
   final _loadingSubject = BehaviorSubject<bool>();
 
   // State

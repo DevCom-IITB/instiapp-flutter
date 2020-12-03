@@ -11,7 +11,6 @@ import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
 import 'package:markdown/markdown.dart' as markdown;
@@ -32,9 +31,9 @@ class EventPage extends StatefulWidget {
           name: "/event/${event?.eventID ?? ""}",
         ),
         builder: (context) => EventPage(
-              initialEvent: event,
-              eventFuture: bloc.getEvent(event.eventID),
-            ),
+          initialEvent: event,
+          eventFuture: bloc.getEvent(event.eventID),
+        ),
       ),
     );
   }
@@ -91,7 +90,7 @@ class _EventPageState extends State<EventPage> {
       if ((event.eventWebsiteURL ?? "") != "") {
         footerButtons.add(IconButton(
           tooltip: "Open website",
-          icon: Icon(OMIcons.language),
+          icon: Icon(Icons.language_outlined),
           onPressed: () async {
             if (await canLaunch(event.eventWebsiteURL)) {
               await launch(event.eventWebsiteURL);
@@ -103,7 +102,7 @@ class _EventPageState extends State<EventPage> {
           event.eventVenues[0].venueLatitude != null) {
         footerButtons.add(IconButton(
           tooltip: "Navigate to event",
-          icon: Icon(OMIcons.navigation),
+          icon: Icon(Icons.navigation_outlined),
           onPressed: () async {
             String uri = defaultTargetPlatform == TargetPlatform.iOS
                 ? "http://maps.apple.com/?ll=${event.eventVenues[0].venueLatitude},${event.eventVenues[0].venueLongitude}&z=20"
@@ -117,7 +116,7 @@ class _EventPageState extends State<EventPage> {
 
       if (editAccess) {
         footerButtons.add(IconButton(
-          icon: Icon(OMIcons.share),
+          icon: Icon(Icons.share_outlined),
           tooltip: "Share this event",
           onPressed: () async {
             await Share.share(
@@ -136,7 +135,7 @@ class _EventPageState extends State<EventPage> {
           children: <Widget>[
             IconButton(
               icon: Icon(
-                OMIcons.menu,
+                Icons.menu_outlined,
                 semanticLabel: "Show navigation drawer",
               ),
               onPressed: () {
@@ -206,7 +205,7 @@ class _EventPageState extends State<EventPage> {
           ? null
           : editAccess
               ? FloatingActionButton.extended(
-                  icon: Icon(OMIcons.edit),
+                  icon: Icon(Icons.edit_outlined),
                   label: Text("Edit"),
                   tooltip: "Edit this event",
                   onPressed: () {
@@ -215,7 +214,7 @@ class _EventPageState extends State<EventPage> {
                   },
                 )
               : FloatingActionButton(
-                  child: Icon(OMIcons.share),
+                  child: Icon(Icons.share_outlined),
                   tooltip: "Share this event",
                   onPressed: () async {
                     await Share.share(
@@ -233,7 +232,7 @@ class _EventPageState extends State<EventPage> {
       subtitle: Text(body.bodyShortDescription, style: theme.subtitle),
       leading: NullableCircleAvatar(
         body.bodyImageURL,
-        OMIcons.workOutline,
+        Icons.work_outline_outlined,
         heroTag: body.bodyID,
       ),
       onTap: () {

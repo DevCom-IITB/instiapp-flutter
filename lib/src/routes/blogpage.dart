@@ -12,7 +12,6 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/foundation.dart';
 
@@ -39,7 +38,7 @@ class _BlogPageState extends State<BlogPage> {
   double isFabVisible = 0;
 
   bool searchMode = false;
-  IconData actionIcon = OMIcons.search;
+  IconData actionIcon = Icons.search_outlined;
 
   bool firstBuild = true;
   String loadingReaction;
@@ -94,7 +93,7 @@ class _BlogPageState extends State<BlogPage> {
             IconButton(
               tooltip: "Show bottom sheet",
               icon: Icon(
-                OMIcons.menu,
+                Icons.menu_outlined,
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
@@ -186,7 +185,7 @@ class _BlogPageState extends State<BlogPage> {
                     curve: Curves.fastOutSlowIn,
                     duration: const Duration(milliseconds: 600));
               },
-              child: Icon(OMIcons.keyboardArrowUp),
+              child: Icon(Icons.keyboard_arrow_up_outlined),
             ),
     );
   }
@@ -295,7 +294,7 @@ class _BlogPageState extends State<BlogPage> {
                       top: 6,
                       right: 6,
                       child: Icon(
-                        OMIcons.launch,
+                        Icons.launch_outlined,
                         size: 16,
                       ),
                     ),
@@ -507,7 +506,7 @@ class _BlogPageState extends State<BlogPage> {
                         color: theme.cardColor,
                         onPressed: () {
                           setState(() {
-                            actionIcon = OMIcons.close;
+                            actionIcon = Icons.close_outlined;
                             searchMode = !searchMode;
                           });
                         },
@@ -536,7 +535,7 @@ class _BlogPageState extends State<BlogPage> {
                       labelStyle: theme.textTheme.body1,
                       hintStyle: theme.textTheme.body1,
                       prefixIcon: Icon(
-                        OMIcons.search,
+                        Icons.search_outlined,
                       ),
                       suffixIcon: IconButton(
                         tooltip: "Clear search results",
@@ -545,7 +544,7 @@ class _BlogPageState extends State<BlogPage> {
                         ),
                         onPressed: () {
                           setState(() {
-                            actionIcon = OMIcons.search;
+                            actionIcon = Icons.search_outlined;
                             _searchFieldController.text = "";
                             blogBloc.query = "";
                             blogBloc.refresh();

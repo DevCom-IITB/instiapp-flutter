@@ -7,7 +7,6 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -30,7 +29,7 @@ class _NativeMapPageState extends State<NativeMapPage> {
   @override
   void initState() {
     super.initState();
-    scaleSubscription = Observable(controller.outputStateStream)
+    scaleSubscription = controller.outputStateStream
         .bufferTime(Duration(milliseconds: 800))
         .listen((List<PhotoViewControllerValue> values) {
       if (values.isNotEmpty) {
@@ -73,7 +72,7 @@ class _NativeMapPageState extends State<NativeMapPage> {
           children: <Widget>[
             IconButton(
               icon: Icon(
-                OMIcons.menu,
+                Icons.menu_outlined,
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
@@ -141,7 +140,7 @@ class _NativeMapPageState extends State<NativeMapPage> {
                   print(v.venueName);
                 },
                 icon: Icon(
-                  OMIcons.locationOn,
+                  Icons.location_on_outlined,
                   size: 96,
                   color: Colors.orange,
                 ),

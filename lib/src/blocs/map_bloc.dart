@@ -15,7 +15,8 @@ class MapBloc {
   InstiAppBloc bloc;
 
   // Streams
-  Stream<UnmodifiableListView<Venue>> get locations => _locationsSubject.stream;
+  ValueStream<UnmodifiableListView<Venue>> get locations =>
+      _locationsSubject.stream;
   final _locationsSubject = BehaviorSubject<UnmodifiableListView<Venue>>();
 
   // State

@@ -13,7 +13,6 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -31,9 +30,9 @@ class UserPage extends StatefulWidget {
           name: "/user/${user?.userID ?? ""}",
         ),
         builder: (context) => UserPage(
-              initialUser: user,
-              userFuture: bloc.getUser(user.userID),
-            ),
+          initialUser: user,
+          userFuture: bloc.getUser(user.userID),
+        ),
       ),
     );
   }
@@ -80,7 +79,7 @@ class _UserPageState extends State<UserPage> {
       if ((user.userWebsiteURL ?? "") != "") {
         footerButtons.add(IconButton(
           tooltip: "Open website",
-          icon: Icon(OMIcons.language),
+          icon: Icon(Icons.language_outlined),
           onPressed: () async {
             if (await canLaunch(user.userWebsiteURL)) {
               await launch(user.userWebsiteURL);
@@ -103,7 +102,7 @@ class _UserPageState extends State<UserPage> {
             children: <Widget>[
               IconButton(
                 icon: Icon(
-                  OMIcons.menu,
+                  Icons.menu_outlined,
                   semanticLabel: "Show navigation drawer",
                 ),
                 onPressed: () {
@@ -133,7 +132,7 @@ class _UserPageState extends State<UserPage> {
                               ListTile(
                                 leading: NullableCircleAvatar(
                                   user.userProfilePictureUrl,
-                                  OMIcons.personOutline,
+                                  Icons.person_outline_outlined,
                                   radius: 48,
                                   heroTag: user.userID,
                                   photoViewable: true,
@@ -222,13 +221,14 @@ class _UserPageState extends State<UserPage> {
                                 tabs: [
                                   Tab(
                                       text: "Associations",
-                                      icon: Icon(OMIcons.workOutline)),
+                                      icon: Icon(Icons.work_outline_outlined)),
                                   Tab(
                                       text: "Following",
-                                      icon: Icon(OMIcons.peopleOutline)),
+                                      icon:
+                                          Icon(Icons.people_outline_outlined)),
                                   Tab(
                                       text: "Events",
-                                      icon: Icon(OMIcons.event)),
+                                      icon: Icon(Icons.event_outlined)),
                                 ],
                               ),
                             ),
@@ -356,7 +356,7 @@ class _UserPageState extends State<UserPage> {
         floatingActionButton: user == null
             ? null
             : FloatingActionButton(
-                child: Icon(OMIcons.share),
+                child: Icon(Icons.share_outlined),
                 tooltip: "Share this person's profile",
                 onPressed: () async {
                   await Share.share(
@@ -381,7 +381,7 @@ class _UserPageState extends State<UserPage> {
       enabled: true,
       leading: NullableCircleAvatar(
         event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
-        OMIcons.event,
+        Icons.event_outlined,
         heroTag: event.eventID,
       ),
       subtitle: Text(event.getSubTitle()),
@@ -397,7 +397,7 @@ class _UserPageState extends State<UserPage> {
       subtitle: Text(body.bodyShortDescription, style: theme.subtitle),
       leading: NullableCircleAvatar(
         body.bodyImageURL,
-        OMIcons.peopleOutline,
+        Icons.people_outline_outlined,
         heroTag: body.bodyID,
       ),
       onTap: () {
@@ -412,7 +412,7 @@ class _UserPageState extends State<UserPage> {
       subtitle: Text(role.roleName, style: theme.subtitle),
       leading: NullableCircleAvatar(
         role.roleBodyDetails.bodyImageURL,
-        OMIcons.peopleOutline,
+        Icons.people_outline_outlined,
         heroTag: role.roleID ?? role.roleBodyDetails.bodyID,
       ),
       onTap: () {
@@ -428,7 +428,7 @@ class _UserPageState extends State<UserPage> {
           style: theme.subtitle),
       leading: NullableCircleAvatar(
         role.roleBodyDetails.bodyImageURL,
-        OMIcons.peopleOutline,
+        Icons.people_outline_outlined,
         heroTag: role.roleID ?? role.roleBodyDetails.bodyID,
       ),
       onTap: () {

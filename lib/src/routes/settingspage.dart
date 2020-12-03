@@ -6,7 +6,6 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/switch_list_tile.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 
@@ -40,7 +39,7 @@ class _SettingsPageState extends State<SettingsPage> {
             IconButton(
               tooltip: "Show Navigation Drawer",
               icon: Icon(
-                OMIcons.menu,
+                Icons.menu_outlined,
                 semanticLabel: "Show Navigation Drawer",
               ),
               onPressed: () {
@@ -79,7 +78,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         const EdgeInsets.symmetric(horizontal: 28.0),
                     secondary: updatingSCN
                         ? CircularProgressIndicatorExtended()
-                        : Icon(OMIcons.contactPhone),
+                        : Icon(Icons.contact_phone_outlined),
                     title: Text("Show contact number"),
                     subtitle: Text("Toggle visibility on your profile"),
                     value: snapshot.data.profile.userShowContactNumber,
@@ -99,8 +98,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   ListTile(
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 28.0),
-                    leading: Icon(OMIcons.personOutline),
-                    trailing: Icon(OMIcons.launch),
+                    leading: Icon(Icons.person_outline_outlined),
+                    trailing: Icon(Icons.launch_outlined),
                     title: Text("Update Profile"),
                     subtitle: Text("Update personal details on SSO"),
                     onTap: () async {
@@ -112,7 +111,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ListTile(
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 28.0),
-                    leading: Icon(OMIcons.exitToApp),
+                    leading: Icon(Icons.exit_to_app_outlined),
                     title: Text("Logout"),
                     subtitle: Text("Sign out of InstiApp"),
                     onTap: loggingOutLoading
@@ -282,7 +281,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 28.0),
                   child: OutlineButton.icon(
-                    icon: Icon(OMIcons.restore),
+                    icon: Icon(Icons.restore_outlined),
                     label: Text("Restore Default Theme"),
                     onPressed: () {
                       bloc.primaryColor = bloc.defaultThemes[0][0];
@@ -292,8 +291,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 28.0),
-                  leading: Icon(OMIcons.feedback),
-                  trailing: Icon(OMIcons.launch),
+                  leading: Icon(Icons.feedback_outlined),
+                  trailing: Icon(Icons.launch_outlined),
                   title: Text("Feedback"),
                   subtitle:
                       Text("Report technical issues or suggest new features"),
@@ -305,7 +304,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 28.0),
-                  leading: Icon(OMIcons.info),
+                  leading: Icon(Icons.info_outline),
                   title: Text("About"),
                   subtitle: Text("The InstiApp Team"),
                   onTap: () {

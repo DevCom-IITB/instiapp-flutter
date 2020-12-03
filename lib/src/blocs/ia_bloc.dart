@@ -43,16 +43,17 @@ class InstiAppBloc {
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
   // Different Streams for the state
-  Stream<UnmodifiableListView<Hostel>> get hostels => _hostelsSubject.stream;
+  ValueStream<UnmodifiableListView<Hostel>> get hostels =>
+      _hostelsSubject.stream;
   final _hostelsSubject = BehaviorSubject<UnmodifiableListView<Hostel>>();
 
-  Stream<Session> get session => _sessionSubject.stream;
+  ValueStream<Session> get session => _sessionSubject.stream;
   final _sessionSubject = BehaviorSubject<Session>();
 
-  Stream<UnmodifiableListView<Event>> get events => _eventsSubject.stream;
+  ValueStream<UnmodifiableListView<Event>> get events => _eventsSubject.stream;
   final _eventsSubject = BehaviorSubject<UnmodifiableListView<Event>>();
 
-  Stream<UnmodifiableListView<ntf.Notification>> get notifications =>
+  ValueStream<UnmodifiableListView<ntf.Notification>> get notifications =>
       _notificationsSubject.stream;
   final _notificationsSubject =
       BehaviorSubject<UnmodifiableListView<ntf.Notification>>();

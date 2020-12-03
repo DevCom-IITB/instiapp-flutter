@@ -1,10 +1,8 @@
 import 'dart:async';
 
-import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/dom.dart' as dom;
@@ -47,11 +45,11 @@ class NullableCircleAvatar extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => HeroPhotoViewWrapper(
-                              imageProvider: CachedNetworkImageProvider(url),
-                              heroTag: heroTag,
-                              minScale: PhotoViewComputedScale.contained * 0.9,
-                              maxScale: PhotoViewComputedScale.contained * 2.0,
-                            ),
+                          imageProvider: CachedNetworkImageProvider(url),
+                          heroTag: heroTag,
+                          minScale: PhotoViewComputedScale.contained * 0.9,
+                          maxScale: PhotoViewComputedScale.contained * 2.0,
+                        ),
                       ));
                 },
                 child: heroTag != null
@@ -164,11 +162,11 @@ class HeroPhotoViewWrapperState extends State<HeroPhotoViewWrapper> {
           ),
           child: PhotoView(
             imageProvider: widget.imageProvider,
-            loadingChild: widget.loadingChild,
+            loadingBuilder: (_, __) => widget.loadingChild,
             backgroundDecoration: widget.backgroundDecoration,
             minScale: widget.minScale,
             maxScale: widget.maxScale,
-            heroTag: widget.heroTag,
+            heroAttributes: PhotoViewHeroAttributes(tag: widget.heroTag),
           )),
     );
   }
@@ -201,13 +199,13 @@ class PhotoViewableImage extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => HeroPhotoViewWrapper(
-                      imageProvider:
-                          imageProvider ?? CachedNetworkImageProvider(url),
-                      heroTag: heroTag,
-                      minScale: PhotoViewComputedScale.contained * 0.9,
-                      maxScale: PhotoViewComputedScale.contained * 2.0,
-                      theme: theme,
-                    ),
+                  imageProvider:
+                      imageProvider ?? CachedNetworkImageProvider(url),
+                  heroTag: heroTag,
+                  minScale: PhotoViewComputedScale.contained * 0.9,
+                  maxScale: PhotoViewComputedScale.contained * 2.0,
+                  theme: theme,
+                ),
               ));
         },
         child: Hero(
@@ -220,15 +218,15 @@ class PhotoViewableImage extends StatelessWidget {
               : CachedNetworkImage(
                   imageUrl: url,
                   placeholder: (context, url) => CachedNetworkImage(
-                        imageUrl: thumbnailUrl(url),
-                        fit: fit,
-                        placeholder: (context, url) =>
-                            CircularProgressIndicatorExtended(),
-                        errorWidget: (context, url, error) =>
-                            new Icon(OMIcons.errorOutline),
-                      ),
+                    imageUrl: thumbnailUrl(url),
+                    fit: fit,
+                    placeholder: (context, url) =>
+                        CircularProgressIndicatorExtended(),
+                    errorWidget: (context, url, error) =>
+                        new Icon(Icons.error_outline_outlined),
+                  ),
                   errorWidget: (context, url, error) =>
-                      new Icon(OMIcons.errorOutline),
+                      new Icon(Icons.error_outline_outlined),
                   fit: fit,
                   fadeInDuration: Duration(milliseconds: 0),
                   fadeOutDuration: Duration(milliseconds: 0),
@@ -281,6 +279,7 @@ class CommonHtml extends StatelessWidget {
                     );
                 }
               }
+              return null;
             },
           )
         : CircularProgressIndicatorExtended(

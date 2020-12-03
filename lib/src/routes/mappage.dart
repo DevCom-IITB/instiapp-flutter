@@ -5,7 +5,6 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:jaguar/jaguar.dart' as jag;
 import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
 
@@ -101,7 +100,7 @@ class _MapPageState extends State<MapPage> {
             IconButton(
               tooltip: "Refresh",
               icon: Icon(
-                OMIcons.refresh,
+                Icons.refresh_outlined,
                 semanticLabel: "Refresh",
               ),
               onPressed: () {

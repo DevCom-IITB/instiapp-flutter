@@ -4,7 +4,6 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 
 class PutEntityPage extends StatefulWidget {
   final String entityID;
@@ -87,7 +86,7 @@ class _PutEntityPageState extends State<PutEntityPage> {
             IconButton(
               tooltip: "Refresh",
               icon: Icon(
-                OMIcons.refresh,
+                Icons.refresh_outlined,
                 semanticLabel: "Refresh",
               ),
               onPressed: () {

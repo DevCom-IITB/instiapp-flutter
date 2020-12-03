@@ -127,7 +127,9 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
   Future<void> updateUserEventStatus(@Header("Cookie") String sessionID,
       @PathParam() String eventID, @QueryParam("status") int status);
 
-  @GetReq(path: "/user-me/unr/:postID")
+  @GetReq(
+    path: "/user-me/unr/:postID",
+  )
   Future<void> updateUserNewsReaction(@Header("Cookie") String sessionID,
       @PathParam() String postID, @QueryParam("reaction") int reaction);
 

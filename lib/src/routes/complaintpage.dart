@@ -13,7 +13,6 @@ import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as LocationManager;
 
@@ -32,9 +31,9 @@ class ComplaintPage extends StatefulWidget {
         name: "/complaint/${complaint?.complaintID ?? ""}",
       ),
       builder: (context) => ComplaintPage(
-            initialComplaint: complaint,
-            complaintFuture: bloc.getComplaint(complaint.complaintID),
-          ),
+        initialComplaint: complaint,
+        complaintFuture: bloc.getComplaint(complaint.complaintID),
+      ),
     );
     replace
         ? Navigator.pushReplacement(context, route)
@@ -121,7 +120,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                       : theme.colorScheme.onPrimary),
                 ),
               )
-            : Icon(OMIcons.arrowUpward),
+            : Icon(Icons.arrow_upward_outlined),
         label: Text(userVoted ? "Upvoted" : "Upvote"),
         onPressed: () async {
           setState(() {
@@ -145,7 +144,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
           children: <Widget>[
             IconButton(
               icon: Icon(
-                OMIcons.menu,
+                Icons.menu_outlined,
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
@@ -258,8 +257,10 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                         icon: loadingSubs
                                             ? CircularProgressIndicatorExtended()
                                             : Icon((complaint.isSubscribed
-                                                ? OMIcons.notificationsActive
-                                                : OMIcons.notificationsOff)),
+                                                ? Icons
+                                                    .notifications_active_outlined
+                                                : Icons
+                                                    .notifications_off_outlined)),
                                         onPressed: () async {
                                           setState(() {
                                             loadingSubs = true;
@@ -462,7 +463,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Icon(
-                            OMIcons.comment,
+                            Icons.comment_outlined,
                             color: theme.accentColor,
                           ),
                           SizedBox(
@@ -486,7 +487,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Icon(
-                              OMIcons.arrowUpward,
+                              Icons.arrow_upward_outlined,
                               color: theme.accentColor,
                             ),
                             SizedBox(
@@ -530,7 +531,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
               contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
               leading: NullableCircleAvatar(
                 v.commentedBy.userProfilePictureUrl,
-                OMIcons.personOutline,
+                Icons.person_outline_outlined,
                 heroTag: v.id,
               ),
               title: Text(v.commentedBy.userName),
@@ -563,11 +564,11 @@ class _ComplaintPageState extends State<ComplaintPage> {
                           },
                           itemBuilder: (BuildContext context) =>
                               <PopupMenuItem<String>>[
-                                const PopupMenuItem<String>(
-                                    value: 'Edit', child: Text('Edit')),
-                                const PopupMenuItem<String>(
-                                    value: 'Delete', child: Text('Delete')),
-                              ],
+                            const PopupMenuItem<String>(
+                                value: 'Edit', child: Text('Edit')),
+                            const PopupMenuItem<String>(
+                                value: 'Delete', child: Text('Delete')),
+                          ],
                         )
                       : null)
                   : SizedBox(
@@ -608,7 +609,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                       strokeWidth: 2,
                                     ),
                                   )
-                                : Icon(OMIcons.send),
+                                : Icon(Icons.send_outlined),
                             onPressed: () async {
                               if (loadingEditComment) {
                                 return;
@@ -664,7 +665,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
         children: <Widget>[
           NullableCircleAvatar(
             bloc.currSession.profile.userProfilePictureUrl,
-            OMIcons.personOutline,
+            Icons.person_outline_outlined,
           ),
           SizedBox(
             width: 8.0,
@@ -688,7 +689,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                             strokeWidth: 2,
                           ),
                         )
-                      : Icon(OMIcons.send),
+                      : Icon(Icons.send_outlined),
                   onPressed: () async {
                     if (loadingComment) {
                       return;
@@ -728,7 +729,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
     return ListTile(
       leading: NullableCircleAvatar(
         u.userProfilePictureUrl,
-        OMIcons.personOutline,
+        Icons.person_outline_outlined,
         heroTag: u.userID,
       ),
       title: Text(u.userName),

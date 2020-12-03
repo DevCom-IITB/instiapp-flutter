@@ -1,4 +1,4 @@
-import 'dart:async';
+// import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
 
@@ -21,11 +21,11 @@ class ComplaintsBloc {
   InstiAppBloc bloc;
 
   // Streams
-  Stream<UnmodifiableListView<Complaint>> get allComplaints =>
+  ValueStream<UnmodifiableListView<Complaint>> get allComplaints =>
       _complaintsSubject.stream;
   final _complaintsSubject = BehaviorSubject<UnmodifiableListView<Complaint>>();
 
-  Stream<UnmodifiableListView<Complaint>> get myComplaints =>
+  ValueStream<UnmodifiableListView<Complaint>> get myComplaints =>
       _mycomplaintsSubject.stream;
   final _mycomplaintsSubject =
       BehaviorSubject<UnmodifiableListView<Complaint>>();

@@ -9,7 +9,6 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 
 class ExplorePage extends StatefulWidget {
   final String title = "Explore";
@@ -29,7 +28,7 @@ class _ExplorePageState extends State<ExplorePage> {
   double isFabVisible = 0;
 
   bool searchMode = false;
-  IconData actionIcon = OMIcons.search;
+  IconData actionIcon = Icons.search_outlined;
 
   bool firstBuild = true;
 
@@ -82,7 +81,7 @@ class _ExplorePageState extends State<ExplorePage> {
             IconButton(
               tooltip: "Show bottom sheet",
               icon: Icon(
-                OMIcons.menu,
+                Icons.menu_outlined,
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
@@ -134,7 +133,7 @@ class _ExplorePageState extends State<ExplorePage> {
                               color: theme.cardColor,
                               onPressed: () {
                                 setState(() {
-                                  actionIcon = OMIcons.close;
+                                  actionIcon = Icons.close_outlined;
                                   searchMode = !searchMode;
                                 });
                               },
@@ -165,7 +164,7 @@ class _ExplorePageState extends State<ExplorePage> {
                           labelStyle: theme.textTheme.body1,
                           hintStyle: theme.textTheme.body1,
                           prefixIcon: Icon(
-                            OMIcons.search,
+                            Icons.search_outlined,
                           ),
                           suffixIcon: IconButton(
                             tooltip: "Search events, bodies, users...",
@@ -174,7 +173,7 @@ class _ExplorePageState extends State<ExplorePage> {
                             ),
                             onPressed: () {
                               setState(() {
-                                actionIcon = OMIcons.search;
+                                actionIcon = Icons.search_outlined;
                                 exploreBloc.query = "";
                                 exploreBloc.refresh();
                                 searchMode = !searchMode;
@@ -222,7 +221,7 @@ class _ExplorePageState extends State<ExplorePage> {
                     curve: Curves.fastOutSlowIn,
                     duration: const Duration(milliseconds: 600));
               },
-              child: Icon(OMIcons.keyboardArrowUp),
+              child: Icon(Icons.keyboard_arrow_up_outlined),
             ),
     );
   }
@@ -253,7 +252,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       b.bodyName,
                       b.bodyShortDescription,
                       b.bodyImageURL,
-                      OMIcons.peopleOutline,
+                      Icons.people_outline_outlined,
                       () => BodyPage.navigateWith(context, exploreBloc.bloc,
                           body: b),
                       theme))
@@ -265,7 +264,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       e.eventName,
                       e.getSubTitle(),
                       e.eventImageURL ?? e.eventBodies[0]?.bodyImageURL,
-                      OMIcons.event,
+                      Icons.event_outlined,
                       () =>
                           EventPage.navigateWith(context, exploreBloc.bloc, e),
                       theme))
@@ -277,7 +276,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       u.userName,
                       u.userLDAPId,
                       u.userProfilePictureUrl,
-                      OMIcons.personOutline,
+                      Icons.person_outline_outlined,
                       () => UserPage.navigateWith(context, exploreBloc.bloc, u),
                       theme))
                   ?.toList() ??

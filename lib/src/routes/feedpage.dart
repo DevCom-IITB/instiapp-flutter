@@ -9,7 +9,6 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 
 class FeedPage extends StatefulWidget {
   @override
@@ -33,9 +32,9 @@ class _FeedPageState extends State<FeedPage> {
     var fab;
 
     if (bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false) {
-      // fab = FloatingActionButton(child: Icon(OMIcons.add), onPressed: () {},);
+      // fab = FloatingActionButton(child: Icon(Icons.add_outlined), onPressed: () {},);
       fab = FloatingActionButton.extended(
-        icon: Icon(OMIcons.add),
+        icon: Icon(Icons.add_outlined),
         label: Text("Add Event"),
         onPressed: () {
           Navigator.of(context).pushNamed("/putentity/event");
@@ -55,7 +54,7 @@ class _FeedPageState extends State<FeedPage> {
             IconButton(
               tooltip: "Show bottom sheet",
               icon: Icon(
-                OMIcons.menu,
+                Icons.menu_outlined,
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
@@ -167,7 +166,7 @@ class _FeedPageState extends State<FeedPage> {
         enabled: true,
         leading: NullableCircleAvatar(
           event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
-          OMIcons.event,
+          Icons.event_outlined,
           heroTag: event.eventID,
         ),
         subtitle: Text(event.getSubTitle()),
