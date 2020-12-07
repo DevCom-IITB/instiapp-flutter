@@ -21,10 +21,12 @@ import 'package:InstiApp/src/utils/app_brightness.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dynamic_icon/flutter_dynamic_icon.dart';
 import 'dart:collection';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/io_client.dart';
+// import 'package:http/browser_client.dart';
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:InstiApp/src/api/model/notification.dart' as ntf;
@@ -178,7 +180,11 @@ class InstiAppBloc {
   GlobalKey<MyAppState> wholeAppKey;
 
   InstiAppBloc({@required this.wholeAppKey}) {
+    // if (kIsWeb) {
+    //   globalClient = BrowserClient();
+    // } else {
     globalClient = IOClient();
+    // }
     placementBloc = PostBloc(this, postType: PostType.Placement);
     trainingBloc = PostBloc(this, postType: PostType.Training);
     newsBloc = PostBloc(this, postType: PostType.NewsArticle);
@@ -462,7 +468,7 @@ class InstiAppBloc {
 
   // Set batch number on icon for iOS
   void _initNotificationBatch() {
-    if (Platform.isIOS) {
+    if (!kIsWeb && Platform.isIOS) {
       notifications.listen((notifs) async {
         try {
           await FlutterDynamicIcon.setApplicationIconBadgeNumber(notifs.length);

@@ -15,7 +15,9 @@ import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/api/response/news_feed_response.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/io_client.dart';
+// import 'package:http/browser_client.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
 import 'package:InstiApp/src/api/model/post.dart';
 import 'package:InstiApp/src/api/model/user.dart';
@@ -37,7 +39,11 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
 
   static InstiAppApi _instance = InstiAppApi.internal();
   InstiAppApi.internal() {
+    // if (kIsWeb) {
+    //   globalClient = BrowserClient();
+    // } else {
     globalClient = IOClient();
+    // }
     jsonConverter = standardSerializers;
   }
   factory InstiAppApi() => _instance;

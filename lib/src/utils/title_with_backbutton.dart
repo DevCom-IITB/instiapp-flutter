@@ -24,7 +24,8 @@ class _TitleWithBackButtonState extends State<TitleWithBackButton> {
     return StreamBuilder(
       stream: bloc.navigatorObserver.secondTopRouteName,
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-        bool currHasBackButton = theme.platform == TargetPlatform.iOS &&
+        bool currHasBackButton = (theme.platform == TargetPlatform.iOS ||
+                theme.platform == TargetPlatform.macOS) &&
             widget.hasBackButton &&
             snapshot?.data != null &&
             Navigator.of(context).canPop();
