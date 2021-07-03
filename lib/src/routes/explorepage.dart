@@ -69,7 +69,7 @@ class _ExplorePageState extends State<ExplorePage> {
     }
 
     return Scaffold(
-      resizeToAvoidBottomPadding: true,
+      resizeToAvoidBottomInset: true,
       key: _scaffoldKey,
       drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(

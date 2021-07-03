@@ -246,8 +246,6 @@ class CommonHtml extends StatelessWidget {
     return data != null
         ? Html(
             data: data,
-            defaultTextStyle: defaultTextStyle,
-            useRichText: true,
             onLinkTap: (link) async {
               print(link);
               if (await canLaunch(link)) {
@@ -256,30 +254,25 @@ class CommonHtml extends StatelessWidget {
                 throw "Couldn't launch $link";
               }
             },
-            customRender: (node, children) {
-              if (node is dom.Element) {
-                switch (node.localName) {
-                  case "img":
-                    return Text(node.attributes['src'] ??
-                        node.attributes['href'] ??
-                        "<img>");
-                  case "a":
-                    return InkWell(
-                      onTap: () async {
-                        if (await canLaunch(node.attributes['href'])) {
-                          await launch(node.attributes['href']);
-                        }
-                      },
-                      child: Text(
-                        node.innerHtml,
-                        style: TextStyle(
-                            color: Colors.lightBlue,
-                            decoration: TextDecoration.underline),
-                      ),
-                    );
-                }
+            customRender: {
+              "img": (_, __, attributes, ___) {
+                return Text(attributes['src'] ?? attributes['href'] ?? "<img>");
+              },
+              "a": (_, __, ___, node) {
+                return InkWell(
+                  onTap: () async {
+                    if (await canLaunch(node.attributes['href'])) {
+                      await launch(node.attributes['href']);
+                    }
+                  },
+                  child: Text(
+                    node.innerHtml,
+                    style: TextStyle(
+                        color: Colors.lightBlue,
+                        decoration: TextDecoration.underline),
+                  ),
+                );
               }
-              return null;
             },
           )
         : CircularProgressIndicatorExtended(
