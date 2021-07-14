@@ -8,14 +8,13 @@ part of 'venter.dart';
 
 abstract class _$ComplaintSerializer implements Serializer<Complaint> {
   Serializer<User> __userSerializer;
-  Serializer<User> get _userSerializer =>
-      __userSerializer ??= new UserSerializer();
+  Serializer<User> get _userSerializer => __userSerializer ??= UserSerializer();
   Serializer<TagUri> __tagUriSerializer;
   Serializer<TagUri> get _tagUriSerializer =>
-      __tagUriSerializer ??= new TagUriSerializer();
+      __tagUriSerializer ??= TagUriSerializer();
   Serializer<Comment> __commentSerializer;
   Serializer<Comment> get _commentSerializer =>
-      __commentSerializer ??= new CommentSerializer();
+      __commentSerializer ??= CommentSerializer();
   @override
   Map<String, dynamic> toMap(Complaint model) {
     if (model == null) return null;
@@ -56,7 +55,7 @@ abstract class _$ComplaintSerializer implements Serializer<Complaint> {
   @override
   Complaint fromMap(Map map) {
     if (map == null) return null;
-    final obj = new Complaint();
+    final obj = Complaint();
     obj.complaintID = map['id'] as String;
     obj.complaintCreatedBy = _userSerializer.fromMap(map['created_by'] as Map);
     obj.description = map['description'] as String;
@@ -94,7 +93,7 @@ abstract class _$TagUriSerializer implements Serializer<TagUri> {
   @override
   TagUri fromMap(Map map) {
     if (map == null) return null;
-    final obj = new TagUri();
+    final obj = TagUri();
     obj.id = map['id'] as String;
     obj.tagUri = map['tag_uri'] as String;
     return obj;
@@ -103,8 +102,7 @@ abstract class _$TagUriSerializer implements Serializer<TagUri> {
 
 abstract class _$CommentSerializer implements Serializer<Comment> {
   Serializer<User> __userSerializer;
-  Serializer<User> get _userSerializer =>
-      __userSerializer ??= new UserSerializer();
+  Serializer<User> get _userSerializer => __userSerializer ??= UserSerializer();
   @override
   Map<String, dynamic> toMap(Comment model) {
     if (model == null) return null;
@@ -120,7 +118,7 @@ abstract class _$CommentSerializer implements Serializer<Comment> {
   @override
   Comment fromMap(Map map) {
     if (map == null) return null;
-    final obj = new Comment();
+    final obj = Comment();
     obj.id = map['id'] as String;
     obj.time = map['time'] as String;
     obj.text = map['text'] as String;

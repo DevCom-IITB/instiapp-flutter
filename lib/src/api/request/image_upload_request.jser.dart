@@ -19,7 +19,7 @@ abstract class _$ImageUploadRequestSerializer
   @override
   ImageUploadRequest fromMap(Map map) {
     if (map == null) return null;
-    final obj = new ImageUploadRequest();
+    final obj = ImageUploadRequest();
     obj.base64Image = map['picture'] as String;
     return obj;
   }

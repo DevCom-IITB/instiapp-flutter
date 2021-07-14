@@ -11,22 +11,22 @@ abstract class _$NotificationSerializer implements Serializer<Notification> {
   Map<String, dynamic> toMap(Notification model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
+    setMapValue(ret, 'isEvent', model.isEvent);
+    setMapValue(ret, 'isNews', model.isNews);
+    setMapValue(ret, 'isBlogPost', model.isBlogPost);
+    setMapValue(ret, 'isComplaintComment', model.isComplaintComment);
     setMapValue(ret, 'id', model.notificationId);
     setMapValue(ret, 'verb', model.notificationVerb);
     setMapValue(ret, 'unread', model.notificationUnread);
     setMapValue(ret, 'actor_type', model.notificationActorType);
     setMapValue(ret, 'actor', passProcessor.serialize(model.notificationActor));
-    setMapValue(ret, 'isEvent', model.isEvent);
-    setMapValue(ret, 'isNews', model.isNews);
-    setMapValue(ret, 'isBlogPost', model.isBlogPost);
-    setMapValue(ret, 'isComplaintComment', model.isComplaintComment);
     return ret;
   }
 
   @override
   Notification fromMap(Map map) {
     if (map == null) return null;
-    final obj = new Notification();
+    final obj = Notification();
     obj.notificationId = map['id'] as int;
     obj.notificationVerb = map['verb'] as String;
     obj.notificationUnread = map['unread'] as bool;

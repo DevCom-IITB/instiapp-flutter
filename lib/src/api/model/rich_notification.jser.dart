@@ -27,7 +27,7 @@ abstract class _$RichNotificationSerializer
   @override
   RichNotification fromMap(Map map) {
     if (map == null) return null;
-    final obj = new RichNotification();
+    final obj = RichNotification();
     obj.notificationType = map['type'] as String;
     obj.notificationObjectID = map['id'] as String;
     obj.notificationExtra = map['extra'] as String;
