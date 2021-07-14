@@ -20,7 +20,7 @@ abstract class _$ComplaintCreateResponseSerializer
   @override
   ComplaintCreateResponse fromMap(Map map) {
     if (map == null) return null;
-    final obj = new ComplaintCreateResponse();
+    final obj = ComplaintCreateResponse();
     obj.result = map['result'] as String;
     obj.complaintId = map['complaintId'] as String;
     return obj;

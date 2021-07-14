@@ -8,8 +8,7 @@ part of 'user.dart';
 
 abstract class _$SessionSerializer implements Serializer<Session> {
   Serializer<User> __userSerializer;
-  Serializer<User> get _userSerializer =>
-      __userSerializer ??= new UserSerializer();
+  Serializer<User> get _userSerializer => __userSerializer ??= UserSerializer();
   @override
   Map<String, dynamic> toMap(Session model) {
     if (model == null) return null;
@@ -24,7 +23,7 @@ abstract class _$SessionSerializer implements Serializer<Session> {
   @override
   Session fromMap(Map map) {
     if (map == null) return null;
-    final obj = new Session();
+    final obj = Session();
     obj.sessionid = map['sessionid'] as String;
     obj.user = map['user'] as String;
     obj.profileId = map['profile_id'] as String;
@@ -36,13 +35,11 @@ abstract class _$SessionSerializer implements Serializer<Session> {
 abstract class _$UserSerializer implements Serializer<User> {
   Serializer<Event> __eventSerializer;
   Serializer<Event> get _eventSerializer =>
-      __eventSerializer ??= new EventSerializer();
+      __eventSerializer ??= EventSerializer();
   Serializer<Body> __bodySerializer;
-  Serializer<Body> get _bodySerializer =>
-      __bodySerializer ??= new BodySerializer();
+  Serializer<Body> get _bodySerializer => __bodySerializer ??= BodySerializer();
   Serializer<Role> __roleSerializer;
-  Serializer<Role> get _roleSerializer =>
-      __roleSerializer ??= new RoleSerializer();
+  Serializer<Role> get _roleSerializer => __roleSerializer ??= RoleSerializer();
   @override
   Map<String, dynamic> toMap(User model) {
     if (model == null) return null;
@@ -97,7 +94,7 @@ abstract class _$UserSerializer implements Serializer<User> {
   @override
   User fromMap(Map map) {
     if (map == null) return null;
-    final obj = new User();
+    final obj = User();
     obj.userID = map['id'] as String;
     obj.userName = map['name'] as String;
     obj.userProfilePictureUrl = map['profile_pic'] as String;

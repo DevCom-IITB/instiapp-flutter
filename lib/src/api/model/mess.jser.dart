@@ -9,7 +9,7 @@ part of 'mess.dart';
 abstract class _$HostelSerializer implements Serializer<Hostel> {
   Serializer<HostelMess> __hostelMessSerializer;
   Serializer<HostelMess> get _hostelMessSerializer =>
-      __hostelMessSerializer ??= new HostelMessSerializer();
+      __hostelMessSerializer ??= HostelMessSerializer();
   @override
   Map<String, dynamic> toMap(Hostel model) {
     if (model == null) return null;
@@ -29,7 +29,7 @@ abstract class _$HostelSerializer implements Serializer<Hostel> {
   @override
   Hostel fromMap(Map map) {
     if (map == null) return null;
-    final obj = new Hostel();
+    final obj = Hostel();
     obj.id = map['id'] as String;
     obj.name = map['name'] as String;
     obj.shortName = map['short_name'] as String;
@@ -58,7 +58,7 @@ abstract class _$HostelMessSerializer implements Serializer<HostelMess> {
   @override
   HostelMess fromMap(Map map) {
     if (map == null) return null;
-    final obj = new HostelMess();
+    final obj = HostelMess();
     obj.id = map['id'] as String;
     obj.day = map['day'] as int;
     obj.breakfast = map['breakfast'] as String;
