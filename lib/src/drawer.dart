@@ -161,6 +161,16 @@ class _NavDrawerState extends State<NavDrawer> {
                         navi.pushNamed('/settings');
                       },
                     ),
+                    11: NavListTile(
+                      icon: Icons.settings_outlined,
+                      title: "Achievements",
+                      onTap: () {
+                        changeSelection(11, drawerState);
+                        var navi = Navigator.of(context);
+                        navi.pop();
+                        navi.pushNamed('/achievements');
+                      },
+                    ),
                   };
 
                   List<Widget> navList, navDownList = <Widget>[];
@@ -439,6 +449,7 @@ class MNavigatorObserver extends NavigatorObserver {
     "/putentity/event": 0,
     "/map": 7,
     "/settings": 10,
+    "/achievements":11,
     "/notifications": -1,
   };
 
@@ -457,6 +468,7 @@ class MNavigatorObserver extends NavigatorObserver {
     "/map": "Map",
     "/settings": "Settings",
     "/notifications": "Notifications",
+    "/achievements":"Achievements",
     "n/a": "",
   };
 
