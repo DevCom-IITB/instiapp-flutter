@@ -1,17 +1,20 @@
 // Copyright (c) 2015, Google Inc. Please see the AUTHORS file for details.
 library serializers;
 
+import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/datetime.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
 import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
+import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
 import 'package:InstiApp/src/api/request/image_upload_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
+import 'package:InstiApp/src/api/response/achievement_create_response.dart';
 import 'package:InstiApp/src/api/response/complaint_create_response.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
@@ -52,6 +55,7 @@ JsonRepo standardSerializers = JsonRepo(serializers: [
   ComplaintSerializer(),
   TagUriSerializer(),
   CommentSerializer(),
+  AchievementSerializer(),
 
   // Requests
   ComplaintCreateRequestSerializer(),
@@ -60,6 +64,7 @@ JsonRepo standardSerializers = JsonRepo(serializers: [
   CommentCreateRequestSerializer(),
   UserFCMPatchRequestSerializer(),
   UserSCNPatchRequestSerializer(),
+  AchievementCreateRequestSerializer(),
 
   // Responses
   NewsFeedResponseSerializer(),
@@ -67,4 +72,5 @@ JsonRepo standardSerializers = JsonRepo(serializers: [
   EventCreateResponseSerializer(),
   ImageUploadResponseSerializer(),
   ComplaintCreateResponseSerializer(),
+  AchievementCreateResponseSerializer(),
 ]);

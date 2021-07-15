@@ -359,7 +359,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
   }
 
 
-  Future<Achievement> postForm(String sessionId,
+  Future<AchievementCreateResponse> postForm(String sessionId,
       AchievementCreateRequest achievementCreateRequest) async {
     var req = base.post
         .path(basePath)
