@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
+import 'package:InstiApp/src/api/response/achievement_create_response.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 class Validators{
@@ -53,7 +54,7 @@ class Bloc extends Object with Validators {
   // }
 
   Bloc(this.bloc);
-  Future<Achievement> postForm(AchievementCreateRequest req) async {
+  Future<AchievementCreateResponse> postForm(AchievementCreateRequest req) async {
     try {
       req.description=description.toString();
       req.title=title.toString();
@@ -78,3 +79,4 @@ class Bloc extends Object with Validators {
     _veryfying_authController.close();
   }
 }
+
