@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
+import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
@@ -33,7 +35,7 @@ part 'apiclient.jretro.dart';
 class InstiAppApi extends ApiClient with _$InstiAppApiClient {
   // static String endpoint = "http://10.4.66.222:8000/api";
   static String endpoint = "https://api.insti.app/api";
-  final resty.Route base = Route(endpoint);
+  final resty.Route base = route(endpoint);
   // final JsonRepo jsonConverter = standardSerializers;
   // final SerializerRepo serializers = standardSerializers;
 
@@ -218,4 +220,10 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
 
   @GetReq(path: "/venter/tags")
   Future<List<TagUri>> getAllTags(@Header("Cookie") String sessionId);
+
+  @PostReq(path: "/achievements")
+  Future<Achievement> postForm(
+      @Header("Cookie") String sessionId,
+      @AsJson() AchievementCreateRequest achievementCreateRequest);
+
 }
