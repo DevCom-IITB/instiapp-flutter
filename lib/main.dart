@@ -207,8 +207,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           } else {
             switch (settings.name) {
               case "/":
-                return _buildRoute(settings, FeedPage());
-              // return _buildRoute(settings, LoginPage(widget.bloc));
+                //return _buildRoute(settings, FeedPage());
+               return _buildRoute(settings, LoginPage(widget.bloc));
               case "/mess":
                 return _buildRoute(settings, MessPage());
               case "/placeblog":
