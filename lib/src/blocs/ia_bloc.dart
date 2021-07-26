@@ -16,6 +16,7 @@ import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
 import 'package:InstiApp/src/blocs/map_bloc.dart';
+import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -69,6 +70,7 @@ class InstiAppBloc {
   ComplaintsBloc complaintsBloc;
   DrawerBloc drawerState;
   MapBloc mapBloc;
+  Bloc achievementBloc;
 
   // actual current state
   Session currSession;
@@ -194,6 +196,7 @@ class InstiAppBloc {
     drawerState = DrawerBloc(homepageName, highlightPageIndexVal: 0);
     navigatorObserver = MNavigatorObserver(this);
     mapBloc = MapBloc(this);
+    achievementBloc=Bloc(this);
     _initNotificationBatch();
   }
 

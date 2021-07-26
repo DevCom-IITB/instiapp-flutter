@@ -1,28 +1,28 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'complaint_create_response.dart';
+part of 'achievement_create_response.dart';
 
 // **************************************************************************
 // JaguarSerializerGenerator
 // **************************************************************************
 
-abstract class _$ComplaintCreateResponseSerializer
-    implements Serializer<ComplaintCreateResponse> {
+abstract class _$AchievementCreateResponseSerializer
+    implements Serializer<AchievementCreateResponse> {
   @override
-  Map<String, dynamic> toMap(ComplaintCreateResponse model) {
+  Map<String, dynamic> toMap(AchievementCreateResponse model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
     setMapValue(ret, 'result', model.result);
-    setMapValue(ret, 'complaintId', model.complaintId);
+    setMapValue(ret, 'AchID', model.AchID);
     return ret;
   }
 
   @override
-  ComplaintCreateResponse fromMap(Map map) {
+  AchievementCreateResponse fromMap(Map map) {
     if (map == null) return null;
-    final obj = ComplaintCreateResponse();
+    final obj = AchievementCreateResponse();
     obj.result = map['result'] as String;
-    obj.complaintId = map['complaintId'] as String;
+    obj.AchID = map['AchID'] as String;
     return obj;
   }
 }

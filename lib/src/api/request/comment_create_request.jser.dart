@@ -19,7 +19,7 @@ abstract class _$CommentCreateRequestSerializer
   @override
   CommentCreateRequest fromMap(Map map) {
     if (map == null) return null;
-    final obj = new CommentCreateRequest();
+    final obj = CommentCreateRequest();
     obj.text = map['text'] as String;
     return obj;
   }

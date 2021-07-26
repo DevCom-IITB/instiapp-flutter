@@ -77,7 +77,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
 
   Future<NewsFeedResponse> getNewsFeed(String sessionId) async {
     var req =
-        base.get.path(basePath).path("/events").header("Cookie", sessionId);
+    base.get.path(basePath).path("/events").header("Cookie", sessionId);
     return req.go(throwOnErr: true).map(decodeOne);
   }
 
@@ -132,7 +132,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
 
   Future<List<Body>> getAllBodies(String sessionId) async {
     var req =
-        base.get.path(basePath).path("/bodies").header("Cookie", sessionId);
+    base.get.path(basePath).path("/bodies").header("Cookie", sessionId);
     return req.go(throwOnErr: true).map(decodeList);
   }
 
@@ -159,7 +159,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
 
   Future<User> getUserMe(String sessionID) async {
     var req =
-        base.get.path(basePath).path("/user-me").header("Cookie", sessionID);
+    base.get.path(basePath).path("/user-me").header("Cookie", sessionID);
     return req.go(throwOnErr: true).map(decodeOne);
   }
 
@@ -245,7 +245,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
 
   Future<void> logout(String sessionID) async {
     var req =
-        base.get.path(basePath).path("/logout").header("Cookie", sessionID);
+    base.get.path(basePath).path("/logout").header("Cookie", sessionID);
     await req.go(throwOnErr: true);
   }
 
@@ -356,5 +356,16 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path("/venter/tags")
         .header("Cookie", sessionId);
     return req.go(throwOnErr: true).map(decodeList);
+  }
+
+
+  Future<AchievementCreateResponse> postForm(String sessionId,
+      AchievementCreateRequest achievementCreateRequest) async {
+    var req = base.post
+        .path(basePath)
+        .path("/achievements")
+        .header("Cookie", sessionId)
+        .json(jsonConverter.to(achievementCreateRequest));
+    return await req.go(throwOnErr: true).map(decodeOne);
   }
 }
