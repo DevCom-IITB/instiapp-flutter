@@ -100,12 +100,12 @@ class Form extends State<Home> {
                     style: TextStyle(fontSize: 20),
                   )),
       StreamBuilder<String>(
-            stream: bloc.description,
+            stream: bloc.title,
             builder: (context, snapshot) => Container(
                     margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
                     child: TextField(
                       onChanged: bloc.titlechanged,
-                      keyboardType: TextInputType.emailAddress,
+                      keyboardType: TextInputType.name,
                       decoration: InputDecoration(
                         hintText: 'Title*',
                       ),
@@ -115,26 +115,33 @@ class Form extends State<Home> {
               Container(
                   margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
                   child: Text('Description', style: TextStyle(fontSize: 15))),
-              Container(
-                  margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                  child: TextField(
-                    onChanged: bloc.descchanged,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      //errorText: snapshot.error
-                    ),
-                  )),
+              StreamBuilder<String>(
+                stream: bloc.description,
+                builder: (context, snapshot) => Container(
+                    margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
+                    child: TextField(
+                      onChanged: bloc.descchanged,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        //errorText: snapshot.error
+                      ),
+                    )),
+              ),
               Container(
                   margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
                   child: Text(
                     'Admin Note',
                     style: TextStyle(fontSize: 15),
                   )),
-              Container(
-                  margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                  child: TextField(
-                    decoration: InputDecoration(),
-                  )),
+              StreamBuilder<String>(
+                stream: bloc.admin_note,
+                builder: (context, snapshot) => Container(
+                    margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
+                    child: TextField(
+                      onChanged: bloc.adminchanged,
+                      decoration: InputDecoration(),
+                    )),
+              ),
               Container(
                   margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
                   child: Column(
