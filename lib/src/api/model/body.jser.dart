@@ -8,14 +8,12 @@ part of 'body.dart';
 
 abstract class _$BodySerializer implements Serializer<Body> {
   Serializer<Body> __bodySerializer;
-  Serializer<Body> get _bodySerializer =>
-      __bodySerializer ??= new BodySerializer();
+  Serializer<Body> get _bodySerializer => __bodySerializer ??= BodySerializer();
   Serializer<Event> __eventSerializer;
   Serializer<Event> get _eventSerializer =>
-      __eventSerializer ??= new EventSerializer();
+      __eventSerializer ??= EventSerializer();
   Serializer<Role> __roleSerializer;
-  Serializer<Role> get _roleSerializer =>
-      __roleSerializer ??= new RoleSerializer();
+  Serializer<Role> get _roleSerializer => __roleSerializer ??= RoleSerializer();
   @override
   Map<String, dynamic> toMap(Body model) {
     if (model == null) return null;
@@ -56,7 +54,7 @@ abstract class _$BodySerializer implements Serializer<Body> {
   @override
   Body fromMap(Map map) {
     if (map == null) return null;
-    final obj = new Body();
+    final obj = Body();
     obj.bodyID = map['id'] as String;
     obj.bodyStrID = map['str_id'] as String;
     obj.bodyName = map['name'] as String;

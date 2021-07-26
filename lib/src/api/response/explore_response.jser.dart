@@ -9,14 +9,12 @@ part of 'explore_response.dart';
 abstract class _$ExploreResponseSerializer
     implements Serializer<ExploreResponse> {
   Serializer<Body> __bodySerializer;
-  Serializer<Body> get _bodySerializer =>
-      __bodySerializer ??= new BodySerializer();
+  Serializer<Body> get _bodySerializer => __bodySerializer ??= BodySerializer();
   Serializer<Event> __eventSerializer;
   Serializer<Event> get _eventSerializer =>
-      __eventSerializer ??= new EventSerializer();
+      __eventSerializer ??= EventSerializer();
   Serializer<User> __userSerializer;
-  Serializer<User> get _userSerializer =>
-      __userSerializer ??= new UserSerializer();
+  Serializer<User> get _userSerializer => __userSerializer ??= UserSerializer();
   @override
   Map<String, dynamic> toMap(ExploreResponse model) {
     if (model == null) return null;
@@ -39,7 +37,7 @@ abstract class _$ExploreResponseSerializer
   @override
   ExploreResponse fromMap(Map map) {
     if (map == null) return null;
-    final obj = new ExploreResponse();
+    final obj = ExploreResponse();
     obj.bodies = codeIterable<Body>(map['bodies'] as Iterable,
         (val) => _bodySerializer.fromMap(val as Map));
     obj.events = codeIterable<Event>(map['events'] as Iterable,

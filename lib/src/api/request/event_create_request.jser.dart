@@ -28,7 +28,7 @@ abstract class _$EventCreateRequestSerializer
   @override
   EventCreateRequest fromMap(Map map) {
     if (map == null) return null;
-    final obj = new EventCreateRequest();
+    final obj = EventCreateRequest();
     obj.eventName = map['name'] as String;
     obj.eventDescription = map['description'] as String;
     obj.eventImageURL = map['image_url'] as String;

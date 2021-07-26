@@ -20,7 +20,7 @@ abstract class _$ImageUploadResponseSerializer
   @override
   ImageUploadResponse fromMap(Map map) {
     if (map == null) return null;
-    final obj = new ImageUploadResponse();
+    final obj = ImageUploadResponse();
     obj.pictureID = map['id'] as String;
     obj.pictureURL = map['picture'] as String;
     return obj;
