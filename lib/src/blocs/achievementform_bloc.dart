@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
@@ -64,7 +65,8 @@ class Bloc extends Object with Validators {
       req.body=event.toString();
 
 
-      return bloc.client.postForm(bloc.getSessionIdHeader(), req);
+      var comment= bloc.client.postForm(bloc.getSessionIdHeader(), req);
+      log(comment.toString());
     } catch (ex) {
       print(ex);
       return null;

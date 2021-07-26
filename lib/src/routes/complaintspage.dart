@@ -362,7 +362,8 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                   loadingSubs = false;
                                   loadingComplaint = null;
                                 });
-                                _scaffoldKey.currentState
+                                _scaffoldKey.
+                                currentState
                                   ..hideCurrentSnackBar()
                                   ..showSnackBar(SnackBar(
                                       content: Text(
