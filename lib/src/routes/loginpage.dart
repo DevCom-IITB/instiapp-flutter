@@ -23,10 +23,12 @@ class _LoginPageState extends State<LoginPage> {
   final flutterWebviewPlugin = FlutterWebviewPlugin();
   jag.Jaguar server;
 
-  final String successUrl = "https://redirecturi";
+  final String successUrl = "https://gymkhana.iitb.ac.in/profiles/user/";
   final String guestUrl = "https://guesturi";
   final String gymkhanaUrl = "https://gymkhana.iitb.ac.in";
   final String httpGymkhanaUrl = "http://gymkhana.iitb.ac.in";
+  final String ssoLogin = "https://sso.iitb.ac.in/login";
+  final String ssoAuth = "https://sso.iitb.ac.in/authorize";
   InstiAppBloc _bloc;
   StreamSubscription<String> onUrlChangedSub;
   StreamSubscription<WebViewStateChanged> onStateChangedSub;
@@ -90,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
 
       onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {
         print("Changed URL: $url");
-        if (url.startsWith(successUrl)) {
+        if(url.startsWith(ssoLogin)) {
           var uri = Uri.parse(url);
           var code = uri.queryParameters['code'];
           print(code);
@@ -112,7 +114,14 @@ class _LoginPageState extends State<LoginPage> {
         } else if (url.startsWith(httpGymkhanaUrl)) {
           print("onUrlChanged: http gymkhana");
           flutterWebviewPlugin.reloadUrl(url.replaceFirst("http", "https"));
-        } else if (!url.startsWith("http://127.0.0.1")) {
+        } else if(url.startsWith(ssoAuth)){
+          print("onUrlChanged: Going to sso login");
+          // flutterWebviewPlugin.reloadUrl(sso);
+          // flutterWebviewPlugin.hide();
+        } else if (url.startsWith(successUrl)){
+          print("onUrlChanged: Going to sso authorize");
+        }
+        else if (!url.startsWith("http://127.0.0.1")) {
           print("Going to unintented website");
           flutterWebviewPlugin.reloadUrl(loginurl);
         }
