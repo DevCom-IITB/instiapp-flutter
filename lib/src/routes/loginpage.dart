@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   final flutterWebviewPlugin = FlutterWebviewPlugin();
   jag.Jaguar server;
 
-  final String successUrl = "https://www.insti.app/";
+  final String successUrl = "instiapp://insti.app/login";
   final String guestUrl = "https://guesturi";
   final String gymkhanaUrl = "https://gymkhana.iitb.ac.in";
   final String httpGymkhanaUrl = "http://gymkhana.iitb.ac.in";
@@ -119,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
 
           print("onUrlChanged: Hiding Web View");
           flutterWebviewPlugin.hide();
-          login(code, successUrl);
+          login(code, "https://www.insti.app/login-android.html");
         }
         else if (!url.startsWith("http://127.0.0.1")) {
           print("Going to unintented website");
