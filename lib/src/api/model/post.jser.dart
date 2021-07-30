@@ -23,7 +23,7 @@ abstract class _$PostSerializer implements Serializer<Post> {
   @override
   Post fromMap(Map map) {
     if (map == null) return null;
-    final obj = new Post();
+    final obj = Post();
     obj.id = map['id'] as String;
     obj.guid = map['guid'] as String;
     obj.link = map['link'] as String;
@@ -52,7 +52,7 @@ abstract class _$PlacementBlogPostSerializer
   @override
   PlacementBlogPost fromMap(Map map) {
     if (map == null) return null;
-    final obj = new PlacementBlogPost();
+    final obj = PlacementBlogPost();
     obj.id = map['id'] as String;
     obj.guid = map['guid'] as String;
     obj.link = map['link'] as String;
@@ -81,7 +81,7 @@ abstract class _$TrainingBlogPostSerializer
   @override
   TrainingBlogPost fromMap(Map map) {
     if (map == null) return null;
-    final obj = new TrainingBlogPost();
+    final obj = TrainingBlogPost();
     obj.id = map['id'] as String;
     obj.guid = map['guid'] as String;
     obj.link = map['link'] as String;
@@ -94,8 +94,7 @@ abstract class _$TrainingBlogPostSerializer
 
 abstract class _$NewsArticleSerializer implements Serializer<NewsArticle> {
   Serializer<Body> __bodySerializer;
-  Serializer<Body> get _bodySerializer =>
-      __bodySerializer ??= new BodySerializer();
+  Serializer<Body> get _bodySerializer => __bodySerializer ??= BodySerializer();
   @override
   Map<String, dynamic> toMap(NewsArticle model) {
     if (model == null) return null;
@@ -116,7 +115,7 @@ abstract class _$NewsArticleSerializer implements Serializer<NewsArticle> {
   @override
   NewsArticle fromMap(Map map) {
     if (map == null) return null;
-    final obj = new NewsArticle();
+    final obj = NewsArticle();
     obj.body = _bodySerializer.fromMap(map['body'] as Map);
     obj.reactionCount =
         codeMap<int>(map['reactions_count'] as Map, (val) => val as int);

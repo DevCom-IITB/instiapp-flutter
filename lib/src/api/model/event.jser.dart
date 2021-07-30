@@ -9,13 +9,11 @@ part of 'event.dart';
 abstract class _$EventSerializer implements Serializer<Event> {
   Serializer<Venue> __venueSerializer;
   Serializer<Venue> get _venueSerializer =>
-      __venueSerializer ??= new VenueSerializer();
+      __venueSerializer ??= VenueSerializer();
   Serializer<Body> __bodySerializer;
-  Serializer<Body> get _bodySerializer =>
-      __bodySerializer ??= new BodySerializer();
+  Serializer<Body> get _bodySerializer => __bodySerializer ??= BodySerializer();
   Serializer<User> __userSerializer;
-  Serializer<User> get _userSerializer =>
-      __userSerializer ??= new UserSerializer();
+  Serializer<User> get _userSerializer => __userSerializer ??= UserSerializer();
   @override
   Map<String, dynamic> toMap(Event model) {
     if (model == null) return null;
@@ -60,7 +58,7 @@ abstract class _$EventSerializer implements Serializer<Event> {
   @override
   Event fromMap(Map map) {
     if (map == null) return null;
-    final obj = new Event();
+    final obj = Event();
     obj.eventID = map['id'] as String;
     obj.eventStrID = map['str_id'] as String;
     obj.eventName = map['name'] as String;
