@@ -29,7 +29,7 @@ abstract class _$VenueSerializer implements Serializer<Venue> {
   @override
   Venue fromMap(Map map) {
     if (map == null) return null;
-    final obj = new Venue();
+    final obj = Venue();
     obj.venueID = map['id'] as String;
     obj.venueName = map['name'] as String;
     obj.venueShortName = map['short_name'] as String;

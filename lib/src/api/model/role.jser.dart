@@ -8,11 +8,9 @@ part of 'role.dart';
 
 abstract class _$RoleSerializer implements Serializer<Role> {
   Serializer<Body> __bodySerializer;
-  Serializer<Body> get _bodySerializer =>
-      __bodySerializer ??= new BodySerializer();
+  Serializer<Body> get _bodySerializer => __bodySerializer ??= BodySerializer();
   Serializer<User> __userSerializer;
-  Serializer<User> get _userSerializer =>
-      __userSerializer ??= new UserSerializer();
+  Serializer<User> get _userSerializer => __userSerializer ??= UserSerializer();
   @override
   Map<String, dynamic> toMap(Role model) {
     if (model == null) return null;
@@ -44,7 +42,7 @@ abstract class _$RoleSerializer implements Serializer<Role> {
   @override
   Role fromMap(Map map) {
     if (map == null) return null;
-    final obj = new Role();
+    final obj = Role();
     obj.roleID = map['id'] as String;
     obj.roleName = map['name'] as String;
     obj.roleInheritable = map['inheritable'] as bool;

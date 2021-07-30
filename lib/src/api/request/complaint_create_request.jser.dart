@@ -27,7 +27,7 @@ abstract class _$ComplaintCreateRequestSerializer
   @override
   ComplaintCreateRequest fromMap(Map map) {
     if (map == null) return null;
-    final obj = new ComplaintCreateRequest();
+    final obj = ComplaintCreateRequest();
     obj.complaintDescription = map['description'] as String;
     obj.complaintSuggestions = map['suggestions'] as String;
     obj.complaintLocationDetails = map['location_details'] as String;
