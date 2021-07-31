@@ -72,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
       // No stored session found
       startLoginPageServer().then((_) async {
         print("startLoginPageServer.then: Launching Web View");
-        // await Future.delayed(Duration(milliseconds: 200));
+         await Future.delayed(Duration(milliseconds: 200));
         var mqdata = MediaQuery.of(context);
         flutterWebviewPlugin.launch(
           loginurl,
@@ -145,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<Session> checkLogin() async {
-    // await _bloc.restorePrefs();
+    await _bloc.restorePrefs();
     return _bloc?.currSession;
   }
 

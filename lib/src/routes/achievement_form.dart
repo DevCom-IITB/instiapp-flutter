@@ -29,11 +29,11 @@ class Verify {
       Verify(
           club: 'InstiApp',
           description: 'The one platform of IIT Bombay',
-          image: 'Assets/instiapp.png'),
+          image: 'assets/login/lotus.png'),
       Verify(
           club: 'sa',
           description: 'The asa platform of IIT Bombay',
-          image: 'Assets/instiapp.png')
+          image: 'assets/login/lotus.png')
     ];
   }
 }
@@ -46,7 +46,7 @@ class Form extends State<Home> {
   List<Verify> _companies = Verify.getverauth();
   List<DropdownMenuItem<Verify>> _dropdownMenuItems;
   Verify _selectedCompany =
-  Verify(club: 'ff', description: 'ff', image: 'Assets/instiapp.png');
+  Verify(club: 'ff', description: 'ff', image: 'assets/login/lotus.png');
 
   @override
   void initState() {
@@ -100,12 +100,12 @@ class Form extends State<Home> {
                     style: TextStyle(fontSize: 20),
                   )),
       StreamBuilder<String>(
-            stream: bloc.description,
+            stream: bloc.title,
             builder: (context, snapshot) => Container(
                     margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
                     child: TextField(
                       onChanged: bloc.titlechanged,
-                      keyboardType: TextInputType.emailAddress,
+                      keyboardType: TextInputType.name,
                       decoration: InputDecoration(
                         hintText: 'Title*',
                       ),
@@ -115,26 +115,33 @@ class Form extends State<Home> {
               Container(
                   margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
                   child: Text('Description', style: TextStyle(fontSize: 15))),
-              Container(
-                  margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                  child: TextField(
-                    onChanged: bloc.descchanged,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      //errorText: snapshot.error
-                    ),
-                  )),
+              StreamBuilder<String>(
+                stream: bloc.description,
+                builder: (context, snapshot) => Container(
+                    margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
+                    child: TextField(
+                      onChanged: bloc.descchanged,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        //errorText: snapshot.error
+                      ),
+                    )),
+              ),
               Container(
                   margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
                   child: Text(
                     'Admin Note',
                     style: TextStyle(fontSize: 15),
                   )),
-              Container(
-                  margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                  child: TextField(
-                    decoration: InputDecoration(),
-                  )),
+              StreamBuilder<String>(
+                stream: bloc.admin_note,
+                builder: (context, snapshot) => Container(
+                    margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
+                    child: TextField(
+                      onChanged: bloc.adminchanged,
+                      decoration: InputDecoration(),
+                    )),
+              ),
               Container(
                   margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
                   child: Column(
@@ -165,13 +172,17 @@ class Form extends State<Home> {
                     "Search for an InstiApp event",
                     style: TextStyle(fontSize: 12),
                   )),
-              Container(
-                  margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Verifying Authority',
-                    ),
-                  )),
+              StreamBuilder<String>(
+                stream: bloc.verauth,
+                builder: (context, snapshot) =>Container(
+                    margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
+                    child: TextField(
+                      onChanged: bloc.verauthChanged,
+                      decoration: InputDecoration(
+                        hintText: 'Verifying Authority',
+                      ),
+                    )),
+              ),
               Container(
                   margin: EdgeInsets.fromLTRB(15.0, 1.0, 15.0, 5.0),
                   child: Text(
@@ -183,7 +194,10 @@ class Form extends State<Home> {
                 margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                 child: TextButton(
                   onPressed: () {
-                    setState(() {});
+                    AchievementCreateRequest req = AchievementCreateRequest();
+
+                    bloc.postForm(req);
+
                   },
                   child: Text('Request Verification'),
                   style: TextButton.styleFrom(
