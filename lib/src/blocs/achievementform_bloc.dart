@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
@@ -20,11 +21,11 @@ class Validators{
 class Bloc extends Object with Validators {
 
   InstiAppBloc bloc;
-  final _titleController = StreamController<String>();
-  final _descriptionController = StreamController<String>();
-  final _admin_noteController = StreamController<String>();
-  final _eventController = StreamController<String>();
-  final _veryfying_authController = StreamController<String>();
+  final _titleController = StreamController<String>.broadcast();
+  final _descriptionController = StreamController<String>.broadcast();
+  final _admin_noteController = StreamController<String>.broadcast();
+  final _eventController = StreamController<String>.broadcast();
+  final _veryfying_authController = StreamController<String>.broadcast();
 
   Function(String) get titlechanged => _titleController.sink.add;
   Function(String) get descchanged => _descriptionController.sink.add;
@@ -64,7 +65,8 @@ class Bloc extends Object with Validators {
       req.body=event.toString();
 
 
-      return bloc.client.postForm(bloc.getSessionIdHeader(), req);
+      var comment= bloc.client.postForm(bloc.getSessionIdHeader(), req);
+      log(comment.toString());
     } catch (ex) {
       print(ex);
       return null;
