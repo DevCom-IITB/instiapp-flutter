@@ -449,7 +449,8 @@ class MNavigatorObserver extends NavigatorObserver {
     "/putentity/event": 0,
     "/map": 7,
     "/settings": 10,
-    "/achievements":11,
+    "/achievements": 11,
+    "/achievements/add": 12,
     "/notifications": -1,
   };
 
@@ -468,7 +469,8 @@ class MNavigatorObserver extends NavigatorObserver {
     "/map": "Map",
     "/settings": "Settings",
     "/notifications": "Notifications",
-    "/achievements":"Achievements",
+    "/achievements": "Achievements",
+    "/achievements/add": "New Achievement",
     "n/a": "",
   };
 
