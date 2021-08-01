@@ -18,6 +18,7 @@ import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/api/response/news_feed_response.dart';
+import 'package:InstiApp/src/api/response/your_achievements_response.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/io_client.dart';
 // import 'package:http/browser_client.dart';
@@ -223,8 +224,10 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
   Future<List<TagUri>> getAllTags(@Header("Cookie") String sessionId);
 
   @PostReq(path: "/achievements")
-  Future<AchievementCreateResponse> postForm(
-      @Header("Cookie") String sessionId,
+  Future<AchievementCreateResponse> postForm(@Header("Cookie") String sessionId,
       @AsJson() AchievementCreateRequest achievementCreateRequest);
 
+  @GetReq(path: "/achievements")
+  Future<List<Achievement>> getYourAchievements(
+      @Header("Cookie") String sessionId);
 }

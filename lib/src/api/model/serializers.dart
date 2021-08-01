@@ -20,6 +20,7 @@ import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/api/response/news_feed_response.dart';
+import 'package:InstiApp/src/api/response/your_achievements_response.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
 import 'package:InstiApp/src/api/model/user.dart';
@@ -73,4 +74,5 @@ JsonRepo standardSerializers = JsonRepo(serializers: [
   ImageUploadResponseSerializer(),
   ComplaintCreateResponseSerializer(),
   AchievementCreateResponseSerializer(),
+  YourAchievementsResponseSerializer(),
 ]);
