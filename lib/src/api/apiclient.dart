@@ -7,6 +7,7 @@ import 'package:InstiApp/src/api/model/notification.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
+import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
 import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
@@ -230,4 +231,8 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
   @GetReq(path: "/achievements")
   Future<List<Achievement>> getYourAchievements(
       @Header("Cookie") String sessionId);
+
+  @PatchReq(path: "/achievements/:id")
+  Future<void> toggleHidden(@Header("Cookie") String sessionID,
+      @PathParam() String id, @AsJson() AchievementHiddenPathRequest hidden);
 }
