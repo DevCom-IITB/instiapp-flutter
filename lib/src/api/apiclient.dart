@@ -19,8 +19,6 @@ import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/api/response/news_feed_response.dart';
-import 'package:InstiApp/src/api/response/your_achievements_response.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http/io_client.dart';
 // import 'package:http/browser_client.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
@@ -29,7 +27,6 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:jaguar_resty/jaguar_resty.dart';
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
-import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'package:InstiApp/src/api/model/serializers.dart';
 
 part 'apiclient.jretro.dart';

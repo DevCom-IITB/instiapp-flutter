@@ -1,25 +1,21 @@
 import 'dart:async';
 import 'dart:developer';
-import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
-import 'package:InstiApp/src/api/model/event.dart';
-class Validators{
 
-  var validator = StreamTransformer<String,String>.fromHandlers(
-      handleData: (text,sink){
-        if(text.length>4){
-          sink.add(text);
-        }else{
-          sink.addError("Length must be greater than 4");
-        }
-      }
-  );
-
+class Validators {
+  var validator =
+      StreamTransformer<String, String>.fromHandlers(handleData: (text, sink) {
+    if (text.length > 4) {
+      sink.add(text);
+    } else {
+      sink.addError("Length must be greater than 4");
+    }
+  });
 }
-class Bloc extends Object with Validators {
 
+class Bloc extends Object with Validators {
   InstiAppBloc bloc;
   final _titleController = StreamController<String>();
   final _descriptionController = StreamController<String>();
@@ -42,8 +38,7 @@ class Bloc extends Object with Validators {
       _descriptionController.stream.transform(validator);
   Stream<String> get admin_note =>
       _admin_noteController.stream.transform(validator);
-  Stream<String> get event =>
-      _eventController.stream.transform(validator);
+  Stream<String> get event => _eventController.stream.transform(validator);
   Stream<String> get verauth =>
       _veryfying_authController.stream.transform(validator);
 
@@ -55,17 +50,17 @@ class Bloc extends Object with Validators {
   // }
 
   Bloc(this.bloc);
-  Future<AchievementCreateResponse> postForm(AchievementCreateRequest req) async {
+  Future<AchievementCreateResponse> postForm(
+      AchievementCreateRequest req) async {
     try {
-      req.description=description.toString();
-      req.title=title.toString();
-      req.adminNote=admin_note.toString();
-      req.verauth=verauth.toString();
-      req.event=event.toString();
-      req.body=event.toString();
+      req.description = description.toString();
+      req.title = title.toString();
+      req.adminNote = admin_note.toString();
+      req.verauth = verauth.toString();
+      req.event = event.toString();
+      req.body = event.toString();
 
-
-      var comment= bloc.client.postForm(bloc.getSessionIdHeader(), req);
+      var comment = bloc.client.postForm(bloc.getSessionIdHeader(), req);
       log(comment.toString());
     } catch (ex) {
       print(ex);
@@ -73,7 +68,7 @@ class Bloc extends Object with Validators {
     }
   }
 
-  void dispose(){
+  void dispose() {
     _titleController.close();
     _descriptionController.close();
     _admin_noteController.close();
@@ -81,4 +76,3 @@ class Bloc extends Object with Validators {
     _veryfying_authController.close();
   }
 }
-

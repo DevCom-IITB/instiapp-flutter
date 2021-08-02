@@ -132,7 +132,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
               orElse: () => null),
 
           toggleableActiveColor: widget.bloc.accentColor,
-          textSelectionHandleColor: widget.bloc.accentColor,
+          textSelectionTheme:
+              TextSelectionThemeData(selectionColor: widget.bloc.accentColor),
 
           canvasColor: widget.bloc.brightness.toColor(),
 

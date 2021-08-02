@@ -1,5 +1,4 @@
-import 'package:InstiApp/src/api/model/event.dart';
-import 'package:InstiApp/src/api/model/role.dart';
+
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
 part 'offeredAchievements.jser.dart';
