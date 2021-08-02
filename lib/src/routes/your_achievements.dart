@@ -81,7 +81,8 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
                       if (snapshot.data.length > 0) {
                         return SliverList(
                           delegate: SliverChildBuilderDelegate(
-                              (context, index) => AchListItem(),
+                              (context, index) => AchListItem(
+                                  achievement: snapshot.data[index]),
                               childCount: snapshot.data.length),
                         );
                       } else {
@@ -125,21 +126,23 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
 class AchListItem extends StatefulWidget {
   final String title;
   final String company;
-  final Icon icon;
+  final String icon;
   final String forText;
   final String importance;
   final bool isVerified;
   final bool isHidden;
-  const AchListItem({
+  final Achievement achievement;
+  AchListItem({
     Key key,
-    this.title,
-    this.company,
-    this.icon,
-    this.forText,
-    this.importance,
-    this.isVerified,
-    this.isHidden,
-  }) : super(key: key);
+    this.achievement,
+  })  : this.title = achievement.title,
+        this.company = achievement.body.bodyName,
+        this.icon = achievement.body.bodyImageURL,
+        this.forText = achievement.event.eventName,
+        this.importance = achievement.description,
+        this.isVerified = achievement.verified,
+        this.isHidden = achievement.hidden,
+        super(key: key);
 
   @override
   _AchListItemState createState() => _AchListItemState();
@@ -152,6 +155,7 @@ class _AchListItemState extends State<AchListItem> {
   void initState() {
     isSwitchOn = widget.isHidden;
     super.initState();
+    print(widget.achievement.user);
   }
 
   void toggleSwitch(bool value) {
@@ -203,7 +207,7 @@ class _AchListItemState extends State<AchListItem> {
 class DefListItem extends StatelessWidget {
   final String title;
   final String company;
-  final Icon icon;
+  final String icon;
   final String forText;
   final String importance;
   final bool isVerified;
@@ -243,7 +247,9 @@ class DefListItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ListTile(
-          leading: icon,
+          leading: CircleAvatar(
+            foregroundImage: NetworkImage(icon),
+          ),
           title: Text(title),
           subtitle: Text(company),
         ),
