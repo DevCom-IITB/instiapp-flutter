@@ -373,6 +373,6 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path(basePath)
         .path("/achievements")
         .header("Cookie", sessionId);
-    return await req.go(throwOnErr: true).map(decodeOne);
+    return await req.go(throwOnErr: true).map(decodeList);
   }
 }

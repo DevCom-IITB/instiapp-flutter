@@ -29,8 +29,8 @@ abstract class _$AchievementSerializer implements Serializer<Achievement> {
     setMapValue(ret, 'title', model.title);
     setMapValue(ret, 'description', model.description);
     setMapValue(ret, 'admin_note', model.adminNote);
-    setMapValue(ret, 'body', _bodySerializer.toMap(model.body));
-    setMapValue(ret, 'event', _eventSerializer.toMap(model.event));
+    setMapValue(ret, 'body_detail', _bodySerializer.toMap(model.body));
+    setMapValue(ret, 'event_detail', _eventSerializer.toMap(model.event));
     setMapValue(ret, 'offer', model.offer);
     return ret;
   }
@@ -50,8 +50,8 @@ abstract class _$AchievementSerializer implements Serializer<Achievement> {
     obj.title = map['title'] as String;
     obj.description = map['description'] as String;
     obj.adminNote = map['admin_note'] as String;
-    obj.body = _bodySerializer.fromMap(map['body'] as Map);
-    obj.event = _eventSerializer.fromMap(map['event'] as Map);
+    obj.body = _bodySerializer.fromMap(map['body_detail'] as Map);
+    obj.event = _eventSerializer.fromMap(map['event_detail'] as Map);
     obj.offer = map['offer'] as String;
     return obj;
   }
