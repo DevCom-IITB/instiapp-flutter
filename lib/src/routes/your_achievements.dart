@@ -23,7 +23,7 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
-    if (firstBuild) {
+    if (firstBuild && bloc.currSession != null) {
       bloc.updateAchievements();
       firstBuild = false;
     }
@@ -58,64 +58,75 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
         ),
       ),
       body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () => bloc.updateAchievements(),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: TitleWithBackButton(
-                    child: Text(
-                      "Your Acheivements",
-                      style: theme.textTheme.headline4,
+        child: bloc.currSession == null
+            ? Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(50),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.cloud,
+                      size: 200,
+                      color: Colors.grey[600],
                     ),
-                  ),
+                    Text(
+                      "Login To View Achievements",
+                      style: theme.textTheme.headline5,
+                      textAlign: TextAlign.center,
+                    )
+                  ],
+                  crossAxisAlignment: CrossAxisAlignment.center,
                 ),
-                StreamBuilder(
-                  stream: bloc.achievements,
-                  builder: (context,
-                      AsyncSnapshot<UnmodifiableListView<Achievement>>
-                          snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data.length > 0) {
-                        return SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                              (context, index) => AchListItem(
-                                  achievement: snapshot.data[index]),
-                              childCount: snapshot.data.length),
-                        );
-                      } else {
-                        return SliverToBoxAdapter(
-                          child: Center(
-                            child: Text("No Achievements"),
-                          ),
-                        );
-                      }
-                    } else {
-                      return SliverToBoxAdapter(
-                        child: Center(
-                          child: CircularProgressIndicatorExtended(
-                            label: Text("Getting your Achievements"),
+              )
+            : RefreshIndicator(
+                onRefresh: () => bloc.updateAchievements(),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: TitleWithBackButton(
+                          child: Text(
+                            "Your Acheivements",
+                            style: theme.textTheme.headline4,
                           ),
                         ),
-                      );
-                    }
-                  },
-                )
-                // AchListItem(
-                //   title: "Participation",
-                //   company: "DevCom",
-                //   icon: Icon(Icons.laptop),
-                //   forText: "Acheivement Page Launch",
-                //   importance: "Doesn't Matter Much",
-                //   isVerified: true,
-                //   isHidden: true,
-                // ),
-              ],
-            ),
-          ),
-        ),
+                      ),
+                      StreamBuilder(
+                        stream: bloc.achievements,
+                        builder: (context,
+                            AsyncSnapshot<UnmodifiableListView<Achievement>>
+                                snapshot) {
+                          if (snapshot.hasData) {
+                            if (snapshot.data.length > 0) {
+                              return SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                    (context, index) => AchListItem(
+                                        achievement: snapshot.data[index]),
+                                    childCount: snapshot.data.length),
+                              );
+                            } else {
+                              return SliverToBoxAdapter(
+                                child: Center(
+                                  child: Text("No Achievements"),
+                                ),
+                              );
+                            }
+                          } else {
+                            return SliverToBoxAdapter(
+                              child: Center(
+                                child: CircularProgressIndicatorExtended(
+                                  label: Text("Getting your Achievements"),
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              ),
       ),
       floatingActionButton: fab,
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
@@ -155,7 +166,6 @@ class _AchListItemState extends State<AchListItem> {
   void initState() {
     isSwitchOn = widget.isHidden;
     super.initState();
-    print(widget.achievement.user);
   }
 
   void toggleSwitch(bool value) {

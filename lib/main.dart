@@ -208,8 +208,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           } else {
             switch (settings.name) {
               case "/":
-                return _buildRoute(settings, YourAchievementPage());
-              // return _buildRoute(settings, LoginPage(widget.bloc));
+                // return _buildRoute(settings, YourAchievementPage());
+                return _buildRoute(settings, LoginPage(widget.bloc));
               case "/mess":
                 print("Entereing here mess");
                 return _buildRoute(settings, MessPage());
