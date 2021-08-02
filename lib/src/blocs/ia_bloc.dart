@@ -5,6 +5,7 @@ import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
+import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
@@ -345,6 +346,19 @@ class InstiAppBloc {
       e.eventUserUes = ues;
     } catch (ex) {
       print(ex);
+    }
+  }
+
+  Future<void> updateHiddenAchievement(
+      Achievement achievement, bool hidden) async {
+    try {
+      print("Updating hidden");
+      await client.toggleHidden(getSessionIdHeader(), achievement.id,
+          AchievementHiddenPathRequest()..hidden = hidden);
+      achievement.hidden = hidden;
+      print("Updated hidden");
+    } catch (e) {
+      print(e);
     }
   }
 

@@ -164,6 +164,7 @@ class _AchListItemState extends State<AchListItem> {
 
   @override
   void initState() {
+    print(widget.company);
     isSwitchOn = widget.isHidden;
     super.initState();
   }
@@ -182,6 +183,7 @@ class _AchListItemState extends State<AchListItem> {
 
   @override
   Widget build(BuildContext context) {
+    var bloc = BlocProvider.of(context).bloc;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -197,7 +199,10 @@ class _AchListItemState extends State<AchListItem> {
           children: [
             Switch(
               value: isSwitchOn,
-              onChanged: toggleSwitch,
+              onChanged: (bool value) {
+                toggleSwitch(value);
+                bloc.updateHiddenAchievement(widget.achievement, value);
+              },
               activeColor: Colors.yellow,
               activeTrackColor: Colors.yellow[200],
               inactiveThumbColor: Colors.grey[600],

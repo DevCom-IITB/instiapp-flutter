@@ -375,4 +375,14 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .header("Cookie", sessionId);
     return await req.go(throwOnErr: true).map(decodeList);
   }
+
+  Future<void> toggleHidden(String sessionID, String id, AchievementHiddenPathRequest hidden) async {
+    var req = base.patch
+        .path(basePath)
+        .path("/achievements/:id")
+        .pathParams("id", id)
+        .header("Cookie", sessionID)
+        .json(jsonConverter.to(hidden));
+    return await req.go(throwOnErr: true);
+  }
 }
