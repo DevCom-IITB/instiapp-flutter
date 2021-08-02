@@ -337,6 +337,7 @@ class _NavDrawerState extends State<NavDrawer> {
                               setState(() {
                                 loggingOutLoading = false;
                               });
+                              Navigator.pushReplacementNamed(context, "/");
                             },
                       trailing: loggingOutLoading
                           ? CircularProgressIndicatorExtended()
