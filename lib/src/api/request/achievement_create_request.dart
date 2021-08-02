@@ -1,5 +1,4 @@
 import 'package:jaguar_serializer/jaguar_serializer.dart';
-import 'package:InstiApp/src/api/model/event.dart';
 part 'achievement_create_request.jser.dart';
 
 
