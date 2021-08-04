@@ -153,7 +153,7 @@ class _BlogPageState extends State<BlogPage> {
                       children: <Widget>[
                         Text(
                           widget.title,
-                          style: theme.textTheme.display2,
+                          style: theme.textTheme.headline3,
                         ),
                       ],
                     ),
@@ -163,7 +163,7 @@ class _BlogPageState extends State<BlogPage> {
                       padding: const EdgeInsets.all(28.0),
                       child: Text(
                         "You must be logged in to view ${widget.title}",
-                        style: theme.textTheme.title,
+                        style: theme.textTheme.headline6,
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -259,7 +259,7 @@ class _BlogPageState extends State<BlogPage> {
                             Text(
                               post.title,
                               textAlign: TextAlign.start,
-                              style: theme.textTheme.headline
+                              style: theme.textTheme.headline5
                                   .copyWith(fontWeight: FontWeight.bold),
                             ),
                             widget.postType == PostType.NewsArticle
@@ -273,7 +273,7 @@ class _BlogPageState extends State<BlogPage> {
                                       message: "Open body page",
                                       child: Text(
                                         "${((post as NewsArticle).body.bodyName)} | ${post.published}",
-                                        style: theme.textTheme.subhead
+                                        style: theme.textTheme.subtitle1
                                             .copyWith(color: Colors.lightBlue),
                                       ),
                                     ),
@@ -281,7 +281,7 @@ class _BlogPageState extends State<BlogPage> {
                                 : Text(
                                     post.published,
                                     textAlign: TextAlign.start,
-                                    style: theme.textTheme.subhead,
+                                    style: theme.textTheme.subtitle1,
                                   ),
                             SizedBox(
                               height: 4.0,
@@ -312,7 +312,7 @@ class _BlogPageState extends State<BlogPage> {
               ),
               child: CommonHtml(
                 data: post.content,
-                defaultTextStyle: theme.textTheme.subhead,
+                defaultTextStyle: theme.textTheme.subtitle1,
               ),
             ),
             widget.postType == PostType.NewsArticle
@@ -395,7 +395,7 @@ class _BlogPageState extends State<BlogPage> {
                                                 child: Text(
                                                   reactionToEmoji[s],
                                                   style:
-                                                      theme.textTheme.headline,
+                                                      theme.textTheme.headline5,
                                                 ),
                                                 onPressed: () {
                                                   Navigator.of(context,
@@ -433,7 +433,7 @@ class _BlogPageState extends State<BlogPage> {
                                                 text:
                                                     "${nonZeroReactions?.map((s) => reactionToEmoji[s])?.join()} ",
                                                 style:
-                                                    theme.textTheme.headline),
+                                                    theme.textTheme.headline5),
                                             TextSpan(
                                                 text:
                                                     " ${((article?.userReaction ?? -1) < 0) ? "" : "You "}${((article?.userReaction ?? -1) >= 0 && totalNumberOfReactions > 1) ? "and " : ""}${numberOfPeopleOtherThanYou > 0 ? (numberOfPeopleOtherThanYou.toString() + " other " + (numberOfPeopleOtherThanYou > 1 ? "people " : "person ")) : ""}reacted"),
@@ -446,7 +446,7 @@ class _BlogPageState extends State<BlogPage> {
                                             TextSpan(
                                                 text: "👍 ",
                                                 style:
-                                                    theme.textTheme.headline),
+                                                    theme.textTheme.headline5),
                                             TextSpan(text: " Like"),
                                           ]),
                                         )),
@@ -484,7 +484,7 @@ class _BlogPageState extends State<BlogPage> {
               Expanded(
                 child: Text(
                   widget.title,
-                  style: theme.textTheme.display2,
+                  style: theme.textTheme.headline3,
                 ),
               ),
               AnimatedContainer(
@@ -526,14 +526,14 @@ class _BlogPageState extends State<BlogPage> {
                   duration: Duration(milliseconds: 500),
                   child: TextField(
                     controller: _searchFieldController,
-                    cursorColor: theme.textTheme.body1.color,
-                    style: theme.textTheme.body1,
+                    cursorColor: theme.textTheme.bodyText2.color,
+                    style: theme.textTheme.bodyText2,
                     focusNode: _focusNode,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30)),
-                      labelStyle: theme.textTheme.body1,
-                      hintStyle: theme.textTheme.body1,
+                      labelStyle: theme.textTheme.bodyText2,
+                      hintStyle: theme.textTheme.bodyText2,
                       prefixIcon: Icon(
                         Icons.search_outlined,
                       ),

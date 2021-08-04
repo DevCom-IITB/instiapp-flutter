@@ -20,6 +20,7 @@ import 'package:InstiApp/src/routes/settingspage.dart';
 import 'package:InstiApp/src/routes/trainingblogpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/routes/achievement_form.dart';
+import 'package:InstiApp/src/routes/your_achievements.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -131,7 +132,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
               orElse: () => null),
 
           toggleableActiveColor: widget.bloc.accentColor,
-          textSelectionHandleColor: widget.bloc.accentColor,
+          textSelectionTheme:
+              TextSelectionThemeData(selectionColor: widget.bloc.accentColor),
 
           canvasColor: widget.bloc.brightness.toColor(),
 
@@ -207,9 +209,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           } else {
             switch (settings.name) {
               case "/":
-                //return _buildRoute(settings, FeedPage());
-               return _buildRoute(settings, LoginPage(widget.bloc));
+                // return _buildRoute(settings, YourAchievementPage());
+                return _buildRoute(settings, LoginPage(widget.bloc));
               case "/mess":
+                print("Entereing here mess");
                 return _buildRoute(settings, MessPage());
               case "/placeblog":
                 return _buildRoute(settings, PlacementBlogPage());
@@ -242,6 +245,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
               case "/about":
                 return _buildRoute(settings, AboutPage());
               case "/achievements":
+                return _buildRoute(settings, YourAchievementPage());
+              case "/achievements/add":
+                print("Entereing here");
                 return _buildRoute(settings, Home());
             }
           }

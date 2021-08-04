@@ -1,4 +1,4 @@
-import 'dart:async';
+
 import 'dart:collection';
 
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
@@ -207,13 +207,13 @@ class _NavDrawerState extends State<NavDrawer> {
                               title: Text(
                                 snapshot?.data?.profile?.userName ??
                                     'Not Logged in',
-                                style: theme.textTheme.body1
+                                style: theme.textTheme.bodyText2
                                     .copyWith(fontWeight: FontWeight.bold),
                               ),
                               subtitle: snapshot.data != null
                                   ? Text(snapshot.data?.profile?.userRollNumber,
-                                      style: theme.textTheme.body1)
-                                  : RaisedButton(
+                                      style: theme.textTheme.bodyText2)
+                                  : ElevatedButton(
                                       child: Text(
                                         "Log in",
                                       ),
@@ -337,6 +337,7 @@ class _NavDrawerState extends State<NavDrawer> {
                               setState(() {
                                 loggingOutLoading = false;
                               });
+                              Navigator.pushReplacementNamed(context, "/");
                             },
                       trailing: loggingOutLoading
                           ? CircularProgressIndicatorExtended()
@@ -449,7 +450,8 @@ class MNavigatorObserver extends NavigatorObserver {
     "/putentity/event": 0,
     "/map": 7,
     "/settings": 10,
-    "/achievements":11,
+    "/achievements": 11,
+    "/achievements/add": 12,
     "/notifications": -1,
   };
 
@@ -468,7 +470,8 @@ class MNavigatorObserver extends NavigatorObserver {
     "/map": "Map",
     "/settings": "Settings",
     "/notifications": "Notifications",
-    "/achievements":"Achievements",
+    "/achievements": "Achievements",
+    "/achievements/add": "New Achievement",
     "n/a": "",
   };
 
