@@ -56,6 +56,8 @@ class InstiAppBloc {
   ValueStream<UnmodifiableListView<Event>> get events => _eventsSubject.stream;
   final _eventsSubject = BehaviorSubject<UnmodifiableListView<Event>>();
 
+
+
   ValueStream<UnmodifiableListView<ntf.Notification>> get notifications =>
       _notificationsSubject.stream;
   final _notificationsSubject =
@@ -103,6 +105,8 @@ class InstiAppBloc {
   AddToCalendar _addToCalendarSetting = AddToCalendar.AlwaysAsk;
 
   AddToCalendar get addToCalendarSetting => _addToCalendarSetting;
+
+  Object get getevents => _events;
 
   set addToCalendarSetting(AddToCalendar mAddToCalendarSetting) {
     if (mAddToCalendarSetting != _addToCalendarSetting) {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/serializers.dart';
@@ -17,6 +18,11 @@ class ExploreBloc {
   // Streams
   ValueStream<ExploreResponse> get explore => _exploreSubject.stream;
   final _exploreSubject = BehaviorSubject<ExploreResponse>();
+
+
+  ValueStream<UnmodifiableListView<Body>> get bodies => _bodiesSubject.stream;
+  final _bodiesSubject = BehaviorSubject<UnmodifiableListView<Body>>();
+
 
   // Params
   String query = "";
@@ -46,6 +52,9 @@ class ExploreBloc {
           standardSerializers.decodeList<Body>(prefs.getString(storageID));
       _push(ExploreResponse(bodies: allBodies));
     }
+    _bodiesSubject.add(UnmodifiableListView(allBodies));
+
+
   }
 
   Future refresh() async {

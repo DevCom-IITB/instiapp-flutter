@@ -1,10 +1,31 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
+import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/body.dart';
+//import 'package:flutter/src/widgets/framework.dart';
+
+import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/routes/bodypage.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/share_url_maker.dart';
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:share/share.dart';
+import 'package:markdown/markdown.dart' as markdown;
+import 'package:device_calendar/device_calendar.dart' as cal;
+
 class Validators{
 
   var validator = StreamTransformer<String,String>.fromHandlers(
@@ -16,6 +37,19 @@ class Validators{
         }
       }
   );
+
+}
+
+
+
+// class for sending request to API
+class _AchievementCreateRequest{
+  String title;
+  String description;
+  String admin_note;
+  String verauth;
+  String event;
+  String body;
 
 }
 class Bloc extends Object with Validators {
@@ -54,24 +88,30 @@ class Bloc extends Object with Validators {
   //   print("xyx");
   // }
 
+
+  // Future<AchievementCreateResponse> postForm(_AchievementCreateRequest req) async {
+  //   try {
+  //     return bloc.client.postForm(bloc.getSessionIdHeader(), req);
+  //   } catch (ex) {
+  //     print(ex);
+  //     return null;
+  //   }
+  // }
   Bloc(this.bloc);
   Future<AchievementCreateResponse> postForm(AchievementCreateRequest req) async {
     try {
-      req.description=description.toString();
-      req.title=title.toString();
-      req.adminNote=admin_note.toString();
-      req.verauth=verauth.toString();
-      req.event=event.toString();
-      req.body=event.toString();
-
-
-      var comment= bloc.client.postForm(bloc.getSessionIdHeader(), req);
-      log(comment.toString());
+      req.event=Event();
+      req.verauth=Body();
+      var comment= await bloc.client.postForm(bloc.getSessionIdHeader(), req);
+      log(comment.result);//comment.whenComplete(() => null);
+      return comment;
     } catch (ex) {
       print(ex);
       return null;
     }
   }
+
+
 
   void dispose(){
     _titleController.close();
