@@ -39,10 +39,10 @@ class Achievement {
   @Alias("admin_note")
   String adminNote;
 
-  @Alias("body")
+  @Alias("body_detail")
   Body body;
 
-  @Alias("event")
+  @Alias("event_detail")
   Event event;
 
   //TODO: Make string an offered achievement

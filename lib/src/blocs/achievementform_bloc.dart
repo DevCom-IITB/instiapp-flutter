@@ -53,7 +53,6 @@ class _AchievementCreateRequest{
 
 }
 class Bloc extends Object with Validators {
-
   InstiAppBloc bloc;
   final _titleController = StreamController<String>.broadcast();
   final _descriptionController = StreamController<String>.broadcast();
@@ -62,22 +61,30 @@ class Bloc extends Object with Validators {
   final _veryfying_authController = StreamController<String>.broadcast();
 
   Function(String) get titlechanged => _titleController.sink.add;
+
   Function(String) get descchanged => _descriptionController.sink.add;
+
   Function(String) get adminchanged => _admin_noteController.sink.add;
+
   Function(String) get eventChanged => _eventController.sink.add;
+
   Function(String) get verauthChanged => _veryfying_authController.sink.add;
+
   //
   //Another way
   // StreamSink<String> get emailChanged => _emailController.sink;
   // StreamSink<String> get passwordChanged => _passwordController.sink;
 
   Stream<String> get title => _titleController.stream.transform(validator);
+
   Stream<String> get description =>
       _descriptionController.stream.transform(validator);
+
   Stream<String> get admin_note =>
       _admin_noteController.stream.transform(validator);
-  Stream<String> get event =>
-      _eventController.stream.transform(validator);
+
+  Stream<String> get event => _eventController.stream.transform(validator);
+
   Stream<String> get verauth =>
       _veryfying_authController.stream.transform(validator);
 
@@ -98,12 +105,12 @@ class Bloc extends Object with Validators {
   //   }
   // }
   Bloc(this.bloc);
-  Future<AchievementCreateResponse> postForm(AchievementCreateRequest req) async {
+
+  Future<AchievementCreateResponse> postForm(
+      AchievementCreateRequest req) async {
     try {
-      req.event=Event();
-      req.verauth=Body();
-      var comment= await bloc.client.postForm(bloc.getSessionIdHeader(), req);
-      log(comment.result);//comment.whenComplete(() => null);
+      var comment = await bloc.client.postForm(bloc.getSessionIdHeader(), req);
+      log(comment.result); //comment.whenComplete(() => null);
       return comment;
     } catch (ex) {
       print(ex);
@@ -112,8 +119,7 @@ class Bloc extends Object with Validators {
   }
 
 
-
-  void dispose(){
+  void dispose() {
     _titleController.close();
     _descriptionController.close();
     _admin_noteController.close();
@@ -121,4 +127,3 @@ class Bloc extends Object with Validators {
     _veryfying_authController.close();
   }
 }
-
