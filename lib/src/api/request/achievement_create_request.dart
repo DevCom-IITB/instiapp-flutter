@@ -1,5 +1,7 @@
+import 'package:InstiApp/src/api/model/user.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/body.dart';
 part 'achievement_create_request.jser.dart';
 
 
@@ -12,16 +14,14 @@ class AchievementCreateRequest {
   String description;
 
   @Alias("admin_note")
-  String adminNote;
-
-  @Alias("body")
-  String body;
+  String admin_note;
 
   @Alias("event")
-  String event;
+  Event event;
 
-  @Alias("verified_by")
-  String verauth;
+  @Alias("body")
+  Body verauth;
+
 }
 
 @GenSerializer()

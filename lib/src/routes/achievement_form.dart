@@ -1,220 +1,356 @@
+import 'dart:collection';
+import 'dart:developer';
+
 import 'package:InstiApp/src/api/apiclient.dart';
+import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 
 import '../bloc_provider.dart';
+import '../drawer.dart';
 
 class Home extends StatefulWidget {
-  Form createState() => Form();
+  // initiate widgetstate Form
+  _CreateAchievementPage createState() => _CreateAchievementPage();
 }
 
-
-class Verify {
-  String club = '';
-  String description = '';
-  String image = 'devcom.png';
-
-  Verify({String club = '', String description = '', String image = ''}) {
-    this.club = club;
-    this.description = description;
-    this.image = image;
-  }
-
-  static List<Verify> getverauth() {
-    return <Verify>[
-      Verify(
-          club: 'InstiApp',
-          description: 'The one platform of IIT Bombay',
-          image: 'assets/login/lotus.png'),
-      Verify(
-          club: 'sa',
-          description: 'The asa platform of IIT Bombay',
-          image: 'assets/login/lotus.png')
-    ];
-  }
-}
-
-
-
-class Form extends State<Home> {
+class _CreateAchievementPage extends State<Home> {
   int number = 0;
-  bool selected=false;
-  List<Verify> _companies = Verify.getverauth();
-  List<DropdownMenuItem<Verify>> _dropdownMenuItems;
-  Verify _selectedCompany =
-  Verify(club: 'ff', description: 'ff', image: 'assets/login/lotus.png');
+  bool selectedE = false;
+  bool selectedB =false;
 
-  @override
-  void initState() {
-    _dropdownMenuItems = buildDropdownMenuItems(_companies);
-  }
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  List<DropdownMenuItem<Verify>> buildDropdownMenuItems(List companies) {
-    List<DropdownMenuItem<Verify>> items = [];
-    for (Verify company in companies) {
+  Event _selectedEvent = Event();
+  Body  _selectedBody =Body();
+  AchievementCreateRequest currRequest = AchievementCreateRequest();
+
+
+
+  TextEditingController titlecontroller =TextEditingController();
+  TextEditingController desccontroller =TextEditingController();
+  TextEditingController adminnotecontroller =TextEditingController();
+
+  // builds dropdown menu for event choice
+  List<DropdownMenuItem<Event>> buildDropdownMenuItems(
+      UnmodifiableListView<Event> data) {
+    List<DropdownMenuItem<Event>> items = [];
+    for (Event event in data) {
       items.add(
         DropdownMenuItem(
-          value: company,
-          child: Text(company.club),
+          value: event,
+          child: Text(event.eventName),
         ),
       );
     }
     return items;
   }
 
+  // builds dropdown menu for event choice
+  List<DropdownMenuItem<Body>> buildDropdownMenuItemsBody(
+      UnmodifiableListView<Body> data) {
+    List<DropdownMenuItem<Body>> items = [];
+    for (Body event in data) {
+      items.add(
+        DropdownMenuItem(
+          value: event,
+          child: Text(event.bodyName),
+        ),
+      );
+    }
+    return items;
+  }
+  @override
+  void initstate(){
+    titlecontroller.addListener(() {currRequest.title=titlecontroller.text;});
+    desccontroller.addListener(() {currRequest.description=desccontroller.text;});
+    adminnotecontroller.addListener(() {currRequest.admin_note=adminnotecontroller.text;});
+  }
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the widget tree.
+    // This also removes the _printLatestValue listener.
+    titlecontroller.dispose();
+    desccontroller.dispose();
+    adminnotecontroller.dispose();
+    super.dispose();
+  }
+
+  bool firstBuild = true;
+
+
+
   @override
   Widget build(BuildContext context) {
-    var bloca = BlocProvider.of(context).bloc;
-    final bloc = bloca.achievementBloc;
+    var bloc = BlocProvider.of(context).bloc;
+    var theme = Theme.of(context);
+    final achievementsBloc = bloc.achievementBloc;
+    currRequest.title="aa";
+    currRequest.description="aa";
+    currRequest.admin_note="aa";
+
+
+    if (firstBuild) {
+      bloc.updateEvents();
+      firstBuild = false;
+    }
+
+
+
+
+
+
 
     return Scaffold(
-      appBar: AppBar(
-        leading: Icon(Icons.menu),
-        title: Text('Achievements'),
-        //centerTitle: true,
-        backgroundColor: Colors.blue,
-        actions: [
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Icon(Icons.qr_code),
+        key: _scaffoldKey,
+        drawer: NavDrawer(),
+        appBar: AppBar(
+          leading: IconButton(
+            tooltip: "Show top sheet",
+            icon: Icon(
+              Icons.menu_outlined,
+              semanticLabel: "Show top sheet",
+            ),
+            onPressed: () {
+              _scaffoldKey.currentState.openDrawer();
+            },
           ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Icon(Icons.notifications),
+          title: Text(
+            'Achievements',
+            //style: theme.textTheme.display2,
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                  margin: EdgeInsets.fromLTRB(15.0, 15.0, 10.0, 5.0),
-                  child: Text(
-                    'Verification Request',
-                    style: TextStyle(fontSize: 20),
-                  )),
-      StreamBuilder<String>(
-            stream: bloc.title,
-            builder: (context, snapshot) => Container(
-                    margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                    child: TextField(
-                      onChanged: bloc.titlechanged,
-                      keyboardType: TextInputType.name,
-                      decoration: InputDecoration(
-                        hintText: 'Title*',
-                      ),
-                      maxLength: 50,
-                    )),
-              ),
-              Container(
-                  margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                  child: Text('Description', style: TextStyle(fontSize: 15))),
-              StreamBuilder<String>(
-                stream: bloc.description,
-                builder: (context, snapshot) => Container(
-                    margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                    child: TextField(
-                      onChanged: bloc.descchanged,
-                      keyboardType: TextInputType.text,
-                      decoration: InputDecoration(
-                        //errorText: snapshot.error
-                      ),
-                    )),
-              ),
-              Container(
-                  margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                  child: Text(
-                    'Admin Note',
-                    style: TextStyle(fontSize: 15),
-                  )),
-              StreamBuilder<String>(
-                stream: bloc.admin_note,
-                builder: (context, snapshot) => Container(
-                    margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                    child: TextField(
-                      onChanged: bloc.adminchanged,
-                      decoration: InputDecoration(),
-                    )),
-              ),
-              Container(
-                  margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(
-                          height: 20.0,
+          //centerTitle: true,
+          backgroundColor: Colors.blue,
+          actions: [
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 10.0),
+              child: Icon(Icons.qr_code),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 10.0),
+              child: Icon(Icons.notifications),
+            ),
+          ],
+        ),
+        body: RefreshIndicator(
+          onRefresh: () => bloc.updateEvents(),
+          child: SingleChildScrollView(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                      margin: EdgeInsets.fromLTRB(15.0, 15.0, 10.0, 5.0),
+                      child: Text(
+                        'Verification Request',
+                        style: TextStyle(fontSize: 20),
+                      )),
+                  Container(
+                      margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
+                      child: TextFormField(
+                        controller: titlecontroller,
+                        maxLength: 50,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: "Title",
                         ),
-                        DropdownButtonFormField(
-                            hint: Text("Event(Optional)"),
-                            items: _dropdownMenuItems,
-                            onChanged: (Verify selectedCompany) {
-                              setState(() {
-                                selected=true;
-                                _selectedCompany = selectedCompany;
-
-                              });
-                            }),
-                        SizedBox(
-                          height: 20.0,
+                        autocorrect: true,
+                        validator: (value) {
+                          log("aa");
+                          currRequest.title = value;
+                        },
+                      )),
+                  Container(
+                      margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
+                      child: TextFormField(
+                        controller: desccontroller,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: "Description",
                         ),
-                        verify_card(thing: this._selectedCompany, selected: this.selected),
-                      ])),
-              Container(
-                  margin: EdgeInsets.fromLTRB(15.0, 1.0, 15.0, 5.0),
-                  child: Text(
-                    "Search for an InstiApp event",
-                    style: TextStyle(fontSize: 12),
-                  )),
-              StreamBuilder<String>(
-                stream: bloc.verauth,
-                builder: (context, snapshot) =>Container(
-                    margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                    child: TextField(
-                      onChanged: bloc.verauthChanged,
-                      decoration: InputDecoration(
-                        hintText: 'Verifying Authority',
-                      ),
-                    )),
-              ),
-              Container(
-                  margin: EdgeInsets.fromLTRB(15.0, 1.0, 15.0, 5.0),
-                  child: Text(
-                    'Enter an Organisations name',
-                    style: TextStyle(fontSize: 12),
-                  )),
-              Container(
-                width: double.infinity,
-                margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-                child: TextButton(
-                  onPressed: () {
-                    AchievementCreateRequest req = AchievementCreateRequest();
+                        autocorrect: true,
+                        onChanged: (String selectedEvent) {
+                                 setState(() {
 
-                    bloc.postForm(req);
+                            currRequest.description = selectedEvent;
 
-                  },
-                  child: Text('Request Verification'),
-                  style: TextButton.styleFrom(
-                      primary: Colors.black,
-                      backgroundColor: Colors.amber,
-                      onSurface: Colors.grey,
-                      elevation: 5.0),
-                ),
-              ),
-            ]),
-      )
-    );
+                            });
+                                 },
+                        validator: (value) {
+                          log("bb");
+                          currRequest.description = value;
+                        },
+                      )),
+                  Container(
+                      margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
+                      child: TextFormField(
+                        controller: adminnotecontroller,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: "Admin Note",
+                        ),
+                        autocorrect: true,
+                        validator: (value) {
+                          log("bb");
+                          currRequest.admin_note = value;
+                        },
+                      )),
+                  Container(
+                      margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SizedBox(
+                              height: 20.0,
+                            ),
+                            StreamBuilder(
+                              stream: bloc.events,
+                              builder: (context,
+                                  AsyncSnapshot<UnmodifiableListView<Event>>
+                                      snapshot) {
+                                if (snapshot.hasData) {
+                                  if (snapshot.data.length > 0) {
+                                    return DropdownButtonFormField(
+                                        hint: Text("Event(Optional)"),
+                                        items: buildDropdownMenuItems(
+                                            snapshot.data),
+                                        onChanged: (Event selectedEvent) {
+                                          setState(() {
+                                            selectedE = true;
+                                            currRequest.event = selectedEvent;
+                                            _selectedEvent = selectedEvent;
+                                          });
+                                        });
+                                  } else {
+                                    return SliverToBoxAdapter(
+                                      child: Center(
+                                        child: Text("No upcoming events"),
+                                      ),
+                                    );
+                                  }
+                                } else {
+                                  return SliverToBoxAdapter(
+                                    child: Center(
+                                      child: CircularProgressIndicatorExtended(
+                                        label:
+                                            Text("Getting the latest events"),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                            SizedBox(
+                              height: 20.0,
+                            ),
+                            verify_card(
+                                thing: this._selectedEvent,
+                                selected: this.selectedE),
+                          ])),
+                  Container(
+                      margin: EdgeInsets.fromLTRB(15.0, 1.0, 15.0, 5.0),
+                      child: Text(
+                        "Search for an InstiApp event",
+                        style: TextStyle(fontSize: 12),
+                      )),
+                  Container(
+                     // width: double.infinity,
+                        margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              SizedBox(
+                                height: 20.0,
+                              ),
+                              StreamBuilder(
+                                stream: bloc.exploreBloc.bodies,
+                                builder: (context,
+                                    AsyncSnapshot<UnmodifiableListView<Body>>
+                                        snapshot) {
+                                  if (snapshot.hasData) {
+                                    if (snapshot.data.length > 0) {
+                                      return DropdownButtonFormField(
+                                          hint: Text("Verifying Authority"),
+                                          items: buildDropdownMenuItemsBody(
+                                              snapshot.data),
+                                          onChanged: (Body selectedEvent) {
+                                            setState(() {
+                                              selectedB = true;
+                                              currRequest.verauth =
+                                                  selectedEvent;
+                                              _selectedBody = selectedEvent;
+                                            });
+                                          });
+                                    } else {
+                                      return SliverToBoxAdapter(
+                                        child: Center(
+                                          child: Text("No upcoming events"),
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    return SliverToBoxAdapter(
+                                      child: Center(
+                                        child: CircularProgressIndicatorExtended(
+                                          label:
+                                              Text("Getting the latest events"),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                              SizedBox(
+                                height: 20.0,
+                              ),
+                              body_card(
+                                  thing: this._selectedBody,
+                                  selected: this.selectedB),
+                              //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
+                            ])),
 
+                  Container(
+                      margin: EdgeInsets.fromLTRB(15.0, 1.0, 15.0, 5.0),
+                      child: Text(
+                        'Enter an Organisations name',
+                        style: TextStyle(fontSize: 12),
+                      )),
+                  Container(
+                    width: double.infinity,
+                    margin:
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                    child: TextButton(
+                      onPressed: () async {
+                        log(currRequest.description);
+                        var resp = await achievementsBloc.postForm(currRequest);
+
+
+                        print(resp?.result);
+                      },
+                      child: Text('Request Verification'),
+                      style: TextButton.styleFrom(
+                          primary: Colors.black,
+                          backgroundColor: Colors.amber,
+                          onSurface: Colors.grey,
+                          elevation: 5.0),
+                    ),
+                  ),
+                ]),
+          ),
+        ));
   }
 }
+
 class verify_card extends StatefulWidget {
-  final Verify thing;
+  final Event thing;
   final bool selected;
 
   verify_card({this.thing, this.selected});
@@ -223,56 +359,62 @@ class verify_card extends StatefulWidget {
 }
 
 class card extends State<verify_card> {
-
-
   Widget build(BuildContext context) {
-    if(widget.selected){
-      return Card(
-          elevation: 0.0,
-          color: Colors.transparent,
-          margin: EdgeInsets.fromLTRB(0, 10.0, 0, 10.0),
-          child: Row(
-            children: [
-              CircleAvatar(
-                backgroundImage: AssetImage('${widget.thing.image}'),
-                radius: 20.0,
-              ),
-              SizedBox(width: 15.0),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${widget.thing.club}',
-                    style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
-                  ),
-                  SizedBox(height: 3.0),
-                  Text(
-                    '${widget.thing.description}',
-                    style: TextStyle(fontSize: 15.0, color: Colors.grey[500]),
-                  )
-                ],
-              )
-            ],
-          ));
-    }
-    else{
+    var bloc = BlocProvider.of(context).bloc;
+    var theme = Theme.of(context);
+    if (widget.selected) {
+      return ListTile(
+        title: Text(
+          widget.thing.eventName,
+          style: theme.textTheme.title,
+        ),
+        enabled: true,
+        leading: NullableCircleAvatar(
+          widget.thing.eventImageURL ??
+              widget.thing.eventBodies[0].bodyImageURL,
+          Icons.event_outlined,
+          heroTag: widget.thing.eventID,
+        ),
+        subtitle: Text(widget.thing.getSubTitle()),
+      );
+    } else {
       return SizedBox(height: 10);
     }
   }
-
 }
 
 
-    //     StreamBuilder<String>(
-    //     stream: bloc.description,
-    //     builder: (context, snapshot) => Container(
-    //     margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-    //     child: TextField(
-    //       onChanged: bloc.descchanged,
-    //       keyboardType: TextInputType.text,
-    //       decoration: InputDecoration(
-    //         //errorText: snapshot.error
-    //       ),
-    //     )
-    // ),
-    // ),
+class body_card extends StatefulWidget {
+  final Body thing;
+  final bool selected;
+
+  body_card({this.thing, this.selected});
+
+  bodycard createState() => bodycard();
+}
+
+class bodycard extends State<body_card> {
+  Widget build(BuildContext context) {
+    var bloc = BlocProvider.of(context).bloc;
+    var theme = Theme.of(context);
+    if (widget.selected) {
+      return ListTile(
+        title: Text(
+          widget.thing.bodyName,
+          style: theme.textTheme.title,
+        ),
+        enabled: true,
+        leading: NullableCircleAvatar(
+          widget.thing.bodyImageURL ??
+              widget.thing.bodyImageURL,
+          Icons.event_outlined,
+          heroTag: widget.thing.bodyID,
+        ),
+        subtitle: Text(widget.thing.bodyShortDescription),
+      );
+    } else {
+      return SizedBox(height: 10);
+    }
+  }
+}
+
