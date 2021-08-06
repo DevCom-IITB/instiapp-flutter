@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io' show Platform;
 import 'package:InstiApp/main.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
@@ -16,6 +17,7 @@ import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
 import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/user.dart';
+import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
 import 'package:InstiApp/src/blocs/map_bloc.dart';
 import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
@@ -72,6 +74,12 @@ class InstiAppBloc {
   final _achievementSubject =
       BehaviorSubject<UnmodifiableListView<Achievement>>();
 
+
+  ValueStream<UnmodifiableListView<Body>> get verifiableBodies =>
+      _verBodySubject.stream;
+  final _verBodySubject =
+  BehaviorSubject<UnmodifiableListView<Body>>();
+
   // Sub Blocs
   PostBloc placementBloc;
   PostBloc trainingBloc;
@@ -88,6 +96,7 @@ class InstiAppBloc {
   var _hostels = <Hostel>[];
   var _events = <Event>[];
   var _achievements = <Achievement>[];
+  var _verifiableBodies = <Body>[];
   var _notifications;
 
   // api functions
@@ -263,6 +272,28 @@ class InstiAppBloc {
     print("Returned response");
     _achievements = yourAchievementResponse;
     _achievementSubject.add(UnmodifiableListView(_achievements));
+  }
+
+
+  Future<void> getVerifiableBodies() async {
+    var currUser= await client.getUserMe(getSessionIdHeader());
+    print("got response");
+
+    List<Body> ListBody= List<Body>();
+
+    for(Role role in currUser.userRoles){
+      if(role.rolePermissions.contains('VerA')){
+        for(Body body in role.roleBodies){
+          if(!ListBody.contains(body)){
+            ListBody.add(body);
+          }
+        }
+      }
+    }
+    print("returning");
+    _verifiableBodies=ListBody;
+    _verBodySubject.add(UnmodifiableListView(_verifiableBodies));
+
   }
 
   // Notifications bloc

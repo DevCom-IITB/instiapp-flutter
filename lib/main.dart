@@ -14,6 +14,7 @@ import 'package:InstiApp/src/routes/mappage.dart';
 import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
 import 'package:InstiApp/src/routes/notificationspage.dart';
+import 'package:InstiApp/src/routes/presentachievements.dart';
 import 'package:InstiApp/src/routes/putentitypage.dart';
 import 'package:InstiApp/src/routes/quicklinkspage.dart';
 import 'package:InstiApp/src/routes/settingspage.dart';
@@ -246,9 +247,11 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 return _buildRoute(settings, AboutPage());
               case "/achievements":
                 return _buildRoute(settings, YourAchievementPage());
+              // case "/achievements/add":
+              //   print("Entereing here");
+              //   return _buildRoute(settings, Home());
               case "/achievements/add":
-                print("Entereing here");
-                return _buildRoute(settings, Home());
+                return _buildRoute(settings, AchievementPage());
             }
           }
           return _buildRoute(settings, MessPage());

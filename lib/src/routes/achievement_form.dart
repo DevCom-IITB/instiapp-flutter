@@ -330,10 +330,11 @@ class _CreateAchievementPage extends State<Home> {
                     child: TextButton(
                       onPressed: () async {
                         log(currRequest.description);
-                        var resp = await achievementsBloc.postForm(currRequest);
+                        //var resp = await achievementsBloc.postForm(currRequest);
+                        bloc.getVerifiableBodies();
 
 
-                        print(resp?.result);
+                        //print(resp?.result);
                       },
                       child: Text('Request Verification'),
                       style: TextButton.styleFrom(
