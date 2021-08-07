@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:InstiApp/src/api/model/achievements.dart';
+import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
@@ -25,6 +26,7 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
     var bloc = BlocProvider.of(context).bloc;
     if (firstBuild && bloc.currSession != null) {
       bloc.updateAchievements();
+      bloc.getVerifiableBodies();
       firstBuild = false;
     }
     var fab;
@@ -79,11 +81,51 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
                 ),
               )
             : RefreshIndicator(
-                onRefresh: () => bloc.updateAchievements(),
+                onRefresh: () {
+                  bloc.getVerifiableBodies();
+                  bloc.updateAchievements();
+                  return;
+                },
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: CustomScrollView(
                     slivers: [
+                      StreamBuilder(
+                        stream: bloc.verifiableBodies,
+                        builder: (context,
+                            AsyncSnapshot<UnmodifiableListView<Body>>
+                                snapshot) {
+                          if (snapshot.hasData) {
+                            if (snapshot.data.length > 0) {
+                              return Column(
+                                children: [SliverToBoxAdapter(
+                                  child: TitleWithBackButton(
+                                    child: Text(
+                                      "Verify",
+                                      style: theme.textTheme.headline4,
+                                    ),
+                                  ),
+                                ),
+                                  SliverList(
+                                  delegate: SliverChildBuilderDelegate(
+                                      (context, index) =>
+                                          body_card(thing: snapshot.data[index]),
+                                      childCount: snapshot.data.length),
+                                ),
+                          ]
+                              );
+                            } else {
+                              return SliverToBoxAdapter(
+                                child: Center(),
+                              );
+                            }
+                          } else {
+                            return SliverToBoxAdapter(
+                              child: Center(),
+                            );
+                          }
+                        },
+                      ),
                       SliverToBoxAdapter(
                         child: TitleWithBackButton(
                           child: Text(
@@ -107,10 +149,38 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
                               );
                             } else {
                               return SliverToBoxAdapter(
-                                child: Center(
-                                  child: Text("No Achievements"),
+                                  child: Container(
+                                alignment: Alignment.center,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.sports_basketball,
+                                      color: Colors.grey[500],
+                                      size: 200.0,
+                                    ),
+                                    SizedBox(
+                                      height: 15.0,
+                                    ),
+                                    Text(
+                                      'No achievments yet',
+                                      style: TextStyle(
+                                          fontSize: 25.0,
+                                          color: Colors.grey[500],
+                                          fontWeight: FontWeight.w300),
+                                    ),
+                                    SizedBox(
+                                      height: 5.0,
+                                    ),
+                                    Text('Let${"'"}s change that!!',
+                                        style: TextStyle(
+                                            fontSize: 25.0,
+                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.w300))
+                                  ],
                                 ),
-                              );
+                              ));
                             }
                           } else {
                             return SliverToBoxAdapter(
@@ -143,6 +213,7 @@ class AchListItem extends StatefulWidget {
   final bool isVerified;
   final bool isHidden;
   final Achievement achievement;
+
   AchListItem({
     Key key,
     this.achievement,
@@ -226,6 +297,7 @@ class DefListItem extends StatelessWidget {
   final String forText;
   final String importance;
   final bool isVerified;
+
   const DefListItem({
     Key key,
     this.title,
@@ -285,6 +357,34 @@ class DefListItem extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+class body_card extends StatefulWidget {
+  final Body thing;
+
+  body_card({this.thing});
+
+  bodycard createState() => bodycard();
+}
+
+class bodycard extends State<body_card> {
+  Widget build(BuildContext context) {
+    var bloc = BlocProvider.of(context).bloc;
+    var theme = Theme.of(context);
+    return ListTile(
+      title: Text(
+        widget.thing.bodyName,
+        style: theme.textTheme.title,
+      ),
+      enabled: true,
+      leading: NullableCircleAvatar(
+        widget.thing.bodyImageURL ?? widget.thing.bodyImageURL,
+        Icons.event_outlined,
+        heroTag: widget.thing.bodyID,
+      ),
+      subtitle: Text(widget.thing.bodyShortDescription),
     );
   }
 }

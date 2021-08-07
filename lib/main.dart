@@ -247,11 +247,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 return _buildRoute(settings, AboutPage());
               case "/achievements":
                 return _buildRoute(settings, YourAchievementPage());
-              // case "/achievements/add":
-              //   print("Entereing here");
-              //   return _buildRoute(settings, Home());
               case "/achievements/add":
-                return _buildRoute(settings, AchievementPage());
+                return _buildRoute(settings, Home());
             }
           }
           return _buildRoute(settings, MessPage());

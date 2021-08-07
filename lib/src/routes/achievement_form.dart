@@ -100,13 +100,14 @@ class _CreateAchievementPage extends State<Home> {
       bloc.updateEvents();
       firstBuild = false;
     }
-
-
-
-
-
-
-
+    var fab;
+    fab = FloatingActionButton.extended(
+      icon: Icon(Icons.add_outlined),
+      label: Text("Add Acheivement"),
+      onPressed: () {
+        Navigator.of(context).pushNamed("/achievements/add");
+      },
+    );
     return Scaffold(
         key: _scaffoldKey,
         drawer: NavDrawer(),
@@ -281,6 +282,10 @@ class _CreateAchievementPage extends State<Home> {
                                           hint: Text("Verifying Authority"),
                                           items: buildDropdownMenuItemsBody(
                                               snapshot.data),
+                                          elevation: 5,
+                                          isExpanded: true,
+
+                                         // menuMaxHeight: 200,
                                           onChanged: (Body selectedEvent) {
                                             setState(() {
                                               selectedB = true;
@@ -308,9 +313,6 @@ class _CreateAchievementPage extends State<Home> {
                                   }
                                 },
                               ),
-                              SizedBox(
-                                height: 20.0,
-                              ),
                               body_card(
                                   thing: this._selectedBody,
                                   selected: this.selectedB),
@@ -330,11 +332,11 @@ class _CreateAchievementPage extends State<Home> {
                     child: TextButton(
                       onPressed: () async {
                         log(currRequest.description);
-                        //var resp = await achievementsBloc.postForm(currRequest);
-                        bloc.getVerifiableBodies();
+                        var resp = await achievementsBloc.postForm(currRequest);
 
 
-                        //print(resp?.result);
+
+                       print(resp?.result);
                       },
                       child: Text('Request Verification'),
                       style: TextButton.styleFrom(
