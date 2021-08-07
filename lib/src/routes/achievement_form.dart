@@ -124,16 +124,24 @@ class _CreateAchievementPage extends State<Home> {
   void onBodyChange(Body body) {
     setState(() {
       selectedB = true;
-      currRequest.verauth = body;
+      currRequest.body = body;
       _selectedBody = body;
     });
   }
 
   @override
-  void initstate(){
-    titlecontroller.addListener(() {log("aass");currRequest.title=titlecontroller.text;});
-    desccontroller.addListener(() {currRequest.description=desccontroller.text;});
-    adminnotecontroller.addListener(() {currRequest.adminNote=adminnotecontroller.text;});
+  void initState() {
+    super.initState();
+    titlecontroller.addListener(() {
+      log("aass");
+      currRequest.title = titlecontroller.text;
+    });
+    desccontroller.addListener(() {
+      currRequest.description = desccontroller.text;
+    });
+    adminnotecontroller.addListener(() {
+      currRequest.adminNote = adminnotecontroller.text;
+    });
   }
 
   @override
@@ -156,7 +164,7 @@ class _CreateAchievementPage extends State<Home> {
     final achievementsBloc = bloc.achievementBloc;
     currRequest.title = "aa";
     currRequest.description = "aa";
-    currRequest.admin_note = "aa";
+    currRequest.adminNote = "aa";
 
     if (firstBuild) {
       firstBuild = false;
@@ -170,249 +178,257 @@ class _CreateAchievementPage extends State<Home> {
       },
     );
     return Scaffold(
-        key: _scaffoldKey,
-        drawer: NavDrawer(),
-        bottomNavigationBar: MyBottomAppBar(
-          shape: RoundedNotchedRectangle(),
-          child: new Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              IconButton(
-                tooltip: "Show bottom sheet",
-                icon: Icon(
-                  Icons.menu_outlined,
-                  semanticLabel: "Show bottom sheet",
-                ),
-                onPressed: () {
-                  _scaffoldKey.currentState.openDrawer();
-                },
+      key: _scaffoldKey,
+      drawer: NavDrawer(),
+      bottomNavigationBar: MyBottomAppBar(
+        shape: RoundedNotchedRectangle(),
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              tooltip: "Show bottom sheet",
+              icon: Icon(
+                Icons.menu_outlined,
+                semanticLabel: "Show bottom sheet",
               ),
-            ],
-          ),
+              onPressed: () {
+                _scaffoldKey.currentState.openDrawer();
+              },
+            ),
+          ],
         ),
-        body: SafeArea(
-            child: bloc.currSession == null
+      ),
+      body: SafeArea(
+          child: bloc.currSession == null
               ? Container(
                   alignment: Alignment.center,
-                   padding: EdgeInsets.all(50),
-                    child: Column(
+                  padding: EdgeInsets.all(50),
+                  child: Column(
                     children: [
                       Icon(
-                      Icons.cloud,
-                      size: 200,
-                      color: Colors.grey[600],
+                        Icons.cloud,
+                        size: 200,
+                        color: Colors.grey[600],
                       ),
                       Text(
-                      "Login To View Achievements",
-                      style: theme.textTheme.headline5,
-                      textAlign: TextAlign.center,
+                        "Login To View Achievements",
+                        style: theme.textTheme.headline5,
+                        textAlign: TextAlign.center,
                       )
-                  ],
-                  crossAxisAlignment: CrossAxisAlignment.center,
-              ),
-            )
-        :RefreshIndicator(
-          onRefresh: () => bloc.updateEvents(),
-          child: Padding(
-            padding: const EdgeInsets.all(7.0),
-            child:
-            SingleChildScrollView(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                      margin: EdgeInsets.fromLTRB(15.0, 15.0, 10.0, 5.0),
-                      child: Text(
-                        'Verification Request',
-                        style: theme.textTheme.headline4,
-                      )),
-                  SizedBox(
-                    height: 40,
+                    ],
+                    crossAxisAlignment: CrossAxisAlignment.center,
                   ),
-                  Container(
-                      margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                      child: TextFormField(
-                        controller: titlecontroller,
-                        maxLength: 50,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Title",
-                        ),
-                        autocorrect: true,
-                        onChanged: (value){
-                          setState(() {
-
-                            currRequest.title = value;
-
-                          });
-                        },
-                      )),
-                  Container(
-                      margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                      child: TextFormField(
-                        controller: desccontroller,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Description",
-                        ),
-                        autocorrect: true,
-                        onChanged: (value) {
-                                 setState(() {
-
-                            currRequest.description = value;
-
-                            });
-                                 },
-                      )),
-                  Container(
-                      margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                      child: TextFormField(
-                        controller: adminnotecontroller,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Admin Note",
-                        ),
-                        autocorrect: true,
-                        onChanged: (value){
-                          setState(() {
-
-                            currRequest.adminNote = value;
-
-                          });
-                        },
-                      )),
-                  Container(
-                      margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 0.0),
+                )
+              : RefreshIndicator(
+                  onRefresh: () => bloc.updateEvents(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(7.0),
+                    child: SingleChildScrollView(
                       child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                                margin:
+                                    EdgeInsets.fromLTRB(15.0, 15.0, 10.0, 5.0),
+                                child: Text(
+                                  'Verification Request',
+                                  style: theme.textTheme.headline4,
+                                )),
                             SizedBox(
-                              height: 20.0,
+                              height: 40,
                             ),
-                            DropdownSearch<Event>(
-                              mode: Mode.DIALOG,
-                              maxHeight: 700,
-                              isFilteredOnline: true,
-                              showSearchBox: true,
-                              label: "Event (Optional)",
-                              hint: "Event (Optional)",
-                              onChanged: onEventChange,
-                              onFind: bloc.achievementBloc.searchForEvent,
-                              dropdownBuilder: buildDropdownMenuItemsEvent,
-                              popupItemBuilder: _customPopupItemBuilderEvent,
-                              popupSafeArea:
-                                  PopupSafeArea(top: true, bottom: true),
-                              scrollbarProps: ScrollbarProps(
-                                isAlwaysShown: true,
-                                thickness: 7,
-                              ),
-                              emptyBuilder: (BuildContext context, String _) {
-                                return Container(
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.all(20),
-                                  child: Text(
-                                    "No events found. Refine your search!",
-                                    style: theme.textTheme.subtitle1,
+                            Container(
+                                margin:
+                                    EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
+                                child: TextFormField(
+                                  controller: titlecontroller,
+                                  maxLength: 50,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: "Title",
                                   ),
-                                );
-                              },
-                            ),
-                            SizedBox(
-                              height: this.selectedE ? 20.0 : 0,
-                            ),
-                            verify_card(
-                                thing: this._selectedEvent,
-                                selected: this.selectedE),
-                          ])),
-                  Container(
-                      // width: double.infinity,
-                      margin: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            SizedBox(
-                              height: 20.0,
-                            ),
-
-                            // return DropdownButtonFormField(
-                            //     hint: Text("Verifying Authority"),
-                            //     items: buildDropdownMenuItemsBody(
-                            //         snapshot.data),
-                            // onChanged: (Body selectedEvent) {
-                            //   setState(() {
-                            //     selectedB = true;
-                            //     currRequest.verauth = selectedEvent;
-                            //     _selectedBody = selectedEvent;
-                            //   });
-                            // });
-
-                            DropdownSearch<Body>(
-                              mode: Mode.DIALOG,
-                              maxHeight: 700,
-                              isFilteredOnline: true,
-                              showSearchBox: true,
-                              label: "Verifying Authority",
-                              hint: "Verifying Authority",
-                              onChanged: onBodyChange,
-                              onFind: bloc.achievementBloc.searchForBody,
-                              dropdownBuilder: buildDropdownMenuItemsBody,
-                              popupItemBuilder: _customPopupItemBuilderBody,
-                              popupSafeArea:
-                                  PopupSafeArea(top: true, bottom: true),
-                              scrollbarProps: ScrollbarProps(
-                                isAlwaysShown: true,
-                                thickness: 7,
-                              ),
-                              selectedItem: _selectedBody,
-                              emptyBuilder: (BuildContext context, String _) {
-                                return Container(
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.all(20),
-                                  child: Text(
-                                    "No verifying authorities found. Refine your search!",
-                                    style: theme.textTheme.subtitle1,
-                                    textAlign: TextAlign.center,
+                                  autocorrect: true,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      currRequest.title = value;
+                                    });
+                                  },
+                                )),
+                            Container(
+                                margin:
+                                    EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
+                                child: TextFormField(
+                                  controller: desccontroller,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: "Description",
                                   ),
-                                );
-                              },
+                                  autocorrect: true,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      currRequest.description = value;
+                                    });
+                                  },
+                                )),
+                            Container(
+                                margin:
+                                    EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
+                                child: TextFormField(
+                                  controller: adminnotecontroller,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: "Admin Note",
+                                  ),
+                                  autocorrect: true,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      currRequest.adminNote = value;
+                                    });
+                                  },
+                                )),
+                            Container(
+                                margin:
+                                    EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 0.0),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      SizedBox(
+                                        height: 20.0,
+                                      ),
+                                      DropdownSearch<Event>(
+                                        mode: Mode.DIALOG,
+                                        maxHeight: 700,
+                                        isFilteredOnline: true,
+                                        showSearchBox: true,
+                                        label: "Event (Optional)",
+                                        hint: "Event (Optional)",
+                                        onChanged: onEventChange,
+                                        onFind:
+                                            bloc.achievementBloc.searchForEvent,
+                                        dropdownBuilder:
+                                            buildDropdownMenuItemsEvent,
+                                        popupItemBuilder:
+                                            _customPopupItemBuilderEvent,
+                                        popupSafeArea: PopupSafeArea(
+                                            top: true, bottom: true),
+                                        scrollbarProps: ScrollbarProps(
+                                          isAlwaysShown: true,
+                                          thickness: 7,
+                                        ),
+                                        emptyBuilder:
+                                            (BuildContext context, String _) {
+                                          return Container(
+                                            alignment: Alignment.center,
+                                            padding: EdgeInsets.all(20),
+                                            child: Text(
+                                              "No events found. Refine your search!",
+                                              style: theme.textTheme.subtitle1,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      SizedBox(
+                                        height: this.selectedE ? 20.0 : 0,
+                                      ),
+                                      verify_card(
+                                          thing: this._selectedEvent,
+                                          selected: this.selectedE),
+                                    ])),
+                            Container(
+                                // width: double.infinity,
+                                margin:
+                                    EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      SizedBox(
+                                        height: 20.0,
+                                      ),
+
+                                      // return DropdownButtonFormField(
+                                      //     hint: Text("Verifying Authority"),
+                                      //     items: buildDropdownMenuItemsBody(
+                                      //         snapshot.data),
+                                      // onChanged: (Body selectedEvent) {
+                                      //   setState(() {
+                                      //     selectedB = true;
+                                      //     currRequest.verauth = selectedEvent;
+                                      //     _selectedBody = selectedEvent;
+                                      //   });
+                                      // });
+
+                                      DropdownSearch<Body>(
+                                        mode: Mode.DIALOG,
+                                        maxHeight: 700,
+                                        isFilteredOnline: true,
+                                        showSearchBox: true,
+                                        label: "Verifying Authority",
+                                        hint: "Verifying Authority",
+                                        onChanged: onBodyChange,
+                                        onFind:
+                                            bloc.achievementBloc.searchForBody,
+                                        dropdownBuilder:
+                                            buildDropdownMenuItemsBody,
+                                        popupItemBuilder:
+                                            _customPopupItemBuilderBody,
+                                        popupSafeArea: PopupSafeArea(
+                                            top: true, bottom: true),
+                                        scrollbarProps: ScrollbarProps(
+                                          isAlwaysShown: true,
+                                          thickness: 7,
+                                        ),
+                                        selectedItem: _selectedBody,
+                                        emptyBuilder:
+                                            (BuildContext context, String _) {
+                                          return Container(
+                                            alignment: Alignment.center,
+                                            padding: EdgeInsets.all(20),
+                                            child: Text(
+                                              "No verifying authorities found. Refine your search!",
+                                              style: theme.textTheme.subtitle1,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      SizedBox(
+                                        height: this.selectedB ? 20.0 : 0,
+                                      ),
+                                      body_card(
+                                          thing: this._selectedBody,
+                                          selected: this.selectedB),
+                                      //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
+                                    ])),
+                            Container(
+                              width: double.infinity,
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 15.0),
+                              child: TextButton(
+                                onPressed: () async {
+                                  log(currRequest.description);
+                                  var resp = await achievementsBloc
+                                      .postForm(currRequest);
+
+                                  //print(resp?.result);
+                                },
+                                child: Text('Request Verification'),
+                                style: TextButton.styleFrom(
+                                    primary: Colors.black,
+                                    backgroundColor: Colors.amber,
+                                    onSurface: Colors.grey,
+                                    elevation: 5.0),
+                              ),
                             ),
-                            SizedBox(
-                              height: this.selectedB ? 20.0 : 0,
-                            ),
-                            body_card(
-                                thing: this._selectedBody,
-                                selected: this.selectedB),
-                            //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
-                          ])),
-                  Container(
-                    width: double.infinity,
-                    margin:
-                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-                    child: TextButton(
-                      onPressed: () async {
-                        log(currRequest.description);
-                        var resp = await achievementsBloc.postForm(currRequest);
-
-
-
-                       //print(resp?.result);
-                      },
-                      child: Text('Request Verification'),
-                      style: TextButton.styleFrom(
-                          primary: Colors.black,
-                          backgroundColor: Colors.amber,
-                          onSurface: Colors.grey,
-                          elevation: 5.0),
+                          ]),
                     ),
                   ),
-                ]),
-          ),
-        ),
-        )),
+                )),
       floatingActionButton: fab,
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
