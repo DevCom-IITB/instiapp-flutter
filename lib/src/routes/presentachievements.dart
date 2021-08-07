@@ -63,7 +63,7 @@ class _AchievementPageState extends State<AchievementPage> {
                 color: Colors.grey[600],
               ),
               Text(
-                "Login To View Achievements",
+                "Login To View AlloBodies",
                 style: theme.textTheme.headline5,
                 textAlign: TextAlign.center,
               )
@@ -72,7 +72,7 @@ class _AchievementPageState extends State<AchievementPage> {
           ),
         )
             : RefreshIndicator(
-          onRefresh: () => bloc.updateAchievements(),
+          onRefresh: () => bloc.getVerifiableBodies(),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: CustomScrollView(
@@ -101,7 +101,7 @@ class _AchievementPageState extends State<AchievementPage> {
                       } else {
                         return SliverToBoxAdapter(
                           child: Center(
-                            child: Text("No Achievements"),
+                            child: Text("No "),
                           ),
                         );
                       }
