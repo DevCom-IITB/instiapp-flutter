@@ -68,9 +68,9 @@ class _CreateAchievementPage extends State<Home> {
   }
   @override
   void initstate(){
-    titlecontroller.addListener(() {currRequest.title=titlecontroller.text;});
+    titlecontroller.addListener(() {log("aass");currRequest.title=titlecontroller.text;});
     desccontroller.addListener(() {currRequest.description=desccontroller.text;});
-    adminnotecontroller.addListener(() {currRequest.admin_note=adminnotecontroller.text;});
+    adminnotecontroller.addListener(() {currRequest.adminNote=adminnotecontroller.text;});
   }
   @override
   void dispose() {
@@ -93,7 +93,7 @@ class _CreateAchievementPage extends State<Home> {
     final achievementsBloc = bloc.achievementBloc;
     currRequest.title="aa";
     currRequest.description="aa";
-    currRequest.admin_note="aa";
+    currRequest.adminNote="aa";
 
 
     if (firstBuild) {
@@ -111,37 +111,52 @@ class _CreateAchievementPage extends State<Home> {
     return Scaffold(
         key: _scaffoldKey,
         drawer: NavDrawer(),
-        appBar: AppBar(
-          leading: IconButton(
-            tooltip: "Show top sheet",
-            icon: Icon(
-              Icons.menu_outlined,
-              semanticLabel: "Show top sheet",
-            ),
-            onPressed: () {
-              _scaffoldKey.currentState.openDrawer();
-            },
+        bottomNavigationBar: MyBottomAppBar(
+          shape: RoundedNotchedRectangle(),
+          child: new Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              IconButton(
+                tooltip: "Show bottom sheet",
+                icon: Icon(
+                  Icons.menu_outlined,
+                  semanticLabel: "Show bottom sheet",
+                ),
+                onPressed: () {
+                  _scaffoldKey.currentState.openDrawer();
+                },
+              ),
+            ],
           ),
-          title: Text(
-            'Achievements',
-            //style: theme.textTheme.display2,
-          ),
-          //centerTitle: true,
-          backgroundColor: Colors.blue,
-          actions: [
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Icon(Icons.qr_code),
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Icon(Icons.notifications),
-            ),
-          ],
         ),
-        body: RefreshIndicator(
+        body: SafeArea(
+            child: bloc.currSession == null
+              ? Container(
+                  alignment: Alignment.center,
+                   padding: EdgeInsets.all(50),
+                    child: Column(
+                    children: [
+                      Icon(
+                      Icons.cloud,
+                      size: 200,
+                      color: Colors.grey[600],
+                      ),
+                      Text(
+                      "Login To View Achievements",
+                      style: theme.textTheme.headline5,
+                      textAlign: TextAlign.center,
+                      )
+                  ],
+                  crossAxisAlignment: CrossAxisAlignment.center,
+              ),
+            )
+        :RefreshIndicator(
           onRefresh: () => bloc.updateEvents(),
-          child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(7.0),
+            child:
+            SingleChildScrollView(
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,8 +165,11 @@ class _CreateAchievementPage extends State<Home> {
                       margin: EdgeInsets.fromLTRB(15.0, 15.0, 10.0, 5.0),
                       child: Text(
                         'Verification Request',
-                        style: TextStyle(fontSize: 20),
+                        style: theme.textTheme.headline4,
                       )),
+                  SizedBox(
+                    height: 40,
+                  ),
                   Container(
                       margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
                       child: TextFormField(
@@ -162,9 +180,12 @@ class _CreateAchievementPage extends State<Home> {
                           labelText: "Title",
                         ),
                         autocorrect: true,
-                        validator: (value) {
-                          log("aa");
-                          currRequest.title = value;
+                        onChanged: (value){
+                          setState(() {
+
+                            currRequest.title = value;
+
+                          });
                         },
                       )),
                   Container(
@@ -176,17 +197,13 @@ class _CreateAchievementPage extends State<Home> {
                           labelText: "Description",
                         ),
                         autocorrect: true,
-                        onChanged: (String selectedEvent) {
+                        onChanged: (value) {
                                  setState(() {
 
-                            currRequest.description = selectedEvent;
+                            currRequest.description = value;
 
                             });
                                  },
-                        validator: (value) {
-                          log("bb");
-                          currRequest.description = value;
-                        },
                       )),
                   Container(
                       margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
@@ -197,9 +214,12 @@ class _CreateAchievementPage extends State<Home> {
                           labelText: "Admin Note",
                         ),
                         autocorrect: true,
-                        validator: (value) {
-                          log("bb");
-                          currRequest.admin_note = value;
+                        onChanged: (value){
+                          setState(() {
+
+                            currRequest.adminNote = value;
+
+                          });
                         },
                       )),
                   Container(
@@ -289,8 +309,9 @@ class _CreateAchievementPage extends State<Home> {
                                           onChanged: (Body selectedEvent) {
                                             setState(() {
                                               selectedB = true;
-                                              currRequest.verauth =
+                                              currRequest.body =
                                                   selectedEvent;
+                                              currRequest.bodyID=selectedEvent.bodyID;
                                               _selectedBody = selectedEvent;
                                             });
                                           });
@@ -336,7 +357,7 @@ class _CreateAchievementPage extends State<Home> {
 
 
 
-                       print(resp?.result);
+                       //print(resp?.result);
                       },
                       child: Text('Request Verification'),
                       style: TextButton.styleFrom(
@@ -348,7 +369,11 @@ class _CreateAchievementPage extends State<Home> {
                   ),
                 ]),
           ),
-        ));
+        ),
+        )),
+      floatingActionButton: fab,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+    );
   }
 }
 

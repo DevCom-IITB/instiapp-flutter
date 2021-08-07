@@ -9,6 +9,30 @@ part 'achievement_create_request.jser.dart';
 
 class AchievementCreateRequest {
 
+  @Alias("id")
+  String id;
+
+  @Alias("time_of_creation")
+  String timeOfCreation;
+
+  @Alias("time_of_modification")
+  String timeOfModification;
+
+  @Alias("user")
+  User user;
+
+  @Alias("hidden")
+  bool hidden;
+
+  @Alias("dismissed")
+  bool dismissed;
+
+  @Alias("verified")
+  bool verified;
+
+  @Alias("verified_by")
+  User verifiedBy;
+
   @Alias("title")
   String title;
 
@@ -16,13 +40,20 @@ class AchievementCreateRequest {
   String description;
 
   @Alias("admin_note")
-  String admin_note;
-
-  @Alias("event")
-  Event event;
+  String adminNote;
 
   @Alias("body")
-  Body verauth;
+  String bodyID;
+
+  @Alias("body_detail")
+  Body body;
+
+  @Alias("event_detail")
+  Event event;
+
+  //TODO: Make string an offered achievement
+  @Alias("offer")
+  String offer;
 
 }
 
