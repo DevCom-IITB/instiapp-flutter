@@ -14,7 +14,6 @@ import 'package:InstiApp/src/routes/mappage.dart';
 import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
 import 'package:InstiApp/src/routes/notificationspage.dart';
-import 'package:InstiApp/src/routes/presentachievements.dart';
 import 'package:InstiApp/src/routes/putentitypage.dart';
 import 'package:InstiApp/src/routes/quicklinkspage.dart';
 import 'package:InstiApp/src/routes/settingspage.dart';
