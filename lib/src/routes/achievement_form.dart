@@ -27,16 +27,11 @@ class _CreateAchievementPage extends State<Home> {
   bool selectedB = false;
 
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  final _formKey = GlobalKey<FormState>();
 
   Event _selectedEvent;
   Body _selectedBody;
   AchievementCreateRequest currRequest = AchievementCreateRequest();
-
-  TextEditingController titlecontroller = TextEditingController();
-  TextEditingController desccontroller = TextEditingController();
-  TextEditingController adminnotecontroller = TextEditingController();
-
-  TextEditingController eventsController = TextEditingController();
 
   // builds dropdown menu for event choice
   Widget buildDropdownMenuItemsEvent(
@@ -125,6 +120,7 @@ class _CreateAchievementPage extends State<Home> {
     setState(() {
       selectedB = true;
       currRequest.body = body;
+      currRequest.bodyID = body.bodyID;
       _selectedBody = body;
     });
   }
@@ -132,26 +128,6 @@ class _CreateAchievementPage extends State<Home> {
   @override
   void initState() {
     super.initState();
-    titlecontroller.addListener(() {
-      log("aass");
-      currRequest.title = titlecontroller.text;
-    });
-    desccontroller.addListener(() {
-      currRequest.description = desccontroller.text;
-    });
-    adminnotecontroller.addListener(() {
-      currRequest.adminNote = adminnotecontroller.text;
-    });
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is removed from the widget tree.
-    // This also removes the _printLatestValue listener.
-    titlecontroller.dispose();
-    desccontroller.dispose();
-    adminnotecontroller.dispose();
-    super.dispose();
   }
 
   bool firstBuild = true;
@@ -162,10 +138,6 @@ class _CreateAchievementPage extends State<Home> {
     var bloc = BlocProvider.of(context).bloc;
     var theme = Theme.of(context);
     final achievementsBloc = bloc.achievementBloc;
-    currRequest.title = "aa";
-    currRequest.description = "aa";
-    currRequest.adminNote = "aa";
-
     if (firstBuild) {
       firstBuild = false;
     }
@@ -225,212 +197,239 @@ class _CreateAchievementPage extends State<Home> {
                   child: Padding(
                     padding: const EdgeInsets.all(7.0),
                     child: SingleChildScrollView(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                                margin:
-                                    EdgeInsets.fromLTRB(15.0, 15.0, 10.0, 5.0),
-                                child: Text(
-                                  'Verification Request',
-                                  style: theme.textTheme.headline4,
-                                )),
-                            SizedBox(
-                              height: 40,
-                            ),
-                            Container(
-                                margin:
-                                    EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                                child: TextFormField(
-                                  controller: titlecontroller,
-                                  maxLength: 50,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    labelText: "Title",
-                                  ),
-                                  autocorrect: true,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      currRequest.title = value;
-                                    });
-                                  },
-                                )),
-                            Container(
-                                margin:
-                                    EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                                child: TextFormField(
-                                  controller: desccontroller,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    labelText: "Description",
-                                  ),
-                                  autocorrect: true,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      currRequest.description = value;
-                                    });
-                                  },
-                                )),
-                            Container(
-                                margin:
-                                    EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                                child: TextFormField(
-                                  controller: adminnotecontroller,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    labelText: "Admin Note",
-                                  ),
-                                  autocorrect: true,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      currRequest.adminNote = value;
-                                    });
-                                  },
-                                )),
-                            Container(
-                                margin:
-                                    EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 0.0),
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      SizedBox(
-                                        height: 20.0,
-                                      ),
-                                      DropdownSearch<Event>(
-                                        mode: Mode.DIALOG,
-                                        maxHeight: 700,
-                                        isFilteredOnline: true,
-                                        showSearchBox: true,
-                                        label: "Event (Optional)",
-                                        hint: "Event (Optional)",
-                                        onChanged: onEventChange,
-                                        onFind:
-                                            bloc.achievementBloc.searchForEvent,
-                                        dropdownBuilder:
-                                            buildDropdownMenuItemsEvent,
-                                        popupItemBuilder:
-                                            _customPopupItemBuilderEvent,
-                                        popupSafeArea: PopupSafeArea(
-                                            top: true, bottom: true),
-                                        scrollbarProps: ScrollbarProps(
-                                          isAlwaysShown: true,
-                                          thickness: 7,
-                                        ),
-                                        emptyBuilder:
-                                            (BuildContext context, String _) {
-                                          return Container(
-                                            alignment: Alignment.center,
-                                            padding: EdgeInsets.all(20),
-                                            child: Text(
-                                              "No events found. Refine your search!",
-                                              style: theme.textTheme.subtitle1,
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                      SizedBox(
-                                        height: this.selectedE ? 20.0 : 0,
-                                      ),
-                                      verify_card(
-                                          thing: this._selectedEvent,
-                                          selected: this.selectedE),
-                                    ])),
-                            Container(
-                                // width: double.infinity,
-                                margin:
-                                    EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      SizedBox(
-                                        height: 20.0,
-                                      ),
-
-                                      // return DropdownButtonFormField(
-                                      //     hint: Text("Verifying Authority"),
-                                      //     items: buildDropdownMenuItemsBody(
-                                      //         snapshot.data),
-                                      // onChanged: (Body selectedEvent) {
-                                      //   setState(() {
-                                      //     selectedB = true;
-                                      //     currRequest.verauth = selectedEvent;
-                                      //     _selectedBody = selectedEvent;
-                                      //   });
-                                      // });
-
-                                      DropdownSearch<Body>(
-                                        mode: Mode.DIALOG,
-                                        maxHeight: 700,
-                                        isFilteredOnline: true,
-                                        showSearchBox: true,
-                                        label: "Verifying Authority",
-                                        hint: "Verifying Authority",
-                                        onChanged: onBodyChange,
-                                        onFind:
-                                            bloc.achievementBloc.searchForBody,
-                                        dropdownBuilder:
-                                            buildDropdownMenuItemsBody,
-                                        popupItemBuilder:
-                                            _customPopupItemBuilderBody,
-                                        popupSafeArea: PopupSafeArea(
-                                            top: true, bottom: true),
-                                        scrollbarProps: ScrollbarProps(
-                                          isAlwaysShown: true,
-                                          thickness: 7,
-                                        ),
-                                        selectedItem: _selectedBody,
-                                        emptyBuilder:
-                                            (BuildContext context, String _) {
-                                          return Container(
-                                            alignment: Alignment.center,
-                                            padding: EdgeInsets.all(20),
-                                            child: Text(
-                                              "No verifying authorities found. Refine your search!",
-                                              style: theme.textTheme.subtitle1,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                      SizedBox(
-                                        height: this.selectedB ? 20.0 : 0,
-                                      ),
-                                      body_card(
-                                          thing: this._selectedBody,
-                                          selected: this.selectedB),
-                                      //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
-                                    ])),
-                            Container(
-                              width: double.infinity,
-                              margin: EdgeInsets.symmetric(
-                                  vertical: 10.0, horizontal: 15.0),
-                              child: TextButton(
-                                onPressed: () async {
-                                  log(currRequest.description);
-                                  var resp = await achievementsBloc
-                                      .postForm(currRequest);
-
-                                  //print(resp?.result);
-                                },
-                                child: Text('Request Verification'),
-                                style: TextButton.styleFrom(
-                                    primary: Colors.black,
-                                    backgroundColor: Colors.amber,
-                                    onSurface: Colors.grey,
-                                    elevation: 5.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                  margin: EdgeInsets.fromLTRB(
+                                      15.0, 15.0, 10.0, 5.0),
+                                  child: Text(
+                                    'Verification Request',
+                                    style: theme.textTheme.headline4,
+                                  )),
+                              SizedBox(
+                                height: 40,
                               ),
-                            ),
-                          ]),
+                              Container(
+                                  margin: EdgeInsets.fromLTRB(
+                                      15.0, 5.0, 15.0, 10.0),
+                                  child: TextFormField(
+                                    maxLength: 50,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: "Title",
+                                    ),
+                                    autocorrect: true,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        currRequest.title = value;
+                                      });
+                                    },
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Title should not be empty';
+                                      }
+                                      return null;
+                                    },
+                                  )),
+                              Container(
+                                  margin: EdgeInsets.fromLTRB(
+                                      15.0, 5.0, 15.0, 10.0),
+                                  child: TextFormField(
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: "Description",
+                                    ),
+                                    autocorrect: true,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        currRequest.description = value;
+                                      });
+                                    },
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Description should not be empty';
+                                      }
+                                      return null;
+                                    },
+                                  )),
+                              Container(
+                                  margin: EdgeInsets.fromLTRB(
+                                      15.0, 5.0, 15.0, 10.0),
+                                  child: TextFormField(
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: "Admin Note",
+                                    ),
+                                    autocorrect: true,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        currRequest.adminNote = value;
+                                      });
+                                    },
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Admin Note should not be empty';
+                                      }
+                                      return null;
+                                    },
+                                  )),
+                              Container(
+                                  margin:
+                                      EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 0.0),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        SizedBox(
+                                          height: 20.0,
+                                        ),
+                                        DropdownSearch<Event>(
+                                          mode: Mode.DIALOG,
+                                          maxHeight: 700,
+                                          isFilteredOnline: true,
+                                          showSearchBox: true,
+                                          label: "Event (Optional)",
+                                          hint: "Event (Optional)",
+                                          onChanged: onEventChange,
+                                          onFind: bloc
+                                              .achievementBloc.searchForEvent,
+                                          dropdownBuilder:
+                                              buildDropdownMenuItemsEvent,
+                                          popupItemBuilder:
+                                              _customPopupItemBuilderEvent,
+                                          popupSafeArea: PopupSafeArea(
+                                              top: true, bottom: true),
+                                          scrollbarProps: ScrollbarProps(
+                                            isAlwaysShown: true,
+                                            thickness: 7,
+                                          ),
+                                          emptyBuilder:
+                                              (BuildContext context, String _) {
+                                            return Container(
+                                              alignment: Alignment.center,
+                                              padding: EdgeInsets.all(20),
+                                              child: Text(
+                                                "No events found. Refine your search!",
+                                                style:
+                                                    theme.textTheme.subtitle1,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        SizedBox(
+                                          height: this.selectedE ? 20.0 : 0,
+                                        ),
+                                        verify_card(
+                                            thing: this._selectedEvent,
+                                            selected: this.selectedE),
+                                      ])),
+                              Container(
+                                  // width: double.infinity,
+                                  margin: EdgeInsets.fromLTRB(
+                                      15.0, 0.0, 15.0, 10.0),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        SizedBox(
+                                          height: 20.0,
+                                        ),
+
+                                        DropdownSearch<Body>(
+                                          mode: Mode.DIALOG,
+                                          maxHeight: 700,
+                                          isFilteredOnline: true,
+                                          showSearchBox: true,
+                                          label: "Verifying Authority",
+                                          hint: "Verifying Authority",
+                                          validator: (value) {
+                                            if (value == null) {
+                                              return 'Please select a organization';
+                                            }
+                                            return null;
+                                          },
+                                          onChanged: onBodyChange,
+                                          onFind: bloc
+                                              .achievementBloc.searchForBody,
+                                          dropdownBuilder:
+                                              buildDropdownMenuItemsBody,
+                                          popupItemBuilder:
+                                              _customPopupItemBuilderBody,
+                                          popupSafeArea: PopupSafeArea(
+                                              top: true, bottom: true),
+                                          scrollbarProps: ScrollbarProps(
+                                            isAlwaysShown: true,
+                                            thickness: 7,
+                                          ),
+                                          selectedItem: _selectedBody,
+                                          emptyBuilder:
+                                              (BuildContext context, String _) {
+                                            return Container(
+                                              alignment: Alignment.center,
+                                              padding: EdgeInsets.all(20),
+                                              child: Text(
+                                                "No verifying authorities found. Refine your search!",
+                                                style:
+                                                    theme.textTheme.subtitle1,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        SizedBox(
+                                          height: this.selectedB ? 20.0 : 0,
+                                        ),
+                                        body_card(
+                                            thing: this._selectedBody,
+                                            selected: this.selectedB),
+                                        //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
+                                      ])),
+                              Container(
+                                width: double.infinity,
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 10.0, horizontal: 15.0),
+                                child: TextButton(
+                                  onPressed: () async {
+                                    if(_formKey.currentState.validate()){
+                                      var resp = await achievementsBloc
+                                          .postForm(currRequest);
+                                     if(resp.result=="success"){
+                                       Navigator.of(context).pushNamed("/achievements");
+                                     }
+                                     else{
+                                       _scaffoldKey.currentState.showSnackBar(
+                                           SnackBar(
+                                             content: new Text('Error'),
+                                             duration: new Duration(seconds: 10),
+                                           )
+                                       );
+                                     }
+                                    }
+
+                                    //log(currRequest.description);
+
+                                  },
+                                  child: Text('Request Verification'),
+                                  style: TextButton.styleFrom(
+                                      primary: Colors.black,
+                                      backgroundColor: Colors.amber,
+                                      onSurface: Colors.grey,
+                                      elevation: 5.0),
+                                ),
+                              ),
+                            ]),
+                      ),
                     ),
                   ),
                 )),
-      floatingActionButton: fab,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 }
