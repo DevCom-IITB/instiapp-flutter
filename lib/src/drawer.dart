@@ -1,4 +1,3 @@
-
 import 'dart:collection';
 
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
@@ -451,7 +450,7 @@ class MNavigatorObserver extends NavigatorObserver {
     "/map": 7,
     "/settings": 10,
     "/achievements": 11,
-    "/achievements/add": 12,
+    "/achievements/add": 11,
     "/notifications": -1,
   };
 
