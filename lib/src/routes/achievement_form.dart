@@ -7,6 +7,7 @@ import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
@@ -23,55 +24,126 @@ class Home extends StatefulWidget {
 class _CreateAchievementPage extends State<Home> {
   int number = 0;
   bool selectedE = false;
-  bool selectedB =false;
+  bool selectedB = false;
 
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  Event _selectedEvent = Event();
-  Body  _selectedBody =Body();
+  Event _selectedEvent;
+  Body _selectedBody;
   AchievementCreateRequest currRequest = AchievementCreateRequest();
 
+  TextEditingController titlecontroller = TextEditingController();
+  TextEditingController desccontroller = TextEditingController();
+  TextEditingController adminnotecontroller = TextEditingController();
 
-
-  TextEditingController titlecontroller =TextEditingController();
-  TextEditingController desccontroller =TextEditingController();
-  TextEditingController adminnotecontroller =TextEditingController();
+  TextEditingController eventsController = TextEditingController();
 
   // builds dropdown menu for event choice
-  List<DropdownMenuItem<Event>> buildDropdownMenuItems(
-      UnmodifiableListView<Event> data) {
-    List<DropdownMenuItem<Event>> items = [];
-    for (Event event in data) {
-      items.add(
-        DropdownMenuItem(
-          value: event,
-          child: Text(event.eventName),
+  Widget buildDropdownMenuItemsEvent(
+      BuildContext context, Event event, String itemDesignation) {
+    print("Entered build dropdown menu items");
+    if (event == null) {
+      return Container(
+        child: Text(
+          "Search for an InstiApp Event",
+          style: Theme.of(context).textTheme.bodyText1,
         ),
       );
     }
-    return items;
+    return Container(
+      child: ListTile(
+        title: Text(event.eventName),
+      ),
+    );
   }
 
-  // builds dropdown menu for event choice
-  List<DropdownMenuItem<Body>> buildDropdownMenuItemsBody(
-      UnmodifiableListView<Body> data) {
-    List<DropdownMenuItem<Body>> items = [];
-    for (Body event in data) {
-      items.add(
-        DropdownMenuItem(
-          value: event,
-          child: Text(event.bodyName),
+  Widget _customPopupItemBuilderEvent(
+      BuildContext context, Event event, bool isSelected) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(event.eventName),
+      ),
+    );
+  }
+
+  Widget buildDropdownMenuItemsBody(
+      BuildContext context, Body body, String itemDesignation) {
+    print("Entered build dropdown menu items");
+    if (body == null) {
+      return Container(
+        child: Text(
+          "Search for an organisation",
+          style: Theme.of(context).textTheme.bodyText1,
         ),
       );
     }
-    return items;
+    print(body);
+    return Container(
+      child: ListTile(
+        title: Text(body.bodyName),
+      ),
+    );
   }
+
+  Widget _customPopupItemBuilderBody(
+      BuildContext context, Body body, bool isSelected) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(body.bodyName),
+      ),
+    );
+  }
+
+  void onEventChange(Event event) {
+    setState(() {
+      selectedE = true;
+      currRequest.event = event;
+      _selectedEvent = event;
+      onBodyChange(event.eventBodies[0]);
+    });
+  }
+
+  void onBodyChange(Body body) {
+    setState(() {
+      selectedB = true;
+      currRequest.verauth = body;
+      _selectedBody = body;
+    });
+  }
+
   @override
-  void initstate(){
-    titlecontroller.addListener(() {currRequest.title=titlecontroller.text;});
-    desccontroller.addListener(() {currRequest.description=desccontroller.text;});
-    adminnotecontroller.addListener(() {currRequest.admin_note=adminnotecontroller.text;});
+  void initState() {
+    titlecontroller.addListener(() {
+      currRequest.title = titlecontroller.text;
+    });
+    desccontroller.addListener(() {
+      currRequest.description = desccontroller.text;
+    });
+    adminnotecontroller.addListener(() {
+      currRequest.admin_note = adminnotecontroller.text;
+    });
+
+    super.initState();
   }
+
   @override
   void dispose() {
     // Clean up the controller when the widget is removed from the widget tree.
@@ -84,28 +156,19 @@ class _CreateAchievementPage extends State<Home> {
 
   bool firstBuild = true;
 
-
-
   @override
   Widget build(BuildContext context) {
+    print(_selectedBody);
     var bloc = BlocProvider.of(context).bloc;
     var theme = Theme.of(context);
     final achievementsBloc = bloc.achievementBloc;
-    currRequest.title="aa";
-    currRequest.description="aa";
-    currRequest.admin_note="aa";
-
+    currRequest.title = "aa";
+    currRequest.description = "aa";
+    currRequest.admin_note = "aa";
 
     if (firstBuild) {
-      bloc.updateEvents();
       firstBuild = false;
     }
-
-
-
-
-
-
 
     return Scaffold(
         key: _scaffoldKey,
@@ -176,12 +239,10 @@ class _CreateAchievementPage extends State<Home> {
                         ),
                         autocorrect: true,
                         onChanged: (String selectedEvent) {
-                                 setState(() {
-
+                          setState(() {
                             currRequest.description = selectedEvent;
-
-                            });
-                                 },
+                          });
+                        },
                         validator: (value) {
                           log("bb");
                           currRequest.description = value;
@@ -202,7 +263,7 @@ class _CreateAchievementPage extends State<Home> {
                         },
                       )),
                   Container(
-                      margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
+                      margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 0.0),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -210,119 +271,102 @@ class _CreateAchievementPage extends State<Home> {
                             SizedBox(
                               height: 20.0,
                             ),
-                            StreamBuilder(
-                              stream: bloc.events,
-                              builder: (context,
-                                  AsyncSnapshot<UnmodifiableListView<Event>>
-                                      snapshot) {
-                                if (snapshot.hasData) {
-                                  if (snapshot.data.length > 0) {
-                                    return DropdownButtonFormField(
-                                        hint: Text("Event(Optional)"),
-                                        items: buildDropdownMenuItems(
-                                            snapshot.data),
-                                        onChanged: (Event selectedEvent) {
-                                          setState(() {
-                                            selectedE = true;
-                                            currRequest.event = selectedEvent;
-                                            _selectedEvent = selectedEvent;
-                                          });
-                                        });
-                                  } else {
-                                    return SliverToBoxAdapter(
-                                      child: Center(
-                                        child: Text("No upcoming events"),
-                                      ),
-                                    );
-                                  }
-                                } else {
-                                  return SliverToBoxAdapter(
-                                    child: Center(
-                                      child: CircularProgressIndicatorExtended(
-                                        label:
-                                            Text("Getting the latest events"),
-                                      ),
-                                    ),
-                                  );
-                                }
+                            DropdownSearch<Event>(
+                              mode: Mode.DIALOG,
+                              maxHeight: 700,
+                              isFilteredOnline: true,
+                              showSearchBox: true,
+                              label: "Event (Optional)",
+                              hint: "Event (Optional)",
+                              onChanged: onEventChange,
+                              onFind: bloc.achievementBloc.searchForEvent,
+                              dropdownBuilder: buildDropdownMenuItemsEvent,
+                              popupItemBuilder: _customPopupItemBuilderEvent,
+                              popupSafeArea:
+                                  PopupSafeArea(top: true, bottom: true),
+                              scrollbarProps: ScrollbarProps(
+                                isAlwaysShown: true,
+                                thickness: 7,
+                              ),
+                              emptyBuilder: (BuildContext context, String _) {
+                                return Container(
+                                  alignment: Alignment.center,
+                                  padding: EdgeInsets.all(20),
+                                  child: Text(
+                                    "No events found. Refine your search!",
+                                    style: theme.textTheme.subtitle1,
+                                  ),
+                                );
                               },
                             ),
                             SizedBox(
-                              height: 20.0,
+                              height: this.selectedE ? 20.0 : 0,
                             ),
                             verify_card(
                                 thing: this._selectedEvent,
                                 selected: this.selectedE),
                           ])),
                   Container(
-                      margin: EdgeInsets.fromLTRB(15.0, 1.0, 15.0, 5.0),
-                      child: Text(
-                        "Search for an InstiApp event",
-                        style: TextStyle(fontSize: 12),
-                      )),
-                  Container(
-                     // width: double.infinity,
-                        margin: EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              SizedBox(
-                                height: 20.0,
-                              ),
-                              StreamBuilder(
-                                stream: bloc.exploreBloc.bodies,
-                                builder: (context,
-                                    AsyncSnapshot<UnmodifiableListView<Body>>
-                                        snapshot) {
-                                  if (snapshot.hasData) {
-                                    if (snapshot.data.length > 0) {
-                                      return DropdownButtonFormField(
-                                          hint: Text("Verifying Authority"),
-                                          items: buildDropdownMenuItemsBody(
-                                              snapshot.data),
-                                          onChanged: (Body selectedEvent) {
-                                            setState(() {
-                                              selectedB = true;
-                                              currRequest.verauth =
-                                                  selectedEvent;
-                                              _selectedBody = selectedEvent;
-                                            });
-                                          });
-                                    } else {
-                                      return SliverToBoxAdapter(
-                                        child: Center(
-                                          child: Text("No upcoming events"),
-                                        ),
-                                      );
-                                    }
-                                  } else {
-                                    return SliverToBoxAdapter(
-                                      child: Center(
-                                        child: CircularProgressIndicatorExtended(
-                                          label:
-                                              Text("Getting the latest events"),
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
-                              SizedBox(
-                                height: 20.0,
-                              ),
-                              body_card(
-                                  thing: this._selectedBody,
-                                  selected: this.selectedB),
-                              //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
-                            ])),
+                      // width: double.infinity,
+                      margin: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SizedBox(
+                              height: 20.0,
+                            ),
 
-                  Container(
-                      margin: EdgeInsets.fromLTRB(15.0, 1.0, 15.0, 5.0),
-                      child: Text(
-                        'Enter an Organisations name',
-                        style: TextStyle(fontSize: 12),
-                      )),
+                            // return DropdownButtonFormField(
+                            //     hint: Text("Verifying Authority"),
+                            //     items: buildDropdownMenuItemsBody(
+                            //         snapshot.data),
+                            // onChanged: (Body selectedEvent) {
+                            //   setState(() {
+                            //     selectedB = true;
+                            //     currRequest.verauth = selectedEvent;
+                            //     _selectedBody = selectedEvent;
+                            //   });
+                            // });
+
+                            DropdownSearch<Body>(
+                              mode: Mode.DIALOG,
+                              maxHeight: 700,
+                              isFilteredOnline: true,
+                              showSearchBox: true,
+                              label: "Verifying Authority",
+                              hint: "Verifying Authority",
+                              onChanged: onBodyChange,
+                              onFind: bloc.achievementBloc.searchForBody,
+                              dropdownBuilder: buildDropdownMenuItemsBody,
+                              popupItemBuilder: _customPopupItemBuilderBody,
+                              popupSafeArea:
+                                  PopupSafeArea(top: true, bottom: true),
+                              scrollbarProps: ScrollbarProps(
+                                isAlwaysShown: true,
+                                thickness: 7,
+                              ),
+                              selectedItem: _selectedBody,
+                              emptyBuilder: (BuildContext context, String _) {
+                                return Container(
+                                  alignment: Alignment.center,
+                                  padding: EdgeInsets.all(20),
+                                  child: Text(
+                                    "No verifying authorities found. Refine your search!",
+                                    style: theme.textTheme.subtitle1,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(
+                              height: this.selectedB ? 20.0 : 0,
+                            ),
+                            body_card(
+                                thing: this._selectedBody,
+                                selected: this.selectedB),
+                            //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
+                          ])),
                   Container(
                     width: double.infinity,
                     margin:
@@ -331,7 +375,6 @@ class _CreateAchievementPage extends State<Home> {
                       onPressed: () async {
                         log(currRequest.description);
                         var resp = await achievementsBloc.postForm(currRequest);
-
 
                         print(resp?.result);
                       },
@@ -383,7 +426,6 @@ class card extends State<verify_card> {
   }
 }
 
-
 class body_card extends StatefulWidget {
   final Body thing;
   final bool selected;
@@ -405,8 +447,7 @@ class bodycard extends State<body_card> {
         ),
         enabled: true,
         leading: NullableCircleAvatar(
-          widget.thing.bodyImageURL ??
-              widget.thing.bodyImageURL,
+          widget.thing.bodyImageURL ?? widget.thing.bodyImageURL,
           Icons.event_outlined,
           heroTag: widget.thing.bodyID,
         ),
@@ -417,4 +458,3 @@ class bodycard extends State<body_card> {
     }
   }
 }
-

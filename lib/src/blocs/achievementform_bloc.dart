@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:developer';
 import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
@@ -21,37 +22,33 @@ import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:device_calendar/device_calendar.dart' as cal;
 
-class Validators{
-
-  var validator = StreamTransformer<String,String>.fromHandlers(
-      handleData: (text,sink){
-        if(text.length>4){
-          sink.add(text);
-        }else{
-          sink.addError("Length must be greater than 4");
-        }
-      }
-  );
-
+class Validators {
+  var validator =
+      StreamTransformer<String, String>.fromHandlers(handleData: (text, sink) {
+    if (text.length > 4) {
+      sink.add(text);
+    } else {
+      sink.addError("Length must be greater than 4");
+    }
+  });
 }
 
-
-
 // class for sending request to API
-class _AchievementCreateRequest{
+class _AchievementCreateRequest {
   String title;
   String description;
   String admin_note;
   String verauth;
   String event;
   String body;
-
 }
+
 class Bloc extends Object with Validators {
   InstiAppBloc bloc;
   final _titleController = StreamController<String>.broadcast();
@@ -88,13 +85,15 @@ class Bloc extends Object with Validators {
   Stream<String> get verauth =>
       _veryfying_authController.stream.transform(validator);
 
+  List<Event> _events = [];
+  List<Body> _bodies = [];
+
   // Stream<bool> get submitCheck =>
   //     Observable.combineLatest2(email, password, (e, p) => true);
 
   // submit() {
   //   print("xyx");
   // }
-
 
   // Future<AchievementCreateResponse> postForm(_AchievementCreateRequest req) async {
   //   try {
@@ -118,6 +117,33 @@ class Bloc extends Object with Validators {
     }
   }
 
+  Future<List<Event>> searchForEvent(String query) async {
+    print("Search called");
+    if (query.length < 3) {
+      return [];
+    }
+    var searchResponse =
+        await bloc.client.search(bloc.getSessionIdHeader(), query);
+    print("Search responed");
+
+    _events = searchResponse.events;
+    print(_events.map((e) => e.eventName));
+    return _events;
+  }
+
+  Future<List<Body>> searchForBody(String query) async {
+    print("Search called");
+    if (query.length < 3) {
+      return [];
+    }
+    var searchResponse =
+        await bloc.client.search(bloc.getSessionIdHeader(), query);
+    print("Search responed");
+
+    _bodies = searchResponse.bodies;
+    print(_bodies.map((e) => e.bodyName));
+    return _bodies;
+  }
 
   void dispose() {
     _titleController.close();
