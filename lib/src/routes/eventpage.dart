@@ -8,6 +8,7 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/footer_buttons.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/foundation.dart';
@@ -225,12 +226,9 @@ class _EventPageState extends State<EventPage> {
                   ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         persistentFooterButtons: [
-          Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: footerButtons,
-            ),
-          ),
+          FooterButtons(
+            footerButtons: footerButtons,
+          )
         ]);
   }
 

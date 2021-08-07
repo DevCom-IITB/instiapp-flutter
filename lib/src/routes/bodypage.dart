@@ -10,6 +10,7 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/footer_buttons.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
@@ -264,9 +265,8 @@ class _BodyPageState extends State<BodyPage> {
                 ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       persistentFooterButtons: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: footerButtons,
+        FooterButtons(
+          footerButtons: footerButtons,
         )
       ],
     );
