@@ -109,7 +109,7 @@ class Bloc extends Object with Validators {
       AchievementCreateRequest req) async {
     try {
       var comment = await bloc.client.postForm(bloc.getSessionIdHeader(), req);
-      log(comment.result); //comment.whenComplete(() => null);
+      //log(comment.result); //comment.whenComplete(() => null);
       return comment;
     } catch (ex) {
       print(ex);
