@@ -161,7 +161,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                     ),
                     11: NavListTile(
-                      icon: Icons.settings_outlined,
+                      icon: Icons.verified_outlined,
                       title: "Achievements",
                       onTap: () {
                         changeSelection(11, drawerState);

@@ -24,9 +24,10 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
+    var achievementBloc= bloc.achievementBloc;
     if (firstBuild && bloc.currSession != null) {
       bloc.updateAchievements();
-      bloc.getVerifiableBodies();
+      bloc.achievementBloc.getVerifiableBodies();
       firstBuild = false;
     }
     var fab;
@@ -82,7 +83,7 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
               )
             : RefreshIndicator(
                 onRefresh: () {
-                  bloc.getVerifiableBodies();
+                  bloc.achievementBloc.getVerifiableBodies();
                   bloc.updateAchievements();
                   return;
                 },
@@ -91,7 +92,7 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
                   child: CustomScrollView(
                     slivers: [
                       StreamBuilder(
-                        stream: bloc.verifiableBodies,
+                        stream: bloc.achievementBloc.verifiableBodies,
                         builder: (context,
                             AsyncSnapshot<UnmodifiableListView<Body>>
                                 snapshot) {
@@ -220,7 +221,7 @@ class AchListItem extends StatefulWidget {
   })  : this.title = achievement.title,
         this.company = achievement.body.bodyName,
         this.icon = achievement.body.bodyImageURL,
-        this.forText = achievement.event.eventName,
+        this.forText =achievement.event!=null? achievement.event.eventName: "No event name specified",
         this.importance = achievement.description,
         this.isVerified = achievement.verified,
         this.isHidden = achievement.hidden,
