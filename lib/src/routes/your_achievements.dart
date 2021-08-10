@@ -19,12 +19,13 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   bool firstBuild = true;
+  bool perToVerify = false;
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
-    var achievementBloc= bloc.achievementBloc;
+    var achievementBloc = bloc.achievementBloc;
     if (firstBuild && bloc.currSession != null) {
       bloc.updateAchievements();
       bloc.achievementBloc.getVerifiableBodies();
@@ -98,22 +99,39 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
                                 snapshot) {
                           if (snapshot.hasData) {
                             if (snapshot.data.length > 0) {
-                              return Column(
-                                children: [SliverToBoxAdapter(
-                                  child: TitleWithBackButton(
-                                    child: Text(
-                                      "Verify",
-                                      style: theme.textTheme.headline4,
-                                    ),
+                              return SliverToBoxAdapter(
+                                child: TitleWithBackButton(
+                                  child: Text(
+                                    "Verify",
+                                    style: theme.textTheme.headline4,
                                   ),
                                 ),
-                                  SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                      (context, index) =>
-                                          body_card(thing: snapshot.data[index]),
-                                      childCount: snapshot.data.length),
+                              );
+                            } else {
+                              return SliverToBoxAdapter(
+                                child: Center(),
+                              );
+                            }
+                          } else {
+                            return SliverToBoxAdapter(
+                              child: Center(),
+                            );
+                          }
+                        },
+                      ),
+                      StreamBuilder(
+                        stream: bloc.achievementBloc.verifiableBodies,
+                        builder: (context,
+                            AsyncSnapshot<UnmodifiableListView<Body>>
+                                snapshot) {
+                          if (snapshot.hasData) {
+                            if (snapshot.data.length > 0) {
+                              return SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                  (context, index) =>
+                                      body_card(thing: snapshot.data[index]),
+                                  childCount: snapshot.data.length,
                                 ),
-                          ]
                               );
                             } else {
                               return SliverToBoxAdapter(
@@ -221,7 +239,9 @@ class AchListItem extends StatefulWidget {
   })  : this.title = achievement.title,
         this.company = achievement.body.bodyName,
         this.icon = achievement.body.bodyImageURL,
-        this.forText =achievement.event!=null? achievement.event.eventName: "No event name specified",
+        this.forText = achievement.event != null
+            ? achievement.event.eventName
+            : "No event name specified",
         this.importance = achievement.description,
         this.isVerified = achievement.verified,
         this.isHidden = achievement.hidden,
