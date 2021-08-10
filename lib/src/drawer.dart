@@ -131,6 +131,16 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                     ),
                     8: NavListTile(
+                      icon: Icons.verified_outlined,
+                      title: "Achievements",
+                      onTap: () {
+                        changeSelection(11, drawerState);
+                        var navi = Navigator.of(context);
+                        navi.pop();
+                        navi.pushNamed('/achievements');
+                      },
+                    ),
+                    9: NavListTile(
                       icon: Icons.feedback_outlined,
                       title: "Complaints/Suggestions",
                       onTap: () {
@@ -140,7 +150,7 @@ class _NavDrawerState extends State<NavDrawer> {
                         navi.pushNamed('/complaints');
                       },
                     ),
-                    9: NavListTile(
+                    10: NavListTile(
                       icon: Icons.link_outlined,
                       title: "Quick Links",
                       onTap: () {
@@ -150,7 +160,7 @@ class _NavDrawerState extends State<NavDrawer> {
                         navi.pushNamed('/quicklinks');
                       },
                     ),
-                    10: NavListTile(
+                    11: NavListTile(
                       icon: Icons.settings_outlined,
                       title: "Settings",
                       onTap: () {
@@ -158,16 +168,6 @@ class _NavDrawerState extends State<NavDrawer> {
                         var navi = Navigator.of(context);
                         navi.pop();
                         navi.pushNamed('/settings');
-                      },
-                    ),
-                    11: NavListTile(
-                      icon: Icons.verified_outlined,
-                      title: "Achievements",
-                      onTap: () {
-                        changeSelection(11, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pop();
-                        navi.pushNamed('/achievements');
                       },
                     ),
                   };
@@ -440,17 +440,17 @@ class MNavigatorObserver extends NavigatorObserver {
     "/placeblog": 4,
     "/trainblog": 5,
     "/feed": 0,
-    "/quicklinks": 9,
+    "/quicklinks": 10,
     "/news": 1,
     "/explore": 2,
     "/calendar": 6,
-    "/complaints": 8,
-    "/newcomplaint": 8,
+    "/complaints": 9,
+    "/newcomplaint": 9,
     "/putentity/event": 0,
     "/map": 7,
-    "/settings": 10,
-    "/achievements": 11,
-    "/achievements/add": 11,
+    "/settings": 11,
+    "/achievements": 8,
+    "/achievements/add": 8,
     "/notifications": -1,
   };
 
