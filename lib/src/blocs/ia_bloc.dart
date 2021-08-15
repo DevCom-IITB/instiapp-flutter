@@ -9,6 +9,7 @@ import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
+import 'package:InstiApp/src/blocs/ach_to_vefiry_bloc.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
 import 'package:InstiApp/src/blocs/complaints_bloc.dart';
@@ -62,8 +63,6 @@ class InstiAppBloc {
   ValueStream<UnmodifiableListView<Event>> get events => _eventsSubject.stream;
   final _eventsSubject = BehaviorSubject<UnmodifiableListView<Event>>();
 
-
-
   ValueStream<UnmodifiableListView<ntf.Notification>> get notifications =>
       _notificationsSubject.stream;
   final _notificationsSubject =
@@ -84,6 +83,7 @@ class InstiAppBloc {
   DrawerBloc drawerState;
   MapBloc mapBloc;
   Bloc achievementBloc;
+  VerifyBloc bodyAchBloc;
 
   // actual current state
   Session currSession;
@@ -211,6 +211,7 @@ class InstiAppBloc {
     navigatorObserver = MNavigatorObserver(this);
     mapBloc = MapBloc(this);
     achievementBloc = Bloc(this);
+    bodyAchBloc = VerifyBloc(this);
     _initNotificationBatch();
   }
 
@@ -257,10 +258,8 @@ class InstiAppBloc {
 
   // Your Achievement Bloc
   Future<void> updateAchievements() async {
-    print("Fetching response");
     var yourAchievementResponse =
         await client.getYourAchievements(getSessionIdHeader());
-    print("Returned response");
     _achievements = yourAchievementResponse;
     _achievementSubject.add(UnmodifiableListView(_achievements));
   }
