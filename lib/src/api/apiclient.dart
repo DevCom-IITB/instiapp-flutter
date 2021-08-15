@@ -232,4 +232,12 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
   @PatchReq(path: "/achievements/:id")
   Future<void> toggleHidden(@Header("Cookie") String sessionID,
       @PathParam() String id, @AsJson() AchievementHiddenPathRequest hidden);
+
+  @GetReq(path: "/achievements-body/:id")
+  Future<List<Achievement>> getBodyAchievements(
+      @Header("Cookie") String sessionId, @PathParam() String id);
+
+  @PutReq(path: "/achievements/:id")
+  Future<void> dismissAchievement(@Header("Cookie") String sessionID,
+      @PathParam() String id, @AsJson() AchievementCreateRequest achievement);
 }

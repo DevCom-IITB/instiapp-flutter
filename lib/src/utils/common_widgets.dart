@@ -668,3 +668,100 @@ class SliverHeaderDelegate extends SliverPersistentHeaderDelegate {
     return false;
   }
 }
+
+class DefListItem extends StatelessWidget {
+  final String title;
+  final String company;
+  final String icon;
+  final String forText;
+  final String importance;
+  final bool isVerified;
+  final bool isDismissed;
+  final String adminNote;
+
+  const DefListItem(
+      {Key key,
+      this.title,
+      this.company,
+      this.icon,
+      this.forText,
+      this.importance,
+      this.isVerified,
+      this.isDismissed,
+      this.adminNote})
+      : super(key: key);
+
+  Widget verifiedText() {
+    if (isVerified) {
+      return Text(
+        "Verified",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.green,
+        ),
+      );
+    } else if (isDismissed) {
+      return Text(
+        "Dismissed",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.red,
+        ),
+      );
+    } else {
+      return Text(
+        "Verification Pending",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.grey,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListTile(
+          leading: icon == null
+              ? null
+              : CircleAvatar(
+                  foregroundImage: NetworkImage(icon),
+                ),
+          title: Text(title),
+          subtitle: Text(company),
+        ),
+        forText == null
+            ? SizedBox()
+            : Row(
+                children: [
+                  Text("For: "),
+                  Text(
+                    forText,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+        importance == null ? SizedBox() : Text(importance),
+        adminNote == null
+            ? SizedBox()
+            : Row(
+                children: [
+                  Text("Admin Note: "),
+                  Text(
+                    adminNote,
+                  ),
+                ],
+              ),
+        Row(
+          children: [
+            Text("Status: "),
+            verifiedText(),
+          ],
+        ),
+      ],
+    );
+  }
+}

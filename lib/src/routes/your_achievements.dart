@@ -4,6 +4,7 @@ import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/routes/verify_ach.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,6 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
-    var achievementBloc = bloc.achievementBloc;
     if (firstBuild && bloc.currSession != null) {
       bloc.updateAchievements();
       bloc.achievementBloc.getVerifiableBodies();
@@ -85,8 +85,7 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
             : RefreshIndicator(
                 onRefresh: () {
                   bloc.achievementBloc.getVerifiableBodies();
-                  bloc.updateAchievements();
-                  return;
+                  return bloc.updateAchievements();
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -231,6 +230,7 @@ class AchListItem extends StatefulWidget {
   final String importance;
   final bool isVerified;
   final bool isHidden;
+  final bool isDismissed;
   final Achievement achievement;
 
   AchListItem({
@@ -244,6 +244,7 @@ class AchListItem extends StatefulWidget {
             : "No event name specified",
         this.importance = achievement.description,
         this.isVerified = achievement.verified,
+        this.isDismissed = achievement.dismissed,
         this.isHidden = achievement.hidden,
         super(key: key);
 
@@ -286,6 +287,7 @@ class _AchListItemState extends State<AchListItem> {
           forText: widget.forText,
           importance: widget.importance,
           isVerified: widget.isVerified,
+          isDismissed: widget.isDismissed,
         ),
         Row(
           children: [
@@ -305,77 +307,6 @@ class _AchListItemState extends State<AchListItem> {
         ),
         Divider(
           color: Colors.grey[600],
-        ),
-      ],
-    );
-  }
-}
-
-class DefListItem extends StatelessWidget {
-  final String title;
-  final String company;
-  final String icon;
-  final String forText;
-  final String importance;
-  final bool isVerified;
-
-  const DefListItem({
-    Key key,
-    this.title,
-    this.company,
-    this.icon,
-    this.forText,
-    this.importance,
-    this.isVerified,
-  }) : super(key: key);
-
-  Widget verifiedText() {
-    if (isVerified) {
-      return Text(
-        "Verified",
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.green,
-        ),
-      );
-    } else {
-      return Text(
-        "Verification Pending",
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.red,
-        ),
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ListTile(
-          leading: CircleAvatar(
-            foregroundImage: NetworkImage(icon),
-          ),
-          title: Text(title),
-          subtitle: Text(company),
-        ),
-        Row(
-          children: [
-            Text("For: "),
-            Text(
-              forText,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        Text(importance),
-        Row(
-          children: [
-            Text("Status: "),
-            verifiedText(),
-          ],
         ),
       ],
     );
@@ -406,6 +337,14 @@ class bodycard extends State<body_card> {
         heroTag: widget.thing.bodyID,
       ),
       subtitle: Text(widget.thing.bodyShortDescription),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => VerifyAchPage(
+                      bodyId: widget.thing.bodyID,
+                    )));
+      },
     );
   }
 }
