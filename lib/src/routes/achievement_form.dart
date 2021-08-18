@@ -398,24 +398,22 @@ class _CreateAchievementPage extends State<Home> {
                                     vertical: 10.0, horizontal: 15.0),
                                 child: TextButton(
                                   onPressed: () async {
-                                    if(_formKey.currentState.validate()){
+                                    if (_formKey.currentState.validate()) {
                                       var resp = await achievementsBloc
                                           .postForm(currRequest);
-                                     if(resp.result=="success"){
-                                       Navigator.of(context).pushNamed("/achievements");
-                                     }
-                                     else{
-                                       _scaffoldKey.currentState.showSnackBar(
-                                           SnackBar(
-                                             content: new Text('Error'),
-                                             duration: new Duration(seconds: 10),
-                                           )
-                                       );
-                                     }
+                                      if (resp.result == "success") {
+                                        Navigator.of(context)
+                                            .pushNamed("/achievements");
+                                      } else {
+                                        _scaffoldKey.currentState
+                                            .showSnackBar(SnackBar(
+                                          content: new Text('Error'),
+                                          duration: new Duration(seconds: 10),
+                                        ));
+                                      }
                                     }
 
                                     //log(currRequest.description);
-
                                   },
                                   child: Text('Request Verification'),
                                   style: TextButton.styleFrom(
@@ -430,6 +428,14 @@ class _CreateAchievementPage extends State<Home> {
                     ),
                   ),
                 )),
+      floatingActionButton: FloatingActionButton.extended(
+        icon: Icon(Icons.qr_code),
+        label: Text("Scan QR"),
+        onPressed: () {
+          Navigator.of(context).pushNamed("/achievements/add");
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 }
