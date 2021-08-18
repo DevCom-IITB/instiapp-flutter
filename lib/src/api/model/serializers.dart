@@ -7,6 +7,7 @@ import 'package:InstiApp/src/api/model/notification.dart';
 import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
+import 'package:InstiApp/src/api/request/ach_verify_request.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
 import 'package:InstiApp/src/api/request/comment_create_request.dart';
@@ -68,6 +69,7 @@ JsonRepo standardSerializers = JsonRepo(serializers: [
   UserSCNPatchRequestSerializer(),
   AchievementCreateRequestSerializer(),
   AchievementHiddenPathRequestSerializer(),
+  AchVerifyRequestSerializer(),
 
   // Responses
   NewsFeedResponseSerializer(),
