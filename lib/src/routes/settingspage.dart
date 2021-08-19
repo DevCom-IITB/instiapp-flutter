@@ -57,7 +57,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 TitleWithBackButton(
                   child: Text(
                     "Settings",
-                    style: theme.textTheme.display2,
+                    style: theme.textTheme.headline3,
                   ),
                 )
               ];
@@ -68,7 +68,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         horizontal: 28.0, vertical: 12.0),
                     child: Text(
                       "Profile settings",
-                      style: theme.textTheme.title.copyWith(
+                      style: theme.textTheme.headline6.copyWith(
                           fontWeight: FontWeight.bold,
                           color: theme.primaryColor),
                     ),
@@ -137,7 +137,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       left: 28.0, right: 28.0, top: 8.0, bottom: 24.0),
                   child: Text(
                     "App settings",
-                    style: theme.textTheme.title.copyWith(
+                    style: theme.textTheme.headline6.copyWith(
                         fontWeight: FontWeight.bold, color: theme.primaryColor),
                   ),
                 ),
@@ -145,7 +145,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 28.0),
                   child: Text(
                     "Default Homepage",
-                    style: theme.textTheme.body1.copyWith(
+                    style: theme.textTheme.bodyText2.copyWith(
                         fontWeight: FontWeight.bold, color: theme.accentColor),
                   ),
                 ),
@@ -183,7 +183,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       top: 16.0, bottom: 12.0, left: 28.0, right: 28.0),
                   child: Text(
                     "App Theme",
-                    style: theme.textTheme.body1.copyWith(
+                    style: theme.textTheme.bodyText2.copyWith(
                         fontWeight: FontWeight.bold, color: theme.accentColor),
                   ),
                 ),
@@ -234,7 +234,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               selectedColor: bloc.primaryColor,
                             ),
                             actions: <Widget>[
-                              FlatButton(
+                              TextButton(
                                 child: Text("Okay"),
                                 onPressed: () {
                                   Navigator.of(context).pop();
@@ -267,7 +267,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               selectedColor: bloc.accentColor,
                             ),
                             actions: <Widget>[
-                              FlatButton(
+                              TextButton(
                                 child: Text("Okay"),
                                 onPressed: () {
                                   Navigator.of(context).pop();
@@ -280,7 +280,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 28.0),
-                  child: OutlineButton.icon(
+                  child: OutlinedButton.icon(
                     icon: Icon(Icons.restore_outlined),
                     label: Text("Restore Default Theme"),
                     onPressed: () {

@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
       // No stored session found
       startLoginPageServer().then((_) async {
         print("startLoginPageServer.then: Launching Web View");
-         await Future.delayed(Duration(milliseconds: 200));
+        await Future.delayed(Duration(milliseconds: 200));
         var mqdata = MediaQuery.of(context);
         flutterWebviewPlugin.launch(
           loginurl,
@@ -92,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
 
       onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {
         print("Changed URL: $url");
-        if(url.startsWith(ssoLogin)) {
+        if (url.startsWith(ssoLogin)) {
           print("onUrlChanged: Going to sso authorize");
         } else if (url.startsWith(guestUrl)) {
           this.onUrlChangedSub.cancel();
@@ -108,11 +108,11 @@ class _LoginPageState extends State<LoginPage> {
         } else if (url.startsWith(httpGymkhanaUrl)) {
           print("onUrlChanged: http gymkhana");
           flutterWebviewPlugin.reloadUrl(url.replaceFirst("http", "https"));
-        } else if(url.startsWith(ssoAuth)){
+        } else if (url.startsWith(ssoAuth)) {
           print("onUrlChanged: Going to sso login");
           // flutterWebviewPlugin.reloadUrl(sso);
           // flutterWebviewPlugin.hide();
-        } else if (url.startsWith(successUrl)){
+        } else if (url.startsWith(successUrl)) {
           var uri = Uri.parse(url);
           var code = uri.queryParameters['code'];
           print(code);
@@ -120,8 +120,7 @@ class _LoginPageState extends State<LoginPage> {
           print("onUrlChanged: Hiding Web View");
           flutterWebviewPlugin.hide();
           login(code, "https://www.insti.app/login-android.html");
-        }
-        else if (!url.startsWith("http://127.0.0.1")) {
+        } else if (!url.startsWith("http://127.0.0.1")) {
           print("Going to unintented website");
           flutterWebviewPlugin.reloadUrl(loginurl);
         }
@@ -184,7 +183,7 @@ class _LoginPageState extends State<LoginPage> {
               "InstiApp",
               style: Theme.of(context)
                   .textTheme
-                  .display1
+                  .headline4
                   .copyWith(color: Theme.of(context).accentColor),
             ),
             CircularProgressIndicatorExtended(
@@ -228,7 +227,7 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         statusMessage = "Log in failed. Reinitializing.";
       });
-      Scaffold.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Authentication Failed"),
       ));
       print("login: Showing Web View");

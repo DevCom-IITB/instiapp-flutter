@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
@@ -161,11 +160,11 @@ class _EventPageState extends State<EventPage> {
                         children: <Widget>[
                           Text(
                             event.eventName,
-                            style: theme.textTheme.display2,
+                            style: theme.textTheme.headline3,
                           ),
                           SizedBox(height: 8.0),
                           Text(event.getSubTitle(),
-                              style: theme.textTheme.title),
+                              style: theme.textTheme.headline6),
                         ],
                       ),
                     ),
@@ -186,7 +185,7 @@ class _EventPageState extends State<EventPage> {
                           horizontal: 28.0, vertical: 16.0),
                       child: CommonHtml(
                         data: event?.eventDescription,
-                        defaultTextStyle: theme.textTheme.subhead,
+                        defaultTextStyle: theme.textTheme.subtitle1,
                       ),
                     ),
                     SizedBox(
@@ -234,8 +233,8 @@ class _EventPageState extends State<EventPage> {
 
   Widget _buildBodyTile(InstiAppBloc bloc, TextTheme theme, Body body) {
     return ListTile(
-      title: Text(body.bodyName, style: theme.title),
-      subtitle: Text(body.bodyShortDescription, style: theme.subtitle),
+      title: Text(body.bodyName, style: theme.headline6),
+      subtitle: Text(body.bodyShortDescription, style: theme.subtitle2),
       leading: NullableCircleAvatar(
         body.bodyImageURL,
         Icons.work_outline_outlined,
@@ -247,19 +246,24 @@ class _EventPageState extends State<EventPage> {
     );
   }
 
-  RaisedButton buildUserStatusButton(
+  ElevatedButton buildUserStatusButton(
       String name, UES uesButton, ThemeData theme, InstiAppBloc bloc) {
-    return RaisedButton(
-      color: event?.eventUserUes == uesButton
-          ? theme.accentColor
-          : theme.scaffoldBackgroundColor,
-      textColor:
-          event?.eventUserUes == uesButton ? theme.accentIconTheme.color : null,
-      shape: RoundedRectangleBorder(
-          side: BorderSide(
-            color: theme.accentColor,
-          ),
-          borderRadius: BorderRadius.all(Radius.circular(4))),
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        primary: event?.eventUserUes == uesButton
+            ? theme.accentColor
+            : theme.scaffoldBackgroundColor,
+        textStyle: TextStyle(
+          color: event?.eventUserUes == uesButton
+              ? theme.accentIconTheme.color
+              : null,
+        ),
+        shape: RoundedRectangleBorder(
+            side: BorderSide(
+              color: theme.accentColor,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(4))),
+      ),
       child: Row(children: () {
         var rowChildren = <Widget>[
           Text(name),
@@ -323,7 +327,7 @@ class _EventPageState extends State<EventPage> {
                   parent: this,
                 ),
                 actions: <Widget>[
-                  FlatButton(
+                  TextButton(
                     child: Text("No"),
                     onPressed: () {
                       Navigator.of(context).pop(false);
@@ -332,7 +336,7 @@ class _EventPageState extends State<EventPage> {
                       }
                     },
                   ),
-                  FlatButton(
+                  TextButton(
                     child: Text("Yes"),
                     onPressed: () {
                       Navigator.of(context).pop(true);
@@ -384,13 +388,13 @@ class _EventPageState extends State<EventPage> {
                 title: Text("Select which calendars to add to?"),
                 content: CalendarList(calendarsResult.data, parent: this),
                 actions: <Widget>[
-                  FlatButton(
+                  TextButton(
                     child: Text("Cancel"),
                     onPressed: () {
                       Navigator.pop(context, false);
                     },
                   ),
-                  FlatButton(
+                  TextButton(
                     child: Text("Yes"),
                     onPressed: () {
                       Navigator.pop(context, true);
@@ -450,7 +454,7 @@ class _EventPageState extends State<EventPage> {
                 content: Text(
                     'Successfully added to ${futures.length} calendar${futures.length > 1 ? "s" : ""}'),
                 actions: <Widget>[
-                  FlatButton(
+                  TextButton(
                     child: Text('Ok'),
                     onPressed: () {
                       Navigator.of(context).pop();

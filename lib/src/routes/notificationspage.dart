@@ -69,7 +69,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       TitleWithBackButton(
                         child: Text(
                           widget.title,
-                          style: theme.textTheme.display2,
+                          style: theme.textTheme.headline3,
                         ),
                       )
                     ] +
@@ -119,7 +119,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
       return [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-          child: Text.rich(TextSpan(style: theme.textTheme.title, children: [
+          child:
+              Text.rich(TextSpan(style: theme.textTheme.headline6, children: [
             TextSpan(text: "No new "),
             TextSpan(
                 text: "notifications",
@@ -163,7 +164,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
         ),
       ),
       onDismissed: (direction) async {
-        await _scaffoldKey.currentState
+        await ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(
               content: Text("Marked \"${notification.getTitle()}\" as read "),
               action: SnackBarAction(

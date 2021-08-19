@@ -73,7 +73,7 @@ class _FeedPageState extends State<FeedPage> {
                 child: TitleWithBackButton(
                   child: Text(
                     "Feed",
-                    style: theme.textTheme.display2,
+                    style: theme.textTheme.headline3,
                   ),
                 ),
               ),
@@ -149,7 +149,7 @@ class _FeedPageState extends State<FeedPage> {
                   EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               title: Text(
                 event.eventName,
-                style: theme.textTheme.title,
+                style: theme.textTheme.headline6,
               ),
               enabled: true,
               subtitle: Text(event.getSubTitle()),
@@ -161,7 +161,7 @@ class _FeedPageState extends State<FeedPage> {
       return ListTile(
         title: Text(
           event.eventName,
-          style: theme.textTheme.title,
+          style: theme.textTheme.headline6,
         ),
         enabled: true,
         leading: NullableCircleAvatar(

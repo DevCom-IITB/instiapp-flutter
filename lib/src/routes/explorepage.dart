@@ -111,7 +111,7 @@ class _ExplorePageState extends State<ExplorePage> {
                     Expanded(
                       child: Text(
                         widget.title,
-                        style: theme.textTheme.display2,
+                        style: theme.textTheme.headline3,
                       ),
                     ),
                     AnimatedContainer(
@@ -155,14 +155,14 @@ class _ExplorePageState extends State<ExplorePage> {
                       duration: Duration(milliseconds: 500),
                       child: TextField(
                         controller: _searchFieldController,
-                        cursorColor: theme.textTheme.body1.color,
-                        style: theme.textTheme.body1,
+                        cursorColor: theme.textTheme.bodyText2.color,
+                        style: theme.textTheme.bodyText2,
                         focusNode: _focusNode,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30)),
-                          labelStyle: theme.textTheme.body1,
-                          hintStyle: theme.textTheme.body1,
+                          labelStyle: theme.textTheme.bodyText2,
+                          hintStyle: theme.textTheme.bodyText2,
                           prefixIcon: Icon(
                             Icons.search_outlined,
                           ),
@@ -236,7 +236,8 @@ class _ExplorePageState extends State<ExplorePage> {
         return [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-            child: Text.rich(TextSpan(style: theme.textTheme.title, children: [
+            child:
+                Text.rich(TextSpan(style: theme.textTheme.headline6, children: [
               TextSpan(text: "Nothing found for the query "),
               TextSpan(
                   text: "\"${exploreBloc.query}\"",
@@ -301,7 +302,7 @@ class _ExplorePageState extends State<ExplorePage> {
       ),
       title: Text(
         title,
-        style: theme.textTheme.title,
+        style: theme.textTheme.headline6,
       ),
       subtitle: Text(subtitle),
       onTap: onClick,

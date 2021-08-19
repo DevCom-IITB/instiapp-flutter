@@ -84,7 +84,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     children: <Widget>[
                       Text(
                         widget.title,
-                        style: theme.textTheme.display2,
+                        style: theme.textTheme.headline3,
                       ),
                       SizedBox(
                           height: 18,
@@ -125,21 +125,21 @@ class _CalendarPageState extends State<CalendarPage> {
                                 DateTime(date.year, date.month, 1), _eventIcon);
                           },
 
-                          headerTextStyle: theme.textTheme.title,
+                          headerTextStyle: theme.textTheme.headline6,
 
-                          weekendTextStyle: theme.textTheme.title
+                          weekendTextStyle: theme.textTheme.headline6
                               .copyWith(fontSize: 18)
                               .copyWith(color: Colors.red[800]),
                           daysTextStyle:
-                              theme.textTheme.title.copyWith(fontSize: 18),
+                              theme.textTheme.headline6.copyWith(fontSize: 18),
                           inactiveDaysTextStyle:
-                              theme.textTheme.title.copyWith(fontSize: 18),
-                          nextDaysTextStyle: theme.textTheme.title
+                              theme.textTheme.headline6.copyWith(fontSize: 18),
+                          nextDaysTextStyle: theme.textTheme.headline6
                               .copyWith(fontSize: 18)
                               .copyWith(
                                   color: theme.colorScheme.onSurface
                                       .withAlpha(150)),
-                          prevDaysTextStyle: theme.textTheme.title
+                          prevDaysTextStyle: theme.textTheme.headline6
                               .copyWith(fontSize: 18)
                               .copyWith(
                                   color: theme.colorScheme.onSurface
@@ -170,7 +170,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
                           todayButtonColor: theme.primaryColor.withOpacity(0.3),
                           selectedDayButtonColor: theme.accentColor,
-                          selectedDayTextStyle: theme.accentTextTheme.title,
+                          selectedDayTextStyle: theme.accentTextTheme.headline6,
 
                           // height: min(MediaQuery.of(context).size.shortestSide, 600) * 1.6,
                           height: 440.0,
@@ -242,7 +242,7 @@ class _CalendarPageState extends State<CalendarPage> {
     return ListTile(
       title: Text(
         event.eventName,
-        style: theme.textTheme.title,
+        style: theme.textTheme.headline6,
       ),
       enabled: true,
       leading: NullableCircleAvatar(
