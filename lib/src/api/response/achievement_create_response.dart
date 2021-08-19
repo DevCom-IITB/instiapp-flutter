@@ -4,7 +4,7 @@ part 'achievement_create_response.jser.dart';
 
 class AchievementCreateResponse {
   String result;
-  String AchID;
+  String achID;
 }
 
 @GenSerializer()

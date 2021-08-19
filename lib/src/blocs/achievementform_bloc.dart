@@ -20,15 +20,14 @@ class Bloc extends Object {
 
   ValueStream<UnmodifiableListView<Body>> get verifiableBodies =>
       _verBodySubject.stream;
-  final _verBodySubject =
-  BehaviorSubject<UnmodifiableListView<Body>>();
+  final _verBodySubject = BehaviorSubject<UnmodifiableListView<Body>>();
 
   Future<AchievementCreateResponse> postForm(
       AchievementCreateRequest req) async {
     try {
       log(req.title);
       var comment = await bloc.client.postForm(bloc.getSessionIdHeader(), req);
-      comment.result="success";
+      comment.result = "success";
       return comment;
     } catch (ex) {
       log("aa");
@@ -38,24 +37,23 @@ class Bloc extends Object {
   }
 
   Future<void> getVerifiableBodies() async {
-    var currUser= await bloc.client.getUserMe(bloc.getSessionIdHeader());
+    var currUser = await bloc.client.getUserMe(bloc.getSessionIdHeader());
     print("got response");
 
-    List<Body> ListBody= List<Body>();
+    List<Body> listBody = [];
 
-    for(Role role in currUser.userRoles){
-      if(role.rolePermissions.contains('VerA')){
-        for(Body body in role.roleBodies){
-          if(!ListBody.contains(body)){
-            ListBody.add(body);
+    for (Role role in currUser.userRoles) {
+      if (role.rolePermissions.contains('VerA')) {
+        for (Body body in role.roleBodies) {
+          if (!listBody.contains(body)) {
+            listBody.add(body);
           }
         }
       }
     }
     print("returning");
-    _verifiableBodies=ListBody;
+    _verifiableBodies = listBody;
     _verBodySubject.add(UnmodifiableListView(_verifiableBodies));
-
   }
 
   Future<List<Event>> searchForEvent(String query) async {
@@ -85,5 +83,4 @@ class Bloc extends Object {
     print(_bodies.map((e) => e.bodyName));
     return _bodies;
   }
-
 }

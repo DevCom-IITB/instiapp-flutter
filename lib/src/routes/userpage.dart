@@ -139,16 +139,16 @@ class _UserPageState extends State<UserPage> {
                                 ),
                                 title: Text(
                                   user.userName,
-                                  style: theme.textTheme.headline.copyWith(
+                                  style: theme.textTheme.headline5.copyWith(
                                       fontFamily:
-                                          theme.textTheme.display2.fontFamily),
+                                          theme.textTheme.headline3.fontFamily),
                                 ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     user.userRollNumber != null
                                         ? Text(user.userRollNumber,
-                                            style: theme.textTheme.title)
+                                            style: theme.textTheme.headline6)
                                         : CircularProgressIndicatorExtended(
                                             size: 12,
                                             label: Text("Loading Roll Number"),
@@ -168,7 +168,7 @@ class _UserPageState extends State<UserPage> {
                                                 child: user.userEmail != null
                                                     ? Text(user.userEmail,
                                                         style: theme
-                                                            .textTheme.title
+                                                            .textTheme.headline6
                                                             .copyWith(
                                                                 color: Colors
                                                                     .lightBlue))
@@ -193,7 +193,8 @@ class _UserPageState extends State<UserPage> {
                                                 message: "Call this person",
                                                 child: Text(
                                                     user.userContactNumber,
-                                                    style: theme.textTheme.title
+                                                    style: theme
+                                                        .textTheme.headline6
                                                         .copyWith(
                                                             color: Colors
                                                                 .lightBlue)),
@@ -376,7 +377,7 @@ class _UserPageState extends State<UserPage> {
     return ListTile(
       title: Text(
         event.eventName,
-        style: theme.textTheme.title,
+        style: theme.textTheme.headline6,
       ),
       enabled: true,
       leading: NullableCircleAvatar(
@@ -393,8 +394,8 @@ class _UserPageState extends State<UserPage> {
 
   Widget _buildBodyTile(InstiAppBloc bloc, TextTheme theme, Body body) {
     return ListTile(
-      title: Text(body.bodyName, style: theme.title),
-      subtitle: Text(body.bodyShortDescription, style: theme.subtitle),
+      title: Text(body.bodyName, style: theme.headline6),
+      subtitle: Text(body.bodyShortDescription, style: theme.subtitle2),
       leading: NullableCircleAvatar(
         body.bodyImageURL,
         Icons.people_outline_outlined,
@@ -408,8 +409,8 @@ class _UserPageState extends State<UserPage> {
 
   Widget _buildRoleTile(InstiAppBloc bloc, TextTheme theme, Role role) {
     return ListTile(
-      title: Text(role.roleBodyDetails.bodyName, style: theme.title),
-      subtitle: Text(role.roleName, style: theme.subtitle),
+      title: Text(role.roleBodyDetails.bodyName, style: theme.headline6),
+      subtitle: Text(role.roleName, style: theme.subtitle2),
       leading: NullableCircleAvatar(
         role.roleBodyDetails.bodyImageURL,
         Icons.people_outline_outlined,
@@ -423,9 +424,9 @@ class _UserPageState extends State<UserPage> {
 
   Widget _buildFormerRoleTile(InstiAppBloc bloc, TextTheme theme, Role role) {
     return ListTile(
-      title: Text(role.roleBodyDetails.bodyName, style: theme.title),
+      title: Text(role.roleBodyDetails.bodyName, style: theme.headline6),
       subtitle: Text("Former ${role.roleName} ${role.year ?? ""}",
-          style: theme.subtitle),
+          style: theme.subtitle2),
       leading: NullableCircleAvatar(
         role.roleBodyDetails.bodyImageURL,
         Icons.people_outline_outlined,
@@ -442,7 +443,7 @@ class _UserPageState extends State<UserPage> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      Scaffold.of(context)
+      ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
@@ -457,7 +458,7 @@ class _UserPageState extends State<UserPage> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      Scaffold.of(context)
+      ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(

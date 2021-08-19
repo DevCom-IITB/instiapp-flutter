@@ -1,16 +1,8 @@
-import 'dart:collection';
-import 'dart:developer';
-
-import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
-import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
-import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
-import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 
 import '../bloc_provider.dart';
@@ -141,14 +133,6 @@ class _CreateAchievementPage extends State<Home> {
     if (firstBuild) {
       firstBuild = false;
     }
-    var fab;
-    fab = FloatingActionButton.extended(
-      icon: Icon(Icons.add_outlined),
-      label: Text("Add Acheivement"),
-      onPressed: () {
-        Navigator.of(context).pushNamed("/achievements/add");
-      },
-    );
     return Scaffold(
       key: _scaffoldKey,
       drawer: NavDrawer(),
@@ -325,7 +309,7 @@ class _CreateAchievementPage extends State<Home> {
                                         SizedBox(
                                           height: this.selectedE ? 20.0 : 0,
                                         ),
-                                        verify_card(
+                                        VerifyCard(
                                             thing: this._selectedEvent,
                                             selected: this.selectedE),
                                       ])),
@@ -387,7 +371,7 @@ class _CreateAchievementPage extends State<Home> {
                                         SizedBox(
                                           height: this.selectedB ? 20.0 : 0,
                                         ),
-                                        body_card(
+                                        BodyCard(
                                             thing: this._selectedBody,
                                             selected: this.selectedB),
                                         //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
@@ -405,7 +389,7 @@ class _CreateAchievementPage extends State<Home> {
                                         Navigator.of(context)
                                             .pushNamed("/achievements");
                                       } else {
-                                        _scaffoldKey.currentState
+                                        ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
                                           content: new Text('Error'),
                                           duration: new Duration(seconds: 10),
@@ -440,24 +424,23 @@ class _CreateAchievementPage extends State<Home> {
   }
 }
 
-class verify_card extends StatefulWidget {
+class VerifyCard extends StatefulWidget {
   final Event thing;
   final bool selected;
 
-  verify_card({this.thing, this.selected});
+  VerifyCard({this.thing, this.selected});
 
-  card createState() => card();
+  Card createState() => Card();
 }
 
-class card extends State<verify_card> {
+class Card extends State<VerifyCard> {
   Widget build(BuildContext context) {
-    var bloc = BlocProvider.of(context).bloc;
     var theme = Theme.of(context);
     if (widget.selected) {
       return ListTile(
         title: Text(
           widget.thing.eventName,
-          style: theme.textTheme.title,
+          style: theme.textTheme.headline6,
         ),
         enabled: true,
         leading: NullableCircleAvatar(
@@ -474,24 +457,23 @@ class card extends State<verify_card> {
   }
 }
 
-class body_card extends StatefulWidget {
+class BodyCard extends StatefulWidget {
   final Body thing;
   final bool selected;
 
-  body_card({this.thing, this.selected});
+  BodyCard({this.thing, this.selected});
 
-  bodycard createState() => bodycard();
+  BodyCardState createState() => BodyCardState();
 }
 
-class bodycard extends State<body_card> {
+class BodyCardState extends State<BodyCard> {
   Widget build(BuildContext context) {
-    var bloc = BlocProvider.of(context).bloc;
     var theme = Theme.of(context);
     if (widget.selected) {
       return ListTile(
         title: Text(
           widget.thing.bodyName,
-          style: theme.textTheme.title,
+          style: theme.textTheme.headline6,
         ),
         enabled: true,
         leading: NullableCircleAvatar(
