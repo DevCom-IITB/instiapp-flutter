@@ -39,16 +39,7 @@ class Bloc extends Object {
       return null;
     }
   }
-  Future<offeredAchievements> getOfferedAchievements(String id) async {
-    try{
-      var response=await bloc.client.getOfferedAchievements(bloc.getSessionIdHeader(), id);
-      return response;
-    } catch(ex){
-      print(ex);
-      return null;
-    }
 
-  }
 
   Future<secret_response> postAchievementOffer(String id,String secret) async {
     try{

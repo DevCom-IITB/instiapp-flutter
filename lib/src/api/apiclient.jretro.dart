@@ -379,14 +379,6 @@ abstract class _$InstiAppApiClient implements ApiClient {
 
     return await req.go(throwOnErr: true).map(decodeOne);
   }
-  Future<offeredAchievements> getOfferedAchievements(String sessionId, String id) async {
-    var req = base.get
-        .path(basePath)
-        .path("/achievements-offer/:id")
-        .pathParams("id", id)
-        .header("Cookie", sessionId);
-    return await req.go(throwOnErr: true).map(decodeOne);
-  }
 
   Future<List<Achievement>> getYourAchievements(String sessionId) async {
     var req = base.get

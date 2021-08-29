@@ -248,10 +248,6 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
   Future<List<Achievement>> getBodyAchievements(
       @Header("Cookie") String sessionId, @PathParam() String id);
 
-  @GetReq(path: "/achievements-offer/:id")
-  Future<offeredAchievements> getOfferedAchievements(
-      @Header("Cookie") String sessionId, @PathParam() String id);
-
   @PutReq(path: "/achievements/:id")
   Future<void> dismissAchievement(@Header("Cookie") String sessionID,
       @PathParam() String id, @AsJson() AchVerifyRequest achievement);
