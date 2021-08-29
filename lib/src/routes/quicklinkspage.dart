@@ -83,7 +83,7 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
           TitleWithBackButton(
             child: Text(
               "Quick Links",
-              style: theme.textTheme.display2,
+              style: theme.textTheme.headline3,
             ),
           ),
           Divider(),
