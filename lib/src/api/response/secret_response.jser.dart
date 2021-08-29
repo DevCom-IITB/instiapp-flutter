@@ -13,7 +13,6 @@ abstract class _$secret_responseSerializer
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
     setMapValue(ret, 'message', model.message);
-    setMapValue(ret, 'some', model.some);
     return ret;
   }
 
@@ -22,7 +21,6 @@ abstract class _$secret_responseSerializer
     if (map == null) return null;
     final obj = secret_response();
     obj.message = map['message'] as String;
-    obj.some = map['some'] as String;
     return obj;
   }
 }
