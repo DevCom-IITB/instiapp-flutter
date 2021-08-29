@@ -14,7 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart' as LocationManager;
+// import 'package:location/location.dart' as LocationManager;
 
 class ComplaintPage extends StatefulWidget {
   final String title = "Complaint";
@@ -58,7 +58,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
   bool loadingSubs = false;
 
   // Completer<GoogleMapController> _mapController = Completer();
-  LocationManager.Location _location;
+  // LocationManager.Location _location;
 
   Comment deletingComment;
 
@@ -84,7 +84,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
     _commentController = TextEditingController();
     _editingCommentController = TextEditingController();
     _editingCommentFocusNode = FocusNode();
-    _location = LocationManager.Location();
+    // _location = LocationManager.Location();
   }
 
   @override
@@ -174,7 +174,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                     TitleWithBackButton(
                       child: Text(
                         widget.title,
-                        style: theme.textTheme.display2,
+                        style: theme.textTheme.headline3,
                       ),
                     ),
                     complaint.images.isNotEmpty
@@ -209,7 +209,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                 TextSpan(text: "No "),
                                 TextSpan(
                                     text: "images ",
-                                    style: theme.textTheme.body1
+                                    style: theme.textTheme.bodyText2
                                         .copyWith(fontWeight: FontWeight.bold)),
                                 TextSpan(text: "uploaded."),
                               ]),
@@ -238,7 +238,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                         Text(
                                             complaint
                                                 .complaintCreatedBy.userName,
-                                            style: theme.textTheme.title
+                                            style: theme.textTheme.headline6
                                                 .copyWith(
                                                     fontWeight:
                                                         FontWeight.bold)),
@@ -271,26 +271,28 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                           setState(() {
                                             loadingSubs = false;
                                           });
-                                          _scaffoldKey.currentState
+                                          ScaffoldMessenger.of(context)
                                             ..hideCurrentSnackBar()
                                             ..showSnackBar(SnackBar(
                                                 content: Text(
                                                     "You are now ${complaint.isSubscribed ? "" : "un"}subscribed to this complaint")));
                                         },
                                       ),
-                                      OutlineButton(
-                                        borderSide: BorderSide(
-                                            color: complaint.status
-                                                        .toLowerCase() ==
-                                                    "Reported".toLowerCase()
-                                                ? Colors.red
-                                                : complaint.status
-                                                            .toLowerCase() ==
-                                                        "In Progress"
-                                                            .toLowerCase()
-                                                    ? Colors.yellow
-                                                    : Colors.green),
-                                        padding: EdgeInsets.all(0),
+                                      OutlinedButton(
+                                        style: OutlinedButton.styleFrom(
+                                          side: BorderSide(
+                                              color: complaint.status
+                                                          .toLowerCase() ==
+                                                      "Reported".toLowerCase()
+                                                  ? Colors.red
+                                                  : complaint.status
+                                                              .toLowerCase() ==
+                                                          "In Progress"
+                                                              .toLowerCase()
+                                                      ? Colors.yellow
+                                                      : Colors.green),
+                                          padding: EdgeInsets.all(0),
+                                        ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           mainAxisAlignment:
@@ -298,7 +300,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                           children: <Widget>[
                                             Text(
                                               capitalize(complaint.status),
-                                              style: theme.textTheme.subhead,
+                                              style: theme.textTheme.subtitle1,
                                             ),
                                           ]..insertAll(
                                               0,
@@ -347,7 +349,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                     horizontal: 28.0),
                                 child: Text(
                                   "Description: ",
-                                  style: theme.textTheme.subhead,
+                                  style: theme.textTheme.subtitle1,
                                 ),
                               )
                             : SizedBox(),
@@ -356,7 +358,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                               left: 28.0, right: 28.0, bottom: 16.0),
                           child: Text(
                             complaint.description,
-                            style: theme.textTheme.subhead,
+                            style: theme.textTheme.subtitle1,
                           ),
                         ),
                       ]
@@ -367,7 +369,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                       horizontal: 28.0),
                                   child: Text(
                                     "Suggestions: ",
-                                    style: theme.textTheme.subhead,
+                                    style: theme.textTheme.subtitle1,
                                   ),
                                 ),
                                 Padding(
@@ -375,7 +377,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                       left: 28.0, right: 28.0, bottom: 16.0),
                                   child: Text(
                                     complaint.suggestions,
-                                    style: theme.textTheme.subhead,
+                                    style: theme.textTheme.subtitle1,
                                   ),
                                 ),
                               ]
@@ -387,7 +389,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                       horizontal: 28.0),
                                   child: Text(
                                     "Location Details: ",
-                                    style: theme.textTheme.subhead,
+                                    style: theme.textTheme.subtitle1,
                                   ),
                                 ),
                                 Padding(
@@ -395,7 +397,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                       left: 28.0, right: 28.0, bottom: 16.0),
                                   child: Text(
                                     complaint.locationDetails,
-                                    style: theme.textTheme.subhead,
+                                    style: theme.textTheme.subtitle1,
                                   ),
                                 ),
                               ]
@@ -441,7 +443,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                 horizontal: 28.0, vertical: 8.0),
                             child: Text(
                               "Tags",
-                              style: theme.textTheme.headline,
+                              style: theme.textTheme.headline5,
                             ),
                           )
                         : SizedBox(
@@ -471,7 +473,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                           ),
                           Text(
                               "${complaint.comments.isEmpty ? "No" : complaint.comments.length} comment${complaint.comments.length == 1 ? "" : "s"}",
-                              style: theme.textTheme.title),
+                              style: theme.textTheme.headline6),
                         ],
                       ),
                     ))
@@ -495,7 +497,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                             ),
                             Text(
                                 "${complaint.usersUpVoted.isEmpty ? "No" : complaint.usersUpVoted.length} upvote${complaint.usersUpVoted.length == 1 ? "" : "s"}",
-                                style: theme.textTheme.title),
+                                style: theme.textTheme.headline6),
                           ],
                         ),
                       ),
@@ -554,7 +556,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                               setState(() {
                                 deletingComment = null;
                               });
-                              _scaffoldKey.currentState
+                              ScaffoldMessenger.of(context)
                                 ..hideCurrentSnackBar()
                                 ..showSnackBar(SnackBar(
                                   content:
@@ -590,7 +592,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
                 child: (editingComment == null || editingComment.id != v.id)
-                    ? Text(v.text, style: theme.textTheme.subhead)
+                    ? Text(v.text, style: theme.textTheme.subtitle1)
                     : TextField(
                         focusNode: _editingCommentFocusNode,
                         controller: _editingCommentController,
@@ -627,14 +629,14 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                 setState(() {
                                   editingComment = null;
                                 });
-                                _scaffoldKey.currentState
+                                ScaffoldMessenger.of(context)
                                   ..hideCurrentSnackBar()
                                   ..showSnackBar(SnackBar(
                                     content:
                                         Text("Your comment has been updated"),
                                   ));
                               } else {
-                                _scaffoldKey.currentState
+                                ScaffoldMessenger.of(context)
                                   ..hideCurrentSnackBar()
                                   ..showSnackBar(SnackBar(
                                     content: Text("Comment empty"),
@@ -705,7 +707,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                         _commentController.text = "";
                       });
                     } else {
-                      _scaffoldKey.currentState
+                      ScaffoldMessenger.of(context)
                         ..hideCurrentSnackBar()
                         ..showSnackBar(SnackBar(
                           content: Text("Comment empty"),

@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/blocs/ach_to_vefiry_bloc.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -173,6 +174,39 @@ class _VerifyListItemState extends State<VerifyListItem> {
 
   String verifyText = "Verify";
 
+  void showAlertDialog(BuildContext context, VerifyBloc verifyBloc) {
+    // set up the buttons
+    Widget cancelButton = ElevatedButton(
+      child: Text("No"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = ElevatedButton(
+      child: Text("Yes"),
+      onPressed: () {
+        verifyBloc.deleteAchievement(widget.achievement.id, widget.achievement.body.bodyID);
+        Navigator.of(context).pop();
+      },
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("AlertDialog"),
+      content: Text("Are you sure you want to delete achievement forever?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var verifyBloc = BlocProvider.of(context).bloc.bodyAchBloc;
@@ -216,7 +250,10 @@ class _VerifyListItemState extends State<VerifyListItem> {
               onPressed: isVerified || isDismissed
                   ? null
                   : () {
-                      isDismissed = true;
+                      verifyBloc.dismissAchievement(false, widget.achievement);
+                      setState(() {
+                        isDismissed = true;
+                      });
                     },
               child: Text(
                 "Dismiss",
@@ -229,7 +266,9 @@ class _VerifyListItemState extends State<VerifyListItem> {
               ),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                showAlertDialog(context, verifyBloc);
+              },
               child: Text(
                 "Delete",
                 style: TextStyle(color: Colors.red),
