@@ -8,6 +8,8 @@ part of 'offeredAchievements.dart';
 
 abstract class _$offeredAchievementsSerializer
     implements Serializer<offeredAchievements> {
+  Serializer<User> __userSerializer;
+  Serializer<User> get _userSerializer => __userSerializer ??= UserSerializer();
   @override
   Map<String, dynamic> toMap(offeredAchievements model) {
     if (model == null) return null;
@@ -17,6 +19,11 @@ abstract class _$offeredAchievementsSerializer
     setMapValue(ret, 'description', model.desc);
     setMapValue(ret, 'body', model.body);
     setMapValue(ret, 'event', model.event);
+    setMapValue(ret, 'priority', model.priority);
+    setMapValue(ret, 'secret', model.secret);
+    setMapValue(ret, 'users',
+        codeIterable(model.users, (val) => _userSerializer.toMap(val as User)));
+    setMapValue(ret, 'stat', model.stat);
     return ret;
   }
 
@@ -29,6 +36,11 @@ abstract class _$offeredAchievementsSerializer
     obj.desc = map['description'] as String;
     obj.body = map['body'] as String;
     obj.event = map['event'] as String;
+    obj.priority = map['priority'] as int;
+    obj.secret = map['secret'] as String;
+    obj.users = codeIterable<User>(
+        map['users'] as Iterable, (val) => _userSerializer.fromMap(val as Map));
+    obj.stat = map['stat'] as int;
     return obj;
   }
 }

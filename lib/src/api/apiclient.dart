@@ -6,6 +6,7 @@ import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
+import 'package:InstiApp/src/api/model/offeredAchievements.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
 import 'package:InstiApp/src/api/request/comment_create_request.dart';
@@ -19,6 +20,8 @@ import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/api/response/news_feed_response.dart';
+import 'package:InstiApp/src/api/response/secret_response.dart';
+import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
 import 'package:http/io_client.dart';
 // import 'package:http/browser_client.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
@@ -29,7 +32,10 @@ import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:InstiApp/src/api/model/serializers.dart';
 
+import 'model/offersecret.dart';
+
 part 'apiclient.jretro.dart';
+
 
 @GenApiClient()
 class InstiAppApi extends ApiClient with _$InstiAppApiClient {
@@ -225,6 +231,10 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
   Future<AchievementCreateResponse> postForm(@Header("Cookie") String sessionId,
       @AsJson() AchievementCreateRequest achievementCreateRequest);
 
+  @PostReq(path: "/achievements-offer/:id")
+  Future<Map<String, List<String>>> postAchievementOffer(@Header("Cookie") String sessionId,
+  @QueryParam() String id, @AsJson()  offersecret secret);
+
   @GetReq(path: "/achievements")
   Future<List<Achievement>> getYourAchievements(
       @Header("Cookie") String sessionId);
@@ -235,6 +245,10 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
 
   @GetReq(path: "/achievements-body/:id")
   Future<List<Achievement>> getBodyAchievements(
+      @Header("Cookie") String sessionId, @PathParam() String id);
+
+  @GetReq(path: "/achievements-offer/:id")
+  Future<offeredAchievements> getOfferedAchievements(
       @Header("Cookie") String sessionId, @PathParam() String id);
 
   @PutReq(path: "/achievements/:id")
