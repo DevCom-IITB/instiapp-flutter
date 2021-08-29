@@ -1,5 +1,11 @@
-import 'dart:collection';
 import 'dart:developer';
+import 'dart:io';
+import 'package:InstiApp/src/api/model/achievements.dart';
+import 'package:InstiApp/src/api/model/offeredAchievements.dart';
+import 'package:InstiApp/src/api/response/achievement_create_response.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/body.dart';
@@ -9,12 +15,11 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
-import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
-import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/model/event.dart';
-
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../bloc_provider.dart';
 import '../drawer.dart';
+import 'eventpage.dart';
 
 class Home extends StatefulWidget {
   // initiate widgetstate Form
@@ -144,9 +149,11 @@ class _CreateAchievementPage extends State<Home> {
     var fab;
     fab = FloatingActionButton.extended(
       icon: Icon(Icons.add_outlined),
-      label: Text("Add Acheivement"),
+      label: Text("SCAN QR CODE"),
       onPressed: () {
-        Navigator.of(context).pushNamed("/achievements/add");
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => QRViewExample(),
+        ));
       },
     );
     return Scaffold(
@@ -398,24 +405,22 @@ class _CreateAchievementPage extends State<Home> {
                                     vertical: 10.0, horizontal: 15.0),
                                 child: TextButton(
                                   onPressed: () async {
-                                    if(_formKey.currentState.validate()){
+                                    if (_formKey.currentState.validate()) {
                                       var resp = await achievementsBloc
                                           .postForm(currRequest);
-                                     if(resp.result=="success"){
-                                       Navigator.of(context).pushNamed("/achievements");
-                                     }
-                                     else{
-                                       _scaffoldKey.currentState.showSnackBar(
-                                           SnackBar(
-                                             content: new Text('Error'),
-                                             duration: new Duration(seconds: 10),
-                                           )
-                                       );
-                                     }
+                                      if (resp.result == "success") {
+                                        Navigator.of(context)
+                                            .pushNamed("/achievements");
+                                      } else {
+                                        _scaffoldKey.currentState
+                                            .showSnackBar(SnackBar(
+                                          content: new Text('Error'),
+                                          duration: new Duration(seconds: 10),
+                                        ));
+                                      }
                                     }
 
                                     //log(currRequest.description);
-
                                   },
                                   child: Text('Request Verification'),
                                   style: TextButton.styleFrom(
@@ -430,6 +435,8 @@ class _CreateAchievementPage extends State<Home> {
                     ),
                   ),
                 )),
+      floatingActionButton: fab,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 }
@@ -498,5 +505,218 @@ class bodycard extends State<body_card> {
     } else {
       return SizedBox(height: 10);
     }
+  }
+}
+
+class QRViewExample extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _QRViewExampleState();
+}
+
+class _QRViewExampleState extends State<QRViewExample> {
+  Barcode result;
+  bool processing = false;
+  QRViewController controller;
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+
+  // In order to get hot reload to work we need to pause the camera if the platform
+  // is android, or resume the camera if the platform is iOS.
+  // @override
+  // void reassemble() {
+  //   super.reassemble();
+  //   if (Platform.isAndroid) {
+  //     controller!.pauseCamera();
+  //   }
+  //   controller!.resumeCamera();
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: <Widget>[
+          Expanded(flex: 4, child: _buildQrView(context)),
+          // Expanded(
+          //   flex: 1,
+          //   child: FittedBox(
+          //     fit: BoxFit.contain,
+          //     child: Column(
+          //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //       children: <Widget>[
+          //         if (result != null)
+          //           Text(
+          //               'Data: ${result.code}')
+          //         else
+          //           Text('Scan a code')
+          //
+          //       ],
+          //     ),
+          //   ),
+          // )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQrView(BuildContext context) {
+    var bloc = BlocProvider.of(context).bloc;
+
+    // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
+    var scanArea = (MediaQuery.of(context).size.width < 400 ||
+            MediaQuery.of(context).size.height < 400)
+        ? 150.0
+        : 300.0;
+
+    void get_offered_achievements(String url) async {
+      if (url.contains("https://www.insti.app/achievement-new/")) {
+        var uri = url.substring(url.lastIndexOf("/") + 1);
+
+        var offerid = uri.substring(0, uri.indexOf("s=") - 1);
+
+        // if offerid is null return or scan again
+        if(offerid==''){
+          bool addToCal = await showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text("Invalid Achievement Code"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("Scan Again"),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                      controller.resumeCamera();
+                      processing = false;
+                    },
+                  ),
+                  FlatButton(
+                    child: Text("Return"),
+                    onPressed: () {
+                      controller.dispose();
+                      processing = false;
+                      Navigator.of(context).pushNamed('/achievements/add');
+                    },
+                  ),
+                ],
+              ));
+          if (addToCal == null) {
+            return;
+          }
+        }
+        // check for a secret if offerid exists
+        else{
+          log(uri);
+          String secret = uri.substring(uri.lastIndexOf("s=") + 2);
+          log(secret);
+          if(secret==null) log('llll');
+          if(secret==''){// if seret is not present then try to get using offerid
+            var achievements = bloc.achievementBloc;
+            offeredAchievements offer= await achievements.getOfferedAchievements(offerid);
+            log(offer.secret);
+          }
+          else{
+            // try using secret
+            log('lllllllllllll');
+            var achievements = bloc.achievementBloc;
+            Map<String, List<String>> offer= await achievements.postAchievementOffer(offerid,secret);
+            log(offer.toString());
+          }
+        }
+
+
+
+
+      } else {
+        log('1');
+        bool addToCal = await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text("Invalid Qr Code"),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text("Scan Again"),
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                        controller.resumeCamera();
+                        processing = false;
+                      },
+                    ),
+                    FlatButton(
+                      child: Text("Return"),
+                      onPressed: () {
+                        controller.dispose();
+                        processing = false;
+                        Navigator.of(context).pushNamed('/achievements/add');
+                      },
+                    ),
+                  ],
+                ));
+        if (addToCal == null) {
+          return;
+        }
+        //processing=true;
+      }
+    }
+
+    // To ensure the Scanner view is properly sizes after rotation
+    // we need to listen for Flutter SizeChanged notification and update controller
+    return QRView(
+      key: qrKey,
+      onQRViewCreated: (QRViewController controller) {
+        setState(() {
+          this.controller = controller;
+        });
+        controller.scannedDataStream.listen((scanData) {
+          setState(() {
+            result = scanData;
+            log(result.code);
+            if (!processing) {
+              get_offered_achievements(result.code);
+              processing = true;
+              controller.pauseCamera();
+            }
+          });
+        });
+      },
+      overlay: QrScannerOverlayShape(
+          borderColor: Colors.red,
+          borderRadius: 10,
+          borderLength: 30,
+          borderWidth: 10,
+          cutOutSize: scanArea),
+      onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
+    );
+  }
+
+  // void _onQRViewCreated(QRViewController controller) {
+  //   setState(() {
+  //     this.controller = controller;
+  //   });
+  //   controller.scannedDataStream.listen((scanData) {
+  //     setState(() {
+  //       result = scanData;
+  //       log(result.code);
+  //       if (!processing) {
+  //         get_offered_achievements(result.code);
+  //         processing = true;
+  //         controller.pauseCamera();
+  //       }
+  //
+  //     });
+  //   });
+  // }
+
+  void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
+    log('${DateTime.now().toIso8601String()}_onPermissionSet $p');
+    if (!p) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('no Permission')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
   }
 }

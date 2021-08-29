@@ -1,4 +1,5 @@
 
+import 'package:InstiApp/src/api/model/user.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
 part 'offeredAchievements.jser.dart';
@@ -18,6 +19,19 @@ class offeredAchievements {
 
   @Alias("event")
   String event;
+
+  @Alias("priority")
+  int priority;
+
+  @Alias("secret")
+  String secret;
+
+  @Alias("users")
+  List<User> users;
+
+  @Alias("stat")
+  int stat;
+
 
 
 }

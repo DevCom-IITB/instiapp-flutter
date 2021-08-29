@@ -4,6 +4,7 @@ library serializers;
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/datetime.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
+import 'package:InstiApp/src/api/model/offersecret.dart';
 import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
@@ -21,6 +22,7 @@ import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/api/response/news_feed_response.dart';
+import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:InstiApp/src/api/response/your_achievements_response.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
@@ -29,6 +31,8 @@ import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
 import 'package:InstiApp/src/api/model/post.dart';
+
+import 'offeredAchievements.dart';
 
 JsonRepo standardSerializers = JsonRepo(serializers: [
   // Mess menu
@@ -47,6 +51,8 @@ JsonRepo standardSerializers = JsonRepo(serializers: [
   NewsArticleSerializer(),
   NotificationSerializer(),
   DateTimeSerializer(),
+  offersecretSerializer(),
+  offeredAchievementsSerializer(),
 
   // Blog
   PostSerializer(),
@@ -77,4 +83,5 @@ JsonRepo standardSerializers = JsonRepo(serializers: [
   ComplaintCreateResponseSerializer(),
   AchievementCreateResponseSerializer(),
   YourAchievementsResponseSerializer(),
+  secret_responseSerializer(),
 ]);

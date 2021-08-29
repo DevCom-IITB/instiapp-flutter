@@ -24,8 +24,8 @@ abstract class _$AchievementCreateRequestSerializer
     setMapValue(ret, 'time_of_modification', model.timeOfModification);
     setMapValue(ret, 'user', _userSerializer.toMap(model.user));
     setMapValue(ret, 'hidden', model.hidden);
-    setMapValue(ret, 'dismissed',false);
-    setMapValue(ret, 'verified', false);
+    setMapValue(ret, 'dismissed', model.dismissed);
+    setMapValue(ret, 'verified', model.verified);
     setMapValue(ret, 'verified_by', _userSerializer.toMap(model.verifiedBy));
     setMapValue(ret, 'title', model.title);
     setMapValue(ret, 'description', model.description);
