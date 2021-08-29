@@ -232,7 +232,7 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
       @AsJson() AchievementCreateRequest achievementCreateRequest);
 
   @PostReq(path: "/achievements-offer/:id")
-  Future<Map<String, List<String>>> postAchievementOffer(@Header("Cookie") String sessionId,
+  Future<secret_response> postAchievementOffer(@Header("Cookie") String sessionId,
   @QueryParam() String id, @AsJson()  offersecret secret);
 
   @GetReq(path: "/achievements")

@@ -51,13 +51,13 @@ class Bloc extends Object {
 
   }
 
-  Future<Map<String, List<String>>> postAchievementOffer(String id,String secret) async {
+  Future<secret_response> postAchievementOffer(String id,String secret) async {
     try{
       offersecret secretclass=offersecret();
       secretclass.secret=secret;
       log(secretclass.secret+'lll');
-      Map<String, List<String>> response=await bloc.client.postAchievementOffer(bloc.getSessionIdHeader(), id,secretclass);
-      log(response.toString());
+      secret_response response=await bloc.client.postAchievementOffer(bloc.getSessionIdHeader(), id,secretclass);
+      log(response.message);
       return response;
     } catch(ex){
       print(ex);

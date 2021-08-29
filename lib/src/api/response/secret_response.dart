@@ -5,7 +5,6 @@ part 'secret_response.jser.dart';
 
 class secret_response {
   String message;
-  String some;
 }
 
 @GenSerializer()

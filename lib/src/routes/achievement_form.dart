@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/offeredAchievements.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
+import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -536,23 +537,6 @@ class _QRViewExampleState extends State<QRViewExample> {
       body: Column(
         children: <Widget>[
           Expanded(flex: 4, child: _buildQrView(context)),
-          // Expanded(
-          //   flex: 1,
-          //   child: FittedBox(
-          //     fit: BoxFit.contain,
-          //     child: Column(
-          //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //       children: <Widget>[
-          //         if (result != null)
-          //           Text(
-          //               'Data: ${result.code}')
-          //         else
-          //           Text('Scan a code')
-          //
-          //       ],
-          //     ),
-          //   ),
-          // )
         ],
       ),
     );
@@ -572,9 +556,9 @@ class _QRViewExampleState extends State<QRViewExample> {
         var uri = url.substring(url.lastIndexOf("/") + 1);
 
         var offerid = uri.substring(0, uri.indexOf("s=") - 1);
-
+        var secret = uri.substring(uri.lastIndexOf("s=") + 2);
         // if offerid is null return or scan again
-        if(offerid==''){
+        if(offerid==''|| secret==''){
           bool addToCal = await showDialog(
               context: context,
               builder: (context) => AlertDialog(
@@ -604,27 +588,10 @@ class _QRViewExampleState extends State<QRViewExample> {
         }
         // check for a secret if offerid exists
         else{
-          log(uri);
-          String secret = uri.substring(uri.lastIndexOf("s=") + 2);
-          log(secret);
-          if(secret==null) log('llll');
-          if(secret==''){// if seret is not present then try to get using offerid
             var achievements = bloc.achievementBloc;
-            offeredAchievements offer= await achievements.getOfferedAchievements(offerid);
-            log(offer.secret);
-          }
-          else{
-            // try using secret
-            log('lllllllllllll');
-            var achievements = bloc.achievementBloc;
-            Map<String, List<String>> offer= await achievements.postAchievementOffer(offerid,secret);
+            secret_response offer= await achievements.postAchievementOffer(offerid,secret);
             log(offer.toString());
-          }
         }
-
-
-
-
       } else {
         log('1');
         bool addToCal = await showDialog(
@@ -686,25 +653,6 @@ class _QRViewExampleState extends State<QRViewExample> {
       onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
     );
   }
-
-  // void _onQRViewCreated(QRViewController controller) {
-  //   setState(() {
-  //     this.controller = controller;
-  //   });
-  //   controller.scannedDataStream.listen((scanData) {
-  //     setState(() {
-  //       result = scanData;
-  //       log(result.code);
-  //       if (!processing) {
-  //         get_offered_achievements(result.code);
-  //         processing = true;
-  //         controller.pauseCamera();
-  //       }
-  //
-  //     });
-  //   });
-  // }
-
   void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
     log('${DateTime.now().toIso8601String()}_onPermissionSet $p');
     if (!p) {

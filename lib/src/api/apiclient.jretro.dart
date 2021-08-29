@@ -368,7 +368,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
     return await req.go(throwOnErr: true).map(decodeOne);
   }
 
-  Future<Map<String, List<String>>> postAchievementOffer(String sessionId,String id,
+  Future<secret_response> postAchievementOffer(String sessionId,String id,
       offersecret secret) async {
     var req = base.post
         .path(basePath)
