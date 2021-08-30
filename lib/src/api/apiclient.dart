@@ -7,6 +7,7 @@ import 'package:InstiApp/src/api/model/notification.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
 import 'package:InstiApp/src/api/model/offeredAchievements.dart';
+import 'package:InstiApp/src/api/request/ach_verify_request.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
 import 'package:InstiApp/src/api/request/comment_create_request.dart';
@@ -247,11 +248,11 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
   Future<List<Achievement>> getBodyAchievements(
       @Header("Cookie") String sessionId, @PathParam() String id);
 
-  @GetReq(path: "/achievements-offer/:id")
-  Future<offeredAchievements> getOfferedAchievements(
-      @Header("Cookie") String sessionId, @PathParam() String id);
-
   @PutReq(path: "/achievements/:id")
   Future<void> dismissAchievement(@Header("Cookie") String sessionID,
-      @PathParam() String id, @AsJson() AchievementCreateRequest achievement);
+      @PathParam() String id, @AsJson() AchVerifyRequest achievement);
+
+  @DeleteReq(path: "/achievements/:id")
+  Future<void> deleteAchievement(
+      @Header("Cookie") String sessionID, @PathParam() String id);
 }

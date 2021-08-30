@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:html/dom.dart' as dom;
 import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:ui' show Brightness;
@@ -339,7 +338,7 @@ class RoundedNotchedRectangle implements NotchedShape {
     final double p2yA = math.sqrt(r * r - p2xA * p2xA);
     final double p2yB = math.sqrt(r * r - p2xB * p2xB);
 
-    final List<Offset> p = List<Offset>(8);
+    final List<Offset> p = [];
 
     // p0, p1, and p2 are the control points for segment A.
     p[0] = Offset(ka - s1, b);
