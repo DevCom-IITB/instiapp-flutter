@@ -341,21 +341,21 @@ class RoundedNotchedRectangle implements NotchedShape {
     final List<Offset> p = [];
 
     // p0, p1, and p2 are the control points for segment A.
-    p[0] = Offset(ka - s1, b);
-    p[1] = Offset(ka, b);
+    p.add(Offset(ka - s1, b));
+    p.add(Offset(ka, b));
     final double cmp = b < 0 ? -1.0 : 1.0;
-    p[2] = cmp * p2yA > cmp * p2yB
+    p.add(cmp * p2yA > cmp * p2yB
         ? Offset(p2xA - 1.0 * (guest.width / 2.0) + r, p2yA)
-        : Offset(p2xB - 1.0 * (guest.width / 2.0) + r, p2yB);
+        : Offset(p2xB - 1.0 * (guest.width / 2.0) + r, p2yB));
 
     // p3, p4, and p5 are the control points for segment B, which is a mirror
     // of segment A around the y axis.
-    p[3] = Offset(-1.0 * p[2].dx, p[2].dy);
-    p[4] = Offset(-1.0 * p[1].dx, p[1].dy);
-    p[5] = Offset(-1.0 * p[0].dx, p[0].dy);
+    p.add(Offset(-1.0 * p[2].dx, p[2].dy));
+    p.add(Offset(-1.0 * p[1].dx, p[1].dy));
+    p.add(Offset(-1.0 * p[0].dx, p[0].dy));
 
-    p[6] = Offset(-1.0 * (guest.width / 2.0) + r, r);
-    p[7] = Offset(-1.0 * p[6].dx, p[6].dy);
+    p.add(Offset(-1.0 * (guest.width / 2.0) + r, r));
+    p.add(Offset(-1.0 * p[6].dx, p[6].dy));
 
     // translate all points back to the absolute coordinate system.
     for (int i = 0; i < p.length; i += 1) p[i] += guest.center;
