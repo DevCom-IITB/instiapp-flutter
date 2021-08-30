@@ -590,7 +590,15 @@ class _QRViewExampleState extends State<QRViewExample> {
         else{
             var achievements = bloc.achievementBloc;
             secret_response offer= await achievements.postAchievementOffer(offerid,secret);
-            log(offer.toString());
+            log(offer.message);
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    content: Text(offer.message)),
+              );
+            controller.dispose();
+            processing = false;
+            Navigator.of(context).pushNamed('/achievements/add');
+
         }
       } else {
         log('1');
