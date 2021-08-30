@@ -13,7 +13,7 @@ abstract class _$AchievementCreateResponseSerializer
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
     setMapValue(ret, 'result', model.result);
-    setMapValue(ret, 'AchID', model.AchID);
+    setMapValue(ret, 'AchID', model.achID);
     return ret;
   }
 
@@ -22,7 +22,7 @@ abstract class _$AchievementCreateResponseSerializer
     if (map == null) return null;
     final obj = AchievementCreateResponse();
     obj.result = map['result'] as String;
-    obj.AchID = map['AchID'] as String;
+    obj.achID = map['AchID'] as String;
     return obj;
   }
 }

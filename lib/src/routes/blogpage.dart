@@ -326,14 +326,14 @@ class _BlogPageState extends State<BlogPage> {
                       "5": "😡",
                     };
 
-                    const Map<String, String> reactionToName = {
-                      "0": "Like",
-                      "1": "Love",
-                      "2": "Haha",
-                      "3": "Wow",
-                      "4": "Sad",
-                      "5": "Angry",
-                    };
+                    // const Map<String, String> reactionToName = {
+                    //   "0": "Like",
+                    //   "1": "Love",
+                    //   "2": "Haha",
+                    //   "3": "Wow",
+                    //   "4": "Sad",
+                    //   "5": "Angry",
+                    // };
 
                     var article = (post as NewsArticle);
                     var totalNumberOfReactions = article?.reactionCount?.values

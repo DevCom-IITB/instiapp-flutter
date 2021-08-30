@@ -128,7 +128,7 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
                               return SliverList(
                                 delegate: SliverChildBuilderDelegate(
                                   (context, index) =>
-                                      body_card(thing: snapshot.data[index]),
+                                      BodyCard(thing: snapshot.data[index]),
                                   childCount: snapshot.data.length,
                                 ),
                               );
@@ -313,22 +313,21 @@ class _AchListItemState extends State<AchListItem> {
   }
 }
 
-class body_card extends StatefulWidget {
+class BodyCard extends StatefulWidget {
   final Body thing;
 
-  body_card({this.thing});
+  BodyCard({this.thing});
 
-  bodycard createState() => bodycard();
+  BodyCardState createState() => BodyCardState();
 }
 
-class bodycard extends State<body_card> {
+class BodyCardState extends State<BodyCard> {
   Widget build(BuildContext context) {
-    var bloc = BlocProvider.of(context).bloc;
     var theme = Theme.of(context);
     return ListTile(
       title: Text(
         widget.thing.bodyName,
-        style: theme.textTheme.title,
+        style: theme.textTheme.headline6,
       ),
       enabled: true,
       leading: NullableCircleAvatar(

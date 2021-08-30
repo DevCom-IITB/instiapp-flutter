@@ -1,4 +1,3 @@
-
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
@@ -31,11 +30,8 @@ class offeredAchievements {
 
   @Alias("stat")
   int stat;
-
-
-
 }
 
 @GenSerializer()
-class offeredAchievementsSerializer extends Serializer<offeredAchievements> with _$offeredAchievementsSerializer {}
-
+class OfferedAchievementsSerializer extends Serializer<offeredAchievements>
+    with _$offeredAchievementsSerializer {}
