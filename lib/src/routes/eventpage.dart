@@ -255,7 +255,7 @@ class _EventPageState extends State<EventPage> {
             : theme.scaffoldBackgroundColor,
         onPrimary: event?.eventUserUes == uesButton
             ? theme.accentIconTheme.color
-            : null,
+            : theme.textTheme.bodyText1.color,
         shape: RoundedRectangleBorder(
             side: BorderSide(
               color: theme.accentColor,
