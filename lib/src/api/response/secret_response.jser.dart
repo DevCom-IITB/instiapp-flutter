@@ -6,10 +6,10 @@ part of 'secret_response.dart';
 // JaguarSerializerGenerator
 // **************************************************************************
 
-abstract class _$secret_responseSerializer
-    implements Serializer<secret_response> {
+abstract class _$SecretResponseSerializer
+    implements Serializer<SecretResponse> {
   @override
-  Map<String, dynamic> toMap(secret_response model) {
+  Map<String, dynamic> toMap(SecretResponse model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
     setMapValue(ret, 'message', model.message);
@@ -17,9 +17,9 @@ abstract class _$secret_responseSerializer
   }
 
   @override
-  secret_response fromMap(Map map) {
+  SecretResponse fromMap(Map map) {
     if (map == null) return null;
-    final obj = secret_response();
+    final obj = SecretResponse();
     obj.message = map['message'] as String;
     return obj;
   }

@@ -1,24 +1,15 @@
 import 'dart:developer';
-import 'dart:io';
-import 'package:InstiApp/src/api/model/achievements.dart';
-import 'package:InstiApp/src/api/model/offeredAchievements.dart';
-import 'package:InstiApp/src/api/response/achievement_create_response.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:dropdown_search/dropdown_search.dart';
-import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/event.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../bloc_provider.dart';
 import '../drawer.dart';
-import 'eventpage.dart';
 
 class Home extends StatefulWidget {
   // initiate widgetstate Form
@@ -548,7 +539,7 @@ class _QRViewExampleState extends State<QRViewExample> {
         ? 250.0
         : 300.0;
 
-    void get_offered_achievements(String url) async {
+    void getOfferedAchievements(String url) async {
       if (url.contains("https://www.insti.app/achievement-new/")) {
         var uri = url.substring(url.lastIndexOf("/") + 1);
 
@@ -561,7 +552,7 @@ class _QRViewExampleState extends State<QRViewExample> {
               builder: (context) => AlertDialog(
                     title: Text("Invalid Achievement Code"),
                     actions: <Widget>[
-                      FlatButton(
+                      TextButton(
                         child: Text("Scan Again"),
                         onPressed: () {
                           Navigator.of(context).pop(true);
@@ -569,7 +560,7 @@ class _QRViewExampleState extends State<QRViewExample> {
                           processing = false;
                         },
                       ),
-                      FlatButton(
+                      TextButton(
                         child: Text("Return"),
                         onPressed: () {
                           controller.dispose();
@@ -587,7 +578,7 @@ class _QRViewExampleState extends State<QRViewExample> {
         // check for a secret if offerid exists
         else{
             var achievements = bloc.achievementBloc;
-            secret_response offer= await achievements.postAchievementOffer(offerid,secret);
+            SecretResponse offer= await achievements.postAchievementOffer(offerid,secret);
             log(offer.message);
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -604,7 +595,7 @@ class _QRViewExampleState extends State<QRViewExample> {
             builder: (context) => AlertDialog(
                   title: Text("Invalid Qr Code"),
                   actions: <Widget>[
-                    FlatButton(
+                    TextButton(
                       child: Text("Scan Again"),
                       onPressed: () {
                         Navigator.of(context).pop(true);
@@ -612,7 +603,7 @@ class _QRViewExampleState extends State<QRViewExample> {
                         processing = false;
                       },
                     ),
-                    FlatButton(
+                    TextButton(
                       child: Text("Return"),
                       onPressed: () {
                         controller.dispose();
@@ -643,7 +634,7 @@ class _QRViewExampleState extends State<QRViewExample> {
             result = scanData;
             log(result.code);
             if (!processing) {
-              get_offered_achievements(result.code);
+              getOfferedAchievements(result.code);
               processing = true;
               controller.pauseCamera();
             }

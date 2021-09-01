@@ -45,7 +45,6 @@ class Achievement {
   @Alias("event_detail")
   Event event;
 
-  //TODO: Make string an offered achievement
   @Alias("offer")
   String offer;
 }

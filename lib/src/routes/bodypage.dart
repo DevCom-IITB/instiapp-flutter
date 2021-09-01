@@ -289,9 +289,8 @@ class _BodyPageState extends State<BodyPage> {
         primary: body.bodyUserFollows ?? false
             ? theme.accentColor
             : theme.scaffoldBackgroundColor,
-        onPrimary: body.bodyUserFollows ?? false
-            ? theme.accentIconTheme.color
-            : Colors.black,
+        onPrimary:
+            body.bodyUserFollows ?? false ? theme.accentIconTheme.color : null,
         shape: RoundedRectangleBorder(
           side: BorderSide(
             color: theme.accentColor,

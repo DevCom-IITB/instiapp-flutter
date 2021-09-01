@@ -6,12 +6,12 @@ part of 'offeredAchievements.dart';
 // JaguarSerializerGenerator
 // **************************************************************************
 
-abstract class _$offeredAchievementsSerializer
-    implements Serializer<offeredAchievements> {
+abstract class _$OfferedAchievementsSerializer
+    implements Serializer<OfferedAchievements> {
   Serializer<User> __userSerializer;
   Serializer<User> get _userSerializer => __userSerializer ??= UserSerializer();
   @override
-  Map<String, dynamic> toMap(offeredAchievements model) {
+  Map<String, dynamic> toMap(OfferedAchievements model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
     setMapValue(ret, 'id', model.achievementID);
@@ -28,9 +28,9 @@ abstract class _$offeredAchievementsSerializer
   }
 
   @override
-  offeredAchievements fromMap(Map map) {
+  OfferedAchievements fromMap(Map map) {
     if (map == null) return null;
-    final obj = offeredAchievements();
+    final obj = OfferedAchievements();
     obj.achievementID = map['id'] as String;
     obj.title = map['title'] as String;
     obj.desc = map['description'] as String;

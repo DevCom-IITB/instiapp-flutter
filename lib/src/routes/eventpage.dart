@@ -253,11 +253,9 @@ class _EventPageState extends State<EventPage> {
         primary: event?.eventUserUes == uesButton
             ? theme.accentColor
             : theme.scaffoldBackgroundColor,
-        textStyle: TextStyle(
-          color: event?.eventUserUes == uesButton
-              ? theme.accentIconTheme.color
-              : null,
-        ),
+        onPrimary: event?.eventUserUes == uesButton
+            ? theme.accentIconTheme.color
+            : null,
         shape: RoundedRectangleBorder(
             side: BorderSide(
               color: theme.accentColor,
