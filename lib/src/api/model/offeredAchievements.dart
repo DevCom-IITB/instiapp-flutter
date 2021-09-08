@@ -3,7 +3,7 @@ import 'package:jaguar_serializer/jaguar_serializer.dart';
 
 part 'offeredAchievements.jser.dart';
 
-class offeredAchievements {
+class OfferedAchievements {
   @Alias("id")
   String achievementID;
 
@@ -33,5 +33,5 @@ class offeredAchievements {
 }
 
 @GenSerializer()
-class OfferedAchievementsSerializer extends Serializer<offeredAchievements>
-    with _$offeredAchievementsSerializer {}
+class OfferedAchievementsSerializer extends Serializer<OfferedAchievements>
+    with _$OfferedAchievementsSerializer {}

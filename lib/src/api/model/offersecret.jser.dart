@@ -6,9 +6,9 @@ part of 'offersecret.dart';
 // JaguarSerializerGenerator
 // **************************************************************************
 
-abstract class _$offersecretSerializer implements Serializer<offersecret> {
+abstract class _$OffersecretSerializer implements Serializer<Offersecret> {
   @override
-  Map<String, dynamic> toMap(offersecret model) {
+  Map<String, dynamic> toMap(Offersecret model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
     setMapValue(ret, 'secret', model.secret);
@@ -16,9 +16,9 @@ abstract class _$offersecretSerializer implements Serializer<offersecret> {
   }
 
   @override
-  offersecret fromMap(Map map) {
+  Offersecret fromMap(Map map) {
     if (map == null) return null;
-    final obj = offersecret();
+    final obj = Offersecret();
     obj.secret = map['secret'] as String;
     return obj;
   }

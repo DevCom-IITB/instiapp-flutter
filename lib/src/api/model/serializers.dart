@@ -52,7 +52,7 @@ JsonRepo standardSerializers = JsonRepo(serializers: [
   NewsArticleSerializer(),
   NotificationSerializer(),
   DateTimeSerializer(),
-  offersecretSerializer(),
+  OffersecretSerializer(),
   OfferedAchievementsSerializer(),
 
   // Blog
@@ -85,5 +85,5 @@ JsonRepo standardSerializers = JsonRepo(serializers: [
   ComplaintCreateResponseSerializer(),
   AchievementCreateResponseSerializer(),
   YourAchievementsResponseSerializer(),
-  secret_responseSerializer(),
+  SecretResponseSerializer(),
 ]);

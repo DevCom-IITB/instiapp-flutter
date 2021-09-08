@@ -6,7 +6,6 @@ import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
-import 'package:InstiApp/src/api/model/offeredAchievements.dart';
 import 'package:InstiApp/src/api/request/ach_verify_request.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
@@ -22,7 +21,6 @@ import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/api/response/news_feed_response.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
-import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
 import 'package:http/io_client.dart';
 // import 'package:http/browser_client.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
@@ -36,7 +34,6 @@ import 'package:InstiApp/src/api/model/serializers.dart';
 import 'model/offersecret.dart';
 
 part 'apiclient.jretro.dart';
-
 
 @GenApiClient()
 class InstiAppApi extends ApiClient with _$InstiAppApiClient {
@@ -233,8 +230,10 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
       @AsJson() AchievementCreateRequest achievementCreateRequest);
 
   @PostReq(path: "/achievements-offer/:id")
-  Future<secret_response> postAchievementOffer(@Header("Cookie") String sessionId,
-  @QueryParam() String id, @AsJson()  offersecret secret);
+  Future<SecretResponse> postAchievementOffer(
+      @Header("Cookie") String sessionId,
+      @QueryParam() String id,
+      @AsJson() Offersecret secret);
 
   @GetReq(path: "/achievements")
   Future<List<Achievement>> getYourAchievements(

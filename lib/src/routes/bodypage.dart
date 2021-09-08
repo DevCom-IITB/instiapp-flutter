@@ -300,7 +300,7 @@ class _BodyPageState extends State<BodyPage> {
             : theme.scaffoldBackgroundColor,
         onPrimary: body.bodyUserFollows ?? false
             ? theme.accentIconTheme.color
-            : Colors.black,
+            : theme.textTheme.bodyText1.color,
         shape: RoundedRectangleBorder(
           side: BorderSide(
             color: theme.accentColor,
