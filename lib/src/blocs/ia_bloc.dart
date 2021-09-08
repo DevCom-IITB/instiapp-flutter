@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:InstiApp/main.dart';
+import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
+import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
+import 'package:InstiApp/src/blocs/ach_to_vefiry_bloc.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
 import 'package:InstiApp/src/blocs/complaints_bloc.dart';
@@ -16,6 +19,7 @@ import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
 import 'package:InstiApp/src/blocs/map_bloc.dart';
+import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -40,6 +44,8 @@ class InstiAppBloc {
   static String messStorageID = "mess";
   // Notifications StorageID
   static String notificationsStorageID = "notifications";
+  // Achievement StorageID
+  static String achievementStorageID = "achievement";
 
   // FCM handle
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
@@ -60,6 +66,11 @@ class InstiAppBloc {
   final _notificationsSubject =
       BehaviorSubject<UnmodifiableListView<ntf.Notification>>();
 
+  ValueStream<UnmodifiableListView<Achievement>> get achievements =>
+      _achievementSubject.stream;
+  final _achievementSubject =
+      BehaviorSubject<UnmodifiableListView<Achievement>>();
+
   // Sub Blocs
   PostBloc placementBloc;
   PostBloc trainingBloc;
@@ -69,11 +80,14 @@ class InstiAppBloc {
   ComplaintsBloc complaintsBloc;
   DrawerBloc drawerState;
   MapBloc mapBloc;
+  Bloc achievementBloc;
+  VerifyBloc bodyAchBloc;
 
   // actual current state
   Session currSession;
   var _hostels = <Hostel>[];
   var _events = <Event>[];
+  var _achievements = <Achievement>[];
   var _notifications;
 
   // api functions
@@ -194,6 +208,8 @@ class InstiAppBloc {
     drawerState = DrawerBloc(homepageName, highlightPageIndexVal: 0);
     navigatorObserver = MNavigatorObserver(this);
     mapBloc = MapBloc(this);
+    achievementBloc = Bloc(this);
+    bodyAchBloc = VerifyBloc(this);
     _initNotificationBatch();
   }
 
@@ -236,6 +252,14 @@ class InstiAppBloc {
       _events[0].eventBigImage = true;
     }
     _eventsSubject.add(UnmodifiableListView(_events));
+  }
+
+  // Your Achievement Bloc
+  Future<void> updateAchievements() async {
+    var yourAchievementResponse =
+        await client.getYourAchievements(getSessionIdHeader());
+    _achievements = yourAchievementResponse;
+    _achievementSubject.add(UnmodifiableListView(_achievements));
   }
 
   // Notifications bloc
@@ -323,6 +347,19 @@ class InstiAppBloc {
       e.eventUserUes = ues;
     } catch (ex) {
       print(ex);
+    }
+  }
+
+  Future<void> updateHiddenAchievement(
+      Achievement achievement, bool hidden) async {
+    try {
+      print("Updating hidden");
+      await client.toggleHidden(getSessionIdHeader(), achievement.id,
+          AchievementHiddenPathRequest()..hidden = hidden);
+      achievement.hidden = hidden;
+      print("Updated hidden");
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -426,6 +463,10 @@ class InstiAppBloc {
     if (_events?.isNotEmpty ?? false) {
       prefs.setString(eventStorageID, standardSerializers.encode(_events));
     }
+    if (_achievements?.isNotEmpty ?? false) {
+      prefs.setString(
+          achievementStorageID, standardSerializers.encode(_achievements));
+    }
     if (_notifications != null) {
       prefs.setString(
           notificationsStorageID, standardSerializers.encode(_notifications));
@@ -452,6 +493,12 @@ class InstiAppBloc {
         _events[0].eventBigImage = true;
       }
       _eventsSubject.add(UnmodifiableListView(_events));
+    }
+
+    if (prefs.getKeys().contains(achievementStorageID)) {
+      _achievements = standardSerializers
+          .decodeList<Achievement>(prefs.getString(achievementStorageID));
+      _achievementSubject.add(UnmodifiableListView(_achievements));
     }
 
     if (prefs.getKeys().contains(notificationsStorageID)) {

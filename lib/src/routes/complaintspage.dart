@@ -70,7 +70,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                   child: TitleWithBackButton(
                     child: Text(
                       widget.title,
-                      style: theme.textTheme.display2,
+                      style: theme.textTheme.headline3,
                     ),
                   ),
                 ),
@@ -123,7 +123,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                           return RefreshIndicator(
                             onRefresh: () => name == "Home"
                                 ? complaintsBloc.refreshAllComplaints(
-                                    force: true) // TODO: for now always force
+                                    force: true) 
                                 : complaintsBloc.updateMyComplaints(),
                             child: SafeArea(
                               top: false,
@@ -181,7 +181,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                                             16.0),
                                                     child: Text("No complaints",
                                                         style: theme
-                                                            .textTheme.title
+                                                            .textTheme.headline6
                                                             .copyWith(
                                                                 fontWeight:
                                                                     FontWeight
@@ -239,7 +239,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                           padding: const EdgeInsets.all(28.0),
                           child: Text(
                             "You need to be logged in to view and complaint",
-                            style: theme.textTheme.headline,
+                            style: theme.textTheme.headline5,
                           ),
                         ),
                       );
@@ -330,7 +330,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(complaint.complaintCreatedBy.userName,
-                                  style: theme.textTheme.title
+                                  style: theme.textTheme.headline6
                                       .copyWith(fontWeight: FontWeight.bold)),
                               Text(
                                 DateTimeUtil.getDate(
@@ -362,30 +362,32 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                   loadingSubs = false;
                                   loadingComplaint = null;
                                 });
-                                _scaffoldKey.currentState
+                                ScaffoldMessenger.of(context)
                                   ..hideCurrentSnackBar()
                                   ..showSnackBar(SnackBar(
                                       content: Text(
                                           "You are now ${complaint.isSubscribed ? "" : "un"}subscribed to this complaint")));
                               },
                             ),
-                            OutlineButton(
-                              borderSide: BorderSide(
-                                  color: complaint.status.toLowerCase() ==
-                                          "Reported".toLowerCase()
-                                      ? Colors.red
-                                      : complaint.status.toLowerCase() ==
-                                              "In Progress".toLowerCase()
-                                          ? Colors.yellow
-                                          : Colors.green),
-                              padding: EdgeInsets.all(0),
+                            OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                    color: complaint.status.toLowerCase() ==
+                                            "Reported".toLowerCase()
+                                        ? Colors.red
+                                        : complaint.status.toLowerCase() ==
+                                                "In Progress".toLowerCase()
+                                            ? Colors.yellow
+                                            : Colors.green),
+                                padding: EdgeInsets.all(0),
+                              ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
                                     capitalize(complaint.status),
-                                    style: theme.textTheme.subhead,
+                                    style: theme.textTheme.subtitle1,
                                   ),
                                 ]..insertAll(
                                     0,
@@ -426,14 +428,14 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                             complaint.suggestions.isNotEmpty
                         ? Text(
                             "Description: ",
-                            style: theme.textTheme.subhead,
+                            style: theme.textTheme.subtitle1,
                           )
                         : SizedBox(),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: Text(
                         complaint.description,
-                        style: theme.textTheme.subhead,
+                        style: theme.textTheme.subtitle1,
                       ),
                     ),
                   ]
@@ -441,13 +443,13 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                         ? [
                             Text(
                               "Suggestions: ",
-                              style: theme.textTheme.subhead,
+                              style: theme.textTheme.subtitle1,
                             ),
                             Padding(
                               padding: const EdgeInsets.only(bottom: 16.0),
                               child: Text(
                                 complaint.suggestions,
-                                style: theme.textTheme.subhead,
+                                style: theme.textTheme.subtitle1,
                               ),
                             ),
                           ]
@@ -456,13 +458,13 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                         ? [
                             Text(
                               "Location Details: ",
-                              style: theme.textTheme.subhead,
+                              style: theme.textTheme.subtitle1,
                             ),
                             Padding(
                               padding: const EdgeInsets.only(bottom: 16.0),
                               child: Text(
                                 complaint.locationDetails,
-                                style: theme.textTheme.subhead,
+                                style: theme.textTheme.subtitle1,
                               ),
                             ),
                           ]

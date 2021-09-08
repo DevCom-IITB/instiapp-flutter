@@ -19,7 +19,7 @@ abstract class _$UserSCNPatchRequestSerializer
   @override
   UserSCNPatchRequest fromMap(Map map) {
     if (map == null) return null;
-    final obj = new UserSCNPatchRequest();
+    final obj = UserSCNPatchRequest();
     obj.userShowContactNumber = map['show_contact_no'] as bool;
     return obj;
   }

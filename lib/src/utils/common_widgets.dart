@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:html/dom.dart' as dom;
 import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:ui' show Brightness;
@@ -339,24 +338,24 @@ class RoundedNotchedRectangle implements NotchedShape {
     final double p2yA = math.sqrt(r * r - p2xA * p2xA);
     final double p2yB = math.sqrt(r * r - p2xB * p2xB);
 
-    final List<Offset> p = List<Offset>(8);
+    final List<Offset> p = [];
 
     // p0, p1, and p2 are the control points for segment A.
-    p[0] = Offset(ka - s1, b);
-    p[1] = Offset(ka, b);
+    p.add(Offset(ka - s1, b));
+    p.add(Offset(ka, b));
     final double cmp = b < 0 ? -1.0 : 1.0;
-    p[2] = cmp * p2yA > cmp * p2yB
+    p.add(cmp * p2yA > cmp * p2yB
         ? Offset(p2xA - 1.0 * (guest.width / 2.0) + r, p2yA)
-        : Offset(p2xB - 1.0 * (guest.width / 2.0) + r, p2yB);
+        : Offset(p2xB - 1.0 * (guest.width / 2.0) + r, p2yB));
 
     // p3, p4, and p5 are the control points for segment B, which is a mirror
     // of segment A around the y axis.
-    p[3] = Offset(-1.0 * p[2].dx, p[2].dy);
-    p[4] = Offset(-1.0 * p[1].dx, p[1].dy);
-    p[5] = Offset(-1.0 * p[0].dx, p[0].dy);
+    p.add(Offset(-1.0 * p[2].dx, p[2].dy));
+    p.add(Offset(-1.0 * p[1].dx, p[1].dy));
+    p.add(Offset(-1.0 * p[0].dx, p[0].dy));
 
-    p[6] = Offset(-1.0 * (guest.width / 2.0) + r, r);
-    p[7] = Offset(-1.0 * p[6].dx, p[6].dy);
+    p.add(Offset(-1.0 * (guest.width / 2.0) + r, r));
+    p.add(Offset(-1.0 * p[6].dx, p[6].dy));
 
     // translate all points back to the absolute coordinate system.
     for (int i = 0; i < p.length; i += 1) p[i] += guest.center;
@@ -666,5 +665,102 @@ class SliverHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
     return false;
+  }
+}
+
+class DefListItem extends StatelessWidget {
+  final String title;
+  final String company;
+  final String icon;
+  final String forText;
+  final String importance;
+  final bool isVerified;
+  final bool isDismissed;
+  final String adminNote;
+
+  const DefListItem(
+      {Key key,
+      this.title,
+      this.company,
+      this.icon,
+      this.forText,
+      this.importance,
+      this.isVerified,
+      this.isDismissed,
+      this.adminNote})
+      : super(key: key);
+
+  Widget verifiedText() {
+    if (isVerified) {
+      return Text(
+        "Verified",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.green,
+        ),
+      );
+    } else if (isDismissed) {
+      return Text(
+        "Dismissed",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.red,
+        ),
+      );
+    } else {
+      return Text(
+        "Verification Pending",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.grey,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListTile(
+          leading: icon == null
+              ? null
+              : CircleAvatar(
+                  foregroundImage: NetworkImage(icon),
+                ),
+          title: Text(title),
+          subtitle: Text(company),
+        ),
+        forText == null
+            ? SizedBox()
+            : Row(
+                children: [
+                  Text("For: "),
+                  Text(
+                    forText,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+        importance == null ? SizedBox() : Text(importance),
+        adminNote == null
+            ? SizedBox()
+            : Row(
+                children: [
+                  Text("Admin Note: "),
+                  Text(
+                    adminNote,
+                  ),
+                ],
+              ),
+        Row(
+          children: [
+            Text("Status: "),
+            verifiedText(),
+          ],
+        ),
+      ],
+    );
   }
 }

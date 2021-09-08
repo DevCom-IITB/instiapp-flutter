@@ -1,4 +1,4 @@
-import 'package:InstiApp/src/bloc_provider.dart';
+
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
@@ -115,7 +115,6 @@ class _AboutPageState extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -144,7 +143,7 @@ class _AboutPageState extends State<AboutPage> {
             TitleWithBackButton(
               child: Text(
                 widget.title,
-                style: theme.textTheme.display2,
+                style: theme.textTheme.headline3,
               ),
             ),
           ]..addAll(_buildContent(theme, widget.sectionToNameToImageUrl)),
@@ -160,7 +159,7 @@ class _AboutPageState extends State<AboutPage> {
         Center(
           child: Text(
             entry.key,
-            style: theme.textTheme.display1,
+            style: theme.textTheme.headline4,
           ),
         ),
         Padding(

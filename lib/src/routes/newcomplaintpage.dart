@@ -228,7 +228,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
             TitleWithBackButton(
               child: Text(
                 widget.title,
-                style: theme.textTheme.display2,
+                style: theme.textTheme.headline3,
               ),
             ),
             Column(
@@ -321,7 +321,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                             TextSpan(text: "No "),
                             TextSpan(
                                 text: "images ",
-                                style: theme.textTheme.body1
+                                style: theme.textTheme.bodyText2
                                     .copyWith(fontWeight: FontWeight.bold)),
                             TextSpan(text: "selected."),
                           ]),
@@ -329,7 +329,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                       ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 28.0),
-                  child: OutlineButton.icon(
+                  child: OutlinedButton.icon(
                     label: Text("Upload Images"),
                     icon: Icon(Icons.image_outlined),
                     onPressed: () async {
@@ -407,6 +407,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                     return "Please enter a description to your complaint/suggestion";
                   }
                   currRequest.description = value;
+                  return null;
                 },
               ),
             ),
@@ -422,6 +423,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                 autocorrect: true,
                 validator: (value) {
                   currRequest.suggestions = value;
+                  return null;
                 },
               ),
             ),
@@ -437,6 +439,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                 autocorrect: true,
                 validator: (value) {
                   currRequest.locationDetail = value;
+                  return null;
                 },
               ),
             ),
@@ -506,7 +509,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-              child: OutlineButton.icon(
+              child: OutlinedButton.icon(
                 icon: Icon(Icons.search_outlined),
                 label: Text("Search Location"),
                 onPressed: () {
@@ -552,14 +555,14 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
         return AlertDialog(
           title: Text("Delete selected image?"),
           actions: <Widget>[
-            FlatButton.icon(
+            TextButton.icon(
               icon: Icon(Icons.cancel_outlined),
               label: Text("Cancel"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
-            FlatButton.icon(
+            TextButton.icon(
               icon: Icon(Icons.delete_outline_outlined),
               label: Text("Delete"),
               onPressed: () {

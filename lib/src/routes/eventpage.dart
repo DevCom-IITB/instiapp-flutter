@@ -7,6 +7,7 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/footer_buttons.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/foundation.dart';
@@ -126,110 +127,114 @@ class _EventPageState extends State<EventPage> {
       }
     }
     return Scaffold(
-      key: _scaffoldKey,
-      drawer: NavDrawer(),
-      bottomNavigationBar: MyBottomAppBar(
-        child: new Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.menu_outlined,
-                semanticLabel: "Show navigation drawer",
-              ),
-              onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
-              },
-            ),
-          ],
-        ),
-      ),
-      body: SafeArea(
-        child: event == null
-            ? Center(
-                child: CircularProgressIndicatorExtended(
-                label: Text("Loading the event page"),
-              ))
-            : ListView(
-                children: <Widget>[
-                  TitleWithBackButton(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          event.eventName,
-                          style: theme.textTheme.display2,
-                        ),
-                        SizedBox(height: 8.0),
-                        Text(event.getSubTitle(), style: theme.textTheme.title),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: PhotoViewableImage(
-                      url: event?.eventImageURL ??
-                          event?.eventBodies[0].bodyImageURL,
-                      heroTag: event.eventID,
-                      fit: BoxFit.fitWidth,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 28.0, vertical: 16.0),
-                    child: CommonHtml(
-                      data: event?.eventDescription,
-                      defaultTextStyle: theme.textTheme.subhead,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  Divider(),
-                ]
-                  ..addAll(event.eventBodies
-                      .map((b) => _buildBodyTile(bloc, theme.textTheme, b)))
-                  ..addAll([
-                    Divider(),
-                    SizedBox(
-                      height: 64.0,
-                    )
-                  ]),
-              ),
-      ),
-      floatingActionButton: _bottomSheetActive || event == null
-          ? null
-          : editAccess
-              ? FloatingActionButton.extended(
-                  icon: Icon(Icons.edit_outlined),
-                  label: Text("Edit"),
-                  tooltip: "Edit this event",
-                  onPressed: () {
-                    Navigator.of(context)
-                        .pushNamed("/putentity/event/${event.eventID}");
-                  },
-                )
-              : FloatingActionButton(
-                  child: Icon(Icons.share_outlined),
-                  tooltip: "Share this event",
-                  onPressed: () async {
-                    await Share.share(
-                        "Check this event: ${ShareURLMaker.getEventURL(event)}");
-                  },
+        key: _scaffoldKey,
+        drawer: NavDrawer(),
+        bottomNavigationBar: MyBottomAppBar(
+          child: new Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.menu_outlined,
+                  semanticLabel: "Show navigation drawer",
                 ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      persistentFooterButtons: footerButtons,
-    );
+                onPressed: () {
+                  _scaffoldKey.currentState.openDrawer();
+                },
+              ),
+            ],
+          ),
+        ),
+        body: SafeArea(
+          child: event == null
+              ? Center(
+                  child: CircularProgressIndicatorExtended(
+                  label: Text("Loading the event page"),
+                ))
+              : ListView(
+                  children: <Widget>[
+                    TitleWithBackButton(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            event.eventName,
+                            style: theme.textTheme.headline3,
+                          ),
+                          SizedBox(height: 8.0),
+                          Text(event.getSubTitle(),
+                              style: theme.textTheme.headline6),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: PhotoViewableImage(
+                        url: event?.eventImageURL ??
+                            event?.eventBodies[0].bodyImageURL,
+                        heroTag: event.eventID,
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 16.0,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28.0, vertical: 16.0),
+                      child: CommonHtml(
+                        data: event?.eventDescription,
+                        defaultTextStyle: theme.textTheme.subtitle1,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 16.0,
+                    ),
+                    Divider(),
+                  ]
+                    ..addAll(event.eventBodies
+                        .map((b) => _buildBodyTile(bloc, theme.textTheme, b)))
+                    ..addAll([
+                      Divider(),
+                      SizedBox(
+                        height: 64.0,
+                      )
+                    ]),
+                ),
+        ),
+        floatingActionButton: _bottomSheetActive || event == null
+            ? null
+            : editAccess
+                ? FloatingActionButton.extended(
+                    icon: Icon(Icons.edit_outlined),
+                    label: Text("Edit"),
+                    tooltip: "Edit this event",
+                    onPressed: () {
+                      Navigator.of(context)
+                          .pushNamed("/putentity/event/${event.eventID}");
+                    },
+                  )
+                : FloatingActionButton(
+                    child: Icon(Icons.share_outlined),
+                    tooltip: "Share this event",
+                    onPressed: () async {
+                      await Share.share(
+                          "Check this event: ${ShareURLMaker.getEventURL(event)}");
+                    },
+                  ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        persistentFooterButtons: [
+          FooterButtons(
+            footerButtons: footerButtons,
+          )
+        ]);
   }
 
   Widget _buildBodyTile(InstiAppBloc bloc, TextTheme theme, Body body) {
     return ListTile(
-      title: Text(body.bodyName, style: theme.title),
-      subtitle: Text(body.bodyShortDescription, style: theme.subtitle),
+      title: Text(body.bodyName, style: theme.headline6),
+      subtitle: Text(body.bodyShortDescription, style: theme.subtitle2),
       leading: NullableCircleAvatar(
         body.bodyImageURL,
         Icons.work_outline_outlined,
@@ -241,19 +246,22 @@ class _EventPageState extends State<EventPage> {
     );
   }
 
-  RaisedButton buildUserStatusButton(
+  ElevatedButton buildUserStatusButton(
       String name, UES uesButton, ThemeData theme, InstiAppBloc bloc) {
-    return RaisedButton(
-      color: event?.eventUserUes == uesButton
-          ? theme.accentColor
-          : theme.scaffoldBackgroundColor,
-      textColor:
-          event?.eventUserUes == uesButton ? theme.accentIconTheme.color : null,
-      shape: RoundedRectangleBorder(
-          side: BorderSide(
-            color: theme.accentColor,
-          ),
-          borderRadius: BorderRadius.all(Radius.circular(4))),
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        primary: event?.eventUserUes == uesButton
+            ? theme.accentColor
+            : theme.scaffoldBackgroundColor,
+        onPrimary: event?.eventUserUes == uesButton
+            ? theme.accentIconTheme.color
+            : theme.textTheme.bodyText1.color,
+        shape: RoundedRectangleBorder(
+            side: BorderSide(
+              color: theme.accentColor,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(4))),
+      ),
       child: Row(children: () {
         var rowChildren = <Widget>[
           Text(name),
@@ -317,7 +325,7 @@ class _EventPageState extends State<EventPage> {
                   parent: this,
                 ),
                 actions: <Widget>[
-                  FlatButton(
+                  TextButton(
                     child: Text("No"),
                     onPressed: () {
                       Navigator.of(context).pop(false);
@@ -326,7 +334,7 @@ class _EventPageState extends State<EventPage> {
                       }
                     },
                   ),
-                  FlatButton(
+                  TextButton(
                     child: Text("Yes"),
                     onPressed: () {
                       Navigator.of(context).pop(true);
@@ -378,13 +386,13 @@ class _EventPageState extends State<EventPage> {
                 title: Text("Select which calendars to add to?"),
                 content: CalendarList(calendarsResult.data, parent: this),
                 actions: <Widget>[
-                  FlatButton(
+                  TextButton(
                     child: Text("Cancel"),
                     onPressed: () {
                       Navigator.pop(context, false);
                     },
                   ),
-                  FlatButton(
+                  TextButton(
                     child: Text("Yes"),
                     onPressed: () {
                       Navigator.pop(context, true);
@@ -444,7 +452,7 @@ class _EventPageState extends State<EventPage> {
                 content: Text(
                     'Successfully added to ${futures.length} calendar${futures.length > 1 ? "s" : ""}'),
                 actions: <Widget>[
-                  FlatButton(
+                  TextButton(
                     child: Text('Ok'),
                     onPressed: () {
                       Navigator.of(context).pop();

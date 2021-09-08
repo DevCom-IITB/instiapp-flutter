@@ -20,7 +20,7 @@ abstract class _$UserFCMPatchRequestSerializer
   @override
   UserFCMPatchRequest fromMap(Map map) {
     if (map == null) return null;
-    final obj = new UserFCMPatchRequest();
+    final obj = UserFCMPatchRequest();
     obj.userFCMId = map['fcm_id'] as String;
     obj.userAndroidVersion = map['android_version'] as int;
     return obj;
