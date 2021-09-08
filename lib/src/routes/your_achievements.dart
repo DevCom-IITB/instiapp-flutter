@@ -216,8 +216,8 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
                 ),
               ),
       ),
-      floatingActionButton: fab,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButton: bloc.currSession == null? null:fab,
+      floatingActionButtonLocation: bloc.currSession == null? null:FloatingActionButtonLocation.endDocked,
     );
   }
 }

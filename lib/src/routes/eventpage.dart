@@ -83,10 +83,10 @@ class _EventPageState extends State<EventPage> {
     if (event != null) {
       footerButtons = <Widget>[];
       editAccess = bloc.editEventAccess(event);
-      footerButtons.addAll([
+      if(bloc.currSession != null){footerButtons.addAll([
         buildUserStatusButton("Going", UES.Going, theme, bloc),
         buildUserStatusButton("Interested", UES.Interested, theme, bloc),
-      ]);
+      ]);}
 
       if ((event.eventWebsiteURL ?? "") != "") {
         footerButtons.add(IconButton(
