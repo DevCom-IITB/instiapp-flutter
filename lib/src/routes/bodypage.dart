@@ -10,6 +10,7 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/footer_buttons.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
@@ -143,11 +144,11 @@ class _BodyPageState extends State<BodyPage> {
                       children: <Widget>[
                         Text(
                           body.bodyName,
-                          style: theme.textTheme.display2,
+                          style: theme.textTheme.headline3,
                         ),
                         SizedBox(height: 8.0),
                         Text(body.bodyShortDescription,
-                            style: theme.textTheme.title),
+                            style: theme.textTheme.headline6),
                       ],
                     ),
                   ),
@@ -167,7 +168,7 @@ class _BodyPageState extends State<BodyPage> {
                         horizontal: 28.0, vertical: 16.0),
                     child: CommonHtml(
                       data: body.bodyDescription,
-                      defaultTextStyle: theme.textTheme.subhead,
+                      defaultTextStyle: theme.textTheme.subtitle1,
                     ),
                   ),
                   SizedBox(
@@ -184,7 +185,7 @@ class _BodyPageState extends State<BodyPage> {
                             horizontal: 28.0, vertical: 16.0),
                         child: Text(
                           "Events",
-                          style: theme.textTheme.headline,
+                          style: theme.textTheme.headline5,
                         ),
                       )))
                   // Children
@@ -197,7 +198,7 @@ class _BodyPageState extends State<BodyPage> {
                             horizontal: 28.0, vertical: 16.0),
                         child: Text(
                           "Organizations",
-                          style: theme.textTheme.headline,
+                          style: theme.textTheme.headline5,
                         ),
                       )))
                   // People
@@ -209,6 +210,7 @@ class _BodyPageState extends State<BodyPage> {
                                   .map((u) => u..currentRole = r.roleName)
                                   .toList();
                             }
+                            return null;
                           })
                           ?.map((u) => _buildUserTile(bloc, theme, u))
                           ?.toList(),
@@ -217,7 +219,7 @@ class _BodyPageState extends State<BodyPage> {
                             horizontal: 28.0, vertical: 16.0),
                         child: Text(
                           "People",
-                          style: theme.textTheme.headline,
+                          style: theme.textTheme.headline5,
                         ),
                       )))
                   // Parents
@@ -230,7 +232,7 @@ class _BodyPageState extends State<BodyPage> {
                             horizontal: 28.0, vertical: 16.0),
                         child: Text(
                           "Part of",
-                          style: theme.textTheme.headline,
+                          style: theme.textTheme.headline5,
                         ),
                       )))
                   ..addAll([
@@ -262,7 +264,11 @@ class _BodyPageState extends State<BodyPage> {
                   },
                 ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      persistentFooterButtons: footerButtons,
+      persistentFooterButtons: [
+        FooterButtons(
+          footerButtons: footerButtons,
+        )
+      ],
     );
   }
 
@@ -277,21 +283,38 @@ class _BodyPageState extends State<BodyPage> {
           ];
   }
 
-  RaisedButton _buildFollowBody(ThemeData theme, InstiAppBloc bloc) {
-    return RaisedButton(
-      color: body.bodyUserFollows ?? false
-          ? theme.accentColor
-          : theme.scaffoldBackgroundColor,
-      textColor:
-          body.bodyUserFollows ?? false ? theme.accentIconTheme.color : null,
-      shape: RoundedRectangleBorder(
+  ElevatedButton _buildFollowBody(ThemeData theme, InstiAppBloc bloc) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        primary: body.bodyUserFollows ?? false
+            ? theme.accentColor
+            : theme.scaffoldBackgroundColor,
+        onPrimary: body.bodyUserFollows ?? false
+            ? theme.accentIconTheme.color
+            : theme.textTheme.bodyText1.color,
+        shape: RoundedRectangleBorder(
           side: BorderSide(
             color: theme.accentColor,
           ),
-          borderRadius: BorderRadius.all(Radius.circular(4))),
+          borderRadius: BorderRadius.all(Radius.circular(4)),
+        ),
+      ),
+      // color: body.bodyUserFollows ?? false
+      //     ? theme.accentColor
+      //     : theme.scaffoldBackgroundColor,
+      // textColor:
+      //     body.bodyUserFollows ?? false ? theme.accentIconTheme.color : null,
+      // shape: RoundedRectangleBorder(
+      //     side: BorderSide(
+      //       color: theme.accentColor,
+      //     ),
+      //     borderRadius: BorderRadius.all(Radius.circular(4))),
       child: Row(children: () {
         var rowChildren = <Widget>[
-          Text(body.bodyUserFollows ?? false ? "Following" : "Follow"),
+          Text(
+            body.bodyUserFollows ?? false ? "Following" : "Follow",
+            // style: TextStyle(color: Colors.black),
+          ),
           SizedBox(
             width: 8.0,
           ),
@@ -345,8 +368,8 @@ class _BodyPageState extends State<BodyPage> {
 
   Widget _buildBodyTile(InstiAppBloc bloc, TextTheme theme, Body body) {
     return ListTile(
-      title: Text(body.bodyName, style: theme.title),
-      subtitle: Text(body.bodyShortDescription, style: theme.subtitle),
+      title: Text(body.bodyName, style: theme.headline6),
+      subtitle: Text(body.bodyShortDescription, style: theme.subtitle2),
       leading: NullableCircleAvatar(
         body.bodyImageURL,
         Icons.people_outline_outlined,
@@ -362,7 +385,7 @@ class _BodyPageState extends State<BodyPage> {
     return ListTile(
       title: Text(
         event.eventName,
-        style: theme.textTheme.title,
+        style: theme.textTheme.headline6,
       ),
       enabled: true,
       leading: NullableCircleAvatar(
@@ -386,7 +409,7 @@ class _BodyPageState extends State<BodyPage> {
       ),
       title: Text(
         u.userName,
-        style: theme.textTheme.title,
+        style: theme.textTheme.headline6,
       ),
       subtitle: Text(u.getSubTitle()),
       onTap: () {

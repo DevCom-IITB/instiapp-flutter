@@ -10,7 +10,7 @@ abstract class _$NewsFeedResponseSerializer
     implements Serializer<NewsFeedResponse> {
   Serializer<Event> __eventSerializer;
   Serializer<Event> get _eventSerializer =>
-      __eventSerializer ??= new EventSerializer();
+      __eventSerializer ??= EventSerializer();
   @override
   Map<String, dynamic> toMap(NewsFeedResponse model) {
     if (model == null) return null;
@@ -27,7 +27,7 @@ abstract class _$NewsFeedResponseSerializer
   @override
   NewsFeedResponse fromMap(Map map) {
     if (map == null) return null;
-    final obj = new NewsFeedResponse();
+    final obj = NewsFeedResponse();
     obj.events = codeIterable<Event>(
         map['data'] as Iterable, (val) => _eventSerializer.fromMap(val as Map));
     obj.count = map['count'] as int;

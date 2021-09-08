@@ -20,7 +20,7 @@ abstract class _$EventCreateResponseSerializer
   @override
   EventCreateResponse fromMap(Map map) {
     if (map == null) return null;
-    final obj = new EventCreateResponse();
+    final obj = EventCreateResponse();
     obj.result = map['result'] as String;
     obj.eventId = map['eventId'] as String;
     return obj;

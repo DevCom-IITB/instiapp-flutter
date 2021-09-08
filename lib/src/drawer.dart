@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:collection';
 
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
@@ -132,6 +131,16 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                     ),
                     8: NavListTile(
+                      icon: Icons.verified_outlined,
+                      title: "Achievements",
+                      onTap: () {
+                        changeSelection(11, drawerState);
+                        var navi = Navigator.of(context);
+                        navi.pop();
+                        navi.pushNamed('/achievements');
+                      },
+                    ),
+                    9: NavListTile(
                       icon: Icons.feedback_outlined,
                       title: "Complaints/Suggestions",
                       onTap: () {
@@ -141,7 +150,7 @@ class _NavDrawerState extends State<NavDrawer> {
                         navi.pushNamed('/complaints');
                       },
                     ),
-                    9: NavListTile(
+                    10: NavListTile(
                       icon: Icons.link_outlined,
                       title: "Quick Links",
                       onTap: () {
@@ -151,7 +160,7 @@ class _NavDrawerState extends State<NavDrawer> {
                         navi.pushNamed('/quicklinks');
                       },
                     ),
-                    10: NavListTile(
+                    11: NavListTile(
                       icon: Icons.settings_outlined,
                       title: "Settings",
                       onTap: () {
@@ -197,13 +206,13 @@ class _NavDrawerState extends State<NavDrawer> {
                               title: Text(
                                 snapshot?.data?.profile?.userName ??
                                     'Not Logged in',
-                                style: theme.textTheme.body1
+                                style: theme.textTheme.bodyText2
                                     .copyWith(fontWeight: FontWeight.bold),
                               ),
                               subtitle: snapshot.data != null
                                   ? Text(snapshot.data?.profile?.userRollNumber,
-                                      style: theme.textTheme.body1)
-                                  : RaisedButton(
+                                      style: theme.textTheme.bodyText2)
+                                  : ElevatedButton(
                                       child: Text(
                                         "Log in",
                                       ),
@@ -327,6 +336,7 @@ class _NavDrawerState extends State<NavDrawer> {
                               setState(() {
                                 loggingOutLoading = false;
                               });
+                              Navigator.pushReplacementNamed(context, "/");
                             },
                       trailing: loggingOutLoading
                           ? CircularProgressIndicatorExtended()
@@ -430,15 +440,17 @@ class MNavigatorObserver extends NavigatorObserver {
     "/placeblog": 4,
     "/trainblog": 5,
     "/feed": 0,
-    "/quicklinks": 9,
+    "/quicklinks": 10,
     "/news": 1,
     "/explore": 2,
     "/calendar": 6,
-    "/complaints": 8,
-    "/newcomplaint": 8,
+    "/complaints": 9,
+    "/newcomplaint": 9,
     "/putentity/event": 0,
     "/map": 7,
-    "/settings": 10,
+    "/settings": 11,
+    "/achievements": 8,
+    "/achievements/add": 8,
     "/notifications": -1,
   };
 
@@ -457,6 +469,8 @@ class MNavigatorObserver extends NavigatorObserver {
     "/map": "Map",
     "/settings": "Settings",
     "/notifications": "Notifications",
+    "/achievements": "Achievements",
+    "/achievements/add": "New Achievement",
     "n/a": "",
   };
 

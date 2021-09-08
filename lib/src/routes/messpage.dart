@@ -69,7 +69,7 @@ class _MessPageState extends State<MessPage> {
               TitleWithBackButton(
                 child: Text(
                   "Mess Menu",
-                  style: theme.textTheme.display2,
+                  style: theme.textTheme.headline3,
                 ),
               ),
               Padding(
@@ -139,7 +139,7 @@ class _MessPageState extends State<MessPage> {
                       value: entry.key,
                     ))
                 .toList(),
-            style: theme.textTheme.subhead.copyWith(color: theme.accentColor),
+            style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor),
             onChanged: (h) {
               setState(() {
                 currHostel = snapshot.data[h].shortName;
@@ -169,14 +169,14 @@ class _MessPageState extends State<MessPage> {
         children: <Widget>[
           Text(
             mess.getDayName(),
-            style: localTheme.headline.copyWith(fontWeight: FontWeight.bold),
+            style: localTheme.headline5.copyWith(fontWeight: FontWeight.bold),
           ),
           SizedBox(
             height: 8.0,
           ),
           Text(
             "Breakfast",
-            style: localTheme.title.copyWith(color: theme.accentColor),
+            style: localTheme.headline6.copyWith(color: theme.accentColor),
           ),
           ContentText(mess.breakfast, context),
           SizedBox(
@@ -184,7 +184,7 @@ class _MessPageState extends State<MessPage> {
           ),
           Text(
             "Lunch",
-            style: localTheme.title.copyWith(color: theme.accentColor),
+            style: localTheme.headline6.copyWith(color: theme.accentColor),
           ),
           ContentText(mess.lunch, context),
           SizedBox(
@@ -192,7 +192,7 @@ class _MessPageState extends State<MessPage> {
           ),
           Text(
             "Snacks",
-            style: localTheme.title.copyWith(color: theme.accentColor),
+            style: localTheme.headline6.copyWith(color: theme.accentColor),
           ),
           ContentText(mess.snacks, context),
           SizedBox(
@@ -200,7 +200,7 @@ class _MessPageState extends State<MessPage> {
           ),
           Text(
             "Dinner",
-            style: localTheme.title.copyWith(color: theme.accentColor),
+            style: localTheme.headline6.copyWith(color: theme.accentColor),
           ),
           ContentText(mess.dinner, context),
           SizedBox(
@@ -217,5 +217,5 @@ class _MessPageState extends State<MessPage> {
 
 class ContentText extends Text {
   ContentText(String data, BuildContext context)
-      : super(data, style: Theme.of(context).textTheme.subhead);
+      : super(data, style: Theme.of(context).textTheme.subtitle1);
 }

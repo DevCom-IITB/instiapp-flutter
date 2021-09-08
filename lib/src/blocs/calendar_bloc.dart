@@ -63,12 +63,6 @@ class CalendarBloc {
     var nextNextMonthStart =
         DateTime(currMonthStart.year, currMonthStart.month + 2);
 
-    var havePrev = monthToEvents.containsKey(prevMonthStart) ||
-        receivingMonths.contains(prevMonthStart);
-    var haveCurr = monthToEvents.containsKey(currMonthStart) ||
-        receivingMonths.contains(currMonthStart);
-    var haveNext = monthToEvents.containsKey(nextMonthStart) ||
-        receivingMonths.contains(nextMonthStart);
     receivingMonths.add(prevMonthStart);
     receivingMonths.add(currMonthStart);
     receivingMonths.add(nextMonthStart);

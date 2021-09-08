@@ -77,7 +77,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
 
   Future<NewsFeedResponse> getNewsFeed(String sessionId) async {
     var req =
-        base.get.path(basePath).path("/events").header("Cookie", sessionId);
+    base.get.path(basePath).path("/events").header("Cookie", sessionId);
     return req.go(throwOnErr: true).map(decodeOne);
   }
 
@@ -132,7 +132,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
 
   Future<List<Body>> getAllBodies(String sessionId) async {
     var req =
-        base.get.path(basePath).path("/bodies").header("Cookie", sessionId);
+    base.get.path(basePath).path("/bodies").header("Cookie", sessionId);
     return req.go(throwOnErr: true).map(decodeList);
   }
 
@@ -159,7 +159,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
 
   Future<User> getUserMe(String sessionID) async {
     var req =
-        base.get.path(basePath).path("/user-me").header("Cookie", sessionID);
+    base.get.path(basePath).path("/user-me").header("Cookie", sessionID);
     return req.go(throwOnErr: true).map(decodeOne);
   }
 
@@ -245,7 +245,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
 
   Future<void> logout(String sessionID) async {
     var req =
-        base.get.path(basePath).path("/logout").header("Cookie", sessionID);
+    base.get.path(basePath).path("/logout").header("Cookie", sessionID);
     await req.go(throwOnErr: true);
   }
 
@@ -357,4 +357,76 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .header("Cookie", sessionId);
     return req.go(throwOnErr: true).map(decodeList);
   }
+
+  Future<AchievementCreateResponse> postForm(String sessionId,
+      AchievementCreateRequest achievementCreateRequest) async {
+    var req = base.post
+        .path(basePath)
+        .path("/achievements")
+        .header("Cookie", sessionId)
+        .json(jsonConverter.to(achievementCreateRequest));
+    return await req.go(throwOnErr: true).map(decodeOne);
+  }
+
+  Future<SecretResponse> postAchievementOffer(String sessionId,String id,
+      Offersecret secret) async {
+    var req = base.post
+        .path(basePath)
+        .path("/achievements-offer/:id")
+        .pathParams("id", id)
+        .header("Cookie", sessionId)
+        .json(jsonConverter.to(secret));
+
+    return await req.go(throwOnErr: true).map(decodeOne);
+  }
+
+  Future<List<Achievement>> getYourAchievements(String sessionId) async {
+    var req = base.get
+        .path(basePath)
+        .path("/achievements")
+        .header("Cookie", sessionId);
+    return await req.go(throwOnErr: true).map(decodeList);
+  }
+
+  Future<void> toggleHidden(
+      String sessionID, String id, AchievementHiddenPathRequest hidden) async {
+    var req = base.patch
+        .path(basePath)
+        .path("/achievements/:id")
+        .pathParams("id", id)
+        .header("Cookie", sessionID)
+        .json(jsonConverter.to(hidden));
+    return await req.go(throwOnErr: true);
+  }
+
+  Future<List<Achievement>> getBodyAchievements(
+      String sessionId, String id) async {
+    var req = base.get
+        .path(basePath)
+        .path("/achievements-body/:id")
+        .pathParams("id", id)
+        .header("Cookie", sessionId);
+    return await req.go(throwOnErr: true).map(decodeList);
+  }
+
+  Future<void> dismissAchievement(
+      String sessionID, String id, AchVerifyRequest achievement) async {
+    var req = base.put
+        .path(basePath)
+        .path("/achievements/:id")
+        .pathParams("id", id)
+        .header("Cookie", sessionID)
+        .json(jsonConverter.to(achievement));
+    return await req.go(throwOnErr: true);
+  }
+
+  Future<void> deleteAchievement(String sessionID, String id) async {
+    var req = base.delete
+        .path(basePath)
+        .path("/achievements/:id")
+        .pathParams("id", id)
+        .header("Cookie", sessionID);
+    return await req.go(throwOnErr: true);
+  }
 }
+
