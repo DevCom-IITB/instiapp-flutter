@@ -18,14 +18,14 @@ class _MapPageState extends State<MapPage> {
 
   jag.Jaguar server;
 
-  // final String hostUrl = "insti.app";
-  // final String mapUrl = "https://insti.app/map/?sandbox=true";
+  final String hostUrl = "insti.app";
+  final String mapUrl = "https://insti.app/map/?sandbox=true";
 
   // final String hostUrl = "127.0.0.1:9999";
   // final String mapUrl = "http://127.0.0.1:9999/";
 
-  final String hostUrl = "pulsejet.github.io";
-  final String mapUrl = "https://pulsejet.github.io/instimapweb-standalone/";
+  // final String hostUrl = "varunpatil.me";
+  // final String mapUrl = "https://varunpatil.me/instimapweb-standalone/";
 
   StreamSubscription<String> onUrlChangedSub;
   StreamSubscription<WebViewStateChanged> onStateChangedSub;
