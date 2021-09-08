@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:developer';
-import 'package:InstiApp/src/api/model/achievements.dart';
-import 'package:InstiApp/src/api/model/offeredAchievements.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
@@ -10,9 +8,9 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/role.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:InstiApp/src/api/model/offersecret.dart';
+
 class Bloc extends Object {
   InstiAppBloc bloc;
 
@@ -40,20 +38,19 @@ class Bloc extends Object {
     }
   }
 
-
-  Future<secret_response> postAchievementOffer(String id,String secret) async {
-    try{
-      offersecret secretclass=offersecret();
-      secretclass.secret=secret;
-      log(secretclass.secret+'lll');
-      secret_response response=await bloc.client.postAchievementOffer(bloc.getSessionIdHeader(), id,secretclass);
+  Future<SecretResponse> postAchievementOffer(String id, String secret) async {
+    try {
+      Offersecret secretclass = Offersecret();
+      secretclass.secret = secret;
+      log(secretclass.secret + 'lll');
+      SecretResponse response = await bloc.client
+          .postAchievementOffer(bloc.getSessionIdHeader(), id, secretclass);
       log(response.message);
       return response;
-    } catch(ex){
+    } catch (ex) {
       print(ex);
       return null;
     }
-
   }
 
   Future<void> getVerifiableBodies() async {
@@ -75,8 +72,6 @@ class Bloc extends Object {
     _verifiableBodies = listBody;
     _verBodySubject.add(UnmodifiableListView(_verifiableBodies));
   }
-
-
 
   Future<List<Event>> searchForEvent(String query) async {
     print("Search called");

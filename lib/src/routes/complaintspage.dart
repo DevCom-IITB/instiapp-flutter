@@ -123,7 +123,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                           return RefreshIndicator(
                             onRefresh: () => name == "Home"
                                 ? complaintsBloc.refreshAllComplaints(
-                                    force: true) // TODO: for now always force
+                                    force: true) 
                                 : complaintsBloc.updateMyComplaints(),
                             child: SafeArea(
                               top: false,
