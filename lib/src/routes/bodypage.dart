@@ -83,9 +83,9 @@ class _BodyPageState extends State<BodyPage> {
     var editAccess = false;
     if (body != null) {
       editAccess = bloc.editBodyAccess(body);
-      footerButtons.addAll([
+      if(bloc.currSession != null){footerButtons.addAll([
         _buildFollowBody(theme, bloc),
-      ]);
+      ]);}
 
       if ((body.bodyWebsiteURL ?? "") != "") {
         footerButtons.add(IconButton(
@@ -154,14 +154,21 @@ class _BodyPageState extends State<BodyPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: PhotoViewableImage(
-                      url: body.bodyImageURL,
-                      heroTag: widget.heroTag ?? body.bodyID,
-                      fit: BoxFit.fitWidth,
-                    ),
+                    child: body.bodyImageURL != null
+                        ? PhotoViewableImage(
+                            url: body.bodyImageURL,
+                            heroTag: widget.heroTag ?? body.bodyID,
+                            fit: BoxFit.fitWidth,
+                          )
+                        : SizedBox(
+                            height: 0.0,
+                          ),
                   ),
-                  SizedBox(
+                  body.bodyImageURL != null
+                      ? SizedBox(
                     height: 16.0,
+                  ): SizedBox(
+                    height: 0.0,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -171,8 +178,10 @@ class _BodyPageState extends State<BodyPage> {
                       defaultTextStyle: theme.textTheme.subtitle1,
                     ),
                   ),
-                  SizedBox(
+                  body.bodyDescription!=null?SizedBox(
                     height: 16.0,
+                  ): SizedBox(
+                    height: 0.0,
                   ),
                   Divider(),
                 ] // Events
