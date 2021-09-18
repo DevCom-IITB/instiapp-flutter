@@ -9,6 +9,7 @@ import 'package:InstiApp/src/routes/complaintpage.dart';
 import 'package:InstiApp/src/routes/complaintspage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
+import 'package:InstiApp/src/routes/externalblogpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:InstiApp/src/routes/mappage.dart';
 import 'package:InstiApp/src/routes/newcomplaintpage.dart';
@@ -209,8 +210,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           } else {
             switch (settings.name) {
               case "/":
-
-               return _buildRoute(settings, LoginPage(widget.bloc));
+                return _buildRoute(settings, LoginPage(widget.bloc));
               case "/mess":
                 print("Entereing here mess");
                 return _buildRoute(settings, MessPage());
@@ -248,6 +248,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 return _buildRoute(settings, YourAchievementPage());
               case "/achievements/add":
                 return _buildRoute(settings, Home());
+              case "/externalblog":
+                return _buildRoute(settings, ExternalBlogPage());
             }
           }
           return _buildRoute(settings, MessPage());

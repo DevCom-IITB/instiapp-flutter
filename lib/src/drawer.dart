@@ -170,6 +170,16 @@ class _NavDrawerState extends State<NavDrawer> {
                         navi.pushNamed('/settings');
                       },
                     ),
+                    12: NavListTile(
+                      icon: Icons.work_outline,
+                      title: "External Blog",
+                      onTap: () {
+                        changeSelection(12, drawerState);
+                        var navi = Navigator.of(context);
+                        navi.pop();
+                        navi.pushNamed('/externalblog');
+                      },
+                    ),
                   };
 
                   List<Widget> navList, navDownList = <Widget>[];
@@ -452,6 +462,7 @@ class MNavigatorObserver extends NavigatorObserver {
     "/achievements": 8,
     "/achievements/add": 8,
     "/notifications": -1,
+    "/externalblog": 12,
   };
 
   static Map<String, String> routeToName = {
@@ -471,6 +482,7 @@ class MNavigatorObserver extends NavigatorObserver {
     "/notifications": "Notifications",
     "/achievements": "Achievements",
     "/achievements/add": "New Achievement",
+    "/externalblog": "External Blog",
     "n/a": "",
   };
 
