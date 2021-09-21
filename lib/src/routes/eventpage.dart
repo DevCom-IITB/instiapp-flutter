@@ -83,10 +83,10 @@ class _EventPageState extends State<EventPage> {
     if (event != null) {
       footerButtons = <Widget>[];
       editAccess = bloc.editEventAccess(event);
-      footerButtons.addAll([
+      if(bloc.currSession != null){footerButtons.addAll([
         buildUserStatusButton("Going", UES.Going, theme, bloc),
         buildUserStatusButton("Interested", UES.Interested, theme, bloc),
-      ]);
+      ]);}
 
       if ((event.eventWebsiteURL ?? "") != "") {
         footerButtons.add(IconButton(
@@ -170,10 +170,7 @@ class _EventPageState extends State<EventPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: event?.eventImageURL ??
-                          event?.eventBodies[0].bodyImageURL==null?SizedBox(
-                        height: 0.0,
-                      ):PhotoViewableImage(
+                      child: PhotoViewableImage(
                         url: event?.eventImageURL ??
                             event?.eventBodies[0].bodyImageURL,
                         heroTag: event.eventID,

@@ -83,9 +83,9 @@ class _BodyPageState extends State<BodyPage> {
     var editAccess = false;
     if (body != null) {
       editAccess = bloc.editBodyAccess(body);
-      footerButtons.addAll([
+      if(bloc.currSession != null){footerButtons.addAll([
         _buildFollowBody(theme, bloc),
-      ]);
+      ]);}
 
       if ((body.bodyWebsiteURL ?? "") != "") {
         footerButtons.add(IconButton(
