@@ -73,6 +73,7 @@ class InstiAppBloc {
 
   // Sub Blocs
   PostBloc placementBloc;
+  PostBloc externalBloc;
   PostBloc trainingBloc;
   PostBloc newsBloc;
   ExploreBloc exploreBloc;
@@ -200,6 +201,7 @@ class InstiAppBloc {
     globalClient = IOClient();
     // }
     placementBloc = PostBloc(this, postType: PostType.Placement);
+    externalBloc = PostBloc(this,postType: PostType.External);
     trainingBloc = PostBloc(this, postType: PostType.Training);
     newsBloc = PostBloc(this, postType: PostType.NewsArticle);
     exploreBloc = ExploreBloc(this);

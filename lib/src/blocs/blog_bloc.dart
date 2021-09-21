@@ -8,7 +8,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'dart:math';
 
-enum PostType { Placement, Training, NewsArticle }
+enum PostType { Placement, Training, NewsArticle, External }
 
 class PostBloc {
   // Streams
@@ -25,7 +25,7 @@ class PostBloc {
   // parent bloc
   InstiAppBloc bloc;
 
-  // Training or Placement or News Article
+  // Training or Placement or News Article or External
   final PostType postType;
 
   PostBloc(this.bloc, {@required this.postType}) {
@@ -68,6 +68,7 @@ class PostBloc {
   Future<List<Post>> getBlogPage(int page) async {
     var httpGetFunc = {
       PostType.Placement: bloc.client.getPlacementBlogFeed,
+      PostType.External: bloc.client.getExternalBlogFeed,
       PostType.Training: bloc.client.getTrainingBlogFeed,
       PostType.NewsArticle: bloc.client.getNews
     }[postType];
