@@ -63,6 +63,35 @@ abstract class _$PlacementBlogPostSerializer
   }
 }
 
+abstract class _$ExternalBlogPostSerializer
+    implements Serializer<ExternalBlogPost> {
+  @override
+  Map<String, dynamic> toMap(ExternalBlogPost model) {
+    if (model == null) return null;
+    Map<String, dynamic> ret = <String, dynamic>{};
+    setMapValue(ret, 'id', model.id);
+    setMapValue(ret, 'guid', model.guid);
+    setMapValue(ret, 'link', model.link);
+    setMapValue(ret, 'title', model.title);
+    setMapValue(ret, 'content', model.content);
+    setMapValue(ret, 'published', model.published);
+    return ret;
+  }
+
+  @override
+  ExternalBlogPost fromMap(Map map) {
+    if (map == null) return null;
+    final obj = ExternalBlogPost();
+    obj.id = map['id'] as String;
+    obj.guid = map['guid'] as String;
+    obj.link = map['link'] as String;
+    obj.title = map['title'] as String;
+    obj.content = map['content'] as String;
+    obj.published = map['published'] as String;
+    return obj;
+  }
+}
+
 abstract class _$TrainingBlogPostSerializer
     implements Serializer<TrainingBlogPost> {
   @override
