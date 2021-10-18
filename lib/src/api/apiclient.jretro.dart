@@ -54,6 +54,18 @@ abstract class _$InstiAppApiClient implements ApiClient {
     return req.go(throwOnErr: true).map(decodeList);
   }
 
+  Future<List<ExternalBlogPost>> getExternalBlogFeed(
+      String sessionId, int from, int number, String query) async {
+    var req = base.get
+        .path(basePath)
+        .path("/external-blog")
+        .query("from", from)
+        .query("num", number)
+        .query("query", query)
+        .header("Cookie", sessionId);
+    return req.go(throwOnErr: true).map(decodeList);
+  }
+
   Future<List<TrainingBlogPost>> getTrainingBlogFeed(
       String sessionID, int from, int num, String query) async {
     var req = base.get

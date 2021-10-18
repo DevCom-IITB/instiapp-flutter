@@ -111,6 +111,16 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                     ),
                     6: NavListTile(
+                      icon: Icons.work_outline,
+                      title: "External Blog",
+                      onTap: () {
+                        changeSelection(12, drawerState);
+                        var navi = Navigator.of(context);
+                        navi.pop();
+                        navi.pushNamed('/externalblog');
+                      },
+                    ),
+                    7: NavListTile(
                       icon: Icons.date_range_outlined,
                       title: "Calendar",
                       onTap: () {
@@ -120,7 +130,7 @@ class _NavDrawerState extends State<NavDrawer> {
                         navi.pushNamed('/calendar');
                       },
                     ),
-                    7: NavListTile(
+                    8: NavListTile(
                       icon: Icons.map_outlined,
                       title: "Map",
                       onTap: () {
@@ -130,7 +140,7 @@ class _NavDrawerState extends State<NavDrawer> {
                         navi.pushNamed('/map');
                       },
                     ),
-                    8: NavListTile(
+                    9: NavListTile(
                       icon: Icons.verified_outlined,
                       title: "Achievements",
                       onTap: () {
@@ -140,7 +150,7 @@ class _NavDrawerState extends State<NavDrawer> {
                         navi.pushNamed('/achievements');
                       },
                     ),
-                    9: NavListTile(
+                    10: NavListTile(
                       icon: Icons.feedback_outlined,
                       title: "Complaints/Suggestions",
                       onTap: () {
@@ -150,7 +160,7 @@ class _NavDrawerState extends State<NavDrawer> {
                         navi.pushNamed('/complaints');
                       },
                     ),
-                    10: NavListTile(
+                    11: NavListTile(
                       icon: Icons.link_outlined,
                       title: "Quick Links",
                       onTap: () {
@@ -160,7 +170,7 @@ class _NavDrawerState extends State<NavDrawer> {
                         navi.pushNamed('/quicklinks');
                       },
                     ),
-                    11: NavListTile(
+                    12: NavListTile(
                       icon: Icons.settings_outlined,
                       title: "Settings",
                       onTap: () {
@@ -436,22 +446,23 @@ class MNavigatorObserver extends NavigatorObserver {
   InstiAppBloc bloc;
 
   static Map<String, int> routeToNavPos = {
+    "/notifications": -1,
+    "/feed": 0,
+    "/putentity/event": 0,
+    "/news": 1,
+    "/explore": 2,
     "/mess": 3,
     "/placeblog": 4,
     "/trainblog": 5,
-    "/feed": 0,
-    "/quicklinks": 10,
-    "/news": 1,
-    "/explore": 2,
-    "/calendar": 6,
-    "/complaints": 9,
-    "/newcomplaint": 9,
-    "/putentity/event": 0,
-    "/map": 7,
-    "/settings": 11,
-    "/achievements": 8,
-    "/achievements/add": 8,
-    "/notifications": -1,
+    "/externalblog": 6,
+    "/calendar": 7,
+    "/map": 8,
+    "/achievements": 9,
+    "/achievements/add": 9,
+    "/complaints": 10,
+    "/newcomplaint": 10,
+    "/quicklinks": 11,
+    "/settings": 12,
   };
 
   static Map<String, String> routeToName = {
@@ -471,6 +482,7 @@ class MNavigatorObserver extends NavigatorObserver {
     "/notifications": "Notifications",
     "/achievements": "Achievements",
     "/achievements/add": "New Achievement",
+    "/externalblog": "External Blog",
     "n/a": "",
   };
 
