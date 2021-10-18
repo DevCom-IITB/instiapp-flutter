@@ -77,6 +77,13 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
       @QueryParam("num") int number,
       @QueryParam("query") String query);
 
+  @GetReq(path: "/external-blog")
+  Future<List<ExternalBlogPost>> getExternalBlogFeed(
+      @Header("Cookie") String sessionId,
+      @QueryParam("from") int from,
+      @QueryParam("num") int number,
+      @QueryParam("query") String query);
+
   @GetReq(path: "/training-blog")
   Future<List<TrainingBlogPost>> getTrainingBlogFeed(
       @Header("Cookie") String sessionID,

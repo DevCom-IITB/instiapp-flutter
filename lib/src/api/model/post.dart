@@ -25,6 +25,8 @@ class Post {
 
 class PlacementBlogPost extends Post {}
 
+class ExternalBlogPost extends Post {}
+
 class TrainingBlogPost extends Post {}
 
 class NewsArticle extends Post {
@@ -44,6 +46,10 @@ class PostSerializer extends Serializer<Post> with _$PostSerializer {}
 @GenSerializer()
 class PlacementBlogPostSerializer extends Serializer<PlacementBlogPost>
     with _$PlacementBlogPostSerializer {}
+
+@GenSerializer()
+class ExternalBlogPostSerializer extends Serializer<ExternalBlogPost>
+    with _$ExternalBlogPostSerializer {}
 
 @GenSerializer()
 class TrainingBlogPostSerializer extends Serializer<TrainingBlogPost>

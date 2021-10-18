@@ -73,6 +73,7 @@ class InstiAppBloc {
 
   // Sub Blocs
   PostBloc placementBloc;
+  PostBloc externalBloc;
   PostBloc trainingBloc;
   PostBloc newsBloc;
   ExploreBloc exploreBloc;
@@ -188,6 +189,7 @@ class InstiAppBloc {
     '/complaints': 8,
     '/quicklinks': 9,
     '/settings': 10,
+    '/externalblog':12,
   };
 
   // MaterialApp reference
@@ -200,6 +202,7 @@ class InstiAppBloc {
     globalClient = IOClient();
     // }
     placementBloc = PostBloc(this, postType: PostType.Placement);
+    externalBloc = PostBloc(this,postType: PostType.External);
     trainingBloc = PostBloc(this, postType: PostType.Training);
     newsBloc = PostBloc(this, postType: PostType.NewsArticle);
     exploreBloc = ExploreBloc(this);
@@ -231,6 +234,7 @@ class InstiAppBloc {
   PostBloc getPostsBloc(PostType blogType) {
     return {
       PostType.Placement: placementBloc,
+      PostType.External: externalBloc,
       PostType.Training: trainingBloc,
       PostType.NewsArticle: newsBloc,
     }[blogType];
