@@ -189,6 +189,7 @@ class InstiAppBloc {
     '/complaints': 8,
     '/quicklinks': 9,
     '/settings': 10,
+    '/externalblog':12,
   };
 
   // MaterialApp reference
@@ -233,6 +234,7 @@ class InstiAppBloc {
   PostBloc getPostsBloc(PostType blogType) {
     return {
       PostType.Placement: placementBloc,
+      PostType.External: externalBloc,
       PostType.Training: trainingBloc,
       PostType.NewsArticle: newsBloc,
     }[blogType];

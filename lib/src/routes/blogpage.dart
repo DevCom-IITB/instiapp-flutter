@@ -290,14 +290,17 @@ class _BlogPageState extends State<BlogPage> {
                         ),
                       ),
                     ),
-                    Positioned(
-                      top: 6,
-                      right: 6,
-                      child: Icon(
-                        Icons.launch_outlined,
-                        size: 16,
-                      ),
-                    ),
+                    linkIcontemporary(post),
+        //             Positioned(
+        //               top: 6,
+        //               right: 6,
+        //               child: Icon(
+        //
+        //               Icons.launch_outlined,
+        //
+        //                 size: 16,
+        //               ),
+        //             ),
                   ],
                 ),
               ),
@@ -570,4 +573,22 @@ class _BlogPageState extends State<BlogPage> {
       ],
     );
   }
-}
+
+  Widget linkIcontemporary(Post post) {
+      if( post.link !=null && post.link !=""){
+        return Positioned(
+              top: 6,
+              right: 6,
+              child: Icon(
+
+              Icons.launch_outlined,
+
+              size: 16,
+            ),
+            );
+      }
+      else{
+        return SizedBox();
+      }
+    }
+  }

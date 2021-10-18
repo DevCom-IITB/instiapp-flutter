@@ -8,7 +8,7 @@ class ExternalBlogPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlogPage(
-      postType: PostType.Placement,
+      postType: PostType.External,
       title: "External Blog",
       loginNeeded: true,
     );
