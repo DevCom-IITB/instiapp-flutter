@@ -25,7 +25,10 @@ class Post {
 
 class PlacementBlogPost extends Post {}
 
-class ExternalBlogPost extends Post {}
+class ExternalBlogPost extends Post {
+  @Alias("body")
+  String body;
+}
 
 class TrainingBlogPost extends Post {}
 

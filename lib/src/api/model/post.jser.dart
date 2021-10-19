@@ -75,6 +75,7 @@ abstract class _$ExternalBlogPostSerializer
     setMapValue(ret, 'title', model.title);
     setMapValue(ret, 'content', model.content);
     setMapValue(ret, 'published', model.published);
+    setMapValue(ret, 'body', model.body);
     return ret;
   }
 
@@ -88,6 +89,7 @@ abstract class _$ExternalBlogPostSerializer
     obj.title = map['title'] as String;
     obj.content = map['content'] as String;
     obj.published = map['published'] as String;
+    obj.body = map['body'] as String;
     return obj;
   }
 }

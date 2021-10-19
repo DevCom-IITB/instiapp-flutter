@@ -222,11 +222,10 @@ class _BlogPageState extends State<BlogPage> {
         ),
       ));
     }
-
     return _post(post, bloc);
   }
 
-  Widget _post(Post post, PostBloc bloc) {
+  Widget _post(dynamic post, PostBloc bloc) {
     var theme = Theme.of(context);
     return Card(
         key: ValueKey(post.id),
@@ -290,17 +289,27 @@ class _BlogPageState extends State<BlogPage> {
                         ),
                       ),
                     ),
-                    linkIcontemporary(post),
-        //             Positioned(
-        //               top: 6,
-        //               right: 6,
-        //               child: Icon(
-        //
-        //               Icons.launch_outlined,
-        //
-        //                 size: 16,
-        //               ),
-        //             ),
+                    (post.link != null && post.link != "")
+                        ? Positioned(
+                            top: 6,
+                            right: 6,
+                            child: Icon(
+                              Icons.launch_outlined,
+                              size: 16,
+                            ),
+                          )
+                        : SizedBox(),
+
+                    //             Positioned(
+                    //               top: 6,
+                    //               right: 6,
+                    //               child: Icon(
+                    //
+                    //               Icons.launch_outlined,
+                    //
+                    //                 size: 16,
+                    //               ),
+                    //             ),
                   ],
                 ),
               ),
@@ -318,6 +327,19 @@ class _BlogPageState extends State<BlogPage> {
                 defaultTextStyle: theme.textTheme.subtitle1,
               ),
             ),
+            widget.postType == PostType.External
+                ? Padding(
+                    padding: const EdgeInsets.only(
+                      left: 12.0,
+                      right: 12.0,
+                    ),
+                    child: Text(
+                      "By " + post.body,
+                      textAlign: TextAlign.start,
+                      style: theme.textTheme.bodyText1,
+                    ),
+                  )
+                : SizedBox(),
             widget.postType == PostType.NewsArticle
                 ? Builder(builder: (BuildContext context) {
                     const Map<String, String> reactionToEmoji = {
@@ -573,22 +595,4 @@ class _BlogPageState extends State<BlogPage> {
       ],
     );
   }
-
-  Widget linkIcontemporary(Post post) {
-      if( post.link !=null && post.link !=""){
-        return Positioned(
-              top: 6,
-              right: 6,
-              child: Icon(
-
-              Icons.launch_outlined,
-
-              size: 16,
-            ),
-            );
-      }
-      else{
-        return SizedBox();
-      }
-    }
-  }
+}
