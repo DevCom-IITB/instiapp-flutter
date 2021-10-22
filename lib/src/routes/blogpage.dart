@@ -222,11 +222,10 @@ class _BlogPageState extends State<BlogPage> {
         ),
       ));
     }
-
     return _post(post, bloc);
   }
 
-  Widget _post(Post post, PostBloc bloc) {
+  Widget _post(dynamic post, PostBloc bloc) {
     var theme = Theme.of(context);
     return Card(
         key: ValueKey(post.id),
@@ -290,14 +289,27 @@ class _BlogPageState extends State<BlogPage> {
                         ),
                       ),
                     ),
-                    Positioned(
-                      top: 6,
-                      right: 6,
-                      child: Icon(
-                        Icons.launch_outlined,
-                        size: 16,
-                      ),
-                    ),
+                    (post.link != null && post.link != "")
+                        ? Positioned(
+                            top: 6,
+                            right: 6,
+                            child: Icon(
+                              Icons.launch_outlined,
+                              size: 16,
+                            ),
+                          )
+                        : SizedBox(),
+
+                    //             Positioned(
+                    //               top: 6,
+                    //               right: 6,
+                    //               child: Icon(
+                    //
+                    //               Icons.launch_outlined,
+                    //
+                    //                 size: 16,
+                    //               ),
+                    //             ),
                   ],
                 ),
               ),
@@ -315,6 +327,20 @@ class _BlogPageState extends State<BlogPage> {
                 defaultTextStyle: theme.textTheme.subtitle1,
               ),
             ),
+            widget.postType == PostType.External
+                ? Padding(
+                    padding: const EdgeInsets.only(
+                      left: 20.0,
+                      right: 12.0,
+                    ),
+                    child: Text(
+                      "By " + post.body,
+                      style: theme.textTheme.bodyText1,
+                    ),
+                  )
+                : SizedBox(),
+            widget.postType == PostType.External?
+            SizedBox(height: 10):SizedBox(),
             widget.postType == PostType.NewsArticle
                 ? Builder(builder: (BuildContext context) {
                     const Map<String, String> reactionToEmoji = {
