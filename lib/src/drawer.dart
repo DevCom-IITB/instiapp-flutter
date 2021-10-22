@@ -114,7 +114,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       icon: Icons.work_outline,
                       title: "External Blog",
                       onTap: () {
-                        changeSelection(12, drawerState);
+                        changeSelection(6, drawerState);
                         var navi = Navigator.of(context);
                         navi.pop();
                         navi.pushNamed('/externalblog');
@@ -124,7 +124,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       icon: Icons.date_range_outlined,
                       title: "Calendar",
                       onTap: () {
-                        changeSelection(6, drawerState);
+                        changeSelection(7, drawerState);
                         var navi = Navigator.of(context);
                         navi.pop();
                         navi.pushNamed('/calendar');
@@ -134,7 +134,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       icon: Icons.map_outlined,
                       title: "Map",
                       onTap: () {
-                        changeSelection(7, drawerState);
+                        changeSelection(8, drawerState);
                         var navi = Navigator.of(context);
                         navi.pop();
                         navi.pushNamed('/map');
@@ -144,7 +144,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       icon: Icons.verified_outlined,
                       title: "Achievements",
                       onTap: () {
-                        changeSelection(11, drawerState);
+                        changeSelection(9, drawerState);
                         var navi = Navigator.of(context);
                         navi.pop();
                         navi.pushNamed('/achievements');
@@ -154,7 +154,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       icon: Icons.feedback_outlined,
                       title: "Complaints/Suggestions",
                       onTap: () {
-                        changeSelection(8, drawerState);
+                        changeSelection(10, drawerState);
                         var navi = Navigator.of(context);
                         navi.pop();
                         navi.pushNamed('/complaints');
@@ -164,7 +164,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       icon: Icons.link_outlined,
                       title: "Quick Links",
                       onTap: () {
-                        changeSelection(9, drawerState);
+                        changeSelection(11, drawerState);
                         var navi = Navigator.of(context);
                         navi.pop();
                         navi.pushNamed('/quicklinks');
@@ -174,10 +174,20 @@ class _NavDrawerState extends State<NavDrawer> {
                       icon: Icons.settings_outlined,
                       title: "Settings",
                       onTap: () {
-                        changeSelection(10, drawerState);
+                        changeSelection(12, drawerState);
                         var navi = Navigator.of(context);
                         navi.pop();
                         navi.pushNamed('/settings');
+                      },
+                    ),
+                    13: NavListTile(
+                      icon: Icons.query_stats,
+                      title: "FAQs",
+                      onTap: () {
+                        changeSelection(13, drawerState);
+                        var navi = Navigator.of(context);
+                        navi.pop();
+                        navi.pushNamed('/query');
                       },
                     ),
                   };
@@ -463,6 +473,7 @@ class MNavigatorObserver extends NavigatorObserver {
     "/newcomplaint": 10,
     "/quicklinks": 11,
     "/settings": 12,
+    "/query": 13,
   };
 
   static Map<String, String> routeToName = {
@@ -483,6 +494,7 @@ class MNavigatorObserver extends NavigatorObserver {
     "/achievements": "Achievements",
     "/achievements/add": "New Achievement",
     "/externalblog": "External Blog",
+    "/query": "Query",
     "n/a": "",
   };
 

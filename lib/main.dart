@@ -16,6 +16,7 @@ import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
 import 'package:InstiApp/src/routes/notificationspage.dart';
 import 'package:InstiApp/src/routes/putentitypage.dart';
+import 'package:InstiApp/src/routes/querypage.dart';
 import 'package:InstiApp/src/routes/quicklinkspage.dart';
 import 'package:InstiApp/src/routes/settingspage.dart';
 import 'package:InstiApp/src/routes/trainingblogpage.dart';
@@ -250,6 +251,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 return _buildRoute(settings, Home());
               case "/externalblog":
                 return _buildRoute(settings, ExternalBlogPage());
+              case "/query":
+                return _buildRoute(settings, QueryPage());
             }
           }
           return _buildRoute(settings, MessPage());
