@@ -10,6 +10,11 @@ class AboutPage extends StatefulWidget {
 
   final Map<String, Map<String, Map<String, String>>> sectionToNameToImageUrl =
       {
+      "Maintainer": {
+        "Rishabh Arya": {
+          "img": "https://raw.githubusercontent.com/wncc/devcomiitb.github.io/master/images/avatars/rishabh.jpg",
+        },
+      },
     "Core Developers": {
       "Varun Patil": {
         "img": "https://insti.app/team-pics/varun.jpg",
@@ -19,6 +24,9 @@ class AboutPage extends StatefulWidget {
       },
       "Harshith Goka": {
         "img": "https://insti.app/team-pics/harshith.jpg",
+      },
+      "Abeen": {
+        "img": "https://raw.githubusercontent.com/wncc/devcomiitb.github.io/master/images/avatars/abeen.jpg",
       },
     },
     "Developers": {
@@ -43,6 +51,19 @@ class AboutPage extends StatefulWidget {
       "Maitreya Verma": {
         "img": "https://insti.app/team-pics/maitreya.jpg",
       },
+      "E Aakash": {
+        "img": "https://raw.githubusercontent.com/wncc/devcomiitb.github.io/master/images/avatars/e%20aakash.jpg",
+      },
+      "Dev Desai": {
+        "img": "https://raw.githubusercontent.com/wncc/devcomiitb.github.io/master/images/avatars/DevDesai.jpg",
+      },
+      "Ashwin Ramachandran": {
+        "img": "https://raw.githubusercontent.com/wncc/devcomiitb.github.io/master/images/avatars/Ashwin%20Ram.jpg",
+      },
+      "Palash Mittal": {
+        "img": "https://raw.githubusercontent.com/wncc/devcomiitb.github.io/master/images/avatars/Palash%20Mittal.jpg",
+      },
+
     },
     "Design": {
       "Soham Khadtare": {
