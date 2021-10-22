@@ -330,16 +330,17 @@ class _BlogPageState extends State<BlogPage> {
             widget.postType == PostType.External
                 ? Padding(
                     padding: const EdgeInsets.only(
-                      left: 12.0,
+                      left: 20.0,
                       right: 12.0,
                     ),
                     child: Text(
                       "By " + post.body,
-                      textAlign: TextAlign.start,
                       style: theme.textTheme.bodyText1,
                     ),
                   )
                 : SizedBox(),
+            widget.postType == PostType.External?
+            SizedBox(height: 10):SizedBox(),
             widget.postType == PostType.NewsArticle
                 ? Builder(builder: (BuildContext context) {
                     const Map<String, String> reactionToEmoji = {
