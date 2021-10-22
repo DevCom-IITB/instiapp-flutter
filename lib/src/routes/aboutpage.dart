@@ -25,6 +25,9 @@ class AboutPage extends StatefulWidget {
       "Harshith Goka": {
         "img": "https://insti.app/team-pics/harshith.jpg",
       },
+      "Abeen": {
+        "img": "https://raw.githubusercontent.com/wncc/devcomiitb.github.io/master/images/avatars/abeen.jpg",
+      },
     },
     "Developers": {
       "Mrunmayi Mungekar": {
