@@ -56,8 +56,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       onTap: () {
                         changeSelection(0, drawerState);
                         var navi = Navigator.of(context);
-                        navi.pop();
-                        navi.pushNamed('/feed');
+                        navi.pushReplacementNamed('/feed');
                       },
                     ),
                     1: NavListTile(
@@ -66,8 +65,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       onTap: () {
                         changeSelection(1, drawerState);
                         var navi = Navigator.of(context);
-                        navi.pop();
-                        navi.pushNamed('/news');
+                        navi.pushReplacementNamed('/news');
                       },
                     ),
                     2: NavListTile(
@@ -76,8 +74,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       onTap: () {
                         changeSelection(2, drawerState);
                         var navi = Navigator.of(context);
-                        navi.pop();
-                        navi.pushNamed('/explore');
+                        navi.pushReplacementNamed('/explore');
                       },
                     ),
                     3: NavListTile(
@@ -86,8 +83,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       onTap: () {
                         changeSelection(3, drawerState);
                         var navi = Navigator.of(context);
-                        navi.pop();
-                        navi.pushNamed('/mess');
+                        navi.pushReplacementNamed('/mess');
                       },
                     ),
                     4: NavListTile(
@@ -96,8 +92,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       onTap: () {
                         changeSelection(4, drawerState);
                         var navi = Navigator.of(context);
-                        navi.pop();
-                        navi.pushNamed('/placeblog');
+                        navi.pushReplacementNamed('/placeblog');
                       },
                     ),
                     5: NavListTile(
@@ -106,8 +101,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       onTap: () {
                         changeSelection(5, drawerState);
                         var navi = Navigator.of(context);
-                        navi.pop();
-                        navi.pushNamed('/trainblog');
+                        navi.pushReplacementNamed('/trainblog');
                       },
                     ),
                     6: NavListTile(
@@ -116,8 +110,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       onTap: () {
                         changeSelection(6, drawerState);
                         var navi = Navigator.of(context);
-                        navi.pop();
-                        navi.pushNamed('/externalblog');
+                        navi.pushReplacementNamed('/externalblog');
                       },
                     ),
                     7: NavListTile(
@@ -126,8 +119,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       onTap: () {
                         changeSelection(7, drawerState);
                         var navi = Navigator.of(context);
-                        navi.pop();
-                        navi.pushNamed('/calendar');
+                        navi.pushReplacementNamed('/calendar');
                       },
                     ),
                     8: NavListTile(
@@ -136,8 +128,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       onTap: () {
                         changeSelection(8, drawerState);
                         var navi = Navigator.of(context);
-                        navi.pop();
-                        navi.pushNamed('/map');
+                        navi.pushReplacementNamed('/map');
                       },
                     ),
                     9: NavListTile(
@@ -146,8 +137,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       onTap: () {
                         changeSelection(9, drawerState);
                         var navi = Navigator.of(context);
-                        navi.pop();
-                        navi.pushNamed('/achievements');
+                        navi.pushReplacementNamed('/achievements');
                       },
                     ),
                     10: NavListTile(
@@ -156,8 +146,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       onTap: () {
                         changeSelection(10, drawerState);
                         var navi = Navigator.of(context);
-                        navi.pop();
-                        navi.pushNamed('/complaints');
+                        navi.pushReplacementNamed('/complaints');
                       },
                     ),
                     11: NavListTile(
@@ -166,8 +155,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       onTap: () {
                         changeSelection(11, drawerState);
                         var navi = Navigator.of(context);
-                        navi.pop();
-                        navi.pushNamed('/quicklinks');
+                        navi.pushReplacementNamed('/quicklinks');
                       },
                     ),
                     12: NavListTile(
@@ -176,8 +164,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       onTap: () {
                         changeSelection(12, drawerState);
                         var navi = Navigator.of(context);
-                        navi.pop();
-                        navi.pushNamed('/settings');
+                        navi.pushReplacementNamed('/settings');
                       },
                     ),
                     13: NavListTile(
@@ -186,8 +173,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       onTap: () {
                         changeSelection(13, drawerState);
                         var navi = Navigator.of(context);
-                        navi.pop();
-                        navi.pushNamed('/query');
+                        navi.pushReplacementNamed('/query');
                       },
                     ),
                   };

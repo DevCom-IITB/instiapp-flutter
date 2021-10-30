@@ -1,8 +1,12 @@
+import 'package:InstiApp/src/api/response/explore_response.dart';
+import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 
 class QueryPage extends StatefulWidget {
+  final String title = "FAQs";
   const QueryPage({Key key}) : super(key: key);
 
   @override
@@ -10,10 +14,44 @@ class QueryPage extends StatefulWidget {
 }
 
 class _QueryPageState extends State<QueryPage> {
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
+
+  FocusNode _focusNode = FocusNode();
+  ScrollController _hideButtonController;
+  TextEditingController _searchFieldController;
+  double isFabVisible = 0;
+
+  bool searchMode = false;
+  IconData actionIcon = Icons.search_outlined;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchFieldController = TextEditingController();
+    _hideButtonController = ScrollController();
+    _hideButtonController.addListener(() {
+      if (isFabVisible == 1 && _hideButtonController.offset < 100) {
+        setState(() {
+          isFabVisible = 0;
+        });
+      } else if (isFabVisible == 0 && _hideButtonController.offset > 100) {
+        setState(() {
+          isFabVisible = 1;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+    var bloc = BlocProvider.of(context).bloc;
+    var exploreBloc = bloc.exploreBloc;
+
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       key: _scaffoldKey,
       drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
@@ -35,6 +73,138 @@ class _QueryPageState extends State<QueryPage> {
           ],
         ),
       ),
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () {
+            _focusNode.unfocus();
+          },
+          child: ListView(controller: _hideButtonController, children: <Widget>[
+            RefreshIndicator(
+              key: _refreshIndicatorKey,
+              onRefresh: () {
+                return exploreBloc.refresh();
+              },
+              child: TitleWithBackButton(
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        widget.title,
+                        style: theme.textTheme.headline3,
+                      ),
+                    ),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 500),
+                      width: searchMode ? 0.0 : null,
+                      height: searchMode ? 0.0 : null,
+                      decoration: ShapeDecoration(
+                          shape: CircleBorder(
+                              side: BorderSide(color: theme.primaryColor))),
+                      child: searchMode
+                          ? SizedBox()
+                          : IconButton(
+                              tooltip: "Search ${widget.title}",
+                              padding: EdgeInsets.all(16.0),
+                              icon: Icon(
+                                actionIcon,
+                                color: theme.primaryColor,
+                              ),
+                              color: theme.cardColor,
+                              onPressed: () {
+                                setState(() {
+                                  actionIcon = Icons.close_outlined;
+                                  searchMode = !searchMode;
+                                });
+                              },
+                            ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            !searchMode
+                ? SizedBox(
+                    height: 0,
+                  )
+                : PreferredSize(
+                    preferredSize: Size.fromHeight(72),
+                    child: AnimatedContainer(
+                      color: theme.canvasColor,
+                      padding: EdgeInsets.all(8.0),
+                      duration: Duration(milliseconds: 500),
+                      child: TextField(
+                        controller: _searchFieldController,
+                        cursorColor: theme.textTheme.bodyText2.color,
+                        style: theme.textTheme.bodyText2,
+                        focusNode: _focusNode,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                          labelStyle: theme.textTheme.bodyText2,
+                          hintStyle: theme.textTheme.bodyText2,
+                          prefixIcon: Icon(
+                            Icons.search_outlined,
+                          ),
+                          suffixIcon: IconButton(
+                            tooltip: "Search events, bodies, users...",
+                            icon: Icon(
+                              actionIcon,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                actionIcon = Icons.search_outlined;
+                                exploreBloc.query = "";
+                                exploreBloc.refresh();
+                                searchMode = !searchMode;
+                              });
+                            },
+                          ),
+                          hintText: "Search events, bodies, users...",
+                        ),
+                        onChanged: (query) async {
+                          if (query.length > 4) {
+                            exploreBloc.query = query;
+                            exploreBloc.refresh();
+                          }
+                        },
+                        onSubmitted: (query) async {
+                          exploreBloc.query = query;
+                          await exploreBloc.refresh();
+                        },
+                      ),
+                    ),
+                  ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: StreamBuilder<ExploreResponse>(
+                stream: exploreBloc.explore,
+                builder: (BuildContext context,
+                    AsyncSnapshot<ExploreResponse> snapshot) {
+                  return Column(
+                    children: [SizedBox()],
+                  );
+                },
+              ),
+            ),
+          ]),
+        ),
+      ),
+      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButton: isFabVisible == 0
+          ? null
+          : FloatingActionButton(
+              tooltip: "Go to the Top",
+              onPressed: () {
+                _hideButtonController.animateTo(0.0,
+                    curve: Curves.fastOutSlowIn,
+                    duration: const Duration(milliseconds: 600));
+              },
+              child: Icon(Icons.keyboard_arrow_up_outlined),
+            ),
     );
   }
 }
