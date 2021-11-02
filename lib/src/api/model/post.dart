@@ -43,6 +43,29 @@ class NewsArticle extends Post {
   int userReaction;
 }
 
+class Query extends Post {
+  @Alias("question")
+  String title;
+
+  @Alias("answer")
+  String content;
+
+  @Alias("category")
+  String published;
+
+  @Alias("sub_category")
+  String subCategory;
+
+  @Alias("sub_sub_category")
+  String subSubCategory;
+
+  @Ignore()
+  String guid;
+
+  @Ignore()
+  String link;
+}
+
 @GenSerializer()
 class PostSerializer extends Serializer<Post> with _$PostSerializer {}
 
@@ -61,3 +84,6 @@ class TrainingBlogPostSerializer extends Serializer<TrainingBlogPost>
 @GenSerializer()
 class NewsArticleSerializer extends Serializer<NewsArticle>
     with _$NewsArticleSerializer {}
+
+@GenSerializer()
+class QuerySerializer extends Serializer<Query> with _$QuerySerializer {}

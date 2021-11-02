@@ -60,6 +60,7 @@ JsonRepo standardSerializers = JsonRepo(serializers: [
   PlacementBlogPostSerializer(),
   ExternalBlogPostSerializer(),
   TrainingBlogPostSerializer(),
+  QuerySerializer(),
 
   // Venter
   ComplaintSerializer(),

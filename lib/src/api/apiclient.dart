@@ -37,8 +37,8 @@ part 'apiclient.jretro.dart';
 
 @GenApiClient()
 class InstiAppApi extends ApiClient with _$InstiAppApiClient {
-  // static String endpoint = "http://10.4.66.222:8000/api";
-  static String endpoint = "https://api.insti.app/api";
+  static String endpoint = "http://10.0.2.2:8000/api";
+  // static String endpoint = "https://api.insti.app/api";
   final resty.Route base = route(endpoint);
   // final JsonRepo jsonConverter = standardSerializers;
   // final SerializerRepo serializers = standardSerializers;
@@ -261,4 +261,11 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
   @DeleteReq(path: "/achievements/:id")
   Future<void> deleteAchievement(
       @Header("Cookie") String sessionID, @PathParam() String id);
+
+  @GetReq(path: "/query")
+  Future<List<Query>> getQueries(
+      @Header("Cookie") String sessionID,
+      @QueryParam("from") int from,
+      @QueryParam("num") int num,
+      @QueryParam("query") String query);
 }
