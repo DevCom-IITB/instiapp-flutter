@@ -8,7 +8,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'dart:math';
 
-enum PostType { Placement, Training, NewsArticle, External }
+enum PostType { Placement, Training, NewsArticle, External, Query }
 
 class PostBloc {
   // Streams
@@ -70,7 +70,8 @@ class PostBloc {
       PostType.Placement: bloc.client.getPlacementBlogFeed,
       PostType.External: bloc.client.getExternalBlogFeed,
       PostType.Training: bloc.client.getTrainingBlogFeed,
-      PostType.NewsArticle: bloc.client.getNews
+      PostType.NewsArticle: bloc.client.getNews,
+      PostType.Query: bloc.client.getQueries
     }[postType];
     var posts = await httpGetFunc(bloc.getSessionIdHeader(),
         page * _noOfPostsPerPage, _noOfPostsPerPage, query);
@@ -79,7 +80,8 @@ class PostBloc {
       p.content = markdown.markdownToHtml(
           p.content.split('\n').map((s) => s.trimRight()).toList().join('\n'),
           blockSyntaxes: [tableParse]);
-      p.published = dateTimeFormatter(p.published);
+      if (postType != PostType.Query)
+        p.published = dateTimeFormatter(p.published);
     });
     return posts;
   }

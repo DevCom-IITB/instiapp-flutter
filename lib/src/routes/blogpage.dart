@@ -43,6 +43,8 @@ class _BlogPageState extends State<BlogPage> {
   bool firstBuild = true;
   String loadingReaction;
 
+  String currCat;
+
   @override
   void initState() {
     super.initState();
@@ -339,8 +341,9 @@ class _BlogPageState extends State<BlogPage> {
                     ),
                   )
                 : SizedBox(),
-            widget.postType == PostType.External?
-            SizedBox(height: 10):SizedBox(),
+            widget.postType == PostType.External
+                ? SizedBox(height: 10)
+                : SizedBox(),
             widget.postType == PostType.NewsArticle
                 ? Builder(builder: (BuildContext context) {
                     const Map<String, String> reactionToEmoji = {
@@ -542,7 +545,9 @@ class _BlogPageState extends State<BlogPage> {
           ),
         ),
         !searchMode
-            ? SizedBox()
+            ? widget.postType == PostType.Query
+                ? buildDropdownButton(theme)
+                : SizedBox()
             : PreferredSize(
                 preferredSize: Size.fromHeight(72),
                 child: AnimatedContainer(
@@ -594,6 +599,32 @@ class _BlogPageState extends State<BlogPage> {
                 ),
               ),
       ],
+    );
+  }
+
+  Widget buildDropdownButton(ThemeData theme) {
+    List<Map<String, String>> categories = [
+      {'value': 'cat1', 'name': 'category1'},
+      {'value': 'cat2', 'name': 'category2'},
+      {'value': 'cat3', 'name': 'category3'},
+    ];
+    return DropdownButton<String>(
+      hint: Text("Filters"),
+      value: currCat,
+      items: categories
+          .map((cat) => DropdownMenuItem<String>(
+                child: Text(
+                  cat['name'],
+                ),
+                value: cat['value'],
+              ))
+          .toList(),
+      style: theme.textTheme.subtitle1,
+      onChanged: (c) {
+        setState(() {
+          currCat = c;
+        });
+      },
     );
   }
 }
