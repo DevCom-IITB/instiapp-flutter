@@ -13,6 +13,7 @@ import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
 import 'package:InstiApp/src/api/request/image_upload_request.dart';
+import 'package:InstiApp/src/api/request/postFAQ_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
@@ -267,5 +268,10 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
       @Header("Cookie") String sessionID,
       @QueryParam("from") int from,
       @QueryParam("num") int num,
-      @QueryParam("query") String query);
+      @QueryParam("query") String query,
+      @QueryParam("category") String category);
+
+  @PostReq(path: "/query/add")
+  Future<void> postFAQ(
+      @Header("Cookie") String sessionId, @AsJson() PostFAQRequest request);
 }

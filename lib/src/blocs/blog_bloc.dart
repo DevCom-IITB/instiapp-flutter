@@ -26,9 +26,15 @@ class PostBloc {
   InstiAppBloc bloc;
 
   // Training or Placement or News Article or External
-  final PostType postType;
+  PostType postType;
+
+  // For categories
+  String category;
 
   PostBloc(this.bloc, {@required this.postType}) {
+    if (postType == PostType.Query) {
+      postType = PostType.NewsArticle;
+    }
     _setIndexListener();
   }
 
@@ -73,8 +79,13 @@ class PostBloc {
       PostType.NewsArticle: bloc.client.getNews,
       PostType.Query: bloc.client.getQueries
     }[postType];
-    var posts = await httpGetFunc(bloc.getSessionIdHeader(),
-        page * _noOfPostsPerPage, _noOfPostsPerPage, query);
+    var posts;
+    if (postType == PostType.Query)
+      posts = await httpGetFunc(bloc.getSessionIdHeader(),
+          page * _noOfPostsPerPage, _noOfPostsPerPage, query, category);
+    else
+      posts = await httpGetFunc(bloc.getSessionIdHeader(),
+          page * _noOfPostsPerPage, _noOfPostsPerPage, query);
     var tableParse = markdown.TableSyntax();
     posts.forEach((p) {
       p.content = markdown.markdownToHtml(

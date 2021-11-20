@@ -441,15 +441,25 @@ abstract class _$InstiAppApiClient implements ApiClient {
     return await req.go(throwOnErr: true);
   }
 
-  Future<List<Query>> getQueries(
-      String sessionID, int from, int num, String query) async {
+  Future<List<Query>> getQueries(String sessionID, int from, int num,
+      String query, String category) async {
     var req = base.get
         .path(basePath)
         .path("/query")
         .query("from", from)
         .query("num", num)
         .query("query", query)
+        .query("category", category)
         .header("Cookie", sessionID);
     return await req.go(throwOnErr: true).map(decodeList);
+  }
+
+  Future<void> postFAQ(String sessionId, PostFAQRequest request) async {
+    var req = base.post
+        .path(basePath)
+        .path("/query/add")
+        .header("Cookie", sessionId)
+        .json(jsonConverter.to(request));
+    return await req.go(throwOnErr: true);
   }
 }

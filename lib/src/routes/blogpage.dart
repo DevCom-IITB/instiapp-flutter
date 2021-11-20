@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:core';
 import 'dart:collection';
+import 'dart:developer';
 
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
@@ -12,6 +13,8 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/foundation.dart';
 
@@ -43,7 +46,7 @@ class _BlogPageState extends State<BlogPage> {
   bool firstBuild = true;
   String loadingReaction;
 
-  String currCat;
+  List<String> currCat;
 
   @override
   void initState() {
@@ -179,7 +182,16 @@ class _BlogPageState extends State<BlogPage> {
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: isFabVisible == 0
-          ? null
+          ? widget.postType == PostType.Query
+              ? FloatingActionButton.extended(
+                  tooltip: "Ask a Question",
+                  onPressed: () {
+                    Navigator.of(context).pushNamed("/query/add");
+                  },
+                  icon: Icon(Icons.add),
+                  label: Text("Ask a Question"),
+                )
+              : null
           : FloatingActionButton(
               tooltip: "Go to the Top",
               onPressed: () {
@@ -502,6 +514,7 @@ class _BlogPageState extends State<BlogPage> {
 
   Widget _blogHeader(BuildContext context, PostBloc blogBloc) {
     var theme = Theme.of(context);
+    log(widget.postType.toString());
     return Column(
       children: <Widget>[
         TitleWithBackButton(
@@ -518,13 +531,15 @@ class _BlogPageState extends State<BlogPage> {
               ),
               AnimatedContainer(
                 duration: Duration(milliseconds: 500),
-                width: searchMode ? 0.0 : null,
-                height: searchMode ? 0.0 : null,
+                // width: searchMode ? 0.0 : null,
+                // height: searchMode ? 0.0 : null,
                 decoration: ShapeDecoration(
                     shape: CircleBorder(
                         side: BorderSide(color: theme.primaryColor))),
                 child: searchMode
-                    ? SizedBox()
+                    ? widget.postType == PostType.Query
+                        ? buildDropdownButton(theme, blogBloc)
+                        : SizedBox()
                     : IconButton(
                         tooltip: "Search ${widget.title}",
                         padding: EdgeInsets.all(16.0),
@@ -545,9 +560,7 @@ class _BlogPageState extends State<BlogPage> {
           ),
         ),
         !searchMode
-            ? widget.postType == PostType.Query
-                ? buildDropdownButton(theme)
-                : SizedBox()
+            ? SizedBox()
             : PreferredSize(
                 preferredSize: Size.fromHeight(72),
                 child: AnimatedContainer(
@@ -602,29 +615,56 @@ class _BlogPageState extends State<BlogPage> {
     );
   }
 
-  Widget buildDropdownButton(ThemeData theme) {
+  Widget buildDropdownButton(ThemeData theme, PostBloc blogBloc) {
     List<Map<String, String>> categories = [
       {'value': 'cat1', 'name': 'category1'},
       {'value': 'cat2', 'name': 'category2'},
       {'value': 'cat3', 'name': 'category3'},
+      {'value': 'cat4', 'name': 'category4'},
+      {'value': 'cat5', 'name': 'category5'},
     ];
-    return DropdownButton<String>(
-      hint: Text("Filters"),
-      value: currCat,
-      items: categories
-          .map((cat) => DropdownMenuItem<String>(
-                child: Text(
+    return Container(
+      padding: EdgeInsets.all(6.0),
+      child: MultiSelectDialogField<String>(
+        title: Text(
+          "Filters",
+          style: theme.textTheme.subtitle1,
+        ),
+        searchable: true,
+        decoration: BoxDecoration(),
+        chipDisplay: MultiSelectChipDisplay.none(),
+        listType: MultiSelectListType.CHIP,
+        items: categories
+            .map((cat) => MultiSelectItem<String>(
+                  cat['value'],
                   cat['name'],
-                ),
-                value: cat['value'],
-              ))
-          .toList(),
-      style: theme.textTheme.subtitle1,
-      onChanged: (c) {
-        setState(() {
-          currCat = c;
-        });
-      },
+                ))
+            .toList(),
+        selectedItemsTextStyle: TextStyle(color: Colors.white),
+        selectedColor: theme.primaryColor,
+        barrierColor: Colors.black.withOpacity(0.7),
+        onConfirm: (c) {
+          setState(() {
+            currCat = c;
+            String category = "";
+            currCat.forEach((element) {
+              category += element + ",";
+            });
+            if (category != "")
+              category = category.substring(0, category.length - 1);
+            blogBloc.category = category;
+            log(category);
+            blogBloc.refresh();
+          });
+        },
+        buttonText: Text(
+          "",
+        ),
+        buttonIcon: Icon(
+          Icons.filter_alt_outlined,
+          color: theme.primaryColor,
+        ),
+      ),
     );
   }
 }
