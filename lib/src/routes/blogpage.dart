@@ -617,11 +617,11 @@ class _BlogPageState extends State<BlogPage> {
 
   Widget buildDropdownButton(ThemeData theme, PostBloc blogBloc) {
     List<Map<String, String>> categories = [
-      {'value': 'cat1', 'name': 'category1'},
-      {'value': 'cat2', 'name': 'category2'},
-      {'value': 'cat3', 'name': 'category3'},
-      {'value': 'cat4', 'name': 'category4'},
-      {'value': 'cat5', 'name': 'category5'},
+      {'value': 'Academic', 'name': 'Academic'},
+      {'value': 'Sports', 'name': 'Sports'},
+      {'value': 'Technical', 'name': 'Technical'},
+      {'value': 'Cultural', 'name': 'Cultural'},
+      {'value': 'SMP', 'name': 'SMP'},
     ];
     return Container(
       padding: EdgeInsets.all(6.0),

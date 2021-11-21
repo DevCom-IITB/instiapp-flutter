@@ -24,19 +24,19 @@ class _QueryAddPageState extends State<QueryAddPage> {
   PostFAQRequest currRequest = PostFAQRequest();
 
   List<String> categories = [
-    'cat1',
-    'cat2',
-    'cat3',
-    'cat4',
-    'cat5',
+    'Academic',
+    'Sports',
+    'Technical',
+    'Cultural',
+    'SMP',
   ];
 
   Map<String, String> valueToCategory = {
-    'cat1': 'category1',
-    'cat2': 'category2',
-    'cat3': 'category3',
-    'cat4': 'category4',
-    'cat5': 'category5',
+    'Academic': 'Academic',
+    'Sports': 'Sports',
+    'Technical': 'Technical',
+    'Cultural': 'Cultural',
+    'SMP': 'SMP',
   };
 
   // builds dropdown menu for event choice
@@ -243,11 +243,13 @@ class _QueryAddPageState extends State<QueryAddPage> {
                                       // if (resp.result == "success") {
                                       Navigator.of(context).pushNamed("/query");
                                       // } else {
-                                      //   ScaffoldMessenger.of(context)
-                                      //       .showSnackBar(SnackBar(
-                                      //     content: new Text('Error'),
-                                      //     duration: new Duration(seconds: 10),
-                                      //   ));
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content: new Text(currRequest.question +
+                                            ":" +
+                                            currRequest.category),
+                                        duration: new Duration(seconds: 10),
+                                      ));
                                       // }
                                     }
 

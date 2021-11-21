@@ -441,13 +441,13 @@ abstract class _$InstiAppApiClient implements ApiClient {
     return await req.go(throwOnErr: true);
   }
 
-  Future<List<Query>> getQueries(String sessionID, int from, int num,
-      String query, String category) async {
+  Future<List<Query>> getQueries(
+      String sessionID, String query, String category) async {
     var req = base.get
         .path(basePath)
         .path("/query")
-        .query("from", from)
-        .query("num", num)
+        // .query("from", from)
+        // .query("num", num)
         .query("query", query)
         .query("category", category)
         .header("Cookie", sessionID);
@@ -455,6 +455,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
   }
 
   Future<void> postFAQ(String sessionId, PostFAQRequest request) async {
+    log("client");
     var req = base.post
         .path(basePath)
         .path("/query/add")

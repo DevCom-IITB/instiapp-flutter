@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
@@ -38,8 +39,8 @@ part 'apiclient.jretro.dart';
 
 @GenApiClient()
 class InstiAppApi extends ApiClient with _$InstiAppApiClient {
-  // static String endpoint = "http://10.0.2.2:8000/api";
-  static String endpoint = "https://api.insti.app/api";
+  static String endpoint = "http://10.105.177.19:8080/api";
+  // static String endpoint = "https://api.insti.app/api";
   final resty.Route base = route(endpoint);
   // final JsonRepo jsonConverter = standardSerializers;
   // final SerializerRepo serializers = standardSerializers;
@@ -266,8 +267,8 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
   @GetReq(path: "/query")
   Future<List<Query>> getQueries(
       @Header("Cookie") String sessionID,
-      @QueryParam("from") int from,
-      @QueryParam("num") int num,
+      // @QueryParam("from") int from,
+      // @QueryParam("num") int num,
       @QueryParam("query") String query,
       @QueryParam("category") String category);
 
