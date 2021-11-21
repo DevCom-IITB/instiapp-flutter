@@ -29,12 +29,12 @@ class PostBloc {
   PostType postType;
 
   // For categories
-  String category;
+  String category = "";
 
   PostBloc(this.bloc, {@required this.postType}) {
-    if (postType == PostType.Query) {
-      postType = PostType.NewsArticle;
-    }
+    // if (postType == PostType.Query) {
+    //   postType = PostType.NewsArticle;
+    // }
     _setIndexListener();
   }
 
@@ -80,9 +80,10 @@ class PostBloc {
       PostType.Query: bloc.client.getQueries
     }[postType];
     var posts;
+    print(query.toString());
+    print(category.toString());
     if (postType == PostType.Query)
-      posts = await httpGetFunc(bloc.getSessionIdHeader(),
-          page * _noOfPostsPerPage, _noOfPostsPerPage, query, category);
+      posts = await httpGetFunc(bloc.getSessionIdHeader(), query, category);
     else
       posts = await httpGetFunc(bloc.getSessionIdHeader(),
           page * _noOfPostsPerPage, _noOfPostsPerPage, query);
