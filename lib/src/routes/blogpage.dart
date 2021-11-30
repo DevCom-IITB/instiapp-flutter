@@ -324,6 +324,7 @@ class _BlogPageState extends State<BlogPage> {
               ),
               child: CommonHtml(
                 data: post.content,
+                query: bloc.query,
                 defaultTextStyle: theme.textTheme.subtitle1,
               ),
             ),

@@ -236,12 +236,14 @@ class PhotoViewableImage extends StatelessWidget {
 
 class CommonHtml extends StatelessWidget {
   final String data;
+  final String query;
   final TextStyle defaultTextStyle;
 
-  CommonHtml({@required this.data, this.defaultTextStyle});
+  CommonHtml({@required this.data, this.defaultTextStyle,this.query});
 
   @override
   Widget build(BuildContext context) {
+    print(data);
     return data != null
         ? Html(
             data: data,
@@ -258,6 +260,7 @@ class CommonHtml extends StatelessWidget {
                 return Text(attributes['src'] ?? attributes['href'] ?? "<img>");
               },
               "a": (_, __, ___, node) {
+                print(node.innerHtml);
                 return InkWell(
                   onTap: () async {
                     if (await canLaunch(node.attributes['href'])) {
@@ -270,6 +273,24 @@ class CommonHtml extends StatelessWidget {
                         color: Colors.lightBlue,
                         decoration: TextDecoration.underline),
                   ),
+                  // child: RichText(
+                  //   textScaleFactor:2,
+                  //   text: highlight(node.innerHtml,"electro"),
+                  // )
+                );
+              },
+              "p":(_,__,___,node){
+                print(node.innerHtml);
+                return RichText(
+                      textScaleFactor:1,
+                      text: highlight(node.innerHtml,query),
+                    );
+              },
+              "td":(_,__,___,node){
+                print(node.innerHtml);
+                return RichText(
+                  textScaleFactor:1,
+                  text: highlight(node.innerHtml,query),
                 );
               }
             },
@@ -277,6 +298,43 @@ class CommonHtml extends StatelessWidget {
         : CircularProgressIndicatorExtended(
             label: Text("Loading content"),
           );
+  }
+  TextSpan highlight(String result,String query){
+    print("llll");
+    TextStyle posRes = TextStyle(color: Colors.white,backgroundColor: Colors.red);
+    TextStyle negRes = TextStyle(color: Colors.black,backgroundColor: Colors.white);
+    if(query==null || result==null || result=="" || query=="") return TextSpan(text:result,style:negRes);
+    result.replaceAll('\n'," ").replaceAll("  ", "");
+
+    var refinedMatch=result.toLowerCase();
+    var refinedsearch=query.toLowerCase();
+
+    if(refinedMatch.contains(refinedsearch)){
+      if(refinedMatch.substring(0,refinedsearch.length)==refinedsearch){
+        return TextSpan(style:posRes,text:result.substring(0,refinedsearch.length),children:[
+          highlight(result.substring(refinedsearch.length),query),
+        ]);
+      }
+      else if(refinedsearch.length==refinedMatch.length){
+        return TextSpan(text:result,style:posRes);
+      }
+      else{
+        return TextSpan(style:negRes,text:result.substring(0,refinedMatch.indexOf(refinedsearch)),
+            children:[highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query)]);
+      }
+    }
+    else if(!refinedMatch.contains(refinedsearch)){
+      return TextSpan(text:result,style:negRes);
+    }
+
+    return TextSpan(
+      text: result.substring(0, refinedMatch.indexOf(refinedsearch)),
+      style: negRes,
+      children: [
+        highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query)
+      ],
+    );
+
   }
 }
 
