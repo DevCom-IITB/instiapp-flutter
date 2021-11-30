@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:InstiApp/src/api/model/post.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'dart:math';
@@ -80,9 +82,12 @@ class PostBloc {
           p.content.split('\n').map((s) => s.trimRight()).toList().join('\n'),
           blockSyntaxes: [tableParse]);
       p.published = dateTimeFormatter(p.published);
+      //print(p.content);
     });
     return posts;
   }
+
+
 
   void _handleIndexes(List<int> indexes) {
     var pages = query.isEmpty ? _fetchPages : _searchFetchPages;
