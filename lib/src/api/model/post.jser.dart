@@ -69,13 +69,13 @@ abstract class _$ExternalBlogPostSerializer
   Map<String, dynamic> toMap(ExternalBlogPost model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
+    setMapValue(ret, 'body', model.body);
     setMapValue(ret, 'id', model.id);
     setMapValue(ret, 'guid', model.guid);
     setMapValue(ret, 'link', model.link);
     setMapValue(ret, 'title', model.title);
     setMapValue(ret, 'content', model.content);
     setMapValue(ret, 'published', model.published);
-    setMapValue(ret, 'body', model.body);
     return ret;
   }
 
@@ -83,13 +83,13 @@ abstract class _$ExternalBlogPostSerializer
   ExternalBlogPost fromMap(Map map) {
     if (map == null) return null;
     final obj = ExternalBlogPost();
+    obj.body = map['body'] as String;
     obj.id = map['id'] as String;
     obj.guid = map['guid'] as String;
     obj.link = map['link'] as String;
     obj.title = map['title'] as String;
     obj.content = map['content'] as String;
     obj.published = map['published'] as String;
-    obj.body = map['body'] as String;
     return obj;
   }
 }
@@ -157,6 +157,34 @@ abstract class _$NewsArticleSerializer implements Serializer<NewsArticle> {
     obj.title = map['title'] as String;
     obj.content = map['content'] as String;
     obj.published = map['published'] as String;
+    return obj;
+  }
+}
+
+abstract class _$QuerySerializer implements Serializer<Query> {
+  @override
+  Map<String, dynamic> toMap(Query model) {
+    if (model == null) return null;
+    Map<String, dynamic> ret = <String, dynamic>{};
+    setMapValue(ret, 'question', model.title);
+    setMapValue(ret, 'answer', model.content);
+    setMapValue(ret, 'category', model.published);
+    setMapValue(ret, 'sub_category', model.subCategory);
+    setMapValue(ret, 'sub_sub_category', model.subSubCategory);
+    setMapValue(ret, 'id', model.id);
+    return ret;
+  }
+
+  @override
+  Query fromMap(Map map) {
+    if (map == null) return null;
+    final obj = Query();
+    obj.title = map['question'] as String;
+    obj.content = map['answer'] as String;
+    obj.published = map['category'] as String;
+    obj.subCategory = map['sub_category'] as String;
+    obj.subSubCategory = map['sub_sub_category'] as String;
+    obj.id = map['id'] as String;
     return obj;
   }
 }

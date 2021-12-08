@@ -89,7 +89,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
 
   Future<NewsFeedResponse> getNewsFeed(String sessionId) async {
     var req =
-    base.get.path(basePath).path("/events").header("Cookie", sessionId);
+        base.get.path(basePath).path("/events").header("Cookie", sessionId);
     return req.go(throwOnErr: true).map(decodeOne);
   }
 
@@ -144,7 +144,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
 
   Future<List<Body>> getAllBodies(String sessionId) async {
     var req =
-    base.get.path(basePath).path("/bodies").header("Cookie", sessionId);
+        base.get.path(basePath).path("/bodies").header("Cookie", sessionId);
     return req.go(throwOnErr: true).map(decodeList);
   }
 
@@ -171,7 +171,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
 
   Future<User> getUserMe(String sessionID) async {
     var req =
-    base.get.path(basePath).path("/user-me").header("Cookie", sessionID);
+        base.get.path(basePath).path("/user-me").header("Cookie", sessionID);
     return req.go(throwOnErr: true).map(decodeOne);
   }
 
@@ -257,7 +257,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
 
   Future<void> logout(String sessionID) async {
     var req =
-    base.get.path(basePath).path("/logout").header("Cookie", sessionID);
+        base.get.path(basePath).path("/logout").header("Cookie", sessionID);
     await req.go(throwOnErr: true);
   }
 
@@ -380,8 +380,8 @@ abstract class _$InstiAppApiClient implements ApiClient {
     return await req.go(throwOnErr: true).map(decodeOne);
   }
 
-  Future<SecretResponse> postAchievementOffer(String sessionId,String id,
-      Offersecret secret) async {
+  Future<SecretResponse> postAchievementOffer(
+      String sessionId, String id, Offersecret secret) async {
     var req = base.post
         .path(basePath)
         .path("/achievements-offer/:id")
@@ -440,5 +440,27 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .header("Cookie", sessionID);
     return await req.go(throwOnErr: true);
   }
-}
 
+  Future<List<Query>> getQueries(
+      String sessionID, String query, String category) async {
+    var req = base.get
+        .path(basePath)
+        .path("/query")
+        // .query("from", from)
+        // .query("num", num)
+        .query("query", query)
+        .query("category", category)
+        .header("Cookie", sessionID);
+    return await req.go(throwOnErr: true).map(decodeList);
+  }
+
+  Future<void> postFAQ(String sessionId, PostFAQRequest request) async {
+    log("client");
+    var req = base.post
+        .path(basePath)
+        .path("/query/add")
+        .header("Cookie", sessionId)
+        .json(jsonConverter.to(request));
+    return await req.go(throwOnErr: true);
+  }
+}

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
@@ -13,6 +14,7 @@ import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
 import 'package:InstiApp/src/api/request/image_upload_request.dart';
+import 'package:InstiApp/src/api/request/postFAQ_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
@@ -37,8 +39,8 @@ part 'apiclient.jretro.dart';
 
 @GenApiClient()
 class InstiAppApi extends ApiClient with _$InstiAppApiClient {
-  // static String endpoint = "http://10.4.66.222:8000/api";
-  static String endpoint = "https://api.insti.app/api";
+  static String endpoint = "http://10.105.177.19:8080/api";
+  // static String endpoint = "https://api.insti.app/api";
   final resty.Route base = route(endpoint);
   // final JsonRepo jsonConverter = standardSerializers;
   // final SerializerRepo serializers = standardSerializers;
@@ -261,4 +263,16 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
   @DeleteReq(path: "/achievements/:id")
   Future<void> deleteAchievement(
       @Header("Cookie") String sessionID, @PathParam() String id);
+
+  @GetReq(path: "/query")
+  Future<List<Query>> getQueries(
+      @Header("Cookie") String sessionID,
+      // @QueryParam("from") int from,
+      // @QueryParam("num") int num,
+      @QueryParam("query") String query,
+      @QueryParam("category") String category);
+
+  @PostReq(path: "/query/add")
+  Future<void> postFAQ(
+      @Header("Cookie") String sessionId, @AsJson() PostFAQRequest request);
 }

@@ -8,7 +8,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'dart:math';
 
-enum PostType { Placement, Training, NewsArticle, External }
+enum PostType { Placement, Training, NewsArticle, External, Query }
 
 class PostBloc {
   // Streams
@@ -26,9 +26,15 @@ class PostBloc {
   InstiAppBloc bloc;
 
   // Training or Placement or News Article or External
-  final PostType postType;
+  PostType postType;
+
+  // For categories
+  String category = "";
 
   PostBloc(this.bloc, {@required this.postType}) {
+    // if (postType == PostType.Query) {
+    //   postType = PostType.NewsArticle;
+    // }
     _setIndexListener();
   }
 
@@ -70,16 +76,24 @@ class PostBloc {
       PostType.Placement: bloc.client.getPlacementBlogFeed,
       PostType.External: bloc.client.getExternalBlogFeed,
       PostType.Training: bloc.client.getTrainingBlogFeed,
-      PostType.NewsArticle: bloc.client.getNews
+      PostType.NewsArticle: bloc.client.getNews,
+      PostType.Query: bloc.client.getQueries
     }[postType];
-    var posts = await httpGetFunc(bloc.getSessionIdHeader(),
-        page * _noOfPostsPerPage, _noOfPostsPerPage, query);
+    var posts;
+    print(query.toString());
+    print(category.toString());
+    if (postType == PostType.Query)
+      posts = await httpGetFunc(bloc.getSessionIdHeader(), query, category);
+    else
+      posts = await httpGetFunc(bloc.getSessionIdHeader(),
+          page * _noOfPostsPerPage, _noOfPostsPerPage, query);
     var tableParse = markdown.TableSyntax();
     posts.forEach((p) {
       p.content = markdown.markdownToHtml(
           p.content.split('\n').map((s) => s.trimRight()).toList().join('\n'),
           blockSyntaxes: [tableParse]);
-      p.published = dateTimeFormatter(p.published);
+      if (postType != PostType.Query)
+        p.published = dateTimeFormatter(p.published);
     });
     return posts;
   }
