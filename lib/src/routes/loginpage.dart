@@ -66,6 +66,7 @@ class _LoginPageState extends State<LoginPage> {
         _bloc.patchFcmKey().then((_) {
           _bloc?.reloadCurrentUser();
         });
+        
 
         Navigator.of(context).pushReplacementNamed(_bloc?.homepageName);
         return;
@@ -122,7 +123,7 @@ class _LoginPageState extends State<LoginPage> {
           login(code, "https://www.insti.app/login-android.html");
         } else if (!url.startsWith("http://127.0.0.1")) {
           print("Going to unintented website");
-          flutterWebviewPlugin.reloadUrl(loginurl);
+          // flutterWebviewPlugin.reloadUrl(loginurl);
         }
       });
       onStateChangedSub = flutterWebviewPlugin.onStateChanged
