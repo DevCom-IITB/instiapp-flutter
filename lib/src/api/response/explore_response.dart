@@ -3,17 +3,20 @@ import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-part 'explore_response.jser.dart';
+part 'explore_response.g.dart';
 
 class ExploreResponse {
-  @Alias("bodies")
+  @JsonKey("bodies")
   List<Body> bodies;
-  @Alias("events")
+  @JsonKey("events")
   List<Event> events;
-  @Alias("users")
+  @JsonKey("users")
   List<User> users;
 
   ExploreResponse({this.bodies, this.events, this.users});
+  factory ExploreResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExploreResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$ExploreResponseToJson(this);
 }
 
 @GenSerializer()

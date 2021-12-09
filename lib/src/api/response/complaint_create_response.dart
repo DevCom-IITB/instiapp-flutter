@@ -1,6 +1,6 @@
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-part 'complaint_create_response.jser.dart';
+part 'complaint_create_response.g.dart';
 
 class ComplaintCreateResponse {
   String result;

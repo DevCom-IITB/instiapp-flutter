@@ -3,70 +3,75 @@ import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/role.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-part 'user.jser.dart';
+part 'user.g.dart';
 
 class Session {
   String sessionid;
   String user;
 
-  @Alias('profile_id')
+  @JsonKey('profile_id')
   String profileId;
   User profile;
+
+  Session(this.sessionid, this.user, this.profileId, this.profile);
+  factory Session.fromJson(Map<String, dynamic> json) =>
+      _$SessionFromJson(json);
+  Map<String, dynamic> toJson() => _$SessionToJson(this);
 }
 
 class User {
-  @Alias("id")
+  @JsonKey("id")
   String userID;
 
-  @Alias("name")
+  @JsonKey("name")
   String userName;
 
-  @Alias("profile_pic")
+  @JsonKey("profile_pic")
   String userProfilePictureUrl;
 
-  @Alias("events_interested")
+  @JsonKey("events_interested")
   List<Event> userInterestedEvents;
 
-  @Alias("events_going")
+  @JsonKey("events_going")
   List<Event> userGoingEvents;
 
-  @Alias("email")
+  @JsonKey("email")
   String userEmail;
 
-  @Alias("roll_no")
+  @JsonKey("roll_no")
   String userRollNumber;
 
-  @Alias("contact_no")
+  @JsonKey("contact_no")
   String userContactNumber;
 
-  @Alias("show_contact_no")
+  @JsonKey("show_contact_no")
   bool userShowContactNumber;
 
-  @Alias("about")
+  @JsonKey("about")
   String userAbout;
 
-  @Alias("followed_bodies")
+  @JsonKey("followed_bodies")
   List<Body> userFollowedBodies;
 
-  @Alias("followed_bodies_id")
+  @JsonKey("followed_bodies_id")
   List<String> userFollowedBodiesID;
 
-  @Alias("roles")
+  @JsonKey("roles")
   List<Role> userRoles;
 
-  @Alias("institute_roles")
+  @JsonKey("institute_roles")
   List<Role> userInstituteRoles;
 
-  @Alias("former_roles")
+  @JsonKey("former_roles")
   List<Role> userFormerRoles;
 
-  @Alias("website_url")
+  @JsonKey("website_url")
   String userWebsiteURL;
 
-  @Alias("ldap_id")
+  @JsonKey("ldap_id")
   String userLDAPId;
 
-  @Alias("hostel")
+  @JsonKey("hostel")
   String hostel;
 
   String currentRole;
@@ -74,6 +79,18 @@ class User {
   String getSubTitle() {
     return currentRole ?? userLDAPId;
   }
+
+  User(
+      {this.userID,
+      this.userName,
+      this.userProfilePictureUrl,
+      this.userInterestedEvents,
+      this.userGoingEvents,
+      this.userEmail,
+      this.userRollNumber,
+      this.userContactNumber,});
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  Map<String, dynamic> toJson() => _$UserToJson(this);
 }
 
 @GenSerializer(serializers: const [UserSerializer])

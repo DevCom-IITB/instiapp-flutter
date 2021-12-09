@@ -1,60 +1,91 @@
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-part 'venter.jser.dart';
+part 'venter.g.dart';
 
 class Complaint {
-  @Alias("id")
+  @JsonKey("id")
   String complaintID;
-  @Alias("created_by")
+  @JsonKey("created_by")
   User complaintCreatedBy;
-  @Alias("description")
+  @JsonKey("description")
   String description;
-  @Alias("suggestions")
+  @JsonKey("suggestions")
   String suggestions;
-  @Alias("location_details")
+  @JsonKey("location_details")
   String locationDetails;
-  @Alias("report_date")
+  @JsonKey("report_date")
   String complaintReportDate;
-  @Alias("status")
+  @JsonKey("status")
   String status;
-  @Alias("latitude")
+  @JsonKey("latitude")
   double latitude;
-  @Alias("longitude")
+  @JsonKey("longitude")
   double longitude;
-  @Alias("location_description")
+  @JsonKey("location_description")
   String locationDescription;
-  @Alias("tags")
+  @JsonKey("tags")
   List<TagUri> tags;
-  @Alias("comments")
+  @JsonKey("comments")
   List<Comment> comments;
-  @Alias("users_up_voted")
+  @JsonKey("users_up_voted")
   List<User> usersUpVoted;
-  @Alias("images")
+  @JsonKey("images")
   List<String> images;
-  @Alias("is_subscribed")
+  @JsonKey("is_subscribed")
   bool isSubscribed;
   int voteCount;
+
+  Complaint(
+      {this.complaintID,
+      this.complaintCreatedBy,
+      this.description,
+      this.suggestions,
+      this.locationDetails,
+      this.complaintReportDate,
+      this.status,
+      this.latitude,
+      this.longitude,
+      this.locationDescription,
+      this.tags,
+      this.comments,
+      this.usersUpVoted,
+      this.images,
+      this.isSubscribed,
+      this.voteCount});
+  factory Complaint.fromJson(Map<String, dynamic> json) =>
+      _$ComplaintFromJson(json);
+  Map<String, dynamic> toJson() => _$ComplaintToJson(this);
 }
 
 class TagUri {
-  @Alias("id")
+  @JsonKey("id")
   String id;
-  @Alias("tag_uri")
+  @JsonKey("tag_uri")
   String tagUri;
+
+  TagUri({this.id, this.tagUri});
+  factory TagUri.fromJson(Map<String, dynamic> json) =>
+      _$TagUriFromJson(json);
+  Map<String, dynamic> toJson() => _$TagUriToJson(this);
 }
 
 class Comment {
-  @Alias("id")
+  @JsonKey("id")
   String id;
-  @Alias("time")
+  @JsonKey("time")
   String time;
-  @Alias("text")
+  @JsonKey("text")
   String text;
-  @Alias("commented_by")
+  @JsonKey("commented_by")
   User commentedBy;
-  @Alias("complaint")
+  @JsonKey("complaint")
   String complaintID;
+
+  Comment(
+      {this.id, this.time, this.text, this.commentedBy, this.complaintID});
+  factory Comment.fromJson(Map<String, dynamic> json) => _$CommentFromJson(json);
+  Map<String, dynamic> toJson() => _$CommentToJson(this);
 }
 
 @GenSerializer()

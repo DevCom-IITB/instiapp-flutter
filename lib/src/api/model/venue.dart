@@ -1,43 +1,59 @@
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-part 'venue.jser.dart';
+part 'venue.g.dart';
 
 class Venue {
-  @Alias("id")
+  @JsonKey("id")
   String venueID;
 
-  @Alias("name")
+  @JsonKey("name")
   String venueName;
 
-  @Alias("short_name")
+  @JsonKey("short_name")
   String venueShortName;
 
-  @Alias("description")
+  @JsonKey("description")
   String venueDescripion;
 
-  @Alias("parent")
+  @JsonKey("parent")
   String venueParentId;
 
-  @Alias("parent_relation")
+  @JsonKey("parent_relation")
   String venueParentRelation;
 
-  @Alias("group_id")
+  @JsonKey("group_id")
   int venueGroupId;
 
-  @Alias("pixel_x")
+  @JsonKey("pixel_x")
   int venuePixelX;
 
-  @Alias("pixel_y")
+  @JsonKey("pixel_y")
   int venuePixelY;
 
-  @Alias("reusable")
+  @JsonKey("reusable")
   bool venueReusable;
 
-  @Alias("lat")
+  @JsonKey("lat")
   String venueLatitude;
 
-  @Alias("lng")
+  @JsonKey("lng")
   String venueLongitude;
+
+  Venue(
+      {this.venueID,
+      this.venueName,
+      this.venueShortName,
+      this.venueDescripion,
+      this.venueParentId,
+      this.venueParentRelation,
+      this.venueGroupId,
+      this.venuePixelX,
+      this.venuePixelY,
+      this.venueReusable,
+      this.venueLatitude,
+      this.venueLongitude});
+  factory Venue.fromJson(Map<String, dynamic> json) => _$VenueFromJson(json);
+  Map<String, dynamic> toJson() => _$VenueToJson(this);
 }
 
 @GenSerializer()

@@ -6,10 +6,10 @@ class Hostel {
   String id;
   String name;
 
-  @Alias('short_name')
+  @JsonKey('short_name')
   String shortName;
 
-  @Alias('long_name')
+  @JsonKey('long_name')
   String longName;
 
   List<HostelMess> mess;
@@ -25,6 +25,12 @@ class Hostel {
     }
     return x.compareTo(y);
   }
+
+  Hostel({this.id, this.name, this.shortName, this.longName, this.mess});
+
+  factory Hostel.fromJson(Map<String, dynamic> json) => _$HostelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$HostelToJson(this);
 }
 
 class HostelMess {

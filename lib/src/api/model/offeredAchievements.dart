@@ -1,35 +1,45 @@
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-part 'offeredAchievements.jser.dart';
+part 'offeredAchievements.g.dart';
 
 class OfferedAchievements {
-  @Alias("id")
+  @JsonKey("id")
   String achievementID;
 
-  @Alias("title")
+  @JsonKey("title")
   String title;
 
-  @Alias("description")
+  @JsonKey("description")
   String desc;
 
-  @Alias("body")
+  @JsonKey("body")
   String body;
 
-  @Alias("event")
+  @JsonKey("event")
   String event;
 
-  @Alias("priority")
+  @JsonKey("priority")
   int priority;
 
-  @Alias("secret")
+  @JsonKey("secret")
   String secret;
 
-  @Alias("users")
+  @JsonKey("users")
   List<User> users;
 
-  @Alias("stat")
+  @JsonKey("stat")
   int stat;
+
+  OfferedAchievements(
+      {this.achievementID,
+      this.title,
+      this.desc,});
+  
+  factory OfferedAchievements.fromJson(Map<String, dynamic> json) =>
+      _$OfferedAchievementsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$OfferedAchievementsToJson(this);
 }
 
 @GenSerializer()

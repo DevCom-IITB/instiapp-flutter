@@ -1,24 +1,37 @@
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-part 'event_create_request.jser.dart';
+part 'event_create_request.g.dart';
 
 class EventCreateRequest {
-  @Alias("name")
+  @JsonKey("name")
   String eventName;
-  @Alias("description")
+  @JsonKey("description")
   String eventDescription;
-  @Alias("image_url")
+  @JsonKey("image_url")
   String eventImageURL;
-  @Alias("start_time")
+  @JsonKey("start_time")
   String eventStartTime;
-  @Alias("end_time")
+  @JsonKey("end_time")
   String eventEndTime;
-  @Alias("all_day")
+  @JsonKey("all_day")
   bool allDayEvent;
-  @Alias("venue_names")
+  @JsonKey("venue_names")
   List<String> eventVenueNames;
-  @Alias("bodies_id")
+  @JsonKey("bodies_id")
   List<String> eventBodiesID;
+
+  EventCreateRequest(
+      {this.eventName,
+      this.eventDescription,
+      this.eventImageURL,
+      this.eventStartTime,
+      this.eventEndTime,
+      this.allDayEvent,
+      this.eventVenueNames,
+      this.eventBodiesID});
+  factory EventCreateRequest.fromJson(Map<String, dynamic> json) =>
+      _$EventCreateRequestFromJson(json);
+  Map<String, dynamic> toJson() => _$EventCreateRequestToJson(this);
 }
 
 @GenSerializer()

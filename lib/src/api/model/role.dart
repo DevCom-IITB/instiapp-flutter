@@ -2,38 +2,42 @@ import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-part 'role.jser.dart';
+part 'role.g.dart';
 
 class Role {
-  @Alias("id")
+  @JsonKey("id")
   String roleID;
 
-  @Alias("name")
+  @JsonKey("name")
   String roleName;
 
-  @Alias("inheritable")
+  @JsonKey("inheritable")
   bool roleInheritable;
 
-  @Alias("body")
+  @JsonKey("body")
   String roleBody;
 
-  @Alias("body_detail")
+  @JsonKey("body_detail")
   Body roleBodyDetails;
 
-  @Alias("bodies")
+  @JsonKey("bodies")
   List<Body> roleBodies;
 
-  @Alias("permissions")
+  @JsonKey("permissions")
   List<String> rolePermissions;
 
-  @Alias("users")
+  @JsonKey("users")
   List<String> roleUsers;
 
-  @Alias("users_detail")
+  @JsonKey("users_detail")
   List<User> roleUsersDetail;
 
-  @Alias("year")
+  @JsonKey("year")
   String year;
+
+  Role({this.roleID, this.roleName, this.roleInheritable, this.roleBody, this.roleBodyDetails, this.roleBodies, this.rolePermissions, this.roleUsers, this.roleUsersDetail, this.year});
+  factory Role.fromJson(Map<String, dynamic> json) => _$RoleFromJson(json);
+  Map<String, dynamic> toJson() => _$RoleToJson(this);
 }
 
 @GenSerializer()
