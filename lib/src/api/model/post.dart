@@ -1,46 +1,80 @@
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-part 'post.jser.dart';
+part 'post.g.dart';
 
 class Post {
-  @Alias("id")
+  @JsonKey("id")
   String id;
 
-  @Alias("guid")
+  @JsonKey("guid")
   String guid;
 
-  @Alias("link")
+  @JsonKey("link")
   String link;
 
-  @Alias("title")
+  @JsonKey("title")
   String title;
 
-  @Alias("content")
+  @JsonKey("content")
   String content;
 
-  @Alias("published")
+  @JsonKey("published")
   String published;
+
+  Post({this.id, this.guid, this.link, this.title, this.content, this.published});
+
+  factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PostToJson(this);
 }
 
-class PlacementBlogPost extends Post {}
+class PlacementBlogPost extends Post {
+  
+
+  PlacementBlogPost();
+
+  factory PlacementBlogPost.fromJson(Map<String, dynamic> json) =>
+      _$PlacementBlogPostFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PlacementBlogPostToJson(this);
+}
 
 class ExternalBlogPost extends Post {
-  @Alias("body")
+  @JsonKey("body")
   String body;
+
+  ExternalBlogPost({this.body});
+  factory ExternalBlogPost.fromJson(Map<String, dynamic> json) =>
+      _$ExternalBlogPostFromJson(json);
+  Map<String, dynamic> toJson() => _$ExternalBlogPostToJson(this);
 }
 
-class TrainingBlogPost extends Post {}
+class TrainingBlogPost extends Post {
+
+  TrainingBlogPost();
+  factory TrainingBlogPost.fromJson(Map<String, dynamic> json) =>
+      _$TrainingBlogPostFromJson(json);
+  Map<String, dynamic> toJson() => _$TrainingBlogPostToJson(this);
+}
 
 class NewsArticle extends Post {
-  @Alias("body")
+  @JsonKey("body")
   Body body;
 
-  @Alias("reactions_count")
+  @JsonKey("reactions_count")
   Map<String, int> reactionCount;
 
-  @Alias("user_reaction")
+  @JsonKey("user_reaction")
   int userReaction;
+
+  NewsArticle({this.body, this.reactionCount, this.userReaction});
+
+  factory NewsArticle.fromJson(Map<String, dynamic> json) =>
+      _$NewsArticleFromJson(json);
+  
+  Map<String, dynamic> toJson() => _$NewsArticleToJson(this);
+
 }
 
 @GenSerializer()
