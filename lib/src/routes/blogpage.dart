@@ -132,7 +132,7 @@ class _BlogPageState extends State<BlogPage> {
                             controller: _hideButtonController,
                             itemBuilder: (BuildContext context, int index) {
                               if (index == 0) {
-                                return _blogHeader(context, blogBloc);
+                                return _blogHeader(context, blogBloc, bloc);
                               }
                               return _buildPost(
                                   blogBloc, index - 1, snapshot.data, theme);
@@ -512,7 +512,7 @@ class _BlogPageState extends State<BlogPage> {
         ));
   }
 
-  Widget _blogHeader(BuildContext context, PostBloc blogBloc) {
+  Widget _blogHeader(BuildContext context, PostBloc blogBloc, var bloc) {
     var theme = Theme.of(context);
     log(widget.postType.toString());
     return Column(
@@ -538,7 +538,7 @@ class _BlogPageState extends State<BlogPage> {
                         side: BorderSide(color: theme.primaryColor))),
                 child: searchMode
                     ? widget.postType == PostType.Query
-                        ? buildDropdownButton(theme, blogBloc)
+                        ? buildDropdownButton(theme, blogBloc, bloc)
                         : SizedBox()
                     : IconButton(
                         tooltip: "Search ${widget.title}",
@@ -615,56 +615,59 @@ class _BlogPageState extends State<BlogPage> {
     );
   }
 
-  Widget buildDropdownButton(ThemeData theme, PostBloc blogBloc) {
-    List<Map<String, String>> categories = [
-      {'value': 'Academic', 'name': 'Academic'},
-      {'value': 'Sports', 'name': 'Sports'},
-      {'value': 'Technical', 'name': 'Technical'},
-      {'value': 'Cultural', 'name': 'Cultural'},
-      {'value': 'SMP', 'name': 'SMP'},
-    ];
+  Widget buildDropdownButton(ThemeData theme, PostBloc blogBloc, var bloc) {
+    var categories = blogBloc.getCategories();
     return Container(
-      padding: EdgeInsets.all(6.0),
-      child: MultiSelectDialogField<String>(
-        title: Text(
-          "Filters",
-          style: theme.textTheme.subtitle1,
-        ),
-        searchable: true,
-        decoration: BoxDecoration(),
-        chipDisplay: MultiSelectChipDisplay.none(),
-        listType: MultiSelectListType.CHIP,
-        items: categories
-            .map((cat) => MultiSelectItem<String>(
-                  cat['value'],
-                  cat['name'],
-                ))
-            .toList(),
-        selectedItemsTextStyle: TextStyle(color: Colors.white),
-        selectedColor: theme.primaryColor,
-        barrierColor: Colors.black.withOpacity(0.7),
-        onConfirm: (c) {
-          setState(() {
-            currCat = c;
-            String category = "";
-            currCat.forEach((element) {
-              category += element + ",";
-            });
-            if (category != "")
-              category = category.substring(0, category.length - 1);
-            blogBloc.category = category;
-            log(category);
-            blogBloc.refresh();
-          });
-        },
-        buttonText: Text(
-          "",
-        ),
-        buttonIcon: Icon(
-          Icons.filter_alt_outlined,
-          color: theme.primaryColor,
-        ),
-      ),
-    );
+        padding: EdgeInsets.all(6.0),
+        child: StreamBuilder<UnmodifiableListView<Map<String, String>>>(
+            stream: blogBloc.categories,
+            builder: (BuildContext context,
+                AsyncSnapshot<UnmodifiableListView<Map<String, String>>>
+                    snapshot) {
+              if (!snapshot.hasData || snapshot.data == null) {
+                return Text("No Filters Found");
+              }
+              var categories_1 = snapshot.data;
+              return MultiSelectDialogField<String>(
+                title: Text(
+                  "Filters",
+                  style: theme.textTheme.subtitle1,
+                ),
+                searchable: true,
+                decoration: BoxDecoration(),
+                chipDisplay: MultiSelectChipDisplay.none(),
+                listType: MultiSelectListType.CHIP,
+                items: categories_1
+                    .map((cat) => MultiSelectItem<String>(
+                          cat['value'],
+                          cat['name'],
+                        ))
+                    .toList(),
+                selectedItemsTextStyle: TextStyle(color: Colors.white),
+                selectedColor: theme.primaryColor,
+                barrierColor: Colors.black.withOpacity(0.7),
+                onConfirm: (c) {
+                  setState(() {
+                    currCat = c;
+                    String category = "";
+                    currCat.forEach((element) {
+                      category += element + ",";
+                    });
+                    if (category != "")
+                      category = category.substring(0, category.length - 1);
+                    blogBloc.category = category;
+                    log(category);
+                    blogBloc.refresh();
+                  });
+                },
+                buttonText: Text(
+                  "",
+                ),
+                buttonIcon: Icon(
+                  Icons.filter_alt_outlined,
+                  color: theme.primaryColor,
+                ),
+              );
+            }));
   }
 }
