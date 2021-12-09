@@ -4,7 +4,7 @@ import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-part 'notification.jser.dart';
+part 'notification.g.dart';
 
 const String TYPE_EVENT = "event";
 const String TYPE_NEWSENTRY = "newsentry";
@@ -12,19 +12,19 @@ const String TYPE_BLOG = "blogentry";
 const String TYPE_COMPLAINT_COMMENT = "complaintcomment";
 
 class Notification {
-  @Alias("id")
+  @JsonKey("id")
   int notificationId;
 
-  @Alias("verb")
+  @JsonKey("verb")
   String notificationVerb;
 
-  @Alias("unread")
+  @JsonKey("unread")
   bool notificationUnread;
 
-  @Alias("actor_type")
+  @JsonKey("actor_type")
   String notificationActorType;
 
-  @Alias("actor")
+  @JsonKey("actor")
   Object notificationActor;
 
   String getTitle() {
@@ -94,6 +94,19 @@ class Notification {
     }
     return "";
   }
+
+  Notification({
+    this.notificationId,
+    this.notificationVerb,
+    this.notificationUnread,
+    this.notificationActorType,
+    this.notificationActor,
+  });
+
+  factory Notification.fromJson(Map<String, dynamic> json) =>
+      _$NotificationFromJson(json);
+  
+  Map<String, dynamic> toJson() => _$NotificationToJson(this);
 }
 
 @GenSerializer()

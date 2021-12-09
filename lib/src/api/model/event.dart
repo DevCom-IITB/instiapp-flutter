@@ -4,7 +4,7 @@ import 'package:InstiApp/src/api/model/venue.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'package:date_format/date_format.dart';
 
-part 'event.jser.dart';
+part 'event.g.dart';
 
 // UserEventStatus
 enum UES {
@@ -14,63 +14,63 @@ enum UES {
 }
 
 class Event {
-  @Alias("id")
+  @JsonKey("id")
   String eventID;
 
-  @Alias("str_id")
+  @JsonKey("str_id")
   String eventStrID;
 
-  @Alias("name")
+  @JsonKey("name")
   String eventName;
 
-  @Alias("description")
+  @JsonKey("description")
   String eventDescription;
 
-  @Alias("image_url")
+  @JsonKey("image_url")
   String eventImageURL;
 
-  @Alias("start_time")
+  @JsonKey("start_time")
   String eventStartTime;
 
-  @Alias("end_time")
+  @JsonKey("end_time")
   String eventEndTime;
 
-  @Alias("all_day")
+  @JsonKey("all_day")
   bool allDayEvent;
 
-  @Alias("venues")
+  @JsonKey("venues")
   List<Venue> eventVenues;
 
-  @Alias("bodies")
+  @JsonKey("bodies")
   List<Body> eventBodies;
 
-  @Alias("interested_count")
+  @JsonKey("interested_count")
   int eventInterestedCount;
 
-  @Alias("going_count")
+  @JsonKey("going_count")
   int eventGoingCount;
 
-  @Alias("interested")
+  @JsonKey("interested")
   List<User> eventInterested;
 
-  @Alias("going")
+  @JsonKey("going")
   List<User> eventGoing;
 
-  @Alias("website_url")
+  @JsonKey("website_url")
   String eventWebsiteURL;
 
-  @Alias("user_ues")
+  @JsonKey("user_ues")
   int eventUserUesInt;
 
-  @Ignore()
+  @@JsonKey(ignore: true)()
   UES get eventUserUes => UES.values[eventUserUesInt ?? 0];
 
-  @Ignore()
+  @@JsonKey(ignore: true)()
   set eventUserUes(UES ues) {
     eventUserUesInt = ues.index;
   }
 
-  @Ignore()
+  @@JsonKey(ignore: true)()
   bool eventBigImage = false;
 
   DateTime eventStartDate;
@@ -115,6 +115,30 @@ class Event {
 
     return subtitle;
   }
+
+  Event({
+    this.eventID,
+    this.eventStrID,
+    this.eventName,
+    this.eventDescription,
+    this.eventImageURL,
+    this.eventStartTime,
+    this.eventEndTime,
+    this.allDayEvent,
+    this.eventVenues,
+    this.eventBodies,
+    this.eventInterestedCount,
+    this.eventGoingCount,
+    this.eventInterested,
+    this.eventGoing,
+    this.eventWebsiteURL,
+    this.eventUserUesInt,
+  });
+
+  factory Event.fromJson(Map<String, dynamic> json) =>
+      _$EventFromJson(json);
+      
+  Map<String, dynamic> toJson() => _$EventToJson(this);
 }
 
 @GenSerializer()
