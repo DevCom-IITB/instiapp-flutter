@@ -1,12 +1,18 @@
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-part 'image_upload_response.jser.dart';
+part 'image_upload_response.g.dart';
 
 class ImageUploadResponse {
-  @Alias("id")
+  @JsonKey("id")
   String pictureID;
-  @Alias("picture")
+  @JsonKey("picture")
   String pictureURL;
+
+  ImageUploadResponse({this.pictureID, this.pictureURL});
+  factory ImageUploadResponse.fromJson(Map<String, dynamic> json) =>
+      _$ImageUploadResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ImageUploadResponseToJson(this);
 }
 
 @GenSerializer()

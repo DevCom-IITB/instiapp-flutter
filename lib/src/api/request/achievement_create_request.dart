@@ -4,55 +4,75 @@ import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 
-part 'achievement_create_request.jser.dart';
+part 'achievement_create_request.g.dart';
 
 
 class AchievementCreateRequest {
 
-  @Alias("id")
+  @JsonKey("id")
   String id;
 
-  @Alias("time_of_creation")
+  @JsonKey("time_of_creation")
   String timeOfCreation;
 
-  @Alias("time_of_modification")
+  @JsonKey("time_of_modification")
   String timeOfModification;
 
-  @Alias("user")
+  @JsonKey("user")
   User user;
 
-  @Alias("hidden")
+  @JsonKey("hidden")
   bool hidden;
 
-  @Alias("dismissed")
+  @JsonKey("dismissed")
   bool dismissed;
 
-  @Alias("verified")
+  @JsonKey("verified")
   bool verified;
 
-  @Alias("verified_by")
+  @JsonKey("verified_by")
   User verifiedBy;
 
-  @Alias("title")
+  @JsonKey("title")
   String title;
 
-  @Alias("description")
+  @JsonKey("description")
   String description;
 
-  @Alias("admin_note")
+  @JsonKey("admin_note")
   String adminNote;
 
-  @Alias("body")
+  @JsonKey("body")
   String bodyID;
 
-  @Alias("body_detail")
+  @JsonKey("body_detail")
   Body body;
 
-  @Alias("event_detail")
+  @JsonKey("event_detail")
   Event event;
 
-  @Alias("offer")
+  @JsonKey("offer")
   String offer;
+
+  AchievementCreateRequest(
+      this.id,
+      this.timeOfCreation,
+      this.timeOfModification,
+      this.user,
+      this.hidden,
+      this.dismissed,
+      this.verified,
+      this.verifiedBy,
+      this.title,
+      this.description,
+      this.adminNote,
+      this.bodyID,
+      this.body,
+      this.event,
+      this.offer,
+      );
+  factory AchievementCreateRequest.fromJson(Map<String, dynamic> json) => _$AchievementCreateRequestFromJson(json);
+  Map<String, dynamic> toJson() => _$AchievementCreateRequestToJson(this);
 
 }
 
