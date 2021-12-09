@@ -15,6 +15,11 @@ class PostBloc {
   ValueStream<UnmodifiableListView<Post>> get blog => _blogSubject.stream;
   final _blogSubject = BehaviorSubject<UnmodifiableListView<Post>>();
 
+  ValueStream<UnmodifiableListView<Map<String, String>>> get categories =>
+      _blogSubject1.stream;
+  final _blogSubject1 =
+      BehaviorSubject<UnmodifiableListView<Map<String, String>>>();
+
   Sink<int> get inPostIndex => _indexController.sink;
   PublishSubject<int> _indexController = PublishSubject<int>();
 
@@ -96,6 +101,17 @@ class PostBloc {
         p.published = dateTimeFormatter(p.published);
     });
     return posts;
+  }
+
+  void getCategories() async {
+    var list_categories;
+    list_categories =
+        await bloc.client.getQueryCategories(bloc.getSessionIdHeader());
+    List<Map<String, String>> categories;
+    list_categories.forEach((val) {
+      categories.add({'value': val, 'name': val});
+    });
+    _blogSubject1.add(categories);
   }
 
   void _handleIndexes(List<int> indexes) {

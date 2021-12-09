@@ -463,4 +463,12 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .json(jsonConverter.to(request));
     return await req.go(throwOnErr: true);
   }
+
+  Future<List<String>> getQueryCategories(String sessionID) async {
+    var req = base.get
+        .path(basePath)
+        .path("/query/categories")
+        .header("Cookie", sessionID);
+    return await req.go(throwOnErr: true).map(decodeList);
+  }
 }
