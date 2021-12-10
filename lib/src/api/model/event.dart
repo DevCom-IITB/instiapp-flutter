@@ -1,10 +1,9 @@
-import 'package:InstiApp/src/api/model/body.dart' as bdy;
+import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
 import 'package:date_format/date_format.dart';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:retrofit/http.dart';
 
 part 'event.g.dart';
 
@@ -45,7 +44,7 @@ class Event {
   List<Venue>? eventVenues;
 
   @JsonKey(name: "bodies")
-  List<bdy.Body>? eventBodies;
+  List<Body>? eventBodies;
 
   @JsonKey(name: "interested_count")
   int? eventInterestedCount;

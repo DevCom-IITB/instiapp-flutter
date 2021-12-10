@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'dart:core';
-part 'mess.jser.dart';
+part 'mess.g.dart';
 
 @JsonSerializable()
 class Hostel {
@@ -49,8 +49,8 @@ class HostelMess {
     final now = DateTime.now();
     int today = now.weekday;
 
-    int x = (this.day - today) + (this.day - today < 0 ? 7 : 0);
-    int y = (h.day - today) + (h.day - today < 0 ? 7 : 0);
+    int x = (this.day! - today) + (this.day! - today < 0 ? 7 : 0);
+    int y = (h.day! - today) + (h.day! - today < 0 ? 7 : 0);
 
     return x.compareTo(y);
   }
