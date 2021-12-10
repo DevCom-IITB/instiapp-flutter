@@ -30,16 +30,15 @@ class Post {
   Map<String, dynamic> toJson() => _$PostToJson(this);
 }
 
-class PlacementBlogPost extends Post {
-  
-
 @JsonSerializable()
-PlacementBlogPost(String? id,
-  String? guid,
-  String? link,
-  String? title,
-  String? content,
-  String? published):super(id: id, guid: guid, link: link, title: title, content: content, published: published);
+class PlacementBlogPost extends Post {
+
+  PlacementBlogPost(String? id,
+    String? guid,
+    String? link,
+    String? title,
+    String? content,
+    String? published):super(id: id, guid: guid, link: link, title: title, content: content, published: published);
 
   factory PlacementBlogPost.fromJson(Map<String, dynamic> json) =>
       _$PlacementBlogPostFromJson(json);

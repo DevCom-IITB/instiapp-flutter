@@ -52,6 +52,7 @@ dependencies:
   retrofit: ^3.0.0
   logger: any
   dio: ^4.0.4
+  json_annotation: ^4.4.0
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +60,8 @@ dev_dependencies:
 
   retrofit_generator: any
   build_runner: any
+  json_model: any
+  json_serializable: ^6.1.1
   # test: 1.6.0
 
 # For information on the generic Dart part of this file, see the
@@ -84,3 +87,25 @@ flutter:
           style: italic
           weight: 700
   uses-material-design: true
+
+# targets:
+#   $default:
+#     builders:
+#       json_serializable:
+#         options:
+#           # Options configure how source code is generated for every
+#           # `@JsonSerializable`-annotated class in the package.
+#           #
+#           # The default value for each is listed.
+#           any_map: false
+#           checked: false
+#           constructor: ""
+#           create_factory: true
+#           create_to_json: true
+#           disallow_unrecognized_keys: false
+#           explicit_to_json: false
+#           field_rename: none
+#           generic_argument_factories: false
+#           ignore_unannotated: false
+#           include_if_null: true
+        

@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'postFAQ_request.jser.dart';
+part 'postFAQ_request.g.dart';
 
 @JsonSerializable()
 class PostFAQRequest {

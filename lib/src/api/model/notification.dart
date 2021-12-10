@@ -10,6 +10,7 @@ const String TYPE_NEWSENTRY = "newsentry";
 const String TYPE_BLOG = "blogentry";
 const String TYPE_COMPLAINT_COMMENT = "complaintcomment";
 
+@JsonSerializable()
 class Notification {
   @JsonKey(name: "id")
   int? notificationId;
@@ -24,37 +25,37 @@ class Notification {
   String? notificationActorType;
 
   @JsonKey(name: "actor")
-  Object? notificationActor;
+  Map<String, dynamic>? notificationActor;
 
-  // String? getTitle() {
-  //   if (isEvent) {
-  //     return getEvent().eventName;
-  //   } else if (isNews) {
-  //     return getNews().title;
-  //   } else if (isBlogPost) {
-  //     return getBlogPost().title;
-  //   } else if (isComplaintComment) {
-  //     var comment = getComment();
-  //     return "\"${comment.text}\" by ${comment.commentedBy!.userName}";
-  //   }
-  //   return "Notification";
-  // }
+  String? getTitle() {
+    if (isEvent) {
+      return getEvent().eventName;
+    } else if (isNews) {
+      return getNews().title;
+    } else if (isBlogPost) {
+      return getBlogPost().title;
+    } else if (isComplaintComment) {
+      var comment = getComment();
+      return "\"${comment.text}\" by ${comment.commentedBy!.userName}";
+    }
+    return "Notification";
+  }
 
   String? getSubtitle() {
     return notificationVerb;
   }
 
-  // String? getAvatarUrl() {
-  //   if (isEvent) {
-  //     var ev = getEvent();
-  //     return ev.eventImageURL ?? ev.eventBodies![0].bodyImageURL;
-  //   } else if (isNews) {
-  //     return getNews().body.bodyImageURL;
-  //   } else if (isComplaintComment) {
-  //     return getComment().commentedBy!.userProfilePictureUrl;
-  //   }
-  //   return null;
-  // }
+  String? getAvatarUrl() {
+    if (isEvent) {
+      var ev = getEvent();
+      return ev.eventImageURL ?? ev.eventBodies![0].bodyImageURL;
+    } else if (isNews) {
+      return getNews().body!.bodyImageURL;
+    } else if (isComplaintComment) {
+      return getComment().commentedBy!.userProfilePictureUrl;
+    }
+    return null;
+  }
 
   bool get isEvent => notificationActorType!.contains(TYPE_EVENT);
 
@@ -65,34 +66,34 @@ class Notification {
   bool get isComplaintComment =>
       notificationActorType!.contains(TYPE_COMPLAINT_COMMENT);
 
-  // Event getEvent() {
-  //   return Event(notificationActor);
-  // }
+  Event getEvent() {
+    return Event.fromJson(notificationActor!);
+  }
 
-  // NewsArticle getNews() {
-  //   return NewsArticle(notificationActor);
-  // }
+  NewsArticle getNews() {
+    return NewsArticle.fromJson(notificationActor!);
+  }
 
-  // Post getBlogPost() {
-  //   return Post(notificationActor);
-  // }
+  Post getBlogPost() {
+    return Post.fromJson(notificationActor!);
+  }
 
-  // Comment getComment() {
-  //   return Comment(notificationActor);
-  // }
+  Comment getComment() {
+    return Comment.fromJson(notificationActor!);
+  }
 
-  // String? getID() {
-  //   if (isEvent) {
-  //     return getEvent().eventID;
-  //   } else if (isNews) {
-  //     return getNews().id;
-  //   } else if (isBlogPost) {
-  //     return getBlogPost().id;
-  //   } else if (isComplaintComment) {
-  //     return getComment().id;
-  //   }
-  //   return "";
-  // }
+  String? getID() {
+    if (isEvent) {
+      return getEvent().eventID;
+    } else if (isNews) {
+      return getNews().id;
+    } else if (isBlogPost) {
+      return getBlogPost().id;
+    } else if (isComplaintComment) {
+      return getComment().id;
+    }
+    return "";
+  }
 
   Notification({
     this.notificationId,

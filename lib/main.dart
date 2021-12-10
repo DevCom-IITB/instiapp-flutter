@@ -58,7 +58,7 @@ class MyApp extends StatefulWidget {
   final Key key;
   final InstiAppBloc bloc;
 
-  MyApp({this.key, @required this.bloc}) : super(key: key);
+  MyApp({this.key, required this.bloc}) : super(key: key);
 
   // This widget is the root of your application.
   @override
