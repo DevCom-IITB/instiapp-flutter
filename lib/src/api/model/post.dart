@@ -82,7 +82,7 @@ class NewsArticle extends Post {
   Body? body;
 
   @JsonKey(name: "reactions_count")
-  Map<String, int>? reactionCount;
+  Map<String, int> reactionCount;
 
   @JsonKey(name: "user_reaction")
   int? userReaction;
@@ -92,7 +92,7 @@ class NewsArticle extends Post {
   String? link,
   String? title,
   String? content,
-  String? published, {this.body, this.reactionCount, this.userReaction}):super(id: id, guid: guid, link: link, title: title, content: content, published: published);
+  String? published, {this.body, this.reactionCount = const {}, this.userReaction}):super(id: id, guid: guid, link: link, title: title, content: content, published: published);
 
   factory NewsArticle.fromJson(Map<String, dynamic> json) =>
       _$NewsArticleFromJson(json);

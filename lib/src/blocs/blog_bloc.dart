@@ -36,10 +36,10 @@ class PostBloc {
   // For categories
   String category = "";
 
-  PostBloc(this.bloc, {@required this.postType}) {
-    // if (postType == PostType.Query) {
-    //   postType = PostType.NewsArticle;
-    // }
+  PostBloc(this.bloc, {required this.postType}) {
+    if (postType == PostType.Query) {
+      _setCategories();
+    }
     _setIndexListener();
   }
 
@@ -85,12 +85,10 @@ class PostBloc {
       PostType.Query: bloc.client.getQueries
     }[postType];
     var posts;
-    print(query.toString());
-    print(category.toString());
     if (postType == PostType.Query)
-      posts = await httpGetFunc(bloc.getSessionIdHeader(), query, category);
+      posts = await httpGetFunc!(bloc.getSessionIdHeader(), query, category);
     else
-      posts = await httpGetFunc(bloc.getSessionIdHeader(),
+      posts = await httpGetFunc!(bloc.getSessionIdHeader(),
           page * _noOfPostsPerPage, _noOfPostsPerPage, query);
     var tableParse = markdown.TableSyntax();
     posts.forEach((p) {
@@ -103,15 +101,15 @@ class PostBloc {
     return posts;
   }
 
-  void getCategories() async {
+  void _setCategories() async {
     var list_categories;
     list_categories =
         await bloc.client.getQueryCategories(bloc.getSessionIdHeader());
-    List<Map<String, String>> categories;
+    List<Map<String, String>> categories = [];
     list_categories.forEach((val) {
       categories.add({'value': val, 'name': val});
     });
-    _blogSubject1.add(categories);
+     _blogSubject1.add(UnmodifiableListView<Map<String, String>>(categories));
   }
 
   void _handleIndexes(List<int> indexes) {
@@ -172,11 +170,15 @@ class PostBloc {
           break;
         }
         // Add the list of fetched posts to the list
-        posts.addAll(pages[i]);
+        var temp = pages[i];
+        if(temp != null){
+          posts.addAll(temp);
+        }
+        
       }
     }
 
-    if (pages[maxPageIndex].length < _noOfPostsPerPage) {
+    if (pages[maxPageIndex]!.length < _noOfPostsPerPage) {
       posts.add(Post());
     }
 
@@ -208,7 +210,7 @@ class PostBloc {
             // As soon as there is a hole, stop
             break;
           }
-          posts.addAll(_fetchPages[i]);
+          posts.addAll(_fetchPages[i]!);
         }
       }
     }
@@ -223,7 +225,7 @@ class PostBloc {
     String sel = "$reaction";
     int sendReaction = article.userReaction == reaction ? -1 : reaction;
     await bloc.client.updateUserNewsReaction(
-        bloc.getSessionIdHeader(), article.id, sendReaction);
+        bloc.getSessionIdHeader(), article.id!, sendReaction);
     if (article.userReaction == -1) {
       article.userReaction = sendReaction;
       article.reactionCount[sel] += 1;

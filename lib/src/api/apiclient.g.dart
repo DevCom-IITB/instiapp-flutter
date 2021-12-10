@@ -815,6 +815,7 @@ class _InstiAppApi implements InstiAppApi {
   Future<void> dismissAchievement(sessionID, id, achievement) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{r'Cookie': sessionID};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
