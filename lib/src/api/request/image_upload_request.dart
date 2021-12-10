@@ -1,10 +1,11 @@
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'image_upload_request.g.dart';
 
+@JsonSerializable()
 class ImageUploadRequest {
-  @JsonKey("picture")
-  String base64Image;
+  @JsonKey(name: "picture")
+  String? base64Image;
 
   ImageUploadRequest({this.base64Image});
   factory ImageUploadRequest.fromJson(Map<String, dynamic> json) =>
@@ -12,7 +13,3 @@ class ImageUploadRequest {
 
   Map<String, dynamic> toJson() => _$ImageUploadRequestToJson(this);
 }
-
-@GenSerializer()
-class ImageUploadRequestSerializer extends Serializer<ImageUploadRequest>
-    with _$ImageUploadRequestSerializer {}
