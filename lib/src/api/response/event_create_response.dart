@@ -1,10 +1,11 @@
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'event_create_response.g.dart';
 
+@JsonSerializable()
 class EventCreateResponse {
-  String result;
-  String eventId;
+  String? result;
+  String? eventId;
 
   EventCreateResponse({
     this.result,
@@ -15,7 +16,3 @@ class EventCreateResponse {
 
   Map<String, dynamic> toJson() => _$EventCreateResponseToJson(this);
 }
-
-@GenSerializer()
-class EventCreateResponseSerializer extends Serializer<EventCreateResponse>
-    with _$EventCreateResponseSerializer {}

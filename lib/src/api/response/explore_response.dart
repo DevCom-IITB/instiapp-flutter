@@ -1,24 +1,21 @@
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/user.dart';
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'explore_response.g.dart';
 
+@JsonSerializable()
 class ExploreResponse {
-  @JsonKey("bodies")
-  List<Body> bodies;
-  @JsonKey("events")
-  List<Event> events;
-  @JsonKey("users")
-  List<User> users;
+  @JsonKey(name: "bodies")
+  List<Body>? bodies;
+  @JsonKey(name: "events")
+  List<Event>? events;
+  @JsonKey(name: "users")
+  List<User>? users;
 
   ExploreResponse({this.bodies, this.events, this.users});
   factory ExploreResponse.fromJson(Map<String, dynamic> json) =>
       _$ExploreResponseFromJson(json);
   Map<String, dynamic> toJson() => _$ExploreResponseToJson(this);
 }
-
-@GenSerializer()
-class ExploreResponseSerializer extends Serializer<ExploreResponse>
-    with _$ExploreResponseSerializer {}

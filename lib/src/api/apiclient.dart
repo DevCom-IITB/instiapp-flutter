@@ -39,7 +39,7 @@ import 'model/offersecret.dart';
 
 @RestApi(baseUrl: "https://api.insti.app/api")
 abstract class InstiAppApi {
-  factory InstiAppApi(Dio dio, {String baseUrl}) = _instance;
+  factory InstiAppApi(Dio dio, {String baseUrl}) = _$InstiAppApi;
 
   @GET("/mess")
   Future<List<Hostel>> getHostelMess();
@@ -224,7 +224,7 @@ abstract class InstiAppApi {
   @POST("/achievements-offer/{id}")
   Future<SecretResponse> postAchievementOffer(
       @Header("Cookie") String sessionId,
-      @Query() String id,
+      @Path() String id,
       @Body() Offersecret secret);
 
   @GET("/achievements")
