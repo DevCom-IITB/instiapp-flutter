@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:InstiApp/src/api/model/event.dart';
-import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
@@ -43,8 +42,8 @@ class CalendarBloc {
 
   List<Event> _getEventsOfMonth(List<Event> evs, DateTime month) {
     return evs.where((e) {
-      return e.eventStartDate.year == month.year &&
-          e.eventStartDate.month == month.month;
+      return e.eventStartDate!.year == month.year &&
+          e.eventStartDate!.month == month.month;
     }).toList();
   }
 
@@ -72,8 +71,8 @@ class CalendarBloc {
         formatDate(prevMonthStart, isoFormat),
         formatDate(nextNextMonthStart, isoFormat));
     var evs = newsFeedResp.events;
-    evs.forEach((e) {
-      var time = DateTime.parse(e.eventStartTime);
+    evs!.forEach((e) {
+      var time = DateTime.parse(e.eventStartTime!);
       e.eventStartDate = DateTime(time.year, time.month, time.day);
     });
 
@@ -84,7 +83,7 @@ class CalendarBloc {
     monthToEvents[nextMonthStart] = _getEventsOfMonth(evs, nextMonthStart);
     receivingMonths.remove(nextMonthStart);
     for (Event e in evs) {
-      var dateList = eventsMap.putIfAbsent(e.eventStartDate, () => []);
+      var dateList = eventsMap.putIfAbsent(e.eventStartDate!, () => []);
       dateList.removeWhere((e1) => e1.eventID == e.eventID);
       dateList.add(e);
     }
@@ -95,13 +94,13 @@ class CalendarBloc {
     }
   }
 
-  Future saveToCache({SharedPreferences sharedPrefs}) async {
+  Future saveToCache({SharedPreferences? sharedPrefs}) async {
     var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
     if (monthToEvents?.isNotEmpty ?? false) {
       prefs.setString(
           mteKeysStorageID, standardSerializers.encode(monthToEvents.keys));
       prefs.setString(
-          mteValuesStorageID, standardSerializers.encode(monthToEvents.values));
+          mteValuesStorageID, json.encode(Event.toJson(monthToEvents.values)));
     }
 
     if (eventsMap?.isNotEmpty ?? false) {
