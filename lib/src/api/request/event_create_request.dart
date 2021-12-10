@@ -1,24 +1,25 @@
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'event_create_request.g.dart';
 
+@JsonSerializable()
 class EventCreateRequest {
-  @JsonKey("name")
-  String eventName;
-  @JsonKey("description")
-  String eventDescription;
-  @JsonKey("image_url")
-  String eventImageURL;
-  @JsonKey("start_time")
-  String eventStartTime;
-  @JsonKey("end_time")
-  String eventEndTime;
-  @JsonKey("all_day")
-  bool allDayEvent;
-  @JsonKey("venue_names")
-  List<String> eventVenueNames;
-  @JsonKey("bodies_id")
-  List<String> eventBodiesID;
+  @JsonKey(name: "name")
+  String? eventName;
+  @JsonKey(name: "description")
+  String? eventDescription;
+  @JsonKey(name: "image_url")
+  String? eventImageURL;
+  @JsonKey(name: "start_time")
+  String? eventStartTime;
+  @JsonKey(name: "end_time")
+  String? eventEndTime;
+  @JsonKey(name: "all_day")
+  bool? allDayEvent;
+  @JsonKey(name: "venue_names")
+  List<String>? eventVenueNames;
+  @JsonKey(name: "bodies_id")
+  List<String>? eventBodiesID;
 
   EventCreateRequest(
       {this.eventName,
@@ -33,7 +34,3 @@ class EventCreateRequest {
       _$EventCreateRequestFromJson(json);
   Map<String, dynamic> toJson() => _$EventCreateRequestToJson(this);
 }
-
-@GenSerializer()
-class EventCreateRequestSerializer extends Serializer<EventCreateRequest>
-    with _$EventCreateRequestSerializer {}
