@@ -1,52 +1,74 @@
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/role.dart';
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+
+import 'package:json_annotation/json_annotation.dart';
 
 part 'body.g.dart';
 
+@JsonSerializable()
 class Body {
-  @JsonKey("id")
-  String bodyID;
+  @JsonKey(name: "id")
+  String? bodyID;
 
-  @JsonKey("str_id")
-  String bodyStrID;
+  @JsonKey(name: "str_id")
+  String? bodyStrID;
 
-  @JsonKey("name")
-  String bodyName;
+  @JsonKey(name: "name")
+  String? bodyName;
 
-  @JsonKey("short_description")
-  String bodyShortDescription;
+  @JsonKey(name: "short_description")
+  String? bodyShortDescription;
 
-  @JsonKey("description")
-  String bodyDescription;
+  @JsonKey(name: "description")
+  String? bodyDescription;
 
-  @JsonKey("image_url")
-  String bodyImageURL;
+  @JsonKey(name: "image_url")
+  String? bodyImageURL;
 
-  @JsonKey("children")
-  List<Body> bodyChildren;
+  @JsonKey(name: "children")
+  List<Body>? bodyChildren;
 
-  @JsonKey("parents")
-  List<Body> bodyParents;
+  @JsonKey(name: "parents")
+  List<Body>? bodyParents;
 
-  @JsonKey("events")
-  List<Event> bodyEvents;
+  @JsonKey(name: "events")
+  List<Event>? bodyEvents;
 
-  @JsonKey("followers_count")
-  int bodyFollowersCount;
+  @JsonKey(name: "followers_count")
+  int? bodyFollowersCount;
 
-  @JsonKey("website_url")
-  String bodyWebsiteURL;
+  @JsonKey(name: "website_url")
+  String? bodyWebsiteURL;
 
-  @JsonKey("blog_url")
-  String bodyBlogURL;
+  @JsonKey(name: "blog_url")
+  String? bodyBlogURL;
 
-  @JsonKey("user_follows")
-  bool bodyUserFollows;
+  @JsonKey(name: "user_follows")
+  bool? bodyUserFollows;
 
-  @JsonKey("roles")
-  List<Role> bodyRoles;
+  @JsonKey(name: "roles")
+  List<Role>? bodyRoles;
+
+  Body({
+    this.bodyBlogURL,
+    this.bodyChildren,
+    this.bodyDescription,
+    this.bodyEvents,
+    this.bodyID,
+    this.bodyFollowersCount,
+    this.bodyImageURL,
+    this.bodyName,
+    this.bodyParents,
+    this.bodyRoles,
+    this.bodyShortDescription,
+    this.bodyStrID,
+    this.bodyUserFollows,
+    this.bodyWebsiteURL
+  });
+
+  factory Body.fromJson(Map<String, dynamic> json) =>
+      _$BodyFromJson(json);
+      
+  Map<String, dynamic> toJson() => _$BodyToJson(this);
+
 }
-
-@GenSerializer()
-class BodySerializer extends Serializer<Body> with _$BodySerializer {}
