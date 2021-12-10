@@ -36,10 +36,14 @@ import 'package:http/io_client.dart';
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:InstiApp/src/api/model/notification.dart' as ntf;
+import 'package:dio/dio.dart';
 
 enum AddToCalendar { AlwaysAsk, Yes, No }
 
 class InstiAppBloc {
+  // Dio instance
+  final dio = Dio();
+
   // Events StorageID
   static String eventStorageID = "events";
   // Mess StorageID
@@ -95,7 +99,7 @@ class InstiAppBloc {
   var _notifications;
 
   // api functions
-  final client = InstiAppApi();
+  final client = InstiAppApi(dio);
 
   // default homepage
   String homepageName = "/feed";
