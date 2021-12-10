@@ -15,6 +15,7 @@ import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
 import 'package:InstiApp/src/api/request/image_upload_request.dart';
+import 'package:InstiApp/src/api/request/postFAQ_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
@@ -60,6 +61,7 @@ JsonRepo standardSerializers = JsonRepo(serializers: [
   PlacementBlogPostSerializer(),
   ExternalBlogPostSerializer(),
   TrainingBlogPostSerializer(),
+  QuerySerializer(),
 
   // Venter
   ComplaintSerializer(),
@@ -77,6 +79,7 @@ JsonRepo standardSerializers = JsonRepo(serializers: [
   AchievementCreateRequestSerializer(),
   AchievementHiddenPathRequestSerializer(),
   AchVerifyRequestSerializer(),
+  PostFAQRequestSerializer(),
 
   // Responses
   NewsFeedResponseSerializer(),
