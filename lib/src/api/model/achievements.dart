@@ -1,54 +1,49 @@
-import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 
-part 'achievements.jser.dart';
+part 'achievements.g.dart';
 
 class Achievement {
-  @Alias("id")
+  @JsonKey(name:"id")
   String id;
 
-  @Alias("time_of_creation")
+  @JsonKey(name:"time_of_creation")
   String timeOfCreation;
 
-  @Alias("time_of_modification")
+  @JsonKey(name:"time_of_modification")
   String timeOfModification;
 
-  @Alias("user")
+  @JsonKey(name:"user")
   User user;
 
-  @Alias("hidden")
+  @JsonKey(name:"hidden")
   bool hidden;
 
-  @Alias("dismissed")
+  @JsonKey(name:"dismissed")
   bool dismissed;
 
-  @Alias("verified")
+  @JsonKey(name:"verified")
   bool verified;
 
-  @Alias("verified_by")
+  @JsonKey(name:"verified_by")
   User verifiedBy;
 
-  @Alias("title")
+  @JsonKey(name:"title")
   String title;
 
-  @Alias("description")
+  @JsonKey(name:"description")
   String description;
 
-  @Alias("admin_note")
+  @JsonKey(name:"admin_note")
   String adminNote;
 
-  @Alias("body_detail")
+  @JsonKey(name:"body_detail")
   Body body;
 
-  @Alias("event_detail")
+  @JsonKey(name:"event_detail")
   Event event;
 
-  @Alias("offer")
+  @JsonKey(name:"offer")
   String offer;
 }
-
-@GenSerializer()
-class AchievementSerializer extends Serializer<Achievement>
-    with _$AchievementSerializer {}
