@@ -1,26 +1,27 @@
 import 'package:InstiApp/src/api/model/body.dart';
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'post.g.dart';
 
+@JsonSerializable()
 class Post {
-  @JsonKey("id")
-  String id;
+  @JsonKey(name: "id")
+  String? id;
 
-  @JsonKey("guid")
-  String guid;
+  @JsonKey(name: "guid")
+  String? guid;
 
-  @JsonKey("link")
-  String link;
+  @JsonKey(name: "link")
+  String? link;
 
-  @JsonKey("title")
-  String title;
+  @JsonKey(name: "title")
+  String? title;
 
-  @JsonKey("content")
-  String content;
+  @JsonKey(name: "content")
+  String? content;
 
-  @JsonKey("published")
-  String published;
+  @JsonKey(name: "published")
+  String? published;
 
   Post({this.id, this.guid, this.link, this.title, this.content, this.published});
 
@@ -32,7 +33,13 @@ class Post {
 class PlacementBlogPost extends Post {
   
 
-  PlacementBlogPost();
+@JsonSerializable()
+PlacementBlogPost(String? id,
+  String? guid,
+  String? link,
+  String? title,
+  String? content,
+  String? published):super(id: id, guid: guid, link: link, title: title, content: content, published: published);
 
   factory PlacementBlogPost.fromJson(Map<String, dynamic> json) =>
       _$PlacementBlogPostFromJson(json);
@@ -40,35 +47,53 @@ class PlacementBlogPost extends Post {
   Map<String, dynamic> toJson() => _$PlacementBlogPostToJson(this);
 }
 
+@JsonSerializable()
 class ExternalBlogPost extends Post {
-  @JsonKey("body")
-  String body;
+  @JsonKey(name: "body")
+  String? body;
 
-  ExternalBlogPost({this.body});
+  ExternalBlogPost(String? id,
+  String? guid,
+  String? link,
+  String? title,
+  String? content,
+  String? published, {this.body}):super(id: id, guid: guid, link: link, title: title, content: content, published: published);
   factory ExternalBlogPost.fromJson(Map<String, dynamic> json) =>
       _$ExternalBlogPostFromJson(json);
   Map<String, dynamic> toJson() => _$ExternalBlogPostToJson(this);
 }
 
+@JsonSerializable()
 class TrainingBlogPost extends Post {
 
-  TrainingBlogPost();
+  TrainingBlogPost(String? id,
+  String? guid,
+  String? link,
+  String? title,
+  String? content,
+  String? published):super(id: id, guid: guid, link: link, title: title, content: content, published: published);
   factory TrainingBlogPost.fromJson(Map<String, dynamic> json) =>
       _$TrainingBlogPostFromJson(json);
   Map<String, dynamic> toJson() => _$TrainingBlogPostToJson(this);
 }
 
+@JsonSerializable()
 class NewsArticle extends Post {
-  @JsonKey("body")
-  Body body;
+  @JsonKey(name: "body")
+  Body? body;
 
-  @JsonKey("reactions_count")
-  Map<String, int> reactionCount;
+  @JsonKey(name: "reactions_count")
+  Map<String, int>? reactionCount;
 
-  @JsonKey("user_reaction")
-  int userReaction;
+  @JsonKey(name: "user_reaction")
+  int? userReaction;
 
-  NewsArticle({this.body, this.reactionCount, this.userReaction});
+  NewsArticle(String? id,
+  String? guid,
+  String? link,
+  String? title,
+  String? content,
+  String? published, {this.body, this.reactionCount, this.userReaction}):super(id: id, guid: guid, link: link, title: title, content: content, published: published);
 
   factory NewsArticle.fromJson(Map<String, dynamic> json) =>
       _$NewsArticleFromJson(json);
@@ -77,47 +102,41 @@ class NewsArticle extends Post {
 
 }
 
+@JsonSerializable()
 class Query extends Post {
-  @Alias("question")
-  String title;
+  @JsonKey(name: "question")
+  String? title;
 
-  @Alias("answer")
-  String content;
+  @JsonKey(name: "answer")
+  String? content;
 
-  @Alias("category")
-  String published;
+  @JsonKey(name: "category")
+  String? published;
 
-  @Alias("sub_category")
-  String subCategory;
+  @JsonKey(name: "sub_category")
+  String? subCategory;
 
-  @Alias("sub_sub_category")
-  String subSubCategory;
+  @JsonKey(name: "sub_sub_category")
+  String? subSubCategory;
 
-  @Ignore()
-  String guid;
+  @JsonKey(ignore: true)
+  String? guid;
 
-  @Ignore()
-  String link;
+  @JsonKey(ignore: true)
+  String? link;
+
+  Query({
+    this.content,
+    this.guid,
+    this.link,
+    this.published,
+    this.subCategory,
+    this.subSubCategory,
+    this.title
+  });
+
+  factory Query.fromJson(Map<String, dynamic> json) =>
+      _$QueryFromJson(json);
+  
+  Map<String, dynamic> toJson() => _$QueryToJson(this);
 }
-
-@GenSerializer()
-class PostSerializer extends Serializer<Post> with _$PostSerializer {}
-
-@GenSerializer()
-class PlacementBlogPostSerializer extends Serializer<PlacementBlogPost>
-    with _$PlacementBlogPostSerializer {}
-
-@GenSerializer()
-class ExternalBlogPostSerializer extends Serializer<ExternalBlogPost>
-    with _$ExternalBlogPostSerializer {}
-
-@GenSerializer()
-class TrainingBlogPostSerializer extends Serializer<TrainingBlogPost>
-    with _$TrainingBlogPostSerializer {}
-
-@GenSerializer()
-class NewsArticleSerializer extends Serializer<NewsArticle>
-    with _$NewsArticleSerializer {}
-
-@GenSerializer()
-class QuerySerializer extends Serializer<Query> with _$QuerySerializer {}
