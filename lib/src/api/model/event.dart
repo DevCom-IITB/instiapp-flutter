@@ -1,8 +1,10 @@
-import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/body.dart' as bdy;
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
-import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'package:date_format/date_format.dart';
+
+import 'package:json_annotation/json_annotation.dart';
+import 'package:retrofit/http.dart';
 
 part 'event.g.dart';
 
@@ -13,73 +15,75 @@ enum UES {
   Going,
 }
 
+@JsonSerializable()
 class Event {
-  @JsonKey("id")
-  String eventID;
+  @JsonKey(name: "id")
+  String? eventID;
 
-  @JsonKey("str_id")
-  String eventStrID;
+  @JsonKey(name: "str_id")
+  String? eventStrID;
 
-  @JsonKey("name")
-  String eventName;
+  @JsonKey(name: "name")
+  String? eventName;
 
-  @JsonKey("description")
-  String eventDescription;
+  @JsonKey(name: "description")
+  String? eventDescription;
 
-  @JsonKey("image_url")
-  String eventImageURL;
+  @JsonKey(name: "image_url")
+  String? eventImageURL;
 
-  @JsonKey("start_time")
-  String eventStartTime;
+  @JsonKey(name: "start_time")
+  String? eventStartTime;
 
-  @JsonKey("end_time")
-  String eventEndTime;
+  @JsonKey(name: "end_time")
+  String? eventEndTime;
 
-  @JsonKey("all_day")
-  bool allDayEvent;
+  @JsonKey(name: "all_day")
+  bool? allDayEvent;
 
-  @JsonKey("venues")
-  List<Venue> eventVenues;
+  @JsonKey(name: "venues")
+  List<Venue>? eventVenues;
 
-  @JsonKey("bodies")
-  List<Body> eventBodies;
+  @JsonKey(name: "bodies")
+  List<bdy.Body>? eventBodies;
 
-  @JsonKey("interested_count")
-  int eventInterestedCount;
+  @JsonKey(name: "interested_count")
+  int? eventInterestedCount;
 
-  @JsonKey("going_count")
-  int eventGoingCount;
+  @JsonKey(name: "going_count")
+  int? eventGoingCount;
 
-  @JsonKey("interested")
-  List<User> eventInterested;
+  @JsonKey(name: "interested")
+  List<User>? eventInterested;
 
-  @JsonKey("going")
-  List<User> eventGoing;
+  @JsonKey(name: "going")
+  List<User>? eventGoing;
 
-  @JsonKey("website_url")
-  String eventWebsiteURL;
+  @JsonKey(name: "website_url")
+  String? eventWebsiteURL;
 
-  @JsonKey("user_ues")
-  int eventUserUesInt;
+  @JsonKey(name: "user_ues")
+  int? eventUserUesInt;
 
-  @@JsonKey(ignore: true)()
+  @JsonKey(ignore: true)
   UES get eventUserUes => UES.values[eventUserUesInt ?? 0];
 
-  @@JsonKey(ignore: true)()
+  @JsonKey(ignore: true)
   set eventUserUes(UES ues) {
     eventUserUesInt = ues.index;
   }
 
-  @@JsonKey(ignore: true)()
+  @JsonKey(ignore: true)
   bool eventBigImage = false;
 
-  DateTime eventStartDate;
+  DateTime? eventStartDate;
 
+  @JsonKey(ignore: true)
   String getSubTitle() {
     String subtitle = "";
 
-    DateTime startTime = DateTime.parse(eventStartTime);
-    DateTime endTime = DateTime.parse(eventEndTime);
+    DateTime startTime = DateTime.parse(eventStartTime!);
+    DateTime endTime = DateTime.parse(eventEndTime!);
     DateTime timeNow = DateTime.now();
     bool eventStarted = timeNow.compareTo(startTime) > 0;
     bool eventEnded = timeNow.compareTo(endTime) > 0;
@@ -106,7 +110,7 @@ class Event {
           formatDate(startTime.toLocal(), [dd, " ", M, " | ", HH, ":", nn]);
     }
     String eventVenueName = "";
-    for (var venue in eventVenues) {
+    for (var venue in eventVenues!) {
       eventVenueName += ", ${venue.venueShortName}";
     }
     if (eventVenueName != "") {
@@ -140,6 +144,3 @@ class Event {
       
   Map<String, dynamic> toJson() => _$EventToJson(this);
 }
-
-@GenSerializer()
-class EventSerializer extends Serializer<Event> with _$EventSerializer {}
