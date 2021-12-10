@@ -1,11 +1,12 @@
 import 'package:InstiApp/src/api/model/achievements.dart';
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'your_achievements_response.g.dart';
 
+@JsonSerializable()
 class YourAchievementsResponse {
-  @JsonKey("data")
-  List<Achievement> achievements;
+  @JsonKey(name: "data")
+  List<Achievement>? achievements;
 
   YourAchievementsResponse(this.achievements);
   factory YourAchievementsResponse.fromJson(Map<String, dynamic> json) =>
@@ -13,8 +14,3 @@ class YourAchievementsResponse {
 
   Map<String, dynamic> toJson() => _$YourAchievementsResponseToJson(this); 
 }
-
-@GenSerializer()
-class YourAchievementsResponseSerializer
-    extends Serializer<YourAchievementsResponse>
-    with _$YourAchievementsResponseSerializer {}

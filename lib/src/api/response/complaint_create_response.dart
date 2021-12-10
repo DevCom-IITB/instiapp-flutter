@@ -1,13 +1,18 @@
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'complaint_create_response.g.dart';
 
+@JsonSerializable()
 class ComplaintCreateResponse {
-  String result;
-  String complaintId;
-}
+  String? result;
+  String? complaintId;
 
-@GenSerializer()
-class ComplaintCreateResponseSerializer
-    extends Serializer<ComplaintCreateResponse>
-    with _$ComplaintCreateResponseSerializer {}
+
+  ComplaintCreateResponse({
+    this.result,
+    this.complaintId
+  });
+  factory ComplaintCreateResponse.fromJson(Map<String, dynamic> json) =>
+      _$ComplaintCreateResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$ComplaintCreateResponseToJson(this);
+}
