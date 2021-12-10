@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:InstiApp/src/api/model/achievements.dart';
-import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/body.dart' as bdy;
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
@@ -26,7 +26,7 @@ import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:http/io_client.dart';
 // import 'package:http/browser_client.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
-import 'package:InstiApp/src/api/model/post.dart';
+import 'package:InstiApp/src/api/model/post.dart' as pst;
 import 'package:InstiApp/src/api/model/user.dart';
 // import 'package:jaguar_resty/jaguar_resty.dart';
 // import 'package:jaguar_resty/jaguar_resty.dart' as resty;
@@ -51,28 +51,28 @@ abstract class InstiAppApi {
   @GET("/pass-login")
   Future<Session> passwordLoginFcm(
       @Query("username") String username,
-      @QueryP"password") String password,
+      @Query("password") String password,
       @Query("fcm_id") String fcmId);
 
   @GET("/login")
   Future<Session> login(@Query('code') String code, @Query('redir') String redir);
 
   @GET("/placement-blog")
-  Future<List<PlacementBlogPost>> getPlacementBlogFeed(
+  Future<List<pst.PlacementBlogPost>> getPlacementBlogFeed(
       @Header("Cookie") String sessionId,
       @Query("from") int from,
       @Query("num") int number,
       @Query("query") String query);
 
   @GET("/external-blog")
-  Future<List<ExternalBlogPost>> getExternalBlogFeed(
+  Future<List<pst.ExternalBlogPost>> getExternalBlogFeed(
       @Header("Cookie") String sessionId,
       @Query("from") int from,
       @Query("num") int number,
       @Query("query") String query);
 
   @GET("/training-blog")
-  Future<List<TrainingBlogPost>> getTrainingBlogFeed(
+  Future<List<pst.TrainingBlogPost>> getTrainingBlogFeed(
       @Header("Cookie") String sessionID,
       @Query("from") int from,
       @Query("num") int num,
@@ -110,11 +110,11 @@ abstract class InstiAppApi {
 
   // Bodies
   @GET("/bodies/{uuid}")
-  Future<Body> getBody(
+  Future<bdy.Body> getBody(
       @Header("Cookie") String sessionId, @Path() String uuid);
 
   @GET("/bodies")
-  Future<List<Body>> getAllBodies(@Header("Cookie") String sessionId);
+  Future<List<bdy.Body>> getAllBodies(@Header("Cookie") String sessionId);
 
   @GET("/bodies/{bodyID}/follow")
   Future<void> updateBodyFollowing(@Header("Cookie") String sessionID,
@@ -146,7 +146,7 @@ abstract class InstiAppApi {
       @Body() UserSCNPatchRequest userSCNPatchRequest);
 
   @GET("/news")
-  Future<List<NewsArticle>> getNews(
+  Future<List<pst.NewsArticle>> getNews(
       @Header("Cookie") String sessionID,
       @Query("from") int from,
       @Query("num") int num,
@@ -248,7 +248,7 @@ abstract class InstiAppApi {
       @Header("Cookie") String sessionID, @Path() String id);
 
   @GET("/query")
-  Future<List<Query>> getQueries(
+  Future<List<pst.Query>> getQueries(
       @Header("Cookie") String sessionID,
       // @QueryParam("from") int from,
       // @QueryParam("num") int num,
