@@ -408,9 +408,10 @@ class _CreateAchievementPage extends State<Home> {
                                         false) {
                                       var resp = await achievementsBloc
                                           .postForm(currRequest);
-                                      if (resp.result == "success") {
+                                      if (resp?.result == "success") {
                                         Navigator.of(context)
                                             .pushNamed("/achievements");
+                                        
                                       } else {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
@@ -588,11 +589,11 @@ class _QRViewExampleState extends State<QRViewExample> {
         // check for a secret if offerid exists
         else {
           var achievements = bloc.achievementBloc;
-          SecretResponse offer =
+          SecretResponse? offer =
               await achievements.postAchievementOffer(offerid, secret);
-          log(offer.message ?? "");
+          log(offer?.message ?? "");
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(offer.message ?? "")),
+            SnackBar(content: Text(offer?.message ?? "")),
           );
           controller?.dispose();
           processing = false;

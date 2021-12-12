@@ -416,15 +416,17 @@ class _QRViewExampleState extends State<QRViewExample> {
         // check for a secret if offerid exists
         else {
           var achievements = bloc.achievementBloc;
-          SecretResponse offer =
+          SecretResponse? offer =
               await achievements.postAchievementOffer(offerid, secret);
-          log(offer.message ?? "");
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(offer.message ?? "")),
-          );
-          controller?.dispose();
-          processing = false;
-          Navigator.of(context).pop();
+          log(offer?.message ?? "");
+          if (offer != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(offer.message ?? "")),
+            );
+            controller?.dispose();
+            processing = false;
+            Navigator.of(context).pop();
+          }
         }
       } else {
         log('1');

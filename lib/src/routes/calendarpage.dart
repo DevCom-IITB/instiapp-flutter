@@ -224,7 +224,7 @@ class _CalendarPageState extends State<CalendarPage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton:
-          (bloc.currSession.profile?.userRoles?.isNotEmpty ?? false)
+          (bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false)
               ? FloatingActionButton(
                   child: Icon(Icons.add_outlined),
                   onPressed: () {
@@ -249,7 +249,7 @@ class _CalendarPageState extends State<CalendarPage> {
       ),
       enabled: true,
       leading: NullableCircleAvatar(
-        event.eventImageURL ?? event.eventBodies[0].bodyImageURL ?? "",
+        event.eventImageURL ?? event.eventBodies?[0].bodyImageURL ?? "",
         Icons.event_outlined,
         heroTag: event.eventID ?? "",
       ),
