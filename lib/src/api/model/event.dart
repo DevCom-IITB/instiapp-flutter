@@ -47,10 +47,10 @@ class Event {
   List<Body>? eventBodies;
 
   @JsonKey(name: "interested_count")
-  int? eventInterestedCount;
+  int eventInterestedCount;
 
   @JsonKey(name: "going_count")
-  int? eventGoingCount;
+  int eventGoingCount;
 
   @JsonKey(name: "interested")
   List<User>? eventInterested;
@@ -130,8 +130,8 @@ class Event {
     this.allDayEvent,
     this.eventVenues,
     this.eventBodies,
-    this.eventInterestedCount,
-    this.eventGoingCount,
+    this.eventInterestedCount = 0,
+    this.eventGoingCount = 0,
     this.eventInterested,
     this.eventGoing,
     this.eventWebsiteURL,

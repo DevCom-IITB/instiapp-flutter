@@ -23,7 +23,7 @@ class _TitleWithBackButtonState extends State<TitleWithBackButton> {
 
     return StreamBuilder(
       stream: bloc?.navigatorObserver.secondTopRouteName,
-      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
         bool currHasBackButton = (theme.platform == TargetPlatform.iOS ||
                 theme.platform == TargetPlatform.macOS) &&
             widget.hasBackButton &&

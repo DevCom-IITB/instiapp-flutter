@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:convert';
 
 import 'package:InstiApp/src/api/model/body.dart';
-import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:rxdart/rxdart.dart';
@@ -28,8 +28,8 @@ class ExploreBloc {
   String query = "";
 
   // State
-  List<Body> allBodies;
-  ExploreResponse currExploreResponse;
+  List<Body> allBodies = <Body>[];
+  ExploreResponse? currExploreResponse;
 
   ExploreBloc(this.bloc);
 
@@ -38,19 +38,21 @@ class ExploreBloc {
     _exploreSubject.add(resp);
   }
 
-  Future saveToCache({SharedPreferences sharedPrefs}) async {
+  Future saveToCache({SharedPreferences? sharedPrefs}) async {
     var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
     if (allBodies?.isNotEmpty ?? false) {
-      prefs.setString(storageID, standardSerializers.encode(allBodies));
+      prefs.setString(storageID, json.encode(allBodies.map((e) => e.toJson()).toList()));
     }
   }
 
-  Future restoreFromCache({SharedPreferences sharedPrefs}) async {
+  Future restoreFromCache({SharedPreferences? sharedPrefs}) async {
     var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
     if (prefs.getKeys().contains(storageID)) {
-      allBodies =
-          standardSerializers.decodeList<Body>(prefs.getString(storageID));
-      _push(ExploreResponse(bodies: allBodies));
+      var x = prefs.getString(storageID);
+      if(x != null){
+        allBodies = json.decode(x).map((e) => Body.fromJson(e)).toList();
+        _push(ExploreResponse(bodies: allBodies));
+      }
     }
     _bodiesSubject.add(UnmodifiableListView(allBodies));
 
