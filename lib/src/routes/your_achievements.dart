@@ -10,7 +10,7 @@ import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 
 class YourAchievementPage extends StatefulWidget {
-  const YourAchievementPage({Key key}) : super(key: key);
+  const YourAchievementPage({Key? key}) : super(key: key);
 
   @override
   _YourAchievementPageState createState() => _YourAchievementPageState();
@@ -55,7 +55,7 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -97,7 +97,7 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
                             AsyncSnapshot<UnmodifiableListView<Body>>
                                 snapshot) {
                           if (snapshot.hasData) {
-                            if (snapshot.data.length > 0) {
+                            if (snapshot.data!.length > 0) {
                               return SliverToBoxAdapter(
                                 child: TitleWithBackButton(
                                   child: Text(
@@ -124,12 +124,12 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
                             AsyncSnapshot<UnmodifiableListView<Body>>
                                 snapshot) {
                           if (snapshot.hasData) {
-                            if (snapshot.data.length > 0) {
+                            if (snapshot.data!.length > 0) {
                               return SliverList(
                                 delegate: SliverChildBuilderDelegate(
                                   (context, index) =>
-                                      BodyCard(thing: snapshot.data[index]),
-                                  childCount: snapshot.data.length,
+                                      BodyCard(thing: snapshot.data![index]),
+                                  childCount: snapshot.data!.length,
                                 ),
                               );
                             } else {
@@ -158,12 +158,12 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
                             AsyncSnapshot<UnmodifiableListView<Achievement>>
                                 snapshot) {
                           if (snapshot.hasData) {
-                            if (snapshot.data.length > 0) {
+                            if (snapshot.data!.length > 0) {
                               return SliverList(
                                 delegate: SliverChildBuilderDelegate(
                                     (context, index) => AchListItem(
-                                        achievement: snapshot.data[index]),
-                                    childCount: snapshot.data.length),
+                                        achievement: snapshot.data![index]),
+                                    childCount: snapshot.data!.length),
                               );
                             } else {
                               return SliverToBoxAdapter(
@@ -216,8 +216,10 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
                 ),
               ),
       ),
-      floatingActionButton: bloc.currSession == null? null:fab,
-      floatingActionButtonLocation: bloc.currSession == null? null:FloatingActionButtonLocation.endDocked,
+      floatingActionButton: bloc.currSession == null ? null : fab,
+      floatingActionButtonLocation: bloc.currSession == null
+          ? null
+          : FloatingActionButtonLocation.endDocked,
     );
   }
 }
@@ -234,18 +236,18 @@ class AchListItem extends StatefulWidget {
   final Achievement achievement;
 
   AchListItem({
-    Key key,
-    this.achievement,
-  })  : this.title = achievement.title,
-        this.company = achievement.body.bodyName,
-        this.icon = achievement.body.bodyImageURL,
-        this.forText = achievement.event != null
-            ? achievement.event.eventName
-            : "No event name specified",
-        this.importance = achievement.description,
-        this.isVerified = achievement.verified,
-        this.isDismissed = achievement.dismissed,
-        this.isHidden = achievement.hidden,
+    Key? key,
+    required this.achievement,
+  })  : this.title = achievement.title ?? "",
+        this.company = achievement.body?.bodyName ?? "",
+        this.icon = achievement.body?.bodyImageURL ?? "",
+        this.forText = (achievement.event != null
+            ? achievement.event!.eventName
+            : "No event name specified")!,
+        this.importance = achievement.description ?? "",
+        this.isVerified = achievement.verified ?? false,
+        this.isDismissed = achievement.dismissed ?? false,
+        this.isHidden = achievement.hidden ?? false,
         super(key: key);
 
   @override
@@ -314,7 +316,7 @@ class _AchListItemState extends State<AchListItem> {
 }
 
 class BodyCard extends StatefulWidget {
-  final Body thing;
+  final Body? thing;
 
   BodyCard({this.thing});
 
@@ -326,22 +328,22 @@ class BodyCardState extends State<BodyCard> {
     var theme = Theme.of(context);
     return ListTile(
       title: Text(
-        widget.thing.bodyName,
+        widget.thing?.bodyName ?? "",
         style: theme.textTheme.headline6,
       ),
       enabled: true,
       leading: NullableCircleAvatar(
-        widget.thing.bodyImageURL ?? widget.thing.bodyImageURL,
+        widget.thing?.bodyImageURL ?? widget.thing?.bodyImageURL ?? "",
         Icons.event_outlined,
-        heroTag: widget.thing.bodyID,
+        heroTag: widget.thing?.bodyID ?? "",
       ),
-      subtitle: Text(widget.thing.bodyShortDescription),
+      subtitle: Text(widget.thing?.bodyShortDescription ?? ""),
       onTap: () {
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => VerifyAchPage(
-                      bodyId: widget.thing.bodyID,
+                      bodyId: widget.thing?.bodyID,
                     )));
       },
     );

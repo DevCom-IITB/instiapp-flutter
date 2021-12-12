@@ -20,7 +20,7 @@ class _QueryAddPageState extends State<QueryAddPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   final _formKey = GlobalKey<FormState>();
 
-  String _selectedCategory;
+  String? _selectedCategory;
   PostFAQRequest currRequest = PostFAQRequest();
 
   List<String> categories = [
@@ -41,7 +41,7 @@ class _QueryAddPageState extends State<QueryAddPage> {
 
   // builds dropdown menu for event choice
   Widget buildDropdownMenuItemsCategory(
-      BuildContext context, String category, String itemDesignation) {
+      BuildContext context, String? category) {
     print("Entered build dropdown menu items");
     if (category == null) {
       return Container(
@@ -53,7 +53,7 @@ class _QueryAddPageState extends State<QueryAddPage> {
     }
     return Container(
       child: ListTile(
-        title: Text(valueToCategory[category]),
+        title: Text(valueToCategory[category]!),
       ),
     );
   }
@@ -71,12 +71,12 @@ class _QueryAddPageState extends State<QueryAddPage> {
             ),
       child: ListTile(
         selected: isSelected,
-        title: Text(valueToCategory[category]),
+        title: Text(valueToCategory[category]!),
       ),
     );
   }
 
-  void onCategoryChange(String category) {
+  void onCategoryChange(String? category) {
     setState(() {
       currRequest.category = category;
       _selectedCategory = category;
@@ -114,7 +114,7 @@ class _QueryAddPageState extends State<QueryAddPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -141,130 +141,127 @@ class _QueryAddPageState extends State<QueryAddPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                   ),
                 )
-              : RefreshIndicator(
-                  onRefresh: () {
-                    return;
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(7.0),
-                    child: SingleChildScrollView(
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                  margin: EdgeInsets.fromLTRB(
-                                      15.0, 15.0, 10.0, 5.0),
-                                  child: Text(
-                                    "Couldn't find what you're looking for?",
-                                    style: theme.textTheme.headline4,
-                                  )),
-                              SizedBox(
-                                height: 40,
-                              ),
-                              Container(
-                                  margin: EdgeInsets.fromLTRB(
-                                      15.0, 5.0, 15.0, 10.0),
-                                  child: TextFormField(
-                                    maxLength: 200,
-                                    decoration: InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      labelText: "Question",
-                                    ),
-                                    autocorrect: true,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        currRequest.question = value;
-                                      });
-                                    },
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Question should not be empty';
-                                      }
-                                      return null;
-                                    },
-                                  )),
-                              Container(
-                                  margin:
-                                      EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 0.0),
-                                  child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        SizedBox(
-                                          height: 20.0,
-                                        ),
-                                        DropdownSearch<String>(
-                                          mode: Mode.DIALOG,
-                                          maxHeight: 700,
-                                          isFilteredOnline: false,
-                                          showSearchBox: true,
-                                          label: "Category",
-                                          hint: "Category",
-                                          items: categories,
-                                          onChanged: onCategoryChange,
-                                          dropdownBuilder:
-                                              buildDropdownMenuItemsCategory,
-                                          popupItemBuilder:
-                                              _customPopupItemBuilderCategory,
-                                          popupSafeArea: PopupSafeArea(
-                                              top: true, bottom: true),
-                                          scrollbarProps: ScrollbarProps(
-                                            isAlwaysShown: true,
-                                            thickness: 7,
-                                          ),
-                                          emptyBuilder:
-                                              (BuildContext context, String _) {
-                                            return Container(
-                                              alignment: Alignment.center,
-                                              padding: EdgeInsets.all(20),
-                                              child: Text(
-                                                "No events found. Refine your search!",
-                                                style:
-                                                    theme.textTheme.subtitle1,
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ])),
-                              Container(
-                                width: double.infinity,
-                                margin: EdgeInsets.symmetric(
-                                    vertical: 10.0, horizontal: 15.0),
-                                child: TextButton(
-                                  onPressed: () async {
-                                    if (_formKey.currentState.validate()) {
-                                      var resp =
-                                          await bloc.postFAQ(currRequest);
-                                      // if (resp.result == "success") {
-                                      Navigator.of(context).pushNamed("/query");
-                                      // } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                        content: new Text(currRequest.question +
-                                            ":" +
-                                            currRequest.category),
-                                        duration: new Duration(seconds: 10),
-                                      ));
-                                      // }
-                                    }
-
-                                    //log(currRequest.description);
+              : Padding(
+                  padding: const EdgeInsets.all(7.0),
+                  child: SingleChildScrollView(
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                                margin:
+                                    EdgeInsets.fromLTRB(15.0, 15.0, 10.0, 5.0),
+                                child: Text(
+                                  "Couldn't find what you're looking for?",
+                                  style: theme.textTheme.headline4,
+                                )),
+                            SizedBox(
+                              height: 40,
+                            ),
+                            Container(
+                                margin:
+                                    EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0),
+                                child: TextFormField(
+                                  maxLength: 200,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: "Question",
+                                  ),
+                                  autocorrect: true,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      currRequest.question = value;
+                                    });
                                   },
-                                  child: Text('Submit Question'),
-                                  style: TextButton.styleFrom(
-                                      primary: Colors.black,
-                                      backgroundColor: Colors.amber,
-                                      onSurface: Colors.grey,
-                                      elevation: 5.0),
-                                ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Question should not be empty';
+                                    }
+                                    return null;
+                                  },
+                                )),
+                            Container(
+                                margin:
+                                    EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 0.0),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      SizedBox(
+                                        height: 20.0,
+                                      ),
+                                      DropdownSearch<String>(
+                                        mode: Mode.DIALOG,
+                                        maxHeight: 700,
+                                        isFilteredOnline: false,
+                                        showSearchBox: true,
+                                        dropdownSearchDecoration:
+                                            InputDecoration(
+                                          labelText: "Category",
+                                          hintText: "Category",
+                                        ),
+                                        items: categories,
+                                        onChanged: onCategoryChange,
+                                        dropdownBuilder:
+                                            buildDropdownMenuItemsCategory,
+                                        popupItemBuilder:
+                                            _customPopupItemBuilderCategory,
+                                        popupSafeArea: PopupSafeAreaProps(
+                                            top: true, bottom: true),
+                                        scrollbarProps: ScrollbarProps(
+                                          isAlwaysShown: true,
+                                          thickness: 7,
+                                        ),
+                                        emptyBuilder:
+                                            (BuildContext context, String? _) {
+                                          return Container(
+                                            alignment: Alignment.center,
+                                            padding: EdgeInsets.all(20),
+                                            child: Text(
+                                              "No events found. Refine your search!",
+                                              style: theme.textTheme.subtitle1,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ])),
+                            Container(
+                              width: double.infinity,
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 15.0),
+                              child: TextButton(
+                                onPressed: () async {
+                                  if (_formKey.currentState?.validate() ??
+                                      false) {
+                                    var resp = await bloc.postFAQ(currRequest);
+                                    // if (resp.result == "success") {
+                                    Navigator.of(context).pushNamed("/query");
+                                    // } else {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: new Text(
+                                          (currRequest.question ?? "") +
+                                              ":" +
+                                              (currRequest.category ?? "")),
+                                      duration: new Duration(seconds: 10),
+                                    ));
+                                    // }
+                                  }
+
+                                  //log(currRequest.description);
+                                },
+                                child: Text('Submit Question'),
+                                style: TextButton.styleFrom(
+                                    primary: Colors.black,
+                                    backgroundColor: Colors.amber,
+                                    onSurface: Colors.grey,
+                                    elevation: 5.0),
                               ),
-                            ]),
-                      ),
+                            ),
+                          ]),
                     ),
                   ),
                 )),
@@ -273,8 +270,8 @@ class _QueryAddPageState extends State<QueryAddPage> {
 }
 
 class VerifyCard extends StatefulWidget {
-  final Event thing;
-  final bool selected;
+  final Event? thing;
+  final bool? selected;
 
   VerifyCard({this.thing, this.selected});
 
@@ -284,20 +281,21 @@ class VerifyCard extends StatefulWidget {
 class Card extends State<VerifyCard> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    if (widget.selected) {
+    if (widget.selected ?? false) {
       return ListTile(
         title: Text(
-          widget.thing.eventName,
+          widget.thing?.eventName ?? "",
           style: theme.textTheme.headline6,
         ),
         enabled: true,
         leading: NullableCircleAvatar(
-          widget.thing.eventImageURL ??
-              widget.thing.eventBodies[0].bodyImageURL,
+          widget.thing?.eventImageURL ??
+              widget.thing?.eventBodies?[0].bodyImageURL ??
+              "",
           Icons.event_outlined,
-          heroTag: widget.thing.eventID,
+          heroTag: widget.thing?.eventID ?? "",
         ),
-        subtitle: Text(widget.thing.getSubTitle()),
+        subtitle: Text(widget.thing?.getSubTitle() ?? ""),
       );
     } else {
       return SizedBox(height: 10);
@@ -306,8 +304,8 @@ class Card extends State<VerifyCard> {
 }
 
 class BodyCard extends StatefulWidget {
-  final Body thing;
-  final bool selected;
+  final Body? thing;
+  final bool? selected;
 
   BodyCard({this.thing, this.selected});
 
@@ -317,19 +315,19 @@ class BodyCard extends StatefulWidget {
 class BodyCardState extends State<BodyCard> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    if (widget.selected) {
+    if (widget.selected ?? false) {
       return ListTile(
         title: Text(
-          widget.thing.bodyName,
+          widget.thing?.bodyName ?? "",
           style: theme.textTheme.headline6,
         ),
         enabled: true,
         leading: NullableCircleAvatar(
-          widget.thing.bodyImageURL ?? widget.thing.bodyImageURL,
+          widget.thing?.bodyImageURL ?? widget.thing?.bodyImageURL ?? "",
           Icons.event_outlined,
-          heroTag: widget.thing.bodyID,
+          heroTag: widget.thing?.bodyID ?? "",
         ),
-        subtitle: Text(widget.thing.bodyShortDescription),
+        subtitle: Text(widget.thing?.bodyShortDescription ?? ""),
       );
     } else {
       return SizedBox(height: 10);
@@ -343,9 +341,9 @@ class QRViewExample extends StatefulWidget {
 }
 
 class _QRViewExampleState extends State<QRViewExample> {
-  Barcode result;
+  Barcode? result;
   bool processing = false;
-  QRViewController controller;
+  QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
   // In order to get hot reload to work we need to pause the camera if the platform
@@ -387,7 +385,7 @@ class _QRViewExampleState extends State<QRViewExample> {
         var secret = uri.substring(uri.lastIndexOf("s=") + 2);
         // if offerid is null return or scan again
         if (offerid == '' || secret == '') {
-          bool addToCal = await showDialog(
+          bool? addToCal = await showDialog(
               context: context,
               builder: (context) => AlertDialog(
                     title: Text("Invalid Achievement Code"),
@@ -396,14 +394,14 @@ class _QRViewExampleState extends State<QRViewExample> {
                         child: Text("Scan Again"),
                         onPressed: () {
                           Navigator.of(context).pop(true);
-                          controller.resumeCamera();
+                          controller?.resumeCamera();
                           processing = false;
                         },
                       ),
                       TextButton(
                         child: Text("Return"),
                         onPressed: () {
-                          controller.dispose();
+                          controller?.dispose();
                           processing = false;
                           Navigator.of(context).pop();
                           Navigator.of(context).pop();
@@ -420,17 +418,17 @@ class _QRViewExampleState extends State<QRViewExample> {
           var achievements = bloc.achievementBloc;
           SecretResponse offer =
               await achievements.postAchievementOffer(offerid, secret);
-          log(offer.message);
+          log(offer.message ?? "");
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(offer.message)),
+            SnackBar(content: Text(offer.message ?? "")),
           );
-          controller.dispose();
+          controller?.dispose();
           processing = false;
           Navigator.of(context).pop();
         }
       } else {
         log('1');
-        bool addToCal = await showDialog(
+        bool? addToCal = await showDialog(
             context: context,
             builder: (context) => AlertDialog(
                   title: Text("Invalid Qr Code"),
@@ -439,14 +437,14 @@ class _QRViewExampleState extends State<QRViewExample> {
                       child: Text("Scan Again"),
                       onPressed: () {
                         Navigator.of(context).pop(true);
-                        controller.resumeCamera();
+                        controller?.resumeCamera();
                         processing = false;
                       },
                     ),
                     TextButton(
                       child: Text("Return"),
                       onPressed: () {
-                        controller.dispose();
+                        controller?.dispose();
                         processing = false;
                         Navigator.of(context).pop(true);
                         Navigator.of(context).pop(true);
@@ -472,9 +470,9 @@ class _QRViewExampleState extends State<QRViewExample> {
         controller.scannedDataStream.listen((scanData) {
           setState(() {
             result = scanData;
-            log(result.code);
+            log(result!.code ?? "");
             if (!processing) {
-              getOfferedAchievements(result.code);
+              getOfferedAchievements(result!.code ?? "");
               processing = true;
               controller.pauseCamera();
             }

@@ -30,14 +30,14 @@ class NewComplaintPage extends StatefulWidget {
 }
 
 class _ComplaintCreateRequest {
-  String description;
-  String suggestions;
-  String locationDetail;
-  String locationDescription;
-  double complaintLatitude;
-  double complaintLongitude;
-  List<String> tags;
-  List<File> images;
+  String? description;
+  String? suggestions;
+  String? locationDetail;
+  String? locationDescription;
+  double? complaintLatitude;
+  double? complaintLongitude;
+  List<String>? tags;
+  List<File>? images;
 }
 
 class _NewComplaintPageState extends State<NewComplaintPage> {
@@ -49,10 +49,10 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
 
   static LatLng iitAreaLocation = LatLng(19.133810, 72.913257);
 
-  GoogleMapController _mapController;
-  GoogleMapsPlaces _places;
-  Marker _currMarker;
-  LatLng _currPos;
+  GoogleMapController? _mapController;
+  GoogleMapsPlaces? _places;
+  Marker? _currMarker;
+  LatLng? _currPos;
 
   _ComplaintCreateRequest currRequest = _ComplaintCreateRequest();
   TextEditingController _tagController = TextEditingController();
@@ -136,7 +136,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
         });
 
         var finalPos = _currPos ?? (await getCurrLocation()) ?? iitAreaLocation;
-        if (_formKey.currentState.validate()) {
+        if ((_formKey.currentState?.validate() ?? false)) {
           var req = ComplaintCreateRequest();
           req.complaintDescription = currRequest.description;
           req.complaintSuggestions = currRequest.suggestions ?? "";
@@ -146,11 +146,11 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
           req.complaintLatitude = finalPos.latitude;
           req.complaintLongitude = finalPos.longitude;
 
-          req.tags = _chipsKey.currentState.tags.toList();
-          if (currRequest?.images?.isNotEmpty ?? false) {
+          req.tags = _chipsKey.currentState?.tags.toList();
+          if (currRequest.images?.isNotEmpty ?? false) {
             var encNum = 0;
             var uploadNum = 0;
-            var totNum = currRequest.images.length;
+            var totNum = currRequest.images?.length;
 
             setState(() {
               _uploadingImages = true;
@@ -159,7 +159,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
             });
 
             req.images =
-                await Future.wait(currRequest.images.map((File f) async {
+                await Future.wait(currRequest.images!.map((File f) async {
               var s = convert
                   .base64Encode(await FlutterImageCompress.compressWithFile(
                 f.path,
@@ -174,7 +174,8 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
             }).map((Future<String> base64Image) async {
               var url =
                   (await complaintsBloc.uploadBase64Image(await base64Image))
-                      .pictureURL;
+                          .pictureURL ??
+                      "";
               setState(() {
                 uploadNum++;
                 _uploadingStatus = "$uploadNum/$totNum";
@@ -190,7 +191,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
           }
 
           var resp = await complaintsBloc.postComplaint(req);
-          print(resp?.complaintID);
+          print(resp.complaintID);
           ComplaintPage.navigateWith(context, bloc, resp, replace: true);
         }
 
@@ -215,7 +216,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -260,7 +261,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                           child: ListView(
                             padding: EdgeInsets.all(8.0),
                             scrollDirection: Axis.horizontal,
-                            children: currRequest.images.map((im) {
+                            children: currRequest.images!.map((im) {
                               return InkWell(
                                 onLongPress: () {
                                   showRemoveImageDialog(context, im);
@@ -322,7 +323,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                             TextSpan(
                                 text: "images ",
                                 style: theme.textTheme.bodyText2
-                                    .copyWith(fontWeight: FontWeight.bold)),
+                                    ?.copyWith(fontWeight: FontWeight.bold)),
                             TextSpan(text: "selected."),
                           ]),
                         ),
@@ -333,7 +334,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                     label: Text("Upload Images"),
                     icon: Icon(Icons.image_outlined),
                     onPressed: () async {
-                      File imageFile = await showDialog(
+                      File? imageFile = await showDialog(
                           context: context,
                           builder: (BuildContext context) {
                             return SimpleDialog(
@@ -354,7 +355,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                                   ),
                                   onPressed: () async {
                                     Navigator.of(context).pop(
-                                        await ImagePicker.pickImage(
+                                        await ImagePicker().pickImage(
                                             source: ImageSource.camera));
                                   },
                                 ),
@@ -374,7 +375,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                                   ),
                                   onPressed: () async {
                                     Navigator.of(context).pop(
-                                        await ImagePicker.pickImage(
+                                        await ImagePicker().pickImage(
                                             source: ImageSource.gallery));
                                   },
                                 ),
@@ -384,7 +385,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                       if (imageFile != null) {
                         currRequest.images = currRequest.images ?? [];
                         setState(() {
-                          currRequest.images.add(imageFile);
+                          currRequest.images!.add(imageFile);
                         });
                       }
                     },
@@ -403,7 +404,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                 ),
                 autocorrect: true,
                 validator: (value) {
-                  if (value.isEmpty) {
+                  if (value?.isEmpty ?? false) {
                     return "Please enter a description to your complaint/suggestion";
                   }
                   currRequest.description = value;
@@ -463,19 +464,19 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                 hideSuggestionsOnKeyboardHide: false,
                 getImmediateSuggestions: true,
                 onSuggestionSelected: (TagUri tag) {
-                  _tagController.text = tag.tagUri;
+                  _tagController.text = tag.tagUri ?? "";
                   _textTagController.text = "";
                 },
                 suggestionsCallback: (q) async {
                   RegExp exp = RegExp(".*" + q.split("").join(".*") + ".*",
                       caseSensitive: false);
                   return (await _tagListCompleter.future)
-                      .where((t) => exp.hasMatch(t.tagUri))
+                      .where((t) => exp.hasMatch(t.tagUri ?? ""))
                       .toList();
                 },
                 itemBuilder: (context, TagUri suggestion) {
                   return ListTile(
-                    title: Text(suggestion.tagUri),
+                    title: Text(suggestion.tagUri ?? ""),
                   );
                 },
                 textFieldConfiguration: TextFieldConfiguration(
@@ -528,7 +529,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                 onMapCreated: _onMapCreated,
                 initialCameraPosition:
                     CameraPosition(target: iitAreaLocation, zoom: 16),
-                markers: _currMarker != null ? Set.from([_currMarker]) : null,
+                markers: _currMarker != null ? Set.from([_currMarker]) : Set(),
                 scrollGesturesEnabled: true,
                 rotateGesturesEnabled: true,
                 zoomGesturesEnabled: true,
@@ -568,7 +569,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
               onPressed: () {
                 Navigator.of(context).pop();
                 setState(() {
-                  currRequest.images.remove(im);
+                  currRequest.images?.remove(im);
                 });
               },
             ),
@@ -586,22 +587,24 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
     setState(() {
       _currMarker = Marker(
         markerId: MarkerId("$_currPos"),
-        position: _currPos,
+        position: _currPos ?? LatLng(0, 0),
         infoWindow: InfoWindow(
           title: currLocation == null ? "IIT Area" : "Your Location",
         ),
       );
     });
-    controller.moveCamera(CameraUpdate.newLatLngZoom(_currPos, 16));
+    controller
+        .moveCamera(CameraUpdate.newLatLngZoom(_currPos ?? LatLng(0, 0), 16));
   }
 
-  Future<LatLng> getCurrLocation() async {
+  Future<LatLng?> getCurrLocation() async {
     // var currentLocation = <String, double>{};
-    loc.LocationData currentLocation;
+    loc.LocationData? currentLocation;
     final location = loc.Location();
     try {
       currentLocation = await location.getLocation();
-      return LatLng(currentLocation.latitude, currentLocation.longitude);
+      return LatLng(
+          currentLocation.latitude ?? 0, currentLocation.longitude ?? 0);
     } on PlatformException {
       currentLocation = null;
       return null;
@@ -611,24 +614,25 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
   Future<void> _handlePressButton() async {
     final center = await getCurrLocation();
     try {
-      Prediction p = await PlacesAutocomplete.show(
+      Prediction? p = await PlacesAutocomplete.show(
           context: context,
           strictbounds: center == null ? false : true,
           apiKey: widget.apiKey,
           mode: Mode.overlay,
           language: "en",
           location: center == null
-              ? iitAreaLocation
-              : Location(center.latitude, center.longitude),
+              ? Location(
+                  lat: iitAreaLocation.latitude, lng: iitAreaLocation.longitude)
+              : Location(lat: center.latitude, lng: center.longitude),
           radius: center == null ? null : 10000);
 
-      PlacesDetailsResponse detail =
-          await _places.getDetailsByPlaceId(p.placeId);
+      PlacesDetailsResponse? detail =
+          await _places?.getDetailsByPlaceId(p?.placeId??"");
 
-      var selLocation = LatLng(detail.result.geometry.location.lat,
-          detail.result.geometry.location.lng);
+      var selLocation = LatLng(detail?.result.geometry?.location.lat??0,
+          detail?.result.geometry?.location.lng??0);
       _currPos = selLocation;
-      currRequest.locationDescription = detail.result.name;
+      currRequest.locationDescription = detail?.result.name;
 
       setState(() {
         _currMarker = Marker(
@@ -636,8 +640,8 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
           position: selLocation,
           visible: true,
           infoWindow: InfoWindow(
-            title: detail.result.name,
-            snippet: detail.result.formattedAddress,
+            title: detail?.result.name,
+            snippet: detail?.result.formattedAddress,
           ),
         );
       });
@@ -648,7 +652,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
     }
   }
 
-  Future<List<String>> _extractTagUris(Future<List<TagUri>> future) async {
+  Future<List<String?>> _extractTagUris(Future<List<TagUri>> future) async {
     return (await future).map((t) => t.tagUri).toList();
   }
 }

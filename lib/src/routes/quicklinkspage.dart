@@ -76,7 +76,7 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
