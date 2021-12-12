@@ -9,7 +9,7 @@ import 'package:InstiApp/src/api/model/mess.dart';
 import 'dart:collection';
 
 class MessPage extends StatefulWidget {
-  MessPage({Key key}) : super(key: key);
+  MessPage({Key? key}) : super(key: key);
 
   @override
   _MessPageState createState() => _MessPageState();
@@ -54,7 +54,7 @@ class _MessPageState extends State<MessPage> {
                 semanticLabel: "Show navigation drawer",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -81,13 +81,14 @@ class _MessPageState extends State<MessPage> {
                     if (currHostel == "0")
                       currHostel = bloc.currSession?.profile?.hostel ?? "1";
                     if (hostels.hasData) {
-                      var currMess = hostels.data
+                      var currMess = hostels.data!
                           .firstWhere((h) => h.shortName == currHostel)
                           .mess
-                        ..sort((h1, h2) => h1.compareTo(h2));
+                        ?..sort((h1, h2) => h1.compareTo(h2));
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: currMess.map(_buildSingleDayMess).toList(),
+                        children:
+                            currMess?.map(_buildSingleDayMess).toList() ?? [],
                       );
                     } else {
                       return Center(
@@ -125,24 +126,25 @@ class _MessPageState extends State<MessPage> {
       stream: bloc.hostels,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          var val = snapshot.data.indexWhere((h) => h.shortName == currHostel);
+          var val = snapshot.data!.indexWhere((h) => h.shortName == currHostel);
           return DropdownButton<int>(
             hint: Text("Reload"),
             value: val != -1 ? val : null,
-            items: snapshot.data
+            items: snapshot.data!
                 .asMap()
                 .entries
                 .map((entry) => DropdownMenuItem<int>(
                       child: Text(
-                        entry.value.name,
+                        entry.value.name ?? "",
                       ),
                       value: entry.key,
                     ))
                 .toList(),
-            style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor),
+            style:
+                theme.textTheme.subtitle1?.copyWith(color: theme.accentColor),
             onChanged: (h) {
               setState(() {
-                currHostel = snapshot.data[h].shortName;
+                currHostel = snapshot.data![h ?? 0].shortName ?? "0";
               });
             },
           );
@@ -169,40 +171,40 @@ class _MessPageState extends State<MessPage> {
         children: <Widget>[
           Text(
             mess.getDayName(),
-            style: localTheme.headline5.copyWith(fontWeight: FontWeight.bold),
+            style: localTheme.headline5?.copyWith(fontWeight: FontWeight.bold),
           ),
           SizedBox(
             height: 8.0,
           ),
           Text(
             "Breakfast",
-            style: localTheme.headline6.copyWith(color: theme.accentColor),
+            style: localTheme.headline6?.copyWith(color: theme.accentColor),
           ),
-          ContentText(mess.breakfast, context),
+          ContentText(mess.breakfast ?? "", context),
           SizedBox(
             height: 8.0,
           ),
           Text(
             "Lunch",
-            style: localTheme.headline6.copyWith(color: theme.accentColor),
+            style: localTheme.headline6?.copyWith(color: theme.accentColor),
           ),
-          ContentText(mess.lunch, context),
+          ContentText(mess.lunch ?? "", context),
           SizedBox(
             height: 8.0,
           ),
           Text(
             "Snacks",
-            style: localTheme.headline6.copyWith(color: theme.accentColor),
+            style: localTheme.headline6?.copyWith(color: theme.accentColor),
           ),
-          ContentText(mess.snacks, context),
+          ContentText(mess.snacks ?? "", context),
           SizedBox(
             height: 8.0,
           ),
           Text(
             "Dinner",
-            style: localTheme.headline6.copyWith(color: theme.accentColor),
+            style: localTheme.headline6?.copyWith(color: theme.accentColor),
           ),
-          ContentText(mess.dinner, context),
+          ContentText(mess.dinner ?? "", context),
           SizedBox(
             height: 8.0,
           ),

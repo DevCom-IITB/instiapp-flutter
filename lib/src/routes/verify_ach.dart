@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import '../drawer.dart';
 
 class VerifyAchPage extends StatefulWidget {
-  final String bodyId;
-  const VerifyAchPage({Key key, this.bodyId}) : super(key: key);
+  final String? bodyId;
+  const VerifyAchPage({Key? key, this.bodyId}) : super(key: key);
 
   @override
   _VerifyAchPageState createState() => _VerifyAchPageState();
@@ -26,7 +26,7 @@ class _VerifyAchPageState extends State<VerifyAchPage> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context).bloc;
     var verifyBloc = bloc.bodyAchBloc;
-    print("Body id:" + widget.bodyId);
+    print("Body id:" + (widget.bodyId ?? ""));
 
     if (bloc.currSession == null) {
       Navigator.pop(context);
@@ -60,7 +60,7 @@ class _VerifyAchPageState extends State<VerifyAchPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -92,13 +92,13 @@ class _VerifyAchPageState extends State<VerifyAchPage> {
                       AsyncSnapshot<UnmodifiableListView<Achievement>>
                           snapshot) {
                     if (snapshot.hasData) {
-                      if (snapshot.data.length > 0) {
+                      if (snapshot.data!.length > 0) {
                         print(snapshot.data);
                         return SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
                               print(index);
-                              var data = snapshot.data[index];
+                              var data = snapshot.data![index];
                               print("Data " +
                                   index.toString() +
                                   ": " +
@@ -107,7 +107,7 @@ class _VerifyAchPageState extends State<VerifyAchPage> {
                                 achievement: data,
                               );
                             },
-                            childCount: snapshot.data.length,
+                            childCount: snapshot.data!.length,
                           ),
                         );
                       } else {
@@ -160,9 +160,9 @@ class _VerifyAchPageState extends State<VerifyAchPage> {
 }
 
 class VerifyListItem extends StatefulWidget {
-  final Achievement achievement;
+  final Achievement? achievement;
 
-  const VerifyListItem({Key key, this.achievement}) : super(key: key);
+  const VerifyListItem({Key? key, this.achievement}) : super(key: key);
 
   @override
   _VerifyListItemState createState() => _VerifyListItemState();
@@ -185,7 +185,8 @@ class _VerifyListItemState extends State<VerifyListItem> {
     Widget continueButton = ElevatedButton(
       child: Text("Yes"),
       onPressed: () {
-        verifyBloc.deleteAchievement(widget.achievement.id, widget.achievement.body.bodyID);
+        verifyBloc.deleteAchievement(
+            widget.achievement.id, widget.achievement.body.bodyID);
         Navigator.of(context).pop();
       },
     );
@@ -213,8 +214,8 @@ class _VerifyListItemState extends State<VerifyListItem> {
     return Column(
       children: [
         DefListItem(
-          title: widget.achievement.title ?? "No title",
-          company: widget.achievement.user.userName ?? "Anonymous",
+          title: widget.achievement?.title ?? "No title",
+          company: widget.achievement?.user?.userName ?? "Anonymous",
           forText: widget.achievement.event != null
               ? widget.achievement.event.eventName
               : null,

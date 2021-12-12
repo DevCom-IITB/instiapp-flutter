@@ -8,8 +8,6 @@ import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
-import 'package:jaguar/jaguar.dart' as jag;
-import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
 
 class LoginPage extends StatefulWidget {
   final InstiAppBloc bloc;
@@ -29,14 +27,14 @@ class _LoginPageState extends State<LoginPage> {
   final String httpGymkhanaUrl = "http://gymkhana.iitb.ac.in";
   final String ssoLogin = "https://sso.iitb.ac.in/login";
   final String ssoAuth = "https://sso.iitb.ac.in/authorize";
-  InstiAppBloc _bloc;
-  StreamSubscription<String> onUrlChangedSub;
-  StreamSubscription<WebViewStateChanged> onStateChangedSub;
+  InstiAppBloc? _bloc;
+  StreamSubscription<String>? onUrlChangedSub;
+  StreamSubscription<WebViewStateChanged>? onStateChangedSub;
 
   String statusMessage = "Initializing";
 
-  String loginurl;
-  Session currSession;
+  String? loginurl;
+  Session? currSession;
 
   @override
   void dispose() {
@@ -55,20 +53,19 @@ class _LoginPageState extends State<LoginPage> {
 
     // Creating login url
     loginurl = "http://127.0.0.1:9399/" +
-        ((_bloc.brightness.toBrightness() == Brightness.dark)
+        ((_bloc!.brightness.toBrightness() == Brightness.dark)
             ? "login_dark.html"
             : "login.html");
     print("Formed URL: $loginurl");
 
-    checkLogin().then((Session sess) {
+    checkLogin().then((Session? sess) {
       // If session already exists, continue to homepage with current session
       if (sess != null) {
-        _bloc.patchFcmKey().then((_) {
+        _bloc!.patchFcmKey().then((_) {
           _bloc?.reloadCurrentUser();
         });
-        
 
-        Navigator.of(context).pushReplacementNamed(_bloc?.homepageName);
+        Navigator.of(context).pushReplacementNamed(_bloc!.homepageName);
         return;
       }
 
@@ -78,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
         await Future.delayed(Duration(milliseconds: 200));
         var mqdata = MediaQuery.of(context);
         flutterWebviewPlugin.launch(
-          loginurl,
+          loginurl!,
           hidden: false,
           withJavascript: true,
           clearCookies: true,
@@ -96,13 +93,13 @@ class _LoginPageState extends State<LoginPage> {
         if (url.startsWith(ssoLogin)) {
           print("onUrlChanged: Going to sso authorize");
         } else if (url.startsWith(guestUrl)) {
-          this.onUrlChangedSub.cancel();
-          this.onStateChangedSub.cancel();
+          this.onUrlChangedSub!.cancel();
+          this.onStateChangedSub?.cancel();
           print("onUrlChanged: Closing Web View");
           flutterWebviewPlugin.close();
 
           Navigator.of(context)
-              .pushNamedAndRemoveUntil(_bloc?.homepageName, (r) => false);
+              .pushNamedAndRemoveUntil(_bloc!.homepageName, (r) => false);
         } else if (url.startsWith(gymkhanaUrl)) {
           print("onUrlChanged: Hiding Web View");
           flutterWebviewPlugin.hide();
@@ -120,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
 
           print("onUrlChanged: Hiding Web View");
           flutterWebviewPlugin.hide();
-          login(code, "https://www.insti.app/login-android.html");
+          login(code ?? "", "https://www.insti.app/login-android.html");
         } else if (!url.startsWith("http://127.0.0.1")) {
           print("Going to unintented website");
           // flutterWebviewPlugin.reloadUrl(loginurl);
@@ -153,8 +150,8 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  Future<Session> checkLogin() async {
-    await _bloc.restorePrefs();
+  Future<Session?> checkLogin() async {
+    await _bloc?.restorePrefs();
     return _bloc?.currSession;
   }
 
@@ -185,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
               style: Theme.of(context)
                   .textTheme
                   .headline4
-                  .copyWith(color: Theme.of(context).accentColor),
+                  ?.copyWith(color: Theme.of(context).accentColor),
             ),
             CircularProgressIndicatorExtended(
               label: Text(statusMessage),
@@ -212,16 +209,16 @@ class _LoginPageState extends State<LoginPage> {
       response = await InstiAppApi().login(authCode, redirectUrl);
     } catch (e) {}
     if (response?.sessionid != null) {
-      _bloc.updateSession(response);
+      _bloc?.updateSession(response);
       setState(() {
         statusMessage = "Logged in";
       });
-      _bloc.patchFcmKey();
+      _bloc?.patchFcmKey();
 
-      Navigator.of(context).pushReplacementNamed(_bloc?.homepageName);
+      Navigator.of(context).pushReplacementNamed(_bloc?.homepageName ?? "");
 
-      this.onUrlChangedSub.cancel();
-      this.onStateChangedSub.cancel();
+      this.onUrlChangedSub?.cancel();
+      this.onStateChangedSub?.cancel();
       print("login: Closing Web View");
       flutterWebviewPlugin.close();
     } else {
@@ -234,7 +231,7 @@ class _LoginPageState extends State<LoginPage> {
       print("login: Showing Web View");
       flutterWebviewPlugin.show();
       print("login: Launching Web View");
-      flutterWebviewPlugin.launch(loginurl);
+      flutterWebviewPlugin.launch(loginurl ?? "");
     }
   }
 }

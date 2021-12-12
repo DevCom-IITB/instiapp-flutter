@@ -47,7 +47,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -111,8 +111,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
       AsyncSnapshot<UnmodifiableListView<ntf.Notification>> snapshot,
       ThemeData theme,
       InstiAppBloc bloc) {
-    if (snapshot.hasData && snapshot.data.isNotEmpty) {
-      return snapshot.data
+    if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+      return snapshot.data!
           .map((n) => _buildNotificationTile(theme, bloc, n))
           .toList();
     } else {
@@ -182,17 +182,17 @@ class _NotificationsPageState extends State<NotificationsPage> {
         setState(() {});
       },
       child: ListTile(
-        title: Text(notification.getTitle()),
-        subtitle: Text(notification.getSubtitle()),
+        title: Text(notification.getTitle() ?? ""),
+        subtitle: Text(notification.getSubtitle() ?? ""),
         leading: NullableCircleAvatar(
-          notification.getAvatarUrl(),
+          notification.getAvatarUrl() ?? "",
           Icons.notifications_outlined,
-          heroTag: notification.getID(),
+          heroTag: notification.getID() ?? "",
         ),
         onTap: () {
           if (notification.isBlogPost) {
             Navigator.of(context).pushNamed(
-                notification.getBlogPost().link.contains("training")
+                (notification.getBlogPost().link?.contains("training") ?? false)
                     ? "/trainblog"
                     : "/placeblog");
           } else if (notification.isEvent) {
