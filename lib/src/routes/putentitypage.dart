@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class PutEntityPage extends StatefulWidget {
-  final String entityID;
+  final String? entityID;
   final String cookie;
   final bool isBody;
 
-  PutEntityPage({@required this.cookie, this.entityID, this.isBody = false});
+  PutEntityPage({required this.cookie, this.entityID, this.isBody = false});
 
   @override
   _PutEntityPageState createState() => _PutEntityPageState();
@@ -29,11 +29,11 @@ class _PutEntityPageState extends State<PutEntityPage> {
   bool firstBuild = true;
   bool addedCookie = false;
 
-  StreamSubscription<String> onUrlChangedSub;
-  StreamSubscription<WebViewStateChanged> onStateChangedSub;
+  StreamSubscription<String>? onUrlChangedSub;
+  StreamSubscription<WebViewStateChanged>? onStateChangedSub;
 
   // Storing for dispose
-  ThemeData theme;
+  ThemeData? theme;
 
   @override
   void initState() {
@@ -71,7 +71,7 @@ class _PutEntityPageState extends State<PutEntityPage> {
     // var bloc = BlocProvider.of(context).bloc;
     theme = Theme.of(context);
     var url =
-        "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + "/" + widget.entityID)}?${widget.cookie}&$sandboxTrueQParam";
+        "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + "/" + widget.entityID!)}?${widget.cookie}&$sandboxTrueQParam";
     return SafeWebviewScaffold(
       url: url,
       withJavascript: true,
