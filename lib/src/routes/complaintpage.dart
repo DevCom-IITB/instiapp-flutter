@@ -19,9 +19,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class ComplaintPage extends StatefulWidget {
   final String title = "Complaint";
   final Complaint? initialComplaint;
-  final Future<Complaint>? complaintFuture;
+  final Future<Complaint?> complaintFuture;
 
-  ComplaintPage({this.complaintFuture, this.initialComplaint});
+  ComplaintPage({required this.complaintFuture, this.initialComplaint});
 
   static void navigateWith(
       BuildContext context, InstiAppBloc bloc, Complaint complaint,
@@ -71,7 +71,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
   void initState() {
     super.initState();
     complaint = widget.initialComplaint;
-    widget.complaintFuture?.then((c) {
+    widget.complaintFuture.then((c) {
       if (this.mounted) {
         setState(() {
           complaint = c;
@@ -558,7 +558,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
               subtitle: Text(DateTimeUtil.getDate(v.time ?? "")),
               trailing: (deletingComment?.id?.compareTo(v.id!) ?? -1) != 0
                   ? ((v.commentedBy!.userID ?? "") ==
-                          bloc.currSession.profile?.userID
+                          bloc.currSession?.profile?.userID
                       ? PopupMenuButton<String>(
                           onSelected: (s) async {
                             if (s == "Edit") {
@@ -686,7 +686,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           NullableCircleAvatar(
-            bloc.currSession.profile?.userProfilePictureUrl ?? "",
+            bloc.currSession?.profile?.userProfilePictureUrl ?? "",
             Icons.person_outline_outlined,
           ),
           SizedBox(

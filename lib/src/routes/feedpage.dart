@@ -31,7 +31,7 @@ class _FeedPageState extends State<FeedPage> {
 
     var fab;
 
-    if (bloc.currSession.profile?.userRoles?.isNotEmpty ?? false) {
+    if (bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false) {
       // fab = FloatingActionButton(child: Icon(Icons.add_outlined), onPressed: () {},);
       fab = FloatingActionButton.extended(
         icon: Icon(Icons.add_outlined),

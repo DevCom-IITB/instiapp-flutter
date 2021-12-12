@@ -33,7 +33,7 @@ class _VerifyAchPageState extends State<VerifyAchPage> {
     }
 
     if (firstBuild) {
-      verifyBloc.updateAchievements(widget.bodyId);
+      verifyBloc.updateAchievements(widget.bodyId ?? "");
     }
 
     var fab = FloatingActionButton.extended(
@@ -69,7 +69,7 @@ class _VerifyAchPageState extends State<VerifyAchPage> {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () {
-            return verifyBloc.updateAchievements(widget.bodyId);
+            return verifyBloc.updateAchievements(widget.bodyId ?? "");
           },
           child: Padding(
             padding: EdgeInsets.all(16.0),
@@ -160,9 +160,9 @@ class _VerifyAchPageState extends State<VerifyAchPage> {
 }
 
 class VerifyListItem extends StatefulWidget {
-  final Achievement? achievement;
+  final Achievement achievement;
 
-  const VerifyListItem({Key? key, this.achievement}) : super(key: key);
+  const VerifyListItem({Key? key, required this.achievement}) : super(key: key);
 
   @override
   _VerifyListItemState createState() => _VerifyListItemState();
@@ -185,8 +185,8 @@ class _VerifyListItemState extends State<VerifyListItem> {
     Widget continueButton = ElevatedButton(
       child: Text("Yes"),
       onPressed: () {
-        verifyBloc.deleteAchievement(
-            widget.achievement.id, widget.achievement.body.bodyID);
+        verifyBloc.deleteAchievement(widget.achievement.id ?? "",
+            widget.achievement.body?.bodyID ?? "");
         Navigator.of(context).pop();
       },
     );
@@ -214,13 +214,13 @@ class _VerifyListItemState extends State<VerifyListItem> {
     return Column(
       children: [
         DefListItem(
-          title: widget.achievement?.title ?? "No title",
-          company: widget.achievement?.user?.userName ?? "Anonymous",
+          title: widget.achievement.title ?? "No title",
+          company: widget.achievement.user?.userName ?? "Anonymous",
           forText: widget.achievement.event != null
-              ? widget.achievement.event.eventName
-              : null,
-          importance: widget.achievement.description,
-          adminNote: widget.achievement.adminNote,
+              ? widget.achievement.event!.eventName ?? ""
+              : "",
+          importance: widget.achievement.description ?? "",
+          adminNote: widget.achievement.adminNote ?? "",
           isVerified: isVerified,
           isDismissed: isDismissed,
         ),

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
@@ -160,11 +161,12 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
 
             req.images =
                 await Future.wait(currRequest.images!.map((File f) async {
-              var s = convert
-                  .base64Encode(await FlutterImageCompress.compressWithFile(
+              Uint8List? compImage =
+                  await FlutterImageCompress.compressWithFile(
                 f.path,
                 quality: 60,
-              ));
+              );
+              var s = convert.base64Encode(List.from(compImage ?? []));
 
               setState(() {
                 encNum++;
@@ -174,7 +176,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
             }).map((Future<String> base64Image) async {
               var url =
                   (await complaintsBloc.uploadBase64Image(await base64Image))
-                          .pictureURL ??
+                          ?.pictureURL ??
                       "";
               setState(() {
                 uploadNum++;
@@ -191,8 +193,9 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
           }
 
           var resp = await complaintsBloc.postComplaint(req);
-          print(resp.complaintID);
-          ComplaintPage.navigateWith(context, bloc, resp, replace: true);
+          print(resp?.complaintID);
+          if (resp != null)
+            ComplaintPage.navigateWith(context, bloc, resp, replace: true);
         }
 
         setState(() {
@@ -486,11 +489,11 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                       labelText: "Tags",
                       suffixIcon: IconButton(
                         icon: (!_textTagFocusNode.hasFocus ||
-                                (_textTagController.text?.isNotEmpty ?? false))
+                                (_textTagController.text.isNotEmpty))
                             ? Icon(Icons.add_outlined)
                             : Icon(Icons.close_outlined),
                         onPressed: () {
-                          if (_textTagController.text?.isNotEmpty ?? false) {
+                          if (_textTagController.text.isNotEmpty) {
                             _tagController.text = _textTagController.text;
                             _textTagController.text = "";
                             _textTagFocusNode.unfocus();
@@ -627,10 +630,10 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
           radius: center == null ? null : 10000);
 
       PlacesDetailsResponse? detail =
-          await _places?.getDetailsByPlaceId(p?.placeId??"");
+          await _places?.getDetailsByPlaceId(p?.placeId ?? "");
 
-      var selLocation = LatLng(detail?.result.geometry?.location.lat??0,
-          detail?.result.geometry?.location.lng??0);
+      var selLocation = LatLng(detail?.result.geometry?.location.lat ?? 0,
+          detail?.result.geometry?.location.lng ?? 0);
       _currPos = selLocation;
       currRequest.locationDescription = detail?.result.name;
 
@@ -652,7 +655,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
     }
   }
 
-  Future<List<String?>> _extractTagUris(Future<List<TagUri>> future) async {
-    return (await future).map((t) => t.tagUri).toList();
+  Future<List<String>> _extractTagUris(Future<List<TagUri>> future) async {
+    return (await future).map((t) => t.tagUri ?? "").toList();
   }
 }

@@ -16,12 +16,13 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:device_calendar/device_calendar.dart' as cal;
+import 'package:timezone/timezone.dart' as tz;
 
 class EventPage extends StatefulWidget {
   final Event? initialEvent;
-  final Future<Event>? eventFuture;
+  final Future<Event?> eventFuture;
 
-  EventPage({this.eventFuture, this.initialEvent});
+  EventPage({required this.eventFuture, this.initialEvent});
 
   static void navigateWith(
       BuildContext context, InstiAppBloc bloc, Event event) {
@@ -33,7 +34,7 @@ class EventPage extends StatefulWidget {
         ),
         builder: (context) => EventPage(
           initialEvent: event,
-          eventFuture: bloc.getEvent(event.eventID),
+          eventFuture: bloc.getEvent(event.eventID ?? ""),
         ),
       ),
     );
@@ -55,9 +56,9 @@ class _EventPageState extends State<EventPage> {
   void initState() {
     super.initState();
     event = widget.initialEvent;
-    widget.eventFuture?.then((ev) {
+    widget.eventFuture.then((ev) {
       var tableParse = markdown.TableSyntax();
-      ev.eventDescription = markdown.markdownToHtml(
+      ev?.eventDescription = markdown.markdownToHtml(
           ev.eventDescription
                   ?.split('\n')
                   .map((s) => s.trimRight())
@@ -303,8 +304,8 @@ class _EventPageState extends State<EventPage> {
         setState(() {
           loadingUes = uesButton;
         });
-        await bloc.updateUesEvent(
-            event, event.eventUserUes == uesButton ? UES.NotGoing : uesButton);
+        await bloc.updateUesEvent(event!,
+            event!.eventUserUes == uesButton ? UES.NotGoing : uesButton);
         setState(() {
           loadingUes = UES.NotGoing;
           // event has changes
@@ -385,7 +386,7 @@ class _EventPageState extends State<EventPage> {
     if (calendarsResult.data != null) {
       lastCheck = false;
       // Get Calendar Permissions
-      if (bloc.defaultCalendarsSetting?.isEmpty ?? true) {
+      if (bloc.defaultCalendarsSetting.isEmpty) {
         bool? toContinue = await showDialog(
             context: context,
             builder: (context) {
@@ -438,8 +439,14 @@ class _EventPageState extends State<EventPage> {
                     description: event?.eventDescription,
                     eventId: event?.eventID,
                     title: event?.eventName,
-                    start: DateTime.parse(event.eventStartTime),
-                    end: DateTime.parse(event.eventEndTime),
+                    start: event?.eventStartTime == null
+                        ? null
+                        : tz.TZDateTime.from(
+                            DateTime.parse(event!.eventStartTime!), tz.local),
+                    end: event?.eventEndTime == null
+                        ? null
+                        : tz.TZDateTime.from(
+                            DateTime.parse(event!.eventStartTime!), tz.local),
                   );
                   return <Future<cal.Result<String>?>>[
                     calendarPlugin.createOrUpdateEvent(ev)
@@ -473,6 +480,10 @@ class _EventPageState extends State<EventPage> {
       }
     }
   }
+
+  // tz.TZDateTime? dateTimeToTZ(DateTime? dateTime){
+  //   final timeZone = TimeZone()
+  // }
 }
 
 class CalendarList extends StatefulWidget {

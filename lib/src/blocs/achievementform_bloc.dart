@@ -52,7 +52,7 @@ class Bloc extends Object {
     var currUser = await bloc.client.getUserMe(bloc.getSessionIdHeader());
 
     List<Body> listBody = [];
-    if(currUser.userRoles == null){
+    if (currUser.userRoles == null) {
       return;
     }
     for (Role role in currUser.userRoles!) {
@@ -68,14 +68,15 @@ class Bloc extends Object {
     _verBodySubject.add(UnmodifiableListView(_verifiableBodies));
   }
 
-  Future<List<Event>?> searchForEvent(String query) async {
+  Future<List<Event>> searchForEvent(String? query) async {
+    if (query == null) return <Event>[];
     if (query.length < 3) {
       return [];
     }
     var searchResponse =
         await bloc.client.search(bloc.getSessionIdHeader(), query);
 
-    if(searchResponse.events== null){
+    if (searchResponse.events == null) {
       return [];
     }
     _events = searchResponse.events!;
@@ -83,8 +84,9 @@ class Bloc extends Object {
     return _events;
   }
 
-  Future<List<Body>> searchForBody(String query) async {
+  Future<List<Body>> searchForBody(String? query) async {
     print("Search called");
+    if (query == null) return <Body>[];
     if (query.length < 3) {
       return [];
     }
@@ -92,7 +94,7 @@ class Bloc extends Object {
         await bloc.client.search(bloc.getSessionIdHeader(), query);
     print("Search responed");
 
-    if(searchResponse.bodies == null){
+    if (searchResponse.bodies == null) {
       return [];
     }
 
