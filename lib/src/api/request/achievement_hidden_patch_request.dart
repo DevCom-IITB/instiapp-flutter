@@ -8,7 +8,7 @@ class AchievementHiddenPathRequest {
   bool? hidden;
 
   AchievementHiddenPathRequest({this.hidden});
-  factory AchievementHiddenPathRequest.fromJson(Map<String, dynamic> json) =
-      _$AchievementHiddenPathRequestFromJson;
+  factory AchievementHiddenPathRequest.fromJson(Map<String, dynamic> json) =>
+      _$AchievementHiddenPathRequestFromJson(json);
   Map<String, dynamic> toJson() => _$AchievementHiddenPathRequestToJson(this);
 }

@@ -228,14 +228,28 @@ class PostBloc {
         bloc.getSessionIdHeader(), article.id!, sendReaction);
     if (article.userReaction == -1) {
       article.userReaction = sendReaction;
-      article.reactionCount[sel] += 1;
+      var x = article.reactionCount![sel];
+      if(x != null){
+        x += 1;
+        article.reactionCount![sel] = x;
+      }
     } else if (article.userReaction != reaction) {
-      article.reactionCount["${article.userReaction}"] -= 1;
-      article.userReaction = sendReaction;
-      article.reactionCount[sel] += 1;
+      var x = article.reactionCount!["${article.userReaction}"];
+      var y = article.reactionCount![sel];
+      if(x!= null && y!= null){
+        x -= 1;
+        y += 1;
+        article.reactionCount!["${article.userReaction}"] = x;
+        article.userReaction = sendReaction;
+        article.reactionCount![sel] = y;
+      }
     } else {
       article.userReaction = -1;
-      article.reactionCount[sel] -= 1;
+      var x = article.reactionCount![sel];
+      if(x != null){
+        x -= 1;
+        article.reactionCount![sel] = x;
+      }
     }
     return Future.delayed(Duration(milliseconds: 0));
   }
