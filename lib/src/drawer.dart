@@ -35,9 +35,9 @@ class _NavDrawerState extends State<NavDrawer> {
 
     return Drawer(
       child: SafeArea(
-        child: StreamBuilder<Session>(
+        child: StreamBuilder<Session?>(
           stream: bloc?.session,
-          builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
+          builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
             var theme = Theme.of(context);
             if (snapshot.hasData &&
                 snapshot.data != null &&
@@ -195,7 +195,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                         bottomRight:
                                             const Radius.circular(48.0),
                                         topRight: const Radius.circular(48.0)))
-                                : snapshot?.data?.profile?.userName != null
+                                : snapshot.data?.profile?.userName != null
                                     ? BoxDecoration(
                                         color: theme.primaryColor.withAlpha(60),
                                         borderRadius: BorderRadius.only(
@@ -210,7 +210,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                 Icons.person_outline_outlined,
                               ),
                               title: Text(
-                                snapshot?.data?.profile?.userName ??
+                                snapshot.data?.profile?.userName ??
                                     'Not Logged in',
                                 style: theme.textTheme.bodyText2
                                     ?.copyWith(fontWeight: FontWeight.bold),
@@ -420,10 +420,10 @@ class NavListTile extends StatelessWidget {
   }
 
   Color? _iconAndTextColor(ThemeData theme, ListTileTheme tileTheme) {
-    if (selected && tileTheme?.selectedColor != null)
+    if (selected && tileTheme.selectedColor != null)
       return tileTheme.selectedColor!;
 
-    if (!selected && tileTheme?.iconColor != null) return tileTheme.iconColor!;
+    if (!selected && tileTheme.iconColor != null) return tileTheme.iconColor!;
 
     switch (theme.brightness) {
       case Brightness.light:
@@ -506,7 +506,7 @@ class MNavigatorObserver extends NavigatorObserver {
 
   @override
   void didPush(Route route, Route? previousRoute) {
-    navStack.addLast(route?.settings?.name ?? "n/a");
+    navStack.addLast(route.settings?.name ?? "n/a");
     try {
       var el = navStack.elementAt(navStack.length - 2);
       _secondTopRouteNameSubject.add(routeToName[el] ?? startsWith(el));
