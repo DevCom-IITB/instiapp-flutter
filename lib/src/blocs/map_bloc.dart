@@ -31,7 +31,7 @@ class MapBloc {
 
   Future saveToCache({SharedPreferences? sharedPrefs}) async {
     var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
-    if (_locations?.isNotEmpty ?? false) {
+    if (_locations.isNotEmpty) {
       prefs.setString(
           locationsStorageID, json.encode(_locations.map((e)=> e.toJson()).toList()));
     }
