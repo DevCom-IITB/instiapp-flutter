@@ -31,7 +31,7 @@ class _FeedPageState extends State<FeedPage> {
 
     var fab;
 
-    if (bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false) {
+    if (bloc.currSession.profile?.userRoles?.isNotEmpty ?? false) {
       // fab = FloatingActionButton(child: Icon(Icons.add_outlined), onPressed: () {},);
       fab = FloatingActionButton.extended(
         icon: Icon(Icons.add_outlined),
@@ -58,7 +58,7 @@ class _FeedPageState extends State<FeedPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -82,12 +82,12 @@ class _FeedPageState extends State<FeedPage> {
                 builder: (context,
                     AsyncSnapshot<UnmodifiableListView<Event>> snapshot) {
                   if (snapshot.hasData) {
-                    if (snapshot.data.length > 0) {
+                    if (snapshot.data!.length > 0) {
                       return SliverList(
                         delegate: SliverChildBuilderDelegate(
                             (context, index) =>
-                                _buildEvent(theme, bloc, snapshot.data[index]),
-                            childCount: snapshot.data.length),
+                                _buildEvent(theme, bloc, snapshot.data![index]),
+                            childCount: snapshot.data!.length),
                       );
                     } else {
                       return SliverToBoxAdapter(
@@ -122,7 +122,7 @@ class _FeedPageState extends State<FeedPage> {
   }
 
   Widget _buildEvent(ThemeData theme, InstiAppBloc bloc, Event event) {
-    if (event.eventBigImage ?? false) {
+    if (event.eventBigImage) {
       return InkWell(
         onTap: () {
           _openEventPage(bloc, event);
@@ -131,13 +131,15 @@ class _FeedPageState extends State<FeedPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Hero(
-              tag: event.eventID,
+              tag: event.eventID ?? "",
               child: Material(
                 type: MaterialType.transparency,
                 child: Ink.image(
                   child: Container(),
                   image: CachedNetworkImageProvider(
-                    event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+                    event.eventImageURL ??
+                        event.eventBodies?[0].bodyImageURL ??
+                        "",
                   ),
                   height: 200,
                   fit: BoxFit.cover,
@@ -148,7 +150,7 @@ class _FeedPageState extends State<FeedPage> {
               contentPadding:
                   EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               title: Text(
-                event.eventName,
+                event.eventName ?? "",
                 style: theme.textTheme.headline6,
               ),
               enabled: true,
@@ -160,14 +162,14 @@ class _FeedPageState extends State<FeedPage> {
     } else {
       return ListTile(
         title: Text(
-          event.eventName,
+          event.eventName ?? "",
           style: theme.textTheme.headline6,
         ),
         enabled: true,
         leading: NullableCircleAvatar(
-          event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+          event.eventImageURL ?? event.eventBodies?[0].bodyImageURL ?? "",
           Icons.event_outlined,
-          heroTag: event.eventID,
+          heroTag: event.eventID ?? "",
         ),
         subtitle: Text(event.getSubTitle()),
         onTap: () {
