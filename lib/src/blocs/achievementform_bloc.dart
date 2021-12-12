@@ -28,32 +28,23 @@ class Bloc extends Object {
       _verBodySubject.stream;
   final _verBodySubject = BehaviorSubject<UnmodifiableListView<Body>>();
 
-  ValueStream<UnmodifiableListView<Interest>> get myInterests =>
-      _verInterestSubject.stream;
-  final _verInterestSubject = BehaviorSubject<UnmodifiableListView<Interest>>();
-
-  Future<AchievementCreateResponse> postForm(
+  Future<AchievementCreateResponse?> postForm(
       AchievementCreateRequest req) async {
     try {
-      log(req.title);
       var comment = await bloc.client.postForm(bloc.getSessionIdHeader(), req);
       comment.result = "success";
       return comment;
     } catch (ex) {
-      log("aa");
-      print(ex);
       return null;
     }
   }
 
-  Future<SecretResponse> postAchievementOffer(String id, String secret) async {
+  Future<SecretResponse?> postAchievementOffer(String id, String secret) async {
     try {
       Offersecret secretclass = Offersecret();
       secretclass.secret = secret;
-      log(secretclass.secret + 'lll');
       SecretResponse response = await bloc.client
           .postAchievementOffer(bloc.getSessionIdHeader(), id, secretclass);
-      log(response.message);
       return response;
     } catch (ex) {
       print(ex);
@@ -88,67 +79,36 @@ class Bloc extends Object {
 
   Future<void> getVerifiableBodies() async {
     var currUser = await bloc.client.getUserMe(bloc.getSessionIdHeader());
-    print("got response");
 
     List<Body> listBody = [];
-
-    for (Role role in currUser.userRoles) {
-      if (role.rolePermissions.contains('VerA')) {
-        for (Body body in role.roleBodies) {
+    if(currUser.userRoles == null){
+      return;
+    }
+    for (Role role in currUser.userRoles!) {
+      if (role.rolePermissions!.contains('VerA')) {
+        for (Body body in role.roleBodies!) {
           if (!listBody.contains(body)) {
             listBody.add(body);
           }
         }
       }
     }
-    print("returning");
     _verifiableBodies = listBody;
     _verBodySubject.add(UnmodifiableListView(_verifiableBodies));
   }
 
-  Future<void> getMyInterests() async {
-    var currUser = await bloc.client.getUserMe(bloc.getSessionIdHeader());
-    print("got response");
-
-    List<Interest> listInterest = [];
-
-    for (Interest interest in currUser.interests) {
-          if (!listInterest.contains(interest)) {
-            listInterest.add(interest);
-          }
-    }
-    print("returning");
-    _Interests = listInterest;
-    _verInterestSubject.add(UnmodifiableListView(listInterest));
-  }
-
-  Future<List<Interest>> searchForInterest(String query) async {
-    print("Search called");
-    if (query.length < 3) {
-      return [];
-    }
-    var searchResponse =
-    await bloc.client.search(bloc.getSessionIdHeader(), query);
-    print("Search responed");
-
-    _bodies = searchResponse.interests;
-    print(_bodies.map((e) => e.bodyName));
-    return _bodies;
-  }
-
-
-
-  Future<List<Event>> searchForEvent(String query) async {
-    print("Search called");
+  Future<List<Event>?> searchForEvent(String query) async {
     if (query.length < 3) {
       return [];
     }
     var searchResponse =
         await bloc.client.search(bloc.getSessionIdHeader(), query);
-    print("Search responed");
 
-    _events = searchResponse.events;
-    print(_events.map((e) => e.eventName));
+    if(searchResponse.events== null){
+      return [];
+    }
+    _events = searchResponse.events!;
+
     return _events;
   }
 
@@ -161,7 +121,11 @@ class Bloc extends Object {
         await bloc.client.search(bloc.getSessionIdHeader(), query);
     print("Search responed");
 
-    _bodies = searchResponse.bodies;
+    if(searchResponse.bodies == null){
+      return [];
+    }
+
+    _bodies = searchResponse.bodies!;
     print(_bodies.map((e) => e.bodyName));
     return _bodies;
   }

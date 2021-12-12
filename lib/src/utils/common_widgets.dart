@@ -247,7 +247,7 @@ class CommonHtml extends StatelessWidget {
     return data != null
         ? Html(
             data: data,
-            onLinkTap: (link) async {
+            onLinkTap: (link,_,__,____) async {
               print(link);
               if (await canLaunch(link!)) {
                 await launch(link!);
@@ -256,10 +256,12 @@ class CommonHtml extends StatelessWidget {
               }
             },
             customRender: {
-              "img": (_, __, attributes, ___) {
+              "img": (context, child) {
+                var attributes=context.tree.element!.attributes;
                 return Text(attributes['src'] ?? attributes['href'] ?? "<img>");
               },
-              "a": (_, __, ___, node) {
+              "a": (context, child) {
+                context.tree.element.parentNode;
                 print(node.innerHtml);
                 return InkWell(
                   onTap: () async {
@@ -279,14 +281,14 @@ class CommonHtml extends StatelessWidget {
                   // )
                 );
               },
-              "p":(_,__,___,node){
+              "p":(context, child) {
                 print(node.innerHtml);
                 return RichText(
                       textScaleFactor:1,
                       text: highlight(node.innerHtml,query),
                     );
               },
-              "td":(_,__,___,node){
+              "td":(context, child) {
                 print(node.innerHtml);
                 return RichText(
                   textScaleFactor:1,

@@ -3,6 +3,7 @@ import 'dart:core';
 import 'dart:collection';
 import 'dart:developer';
 
+import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
@@ -23,7 +24,8 @@ class BlogPage extends StatefulWidget {
   final PostType postType;
   final bool loginNeeded;
 
-  BlogPage({@required this.postType, this.title, this.loginNeeded = true});
+  BlogPage(
+      {required this.postType, required this.title, this.loginNeeded = true});
 
   @override
   _BlogPageState createState() => _BlogPageState();
@@ -36,29 +38,29 @@ class _BlogPageState extends State<BlogPage> {
       GlobalKey<RefreshIndicatorState>();
 
   FocusNode _focusNode = FocusNode();
-  TextEditingController _searchFieldController;
-  ScrollController _hideButtonController;
+  TextEditingController? _searchFieldController;
+  ScrollController? _hideButtonController;
   double isFabVisible = 0;
 
   bool searchMode = false;
   IconData actionIcon = Icons.search_outlined;
 
   bool firstBuild = true;
-  String loadingReaction;
+  String? loadingReaction;
 
-  List<String> currCat;
+  List<String>? currCat;
 
   @override
   void initState() {
     super.initState();
     _searchFieldController = TextEditingController();
     _hideButtonController = ScrollController();
-    _hideButtonController.addListener(() {
-      if (isFabVisible == 1 && _hideButtonController.offset < 100) {
+    _hideButtonController!.addListener(() {
+      if (isFabVisible == 1 && _hideButtonController!.offset < 100) {
         setState(() {
           isFabVisible = 0;
         });
-      } else if (isFabVisible == 0 && _hideButtonController.offset > 100) {
+      } else if (isFabVisible == 0 && _hideButtonController!.offset > 100) {
         setState(() {
           isFabVisible = 1;
         });
@@ -68,8 +70,8 @@ class _BlogPageState extends State<BlogPage> {
 
   @override
   void dispose() {
-    _searchFieldController.dispose();
-    _hideButtonController.dispose();
+    _searchFieldController?.dispose();
+    _hideButtonController?.dispose();
     super.dispose();
   }
 
@@ -102,7 +104,7 @@ class _BlogPageState extends State<BlogPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -139,10 +141,10 @@ class _BlogPageState extends State<BlogPage> {
                             },
                             itemCount: (snapshot.data == null
                                     ? 0
-                                    : ((snapshot.data.isNotEmpty &&
-                                            snapshot.data.last.content == null)
-                                        ? snapshot.data.length - 1
-                                        : snapshot.data.length)) +
+                                    : ((snapshot.data!.isNotEmpty &&
+                                            snapshot.data!.last.content == null)
+                                        ? snapshot.data!.length - 1
+                                        : snapshot.data!.length)) +
                                 2,
                           );
                         }),
@@ -195,7 +197,7 @@ class _BlogPageState extends State<BlogPage> {
           : FloatingActionButton(
               tooltip: "Go to the Top",
               onPressed: () {
-                _hideButtonController.animateTo(0.0,
+                _hideButtonController!.animateTo(0.0,
                     curve: Curves.fastOutSlowIn,
                     duration: const Duration(milliseconds: 600));
               },
@@ -210,10 +212,10 @@ class _BlogPageState extends State<BlogPage> {
   }
 
   Widget _buildPost(
-      PostBloc bloc, int index, List<Post> posts, ThemeData theme) {
+      PostBloc bloc, int index, List<Post>? posts, ThemeData theme) {
     bloc.inPostIndex.add(index);
 
-    final Post post =
+    final Post? post =
         (posts != null && posts.length > index) ? posts[index] : null;
 
     if (post == null) {
@@ -273,21 +275,21 @@ class _BlogPageState extends State<BlogPage> {
                               post.title,
                               textAlign: TextAlign.start,
                               style: theme.textTheme.headline5
-                                  .copyWith(fontWeight: FontWeight.bold),
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             widget.postType == PostType.NewsArticle
                                 ? InkWell(
                                     onTap: () async {
                                       var p = (post as NewsArticle);
                                       BodyPage.navigateWith(context, bloc.bloc,
-                                          body: p.body);
+                                          body: p.body ?? Body());
                                     },
                                     child: Tooltip(
                                       message: "Open body page",
                                       child: Text(
-                                        "${((post as NewsArticle).body.bodyName)} | ${post.published}",
+                                        "${((post as NewsArticle).body?.bodyName)} | ${post.published}",
                                         style: theme.textTheme.subtitle1
-                                            .copyWith(color: Colors.lightBlue),
+                                            ?.copyWith(color: Colors.lightBlue),
                                       ),
                                     ),
                                   )
@@ -338,8 +340,7 @@ class _BlogPageState extends State<BlogPage> {
               ),
               child: CommonHtml(
                 data: post.content,
-                query: bloc.query,
-                defaultTextStyle: theme.textTheme.subtitle1,
+                defaultTextStyle: theme.textTheme.subtitle1 ?? TextStyle(),
               ),
             ),
             widget.postType == PostType.External
@@ -378,18 +379,18 @@ class _BlogPageState extends State<BlogPage> {
                     // };
 
                     var article = (post as NewsArticle);
-                    var totalNumberOfReactions = article?.reactionCount?.values
-                        ?.reduce((i1, i2) => i1 + i2);
+                    var totalNumberOfReactions = article.reactionCount?.values
+                        .reduce((i1, i2) => i1 + i2);
 
-                    var nonZeroReactions = article?.reactionCount?.keys
-                        ?.where((s) => (article?.reactionCount[s] > 0))
-                        ?.toList();
+                    var nonZeroReactions = article.reactionCount?.keys
+                        .where((s) => ((article.reactionCount?[s] ?? 0) > 0))
+                        .toList();
                     nonZeroReactions?.sort((s1, s2) =>
-                        ((article?.reactionCount[s1])
-                            .compareTo(article?.reactionCount[s2])));
+                        ((article.reactionCount?[s1] ?? 0)
+                            .compareTo(article.reactionCount?[s2] ?? 0)));
                     var numberOfPeopleOtherThanYou =
                         (totalNumberOfReactions ?? 0) -
-                            ((article?.userReaction ?? -1) >= 0 ? 1 : 0);
+                            ((article.userReaction ?? -1) >= 0 ? 1 : 0);
 
                     if (nonZeroReactions != null) {
                       return Column(
@@ -432,10 +433,11 @@ class _BlogPageState extends State<BlogPage> {
                                                 fillColor:
                                                     "${article.userReaction}" ==
                                                             s
-                                                        ? theme.accentColor
+                                                        ? theme.colorScheme
+                                                            .secondary
                                                         : theme.cardColor,
                                                 child: Text(
-                                                  reactionToEmoji[s],
+                                                  reactionToEmoji[s] ?? "",
                                                   style:
                                                       theme.textTheme.headline5,
                                                 ),
@@ -468,17 +470,17 @@ class _BlogPageState extends State<BlogPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  totalNumberOfReactions > 0
+                                  (totalNumberOfReactions ?? 0) > 0
                                       ? Text.rich(
                                           TextSpan(children: [
                                             TextSpan(
                                                 text:
-                                                    "${nonZeroReactions?.map((s) => reactionToEmoji[s])?.join()} ",
+                                                    "${nonZeroReactions.map((s) => reactionToEmoji[s]).join()} ",
                                                 style:
                                                     theme.textTheme.headline5),
                                             TextSpan(
                                                 text:
-                                                    " ${((article?.userReaction ?? -1) < 0) ? "" : "You "}${((article?.userReaction ?? -1) >= 0 && totalNumberOfReactions > 1) ? "and " : ""}${numberOfPeopleOtherThanYou > 0 ? (numberOfPeopleOtherThanYou.toString() + " other " + (numberOfPeopleOtherThanYou > 1 ? "people " : "person ")) : ""}reacted"),
+                                                    " ${((article.userReaction ?? -1) < 0) ? "" : "You "}${((article.userReaction ?? -1) >= 0 && (totalNumberOfReactions ?? 0) > 1) ? "and " : ""}${numberOfPeopleOtherThanYou > 0 ? (numberOfPeopleOtherThanYou.toString() + " other " + (numberOfPeopleOtherThanYou > 1 ? "people " : "person ")) : ""}reacted"),
                                           ]),
                                           textAlign: TextAlign.center,
                                         )
@@ -571,7 +573,7 @@ class _BlogPageState extends State<BlogPage> {
                   duration: Duration(milliseconds: 500),
                   child: TextField(
                     controller: _searchFieldController,
-                    cursorColor: theme.textTheme.bodyText2.color,
+                    cursorColor: theme.textTheme.bodyText2?.color,
                     style: theme.textTheme.bodyText2,
                     focusNode: _focusNode,
                     decoration: InputDecoration(
@@ -590,7 +592,7 @@ class _BlogPageState extends State<BlogPage> {
                         onPressed: () {
                           setState(() {
                             actionIcon = Icons.search_outlined;
-                            _searchFieldController.text = "";
+                            _searchFieldController?.text = "";
                             blogBloc.query = "";
                             blogBloc.refresh();
                             searchMode = !searchMode;
@@ -639,11 +641,12 @@ class _BlogPageState extends State<BlogPage> {
                 chipDisplay: MultiSelectChipDisplay.none(),
                 listType: MultiSelectListType.CHIP,
                 items: categories_1
-                    .map((cat) => MultiSelectItem<String>(
-                          cat['value'],
-                          cat['name'],
-                        ))
-                    .toList(),
+                        ?.map((cat) => MultiSelectItem<String>(
+                              cat['value'] ?? "",
+                              cat['name'] ?? "",
+                            ))
+                        .toList() ??
+                    [],
                 selectedItemsTextStyle: TextStyle(color: Colors.white),
                 selectedColor: theme.primaryColor,
                 barrierColor: Colors.black.withOpacity(0.7),
@@ -651,7 +654,7 @@ class _BlogPageState extends State<BlogPage> {
                   setState(() {
                     currCat = c;
                     String category = "";
-                    currCat.forEach((element) {
+                    currCat?.forEach((element) {
                       category += element + ",";
                     });
                     if (category != "")

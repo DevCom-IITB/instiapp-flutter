@@ -251,8 +251,8 @@ abstract class InstiAppApi {
       @rt.Header("Cookie") String sessionId, @rt.Path() String id);
 
   @rt.PUT("/achievements/{id}")
-  Future<void> dismissAchievement(@rt.Header("Cookie") String sessionID,
-      @rt.Path() String id, @rt.Body() AchVerifyRequest achievement);
+  Future<void> dismissAchievement(@rt.Header("Cookie") String? sessionID,
+      @rt.Path() String? id, @rt.Body() AchVerifyRequest achievement);
 
   @rt.DELETE("/achievements/:id")
   Future<void> deleteAchievement(

@@ -18,12 +18,12 @@ import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UserPage extends StatefulWidget {
-  final User initialUser;
-  final Future<User> userFuture;
+  final User? initialUser;
+  final Future<User>? userFuture;
 
   UserPage({this.userFuture, this.initialUser});
 
-  static void navigateWith(BuildContext context, InstiAppBloc bloc, User user) {
+  static void navigateWith(BuildContext context, InstiAppBloc bloc, User? user) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -32,7 +32,7 @@ class UserPage extends StatefulWidget {
         ),
         builder: (context) => UserPage(
           initialUser: user,
-          userFuture: bloc.getUser(user.userID),
+          userFuture: bloc.getUser(user?.userID ?? ""),
         ),
       ),
     );
@@ -44,98 +44,16 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  User user;
+  User? user;
   Set<Event> sEvents = Set();
-  List<Event> events = [];
-  Body _selectedBody;
-  bool editable;
-  List<Interest> interests=[];
-  Widget _buildChips(BuildContext context){
-    List<Widget> w=[];
-    var bloc = BlocProvider.of(context).bloc;
-    for(int i=0;i< interests.length;i++){
-
-      w.add(Chip(
-        labelPadding: EdgeInsets.all(2.0),
-        label: Text(
-          interests[i].title,
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: Colors.primaries[Random().nextInt(Colors.primaries.length)],
-        elevation: 6.0,
-        shadowColor: Colors.grey[60],
-        padding: EdgeInsets.all(8.0),
-
-        onDeleted: () async {
-          await bloc.achievementBloc.postDelInterest(interests[i].title);
-          interests.removeAt(i);
-          //_selected.removeAt(i);
-
-          setState(() {
-            interests = interests;
-            //_selected = _selected;
-          });
-        },
-
-      ));
-      //w.add(_buildChip(interest.title, Colors.primaries[Random().nextInt(Colors.primaries.length)]));
-    }
-    return Wrap(
-      spacing: 8.0, // gap between adjacent chips
-      runSpacing: 4.0,
-      children: w,
-    );
-  }
-
-
-  
-  Widget buildDropdownMenuItemsBody(
-      BuildContext context, Body body, String itemDesignation) {
-    print("Entered build dropdown menu items");
-    if (body == null) {
-      return Container(
-        child: Text(
-          "Search for an organisation",
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
-      );
-    }
-    print(body);
-    return Container(
-      child: ListTile(
-        title: Text(body.bodyName),
-      ),
-    );
-  }
-
-  Widget _customPopupItemBuilderBody(
-      BuildContext context, Body body, bool isSelected) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 8),
-      decoration: !isSelected
-          ? null
-          : BoxDecoration(
-        border: Border.all(color: Theme.of(context).primaryColor),
-        borderRadius: BorderRadius.circular(5),
-        color: Colors.white,
-      ),
-      child: ListTile(
-        selected: isSelected,
-        title: Text(body.bodyName),
-      ),
-    );
-  }
+  List<Event>? events = [];
 
   @override
   void initState() {
     super.initState();
 
     user = widget.initialUser;
-    //User curruser = await bloc.client.
-    interests = user.interests;
-    widget.userFuture.then((u) {
+    widget.userFuture?.then((u) {
       if (this.mounted) {
         setState(() {
           user = u;
@@ -154,18 +72,20 @@ class _UserPageState extends State<UserPage> {
 
     if (user != null) {
       sEvents.clear();
-      sEvents.addAll(user.userGoingEvents ?? []);
-      sEvents.addAll(user.userInterestedEvents ?? []);
+      sEvents.addAll(user!.userGoingEvents ?? []);
+      sEvents.addAll(user!.userInterestedEvents ?? []);
 
-      events = user.userGoingEvents != null ? sEvents.toList() : null;
+      events = user!.userGoingEvents != null ? sEvents.toList() : null;
 
-      if ((user.userWebsiteURL ?? "") != "") {
+      if ((user!.userWebsiteURL ?? "") != "") {
         footerButtons.add(IconButton(
           tooltip: "Open website",
           icon: Icon(Icons.language_outlined),
           onPressed: () async {
-            if (await canLaunch(user.userWebsiteURL)) {
-              await launch(user.userWebsiteURL);
+            if (user!.userWebsiteURL != null) {
+              if (await canLaunch(user!.userWebsiteURL!)) {
+                await launch(user!.userWebsiteURL!);
+              }
             }
           },
         ));
@@ -189,7 +109,7 @@ class _UserPageState extends State<UserPage> {
                   semanticLabel: "Show navigation drawer",
                 ),
                 onPressed: () {
-                  _scaffoldKey.currentState.openDrawer();
+                  _scaffoldKey.currentState?.openDrawer();
                 },
               ),
             ],
@@ -214,45 +134,45 @@ class _UserPageState extends State<UserPage> {
                             children: <Widget>[
                               ListTile(
                                 leading: NullableCircleAvatar(
-                                  user.userProfilePictureUrl,
+                                  user!.userProfilePictureUrl ?? "",
                                   Icons.person_outline_outlined,
                                   radius: 48,
-                                  heroTag: user.userID,
+                                  heroTag: user!.userID ?? "",
                                   photoViewable: true,
                                 ),
                                 title: Text(
-                                  user.userName,
-                                  style: theme.textTheme.headline5.copyWith(
-                                      fontFamily:
-                                          theme.textTheme.headline3.fontFamily),
+                                  user!.userName ?? "",
+                                  style: theme.textTheme.headline5?.copyWith(
+                                      fontFamily: theme
+                                          .textTheme.headline3?.fontFamily),
                                 ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    user.userRollNumber != null
-                                        ? Text(user.userRollNumber,
+                                    user!.userRollNumber != null
+                                        ? Text(user!.userRollNumber ?? "",
                                             style: theme.textTheme.headline6)
                                         : CircularProgressIndicatorExtended(
                                             size: 12,
                                             label: Text("Loading Roll Number"),
                                           ),
                                   ]
-                                    ..addAll(user.userEmail != null &&
-                                            !user.userEmail
+                                    ..addAll(user!.userEmail != null &&
+                                            !user!.userEmail!
                                                 .toLowerCase()
                                                 .contains("n/a")
                                         ? [
                                             InkWell(
-                                              onTap: user.userEmail != null
+                                              onTap: user!.userEmail != null
                                                   ? () => _launchEmail(context)
                                                   : null,
                                               child: Tooltip(
                                                 message: "E-mail this person",
-                                                child: user.userEmail != null
-                                                    ? Text(user.userEmail,
+                                                child: user!.userEmail != null
+                                                    ? Text(user!.userEmail!,
                                                         style: theme
                                                             .textTheme.headline6
-                                                            .copyWith(
+                                                            ?.copyWith(
                                                                 color: Colors
                                                                     .lightBlue))
                                                     : CircularProgressIndicatorExtended(
@@ -264,8 +184,8 @@ class _UserPageState extends State<UserPage> {
                                             ),
                                           ]
                                         : [])
-                                    ..addAll(user.userContactNumber != null &&
-                                            !user.userContactNumber
+                                    ..addAll(user!.userContactNumber != null &&
+                                            !user!.userContactNumber!
                                                 .toLowerCase()
                                                 .contains("n/a")
                                         ? [
@@ -275,10 +195,10 @@ class _UserPageState extends State<UserPage> {
                                               child: Tooltip(
                                                 message: "Call this person",
                                                 child: Text(
-                                                    user.userContactNumber,
+                                                    user!.userContactNumber!,
                                                     style: theme
                                                         .textTheme.headline6
-                                                        .copyWith(
+                                                        ?.copyWith(
                                                             color: Colors
                                                                 .lightBlue)),
                                               ),
@@ -420,18 +340,18 @@ class _UserPageState extends State<UserPage> {
                             var delegates = {
                               "Associations": SliverChildBuilderDelegate(
                                 (BuildContext context, int index) {
-                                  return user.userRoles != null
-                                      ? (index >= (user.userRoles?.length ?? 0)
+                                  return user!.userRoles != null
+                                      ? (index >= (user!.userRoles?.length ?? 0)
                                           ? _buildFormerRoleTile(
                                               bloc,
                                               theme.textTheme,
-                                              user.userFormerRoles[index -
-                                                  (user.userRoles?.length ??
+                                              user!.userFormerRoles![index -
+                                                  (user!.userRoles?.length ??
                                                       0)])
                                           : _buildRoleTile(
                                               bloc,
                                               theme.textTheme,
-                                              user.userRoles[index]))
+                                              user!.userRoles![index]))
                                       : Padding(
                                           padding: EdgeInsets.all(8.0),
                                           child:
@@ -439,14 +359,14 @@ class _UserPageState extends State<UserPage> {
                                             label: Text("Loading associations"),
                                           ));
                                 },
-                                childCount: (user.userRoles?.length ?? 1) +
-                                    (user.userFormerRoles?.length ?? 0),
+                                childCount: (user!.userRoles?.length ?? 1) +
+                                    (user!.userFormerRoles?.length ?? 0),
                               ),
                               "Following": SliverChildBuilderDelegate(
                                 (BuildContext context, int index) {
-                                  return user.userFollowedBodies != null
+                                  return user!.userFollowedBodies != null
                                       ? _buildBodyTile(bloc, theme.textTheme,
-                                          user.userFollowedBodies[index])
+                                          user!.userFollowedBodies![index])
                                       : Padding(
                                           padding: EdgeInsets.all(8.0),
                                           child:
@@ -456,13 +376,13 @@ class _UserPageState extends State<UserPage> {
                                           ));
                                 },
                                 childCount:
-                                    user.userFollowedBodies?.length ?? 1,
+                                    user!.userFollowedBodies?.length ?? 1,
                               ),
                               "Events": SliverChildBuilderDelegate(
                                 (BuildContext context, int index) {
                                   return events != null
                                       ? _buildEventTile(
-                                          bloc, events[index], theme)
+                                          bloc, events![index], theme)
                                       : Padding(
                                           padding: EdgeInsets.all(8.0),
                                           child:
@@ -496,7 +416,7 @@ class _UserPageState extends State<UserPage> {
                                   // fixed-height list items, hence the use of
                                   // SliverFixedExtentList. However, one could use any
                                   // sliver widget here, e.g. SliverList or SliverGrid.
-                                  sliver: delegates[name].childCount == 0
+                                  sliver: delegates[name]?.childCount == 0
                                       ? SliverToBoxAdapter(
                                           child: Center(
                                             child: Padding(
@@ -509,7 +429,7 @@ class _UserPageState extends State<UserPage> {
                                           ),
                                         )
                                       : SliverList(
-                                          delegate: delegates[name],
+                                          delegate: delegates[name]!,
                                         ),
                                 ),
                               ],
@@ -528,7 +448,7 @@ class _UserPageState extends State<UserPage> {
                 tooltip: "Share this person's profile",
                 onPressed: () async {
                   await Share.share(
-                      "Check this cool person: ${ShareURLMaker.getUserURL(user)}");
+                      "Check this cool person: ${ShareURLMaker.getUserURL(user!)}");
                 },
               ),
         floatingActionButtonLocation: footerButtons.isEmpty
@@ -543,14 +463,14 @@ class _UserPageState extends State<UserPage> {
   Widget _buildEventTile(InstiAppBloc bloc, Event event, ThemeData theme) {
     return ListTile(
       title: Text(
-        event.eventName,
+        event.eventName ?? "",
         style: theme.textTheme.headline6,
       ),
       enabled: true,
       leading: NullableCircleAvatar(
-        event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+        event.eventImageURL ?? event.eventBodies?[0].bodyImageURL ?? "",
         Icons.event_outlined,
-        heroTag: event.eventID,
+        heroTag: event.eventID ?? "",
       ),
       subtitle: Text(event.getSubTitle()),
       onTap: () {
@@ -561,12 +481,12 @@ class _UserPageState extends State<UserPage> {
 
   Widget _buildBodyTile(InstiAppBloc bloc, TextTheme theme, Body body) {
     return ListTile(
-      title: Text(body.bodyName, style: theme.headline6),
-      subtitle: Text(body.bodyShortDescription, style: theme.subtitle2),
+      title: Text(body.bodyName ?? "", style: theme.headline6),
+      subtitle: Text(body.bodyShortDescription ?? "", style: theme.subtitle2),
       leading: NullableCircleAvatar(
-        body.bodyImageURL,
+        body.bodyImageURL ?? "",
         Icons.people_outline_outlined,
-        heroTag: body.bodyID,
+        heroTag: body.bodyID ?? "",
       ),
       onTap: () {
         BodyPage.navigateWith(context, bloc, body: body);
@@ -576,12 +496,12 @@ class _UserPageState extends State<UserPage> {
 
   Widget _buildRoleTile(InstiAppBloc bloc, TextTheme theme, Role role) {
     return ListTile(
-      title: Text(role.roleBodyDetails.bodyName, style: theme.headline6),
-      subtitle: Text(role.roleName, style: theme.subtitle2),
+      title: Text(role.roleBodyDetails?.bodyName ?? "", style: theme.headline6),
+      subtitle: Text(role.roleName ?? "", style: theme.subtitle2),
       leading: NullableCircleAvatar(
-        role.roleBodyDetails.bodyImageURL,
+        role.roleBodyDetails?.bodyImageURL ?? "",
         Icons.people_outline_outlined,
-        heroTag: role.roleID ?? role.roleBodyDetails.bodyID,
+        heroTag: role.roleID ?? role.roleBodyDetails?.bodyID ?? "",
       ),
       onTap: () {
         BodyPage.navigateWith(context, bloc, role: role);
@@ -591,13 +511,13 @@ class _UserPageState extends State<UserPage> {
 
   Widget _buildFormerRoleTile(InstiAppBloc bloc, TextTheme theme, Role role) {
     return ListTile(
-      title: Text(role.roleBodyDetails.bodyName, style: theme.headline6),
+      title: Text(role.roleBodyDetails?.bodyName ?? "", style: theme.headline6),
       subtitle: Text("Former ${role.roleName} ${role.year ?? ""}",
           style: theme.subtitle2),
       leading: NullableCircleAvatar(
-        role.roleBodyDetails.bodyImageURL,
+        role.roleBodyDetails?.bodyImageURL ?? "",
         Icons.people_outline_outlined,
-        heroTag: role.roleID ?? role.roleBodyDetails.bodyID,
+        heroTag: role.roleID ?? role.roleBodyDetails?.bodyID ?? "",
       ),
       onTap: () {
         BodyPage.navigateWith(context, bloc, role: role);
@@ -606,7 +526,7 @@ class _UserPageState extends State<UserPage> {
   }
 
   _launchEmail(BuildContext context) async {
-    var url = "mailto:${user.userEmail}?subject=Let's Have Coffee";
+    var url = "mailto:${user?.userEmail}?subject=Let's Have Coffee";
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -621,7 +541,7 @@ class _UserPageState extends State<UserPage> {
   }
 
   _launchDialer(BuildContext context) async {
-    var url = "tel:${user.userContactNumber}";
+    var url = "tel:${user?.userContactNumber}";
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -639,7 +559,7 @@ class _UserPageState extends State<UserPage> {
 class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   final PreferredSize child;
 
-  _SliverTabBarDelegate({this.child});
+  _SliverTabBarDelegate({required this.child});
 
   @override
   Widget build(

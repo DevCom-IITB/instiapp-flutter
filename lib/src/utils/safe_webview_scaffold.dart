@@ -169,7 +169,7 @@ class _WebviewPlaceholderRender extends RenderProxyBox {
         super(child);
 
   ValueChanged<Rect> _callback;
-  Rect _rect;
+  late Rect _rect;
 
   Rect get rect => _rect;
 

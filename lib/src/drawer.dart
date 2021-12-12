@@ -232,7 +232,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                       changeSelection(-2, drawerState!);
                                       Navigator.pop(context);
                                       UserPage.navigateWith(context, bloc!,
-                                          bloc.currSession.profile!);
+                                          bloc.currSession?.profile);
                                     }
                                   : null,
                             ),
@@ -393,7 +393,7 @@ class NavListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var listTileTheme = ListTileTheme.of(context);
+    ListTileTheme listTileTheme = ListTileTheme.of(context);
     return Container(
       decoration: !highlight
           ? null
@@ -500,9 +500,9 @@ class MNavigatorObserver extends NavigatorObserver {
   Queue<String> navStack = Queue<String>();
   MNavigatorObserver(this.bloc);
 
-  ValueStream<String> get secondTopRouteName =>
+  ValueStream<String?> get secondTopRouteName =>
       _secondTopRouteNameSubject.stream;
-  final _secondTopRouteNameSubject = BehaviorSubject<String>();
+  final _secondTopRouteNameSubject = BehaviorSubject<String?>();
 
   @override
   void didPush(Route route, Route? previousRoute) {
