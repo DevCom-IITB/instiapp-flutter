@@ -1,27 +1,37 @@
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-part 'complaint_create_request.jser.dart';
+part 'complaint_create_request.g.dart';
 
+@JsonSerializable()
 class ComplaintCreateRequest {
-  @Alias("description")
-  String complaintDescription;
-  @Alias("suggestions")
-  String complaintSuggestions;
-  @Alias("location_details")
-  String complaintLocationDetails;
-  @Alias("location_description")
-  String complaintLocation;
-  @Alias("latitude")
-  double complaintLatitude;
-  @Alias("longitude")
-  double complaintLongitude;
-  @Alias("tags")
-  List<String> tags;
-  @Alias("images")
-  List<String> images;
-}
+  @JsonKey(name: "description")
+  String? complaintDescription;
+  @JsonKey(name: "suggestions")
+  String? complaintSuggestions;
+  @JsonKey(name: "location_details")
+  String? complaintLocationDetails;
+  @JsonKey(name: "location_description")
+  String? complaintLocation;
+  @JsonKey(name: "latitude")
+  double? complaintLatitude;
+  @JsonKey(name: "longitude")
+  double? complaintLongitude;
+  @JsonKey(name: "tags")
+  List<String>? tags;
+  @JsonKey(name: "images")
+  List<String>? images;
 
-@GenSerializer()
-class ComplaintCreateRequestSerializer
-    extends Serializer<ComplaintCreateRequest>
-    with _$ComplaintCreateRequestSerializer {}
+  ComplaintCreateRequest(
+      {this.complaintDescription,
+      this.complaintSuggestions,
+      this.complaintLocationDetails,
+      this.complaintLocation,
+      this.complaintLatitude,
+      this.complaintLongitude,
+      this.tags,
+      this.images});
+
+  factory ComplaintCreateRequest.fromJson(Map<String, dynamic> json) =>
+      _$ComplaintCreateRequestFromJson(json);
+  Map<String, dynamic> toJson() => _$ComplaintCreateRequestToJson(this);
+}

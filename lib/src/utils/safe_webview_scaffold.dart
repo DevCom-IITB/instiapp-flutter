@@ -8,27 +8,27 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class SafeWebviewScaffold extends StatefulWidget {
   const SafeWebviewScaffold({
-    Key key,
-    this.appBar,
-    @required this.url,
-    this.headers,
-    this.withJavascript,
-    this.clearCache,
-    this.clearCookies,
-    this.enableAppScheme,
-    this.userAgent,
+    required Key key,
+    required this.appBar,
+    required this.url,
+    required this.headers,
+    required this.withJavascript,
+    required this.clearCache,
+    required this.clearCookies,
+    required this.enableAppScheme,
+    required this.userAgent,
     this.primary = true,
-    this.persistentFooterButtons,
-    this.bottomNavigationBar,
-    this.withZoom,
-    this.withLocalStorage,
-    this.withLocalUrl,
-    this.scrollBar,
-    this.supportMultipleWindows,
-    this.appCacheEnabled,
-    this.hidden = false,
-    this.initialChild,
-    this.allowFileURLs,
+    required this.persistentFooterButtons,
+    required this.bottomNavigationBar,
+    required this.withZoom,
+    required this.withLocalStorage,
+    required this.withLocalUrl,
+    required this.scrollBar,
+    required this.supportMultipleWindows,
+    required this.appCacheEnabled,
+     this.hidden = false,
+    required this.initialChild,
+    required this.allowFileURLs,
     this.geolocationEnabled = false,
   }) : super(key: key);
 
@@ -60,9 +60,9 @@ class SafeWebviewScaffold extends StatefulWidget {
 
 class _SafeWebviewScaffoldState extends State<SafeWebviewScaffold> {
   final webviewReference = FlutterWebviewPlugin();
-  Rect _rect;
-  Timer _resizeTimer;
-  StreamSubscription<WebViewStateChanged> _onStateChanged;
+  late Rect _rect;
+  late Timer _resizeTimer;
+  late StreamSubscription<WebViewStateChanged> _onStateChanged;
 
   @override
   void initState() {
@@ -140,9 +140,9 @@ class _SafeWebviewScaffoldState extends State<SafeWebviewScaffold> {
 
 class _WebviewPlaceholder extends SingleChildRenderObjectWidget {
   const _WebviewPlaceholder({
-    Key key,
-    @required this.onRectChanged,
-    Widget child,
+    Key? key,
+    required this.onRectChanged,
+    required Widget child,
   }) : super(key: key, child: child);
 
   final ValueChanged<Rect> onRectChanged;
@@ -150,7 +150,7 @@ class _WebviewPlaceholder extends SingleChildRenderObjectWidget {
   @override
   RenderObject createRenderObject(BuildContext context) {
     return _WebviewPlaceholderRender(
-      onRectChanged: onRectChanged,
+      onRectChanged: onRectChanged, child: null,
     );
   }
 
@@ -163,9 +163,9 @@ class _WebviewPlaceholder extends SingleChildRenderObjectWidget {
 
 class _WebviewPlaceholderRender extends RenderProxyBox {
   _WebviewPlaceholderRender({
-    RenderBox child,
-    ValueChanged<Rect> onRectChanged,
-  })  : _callback = onRectChanged,
+    RenderBox? child,
+    ValueChanged<Rect>? onRectChanged,
+  })  : _callback = onRectChanged!,
         super(child);
 
   ValueChanged<Rect> _callback;

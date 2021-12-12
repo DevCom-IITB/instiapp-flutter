@@ -4,9 +4,8 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/response/news_feed_response.dart';
 
 import 'api/model/mess.dart';
-import 'api/model/serializers.dart';
 
-List<Hostel> parseMess(String jsonStr) {
+List parseMess(String jsonStr) {
   final parsed = json.decode(jsonStr);
   final listOfHostels = List<dynamic>.from(parsed);
   // return standardSerializers.deserializeWith(Hostel.serializer, listOfHostels);

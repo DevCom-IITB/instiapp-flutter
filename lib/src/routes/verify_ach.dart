@@ -214,12 +214,12 @@ class _VerifyListItemState extends State<VerifyListItem> {
       children: [
         DefListItem(
           title: widget.achievement.title ?? "No title",
-          company: widget.achievement.user.userName ?? "Anonymous",
+          company: widget.achievement.user?.userName ?? "Anonymous",
           forText: widget.achievement.event != null
-              ? widget.achievement.event.eventName
+              ? widget.achievement.event?.eventName
               : null,
-          importance: widget.achievement.description,
-          adminNote: widget.achievement.adminNote,
+          importance: widget.achievement.description!,
+          adminNote: widget.achievement.adminNote!,
           isVerified: isVerified,
           isDismissed: isDismissed,
         ),
