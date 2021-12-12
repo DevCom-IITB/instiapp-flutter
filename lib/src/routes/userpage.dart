@@ -1,5 +1,6 @@
 import 'dart:async';
-
+import 'dart:math';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/role.dart';
@@ -46,12 +47,94 @@ class _UserPageState extends State<UserPage> {
   User user;
   Set<Event> sEvents = Set();
   List<Event> events = [];
+  Body _selectedBody;
+  bool editable;
+  List<Interest> interests=[];
+  Widget _buildChips(BuildContext context){
+    List<Widget> w=[];
+    var bloc = BlocProvider.of(context).bloc;
+    for(int i=0;i< interests.length;i++){
+
+      w.add(Chip(
+        labelPadding: EdgeInsets.all(2.0),
+        label: Text(
+          interests[i].title,
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.primaries[Random().nextInt(Colors.primaries.length)],
+        elevation: 6.0,
+        shadowColor: Colors.grey[60],
+        padding: EdgeInsets.all(8.0),
+
+        onDeleted: () async {
+          await bloc.achievementBloc.postDelInterest(interests[i].title);
+          interests.removeAt(i);
+          //_selected.removeAt(i);
+
+          setState(() {
+            interests = interests;
+            //_selected = _selected;
+          });
+        },
+
+      ));
+      //w.add(_buildChip(interest.title, Colors.primaries[Random().nextInt(Colors.primaries.length)]));
+    }
+    return Wrap(
+      spacing: 8.0, // gap between adjacent chips
+      runSpacing: 4.0,
+      children: w,
+    );
+  }
+
+
+  
+  Widget buildDropdownMenuItemsBody(
+      BuildContext context, Body body, String itemDesignation) {
+    print("Entered build dropdown menu items");
+    if (body == null) {
+      return Container(
+        child: Text(
+          "Search for an organisation",
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+      );
+    }
+    print(body);
+    return Container(
+      child: ListTile(
+        title: Text(body.bodyName),
+      ),
+    );
+  }
+
+  Widget _customPopupItemBuilderBody(
+      BuildContext context, Body body, bool isSelected) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+        border: Border.all(color: Theme.of(context).primaryColor),
+        borderRadius: BorderRadius.circular(5),
+        color: Colors.white,
+      ),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(body.bodyName),
+      ),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
 
     user = widget.initialUser;
+    //User curruser = await bloc.client.
+    interests = user.interests;
     widget.userFuture.then((u) {
       if (this.mounted) {
         setState(() {
@@ -204,10 +287,94 @@ class _UserPageState extends State<UserPage> {
                                         : []),
                                 ),
                               ),
+                              Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      // width: double.infinity,
+                                        margin:
+                                        EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
+                                        child: Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              SizedBox(
+                                                height: 20.0,
+                                              ),
+                                            //  user.userEmail==bloc.client.getUserMe(sessionID):
+                                              DropdownSearch<Body>(
+                                                mode: Mode.DIALOG,
+                                                maxHeight: 700,
+                                                isFilteredOnline: true,
+                                                showSearchBox: true,
+                                                label: "Interests",
+                                                hint: "Interests",
+                                                validator: (value) {
+                                                  if (value == null) {
+                                                    return 'Please select a organization';
+                                                  }
+                                                  return null;
+                                                },
+                                                //onChanged: onBodyChange,
+                                                onFind:
+                                                bloc.achievementBloc.searchForBody,
+                                                dropdownBuilder:
+                                                buildDropdownMenuItemsBody,
+                                                popupItemBuilder:
+                                                _customPopupItemBuilderBody,
+                                                popupSafeArea:
+                                                PopupSafeArea(
+                                                    top: true,
+                                                    bottom: true),
+                                                scrollbarProps:
+                                                ScrollbarProps(
+                                                  isAlwaysShown: true,
+                                                  thickness: 7,
+                                                ),
+                                                selectedItem:
+                                                _selectedBody,
+                                                emptyBuilder:
+                                                    (BuildContext context,
+                                                    String _) {
+                                                  return Container(
+                                                    alignment:
+                                                    Alignment.center,
+                                                    padding:
+                                                    EdgeInsets.all(
+                                                        20),
+                                                    child: Text(
+                                                      "No verifying authorities found. Refine your search!",
+                                                      style: theme
+                                                          .textTheme
+                                                          .subtitle1,
+                                                      textAlign: TextAlign
+                                                          .center,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                              _buildChips(context),
+                                              _buildChip('Gamer', Color(0xFFff6666))
+                                              // SizedBox(
+                                              // height: this.selectedB
+                                              // ? 20.0
+                                              //     : 0,
+                                              // ),
+                                              // BodyCard(
+                                              // thing:
+                                              // this._selectedBody,
+                                              // selected:
+                                              // this.selectedB),
+                                              //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
+                                            ])),
+                                  ]),
                             ],
                           ),
                         ),
                       ),
+
                       SliverPersistentHeader(
                         floating: true,
                         pinned: true,

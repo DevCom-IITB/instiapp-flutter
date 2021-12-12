@@ -12,6 +12,10 @@ class ExploreResponse {
   List<Event> events;
   @Alias("users")
   List<User> users;
+  @Alias("interests")
+  List<Interest> interest;
+  @Alias("skills")
+  List<Skill> skills;
 
   ExploreResponse({this.bodies, this.events, this.users});
 }
