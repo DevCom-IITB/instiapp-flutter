@@ -7,7 +7,7 @@ class TitleWithBackButton extends StatefulWidget {
   final EdgeInsets contentPadding;
 
   TitleWithBackButton(
-      {@required this.child,
+      {required this.child,
       this.hasBackButton = true,
       this.contentPadding = const EdgeInsets.all(28.0)});
 
@@ -18,11 +18,11 @@ class TitleWithBackButton extends StatefulWidget {
 class _TitleWithBackButtonState extends State<TitleWithBackButton> {
   @override
   Widget build(BuildContext context) {
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)?.bloc;
     var theme = Theme.of(context);
 
     return StreamBuilder(
-      stream: bloc.navigatorObserver.secondTopRouteName,
+      stream: bloc?.navigatorObserver.secondTopRouteName,
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         bool currHasBackButton = (theme.platform == TargetPlatform.iOS ||
                 theme.platform == TargetPlatform.macOS) &&

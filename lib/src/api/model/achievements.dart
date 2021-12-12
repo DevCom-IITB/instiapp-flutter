@@ -1,54 +1,74 @@
-import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 
-part 'achievements.jser.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'achievements.g.dart';
+
+@JsonSerializable()
 class Achievement {
-  @Alias("id")
-  String id;
+  @JsonKey(name:"id")
+  String? id;
 
-  @Alias("time_of_creation")
-  String timeOfCreation;
+  @JsonKey(name:"time_of_creation")
+  String? timeOfCreation;
 
-  @Alias("time_of_modification")
-  String timeOfModification;
+  @JsonKey(name:"time_of_modification")
+  String? timeOfModification;
 
-  @Alias("user")
-  User user;
+  @JsonKey(name:"user")
+  User? user;
 
-  @Alias("hidden")
-  bool hidden;
+  @JsonKey(name:"hidden")
+  bool? hidden;
 
-  @Alias("dismissed")
-  bool dismissed;
+  @JsonKey(name:"dismissed")
+  bool? dismissed;
 
-  @Alias("verified")
-  bool verified;
+  @JsonKey(name:"verified")
+  bool? verified;
 
-  @Alias("verified_by")
-  User verifiedBy;
+  @JsonKey(name:"verified_by")
+  User? verifiedBy;
 
-  @Alias("title")
-  String title;
+  @JsonKey(name:"title")
+  String? title;
 
-  @Alias("description")
-  String description;
+  @JsonKey(name:"description")
+  String? description;
 
-  @Alias("admin_note")
-  String adminNote;
+  @JsonKey(name:"admin_note")
+  String? adminNote;
 
-  @Alias("body_detail")
-  Body body;
+  @JsonKey(name:"body_detail")
+  Body? body;
 
-  @Alias("event_detail")
-  Event event;
+  @JsonKey(name:"event_detail")
+  Event? event;
 
-  @Alias("offer")
-  String offer;
+  @JsonKey(name:"offer")
+  String? offer;
+
+  Achievement({
+    this.adminNote,
+    this.description,
+    this.body, 
+    this.offer, 
+    this.dismissed, 
+    this.verified, 
+    this.event, 
+    this.hidden, 
+    this.id, 
+    this.timeOfCreation, 
+    this.timeOfModification, 
+    this.title, 
+    this.user, 
+    this.verifiedBy
+  });
+
+  factory Achievement.fromJson(Map<String, dynamic> json) =>
+      _$AchievementFromJson(json);
+      
+  Map<String, dynamic> toJson() => _$AchievementToJson(this);
 }
-
-@GenSerializer()
-class AchievementSerializer extends Serializer<Achievement>
-    with _$AchievementSerializer {}

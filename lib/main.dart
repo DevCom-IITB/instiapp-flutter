@@ -16,6 +16,8 @@ import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
 import 'package:InstiApp/src/routes/notificationspage.dart';
 import 'package:InstiApp/src/routes/putentitypage.dart';
+import 'package:InstiApp/src/routes/queryaddpage.dart';
+import 'package:InstiApp/src/routes/querypage.dart';
 import 'package:InstiApp/src/routes/quicklinkspage.dart';
 import 'package:InstiApp/src/routes/settingspage.dart';
 import 'package:InstiApp/src/routes/trainingblogpage.dart';
@@ -56,7 +58,7 @@ class MyApp extends StatefulWidget {
   final Key key;
   final InstiAppBloc bloc;
 
-  MyApp({this.key, @required this.bloc}) : super(key: key);
+  MyApp({required this.key, required this.bloc}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -71,7 +73,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       new FlutterLocalNotificationsPlugin();
 
   GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
-  StreamSubscription _appLinksSub;
+  late StreamSubscription _appLinksSub;
 
   void setTheme(VoidCallback a) {
     setState(a);
@@ -85,13 +87,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       initAppLinksState();
     }
 
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance?.addObserver(this);
   }
 
   @override
   void dispose() async {
     _appLinksSub?.cancel();
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
 
@@ -165,27 +167,29 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
               headline5: TextStyle()),
         ),
         onGenerateRoute: (RouteSettings settings) {
-          if (settings.name.startsWith("/event/")) {
+          var temp = settings.name;
+          if(temp!=null){
+          if (temp.startsWith("/event/")) {
             return _buildRoute(
                 settings,
                 EventPage(
                   eventFuture:
-                      widget.bloc.getEvent(settings.name.split("/event/")[1]),
+                      widget.bloc.getEvent(temp.split("/event/")[1]),
                 ));
-          } else if (settings.name.startsWith("/body/")) {
+          } else if (temp.startsWith("/body/")) {
             return _buildRoute(
                 settings,
                 BodyPage(
                     bodyFuture:
-                        widget.bloc.getBody(settings.name.split("/body/")[1])));
-          } else if (settings.name.startsWith("/user/")) {
+                        widget.bloc.getBody(temp.split("/body/")[1])));
+          } else if (temp.startsWith("/user/")) {
             return _buildRoute(
                 settings,
                 UserPage(
                     userFuture:
-                        widget.bloc.getUser(settings.name.split("/user/")[1])));
-          } else if (settings.name.startsWith("/complaint/")) {
-            Uri uri = Uri.parse(settings.name);
+                        widget.bloc.getUser(temp.split("/user/")[1])));
+          } else if (temp.startsWith("/complaint/")) {
+            Uri uri = Uri.parse(temp);
 
             return _buildRoute(
                 settings,
@@ -194,18 +198,18 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                         uri.pathSegments[1],
                         reload: uri.queryParameters.containsKey("reload") &&
                             uri.queryParameters["reload"] == "true")));
-          } else if (settings.name.startsWith("/putentity/event/")) {
+          } else if (temp.startsWith("/putentity/event/")) {
             return _buildRoute(
                 settings,
                 PutEntityPage(
-                    entityID: settings.name.split("/putentity/event/")[1],
+                    entityID: temp.split("/putentity/event/")[1],
                     cookie: widget.bloc.getSessionIdHeader()));
-          } else if (settings.name.startsWith("/putentity/body/")) {
+          } else if (temp.startsWith("/putentity/body/")) {
             return _buildRoute(
                 settings,
                 PutEntityPage(
                     isBody: true,
-                    entityID: settings.name.split("/putentity/body/")[1],
+                    entityID: temp.split("/putentity/body/")[1],
                     cookie: widget.bloc.getSessionIdHeader()));
           } else {
             switch (settings.name) {
@@ -250,10 +254,14 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 return _buildRoute(settings, Home());
               case "/externalblog":
                 return _buildRoute(settings, ExternalBlogPage());
+              case "/query":
+                return _buildRoute(settings, QueryPage());
+              case "/query/add":
+                return _buildRoute(settings, QueryAddPage());
             }
           }
           return _buildRoute(settings, MessPage());
-        },
+        }},
         navigatorObservers: [widget.bloc.navigatorObserver],
       ),
     );
@@ -275,7 +283,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     var initializationSettingsIOS = new IOSInitializationSettings();
     var initializationSettings = new InitializationSettings(
-        initializationSettingsAndroid, initializationSettingsIOS);
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: onSelectNotification);
 
@@ -391,10 +399,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           "/complaint/${fromMap.notificationExtra ?? ""}?reload=true",
     }[fromMap.notificationType];
 
-    _navigatorKey.currentState.pushNamed(routeName);
+    _navigatorKey.currentState?.pushNamed(routeName!);
 
     // marking the notification as read
-    widget.bloc.clearNotificationUsingID(fromMap.notificationID);
+    widget.bloc.clearNotificationUsingID(fromMap.notificationID!);
   }
 
   void handleAppLink(Uri uri) {
@@ -405,7 +413,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       "map": "/map",
       "org": "/body/${uri.pathSegments[1] ?? ""}",
     }[uri.pathSegments[0]];
-    _navigatorKey.currentState.pushNamed(routeName);
+    _navigatorKey.currentState?.pushNamed(routeName!);
   }
 
   Future initAppLinksState() async {
@@ -417,10 +425,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       print('Failed to get latest link: $err.');
     });
     try {
-      Uri initialUri = await getInitialUri();
+      Uri? initialUri = await getInitialUri();
       // Parse the link and warn the user, if it is not correct,
       // but keep in mind it could be `null`.
-      handleAppLink(initialUri);
+      handleAppLink(initialUri!);
     } on PlatformException {
       // Handle exception by warning the user their action did not succeed
       // return?

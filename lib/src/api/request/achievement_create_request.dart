@@ -1,62 +1,75 @@
 import 'package:InstiApp/src/api/model/user.dart';
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 
-part 'achievement_create_request.jser.dart';
+part 'achievement_create_request.g.dart';
 
-
+@JsonSerializable()
 class AchievementCreateRequest {
+@JsonKey(name: "id")
+  String? id;
 
-  @Alias("id")
-  String id;
+  @JsonKey(name: "time_of_creation")
+  String? timeOfCreation;
 
-  @Alias("time_of_creation")
-  String timeOfCreation;
+  @JsonKey(name: "time_of_modification")
+  String? timeOfModification;
 
-  @Alias("time_of_modification")
-  String timeOfModification;
+  @JsonKey(name: "user")
+  User? user;
 
-  @Alias("user")
-  User user;
+  @JsonKey(name: "hidden")
+  bool? hidden;
 
-  @Alias("hidden")
-  bool hidden;
+  @JsonKey(name: "dismissed")
+  bool? dismissed;
 
-  @Alias("dismissed")
-  bool dismissed;
+  @JsonKey(name: "verified")
+  bool? verified;
 
-  @Alias("verified")
-  bool verified;
+  @JsonKey(name: "verified_by")
+  User? verifiedBy;
 
-  @Alias("verified_by")
-  User verifiedBy;
+  @JsonKey(name: "title")
+  String? title;
 
-  @Alias("title")
-  String title;
+  @JsonKey(name: "description")
+  String? description;
 
-  @Alias("description")
-  String description;
+  @JsonKey(name: "admin_note")
+  String? adminNote;
 
-  @Alias("admin_note")
-  String adminNote;
+  @JsonKey(name: "body")
+  String? bodyID;
 
-  @Alias("body")
-  String bodyID;
+  @JsonKey(name: "body_detail")
+  Body? body;
 
-  @Alias("body_detail")
-  Body body;
+  @JsonKey(name: "event_detail")
+  Event? event;
 
-  @Alias("event_detail")
-  Event event;
+  @JsonKey(name: "offer")
+  String? offer;
 
-  @Alias("offer")
-  String offer;
+  AchievementCreateRequest({
+      this.id,
+      this.timeOfCreation,
+      this.timeOfModification,
+      this.user,
+      this.hidden,
+      this.dismissed,
+      this.verified,
+      this.verifiedBy,
+      this.title,
+      this.description,
+      this.adminNote,
+      this.bodyID,
+      this.body,
+      this.event,
+      this.offer});
+  factory AchievementCreateRequest.fromJson(Map<String, dynamic> json) => _$AchievementCreateRequestFromJson(json);
+  Map<String, dynamic> toJson() => _$AchievementCreateRequestToJson(this);
 
 }
-
-@GenSerializer()
-class AchievementCreateRequestSerializer
-    extends Serializer<AchievementCreateRequest>
-    with _$AchievementCreateRequestSerializer {}

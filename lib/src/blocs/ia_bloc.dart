@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io' show Platform;
 import 'package:InstiApp/main.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
@@ -6,6 +7,7 @@ import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
+import 'package:InstiApp/src/api/request/postFAQ_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/blocs/ach_to_vefiry_bloc.dart';
@@ -34,10 +36,14 @@ import 'package:http/io_client.dart';
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:InstiApp/src/api/model/notification.dart' as ntf;
+import 'package:dio/dio.dart';
 
 enum AddToCalendar { AlwaysAsk, Yes, No }
 
 class InstiAppBloc {
+  // Dio instance
+  final dio = Dio();
+
   // Events StorageID
   static String eventStorageID = "events";
   // Mess StorageID
@@ -76,6 +82,7 @@ class InstiAppBloc {
   PostBloc externalBloc;
   PostBloc trainingBloc;
   PostBloc newsBloc;
+  PostBloc queryBloc;
   ExploreBloc exploreBloc;
   CalendarBloc calendarBloc;
   ComplaintsBloc complaintsBloc;
@@ -92,7 +99,7 @@ class InstiAppBloc {
   var _notifications;
 
   // api functions
-  final client = InstiAppApi();
+  final client = InstiAppApi(dio);
 
   // default homepage
   String homepageName = "/feed";
@@ -189,7 +196,7 @@ class InstiAppBloc {
     '/complaints': 8,
     '/quicklinks': 9,
     '/settings': 10,
-    '/externalblog':12,
+    '/externalblog': 12,
   };
 
   // MaterialApp reference
@@ -202,9 +209,10 @@ class InstiAppBloc {
     globalClient = IOClient();
     // }
     placementBloc = PostBloc(this, postType: PostType.Placement);
-    externalBloc = PostBloc(this,postType: PostType.External);
+    externalBloc = PostBloc(this, postType: PostType.External);
     trainingBloc = PostBloc(this, postType: PostType.Training);
     newsBloc = PostBloc(this, postType: PostType.NewsArticle);
+    queryBloc = PostBloc(this, postType: PostType.Query);
     exploreBloc = ExploreBloc(this);
     calendarBloc = CalendarBloc(this);
     complaintsBloc = ComplaintsBloc(this);
@@ -237,6 +245,7 @@ class InstiAppBloc {
       PostType.External: externalBloc,
       PostType.Training: trainingBloc,
       PostType.NewsArticle: newsBloc,
+      PostType.Query: queryBloc,
     }[blogType];
   }
 
@@ -362,6 +371,15 @@ class InstiAppBloc {
           AchievementHiddenPathRequest()..hidden = hidden);
       achievement.hidden = hidden;
       print("Updated hidden");
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> postFAQ(PostFAQRequest postFAQRequest) async {
+    log("message");
+    try {
+      await client.postFAQ(getSessionIdHeader(), postFAQRequest);
     } catch (e) {
       print(e);
     }
