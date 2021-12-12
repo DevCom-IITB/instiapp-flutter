@@ -240,6 +240,7 @@ abstract class _$InstiAppApiClient implements ApiClient {
   Future<void> markNotificationRead(
       String sessionID, String notificationID) async {
     var req = base.get
+    var req = base.get
         .path(basePath)
         .path("/notifications/read/:notificationID")
         .pathParams("notificationID", notificationID)
@@ -266,6 +267,16 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .path(basePath)
         .path("/search")
         .query("query", query)
+        .header("Cookie", sessionID);
+    return req.go(throwOnErr: true).map(decodeOne);
+  }
+
+  Future<ExploreResponse> searchType(String sessionID, String query,String type) async {
+    var req = base.get
+        .path(basePath)
+        .path("/search")
+        .query("query", query)
+        .query("types",type)
         .header("Cookie", sessionID);
     return req.go(throwOnErr: true).map(decodeOne);
   }
@@ -388,6 +399,28 @@ abstract class _$InstiAppApiClient implements ApiClient {
         .pathParams("id", id)
         .header("Cookie", sessionId)
         .json(jsonConverter.to(secret));
+
+    return await req.go(throwOnErr: true).map(decodeOne);
+  }
+// pass trhough the body
+  Future<SecretResponse> postInterests(String sessionId,String id,
+      String title) async {
+    var req = base.post
+        .path(basePath)
+        .path("/interests")
+        .pathParams("id", id)
+        .pathParams("title", title)
+        .header("Cookie", sessionId);
+
+    return await req.go(throwOnErr: true).map(decodeOne);
+  }
+
+  Future<SecretResponse> postDelInterests(String sessionId,
+      String title) async {
+    var req = base.post
+        .path(basePath)
+        .path("/interests/:title")
+        .header("Cookie", sessionId);
 
     return await req.go(throwOnErr: true).map(decodeOne);
   }

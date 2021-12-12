@@ -147,7 +147,10 @@ class _CreateAchievementPage extends State<Home> {
       },
     );
 
-    return Scaffold(
+    return DefaultTabController(
+        initialIndex: 0,
+        length: 2,
+        child: Scaffold(
       key: _scaffoldKey,
       drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
@@ -170,265 +173,799 @@ class _CreateAchievementPage extends State<Home> {
         ),
       ),
       body: SafeArea(
-          child: bloc.currSession == null
-              ? Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.all(50),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.cloud,
-                        size: 200,
-                        color: Colors.grey[600],
-                      ),
-                      Text(
-                        "Login To View Achievements",
-                        style: theme.textTheme.headline5,
-                        textAlign: TextAlign.center,
-                      )
-                    ],
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                  ),
-                )
-              : RefreshIndicator(
-                  onRefresh: () => bloc.updateEvents(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(7.0),
-                    child: SingleChildScrollView(
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                  margin: EdgeInsets.fromLTRB(
-                                      15.0, 15.0, 10.0, 5.0),
-                                  child: Text(
-                                    'Verification Request',
-                                    style: theme.textTheme.headline4,
-                                  )),
-                              SizedBox(
-                                height: 40,
-                              ),
-                              Container(
-                                  margin: EdgeInsets.fromLTRB(
-                                      15.0, 5.0, 15.0, 10.0),
-                                  child: TextFormField(
-                                    maxLength: 50,
-                                    decoration: InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      labelText: "Title",
-                                    ),
-                                    autocorrect: true,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        currRequest.title = value;
-                                      });
-                                    },
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Title should not be empty';
-                                      }
-                                      return null;
-                                    },
-                                  )),
-                              Container(
-                                  margin: EdgeInsets.fromLTRB(
-                                      15.0, 5.0, 15.0, 10.0),
-                                  child: TextFormField(
-                                    decoration: InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      labelText: "Description",
-                                    ),
-                                    autocorrect: true,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        currRequest.description = value;
-                                      });
-                                    },
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Description should not be empty';
-                                      }
-                                      return null;
-                                    },
-                                  )),
-                              Container(
-                                  margin: EdgeInsets.fromLTRB(
-                                      15.0, 5.0, 15.0, 10.0),
-                                  child: TextFormField(
-                                    decoration: InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      labelText: "Admin Note",
-                                    ),
-                                    autocorrect: true,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        currRequest.adminNote = value;
-                                      });
-                                    },
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Admin Note should not be empty';
-                                      }
-                                      return null;
-                                    },
-                                  )),
-                              Container(
-                                  margin:
-                                      EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 0.0),
-                                  child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        SizedBox(
-                                          height: 20.0,
-                                        ),
-                                        DropdownSearch<Event>(
-                                          mode: Mode.DIALOG,
-                                          maxHeight: 700,
-                                          isFilteredOnline: true,
-                                          showSearchBox: true,
-                                          label: "Event (Optional)",
-                                          hint: "Event (Optional)",
-                                          onChanged: onEventChange,
-                                          onFind: bloc
-                                              .achievementBloc.searchForEvent,
-                                          dropdownBuilder:
-                                              buildDropdownMenuItemsEvent,
-                                          popupItemBuilder:
-                                              _customPopupItemBuilderEvent,
-                                          popupSafeArea: PopupSafeArea(
-                                              top: true, bottom: true),
-                                          scrollbarProps: ScrollbarProps(
-                                            isAlwaysShown: true,
-                                            thickness: 7,
-                                          ),
-                                          emptyBuilder:
-                                              (BuildContext context, String _) {
-                                            return Container(
-                                              alignment: Alignment.center,
-                                              padding: EdgeInsets.all(20),
-                                              child: Text(
-                                                "No events found. Refine your search!",
-                                                style:
-                                                    theme.textTheme.subtitle1,
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                        SizedBox(
-                                          height: this.selectedE ? 20.0 : 0,
-                                        ),
-                                        VerifyCard(
-                                            thing: this._selectedEvent,
-                                            selected: this.selectedE),
-                                      ])),
-                              Container(
-                                  // width: double.infinity,
-                                  margin: EdgeInsets.fromLTRB(
-                                      15.0, 0.0, 15.0, 10.0),
-                                  child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        SizedBox(
-                                          height: 20.0,
-                                        ),
-
-                                        DropdownSearch<Body>(
-                                          mode: Mode.DIALOG,
-                                          maxHeight: 700,
-                                          isFilteredOnline: true,
-                                          showSearchBox: true,
-                                          label: "Verifying Authority",
-                                          hint: "Verifying Authority",
-                                          validator: (value) {
-                                            if (value == null) {
-                                              return 'Please select a organization';
-                                            }
-                                            return null;
-                                          },
-                                          onChanged: onBodyChange,
-                                          onFind: bloc
-                                              .achievementBloc.searchForBody,
-                                          dropdownBuilder:
-                                              buildDropdownMenuItemsBody,
-                                          popupItemBuilder:
-                                              _customPopupItemBuilderBody,
-                                          popupSafeArea: PopupSafeArea(
-                                              top: true, bottom: true),
-                                          scrollbarProps: ScrollbarProps(
-                                            isAlwaysShown: true,
-                                            thickness: 7,
-                                          ),
-                                          selectedItem: _selectedBody,
-                                          emptyBuilder:
-                                              (BuildContext context, String _) {
-                                            return Container(
-                                              alignment: Alignment.center,
-                                              padding: EdgeInsets.all(20),
-                                              child: Text(
-                                                "No verifying authorities found. Refine your search!",
-                                                style:
-                                                    theme.textTheme.subtitle1,
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                        SizedBox(
-                                          height: this.selectedB ? 20.0 : 0,
-                                        ),
-                                        BodyCard(
-                                            thing: this._selectedBody,
-                                            selected: this.selectedB),
-                                        //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
-                                      ])),
-                              Container(
-                                width: double.infinity,
-                                margin: EdgeInsets.symmetric(
-                                    vertical: 10.0, horizontal: 15.0),
-                                child: TextButton(
-                                  onPressed: () async {
-                                    if (_formKey.currentState.validate()) {
-                                      var resp = await achievementsBloc
-                                          .postForm(currRequest);
-                                      if (resp.result == "success") {
-                                        Navigator.of(context)
-                                            .pushNamed("/achievements");
-                                      } else {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                          content: new Text('Error'),
-                                          duration: new Duration(seconds: 10),
-                                        ));
-                                      }
-                                    }
-
-                                    //log(currRequest.description);
-                                  },
-                                  child: Text('Request Verification'),
-                                  style: TextButton.styleFrom(
-                                      primary: Colors.black,
-                                      backgroundColor: Colors.amber,
-                                      onSurface: Colors.grey,
-                                      elevation: 5.0),
-                                ),
-                              ),
-                            ]),
+        child: bloc.currSession == null
+            ? Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(50),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.cloud,
+                      size: 200,
+                      color: Colors.grey[600],
+                    ),
+                    Text(
+                      "Login To View Achievements",
+                      style: theme.textTheme.headline5,
+                      textAlign: TextAlign.center,
+                    )
+                  ],
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                ),
+              )
+            : NestedScrollView(
+                headerSliverBuilder:
+                    (BuildContext context, bool innerBoxIsScrolled) {
+                  return <Widget>[
+                    SliverPersistentHeader(
+                      floating: true,
+                      pinned: true,
+                      delegate: _SliverTabBarDelegate(
+                        child: PreferredSize(
+                          preferredSize: Size.fromHeight(72),
+                          child: Material(
+                            elevation: 4.0,
+                            child: TabBar(
+                              labelColor: theme.accentColor,
+                              unselectedLabelColor: theme.disabledColor,
+                              tabs: [
+                                Tab(
+                                    text: "Associations",
+                                    icon: Icon(Icons.work_outline_outlined)),
+                                Tab(
+                                    text: "Events",
+                                    icon: Icon(Icons.event_outlined)),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                )),
+                  ];
+                },
+                body: TabBarView(
+                  // These are the contents of the tab views, below the tabs.
+                  children: ["Associations", "Events"].map((name) {
+                    return SafeArea(
+                      top: false,
+                      bottom: false,
+                      child: Builder(
+                        // This Builder is needed to provide a BuildContext that is "inside"
+                        // the NestedScrollView, so that sliverOverlapAbsorberHandleFor() can
+                        // find the NestedScrollView.
+                        builder: (BuildContext context) {
+                          var delegates = {
+                            "Associations": RefreshIndicator(
+                              onRefresh: () => bloc.updateEvents(),
+                              child: Padding(
+                                padding: const EdgeInsets.all(7.0),
+                                child: SingleChildScrollView(
+                                  child: Form(
+                                    key: _formKey,
+                                    child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                              margin: EdgeInsets.fromLTRB(
+                                                  15.0, 15.0, 10.0, 5.0),
+                                              child: Text(
+                                                'Verification Request',
+                                                style:
+                                                    theme.textTheme.headline4,
+                                              )),
+                                          SizedBox(
+                                            height: 40,
+                                          ),
+                                          Container(
+                                              margin: EdgeInsets.fromLTRB(
+                                                  15.0, 5.0, 15.0, 10.0),
+                                              child: TextFormField(
+                                                maxLength: 50,
+                                                decoration: InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                  labelText: "Title",
+                                                ),
+                                                autocorrect: true,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    currRequest.title = value;
+                                                  });
+                                                },
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'Title should not be empty';
+                                                  }
+                                                  return null;
+                                                },
+                                              )),
+                                          Container(
+                                              margin: EdgeInsets.fromLTRB(
+                                                  15.0, 5.0, 15.0, 10.0),
+                                              child: TextFormField(
+                                                decoration: InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                  labelText: "Description",
+                                                ),
+                                                autocorrect: true,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    currRequest.description =
+                                                        value;
+                                                  });
+                                                },
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'Description should not be empty';
+                                                  }
+                                                  return null;
+                                                },
+                                              )),
+                                          Container(
+                                              margin: EdgeInsets.fromLTRB(
+                                                  15.0, 5.0, 15.0, 10.0),
+                                              child: TextFormField(
+                                                decoration: InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                  labelText: "Admin Note",
+                                                ),
+                                                autocorrect: true,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    currRequest.adminNote =
+                                                        value;
+                                                  });
+                                                },
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'Admin Note should not be empty';
+                                                  }
+                                                  return null;
+                                                },
+                                              )),
+                                          Container(
+                                              margin: EdgeInsets.fromLTRB(
+                                                  15.0, 5.0, 15.0, 0.0),
+                                              child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    SizedBox(
+                                                      height: 20.0,
+                                                    ),
+                                                    DropdownSearch<Event>(
+                                                      mode: Mode.DIALOG,
+                                                      maxHeight: 700,
+                                                      isFilteredOnline: true,
+                                                      showSearchBox: true,
+                                                      label: "Event (Optional)",
+                                                      hint: "Event (Optional)",
+                                                      onChanged: onEventChange,
+                                                      onFind: bloc
+                                                          .achievementBloc
+                                                          .searchForEvent,
+                                                      dropdownBuilder:
+                                                          buildDropdownMenuItemsEvent,
+                                                      popupItemBuilder:
+                                                          _customPopupItemBuilderEvent,
+                                                      popupSafeArea:
+                                                          PopupSafeArea(
+                                                              top: true,
+                                                              bottom: true),
+                                                      scrollbarProps:
+                                                          ScrollbarProps(
+                                                        isAlwaysShown: true,
+                                                        thickness: 7,
+                                                      ),
+                                                      emptyBuilder:
+                                                          (BuildContext context,
+                                                              String _) {
+                                                        return Container(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  20),
+                                                          child: Text(
+                                                            "No events found. Refine your search!",
+                                                            style: theme
+                                                                .textTheme
+                                                                .subtitle1,
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                    SizedBox(
+                                                      height: this.selectedE
+                                                          ? 20.0
+                                                          : 0,
+                                                    ),
+                                                    VerifyCard(
+                                                        thing:
+                                                            this._selectedEvent,
+                                                        selected:
+                                                            this.selectedE),
+                                                  ])),
+                                          Container(
+                                              // width: double.infinity,
+                                              margin: EdgeInsets.fromLTRB(
+                                                  15.0, 0.0, 15.0, 10.0),
+                                              child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    SizedBox(
+                                                      height: 20.0,
+                                                    ),
+
+                                                    DropdownSearch<Body>(
+                                                      mode: Mode.DIALOG,
+                                                      maxHeight: 700,
+                                                      isFilteredOnline: true,
+                                                      showSearchBox: true,
+                                                      label:
+                                                          "Verifying Authority",
+                                                      hint:
+                                                          "Verifying Authority",
+                                                      validator: (value) {
+                                                        if (value == null) {
+                                                          return 'Please select a organization';
+                                                        }
+                                                        return null;
+                                                      },
+                                                      onChanged: onBodyChange,
+                                                      onFind: bloc
+                                                          .achievementBloc
+                                                          .searchForBody,
+                                                      dropdownBuilder:
+                                                          buildDropdownMenuItemsBody,
+                                                      popupItemBuilder:
+                                                          _customPopupItemBuilderBody,
+                                                      popupSafeArea:
+                                                          PopupSafeArea(
+                                                              top: true,
+                                                              bottom: true),
+                                                      scrollbarProps:
+                                                          ScrollbarProps(
+                                                        isAlwaysShown: true,
+                                                        thickness: 7,
+                                                      ),
+                                                      selectedItem:
+                                                          _selectedBody,
+                                                      emptyBuilder:
+                                                          (BuildContext context,
+                                                              String _) {
+                                                        return Container(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  20),
+                                                          child: Text(
+                                                            "No verifying authorities found. Refine your search!",
+                                                            style: theme
+                                                                .textTheme
+                                                                .subtitle1,
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                    SizedBox(
+                                                      height: this.selectedB
+                                                          ? 20.0
+                                                          : 0,
+                                                    ),
+                                                    BodyCard(
+                                                        thing:
+                                                            this._selectedBody,
+                                                        selected:
+                                                            this.selectedB),
+                                                    //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
+                                                  ])),
+                                          Container(
+                                            width: double.infinity,
+                                            margin: EdgeInsets.symmetric(
+                                                vertical: 10.0,
+                                                horizontal: 15.0),
+                                            child: TextButton(
+                                              onPressed: () async {
+                                                if (_formKey.currentState
+                                                    .validate()) {
+                                                  var resp =
+                                                      await achievementsBloc
+                                                          .postForm(
+                                                              currRequest);
+                                                  if (resp.result ==
+                                                      "success") {
+                                                    Navigator.of(context)
+                                                        .pushNamed(
+                                                            "/achievements");
+                                                  } else {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(SnackBar(
+                                                      content:
+                                                          new Text('Error'),
+                                                      duration: new Duration(
+                                                          seconds: 10),
+                                                    ));
+                                                  }
+                                                }
+
+                                                //log(currRequest.description);
+                                              },
+                                              child:
+                                                  Text('Request Verification'),
+                                              style: TextButton.styleFrom(
+                                                  primary: Colors.black,
+                                                  backgroundColor: Colors.amber,
+                                                  onSurface: Colors.grey,
+                                                  elevation: 5.0),
+                                            ),
+                                          ),
+                                        ]),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            "Events":RefreshIndicator(
+                              onRefresh: () => bloc.updateEvents(),
+                              child: Padding(
+                                padding: const EdgeInsets.all(7.0),
+                                child: SingleChildScrollView(
+                                  child: Form(
+                                    key: _formKey,
+                                    child: Column(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            // width: double.infinity,
+                                              margin: EdgeInsets.fromLTRB(
+                                                  15.0, 0.0, 15.0, 10.0),
+                                              child: Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    SizedBox(
+                                                      height: 20.0,
+                                                    ),
+
+                                                    DropdownSearch<Body>(
+                                                      mode: Mode.DIALOG,
+                                                      maxHeight: 700,
+                                                      isFilteredOnline: true,
+                                                      showSearchBox: true,
+                                                      label:
+                                                      "Skills",
+                                                      hint:
+                                                      "Skills",
+                                                      validator: (value) {
+                                                        if (value == null) {
+                                                          return 'Please select a organization';
+                                                        }
+                                                        return null;
+                                                      },
+                                                      onChanged: onBodyChange,
+                                                      onFind: bloc
+                                                          .achievementBloc
+                                                          .searchForBody,
+                                                      dropdownBuilder:
+                                                      buildDropdownMenuItemsBody,
+                                                      popupItemBuilder:
+                                                      _customPopupItemBuilderBody,
+                                                      popupSafeArea:
+                                                      PopupSafeArea(
+                                                          top: true,
+                                                          bottom: true),
+                                                      scrollbarProps:
+                                                      ScrollbarProps(
+                                                        isAlwaysShown: true,
+                                                        thickness: 7,
+                                                      ),
+                                                      selectedItem:
+                                                      _selectedBody,
+                                                      emptyBuilder:
+                                                          (BuildContext context,
+                                                          String _) {
+                                                        return Container(
+                                                          alignment:
+                                                          Alignment.center,
+                                                          padding:
+                                                          EdgeInsets.all(
+                                                              20),
+                                                          child: Text(
+                                                            "No verifying authorities found. Refine your search!",
+                                                            style: theme
+                                                                .textTheme
+                                                                .subtitle1,
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                    SizedBox(
+                                                      height: this.selectedB
+                                                          ? 20.0
+                                                          : 0,
+                                                    ),
+                                                    BodyCard(
+                                                        thing:
+                                                        this._selectedBody,
+                                                        selected:
+                                                        this.selectedB),
+                                                    //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
+                                                  ])),
+                                          Container(
+                                            width: double.infinity,
+                                            margin: EdgeInsets.symmetric(
+                                                vertical: 10.0,
+                                                horizontal: 15.0),
+                                            child: TextButton(
+                                              onPressed: () async {
+                                                if (_formKey.currentState
+                                                    .validate()) {
+                                                  var resp =
+                                                  await achievementsBloc
+                                                      .postForm(
+                                                      currRequest);
+                                                  if (resp.result ==
+                                                      "success") {
+                                                    Navigator.of(context)
+                                                        .pushNamed(
+                                                        "/achievements");
+                                                  } else {
+                                                    ScaffoldMessenger.of(
+                                                        context)
+                                                        .showSnackBar(SnackBar(
+                                                      content:
+                                                      new Text('Error'),
+                                                      duration: new Duration(
+                                                          seconds: 10),
+                                                    ));
+                                                  }
+                                                }
+
+                                                //log(currRequest.description);
+                                              },
+                                              child:
+                                              Text('Request Verification'),
+                                              style: TextButton.styleFrom(
+                                                  primary: Colors.black,
+                                                  backgroundColor: Colors.amber,
+                                                  onSurface: Colors.grey,
+                                                  elevation: 5.0),
+                                            ),
+                                          ),
+                                        ]),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          };
+                          return delegates[name];
+                          // return CustomScrollView(
+                          //   // The "controller" and "primary" members should be left
+                          //   // unset, so that the NestedScrollView can control this
+                          //   // inner scroll view.
+                          //   // If the "controller" property is set, then this scroll
+                          //   // view will not be associated with the NestedScrollView.
+                          //   // The PageStorageKey should be unique to this ScrollView;
+                          //   // it allows the list to remember its scroll position when
+                          //   // the tab view is not on the screen.
+                          //   key: PageStorageKey<String>(name),
+                          //   slivers: <Widget>[
+                          //     // SliverOverlapInjector(
+                          //     //   // This is the flip side of the SliverOverlapAbsorber above.
+                          //     //   handle: NestedScrollView
+                          //     //       .sliverOverlapAbsorberHandleFor(context),
+                          //     // ),
+                          //     SliverPadding(
+                          //       padding: const EdgeInsets.all(8.0),
+                          //       // In this example, the inner scroll view has
+                          //       // fixed-height list items, hence the use of
+                          //       // SliverFixedExtentList. However, one could use any
+                          //       // sliver widget here, e.g. SliverList or SliverGrid.
+                          //       sliver: delegates[name].childCount == 0
+                          //           ? SliverToBoxAdapter(
+                          //               child: Center(
+                          //                 child: Padding(
+                          //                   padding: const EdgeInsets.all(8.0),
+                          //                   child: Text(
+                          //                     "No $name",
+                          //                   ),
+                          //                 ),
+                          //               ),
+                          //             )
+                          //           : SliverList(
+                          //               delegate: delegates[name],
+                          //             ),
+                          //     ),
+                          //   ],
+                          // );
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+      ),
+      // body: SafeArea(
+      //     child: bloc.currSession == null
+      //         ? Container(
+      //             alignment: Alignment.center,
+      //             padding: EdgeInsets.all(50),
+      //             child: Column(
+      //               children: [
+      //                 Icon(
+      //                   Icons.cloud,
+      //                   size: 200,
+      //                   color: Colors.grey[600],
+      //                 ),
+      //                 Text(
+      //                   "Login To View Achievements",
+      //                   style: theme.textTheme.headline5,
+      //                   textAlign: TextAlign.center,
+      //                 )
+      //               ],
+      //               crossAxisAlignment: CrossAxisAlignment.center,
+      //             ),
+      //           )
+      //         : RefreshIndicator(
+      //             onRefresh: () => bloc.updateEvents(),
+      //             child: Padding(
+      //               padding: const EdgeInsets.all(7.0),
+      //               child: SingleChildScrollView(
+      //                 child: Form(
+      //                   key: _formKey,
+      //                   child: Column(
+      //                       mainAxisAlignment: MainAxisAlignment.start,
+      //                       crossAxisAlignment: CrossAxisAlignment.start,
+      //                       children: [
+      //                         Container(
+      //                             margin: EdgeInsets.fromLTRB(
+      //                                 15.0, 15.0, 10.0, 5.0),
+      //                             child: Text(
+      //                               'Verification Request',
+      //                               style: theme.textTheme.headline4,
+      //                             )),
+      //                         SizedBox(
+      //                           height: 40,
+      //                         ),
+      //                         Container(
+      //                             margin: EdgeInsets.fromLTRB(
+      //                                 15.0, 5.0, 15.0, 10.0),
+      //                             child: TextFormField(
+      //                               maxLength: 50,
+      //                               decoration: InputDecoration(
+      //                                 border: OutlineInputBorder(),
+      //                                 labelText: "Title",
+      //                               ),
+      //                               autocorrect: true,
+      //                               onChanged: (value) {
+      //                                 setState(() {
+      //                                   currRequest.title = value;
+      //                                 });
+      //                               },
+      //                               validator: (value) {
+      //                                 if (value == null || value.isEmpty) {
+      //                                   return 'Title should not be empty';
+      //                                 }
+      //                                 return null;
+      //                               },
+      //                             )),
+      //                         Container(
+      //                             margin: EdgeInsets.fromLTRB(
+      //                                 15.0, 5.0, 15.0, 10.0),
+      //                             child: TextFormField(
+      //                               decoration: InputDecoration(
+      //                                 border: OutlineInputBorder(),
+      //                                 labelText: "Description",
+      //                               ),
+      //                               autocorrect: true,
+      //                               onChanged: (value) {
+      //                                 setState(() {
+      //                                   currRequest.description = value;
+      //                                 });
+      //                               },
+      //                               validator: (value) {
+      //                                 if (value == null || value.isEmpty) {
+      //                                   return 'Description should not be empty';
+      //                                 }
+      //                                 return null;
+      //                               },
+      //                             )),
+      //                         Container(
+      //                             margin: EdgeInsets.fromLTRB(
+      //                                 15.0, 5.0, 15.0, 10.0),
+      //                             child: TextFormField(
+      //                               decoration: InputDecoration(
+      //                                 border: OutlineInputBorder(),
+      //                                 labelText: "Admin Note",
+      //                               ),
+      //                               autocorrect: true,
+      //                               onChanged: (value) {
+      //                                 setState(() {
+      //                                   currRequest.adminNote = value;
+      //                                 });
+      //                               },
+      //                               validator: (value) {
+      //                                 if (value == null || value.isEmpty) {
+      //                                   return 'Admin Note should not be empty';
+      //                                 }
+      //                                 return null;
+      //                               },
+      //                             )),
+      //                         Container(
+      //                             margin:
+      //                                 EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 0.0),
+      //                             child: Column(
+      //                                 crossAxisAlignment:
+      //                                     CrossAxisAlignment.center,
+      //                                 mainAxisAlignment:
+      //                                     MainAxisAlignment.center,
+      //                                 children: <Widget>[
+      //                                   SizedBox(
+      //                                     height: 20.0,
+      //                                   ),
+      //                                   DropdownSearch<Event>(
+      //                                     mode: Mode.DIALOG,
+      //                                     maxHeight: 700,
+      //                                     isFilteredOnline: true,
+      //                                     showSearchBox: true,
+      //                                     label: "Event (Optional)",
+      //                                     hint: "Event (Optional)",
+      //                                     onChanged: onEventChange,
+      //                                     onFind: bloc
+      //                                         .achievementBloc.searchForEvent,
+      //                                     dropdownBuilder:
+      //                                         buildDropdownMenuItemsEvent,
+      //                                     popupItemBuilder:
+      //                                         _customPopupItemBuilderEvent,
+      //                                     popupSafeArea: PopupSafeArea(
+      //                                         top: true, bottom: true),
+      //                                     scrollbarProps: ScrollbarProps(
+      //                                       isAlwaysShown: true,
+      //                                       thickness: 7,
+      //                                     ),
+      //                                     emptyBuilder:
+      //                                         (BuildContext context, String _) {
+      //                                       return Container(
+      //                                         alignment: Alignment.center,
+      //                                         padding: EdgeInsets.all(20),
+      //                                         child: Text(
+      //                                           "No events found. Refine your search!",
+      //                                           style:
+      //                                               theme.textTheme.subtitle1,
+      //                                         ),
+      //                                       );
+      //                                     },
+      //                                   ),
+      //                                   SizedBox(
+      //                                     height: this.selectedE ? 20.0 : 0,
+      //                                   ),
+      //                                   VerifyCard(
+      //                                       thing: this._selectedEvent,
+      //                                       selected: this.selectedE),
+      //                                 ])),
+      //                         Container(
+      //                             // width: double.infinity,
+      //                             margin: EdgeInsets.fromLTRB(
+      //                                 15.0, 0.0, 15.0, 10.0),
+      //                             child: Column(
+      //                                 crossAxisAlignment:
+      //                                     CrossAxisAlignment.center,
+      //                                 mainAxisAlignment:
+      //                                     MainAxisAlignment.center,
+      //                                 children: <Widget>[
+      //                                   SizedBox(
+      //                                     height: 20.0,
+      //                                   ),
+      //
+      //                                   DropdownSearch<Body>(
+      //                                     mode: Mode.DIALOG,
+      //                                     maxHeight: 700,
+      //                                     isFilteredOnline: true,
+      //                                     showSearchBox: true,
+      //                                     label: "Verifying Authority",
+      //                                     hint: "Verifying Authority",
+      //                                     validator: (value) {
+      //                                       if (value == null) {
+      //                                         return 'Please select a organization';
+      //                                       }
+      //                                       return null;
+      //                                     },
+      //                                     onChanged: onBodyChange,
+      //                                     onFind: bloc
+      //                                         .achievementBloc.searchForBody,
+      //                                     dropdownBuilder:
+      //                                         buildDropdownMenuItemsBody,
+      //                                     popupItemBuilder:
+      //                                         _customPopupItemBuilderBody,
+      //                                     popupSafeArea: PopupSafeArea(
+      //                                         top: true, bottom: true),
+      //                                     scrollbarProps: ScrollbarProps(
+      //                                       isAlwaysShown: true,
+      //                                       thickness: 7,
+      //                                     ),
+      //                                     selectedItem: _selectedBody,
+      //                                     emptyBuilder:
+      //                                         (BuildContext context, String _) {
+      //                                       return Container(
+      //                                         alignment: Alignment.center,
+      //                                         padding: EdgeInsets.all(20),
+      //                                         child: Text(
+      //                                           "No verifying authorities found. Refine your search!",
+      //                                           style:
+      //                                               theme.textTheme.subtitle1,
+      //                                           textAlign: TextAlign.center,
+      //                                         ),
+      //                                       );
+      //                                     },
+      //                                   ),
+      //                                   SizedBox(
+      //                                     height: this.selectedB ? 20.0 : 0,
+      //                                   ),
+      //                                   BodyCard(
+      //                                       thing: this._selectedBody,
+      //                                       selected: this.selectedB),
+      //                                   //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
+      //                                 ])),
+      //                         Container(
+      //                           width: double.infinity,
+      //                           margin: EdgeInsets.symmetric(
+      //                               vertical: 10.0, horizontal: 15.0),
+      //                           child: TextButton(
+      //                             onPressed: () async {
+      //                               if (_formKey.currentState.validate()) {
+      //                                 var resp = await achievementsBloc
+      //                                     .postForm(currRequest);
+      //                                 if (resp.result == "success") {
+      //                                   Navigator.of(context)
+      //                                       .pushNamed("/achievements");
+      //                                 } else {
+      //                                   ScaffoldMessenger.of(context)
+      //                                       .showSnackBar(SnackBar(
+      //                                     content: new Text('Error'),
+      //                                     duration: new Duration(seconds: 10),
+      //                                   ));
+      //                                 }
+      //                               }
+      //
+      //                               //log(currRequest.description);
+      //                             },
+      //                             child: Text('Request Verification'),
+      //                             style: TextButton.styleFrom(
+      //                                 primary: Colors.black,
+      //                                 backgroundColor: Colors.amber,
+      //                                 onSurface: Colors.grey,
+      //                                 elevation: 5.0),
+      //                           ),
+      //                         ),
+      //                       ]),
+      //                 ),
+      //               ),
+      //             ),
+      //           )),
       floatingActionButton: fab,
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-    );
+    ));
   }
 }
 
@@ -576,19 +1113,19 @@ class _QRViewExampleState extends State<QRViewExample> {
           }
         }
         // check for a secret if offerid exists
-        else{
-            var achievements = bloc.achievementBloc;
-            SecretResponse offer= await achievements.postAchievementOffer(offerid,secret);
-            log(offer.message);
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    content: Text(offer.message)),
-              );
-            controller.dispose();
-            processing = false;
-        Navigator.of(context).pop();
-      }
-      }else {
+        else {
+          var achievements = bloc.achievementBloc;
+          SecretResponse offer =
+              await achievements.postAchievementOffer(offerid, secret);
+          log(offer.message);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(offer.message)),
+          );
+          controller.dispose();
+          processing = false;
+          Navigator.of(context).pop();
+        }
+      } else {
         log('1');
         bool addToCal = await showDialog(
             context: context,
@@ -664,5 +1201,28 @@ class _QRViewExampleState extends State<QRViewExample> {
   void dispose() {
     controller?.dispose();
     super.dispose();
+  }
+}
+
+class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
+  final PreferredSize child;
+
+  _SliverTabBarDelegate({this.child});
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return child;
+  }
+
+  @override
+  double get maxExtent => child.preferredSize.height;
+
+  @override
+  double get minExtent => child.preferredSize.height;
+
+  @override
+  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
   }
 }

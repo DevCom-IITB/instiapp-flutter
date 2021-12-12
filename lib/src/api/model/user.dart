@@ -14,6 +14,23 @@ class Session {
   User profile;
 }
 
+class Interest{
+  @Alias("id")
+  String id;
+
+  @Alias("title")
+  String title;
+}
+
+class Skill{
+  @Alias("title")
+  String title;
+
+  @Alias("body")
+  Body body;
+}
+
+
 class User {
   @Alias("id")
   String userID;
@@ -69,12 +86,17 @@ class User {
   @Alias("hostel")
   String hostel;
 
+  @Alias("interests")
+  List<Interest> interests;
+
   String currentRole;
 
   String getSubTitle() {
     return currentRole ?? userLDAPId;
   }
 }
+
+
 
 @GenSerializer(serializers: const [UserSerializer])
 class SessionSerializer extends Serializer<Session> with _$SessionSerializer {}

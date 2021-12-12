@@ -186,6 +186,10 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
   Future<ExploreResponse> search(
       @Header("Cookie") String sessionID, @QueryParam("query") String query);
 
+  @GetReq(path: "/search?type=")
+  Future<ExploreResponse> search(
+      @Header("Cookie") String sessionID, @QueryParam("query") String query);
+
   // Venter
   @GetReq(path: "/venter/complaints")
   Future<List<Complaint>> getAllComplaints(
@@ -241,6 +245,18 @@ class InstiAppApi extends ApiClient with _$InstiAppApiClient {
       @Header("Cookie") String sessionId,
       @QueryParam() String id,
       @AsJson() Offersecret secret);
+
+  @PostReq(path: "/interests/:id/:title")
+  Future<SecretResponse> postInterests(
+      @Header("Cookie") String sessionId,
+      @QueryParam() String id,
+      @AsJson() String title);
+
+  @PostReq(path: "/interests/:id/:title")
+  Future<SecretResponse> postDelInterests(
+      @Header("Cookie") String sessionId,
+      @QueryParam() String id,
+      @AsJson() String title);
 
   @GetReq(path: "/achievements")
   Future<List<Achievement>> getYourAchievements(
