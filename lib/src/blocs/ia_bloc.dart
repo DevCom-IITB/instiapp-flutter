@@ -389,7 +389,8 @@ class InstiAppBloc {
       await client.updateBodyFollowing(
           getSessionIdHeader(), b.bodyID, b.bodyUserFollows! ? 0 : 1);
       b.bodyUserFollows = !b.bodyUserFollows!;
-      b.bodyFollowersCount = b.bodyFollowersCount! + (b.bodyUserFollows! ? 1 : -1);
+      b.bodyFollowersCount =
+          b.bodyFollowersCount! + (b.bodyUserFollows! ? 1 : -1);
     } catch (ex) {
       print(ex);
     }
@@ -413,11 +414,11 @@ class InstiAppBloc {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.getKeys().contains("session")) {
       var x = prefs.getString("session");
-      if(x != null){
+      if (x != null) {
         Session? sess = Session.fromJson(json.decode(x));
-      if (sess?.sessionid != null) {
-        updateSession(sess);
-      }
+        if (sess.sessionid != null) {
+          updateSession(sess);
+        }
       }
     }
     if (prefs.getKeys().contains("homepage")) {
@@ -427,25 +428,19 @@ class InstiAppBloc {
     }
     if (prefs.getKeys().contains("brightness")) {
       int? x = prefs.getInt("brightness");
-      if(x != null)
-      _brightness =
-          AppBrightness.values[x];
+      if (x != null) _brightness = AppBrightness.values[x];
     }
     if (prefs.getKeys().contains("accentColor")) {
       int? x = prefs.getInt("accentColor");
-      if(x != null)
-      _accentColor = Color(x);
+      if (x != null) _accentColor = Color(x);
     }
     if (prefs.getKeys().contains("primaryColor")) {
       int? x = prefs.getInt("primaryColor");
-      if(x != null)
-      _primaryColor = Color(x);
+      if (x != null) _primaryColor = Color(x);
     }
     if (prefs.getKeys().contains("addToCalendarSetting")) {
       int? x = prefs.getInt("addToCalendarSetting");
-      if(x != null)
-      _addToCalendarSetting =
-          AddToCalendar.values[x];
+      if (x != null) _addToCalendarSetting = AddToCalendar.values[x];
     }
     if (prefs.getKeys().contains("defaultCalendarsSetting")) {
       _defaultCalendarsSetting =
@@ -466,7 +461,7 @@ class InstiAppBloc {
 
   void _persistSession(Session? sess) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if(sess == null) return;
+    if (sess == null) return;
     prefs.setString("session", json.encode(sess.toJson()));
   }
 
@@ -490,41 +485,43 @@ class InstiAppBloc {
 
   Future saveToCache({SharedPreferences? sharedPrefs}) async {
     var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
-    if (_hostels?.isNotEmpty ?? false) {
-      prefs.setString(messStorageID, json.encode(_hostels.map((e)=> e.toJson()).toList()));
-    }
-    if (_events?.isNotEmpty ?? false) {
-      prefs.setString(eventStorageID, json.encode(_events.map((e)=>e.toJson()).toList()));
-    }
-    if (_achievements?.isNotEmpty ?? false) {
+    if (_hostels.isNotEmpty) {
       prefs.setString(
-          achievementStorageID, json.encode(_achievements.map((e) => e.toJson()).toList()));
+          messStorageID, json.encode(_hostels.map((e) => e.toJson()).toList()));
     }
-    if (_notifications != null) {
+    if (_events.isNotEmpty) {
       prefs.setString(
-          notificationsStorageID, json.encode(_notifications.map((e)=> e.toJson()).toList()));
+          eventStorageID, json.encode(_events.map((e) => e.toJson()).toList()));
+    }
+    if (_achievements.isNotEmpty) {
+      prefs.setString(achievementStorageID,
+          json.encode(_achievements.map((e) => e.toJson()).toList()));
+    }
+    if (_notifications.isNotEmpty) {
+      prefs.setString(notificationsStorageID,
+          json.encode(_notifications.map((e) => e.toJson()).toList()));
     }
 
-    exploreBloc?.saveToCache(sharedPrefs: prefs);
+    exploreBloc.saveToCache(sharedPrefs: prefs);
     // complaintsBloc?.saveToCache(sharedPrefs: prefs);
-    calendarBloc?.saveToCache(sharedPrefs: prefs);
-    mapBloc?.saveToCache(sharedPrefs: prefs);
+    calendarBloc.saveToCache(sharedPrefs: prefs);
+    mapBloc.saveToCache(sharedPrefs: prefs);
   }
 
   Future restoreFromCache({SharedPreferences? sharedPrefs}) async {
     var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
     if (prefs.getKeys().contains(messStorageID)) {
       var x = prefs.getString(messStorageID);
-      if(x != null){
-        _hostels = json.decode(x).map((e)=>Hostel.fromJson(e)).toList();
+      if (x != null) {
+        _hostels = json.decode(x).map((e) => Hostel.fromJson(e)).toList();
         _hostelsSubject.add(UnmodifiableListView(_hostels));
       }
     }
 
     if (prefs.getKeys().contains(eventStorageID)) {
       var x = prefs.getString(eventStorageID);
-      if(x != null){
-        _events = json.decode(x).map((e)=>Event.fromJson(e)).toList();
+      if (x != null) {
+        _events = json.decode(x).map((e) => Event.fromJson(e)).toList();
         if (_events.length >= 1) {
           _events[0].eventBigImage = true;
         }
@@ -534,24 +531,26 @@ class InstiAppBloc {
 
     if (prefs.getKeys().contains(achievementStorageID)) {
       var x = prefs.getString(achievementStorageID);
-      if(x != null){
-        _achievements = json.decode(x).map((e)=>Achievement.fromJson(e)).toList();
+      if (x != null) {
+        _achievements =
+            json.decode(x).map((e) => Achievement.fromJson(e)).toList();
         _achievementSubject.add(UnmodifiableListView(_achievements));
       }
     }
 
     if (prefs.getKeys().contains(notificationsStorageID)) {
       var x = prefs.getString(notificationsStorageID);
-      if(x != null){
-        _notifications = json.decode(x).map((e)=>ntf.Notification.fromJson(e)).toList();
+      if (x != null) {
+        _notifications =
+            json.decode(x).map((e) => ntf.Notification.fromJson(e)).toList();
         _notificationsSubject.add(UnmodifiableListView(_notifications));
       }
     }
 
-    exploreBloc?.restoreFromCache(sharedPrefs: prefs);
+    exploreBloc.restoreFromCache(sharedPrefs: prefs);
     // complaintsBloc?.restoreFromCache(sharedPrefs: prefs);
-    calendarBloc?.restoreFromCache(sharedPrefs: prefs);
-    mapBloc?.restoreFromCache(sharedPrefs: prefs);
+    calendarBloc.restoreFromCache(sharedPrefs: prefs);
+    mapBloc.restoreFromCache(sharedPrefs: prefs);
   }
 
   // Set batch number on icon for iOS

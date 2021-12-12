@@ -19,10 +19,8 @@ class ExploreBloc {
   ValueStream<ExploreResponse> get explore => _exploreSubject.stream;
   final _exploreSubject = BehaviorSubject<ExploreResponse>();
 
-
   ValueStream<UnmodifiableListView<Body>> get bodies => _bodiesSubject.stream;
   final _bodiesSubject = BehaviorSubject<UnmodifiableListView<Body>>();
-
 
   // Params
   String query = "";
@@ -40,8 +38,9 @@ class ExploreBloc {
 
   Future saveToCache({SharedPreferences? sharedPrefs}) async {
     var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
-    if (allBodies?.isNotEmpty ?? false) {
-      prefs.setString(storageID, json.encode(allBodies.map((e) => e.toJson()).toList()));
+    if (allBodies.isNotEmpty) {
+      prefs.setString(
+          storageID, json.encode(allBodies.map((e) => e.toJson()).toList()));
     }
   }
 
@@ -49,19 +48,17 @@ class ExploreBloc {
     var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
     if (prefs.getKeys().contains(storageID)) {
       var x = prefs.getString(storageID);
-      if(x != null){
+      if (x != null) {
         allBodies = json.decode(x).map((e) => Body.fromJson(e)).toList();
         _push(ExploreResponse(bodies: allBodies));
       }
     }
     _bodiesSubject.add(UnmodifiableListView(allBodies));
-
-
   }
 
   Future refresh() async {
-    if ((query ?? "") == "") {
-      if (allBodies?.isEmpty ?? true) {
+    if (query == "") {
+      if (allBodies.isEmpty) {
         allBodies = await bloc.client.getAllBodies(bloc.getSessionIdHeader());
       }
       _push(ExploreResponse(bodies: allBodies));
