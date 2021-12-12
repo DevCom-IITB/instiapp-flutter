@@ -261,16 +261,16 @@ class CommonHtml extends StatelessWidget {
                 return Text(attributes['src'] ?? attributes['href'] ?? "<img>");
               },
               "a": (context, child) {
-                context.tree.element.parentNode;
-                print(node.innerHtml);
+                var attributes=context.tree.element!.attributes;
+                var innerHtml= context.tree.element?.innerHtml;
                 return InkWell(
                   onTap: () async {
-                    if (await canLaunch(node.attributes['href'])) {
-                      await launch(node.attributes['href']);
+                    if (await canLaunch(attributes['href']!)) {
+                      await launch(attributes['href']!);
                     }
                   },
                   child: Text(
-                    node.innerHtml,
+                    innerHtml??"",
                     style: TextStyle(
                         color: Colors.lightBlue,
                         decoration: TextDecoration.underline),
@@ -282,17 +282,17 @@ class CommonHtml extends StatelessWidget {
                 );
               },
               "p":(context, child) {
-                print(node.innerHtml);
+                print(context.tree.element?.innerHtml);
                 return RichText(
                       textScaleFactor:1,
-                      text: highlight(node.innerHtml,query),
+                      text: highlight(context.tree.element?.innerHtml??"",query),
                     );
               },
               "td":(context, child) {
-                print(node.innerHtml);
+               // print(node.innerHtml);
                 return RichText(
                   textScaleFactor:1,
-                  text: highlight(node.innerHtml,query),
+                  text: highlight(context.tree.element?.innerHtml??"",query),
                 );
               }
             },
@@ -359,7 +359,7 @@ class RoundedNotchedRectangle implements NotchedShape {
   /// The notch is curve that smoothly connects the host's top edge and
   /// the guest circle.
   @override
-  Path getOuterPath(Rect host, Rect guest) {
+  Path getOuterPath(Rect host, Rect? guest) {
     if (guest == null || !host.overlaps(guest)) return Path()..addRect(host);
 
     // The guest's shape is a circle bounded by the guest rectangle.
