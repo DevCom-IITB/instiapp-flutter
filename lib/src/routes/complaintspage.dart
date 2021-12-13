@@ -77,7 +77,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                 StreamBuilder(
                   stream: bloc.session,
                   builder:
-                      (BuildContext context, AsyncSnapshot<Session> snapshot) {
+                      (BuildContext context, AsyncSnapshot<Session?> snapshot) {
                     return (snapshot.hasData && snapshot.data != null)
                         ? SliverPersistentHeader(
                             floating: true,
@@ -115,7 +115,8 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
             },
             body: StreamBuilder(
               stream: bloc.session,
-              builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
+              builder:
+                  (BuildContext context, AsyncSnapshot<Session?> snapshot) {
                 return (snapshot.hasData && snapshot.data != null)
                     ? TabBarView(
                         // These are the contents of the tab views, below the tabs.
@@ -251,7 +252,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
         ),
         floatingActionButton: StreamBuilder(
           stream: bloc.session,
-          builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
+          builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
             return snapshot.hasData && snapshot.data != null
                 ? FloatingActionButton.extended(
                     label: Text("New Complaint"),

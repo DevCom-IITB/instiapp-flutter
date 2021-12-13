@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
@@ -8,6 +9,8 @@ import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:jaguar/jaguar.dart' as jag;
+import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
 
 class LoginPage extends StatefulWidget {
   final InstiAppBloc bloc;
@@ -19,7 +22,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final flutterWebviewPlugin = FlutterWebviewPlugin();
-  jag.Jaguar server;
+  late jag.Jaguar server;
+  final Dio dio = Dio();
 
   final String successUrl = "instiapp://insti.app/login";
   final String guestUrl = "https://guesturi";
@@ -38,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    server?.close();
+    server.close();
     flutterWebviewPlugin.dispose();
 
     onUrlChangedSub?.cancel();
@@ -206,7 +210,7 @@ class _LoginPageState extends State<LoginPage> {
     });
     var response;
     try {
-      response = await InstiAppApi().login(authCode, redirectUrl);
+      response = await InstiAppApi(dio).login(authCode, redirectUrl);
     } catch (e) {}
     if (response?.sessionid != null) {
       _bloc?.updateSession(response);
