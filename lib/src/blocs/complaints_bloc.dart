@@ -189,7 +189,7 @@ class ComplaintsBloc {
     }
   }
 
-  Future<Complaint?> getComplaint(String uuid, {bool reload = false}) async {
+  Future<Complaint>? getComplaint(String uuid, {bool reload = false}) async {
     if (bloc.currSession == null) {
       return null;
     }
