@@ -79,7 +79,7 @@ class _EventPageState extends State<EventPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     var footerButtons;
     var editAccess = false;
     if (event != null) {

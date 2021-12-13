@@ -8,51 +8,51 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class SafeWebviewScaffold extends StatefulWidget {
   const SafeWebviewScaffold({
-    required Key key,
-    required this.appBar,
-    required this.url,
-    required this.headers,
-    required this.withJavascript,
-    required this.clearCache,
-    required this.clearCookies,
-    required this.enableAppScheme,
-    required this.userAgent,
+    Key? key,
+    this.appBar,
+    this.url,
+    this.headers,
+    this.withJavascript,
+    this.clearCache,
+    this.clearCookies,
+    this.enableAppScheme,
+    this.userAgent,
     this.primary = true,
-    required this.persistentFooterButtons,
-    required this.bottomNavigationBar,
-    required this.withZoom,
-    required this.withLocalStorage,
-    required this.withLocalUrl,
-    required this.scrollBar,
-    required this.supportMultipleWindows,
-    required this.appCacheEnabled,
+    this.persistentFooterButtons,
+    this.bottomNavigationBar,
+    this.withZoom,
+    this.withLocalStorage,
+    this.withLocalUrl,
+    this.scrollBar,
+    this.supportMultipleWindows,
+    this.appCacheEnabled,
      this.hidden = false,
-    required this.initialChild,
-    required this.allowFileURLs,
+    this.initialChild,
+    this.allowFileURLs,
     this.geolocationEnabled = false,
   }) : super(key: key);
 
-  final PreferredSizeWidget appBar;
-  final String url;
-  final Map<String, String> headers;
-  final bool withJavascript;
-  final bool clearCache;
-  final bool clearCookies;
-  final bool enableAppScheme;
-  final String userAgent;
-  final bool primary;
-  final List<Widget> persistentFooterButtons;
-  final Widget bottomNavigationBar;
-  final bool withZoom;
-  final bool withLocalStorage;
-  final bool withLocalUrl;
-  final bool scrollBar;
-  final bool supportMultipleWindows;
-  final bool appCacheEnabled;
-  final bool hidden;
-  final Widget initialChild;
-  final bool allowFileURLs;
-  final bool geolocationEnabled;
+  final PreferredSizeWidget? appBar;
+  final String? url;
+  final Map<String, String>? headers;
+  final bool? withJavascript;
+  final bool? clearCache;
+  final bool? clearCookies;
+  final bool? enableAppScheme;
+  final String? userAgent;
+  final bool? primary;
+  final List<Widget>? persistentFooterButtons;
+  final Widget? bottomNavigationBar;
+  final bool? withZoom;
+  final bool? withLocalStorage;
+  final bool? withLocalUrl;
+  final bool? scrollBar;
+  final bool? supportMultipleWindows;
+  final bool? appCacheEnabled;
+  final bool? hidden;
+  final Widget? initialChild;
+  final bool? allowFileURLs;
+  final bool? geolocationEnabled;
 
   @override
   _SafeWebviewScaffoldState createState() => _SafeWebviewScaffoldState();
@@ -69,7 +69,7 @@ class _SafeWebviewScaffoldState extends State<SafeWebviewScaffold> {
     super.initState();
     webviewReference.close();
 
-    if (widget.hidden) {
+    if (widget.hidden ?? false) {
       _onStateChanged =
           webviewReference.onStateChanged.listen((WebViewStateChanged state) {
         if (state.type == WebViewState.finishLoad) {
@@ -84,7 +84,7 @@ class _SafeWebviewScaffoldState extends State<SafeWebviewScaffold> {
     super.dispose();
     _resizeTimer?.cancel();
     webviewReference.close();
-    if (widget.hidden) {
+    if (widget.hidden ?? false) {
       _onStateChanged.cancel();
     }
     webviewReference.dispose();
@@ -102,22 +102,22 @@ class _SafeWebviewScaffoldState extends State<SafeWebviewScaffold> {
             if (_rect == null) {
               _rect = value;
               webviewReference.launch(
-                widget.url,
+                widget.url!,
                 headers: widget.headers,
-                withJavascript: widget.withJavascript,
-                clearCache: widget.clearCache,
-                clearCookies: widget.clearCookies,
-                enableAppScheme: widget.enableAppScheme,
+                withJavascript: widget.withJavascript!,
+                clearCache: widget.clearCache!,
+                clearCookies: widget.clearCookies!,
+                enableAppScheme: widget.enableAppScheme!,
                 userAgent: widget.userAgent,
                 rect: _rect,
-                withZoom: widget.withZoom,
-                withLocalStorage: widget.withLocalStorage,
-                withLocalUrl: widget.withLocalUrl,
-                scrollBar: widget.scrollBar,
-                supportMultipleWindows: widget.supportMultipleWindows,
-                appCacheEnabled: widget.appCacheEnabled,
-                allowFileURLs: widget.allowFileURLs,
-                geolocationEnabled: widget.geolocationEnabled,
+                withZoom: widget.withZoom!,
+                withLocalStorage: widget.withLocalStorage!,
+                withLocalUrl: widget.withLocalUrl!,
+                scrollBar: widget.scrollBar!,
+                supportMultipleWindows: widget.supportMultipleWindows!,
+                appCacheEnabled: widget.appCacheEnabled!,
+                allowFileURLs: widget.allowFileURLs!,
+                geolocationEnabled: widget.geolocationEnabled!,
               );
             } else {
               if (_rect != value) {

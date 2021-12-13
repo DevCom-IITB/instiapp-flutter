@@ -172,20 +172,20 @@ class HeroPhotoViewWrapperState extends State<HeroPhotoViewWrapper> {
 }
 
 class PhotoViewableImage extends StatelessWidget {
-  final String url;
-  final ImageProvider imageProvider;
+  final String? url;
+  final ImageProvider? imageProvider;
   final String heroTag;
-  final BoxFit fit;
-  final ShapeBorder customBorder;
+  final BoxFit? fit;
+  final ShapeBorder? customBorder;
   // final double height;
   // final double width;
 
   PhotoViewableImage({
-    required this.url,
-    required this.imageProvider,
+    this.url,
+    this.imageProvider,
     required this.heroTag,
-    required this.fit,
-    required this.customBorder,
+    this.fit,
+    this.customBorder,
   }) : assert(url != null || imageProvider != null);
 
   @override
@@ -199,7 +199,7 @@ class PhotoViewableImage extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => HeroPhotoViewWrapper(
                   imageProvider:
-                      imageProvider ?? CachedNetworkImageProvider(url),
+                      imageProvider ?? CachedNetworkImageProvider(url??""),
                   heroTag: heroTag,
                   minScale: PhotoViewComputedScale.contained * 0.9,
                   maxScale: PhotoViewComputedScale.contained * 2.0,
@@ -211,11 +211,11 @@ class PhotoViewableImage extends StatelessWidget {
           tag: heroTag,
           child: imageProvider != null
               ? Image(
-                  image: imageProvider,
+                  image: imageProvider!,
                   fit: fit,
                 )
               : CachedNetworkImage(
-                  imageUrl: url,
+                  imageUrl: url??"",
                   placeholder: (context, url) => CachedNetworkImage(
                     imageUrl: thumbnailUrl(url),
                     fit: fit,
@@ -235,11 +235,11 @@ class PhotoViewableImage extends StatelessWidget {
 }
 
 class CommonHtml extends StatelessWidget {
-  final String data;
-  final String query;
+  final String? data;
+  final String? query;
   final TextStyle defaultTextStyle;
 
-  CommonHtml({required this.data, required this.defaultTextStyle,required this.query});
+  CommonHtml({this.data, required this.defaultTextStyle, this.query});
 
   @override
   Widget build(BuildContext context) {
@@ -285,14 +285,14 @@ class CommonHtml extends StatelessWidget {
                 print(context.tree.element?.innerHtml);
                 return RichText(
                       textScaleFactor:1,
-                      text: highlight(context.tree.element?.innerHtml??"",query),
+                      text: highlight(context.tree.element?.innerHtml??"",query?? ''),
                     );
               },
               "td":(context, child) {
                // print(node.innerHtml);
                 return RichText(
                   textScaleFactor:1,
-                  text: highlight(context.tree.element?.innerHtml??"",query),
+                  text: highlight(context.tree.element?.innerHtml??"",query?? ''),
                 );
               }
             },
@@ -587,11 +587,11 @@ class CircularProgressIndicatorExtended extends StatelessWidget {
 
 class EditableChipList extends StatefulWidget {
   EditableChipList({
-    required Key key,
+    Key? key,
     this.editable = false,
     required this.tags,
-    required this.preDefinedTags,
-    required this.controller,
+    this.preDefinedTags,
+    this.controller,
   }) : super(key: key);
 
   /// Determines whether [Chip] should have a cross
@@ -601,13 +601,13 @@ class EditableChipList extends StatefulWidget {
   /// Useful when [editable] is true
   ///
   /// Uses these tags to search
-  final FutureOr<List<String>> preDefinedTags;
+  final FutureOr<List<String>>? preDefinedTags;
 
   /// Tags to be shown initially
   final Set<String> tags;
 
   /// [TextEditingController] for controller to get new tags to add
-  final TextEditingController controller;
+  final TextEditingController? controller;
 
   @override
   EditableChipListState createState() => EditableChipListState();
@@ -623,7 +623,7 @@ class EditableChipListState extends State<EditableChipList> {
     tags.addAll(widget.tags);
 
     if (widget.controller != null) {
-      widget.controller.addListener(_onCreate);
+      widget.controller?.addListener(_onCreate);
     }
   }
 
@@ -631,13 +631,13 @@ class EditableChipListState extends State<EditableChipList> {
     String newTag;
     if ((widget.preDefinedTags is List<String> &&
             (widget.preDefinedTags as List<String>)
-                .contains(widget.controller.text)) ||
+                .contains(widget.controller?.text)) ||
         (widget.preDefinedTags is Future<List<String>> &&
             (await (widget.preDefinedTags as Future<List<String>>))
-                .contains(widget.controller.text))) {
-      newTag = widget.controller.text;
+                .contains(widget.controller?.text))) {
+      newTag = widget.controller!.text;
     } else {
-      newTag = "${widget.controller.text} (U)";
+      newTag = "${widget.controller?.text} (U)";
     }
     setState(() {
       tags.add(newTag);
@@ -739,7 +739,7 @@ class DefListItem extends StatelessWidget {
   final String? adminNote;
 
   const DefListItem(
-      {required Key key,
+      {Key? key,
       this.title,
       this.company,
       this.icon,

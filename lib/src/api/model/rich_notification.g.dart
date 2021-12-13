@@ -10,7 +10,7 @@ RichNotification _$RichNotificationFromJson(Map<String, dynamic> json) =>
     RichNotification(
       notificationType: json['type'] as String?,
       notificationObjectID: json['id'] as String?,
-      notificationExtra: json['name: extra'] as String?,
+      notificationExtra: json['extra'] as String?,
       notificationID: json['notification_id'] as String?,
       notificationTitle: json['title'] as String?,
       notificationVerb: json['verb'] as String?,
@@ -23,7 +23,7 @@ Map<String, dynamic> _$RichNotificationToJson(RichNotification instance) =>
     <String, dynamic>{
       'type': instance.notificationType,
       'id': instance.notificationObjectID,
-      'name: extra': instance.notificationExtra,
+      'extra': instance.notificationExtra,
       'notification_id': instance.notificationID,
       'title': instance.notificationTitle,
       'verb': instance.notificationVerb,

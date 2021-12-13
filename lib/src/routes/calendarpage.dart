@@ -30,7 +30,7 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     var calBloc = bloc.calendarBloc;
 
     print("Width: ${MediaQuery.of(context).size.width}");

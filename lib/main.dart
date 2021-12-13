@@ -74,6 +74,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   late StreamSubscription _appLinksSub;
+  final ThemeData theme = ThemeData();
 
   void setTheme(VoidCallback a) {
     setState(a);
@@ -129,10 +130,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           fontFamily: "IBMPlexSans",
 
           primaryColor: widget.bloc.primaryColor,
-          accentColor: widget.bloc.accentColor,
+          colorScheme: theme.colorScheme.copyWith(secondary: widget.bloc.accentColor),
           primarySwatch: Colors.primaries.singleWhere(
-              (c) => c.value == widget.bloc.accentColor.value,
-              orElse: () => null),
+              (c) => c.value == widget.bloc.accentColor.value),
+              // orElse: () => MaterialColor(, swatch)),
 
           toggleableActiveColor: widget.bloc.accentColor,
           textSelectionTheme:
@@ -174,7 +175,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 settings,
                 EventPage(
                   eventFuture:
-                      widget.bloc.getEvent(temp.split("/event/")[1])??,
+                      widget.bloc.getEvent(temp.split("/event/")[1]),
                 ));
           } else if (temp.startsWith("/body/")) {
             return _buildRoute(
@@ -287,34 +288,32 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: onSelectNotification);
 
-    widget.bloc.firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) async {
+    FirebaseMessaging.onMessage.listen( (RemoteMessage message) async {
         print("onMessage: $message");
         var appDocDir = await getApplicationDocumentsDirectory();
 
-        String payload = jsonEncode(message["data"]);
+        String payload = jsonEncode(message.data);
 
-        var notif = message["data"].map((e) => e.toJson()).toList();
+        RichNotification notif = RichNotification.fromJson(message.data);
 
         StyleInformation style;
         AndroidNotificationStyle styleType;
 
         if (notif.notificationImage != null) {
-          var bigPictureResponse = await http.get(notif.notificationImage);
+          var bigPictureResponse = await http.get(Uri.parse(notif.notificationImage ?? ""));
           var bigPicturePath =
               '${appDocDir.path}/bigPicture-${notif.notificationID}';
           var file = new File(bigPicturePath);
           await file.writeAsBytes(bigPictureResponse.bodyBytes);
-
+          
           style = BigPictureStyleInformation(
-            bigPicturePath,
-            BitmapSource.FilePath,
+            FilePathAndroidBitmap(bigPicturePath),
             summaryText: notif.notificationLargeContent,
           );
           styleType = AndroidNotificationStyle.bigPicture;
         } else if (notif.notificationLargeContent != null) {
           style = BigTextStyleInformation(
-            notif.notificationLargeContent,
+            notif.notificationLargeContent?? "",
           );
           styleType = AndroidNotificationStyle.bigText;
         } else {
@@ -322,10 +321,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           styleType = AndroidNotificationStyle.defaultStyle;
         }
 
-        String largeIconPath;
-        BitmapSource largeIconSource;
+        String largeIconPath = "";
         if (notif.notificationLargeIcon != null) {
-          var largeIconResponse = await http.get(notif.notificationLargeIcon);
+          var largeIconResponse = await http.get(Uri.parse(notif.notificationLargeIcon ?? ""));
           largeIconPath = '${appDocDir.path}/largeIcon-${notif.notificationID}';
           var file = new File(largeIconPath);
           await file.writeAsBytes(largeIconResponse.bodyBytes);
@@ -337,9 +335,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
          channelDescription: 'All Placement Blog Notifications go here with high importance',
           importance: Importance.max,
           priority: Priority.high,
-          largeIcon: largeIconPath,
-          largeIconBitmapSource: largeIconSource,
-          style: styleType,
+          largeIcon: FilePathAndroidBitmap(largeIconPath),
+          // style: styleType,
           styleInformation: style,
         );
         var iOSPlatformChannelSpecifics =
@@ -355,21 +352,27 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           payload: payload,
         );
       },
-      onLaunch: (Map<String, dynamic> message) async {
-        print("onLaunch: $message");
-        navigateFromNotification(RichNotificationSerializer().fromMap(message));
-      },
-      onResume: (Map<String, dynamic> message) async {
-        print("onResume: $message");
-        navigateFromNotification(NewsFeedResponse.fromJson(message));
-      },
     );
-    widget.bloc.firebaseMessaging.requestNotificationPermissions(
-        const IosNotificationSettings(sound: true, badge: true, alert: true));
-    widget.bloc.firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings) {
-      print("Settings registered: $settings");
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+      navigateFromNotification(RichNotification.fromJson(message.data));
     });
+
+    if (Platform.isIOS) {
+      widget.bloc.firebaseMessaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+    } 
+    // widget.bloc.firebaseMessaging.onIosSettingsRegistered
+    //     .listen((IosNotificationSettings settings) {
+    //   print("Settings registered: $settings");
+    // });
 
     widget.bloc.firebaseMessaging.getToken().then((String? token) {
       assert(token != null);
@@ -377,13 +380,11 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     });
   }
 
-  Future onSelectNotification(String payload) async {
+  Future onSelectNotification(String? payload) async {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
     }
-    navigateFromNotification(
-        jsonDecode(payload).map((e) => e.toJson()).toList());
-        //RichNotificationSerializer().fromMap(jsonDecode(payload)));
+    navigateFromNotification(RichNotification.fromJson(jsonDecode(payload ?? "")));
   }
 
   Future navigateFromNotification(dynamic fromMap) async {
@@ -418,7 +419,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future initAppLinksState() async {
-    _appLinksSub = getUriLinksStream().listen((Uri? uri) {
+    _appLinksSub = uriLinkStream.listen((Uri? uri) {
       if (!mounted) return;
       handleAppLink(uri!);
     }, onError: (err) {
