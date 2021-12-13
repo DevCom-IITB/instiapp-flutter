@@ -271,7 +271,7 @@ class _BodyPageState extends State<BodyPage> {
                   tooltip: "Edit this Body",
                   onPressed: () {
                     Navigator.of(context)
-                        .pushNamed("/putentity/body/${body?.bodyID}");
+                        .pushNamed("/putentity/body/${body!.bodyID}");
                   },
                 )
               : FloatingActionButton(
@@ -279,7 +279,7 @@ class _BodyPageState extends State<BodyPage> {
                   tooltip: "Share this body",
                   onPressed: () async {
                     await Share.share(
-                        "Check this Institute Body: ${ShareURLMaker.getBodyURL(body)}");
+                        "Check this Institute Body: ${ShareURLMaker.getBodyURL(body!)}");
                   },
                 ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -377,7 +377,7 @@ class _BodyPageState extends State<BodyPage> {
         setState(() {
           loadingFollow = true;
         });
-        await bloc.updateFollowBody(body);
+        if (body != null) await bloc.updateFollowBody(body!);
         setState(() {
           loadingFollow = false;
           // event has changes

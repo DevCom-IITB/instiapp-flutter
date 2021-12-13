@@ -52,7 +52,7 @@ class _SettingsPageState extends State<SettingsPage> {
       body: SafeArea(
         child: StreamBuilder(
             stream: bloc.session,
-            builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
               var children = <Widget>[
                 TitleWithBackButton(
                   child: Text(
@@ -172,8 +172,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         child: Text(entry.value),
                       );
                     }).toList(),
-                    onChanged: (String s) {
-                      bloc.updateHomepage(s);
+                    onChanged: (String? s) {
+                      bloc.updateHomepage(s ?? "");
                       setState(() {});
                     },
                     value: bloc.homepageName,

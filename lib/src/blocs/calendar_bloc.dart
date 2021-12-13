@@ -96,34 +96,34 @@ class CalendarBloc {
 
   Future saveToCache({SharedPreferences? sharedPrefs}) async {
     var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
-    if (monthToEvents?.isNotEmpty ?? false) {
+    if (monthToEvents.isNotEmpty) {
       List<String> keys = [];
-      for(DateTime i in monthToEvents.keys){
+      for (DateTime i in monthToEvents.keys) {
         keys.add(i.toIso8601String());
-    }
+      }
+      prefs.setString(mteKeysStorageID, json.encode(keys));
       prefs.setString(
-          mteKeysStorageID, json.encode(keys));
-      prefs.setString(
-          mteValuesStorageID, json.encode(monthToEvents.values.map((e) =>{
-            e.map((k)=>{
-              k.toJson()
-            }).toList()
-          }).toList()));
+          mteValuesStorageID,
+          json.encode(monthToEvents.values
+              .map((e) => {
+                    e.map((k) => {k.toJson()}).toList()
+                  })
+              .toList()));
     }
 
-    if (eventsMap?.isNotEmpty ?? false) {
+    if (eventsMap.isNotEmpty) {
       List<String> keys = [];
-      for(DateTime i in eventsMap.keys){
+      for (DateTime i in eventsMap.keys) {
         keys.add(i.toIso8601String());
-    }
+      }
+      prefs.setString(eventsMapKeysStorageID, json.encode(keys));
       prefs.setString(
-          eventsMapKeysStorageID, json.encode(keys));
-      prefs.setString(eventsMapValuesStorageID,
-          json.encode(eventsMap.values.map((e) =>{
-            e.map((k)=>{
-              k.toJson()
-            }).toList()
-          }).toList()));
+          eventsMapValuesStorageID,
+          json.encode(eventsMap.values
+              .map((e) => {
+                    e.map((k) => {k.toJson()}).toList()
+                  })
+              .toList()));
     }
   }
 
@@ -131,23 +131,33 @@ class CalendarBloc {
     var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
     if (prefs.getKeys().contains(mteKeysStorageID) &&
         prefs.getKeys().contains(mteValuesStorageID)) {
-          if(prefs.getString(mteKeysStorageID) != null && prefs.getString(mteValuesStorageID) != null){
-            var keys = (json.decode(prefs.getString(mteKeysStorageID)?? '') as List).map((e)=>DateTime.parse(e as String));
-            var values = (json.decode(prefs.getString(mteValuesStorageID)?? '') as List)
-          .map((evs) => evs.map((e) => Event.fromJson(e)).toList() as List<Event>);
-            monthToEvents = Map.fromIterables(keys, values);
-          }
+      if (prefs.getString(mteKeysStorageID) != null &&
+          prefs.getString(mteValuesStorageID) != null) {
+        var keys =
+            (json.decode(prefs.getString(mteKeysStorageID) ?? '') as List)
+                .map((e) => DateTime.parse(e as String));
+        var values =
+            (json.decode(prefs.getString(mteValuesStorageID) ?? '') as List)
+                .map((evs) =>
+                    evs.map((e) => Event.fromJson(e)).toList() as List<Event>);
+        monthToEvents = Map.fromIterables(keys, values);
+      }
     }
 
     if (prefs.getKeys().contains(eventsMapKeysStorageID) &&
         prefs.getKeys().contains(eventsMapValuesStorageID)) {
-          if(prefs.getString(mteKeysStorageID) != null && prefs.getString(mteValuesStorageID) != null){
-            var keys = (json.decode(prefs.getString(mteKeysStorageID)?? '') as List).map((e)=>DateTime.parse(e as String));
-            var values = (json.decode(prefs.getString(mteValuesStorageID)?? '') as List)
-          .map((evs) => evs.map((e) => Event.fromJson(e)).toList() as List<Event>);
-            eventsMap = Map.fromIterables(keys, values);
-            _eventsSubject.add(eventsMap);
-          }
+      if (prefs.getString(mteKeysStorageID) != null &&
+          prefs.getString(mteValuesStorageID) != null) {
+        var keys =
+            (json.decode(prefs.getString(mteKeysStorageID) ?? '') as List)
+                .map((e) => DateTime.parse(e as String));
+        var values =
+            (json.decode(prefs.getString(mteValuesStorageID) ?? '') as List)
+                .map((evs) =>
+                    evs.map((e) => Event.fromJson(e)).toList() as List<Event>);
+        eventsMap = Map.fromIterables(keys, values);
+        _eventsSubject.add(eventsMap);
+      }
     }
   }
 }

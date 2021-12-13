@@ -53,6 +53,8 @@ dependencies:
   logger: any
   dio: ^4.0.4
   json_annotation: ^4.4.0
+  jaguar: ^3.0.12
+  jaguar_flutter_asset: ^3.0.0
 
 dev_dependencies:
   flutter_test:
