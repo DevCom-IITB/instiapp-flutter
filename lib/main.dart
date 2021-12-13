@@ -174,7 +174,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 settings,
                 EventPage(
                   eventFuture:
-                      widget.bloc.getEvent(temp.split("/event/")[1]),
+                      widget.bloc.getEvent(temp.split("/event/")[1])??,
                 ));
           } else if (temp.startsWith("/body/")) {
             return _buildRoute(
@@ -294,7 +294,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
         String payload = jsonEncode(message["data"]);
 
-        var notif = RichNotificationSerializer().fromMap(message["data"]);
+        var notif = message["data"].map((e) => e.toJson()).toList();
 
         StyleInformation style;
         AndroidNotificationStyle styleType;
@@ -311,15 +311,15 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             BitmapSource.FilePath,
             summaryText: notif.notificationLargeContent,
           );
-          styleType = AndroidNotificationStyle.BigPicture;
+          styleType = AndroidNotificationStyle.bigPicture;
         } else if (notif.notificationLargeContent != null) {
           style = BigTextStyleInformation(
             notif.notificationLargeContent,
           );
-          styleType = AndroidNotificationStyle.BigText;
+          styleType = AndroidNotificationStyle.bigText;
         } else {
           style = DefaultStyleInformation(false, false);
-          styleType = AndroidNotificationStyle.Default;
+          styleType = AndroidNotificationStyle.defaultStyle;
         }
 
         String largeIconPath;
@@ -334,9 +334,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
           'Very Important',
           'Placement Blog Notifications',
-          'All Placement Blog Notifications go here with high importance',
-          importance: Importance.Max,
-          priority: Priority.High,
+         channelDescription: 'All Placement Blog Notifications go here with high importance',
+          importance: Importance.max,
+          priority: Priority.high,
           largeIcon: largeIconPath,
           largeIconBitmapSource: largeIconSource,
           style: styleType,
@@ -345,7 +345,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         var iOSPlatformChannelSpecifics =
             new IOSNotificationDetails(presentAlert: true);
         var platformChannelSpecifics = new NotificationDetails(
-            androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+            android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
 
         await flutterLocalNotificationsPlugin.show(
           0,
@@ -361,7 +361,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       },
       onResume: (Map<String, dynamic> message) async {
         print("onResume: $message");
-        navigateFromNotification(RichNotificationSerializer().fromMap(message));
+        navigateFromNotification(NewsFeedResponse.fromJson(message));
       },
     );
     widget.bloc.firebaseMessaging.requestNotificationPermissions(
@@ -371,7 +371,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       print("Settings registered: $settings");
     });
 
-    widget.bloc.firebaseMessaging.getToken().then((String token) {
+    widget.bloc.firebaseMessaging.getToken().then((String? token) {
       assert(token != null);
       print("Push Messaging token: $token");
     });
@@ -382,10 +382,11 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       debugPrint('notification payload: ' + payload);
     }
     navigateFromNotification(
-        RichNotificationSerializer().fromMap(jsonDecode(payload)));
+        jsonDecode(payload).map((e) => e.toJson()).toList());
+        //RichNotificationSerializer().fromMap(jsonDecode(payload)));
   }
 
-  Future navigateFromNotification(RichNotification fromMap) async {
+  Future navigateFromNotification(dynamic fromMap) async {
     // Navigating to correct page
     var routeName = {
       "blogentry": fromMap.notificationExtra?.contains("/trainingblog") ?? false
@@ -417,9 +418,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future initAppLinksState() async {
-    _appLinksSub = getUriLinksStream().listen((Uri uri) {
+    _appLinksSub = getUriLinksStream().listen((Uri? uri) {
       if (!mounted) return;
-      handleAppLink(uri);
+      handleAppLink(uri!);
     }, onError: (err) {
       if (!mounted) return;
       print('Failed to get latest link: $err.');

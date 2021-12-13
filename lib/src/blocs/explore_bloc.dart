@@ -61,7 +61,7 @@ class ExploreBloc {
 
   Future refresh() async {
     if ((query ?? "") == "") {
-      if (allBodies?.isEmpty ?? true) {
+      if (allBodies.isEmpty ?? true) {
         allBodies = await bloc.client.getAllBodies(bloc.getSessionIdHeader());
       }
       _push(ExploreResponse(bodies: allBodies));
