@@ -189,7 +189,7 @@ class ComplaintsBloc {
     }
   }
 
-  Future<Complaint>? getComplaint(String uuid, {bool reload = false}) async {
+  Future<Complaint?>? getComplaint(String uuid, {bool reload = false}) async {
     if (bloc.currSession == null) {
       return null;
     }
@@ -198,14 +198,14 @@ class ComplaintsBloc {
     try {
       c = (reload
           ? await bloc.client.getComplaint(bloc.getSessionIdHeader(), uuid)
-          : _allComplaints?.firstWhere((c) => c.complaintID == uuid))!;
+          : _allComplaints.firstWhere((c) => c.complaintID == uuid))!;
     } catch (ex) {
       c = await bloc.client.getComplaint(bloc.getSessionIdHeader(), uuid);
     }
-    c.voteCount =
-        c.usersUpVoted!.any((u) => u.userID == bloc.currSession!.profile!.userID)
-            ? 1
-            : 0;
+    c.voteCount = c.usersUpVoted!
+            .any((u) => u.userID == bloc.currSession!.profile!.userID)
+        ? 1
+        : 0;
     return c;
   }
 
@@ -224,8 +224,9 @@ class ComplaintsBloc {
           .upVote(bloc.getSessionIdHeader(), complaint.complaintID!, voteCount);
       complaint.voteCount = voteCount;
       if (voteCount == 0) {
-        complaint.usersUpVoted?? []
-            .removeWhere((u) => bloc.currSession!.profile?.userID == u.userID);
+        complaint.usersUpVoted ??
+            [].removeWhere(
+                (u) => bloc.currSession!.profile?.userID == u.userID);
       } else {
         complaint.usersUpVoted?.add(bloc.currSession!.profile!);
       }
@@ -262,7 +263,7 @@ class ComplaintsBloc {
           .updateComment(bloc.getSessionIdHeader(), mComment.id!, req);
       var idx = complaint.comments?.indexWhere((c) => c.id == comment.id);
       complaint.comments![idx!].text = comment.text;
-      complaint.comments![idx!].time = comment.time;
+      complaint.comments![idx].time = comment.time;
     } catch (ex) {
       print(ex);
     }

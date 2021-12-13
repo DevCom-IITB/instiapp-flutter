@@ -2,6 +2,8 @@ import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
 import 'package:date_format/date_format.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_calendar_carousel/classes/event.dart' as elt;
 
 import 'package:json_annotation/json_annotation.dart';
 
@@ -15,7 +17,7 @@ enum UES {
 }
 
 @JsonSerializable()
-class Event {
+class Event extends elt.Event {
   @JsonKey(name: "id")
   String? eventID;
 
@@ -136,10 +138,17 @@ class Event {
     this.eventGoing,
     this.eventWebsiteURL,
     this.eventUserUesInt,
-  });
+  }) : super(
+          date: DateTime.parse(eventStartTime!),
+          title: eventName,
+          description: eventDescription,
+          location: eventVenues?.map((e) => e.venueName).toList().join(", "),
+          icon: eventImageURL == null
+              ? null
+              : Image(image: NetworkImage(eventImageURL)),
+        );
 
-  factory Event.fromJson(Map<String, dynamic> json) =>
-      _$EventFromJson(json);
-      
+  factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
+
   Map<String, dynamic> toJson() => _$EventToJson(this);
 }

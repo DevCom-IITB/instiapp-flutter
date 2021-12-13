@@ -82,8 +82,8 @@ class _BlogPageState extends State<BlogPage> {
     var blogBloc = bloc.getPostsBloc(widget.postType);
 
     if (firstBuild) {
-      blogBloc.query = "";
-      blogBloc.refresh();
+      blogBloc?.query = "";
+      blogBloc?.refresh();
       firstBuild = false;
     }
 
@@ -113,7 +113,7 @@ class _BlogPageState extends State<BlogPage> {
       body: SafeArea(
         child: StreamBuilder(
           stream: bloc.session,
-          builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
+          builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
             if ((snapshot.hasData && snapshot.data != null) ||
                 !widget.loginNeeded) {
               return GestureDetector(
@@ -126,7 +126,7 @@ class _BlogPageState extends State<BlogPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: StreamBuilder<UnmodifiableListView<Post>>(
-                        stream: blogBloc.blog,
+                        stream: blogBloc!.blog,
                         builder: (BuildContext context,
                             AsyncSnapshot<UnmodifiableListView<Post>>
                                 snapshot) {
@@ -208,7 +208,7 @@ class _BlogPageState extends State<BlogPage> {
 
   Future<void> _handleRefresh() {
     var blogbloc = BlocProvider.of(context).bloc.getPostsBloc(widget.postType);
-    return blogbloc.refresh(force: blogbloc.query.isEmpty);
+    return blogbloc!.refresh(force: blogbloc.query.isEmpty);
   }
 
   Widget _buildPost(
@@ -619,7 +619,6 @@ class _BlogPageState extends State<BlogPage> {
   }
 
   Widget buildDropdownButton(ThemeData theme, PostBloc blogBloc, var bloc) {
-    var categories = blogBloc.getCategories();
     return Container(
         padding: EdgeInsets.all(6.0),
         child: StreamBuilder<UnmodifiableListView<Map<String, String>>>(
