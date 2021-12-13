@@ -16,7 +16,7 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   final flutterWebviewPlugin = FlutterWebviewPlugin();
 
-  jag.Jaguar server;
+  late jag.Jaguar server;
 
   final String hostUrl = "insti.app";
   final String mapUrl = "https://insti.app/map/?sandbox=true";
@@ -27,11 +27,11 @@ class _MapPageState extends State<MapPage> {
   // final String hostUrl = "varunpatil.me";
   // final String mapUrl = "https://varunpatil.me/instimapweb-standalone/";
 
-  StreamSubscription<String> onUrlChangedSub;
-  StreamSubscription<WebViewStateChanged> onStateChangedSub;
+  StreamSubscription<String>? onUrlChangedSub;
+  StreamSubscription<WebViewStateChanged>? onStateChangedSub;
 
   // Storing for dispose
-  ThemeData theme;
+  ThemeData? theme;
 
   @override
   void initState() {
@@ -67,7 +67,7 @@ class _MapPageState extends State<MapPage> {
     onStateChangedSub?.cancel();
     onUrlChangedSub?.cancel();
     flutterWebviewPlugin.dispose();
-    server?.close();
+    server.close();
 
     super.dispose();
   }
@@ -75,7 +75,7 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     theme = Theme.of(context);
-    print(theme.canvasColor);
+    print(theme?.canvasColor);
     var bloc = BlocProvider.of(context).bloc;
 
     print("This is the URL: $mapUrl");
