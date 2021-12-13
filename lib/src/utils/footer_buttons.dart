@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class FooterButtons extends StatelessWidget {
   final List<Widget> footerButtons;
-  const FooterButtons({required Key key, required this.footerButtons}) : super(key: key);
+  const FooterButtons({Key? key, required this.footerButtons}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

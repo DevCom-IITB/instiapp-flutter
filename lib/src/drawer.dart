@@ -206,7 +206,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                     : null,
                             child: ListTile(
                               leading: NullableCircleAvatar(
-                                snapshot.data?.profile?.userProfilePictureUrl,
+                                snapshot.data?.profile?.userProfilePictureUrl ?? "",
                                 Icons.person_outline_outlined,
                               ),
                               title: Text(
@@ -216,7 +216,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                     ?.copyWith(fontWeight: FontWeight.bold),
                               ),
                               subtitle: snapshot.data != null
-                                  ? Text(snapshot.data?.profile?.userRollNumber,
+                                  ? Text(snapshot.data?.profile?.userRollNumber ?? "",
                                       style: theme.textTheme.bodyText2)
                                   : ElevatedButton(
                                       child: Text(
@@ -393,7 +393,7 @@ class NavListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    ListTileTheme listTileTheme = ListTileTheme.of(context);
+    ListTileThemeData listTileTheme = ListTileTheme.of(context);
     return Container(
       decoration: !highlight
           ? null
@@ -419,7 +419,7 @@ class NavListTile extends StatelessWidget {
     );
   }
 
-  Color? _iconAndTextColor(ThemeData theme, ListTileTheme tileTheme) {
+  Color? _iconAndTextColor(ThemeData theme, ListTileThemeData tileTheme) {
     if (selected && tileTheme.selectedColor != null)
       return tileTheme.selectedColor!;
 
@@ -429,7 +429,7 @@ class NavListTile extends StatelessWidget {
       case Brightness.light:
         return selected ? theme.primaryColor : Colors.black54;
       case Brightness.dark:
-        return selected?null: theme.accentColor; // null - use current icon theme color
+        return selected?null: theme.colorScheme.secondary; // null - use current icon theme color
     }
     assert(theme.brightness != null);
     return null;

@@ -76,7 +76,7 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     theme = Theme.of(context);
     print(theme?.canvasColor);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
 
     print("This is the URL: $mapUrl");
     return SafeWebviewScaffold(

@@ -161,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    _bloc = BlocProvider.of(context).bloc;
+    _bloc = BlocProvider.of(context)!.bloc;
     var mqdata = MediaQuery.of(context);
 
     flutterWebviewPlugin.resize(Rect.fromLTWH(
@@ -176,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Image(
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).colorScheme.secondary,
               image: AssetImage('assets/login/lotus.png'),
               width: 250.0,
               fit: BoxFit.scaleDown,
@@ -186,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
               style: Theme.of(context)
                   .textTheme
                   .headline4
-                  ?.copyWith(color: Theme.of(context).accentColor),
+                  ?.copyWith(color: Theme.of(context).colorScheme.secondary),
             ),
             CircularProgressIndicatorExtended(
               label: Text(statusMessage),

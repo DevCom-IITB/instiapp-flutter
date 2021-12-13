@@ -32,7 +32,7 @@ class _MessPageState extends State<MessPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
 
     if (firstBuild) {
       bloc.updateHostels();
@@ -121,7 +121,7 @@ class _MessPageState extends State<MessPage> {
   }
 
   Widget buildDropdownButton(ThemeData theme) {
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     return StreamBuilder<UnmodifiableListView<Hostel>>(
       stream: bloc.hostels,
       builder: (context, snapshot) {

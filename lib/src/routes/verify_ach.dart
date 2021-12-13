@@ -24,7 +24,7 @@ class _VerifyAchPageState extends State<VerifyAchPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     var verifyBloc = bloc.bodyAchBloc;
     print("Body id:" + (widget.bodyId ?? ""));
 
@@ -210,7 +210,7 @@ class _VerifyListItemState extends State<VerifyListItem> {
 
   @override
   Widget build(BuildContext context) {
-    var verifyBloc = BlocProvider.of(context).bloc.bodyAchBloc;
+    var verifyBloc = BlocProvider.of(context)!.bloc.bodyAchBloc;
     return Column(
       children: [
         DefListItem(
