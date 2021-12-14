@@ -19,7 +19,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class ComplaintPage extends StatefulWidget {
   final String title = "Complaint";
   final Complaint? initialComplaint;
-  final Future<Complaint?> complaintFuture;
+  final Future<Complaint?>? complaintFuture;
 
   ComplaintPage({required this.complaintFuture, this.initialComplaint});
 
@@ -32,7 +32,7 @@ class ComplaintPage extends StatefulWidget {
       ),
       builder: (context) => ComplaintPage(
         initialComplaint: complaint,
-        complaintFuture: bloc.getComplaint(complaint.complaintID ?? ""),
+        complaintFuture: bloc.getComplaint(complaint.complaintID ?? "")?? null,
       ),
     );
     replace
@@ -71,7 +71,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
   void initState() {
     super.initState();
     complaint = widget.initialComplaint;
-    widget.complaintFuture.then((c) {
+    widget.complaintFuture?.then((c) {
       if (this.mounted) {
         setState(() {
           complaint = c;
@@ -98,7 +98,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
 
   @override
   Widget build(BuildContext context) {
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     var theme = Theme.of(context);
     var complaintBloc = bloc.complaintsBloc;
     var fab;

@@ -8,7 +8,7 @@ class RichNotification {
   String? notificationType;
   @JsonKey(name: "id")
   String? notificationObjectID;
-  @JsonKey(name: "name: extra")
+  @JsonKey(name: "extra")
   String? notificationExtra;
   @JsonKey(name: "notification_id")
   String? notificationID;

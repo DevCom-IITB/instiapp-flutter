@@ -52,11 +52,11 @@ class Bloc extends Object {
     }
   }
 
-  Future<SecretResponse> postInterest(String id,String title) async {
+  Future<SecretResponse?> postInterest(String id,String title) async {
     try {
       SecretResponse response = await bloc.client
           .postInterests(bloc.getSessionIdHeader(), id, title);
-      log(response.message);
+      // log(response.message);
       return response;
     } catch (ex) {
       print(ex);
@@ -64,12 +64,12 @@ class Bloc extends Object {
     }
   }
 
-  Future<SecretResponse> postDelInterest(String title) async {
+  Future<SecretResponse?> postDelInterest(String title) async {
     try {
       var currUser = await bloc.client.getUserMe(bloc.getSessionIdHeader());
       SecretResponse response = await bloc.client
           .postDelInterests(bloc.getSessionIdHeader(), currUser.userID, title);
-      log(response.message);
+      // log(response.message);
       return response;
     } catch (ex) {
       print(ex);

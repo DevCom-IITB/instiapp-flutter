@@ -22,6 +22,28 @@ Map<String, dynamic> _$SessionToJson(Session instance) => <String, dynamic>{
       'profile': instance.profile,
     };
 
+Interest _$InterestFromJson(Map<String, dynamic> json) => Interest(
+      id: json['id'] as String?,
+      title: json['title'] as String?,
+    );
+
+Map<String, dynamic> _$InterestToJson(Interest instance) => <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+    };
+
+Skill _$SkillFromJson(Map<String, dynamic> json) => Skill(
+      title: json['title'] as String?,
+      body: json['body'] == null
+          ? null
+          : Body.fromJson(json['body'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$SkillToJson(Skill instance) => <String, dynamic>{
+      'title': instance.title,
+      'body': instance.body,
+    };
+
 User _$UserFromJson(Map<String, dynamic> json) => User(
       userID: json['id'] as String?,
       userName: json['name'] as String?,
@@ -56,6 +78,9 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
           .toList(),
       userShowContactNumber: json['show_contact_no'] as bool?,
       userWebsiteURL: json['website_url'] as String?,
+      interests: (json['interests'] as List<dynamic>?)
+          ?.map((e) => Interest.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -77,5 +102,6 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'website_url': instance.userWebsiteURL,
       'ldap_id': instance.userLDAPId,
       'hostel': instance.hostel,
+      'interests': instance.interests,
       'currentRole': instance.currentRole,
     };

@@ -54,7 +54,7 @@ class _NativeMapPageState extends State<NativeMapPage> {
 
   @override
   Widget build(BuildContext context) {
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     var theme = Theme.of(context);
     var mapBloc = bloc.mapBloc;
 

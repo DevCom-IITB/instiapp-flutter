@@ -20,27 +20,34 @@ class Session {
   Map<String, dynamic> toJson() => _$SessionToJson(this);
 }
 
-<<<<<<< HEAD
-class Interest{
-  @Alias("id")
-  String id;
-
-  @Alias("title")
-  String title;
-}
-
-class Skill{
-  @Alias("title")
-  String title;
-
-  @Alias("body")
-  Body body;
-}
-
-
-=======
 @JsonSerializable()
->>>>>>> 979eea57d0f6b8b4c1a6fc4046d90e8fa671fe78
+class Interest{
+  @JsonKey(name: "id")
+  String? id;
+
+  @JsonKey(name: "title")
+  String? title;
+  Interest({this.id, this.title});
+  factory Interest.fromJson(Map<String, dynamic> json) =>
+      _$InterestFromJson(json);
+  Map<String, dynamic> toJson() => _$InterestToJson(this);
+}
+
+@JsonSerializable()
+class Skill{
+  @JsonKey(name: "title")
+  String? title;
+
+  @JsonKey(name: "body")
+  Body? body;
+
+  Skill({this.title, this.body});
+  factory Skill.fromJson(Map<String, dynamic> json) =>
+      _$SkillFromJson(json);
+  Map<String, dynamic> toJson() => _$SkillToJson(this);
+}
+
+@JsonSerializable()
 class User {
   @JsonKey(name: "id")
   String? userID;
@@ -96,28 +103,14 @@ class User {
   @JsonKey(name: "hostel")
   String? hostel;
 
-<<<<<<< HEAD
-  @Alias("interests")
-  List<Interest> interests;
+  @JsonKey(name: "interests")
+  List<Interest>? interests;
 
-  String currentRole;
-=======
   String? currentRole;
->>>>>>> 979eea57d0f6b8b4c1a6fc4046d90e8fa671fe78
 
   String? getSubTitle() {
     return currentRole ?? userLDAPId;
   }
-
-<<<<<<< HEAD
-
-
-@GenSerializer(serializers: const [UserSerializer])
-class SessionSerializer extends Serializer<Session> with _$SessionSerializer {}
-
-@GenSerializer()
-class UserSerializer extends Serializer<User> with _$UserSerializer {}
-=======
   User(
       {this.userID,
       this.userName,
@@ -137,9 +130,9 @@ class UserSerializer extends Serializer<User> with _$UserSerializer {}
       this.userLDAPId,
       this.userRoles,
       this.userShowContactNumber,
-      this.userWebsiteURL
+      this.userWebsiteURL,
+      this.interests
       });
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
   Map<String, dynamic> toJson() => _$UserToJson(this);
 }
->>>>>>> 979eea57d0f6b8b4c1a6fc4046d90e8fa671fe78

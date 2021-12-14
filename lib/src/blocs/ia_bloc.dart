@@ -322,7 +322,7 @@ class InstiAppBloc {
         : client.getUser(getSessionIdHeader(), uuid);
   }
 
-  Future<Complaint>? getComplaint(String uuid, {bool reload = false}) async {
+  Future<Complaint?>? getComplaint(String uuid, {bool reload = false}) async {
     return complaintsBloc.getComplaint(uuid, reload: reload);
   }
 

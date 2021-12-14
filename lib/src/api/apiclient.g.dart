@@ -534,6 +534,23 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
+  Future<ExploreResponse> searchType(sessionID, query) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'query': query};
+    final _headers = <String, dynamic>{r'Cookie': sessionID};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ExploreResponse>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/search?type=',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = ExploreResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<List<Complaint>> getAllComplaints(
       sessionId, from, number, query) async {
     const _extra = <String, dynamic>{};
@@ -751,6 +768,41 @@ class _InstiAppApi implements InstiAppApi {
         _setStreamType<SecretResponse>(
             Options(method: 'POST', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/achievements-offer/${id}',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = SecretResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<SecretResponse> postInterests(sessionId, interest) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(interest.toJson());
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SecretResponse>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/interests',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = SecretResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<SecretResponse> postDelInterests(sessionId, id) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SecretResponse>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/interests/:title',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = SecretResponse.fromJson(_result.data!);

@@ -165,9 +165,9 @@ abstract class InstiAppApi {
   Future<ExploreResponse> search(
       @rt.Header("Cookie") String sessionID, @rt.Query("query") String query);
 
-  @GetReq(path: "/search?type=")
-  Future<ExploreResponse> search(
-      @Header("Cookie") String sessionID, @QueryParam("query") String query);
+  @rt.GET("/search?type=")
+  Future<ExploreResponse> searchType(
+      @rt.Header("Cookie") String sessionID, @rt.Query("query") String query);
 
   // Venter
   @rt.GET("/venter/complaints")
@@ -225,19 +225,16 @@ abstract class InstiAppApi {
       @rt.Path() String id,
       @rt.Body() Offersecret secret);
 
-  @PostReq(path: "/interests/:id/:title")
+  @rt.POST("/interests")
   Future<SecretResponse> postInterests(
-      @Header("Cookie") String sessionId,
-      @QueryParam() String id,
-      @AsJson() String title);
+      @rt.Header("Cookie") String sessionId,
+      @rt.Body() Interest interest);
 
-  @PostReq(path: "/interests/:id/:title")
+  @rt.POST("/interests/:title")
   Future<SecretResponse> postDelInterests(
-      @Header("Cookie") String sessionId,
-      @QueryParam() String id,
-      @AsJson() String title);
+      @rt.Header("Cookie") String sessionId,
+      @rt.Path() String id);
 
-  @GetReq(path: "/achievements")
   @rt.GET("/achievements")
   Future<List<Achievement>> getYourAchievements(
       @rt.Header("Cookie") String sessionId);

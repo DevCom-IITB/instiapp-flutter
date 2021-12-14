@@ -80,7 +80,7 @@ class _BodyPageState extends State<BodyPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     var footerButtons = <Widget>[];
     var editAccess = false;
     if (body != null) {
@@ -183,7 +183,7 @@ class _BodyPageState extends State<BodyPage> {
                     child: CommonHtml(
                       data: body?.bodyDescription ?? "",
                       defaultTextStyle:
-                          theme.textTheme.subtitle1 ?? TextStyle(),
+                          theme.textTheme.subtitle1 ?? TextStyle(), query: '',
                     ),
                   ),
                   body?.bodyDescription != null

@@ -60,7 +60,7 @@ class _ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     var exploreBloc = bloc.exploreBloc;
     if (firstBuild) {
       exploreBloc.query = "";
