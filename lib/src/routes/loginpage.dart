@@ -83,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
         print("startLoginPageServer.then: Launching Web View");
         await Future.delayed(Duration(milliseconds: 200));
         var mqdata = MediaQuery.of(context);
-        var loading = false;
+        setState((){loading = false;});
         // flutterWebviewPlugin.launch(
         //   loginurl!,
         //   hidden: false,
@@ -196,18 +196,21 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     ) : WebView(
+      javascriptMode: JavascriptMode.unrestricted,
       initialUrl: loginurl,
       onWebViewCreated: (controller){
         this._controller = controller;
       },
-      onPageStarted: (url){
+      onPageStarted: (url) async{
         if (url.startsWith(successUrl)) {
           var uri = Uri.parse(url);
           var code = uri.queryParameters['code'];
           print(code);
 
           print("onUrlChanged: Hiding Web View");
-          login(code ?? "", "https://www.insti.app/login-android.html");
+          setState(() {loading = true;});
+          await login(code ?? "", "https://www.insti.app/login-android.html");
+          setState(() {loading = false;});
         }
       },
       onPageFinished: (url){
