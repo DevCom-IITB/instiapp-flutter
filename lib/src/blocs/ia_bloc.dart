@@ -411,6 +411,7 @@ class InstiAppBloc {
   // Section
   // Bloc state management
   Future<void> restorePrefs() async {
+    print("Restoring prefs");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.getKeys().contains("session")) {
       var x = prefs.getString("session");

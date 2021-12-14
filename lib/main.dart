@@ -40,14 +40,16 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uni_links/uni_links.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
+  print("Runnning main");
   GlobalKey<MyAppState> key = GlobalKey();
   InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
   WidgetsFlutterBinding.ensureInitialized();
-  var temp = bloc.restorePrefs();
+  var temp = await bloc.restorePrefs();
+  await Firebase.initializeApp();
 
-  await temp;
   runApp(MyApp(
     key: key,
     bloc: bloc,
@@ -407,7 +409,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     widget.bloc.clearNotificationUsingID(fromMap.notificationID!);
   }
 
-  void handleAppLink(Uri uri) {
+  void handleAppLink(Uri? uri) {
     if (uri == null) return;
     var routeName = {
       "user": "/user/${uri.pathSegments[1] ?? ""}",
