@@ -23,7 +23,7 @@ class _FeedPageState extends State<FeedPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     if (firstBuild) {
       bloc.updateEvents();
       firstBuild = false;

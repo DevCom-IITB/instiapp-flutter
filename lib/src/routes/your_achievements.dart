@@ -25,7 +25,7 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     if (firstBuild && bloc.currSession != null) {
       bloc.updateAchievements();
       bloc.achievementBloc.getVerifiableBodies();
@@ -278,7 +278,7 @@ class _AchListItemState extends State<AchListItem> {
 
   @override
   Widget build(BuildContext context) {
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

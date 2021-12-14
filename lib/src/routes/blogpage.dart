@@ -78,7 +78,7 @@ class _BlogPageState extends State<BlogPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     var blogBloc = bloc.getPostsBloc(widget.postType);
 
     if (firstBuild) {
@@ -207,7 +207,7 @@ class _BlogPageState extends State<BlogPage> {
   }
 
   Future<void> _handleRefresh() {
-    var blogbloc = BlocProvider.of(context).bloc.getPostsBloc(widget.postType);
+    var blogbloc = BlocProvider.of(context)!.bloc.getPostsBloc(widget.postType);
     return blogbloc!.refresh(force: blogbloc.query.isEmpty);
   }
 
@@ -340,7 +340,7 @@ class _BlogPageState extends State<BlogPage> {
               ),
               child: CommonHtml(
                 data: post.content,
-                defaultTextStyle: theme.textTheme.subtitle1 ?? TextStyle(),
+                defaultTextStyle: theme.textTheme.subtitle1 ?? TextStyle(), query: '',
               ),
             ),
             widget.postType == PostType.External

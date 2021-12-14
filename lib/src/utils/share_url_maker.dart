@@ -14,6 +14,6 @@ class ShareURLMaker {
   }
 
   static String getUserURL(User user) {
-    return webHost + "user/" + user.userLDAPId;
+    return webHost + "user/" + (user.userLDAPId ?? '');
   }
 }

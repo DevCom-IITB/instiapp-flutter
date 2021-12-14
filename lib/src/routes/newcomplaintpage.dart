@@ -103,7 +103,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
 
   @override
   Widget build(BuildContext context) {
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     var theme = Theme.of(context);
     var complaintsBloc = bloc.complaintsBloc;
     var fab;
@@ -256,7 +256,7 @@ class _NewComplaintPageState extends State<NewComplaintPage> {
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
                           decoration: BoxDecoration(
-                            border: Border.all(color: theme.accentColor),
+                            border: Border.all(color: theme.colorScheme.secondary),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(6.0)),
                           ),

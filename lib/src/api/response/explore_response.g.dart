@@ -17,10 +17,18 @@ ExploreResponse _$ExploreResponseFromJson(Map<String, dynamic> json) =>
       users: (json['users'] as List<dynamic>?)
           ?.map((e) => User.fromJson(e as Map<String, dynamic>))
           .toList(),
+      interest: (json['interests'] as List<dynamic>?)
+          ?.map((e) => Interest.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      skills: (json['skills'] as List<dynamic>?)
+          ?.map((e) => Skill.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$ExploreResponseToJson(ExploreResponse instance) =>
     <String, dynamic>{
+      'interests': instance.interest,
+      'skills': instance.skills,
       'bodies': instance.bodies,
       'events': instance.events,
       'users': instance.users,

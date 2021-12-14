@@ -92,7 +92,7 @@ class _QueryAddPageState extends State<QueryAddPage> {
 
   @override
   Widget build(BuildContext context) {
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     var theme = Theme.of(context);
     if (firstBuild) {
       firstBuild = false;
@@ -369,7 +369,7 @@ class _QRViewExampleState extends State<QRViewExample> {
   }
 
   Widget _buildQrView(BuildContext context) {
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
 
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
