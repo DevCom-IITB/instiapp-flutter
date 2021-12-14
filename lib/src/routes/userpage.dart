@@ -47,12 +47,89 @@ class _UserPageState extends State<UserPage> {
   User? user;
   Set<Event> sEvents = Set();
   List<Event>? events = [];
+  late Body _selectedBody;
+  late bool editable;
+  List<Interest>? interests=[];
+
+  Widget _buildChips(BuildContext context){
+    List<Widget> w=[];
+    var bloc = BlocProvider.of(context)?.bloc;
+    int length= interests?.length ?? 0;
+    for(int i=0;i< length;i++){
+      w.add(Chip(
+        labelPadding: EdgeInsets.all(2.0),
+        label: Text(
+          interests?[i].title?? "",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.primaries[Random().nextInt(Colors.primaries.length)],
+        elevation: 6.0,
+        shadowColor: Colors.grey[60],
+        padding: EdgeInsets.all(8.0),
+        onDeleted: () async {
+          await bloc?.achievementBloc.postDelInterest(interests![i].title!);
+          interests?.removeAt(i);
+          //_selected.removeAt(i);
+          setState(() {
+            interests = interests;
+            //_selected = _selected;
+          });
+        },
+      ));
+      //w.add(_buildChip(interest.title, Colors.primaries[Random().nextInt(Colors.primaries.length)]));
+    }
+    return Wrap(
+      spacing: 8.0, // gap between adjacent chips
+      runSpacing: 4.0,
+      children: w,
+    );
+  }
+
+  Widget buildDropdownMenuItemsBody(
+      BuildContext context, Body? body) {
+    print("Entered build dropdown menu items");
+    if (body == null) {
+      return Container(
+        child: Text(
+          "Search for an organisation",
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+      );
+    }
+    print(body);
+    return Container(
+      child: ListTile(
+        title: Text(body.bodyName!),
+      ),
+    );
+  }
+  Widget _customPopupItemBuilderBody(
+      BuildContext context, Body body, bool isSelected) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+        border: Border.all(color: Theme.of(context).primaryColor),
+        borderRadius: BorderRadius.circular(5),
+        color: Colors.white,
+      ),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(body.bodyName!),
+      ),
+    );
+  }
+
 
   @override
   void initState() {
     super.initState();
 
     user = widget.initialUser;
+    interests = user?.interests!;
     widget.userFuture?.then((u) {
       if (this.mounted) {
         setState(() {
@@ -244,10 +321,10 @@ class _UserPageState extends State<UserPage> {
                                                 buildDropdownMenuItemsBody,
                                                 popupItemBuilder:
                                                 _customPopupItemBuilderBody,
-                                                popupSafeArea:
-                                                PopupSafeArea(
-                                                    top: true,
-                                                    bottom: true),
+                                                //popupSafeArea:
+                                                // PopupSafeArea(
+                                                //     top: true,
+                                                //     bottom: true),
                                                 scrollbarProps:
                                                 ScrollbarProps(
                                                   isAlwaysShown: true,
@@ -257,7 +334,7 @@ class _UserPageState extends State<UserPage> {
                                                 _selectedBody,
                                                 emptyBuilder:
                                                     (BuildContext context,
-                                                    String _) {
+                                                    String? _) {
                                                   return Container(
                                                     alignment:
                                                     Alignment.center,
@@ -276,7 +353,7 @@ class _UserPageState extends State<UserPage> {
                                                 },
                                               ),
                                               _buildChips(context),
-                                              _buildChip('Gamer', Color(0xFFff6666))
+                                              //_buildChip('Gamer', Color(0xFFff6666))
                                               // SizedBox(
                                               // height: this.selectedB
                                               // ? 20.0
