@@ -48,7 +48,7 @@ class ComplaintsBloc {
   final _searchPagesBeingFetched = Set<int>();
 
   ComplaintsBloc(this.bloc) {
-    _setIndexListener();
+    // _setIndexListener();
   }
 
   void _setIndexListener() {

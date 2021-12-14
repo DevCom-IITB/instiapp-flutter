@@ -39,9 +39,9 @@ class PostBloc {
   String category = "";
 
   PostBloc(this.bloc, {required this.postType}) {
-    if (postType == PostType.Query) {
-      _setCategories();
-    }
+    // if (postType == PostType.Query) {
+    //   _setCategories();
+    // }
     _setIndexListener();
   }
 

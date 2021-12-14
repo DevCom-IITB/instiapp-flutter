@@ -206,6 +206,7 @@ class InstiAppBloc {
     //   globalClient = BrowserClient();
     // } else {
     // }
+    client = InstiAppApi(dio);
     placementBloc = PostBloc(this, postType: PostType.Placement);
     externalBloc = PostBloc(this, postType: PostType.External);
     trainingBloc = PostBloc(this, postType: PostType.Training);
@@ -213,13 +214,12 @@ class InstiAppBloc {
     queryBloc = PostBloc(this, postType: PostType.Query);
     exploreBloc = ExploreBloc(this);
     calendarBloc = CalendarBloc(this);
-    complaintsBloc = ComplaintsBloc(this);
+    // complaintsBloc = ComplaintsBloc(this);
     drawerState = DrawerBloc(homepageName, highlightPageIndexVal: 0);
     navigatorObserver = MNavigatorObserver(this);
     mapBloc = MapBloc(this);
     achievementBloc = Bloc(this);
     bodyAchBloc = VerifyBloc(this);
-    client = InstiAppApi(dio);
     _initNotificationBatch();
   }
 

@@ -45,10 +45,11 @@ import 'package:firebase_core/firebase_core.dart';
 void main() async {
   print("Runnning main");
   GlobalKey<MyAppState> key = GlobalKey();
-  InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
   WidgetsFlutterBinding.ensureInitialized();
-  var temp = await bloc.restorePrefs();
   await Firebase.initializeApp();
+  InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
+  
+  await bloc.restorePrefs();
 
   runApp(MyApp(
     key: key,
@@ -133,9 +134,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
           primaryColor: widget.bloc.primaryColor,
           colorScheme: theme.colorScheme.copyWith(secondary: widget.bloc.accentColor),
-          primarySwatch: Colors.primaries.singleWhere(
-              (c) => c.value == widget.bloc.accentColor.value),
-              // orElse: () => MaterialColor(, swatch)),
+          // primarySwatch: Colors.primaries.singleWhere(
+          //     (c) => c.value == widget.bloc.accentColor.value),
+          //     // orElse: () => MaterialColor(, swatch)),
 
           toggleableActiveColor: widget.bloc.accentColor,
           textSelectionTheme:
@@ -170,6 +171,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
               headline5: TextStyle()),
         ),
         onGenerateRoute: (RouteSettings settings) {
+          print(settings.name);
           var temp = settings.name;
           if(temp!=null){
           if (temp.startsWith("/event/")) {
@@ -423,7 +425,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future initAppLinksState() async {
     _appLinksSub = uriLinkStream.listen((Uri? uri) {
       if (!mounted) return;
-      handleAppLink(uri!);
+      handleAppLink(uri);
     }, onError: (err) {
       if (!mounted) return;
       print('Failed to get latest link: $err.');
@@ -432,7 +434,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       Uri? initialUri = await getInitialUri();
       // Parse the link and warn the user, if it is not correct,
       // but keep in mind it could be `null`.
-      handleAppLink(initialUri!);
+      handleAppLink(initialUri);
     } on PlatformException {
       // Handle exception by warning the user their action did not succeed
       // return?

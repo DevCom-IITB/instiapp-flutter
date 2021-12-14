@@ -36,7 +36,7 @@ class NullableCircleAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return url != null
+    return url != null || url != ""
         ? (photoViewable
             ? InkWell(
                 onTap: () {

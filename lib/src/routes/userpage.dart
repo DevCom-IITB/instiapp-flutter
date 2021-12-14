@@ -47,7 +47,7 @@ class _UserPageState extends State<UserPage> {
   User? user;
   Set<Event> sEvents = Set();
   List<Event>? events = [];
-  late Body _selectedBody;
+  Body? _selectedBody;
   late bool editable;
   List<Interest>? interests=[];
 
