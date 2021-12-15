@@ -534,9 +534,9 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<ExploreResponse> searchType(sessionID, query,type) async {
+  Future<ExploreResponse> searchType(sessionID, query, type) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'query': query,r'types':type};
+    final queryParameters = <String, dynamic>{r'query': query, r'types': type};
     final _headers = <String, dynamic>{r'Cookie': sessionID};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};

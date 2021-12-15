@@ -164,7 +164,7 @@ class _CreateAchievementPage extends State<Home> {
     setState(() {
       selectedS = true;
       currRequest2.title = body?.title;
-      currRequest2.body = body?.body!;
+      // currRequest2.body = body?.body!;
       _selectedSkill = body!;
     });
   }
@@ -255,7 +255,7 @@ class _CreateAchievementPage extends State<Home> {
                         child: Material(
                           elevation: 4.0,
                           child: TabBar(
-                            labelColor: theme.accentColor,
+                            labelColor: theme.colorScheme.secondary,
                             unselectedLabelColor: theme.disabledColor,
                             tabs: [
                               Tab(
@@ -391,11 +391,13 @@ class _CreateAchievementPage extends State<Home> {
                                                   ),
                                                   DropdownSearch<Event>(
                                                     mode: Mode.DIALOG,
+                                                    dropdownSearchDecoration: InputDecoration(
+                                                      labelText: "Event (Optional)",
+                                                      hintText: "Event (Optional)",
+                                                    ),
                                                     maxHeight: 700,
                                                     isFilteredOnline: true,
                                                     showSearchBox: true,
-                                                    label: "Event (Optional)",
-                                                    hint: "Event (Optional)",
                                                     onChanged: onEventChange,
                                                     onFind: bloc
                                                         .achievementBloc
@@ -675,6 +677,7 @@ class _CreateAchievementPage extends State<Home> {
                                               if (_formKey2.currentState!
                                                   .validate()) {
                                                 currRequest2.isSkill=true;
+                                                print(currRequest2.title);
                                                 var resp =
                                                 await achievementsBloc
                                                     .postForm(

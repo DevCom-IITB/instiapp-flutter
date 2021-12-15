@@ -34,8 +34,7 @@ class Bloc extends Object {
     //try {
       var comment = await bloc.client.postForm(bloc.getSessionIdHeader(), req);
       comment.result = "success";
-      print("llal");
-      print(comment.result);print("pppppp");
+      print(comment.result);
       return comment;
     // } catch (ex) {
     //   return null;

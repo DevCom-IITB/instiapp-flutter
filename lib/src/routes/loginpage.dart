@@ -23,7 +23,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   late WebViewController _controller;
-  late jag.Jaguar server;
+  jag.Jaguar? server;
   final Dio dio = Dio();
 
   final String successUrl = "instiapp://insti.app/login";
@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    server.close();
+    server?.close();
     // flutterWebviewPlugin.dispose();
 
     onUrlChangedSub?.cancel();
@@ -249,8 +249,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> startLoginPageServer() async {
     server = jag.Jaguar(port: 9399);
-    server.addRoute(serveFlutterAssets(prefix: "login/"));
-    return server.serve();
+    server?.addRoute(serveFlutterAssets(prefix: "login/"));
+    return server?.serve();
   }
 
   login(final String authCode, final String redirectUrl) async {

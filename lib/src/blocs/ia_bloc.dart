@@ -250,7 +250,7 @@ class InstiAppBloc {
 
   // Mess bloc
   Future<void> updateHostels() async {
-    var hostels = await client.getHostelMess();
+    List<Hostel> hostels = await client.getHostelMess();
     hostels.sort((h1, h2) => h1.compareTo(h2));
     _hostels = hostels;
     _hostelsSubject.add(UnmodifiableListView(_hostels));
@@ -415,7 +415,7 @@ class InstiAppBloc {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.getKeys().contains("session")) {
       var x = prefs.getString("session");
-      if (x != null) {
+      if (x != null && x != "") {
         Session? sess = Session.fromJson(json.decode(x));
         if (sess.sessionid != null) {
           updateSession(sess);
@@ -462,7 +462,7 @@ class InstiAppBloc {
 
   void _persistSession(Session? sess) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (sess == null) return;
+    if (sess == null) {prefs.setString("session", ""); return;}
     prefs.setString("session", json.encode(sess.toJson()));
   }
 
