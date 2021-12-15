@@ -6,7 +6,7 @@ import 'package:InstiApp/src/api/model/body.dart';
 
 part 'achievement_create_request.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class AchievementCreateRequest {
 @JsonKey(name: "id")
   String? id;

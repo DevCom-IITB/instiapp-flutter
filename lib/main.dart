@@ -134,9 +134,11 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
           primaryColor: widget.bloc.primaryColor,
           colorScheme: theme.colorScheme.copyWith(secondary: widget.bloc.accentColor),
-          // primarySwatch: Colors.primaries.singleWhere(
-          //     (c) => c.value == widget.bloc.accentColor.value),
-          //     // orElse: () => MaterialColor(, swatch)),
+          primarySwatch: Colors.primaries.singleWhere(
+              (c) { print(c.value);
+                    print(widget.bloc.accentColor.value);
+                 return c.value == widget.bloc.accentColor.value; }),
+              // orElse: () => MaterialColor(, swatch)),
 
           toggleableActiveColor: widget.bloc.accentColor,
           textSelectionTheme:

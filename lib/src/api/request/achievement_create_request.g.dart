@@ -25,7 +25,6 @@ AchievementCreateRequest _$AchievementCreateRequestFromJson(
       description: json['description'] as String?,
       adminNote: json['admin_note'] as String?,
       bodyID: json['body'] as String?,
-      isSkill: json['isSkill'] as bool,
       body: json['body_detail'] == null
           ? null
           : Body.fromJson(json['body_detail'] as Map<String, dynamic>),
@@ -33,25 +32,34 @@ AchievementCreateRequest _$AchievementCreateRequestFromJson(
           ? null
           : Event.fromJson(json['event_detail'] as Map<String, dynamic>),
       offer: json['offer'] as String?,
+      isSkill: json['isSkill'] as bool?,
     );
 
 Map<String, dynamic> _$AchievementCreateRequestToJson(
-        AchievementCreateRequest instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'time_of_creation': instance.timeOfCreation,
-      'time_of_modification': instance.timeOfModification,
-      'user': instance.user,
-      'hidden': instance.hidden,
-      'dismissed': instance.dismissed,
-      'verified': instance.verified,
-      'verified_by': instance.verifiedBy,
-      'title': instance.title,
-      'description': instance.description,
-      'admin_note': instance.adminNote,
-      'body': instance.bodyID,
-      'body_detail': instance.body,
-      'event_detail': instance.event,
-      'offer': instance.offer,
-          'isSkill':instance.isSkill,
-    };
+    AchievementCreateRequest instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('id', instance.id);
+  writeNotNull('time_of_creation', instance.timeOfCreation);
+  writeNotNull('time_of_modification', instance.timeOfModification);
+  writeNotNull('user', instance.user);
+  writeNotNull('hidden', instance.hidden);
+  writeNotNull('dismissed', instance.dismissed);
+  writeNotNull('verified', instance.verified);
+  writeNotNull('verified_by', instance.verifiedBy);
+  writeNotNull('title', instance.title);
+  writeNotNull('description', instance.description);
+  writeNotNull('admin_note', instance.adminNote);
+  writeNotNull('body', instance.bodyID);
+  writeNotNull('body_detail', instance.body);
+  writeNotNull('event_detail', instance.event);
+  writeNotNull('offer', instance.offer);
+  writeNotNull('isSkill', instance.isSkill);
+  return val;
+}

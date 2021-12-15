@@ -4,6 +4,7 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class PutEntityPage extends StatefulWidget {
   final String? entityID;
@@ -72,12 +73,7 @@ class _PutEntityPageState extends State<PutEntityPage> {
     theme = Theme.of(context);
     var url =
         "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + "/" + widget.entityID!)}?${widget.cookie}&$sandboxTrueQParam";
-    return SafeWebviewScaffold(
-      url: url,
-      withJavascript: true,
-      withLocalStorage: true,
-      primary: true,
-      bottomNavigationBar: MyBottomAppBar(
+    return Scaffold(bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -96,6 +92,25 @@ class _PutEntityPageState extends State<PutEntityPage> {
           ],
         ),
       ),
-    );
+      body: WebView(
+      javascriptMode: JavascriptMode.unrestricted,
+      initialUrl: url,
+      onPageStarted: (url) async{
+        print("Changed URL: $url");
+        if (url.contains("/event/")) {
+          var uri = url.substring(url.lastIndexOf("/") + 1);
+
+          Navigator.of(context).pushReplacementNamed("/event/$uri");
+        } else if (url.contains("/org/")) {
+          var uri = url.substring(url.lastIndexOf("/") + 1);
+
+          Navigator.of(context).pushReplacementNamed("/body/$uri");
+        }
+      },
+      onPageFinished: (url){
+        
+      },
+      gestureNavigationEnabled: true,
+    ),);
   }
 }
