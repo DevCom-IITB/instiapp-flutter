@@ -122,7 +122,7 @@ class _SafeWebviewScaffoldState extends State<SafeWebviewScaffold> {
             } else {
               if (_rect != value) {
                 _rect = value;
-                _resizeTimer?.cancel();
+                _resizeTimer.cancel();
                 _resizeTimer = Timer(const Duration(milliseconds: 250), () {
                   // avoid resizing to fast when build is called multiple time
                   webviewReference.resize(_rect);

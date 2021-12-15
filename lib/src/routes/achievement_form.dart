@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -20,13 +21,15 @@ class _CreateAchievementPage extends State<Home> {
   int number = 0;
   bool selectedE = false;
   bool selectedB = false;
-
+  bool selectedS = false;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  final _formKey = GlobalKey<FormState>();
-
-  late Event _selectedEvent;
-  late Body _selectedBody;
-  AchievementCreateRequest currRequest = AchievementCreateRequest();
+  final _formKey1 = GlobalKey<FormState>();
+  final _formKey2 = GlobalKey<FormState>();
+   Event? _selectedEvent;
+   Body? _selectedBody;
+   Skill? _selectedSkill;
+  AchievementCreateRequest currRequest1 = AchievementCreateRequest();
+  AchievementCreateRequest currRequest2 = AchievementCreateRequest();
 
   // builds dropdown menu for event choice
   Widget buildDropdownMenuItemsEvent(
@@ -102,10 +105,47 @@ class _CreateAchievementPage extends State<Home> {
     );
   }
 
+  Widget buildDropdownMenuItemsSkill(
+      BuildContext context, Skill? body) {
+    print("Entered build dropdown menu items");
+    if (body == null) {
+      return Container(
+        child: Text(
+          "Search for an Skill",
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+      );
+    }
+    print(body);
+    return Container(
+      child: ListTile(
+        title: Text(body.title!),
+      ),
+    );
+  }
+
+  Widget _customPopupItemBuilderSkill(
+      BuildContext context, Skill body, bool isSelected) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+        border: Border.all(color: Theme.of(context).primaryColor),
+        borderRadius: BorderRadius.circular(5),
+        color: Colors.white,
+      ),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(body.title!),
+      ),
+    );
+  }
+
   void onEventChange(Event? event) {
     setState(() {
       selectedE = true;
-      currRequest.event = event;
+      currRequest1.event = event;
       _selectedEvent = event!;
       onBodyChange(event.eventBodies![0]);
     });
@@ -114,9 +154,18 @@ class _CreateAchievementPage extends State<Home> {
   void onBodyChange(Body? body) {
     setState(() {
       selectedB = true;
-      currRequest.body = body;
-      currRequest.bodyID = body?.bodyID!;
+      currRequest1.body = body;
+      currRequest1.bodyID = body?.bodyID!;
       _selectedBody = body!;
+    });
+  }
+
+  void onSkillChange(Skill? body) {
+    setState(() {
+      selectedS = true;
+      currRequest2.title = body?.title;
+      currRequest2.body = body?.body!;
+      _selectedSkill = body!;
     });
   }
 
@@ -225,7 +274,7 @@ class _CreateAchievementPage extends State<Home> {
               },
               body: TabBarView(
                 // These are the contents of the tab views, below the tabs.
-                children: ["Associations", "Events"].map((name) {
+                children: ["Associations", "Skills"].map((name) {
                   return SafeArea(
                     top: false,
                     bottom: false,
@@ -241,7 +290,7 @@ class _CreateAchievementPage extends State<Home> {
                               padding: const EdgeInsets.all(7.0),
                               child: SingleChildScrollView(
                                 child: Form(
-                                  key: _formKey,
+                                  key: _formKey1,
                                   child: Column(
                                       mainAxisAlignment:
                                       MainAxisAlignment.start,
@@ -271,7 +320,7 @@ class _CreateAchievementPage extends State<Home> {
                                               autocorrect: true,
                                               onChanged: (value) {
                                                 setState(() {
-                                                  currRequest.title = value;
+                                                  currRequest1.title = value;
                                                 });
                                               },
                                               validator: (value) {
@@ -293,7 +342,7 @@ class _CreateAchievementPage extends State<Home> {
                                               autocorrect: true,
                                               onChanged: (value) {
                                                 setState(() {
-                                                  currRequest.description =
+                                                  currRequest1.description =
                                                       value;
                                                 });
                                               },
@@ -316,7 +365,7 @@ class _CreateAchievementPage extends State<Home> {
                                               autocorrect: true,
                                               onChanged: (value) {
                                                 setState(() {
-                                                  currRequest.adminNote =
+                                                  currRequest1.adminNote =
                                                       value;
                                                 });
                                               },
@@ -387,11 +436,12 @@ class _CreateAchievementPage extends State<Home> {
                                                         ? 20.0
                                                         : 0,
                                                   ),
-                                                  VerifyCard(
+                                                  _selectedEvent!=null
+                                                    ?VerifyCard(
                                                       thing:
-                                                      this._selectedEvent,
+                                                      this._selectedEvent!,
                                                       selected:
-                                                      this.selectedE),
+                                                      this.selectedE):SizedBox(),
                                                 ])),
                                         Container(
                                           // width: double.infinity,
@@ -466,11 +516,12 @@ class _CreateAchievementPage extends State<Home> {
                                                         ? 20.0
                                                         : 0,
                                                   ),
+                                                  _selectedBody!=null?
                                                   BodyCard(
                                                       thing:
-                                                      this._selectedBody,
+                                                      this._selectedBody!,
                                                       selected:
-                                                      this.selectedB),
+                                                      this.selectedB):SizedBox(),
                                                   //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
                                                 ])),
                                         Container(
@@ -480,12 +531,13 @@ class _CreateAchievementPage extends State<Home> {
                                               horizontal: 15.0),
                                           child: TextButton(
                                             onPressed: () async {
-                                              if (_formKey.currentState!
+                                              if (_formKey1.currentState!
                                                   .validate()) {
+                                                currRequest1.isSkill=false;
                                                 var resp =
                                                 await achievementsBloc
                                                     .postForm(
-                                                    currRequest);
+                                                    currRequest1);
                                                 if (resp!.result ==
                                                     "success") {
                                                   Navigator.of(context)
@@ -519,13 +571,13 @@ class _CreateAchievementPage extends State<Home> {
                               ),
                             ),
                           ),
-                          "Events":RefreshIndicator(
+                          "Skills":RefreshIndicator(
                             onRefresh: () => bloc.updateEvents(),
                             child: Padding(
                               padding: const EdgeInsets.all(7.0),
                               child: SingleChildScrollView(
                                 child: Form(
-                                  key: _formKey,
+                                  key: _formKey2,
                                   child: Column(
                                       mainAxisAlignment:
                                       MainAxisAlignment.start,
@@ -546,29 +598,29 @@ class _CreateAchievementPage extends State<Home> {
                                                     height: 20.0,
                                                   ),
 
-                                                  DropdownSearch<Body>(
+                                                  DropdownSearch<Skill>(
                                                     mode: Mode.DIALOG,
                                                     maxHeight: 700,
                                                     isFilteredOnline: true,
                                                     showSearchBox: true,
                                                     label:
-                                                    "Skills",
+                                                    "Title",
                                                     hint:
-                                                    "Skills",
+                                                    "Title",
                                                     validator: (value) {
                                                       if (value == null) {
-                                                        return 'Please select a organization';
+                                                        return 'Please select a Skill';
                                                       }
                                                       return null;
                                                     },
-                                                    onChanged: onBodyChange,
+                                                    onChanged: onSkillChange,
                                                     onFind: bloc
                                                         .achievementBloc
-                                                        .searchForBody,
+                                                        .searchForSkill,
                                                     dropdownBuilder:
-                                                    buildDropdownMenuItemsBody,
+                                                    buildDropdownMenuItemsSkill,
                                                     popupItemBuilder:
-                                                    _customPopupItemBuilderBody,
+                                                    _customPopupItemBuilderSkill,
                                                     // popupSafeArea:
                                                     // PopupSafeArea(
                                                     //     top: true,
@@ -579,7 +631,7 @@ class _CreateAchievementPage extends State<Home> {
                                                       thickness: 7,
                                                     ),
                                                     selectedItem:
-                                                    _selectedBody,
+                                                    _selectedSkill,
                                                     emptyBuilder:
                                                         (BuildContext context,
                                                         String? _) {
@@ -590,7 +642,7 @@ class _CreateAchievementPage extends State<Home> {
                                                         EdgeInsets.all(
                                                             20),
                                                         child: Text(
-                                                          "No verifying authorities found. Refine your search!",
+                                                          "No skills found. Refine your search!",
                                                           style: theme
                                                               .textTheme
                                                               .subtitle1,
@@ -605,11 +657,12 @@ class _CreateAchievementPage extends State<Home> {
                                                         ? 20.0
                                                         : 0,
                                                   ),
+                                                  _selectedSkill?.body!=null?
                                                   BodyCard(
                                                       thing:
-                                                      this._selectedBody,
+                                                      this._selectedSkill?.body,
                                                       selected:
-                                                      this.selectedB),
+                                                      this.selectedS):SizedBox(),
                                                   //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
                                                 ])),
                                         Container(
@@ -619,13 +672,14 @@ class _CreateAchievementPage extends State<Home> {
                                               horizontal: 15.0),
                                           child: TextButton(
                                             onPressed: () async {
-                                              if (_formKey.currentState!
+                                              if (_formKey2.currentState!
                                                   .validate()) {
+                                                currRequest2.isSkill=true;
                                                 var resp =
                                                 await achievementsBloc
                                                     .postForm(
-                                                    currRequest);
-                                                if (resp!.result ==
+                                                    currRequest2);
+                                                if (resp?.result ==
                                                     "success") {
                                                   Navigator.of(context)
                                                       .pushNamed(
@@ -1003,7 +1057,7 @@ class Card extends State<VerifyCard> {
 }
 
 class BodyCard extends StatefulWidget {
-  final Body thing;
+  final Body? thing;
   final bool selected;
 
   BodyCard({required this.thing, required this.selected});
@@ -1017,16 +1071,16 @@ class BodyCardState extends State<BodyCard> {
     if (widget.selected) {
       return ListTile(
         title: Text(
-          widget.thing.bodyName!,
+          widget.thing?.bodyName??"",
           style: theme.textTheme.headline6,
         ),
         enabled: true,
         leading: NullableCircleAvatar(
-          widget.thing.bodyImageURL ?? widget.thing.bodyImageURL!,
+          widget.thing?.bodyImageURL??widget.thing?.bodyImageURL??"",
           Icons.event_outlined,
-          heroTag: widget.thing.bodyID,
+          heroTag: widget.thing?.bodyID,
         ),
-        subtitle: Text(widget.thing.bodyShortDescription!),
+        subtitle: Text(widget.thing?.bodyShortDescription??""),
       );
     } else {
       return SizedBox(height: 10);

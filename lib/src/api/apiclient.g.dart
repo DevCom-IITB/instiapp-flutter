@@ -534,16 +534,16 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<ExploreResponse> searchType(sessionID, query) async {
+  Future<ExploreResponse> searchType(sessionID, query,type) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'query': query};
+    final queryParameters = <String, dynamic>{r'query': query,r'types':type};
     final _headers = <String, dynamic>{r'Cookie': sessionID};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<ExploreResponse>(
             Options(method: 'GET', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/search?type=',
+                .compose(_dio.options, '/search',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = ExploreResponse.fromJson(_result.data!);

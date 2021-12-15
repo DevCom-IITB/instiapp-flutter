@@ -47,9 +47,27 @@ class _UserPageState extends State<UserPage> {
   User? user;
   Set<Event> sEvents = Set();
   List<Event>? events = [];
-  Body? _selectedBody;
+  Interest? _selectedInterest;
   late bool editable;
   List<Interest>? interests=[];
+
+  void onBodyChange(Interest? body) async {
+    print("ppp");
+    print(body?.title);
+    print(body?.id);
+    var bloc = BlocProvider.of(context)?.bloc;
+    var res=await bloc?.achievementBloc.postInterest(body?.id??"",body!);
+    print(res?.message);
+    setState(() {
+      List<Interest>? k= interests;
+      k?.add(body!);
+      interests=k;
+      print(interests?[0].title??"");
+      print("popop");
+      // _selectedInterest = body!;
+
+    });
+  }
 
   Widget _buildChips(BuildContext context){
     List<Widget> w=[];
@@ -87,8 +105,8 @@ class _UserPageState extends State<UserPage> {
     );
   }
 
-  Widget buildDropdownMenuItemsBody(
-      BuildContext context, Body? body) {
+  Widget buildDropdownMenuItemsInterest(
+      BuildContext context, Interest? body) {
     print("Entered build dropdown menu items");
     if (body == null) {
       return Container(
@@ -101,12 +119,12 @@ class _UserPageState extends State<UserPage> {
     print(body);
     return Container(
       child: ListTile(
-        title: Text(body.bodyName!),
+        title: Text(body.title!),
       ),
     );
   }
-  Widget _customPopupItemBuilderBody(
-      BuildContext context, Body body, bool isSelected) {
+  Widget _customPopupItemBuilderInterest(
+      BuildContext context, Interest body, bool isSelected) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8),
       decoration: !isSelected
@@ -118,7 +136,7 @@ class _UserPageState extends State<UserPage> {
       ),
       child: ListTile(
         selected: isSelected,
-        title: Text(body.bodyName!),
+        title: Text(body.title!),
       ),
     );
   }
@@ -130,6 +148,9 @@ class _UserPageState extends State<UserPage> {
 
     user = widget.initialUser;
     interests = user?.interests!;
+    print(interests);
+    print("aaaa");
+    //interests=[Interest(id:"123",title: "lll")];
     widget.userFuture?.then((u) {
       if (this.mounted) {
         setState(() {
@@ -301,7 +322,7 @@ class _UserPageState extends State<UserPage> {
                                                 height: 20.0,
                                               ),
                                             //  user.userEmail==bloc.client.getUserMe(sessionID):
-                                              DropdownSearch<Body>(
+                                              DropdownSearch<Interest>(
                                                 mode: Mode.DIALOG,
                                                 maxHeight: 700,
                                                 isFilteredOnline: true,
@@ -314,14 +335,14 @@ class _UserPageState extends State<UserPage> {
                                                   }
                                                   return null;
                                                 },
-                                                //onChanged: onBodyChange,
+                                                onChanged: onBodyChange,
                                                 onFind:
-                                                bloc.achievementBloc.searchForBody,
+                                                bloc.achievementBloc.searchForInterest,
                                                 dropdownBuilder:
-                                                buildDropdownMenuItemsBody,
+                                                buildDropdownMenuItemsInterest,
                                                 popupItemBuilder:
-                                                _customPopupItemBuilderBody,
-                                                //popupSafeArea:
+                                                _customPopupItemBuilderInterest,
+                                                // popupSafeArea:
                                                 // PopupSafeArea(
                                                 //     top: true,
                                                 //     bottom: true),
@@ -331,7 +352,7 @@ class _UserPageState extends State<UserPage> {
                                                   thickness: 7,
                                                 ),
                                                 selectedItem:
-                                                _selectedBody,
+                                                _selectedInterest,
                                                 emptyBuilder:
                                                     (BuildContext context,
                                                     String? _) {
