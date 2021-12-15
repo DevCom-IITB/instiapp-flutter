@@ -69,12 +69,14 @@ class _UserPageState extends State<UserPage> {
     });
   }
 
+  late bool cansee;
+
   Widget _buildChips(BuildContext context){
     List<Widget> w=[];
     var bloc = BlocProvider.of(context)?.bloc;
     int length= interests?.length ?? 0;
     for(int i=0;i< length;i++){
-      w.add(Chip(
+      w.add(cansee?Chip(
         labelPadding: EdgeInsets.all(2.0),
         label: Text(
           interests?[i].title?? "",
@@ -86,6 +88,7 @@ class _UserPageState extends State<UserPage> {
         elevation: 6.0,
         shadowColor: Colors.grey[60],
         padding: EdgeInsets.all(8.0),
+
         onDeleted: () async {
           await bloc?.achievementBloc.postDelInterest(interests![i].title!);
           interests?.removeAt(i);
@@ -95,6 +98,18 @@ class _UserPageState extends State<UserPage> {
             //_selected = _selected;
           });
         },
+      ):Chip(
+        labelPadding: EdgeInsets.all(2.0),
+        label: Text(
+          interests?[i].title?? "",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.primaries[Random().nextInt(Colors.primaries.length)],
+        elevation: 6.0,
+        shadowColor: Colors.grey[60],
+        padding: EdgeInsets.all(8.0),
       ));
       //w.add(_buildChip(interest.title, Colors.primaries[Random().nextInt(Colors.primaries.length)]));
     }
@@ -142,14 +157,20 @@ class _UserPageState extends State<UserPage> {
   }
 
 
+
+
   @override
-  void initState() {
+  void initState()async{
     super.initState();
 
     user = widget.initialUser;
     interests = user?.interests!;
     print(interests);
     print("aaaa");
+    var bloc = BlocProvider.of(context)?.bloc;
+    User curr= await bloc?.client.getUserMe(bloc.client.getSessionIdHeader());
+    cansee= user?.userLDAPId==curr.userLDAPId;
+
     //interests=[Interest(id:"123",title: "lll")];
     widget.userFuture?.then((u) {
       if (this.mounted) {
@@ -305,6 +326,7 @@ class _UserPageState extends State<UserPage> {
                                         : []),
                                 ),
                               ),
+
                               Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -321,7 +343,7 @@ class _UserPageState extends State<UserPage> {
                                               SizedBox(
                                                 height: 20.0,
                                               ),
-                                            //  user.userEmail==bloc.client.getUserMe(sessionID):
+                                              cansee?
                                               DropdownSearch<Interest>(
                                                 mode: Mode.DIALOG,
                                                 maxHeight: 700,
@@ -372,7 +394,7 @@ class _UserPageState extends State<UserPage> {
                                                     ),
                                                   );
                                                 },
-                                              ),
+                                              ):SizedBox(),
                                               _buildChips(context),
                                               //_buildChip('Gamer', Color(0xFFff6666))
                                               // SizedBox(
