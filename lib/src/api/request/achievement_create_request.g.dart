@@ -25,6 +25,7 @@ AchievementCreateRequest _$AchievementCreateRequestFromJson(
       description: json['description'] as String?,
       adminNote: json['admin_note'] as String?,
       bodyID: json['body'] as String?,
+      isSkill: json['isSkill'] as bool,
       body: json['body_detail'] == null
           ? null
           : Body.fromJson(json['body_detail'] as Map<String, dynamic>),
@@ -52,4 +53,5 @@ Map<String, dynamic> _$AchievementCreateRequestToJson(
       'body_detail': instance.body,
       'event_detail': instance.event,
       'offer': instance.offer,
+          'isSkill':instance.isSkill,
     };

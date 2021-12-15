@@ -165,9 +165,9 @@ abstract class InstiAppApi {
   Future<ExploreResponse> search(
       @rt.Header("Cookie") String sessionID, @rt.Query("query") String query);
 
-  @rt.GET("/search?type=")
+  @rt.GET("/search")
   Future<ExploreResponse> searchType(
-      @rt.Header("Cookie") String sessionID, @rt.Query("query") String query);
+      @rt.Header("Cookie") String sessionID, @rt.Query("query") String query, @rt.Query("types") String type);
 
   // Venter
   @rt.GET("/venter/complaints")

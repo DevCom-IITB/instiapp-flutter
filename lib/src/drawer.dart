@@ -532,7 +532,7 @@ class MNavigatorObserver extends NavigatorObserver {
     } catch (e) {
       _secondTopRouteNameSubject.add("");
     }
-    int pageIndex = routeToNavPos[previousRoute?.settings.name]!;
+    int pageIndex = routeToNavPos[previousRoute?.settings.name]??0;
     if (pageIndex == null) {
       return;
     }

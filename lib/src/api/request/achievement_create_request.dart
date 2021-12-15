@@ -53,6 +53,9 @@ class AchievementCreateRequest {
   @JsonKey(name: "offer")
   String? offer;
 
+  @JsonKey(name: "isSkill")
+  bool? isSkill;
+
   AchievementCreateRequest({
       this.id,
       this.timeOfCreation,
@@ -68,7 +71,8 @@ class AchievementCreateRequest {
       this.bodyID,
       this.body,
       this.event,
-      this.offer});
+      this.offer,
+  this.isSkill});
   factory AchievementCreateRequest.fromJson(Map<String, dynamic> json) => _$AchievementCreateRequestFromJson(json);
   Map<String, dynamic> toJson() => _$AchievementCreateRequestToJson(this);
 
