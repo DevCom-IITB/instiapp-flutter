@@ -239,7 +239,7 @@ String refineText(String text){
   text=text.replaceAll("<br>", "\n");
   text=text.replaceAll("<strong>", " ");
   text=text.replaceAll("</strong>", " ");
-  text=text.replaceAll("&nbsp;", " ");
+  text=text.replaceAll("&nbsp;", "       ");
   return text;
 }
 class CommonHtml extends StatelessWidget {
