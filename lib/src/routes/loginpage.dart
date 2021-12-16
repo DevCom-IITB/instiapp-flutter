@@ -205,16 +205,17 @@ class _LoginPageState extends State<LoginPage> {
         if (url.startsWith(successUrl)) {
           var uri = Uri.parse(url);
           var code = uri.queryParameters['code'];
-          print(code);
 
-          print("onUrlChanged: Hiding Web View");
           setState(() {loading = true;});
           await login(code ?? "", "https://www.insti.app/login-android.html");
           setState(() {loading = false;});
+        }else if (url.startsWith(guestUrl)) {
+          setState(() {loading = true;});
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil(_bloc!.homepageName, (r) => false);
         }
       },
       onPageFinished: (url){
-        
       },
       gestureNavigationEnabled: true,
     );
