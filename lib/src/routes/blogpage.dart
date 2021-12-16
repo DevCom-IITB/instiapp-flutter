@@ -14,11 +14,47 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
 // import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:flutter/foundation.dart';
+TextSpan highlight(String result,String query){
+  TextStyle posRes = TextStyle(color: Colors.white,backgroundColor: Colors.red);
+  TextStyle negRes = TextStyle(color: Colors.black,backgroundColor: Colors.white);
+  if(query==null || result==null || result=="" || query=="") return TextSpan(text:result,style:negRes);
+  result.replaceAll('\n'," ").replaceAll("  ", "");
 
+  var refinedMatch=result.toLowerCase();
+  var refinedsearch=query.toLowerCase();
+
+  if(refinedMatch.contains(refinedsearch)){
+    if(refinedMatch.substring(0,refinedsearch.length)==refinedsearch){
+      return TextSpan(style:posRes,text:result.substring(0,refinedsearch.length),children:[
+        highlight(result.substring(refinedsearch.length),query),
+      ]);
+    }
+    else if(refinedsearch.length==refinedMatch.length){
+      return TextSpan(text:result,style:posRes);
+    }
+    else{
+      return TextSpan(style:negRes,text:result.substring(0,refinedMatch.indexOf(refinedsearch)),
+          children:[highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query)]);
+    }
+  }
+  else if(!refinedMatch.contains(refinedsearch)){
+    return TextSpan(text:result,style:negRes);
+  }
+
+  return TextSpan(
+    text: result.substring(0, refinedMatch.indexOf(refinedsearch)),
+    style: negRes,
+    children: [
+      highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query)
+    ],
+  );
+
+}
 class BlogPage extends StatefulWidget {
   final String title;
   final PostType postType;
@@ -271,12 +307,19 @@ class _BlogPageState extends State<BlogPage> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                              post.title,
-                              textAlign: TextAlign.start,
-                              style: theme.textTheme.headline5
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
+                          RichText(
+                          textScaleFactor:1,
+                          text: highlight(refineText(post.title),bloc.query?? ''),
+                            textAlign: TextAlign.start,
+                              strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5
+                                       ?.copyWith(fontWeight: FontWeight.bold)??TextStyle())
+                        ),
+                            // Text(
+                            //   post.title,
+                            //   textAlign: TextAlign.start,
+                            //   style: theme.textTheme.headline5
+                            //       ?.copyWith(fontWeight: FontWeight.bold),
+                            // ),
                             widget.postType == PostType.NewsArticle
                                 ? InkWell(
                                     onTap: () async {
@@ -340,7 +383,7 @@ class _BlogPageState extends State<BlogPage> {
               ),
               child: CommonHtml(
                 data: post.content,
-                defaultTextStyle: theme.textTheme.subtitle1 ?? TextStyle(), query: '',
+                defaultTextStyle: theme.textTheme.subtitle1 ?? TextStyle(), query: bloc.query,
               ),
             ),
             widget.postType == PostType.External
