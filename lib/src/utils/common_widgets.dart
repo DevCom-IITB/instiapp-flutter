@@ -256,7 +256,7 @@ class CommonHtml extends StatelessWidget {
         ? Html(
             data: data,
             onLinkTap: (link,_,__,____) async {
-              print(link);
+              //print(link);
               if (await canLaunch(link!)) {
                 await launch(link!);
               } else {
@@ -290,23 +290,39 @@ class CommonHtml extends StatelessWidget {
                 );
               },
               "p":(context, child) {
-                print(query);
                 String text =context.tree.element?.innerHtml??"";
-
                 return RichText(
                       textScaleFactor:1,
                       text: highlight(refineText(text),query?? ''),
                     );
               },
               "td":(context, child) {
-               // print(node.innerHtml);
                 String text =context.tree.element?.innerHtml??"";
-                print(text);
+                text="    "+text+"   ";
                 return RichText(
                   textScaleFactor:1,
                   text: highlight(refineText(text),query?? ''),
                 );
-              }
+              },
+              "th":(context, child) {
+                String text =context.tree.element?.innerHtml??"";
+                text="    "+text+"   ";
+                return RichText(
+                  textScaleFactor:1,
+                  text: highlight(refineText(text),query?? ''),
+                );
+              },
+              // "td":(context,child){
+              //   context.tree.style.padding=const EdgeInsets.only(
+              //     left: 12.0,
+              //     top: 12.0,
+              //     right: 12.0,
+              //   );
+              //   context.tree.style.width=500;
+              //   print(context.tree.style.width);
+              // }
+
+
             },
           )
         : CircularProgressIndicatorExtended(

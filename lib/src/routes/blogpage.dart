@@ -279,7 +279,7 @@ class _BlogPageState extends State<BlogPage> {
 
   Widget _post(dynamic post, PostBloc bloc) {
     var theme = Theme.of(context);
-    print(post.title);
+    //print(post.title);
     return Card(
         key: ValueKey(post.id),
         child: Column(
@@ -314,7 +314,7 @@ class _BlogPageState extends State<BlogPage> {
                           text: highlight(post.title,bloc.query?? ''),
                             textAlign: TextAlign.start,
                               strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
-                                       .copyWith(fontWeight: FontWeight.bold),height: 0.7)
+                                       .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
                         ),
                             // Text(
                             //   post.title,
