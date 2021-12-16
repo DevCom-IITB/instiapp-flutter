@@ -69,7 +69,7 @@ class _UserPageState extends State<UserPage> {
     });
   }
 
-  late bool cansee;
+  late bool cansee = false;
 
   Widget _buildChips(BuildContext context){
     List<Widget> w=[];
@@ -160,7 +160,7 @@ class _UserPageState extends State<UserPage> {
 
 
   @override
-  void initState()async{
+  void initState() {
     super.initState();
 
     user = widget.initialUser;
@@ -168,11 +168,14 @@ class _UserPageState extends State<UserPage> {
     print(interests);
     print("aaaa");
     var bloc = BlocProvider.of(context)?.bloc;
-    User curr= await bloc?.client.getUserMe(bloc.client.getSessionIdHeader());
-    cansee= user?.userLDAPId==curr.userLDAPId;
+    User curr;
 
     //interests=[Interest(id:"123",title: "lll")];
     widget.userFuture?.then((u) {
+      bloc?.client.getUserMe(bloc.client.getSessionIdHeader()).then((result){
+        curr = result;
+        cansee= user?.userLDAPId==curr.userLDAPId;
+      });
       if (this.mounted) {
         setState(() {
           user = u;
