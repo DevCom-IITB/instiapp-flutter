@@ -279,6 +279,7 @@ class _BlogPageState extends State<BlogPage> {
 
   Widget _post(dynamic post, PostBloc bloc) {
     var theme = Theme.of(context);
+    print(post.title);
     return Card(
         key: ValueKey(post.id),
         child: Column(
@@ -308,11 +309,12 @@ class _BlogPageState extends State<BlogPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                           RichText(
-                          textScaleFactor:1,
-                          text: highlight(refineText(post.title),bloc.query?? ''),
+                          textScaleFactor:1.55,
+                         // textHeightBehavior: ,
+                          text: highlight(post.title,bloc.query?? ''),
                             textAlign: TextAlign.start,
-                              strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5
-                                       ?.copyWith(fontWeight: FontWeight.bold)??TextStyle())
+                              strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
+                                       .copyWith(fontWeight: FontWeight.bold),height: 0.7)
                         ),
                             // Text(
                             //   post.title,
