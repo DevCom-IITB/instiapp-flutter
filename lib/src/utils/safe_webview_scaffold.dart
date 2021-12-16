@@ -82,7 +82,7 @@ class _SafeWebviewScaffoldState extends State<SafeWebviewScaffold> {
   @override
   void dispose() {
     super.dispose();
-    _resizeTimer?.cancel();
+    _resizeTimer.cancel();
     webviewReference.close();
     if (widget.hidden ?? false) {
       _onStateChanged.cancel();
