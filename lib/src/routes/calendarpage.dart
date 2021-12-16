@@ -98,7 +98,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                   ? CircularProgressIndicator(
                                       valueColor:
                                           new AlwaysStoppedAnimation<Color>(
-                                              theme.accentColor),
+                                              theme.colorScheme.secondary),
                                       strokeWidth: 2,
                                     )
                                   : Container();
@@ -171,7 +171,9 @@ class _CalendarPageState extends State<CalendarPage> {
 
                           todayButtonColor: theme.primaryColor.withOpacity(0.3),
                           selectedDayButtonColor: theme.colorScheme.secondary,
-                          selectedDayTextStyle: theme.accentTextTheme.headline6,
+                          selectedDayTextStyle: theme.textTheme.headline6?.copyWith(
+                            color: theme.colorScheme.secondary
+                          ),
 
                           // height: min(MediaQuery.of(context).size.shortestSide, 600) * 1.6,
                           height: 440.0,
@@ -183,7 +185,7 @@ class _CalendarPageState extends State<CalendarPage> {
                           daysHaveCircularBorder: null,
                           staticSixWeekFormat: true,
 
-                          iconColor: theme.accentColor,
+                          iconColor: theme.colorScheme.secondary,
                           weekdayTextStyle: TextStyle(
                               // color: theme.accentColor.withOpacity(0.9),
                               color: Colors.grey,
@@ -192,9 +194,9 @@ class _CalendarPageState extends State<CalendarPage> {
                       ),
                       Center(
                         child: RawMaterialButton(
-                          fillColor: theme.accentColor,
+                          fillColor: theme.colorScheme.secondary,
                           shape: StadiumBorder(),
-                          splashColor: theme.accentColor.withOpacity(0.8),
+                          splashColor: theme.colorScheme.secondary.withOpacity(0.8),
                           onPressed: () {},
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -205,7 +207,9 @@ class _CalendarPageState extends State<CalendarPage> {
                                             false)
                                     ? "${snapshot.data?[_currentDate]?.length} Events"
                                     : "No events",
-                                style: theme.accentTextTheme.button),
+                                style: theme.textTheme.button?.copyWith(
+                                  color: theme.colorScheme.secondary
+                                )),
                           ),
                         ),
                       )

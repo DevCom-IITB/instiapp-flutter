@@ -464,10 +464,10 @@ class _CreateAchievementPage extends State<Home> {
                                                     maxHeight: 700,
                                                     isFilteredOnline: true,
                                                     showSearchBox: true,
-                                                    label:
-                                                    "Verifying Authority",
-                                                    hint:
-                                                    "Verifying Authority",
+                                                    dropdownSearchDecoration: InputDecoration(
+                                                      labelText: "Verifying Authority",
+                                                      hintText: "Verifying Authority"
+                                                    ),
                                                     validator: (value) {
                                                       if (value == null) {
                                                         return 'Please select a organization';
@@ -605,10 +605,10 @@ class _CreateAchievementPage extends State<Home> {
                                                     maxHeight: 700,
                                                     isFilteredOnline: true,
                                                     showSearchBox: true,
-                                                    label:
-                                                    "Title",
-                                                    hint:
-                                                    "Title",
+                                                    dropdownSearchDecoration: InputDecoration(
+                                                      labelText: "Title",
+                                                      hintText: "Titile"
+                                                    ),
                                                     validator: (value) {
                                                       if (value == null) {
                                                         return 'Please select a Skill';
@@ -1141,7 +1141,7 @@ class _QRViewExampleState extends State<QRViewExample> {
         var secret = uri.substring(uri.lastIndexOf("s=") + 2);
         // if offerid is null return or scan again
         if (offerid == '' || secret == '') {
-          bool addToCal = await showDialog(
+          bool? addToCal = await showDialog(
               context: context,
               builder: (context) => AlertDialog(
                 title: Text("Invalid Achievement Code"),
@@ -1184,7 +1184,7 @@ class _QRViewExampleState extends State<QRViewExample> {
         }
       } else {
         log('1');
-        bool addToCal = await showDialog(
+        bool? addToCal = await showDialog(
             context: context,
             builder: (context) => AlertDialog(
               title: Text("Invalid Qr Code"),
@@ -1256,7 +1256,7 @@ class _QRViewExampleState extends State<QRViewExample> {
 
   @override
   void dispose() {
-    controller?.dispose();
+    controller.dispose();
     super.dispose();
   }
 }

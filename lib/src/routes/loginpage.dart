@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:InstiApp/src/api/apiclient.dart';
@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
       startLoginPageServer().then((_) async {
         print("startLoginPageServer.then: Launching Web View");
         await Future.delayed(Duration(milliseconds: 200));
-        var mqdata = MediaQuery.of(context);
+        // var mqdata = MediaQuery.of(context);
         setState((){loading = false;});
         // flutterWebviewPlugin.launch(
         //   loginurl!,
@@ -168,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     _bloc = BlocProvider.of(context)!.bloc;
-    var mqdata = MediaQuery.of(context);
+    // var mqdata = MediaQuery.of(context);
 
     return loading? Material(
       child: Center(

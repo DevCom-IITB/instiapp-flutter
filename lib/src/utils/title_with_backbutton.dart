@@ -27,7 +27,7 @@ class _TitleWithBackButtonState extends State<TitleWithBackButton> {
         bool currHasBackButton = (theme.platform == TargetPlatform.iOS ||
                 theme.platform == TargetPlatform.macOS) &&
             widget.hasBackButton &&
-            snapshot?.data != null &&
+            snapshot.data != null &&
             Navigator.of(context).canPop();
         return Stack(
           children: <Widget>[

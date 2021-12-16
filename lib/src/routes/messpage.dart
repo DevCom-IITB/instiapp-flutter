@@ -1,6 +1,6 @@
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
@@ -107,7 +107,7 @@ class _MessPageState extends State<MessPage> {
       floatingActionButton: FloatingActionButton.extended(
         elevation: 8.0,
         backgroundColor: theme.colorScheme.surface,
-        foregroundColor: theme.accentColor,
+        foregroundColor: theme.colorScheme.secondary,
         icon: Icon(
           Icons.home_outlined,
           // color: theme.accentColor,
@@ -141,7 +141,7 @@ class _MessPageState extends State<MessPage> {
                     ))
                 .toList(),
             style:
-                theme.textTheme.subtitle1?.copyWith(color: theme.accentColor),
+                theme.textTheme.subtitle1?.copyWith(color: theme.colorScheme.secondary),
             onChanged: (h) {
               setState(() {
                 currHostel = snapshot.data![h ?? 0].shortName ?? "0";
@@ -153,7 +153,7 @@ class _MessPageState extends State<MessPage> {
             width: 18,
             height: 18,
             child: CircularProgressIndicator(
-              valueColor: new AlwaysStoppedAnimation<Color>(theme.accentColor),
+              valueColor: new AlwaysStoppedAnimation<Color>(theme.colorScheme.secondary),
               strokeWidth: 2,
             ),
           );
@@ -178,7 +178,7 @@ class _MessPageState extends State<MessPage> {
           ),
           Text(
             "Breakfast",
-            style: localTheme.headline6?.copyWith(color: theme.accentColor),
+            style: localTheme.headline6?.copyWith(color: theme.colorScheme.secondary),
           ),
           ContentText(mess.breakfast ?? "", context),
           SizedBox(
@@ -186,7 +186,7 @@ class _MessPageState extends State<MessPage> {
           ),
           Text(
             "Lunch",
-            style: localTheme.headline6?.copyWith(color: theme.accentColor),
+            style: localTheme.headline6?.copyWith(color: theme.colorScheme.secondary),
           ),
           ContentText(mess.lunch ?? "", context),
           SizedBox(
@@ -194,7 +194,7 @@ class _MessPageState extends State<MessPage> {
           ),
           Text(
             "Snacks",
-            style: localTheme.headline6?.copyWith(color: theme.accentColor),
+            style: localTheme.headline6?.copyWith(color: theme.colorScheme.secondary),
           ),
           ContentText(mess.snacks ?? "", context),
           SizedBox(
@@ -202,7 +202,7 @@ class _MessPageState extends State<MessPage> {
           ),
           Text(
             "Dinner",
-            style: localTheme.headline6?.copyWith(color: theme.accentColor),
+            style: localTheme.headline6?.copyWith(color: theme.colorScheme.secondary),
           ),
           ContentText(mess.dinner ?? "", context),
           SizedBox(

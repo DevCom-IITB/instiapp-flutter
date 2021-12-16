@@ -258,14 +258,14 @@ class _EventPageState extends State<EventPage> {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         primary: event?.eventUserUes == uesButton
-            ? theme.accentColor
+            ? theme.colorScheme.secondary
             : theme.scaffoldBackgroundColor,
         onPrimary: event?.eventUserUes == uesButton
-            ? theme.accentIconTheme.color
+            ? theme.floatingActionButtonTheme.foregroundColor
             : theme.textTheme.bodyText1?.color,
         shape: RoundedRectangleBorder(
             side: BorderSide(
-              color: theme.accentColor,
+              color: theme.colorScheme.secondary,
             ),
             borderRadius: BorderRadius.all(Radius.circular(4))),
       ),
@@ -286,8 +286,8 @@ class _EventPageState extends State<EventPage> {
                 child: CircularProgressIndicator(
                   valueColor: new AlwaysStoppedAnimation<Color?>(
                       event?.eventUserUes == uesButton
-                          ? theme.accentIconTheme.color
-                          : theme.accentColor),
+                          ? theme.floatingActionButtonTheme.foregroundColor
+                          : theme.colorScheme.secondary),
                   strokeWidth: 2,
                 )),
             SizedBox(

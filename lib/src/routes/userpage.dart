@@ -349,8 +349,10 @@ class _UserPageState extends State<UserPage> {
                                                 maxHeight: 700,
                                                 isFilteredOnline: true,
                                                 showSearchBox: true,
-                                                label: "Interests",
-                                                hint: "Interests",
+                                                dropdownSearchDecoration: InputDecoration(
+                                                  labelText: "Interests",
+                                                  hintText: "Interests",
+                                                ),
                                                 validator: (value) {
                                                   if (value == null) {
                                                     return 'Please select a organization';
@@ -424,7 +426,7 @@ class _UserPageState extends State<UserPage> {
                             child: Material(
                               elevation: 4.0,
                               child: TabBar(
-                                labelColor: theme.accentColor,
+                                labelColor: theme.colorScheme.secondary,
                                 unselectedLabelColor: theme.disabledColor,
                                 tabs: [
                                   Tab(

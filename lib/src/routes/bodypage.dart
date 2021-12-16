@@ -309,7 +309,7 @@ class _BodyPageState extends State<BodyPage> {
             ? theme.colorScheme.secondary
             : theme.scaffoldBackgroundColor,
         onPrimary: body?.bodyUserFollows ?? false
-            ? theme.accentIconTheme.color
+            ? theme.floatingActionButtonTheme.foregroundColor
             : theme.textTheme.bodyText1?.color,
         shape: RoundedRectangleBorder(
           side: BorderSide(
@@ -345,8 +345,8 @@ class _BodyPageState extends State<BodyPage> {
                   child: CircularProgressIndicator(
                     valueColor: new AlwaysStoppedAnimation<Color>(
                       body?.bodyUserFollows ?? false
-                          ? theme.accentIconTheme.color!
-                          : theme.accentColor,
+                          ? theme.floatingActionButtonTheme.foregroundColor!
+                          : theme.colorScheme.secondary,
                     ),
                     strokeWidth: 2,
                   )),
@@ -359,8 +359,8 @@ class _BodyPageState extends State<BodyPage> {
                 child: CircularProgressIndicator(
                   valueColor: new AlwaysStoppedAnimation<Color>(
                       body?.bodyUserFollows ?? false
-                          ? theme.accentIconTheme.color!
-                          : theme.accentColor),
+                          ? theme.floatingActionButtonTheme.foregroundColor!
+                          : theme.colorScheme.secondary),
                   strokeWidth: 2,
                 )),
             SizedBox(
