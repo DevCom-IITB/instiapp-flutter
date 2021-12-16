@@ -404,7 +404,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           "/complaint/${fromMap.notificationExtra ?? ""}?reload=true",
     }[fromMap.notificationType];
 
-    _navigatorKey.currentState?.pushNamed(routeName!);
+    _navigatorKey.currentState?.pushNamed(routeName ?? '/');
 
     // marking the notification as read
     widget.bloc.clearNotificationUsingID(fromMap.notificationID!);
