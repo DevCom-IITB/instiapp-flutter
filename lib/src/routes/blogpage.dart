@@ -676,7 +676,7 @@ class _BlogPageState extends State<BlogPage> {
                 return Text("No Filters");
               }
               var categories_1 = snapshot.data;
-              return MultiSelectDialogField<String>(
+              return MultiSelectDialogField<String?>(
                 title: Text(
                   "Filters",
                   style: theme.textTheme.subtitle1,
@@ -697,7 +697,7 @@ class _BlogPageState extends State<BlogPage> {
                 barrierColor: Colors.black.withOpacity(0.7),
                 onConfirm: (c) {
                   setState(() {
-                    currCat = c;
+                    currCat = c.map((element) =>element ?? "").toList();
                     String category = "";
                     currCat?.forEach((element) {
                       category += element + ",";
@@ -705,7 +705,7 @@ class _BlogPageState extends State<BlogPage> {
                     if (category != "")
                       category = category.substring(0, category.length - 1);
                     blogBloc.category = category;
-                    log(category);
+                    // log(category);
                     blogBloc.refresh();
                   });
                 },
