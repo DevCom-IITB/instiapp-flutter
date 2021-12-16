@@ -133,7 +133,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           fontFamily: "IBMPlexSans",
 
           primaryColor: widget.bloc.primaryColor,
-          colorScheme: theme.colorScheme.copyWith(secondary: widget.bloc.accentColor),
+          colorScheme: theme.colorScheme.copyWith(secondary: widget.bloc.accentColor, brightness: widget.bloc.brightness.toBrightness()),
           primarySwatch: Colors.primaries.firstWhereOrNull(
               (c) => c.value == widget.bloc.accentColor.value),
               
