@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 // import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PutEntityPage extends StatefulWidget {
@@ -18,7 +17,6 @@ class PutEntityPage extends StatefulWidget {
 }
 
 class _PutEntityPageState extends State<PutEntityPage> {
-  final flutterWebviewPlugin = FlutterWebviewPlugin();
 
   final String hostUrl = "https://insti.app/";
   final String addEventStr = "add-event";
@@ -31,7 +29,7 @@ class _PutEntityPageState extends State<PutEntityPage> {
   bool addedCookie = false;
 
   StreamSubscription<String>? onUrlChangedSub;
-  StreamSubscription<WebViewStateChanged>? onStateChangedSub;
+  WebViewController? webViewController;
 
   // Storing for dispose
   ThemeData? theme;
@@ -39,37 +37,16 @@ class _PutEntityPageState extends State<PutEntityPage> {
   @override
   void initState() {
     super.initState();
-    onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {
-      print("Changed URL: $url");
-      if (url.contains("/event/")) {
-        var uri = url.substring(url.lastIndexOf("/") + 1);
-
-        Navigator.of(context).pushReplacementNamed("/event/$uri");
-      } else if (url.contains("/org/")) {
-        var uri = url.substring(url.lastIndexOf("/") + 1);
-
-        Navigator.of(context).pushReplacementNamed("/body/$uri");
-      }
-    });
-
-    onStateChangedSub =
-        flutterWebviewPlugin.onStateChanged.listen((state) async {
-      print(state.type);
-    });
   }
 
   @override
   void dispose() {
     onUrlChangedSub?.cancel();
-    onStateChangedSub?.cancel();
-    flutterWebviewPlugin.dispose();
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // var bloc = BlocProvider.of(context).bloc;
     theme = Theme.of(context);
     var url =
         "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + "/" + widget.entityID!)}?${widget.cookie}&$sandboxTrueQParam";
@@ -86,7 +63,7 @@ class _PutEntityPageState extends State<PutEntityPage> {
                 semanticLabel: "Refresh",
               ),
               onPressed: () {
-                flutterWebviewPlugin.reload();
+                webViewController?.reload();
               },
             ),
           ],
@@ -94,6 +71,9 @@ class _PutEntityPageState extends State<PutEntityPage> {
       ),
       body: WebView(
       javascriptMode: JavascriptMode.unrestricted,
+      onWebViewCreated: (controller){
+        webViewController = controller;
+      },
       initialUrl: url,
       onPageStarted: (url) async{
         print("Changed URL: $url");
