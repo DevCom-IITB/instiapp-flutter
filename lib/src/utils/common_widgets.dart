@@ -7,10 +7,11 @@ import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
+// ignore: unnecessary_import
 import 'dart:ui' show Brightness;
 
 String capitalize(String name) {
-  if (name != null && name.isNotEmpty) {
+  if (name.isNotEmpty) {
     return name.substring(0, 1).toUpperCase() + name.substring(1);
   }
   return name;
@@ -36,7 +37,7 @@ class NullableCircleAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return url != null || url != ""
+    return url != ""
         ? (photoViewable
             ? InkWell(
                 onTap: () {
@@ -258,7 +259,7 @@ class CommonHtml extends StatelessWidget {
             onLinkTap: (link,_,__,____) async {
               //print(link);
               if (await canLaunch(link!)) {
-                await launch(link!);
+                await launch(link);
               } else {
                 throw "Couldn't launch $link";
               }
@@ -332,7 +333,7 @@ class CommonHtml extends StatelessWidget {
   TextSpan highlight(String result,String query){
     TextStyle posRes = TextStyle(color: Colors.white,backgroundColor: Colors.red);
     TextStyle negRes = TextStyle(color: Colors.black,backgroundColor: Colors.white);
-    if(query==null || result==null || result=="" || query=="") return TextSpan(text:result,style:negRes);
+    if(result=="" || query=="") return TextSpan(text:result,style:negRes);
     result.replaceAll('\n'," ").replaceAll("  ", "");
 
     var refinedMatch=result.toLowerCase();
@@ -511,9 +512,7 @@ class MyBottomAppBar extends StatelessWidget {
     this.notchMargin = 4.0,
     this.child,
     this.iconSize,
-  })  : assert(elevation != null),
-        assert(elevation >= 0.0),
-        assert(clipBehavior != null),
+  })  : assert(elevation >= 0.0),
         super(key: key);
 
   /// The widget below this widget in the tree.
@@ -596,7 +595,7 @@ class CircularProgressIndicatorExtended extends StatelessWidget {
           height: size,
           width: size,
           child: CircularProgressIndicator(
-            valueColor: new AlwaysStoppedAnimation<Color>(theme.accentColor),
+            valueColor: new AlwaysStoppedAnimation<Color>(theme.colorScheme.secondary),
             strokeWidth: 2,
           ),
         ),
@@ -673,7 +672,7 @@ class EditableChipListState extends State<EditableChipList> {
 
   @override
   void dispose() {
-    widget?.controller?.removeListener(_onCreate);
+    widget.controller?.removeListener(_onCreate);
     super.dispose();
   }
 
@@ -727,7 +726,7 @@ class EditableChipListState extends State<EditableChipList> {
   }
 
   String _capitalize(String name) {
-    assert(name != null && name.isNotEmpty);
+    assert(name.isNotEmpty);
     return name.substring(0, 1).toUpperCase() + name.substring(1);
   }
 }

@@ -14,7 +14,7 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
-import 'package:flutter_html/shims/dart_ui_real.dart';
+// import 'package:flutter_html/shims/dart_ui_real.dart';
 // import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,7 +22,7 @@ import 'package:url_launcher/url_launcher.dart';
 TextSpan highlight(String result,String query){
   TextStyle posRes = TextStyle(color: Colors.white,backgroundColor: Colors.red);
   TextStyle negRes = TextStyle(color: Colors.black,backgroundColor: Colors.white);
-  if(query==null || result==null || result=="" || query=="") return TextSpan(text:result,style:negRes);
+  if(result=="" || query=="") return TextSpan(text:result,style:negRes);
   result.replaceAll('\n'," ").replaceAll("  ", "");
 
   var refinedMatch=result.toLowerCase();
@@ -311,7 +311,7 @@ class _BlogPageState extends State<BlogPage> {
                           RichText(
                           textScaleFactor:1.55,
                          // textHeightBehavior: ,
-                          text: highlight(post.title,bloc.query?? ''),
+                          text: highlight(post.title,bloc.query),
                             textAlign: TextAlign.start,
                               strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
                                        .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
