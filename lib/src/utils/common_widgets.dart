@@ -234,6 +234,14 @@ class PhotoViewableImage extends StatelessWidget {
   }
 }
 
+
+String refineText(String text){
+  text=text.replaceAll("<br>", "\n");
+  text=text.replaceAll("<strong>", " ");
+  text=text.replaceAll("</strong>", " ");
+  text=text.replaceAll("&nbsp;", " ");
+  return text;
+}
 class CommonHtml extends StatelessWidget {
   final String? data;
   final String? query;
@@ -282,17 +290,21 @@ class CommonHtml extends StatelessWidget {
                 );
               },
               "p":(context, child) {
-                print(context.tree.element?.innerHtml);
+                print(query);
+                String text =context.tree.element?.innerHtml??"";
+
                 return RichText(
                       textScaleFactor:1,
-                      text: highlight(context.tree.element?.innerHtml??"",query?? ''),
+                      text: highlight(refineText(text),query?? ''),
                     );
               },
               "td":(context, child) {
                // print(node.innerHtml);
+                String text =context.tree.element?.innerHtml??"";
+                print(text);
                 return RichText(
                   textScaleFactor:1,
-                  text: highlight(context.tree.element?.innerHtml??"",query?? ''),
+                  text: highlight(refineText(text),query?? ''),
                 );
               }
             },
@@ -302,7 +314,6 @@ class CommonHtml extends StatelessWidget {
           );
   }
   TextSpan highlight(String result,String query){
-    print("llll");
     TextStyle posRes = TextStyle(color: Colors.white,backgroundColor: Colors.red);
     TextStyle negRes = TextStyle(color: Colors.black,backgroundColor: Colors.white);
     if(query==null || result==null || result=="" || query=="") return TextSpan(text:result,style:negRes);
