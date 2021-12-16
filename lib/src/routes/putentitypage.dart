@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:InstiApp/src/utils/common_widgets.dart';
-import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
+// import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:webview_flutter/webview_flutter.dart';

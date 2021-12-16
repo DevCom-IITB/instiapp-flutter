@@ -1,6 +1,8 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:async';
 import 'dart:collection';
-import 'dart:developer';
+// import 'dart:developer';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
@@ -68,7 +70,7 @@ class Bloc extends Object {
 
   Future<SecretResponse?> postDelInterest(String title) async {
     try {
-      var currUser = await bloc.client.getUserMe(bloc.getSessionIdHeader());
+      await bloc.client.getUserMe(bloc.getSessionIdHeader());
       SecretResponse response = await bloc.client
           .postDelInterests(bloc.getSessionIdHeader(), title);
       // log(response.message);

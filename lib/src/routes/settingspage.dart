@@ -147,7 +147,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   child: Text(
                     "Default Homepage",
                     style: theme.textTheme.bodyText2?.copyWith(
-                        fontWeight: FontWeight.bold, color: theme.accentColor),
+                        fontWeight: FontWeight.bold, color: theme.colorScheme.secondary),
                   ),
                 ),
                 Padding(
@@ -185,7 +185,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   child: Text(
                     "App Theme",
                     style: theme.textTheme.bodyText2?.copyWith(
-                        fontWeight: FontWeight.bold, color: theme.accentColor),
+                        fontWeight: FontWeight.bold, color: theme.colorScheme.secondary),
                   ),
                 ),
                 RadioListTile<AppBrightness>(

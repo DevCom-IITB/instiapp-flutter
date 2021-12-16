@@ -298,7 +298,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                                         decoration:
                                                             BoxDecoration(
                                                           color:
-                                                              theme.accentColor,
+                                                              theme.colorScheme.secondary,
                                                           shape:
                                                               BoxShape.circle,
                                                         ),
@@ -306,8 +306,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                                           child: Text(
                                                             "${snapshot.data?.length}",
                                                             style: theme
-                                                                .accentTextTheme
-                                                                .overline,
+                                                                .textTheme.overline?.copyWith(color: theme.colorScheme.onSecondary,),
                                                           ),
                                                         ),
                                                       )
@@ -369,6 +368,7 @@ class _NavDrawerState extends State<NavDrawer> {
   }
 }
 
+// ignore: must_be_immutable
 class NavListTile extends StatelessWidget {
   final IconData? icon;
   final String? title;
@@ -424,15 +424,15 @@ class NavListTile extends StatelessWidget {
       return tileTheme.selectedColor!;
 
     if (!selected && tileTheme.iconColor != null) return tileTheme.iconColor!;
-
+    // assert(theme.brightness != null);
+    print(theme.brightness);
     switch (theme.brightness) {
       case Brightness.light:
         return selected ? theme.primaryColor : Colors.black54;
       case Brightness.dark:
         return selected?null: theme.colorScheme.secondary; // null - use current icon theme color
     }
-    assert(theme.brightness != null);
-    return null;
+    // return null;
   }
 }
 
@@ -506,7 +506,7 @@ class MNavigatorObserver extends NavigatorObserver {
 
   @override
   void didPush(Route route, Route? previousRoute) {
-    navStack.addLast(route.settings?.name ?? "n/a");
+    navStack.addLast(route.settings.name ?? "n/a");
     try {
       var el = navStack.elementAt(navStack.length - 2);
       _secondTopRouteNameSubject.add(routeToName[el] ?? startsWith(el));
@@ -514,9 +514,6 @@ class MNavigatorObserver extends NavigatorObserver {
       _secondTopRouteNameSubject.add("");
     }
     int? pageIndex = routeToNavPos[route.settings.name];
-    if (pageIndex == null) {
-      return;
-    }
 
     NavDrawer.setPageIndex(bloc, pageIndex ?? -1);
   }
@@ -532,10 +529,7 @@ class MNavigatorObserver extends NavigatorObserver {
     } catch (e) {
       _secondTopRouteNameSubject.add("");
     }
-    int pageIndex = routeToNavPos[previousRoute?.settings.name]??0;
-    if (pageIndex == null) {
-      return;
-    }
+    int? pageIndex = routeToNavPos[previousRoute?.settings.name];
 
     NavDrawer.setPageIndex(bloc, pageIndex ?? -1);
   }
@@ -545,7 +539,7 @@ class MNavigatorObserver extends NavigatorObserver {
     try {
       navStack.removeLast();
     } catch (e) {}
-    navStack.addLast(newRoute?.settings?.name ?? "n/a");
+    navStack.addLast(newRoute?.settings.name ?? "n/a");
     try {
       var el = navStack.elementAt(navStack.length - 2);
       _secondTopRouteNameSubject.add(routeToName[el] ?? startsWith(el));
@@ -554,9 +548,6 @@ class MNavigatorObserver extends NavigatorObserver {
     }
 
     int? pageIndex = routeToNavPos[newRoute?.settings.name];
-    if (pageIndex == null) {
-      return;
-    }
 
     NavDrawer.setPageIndex(bloc, pageIndex ?? -1);
   }

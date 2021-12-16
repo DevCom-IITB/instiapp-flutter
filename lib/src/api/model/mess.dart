@@ -79,6 +79,5 @@ class HostelMess {
 
   Map<String, dynamic> toJson() => _$HostelMessToJson(this);
 
-  @JsonKey(ignore: true)
   getDayName() => dayToName[this.day];
 }

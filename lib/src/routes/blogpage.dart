@@ -1,4 +1,4 @@
-import 'dart:async';
+// import 'dart:async';
 import 'dart:core';
 import 'dart:collection';
 import 'dart:developer';
@@ -8,16 +8,16 @@ import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+// import 'package:flutter/rendering.dart';
 import 'package:InstiApp/src/api/model/post.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
-import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+// import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/foundation.dart';
+// import 'package:flutter/foundation.dart';
 
 class BlogPage extends StatefulWidget {
   final String title;
@@ -619,6 +619,7 @@ class _BlogPageState extends State<BlogPage> {
   }
 
   Widget buildDropdownButton(ThemeData theme, PostBloc blogBloc, var bloc) {
+    blogBloc.setCategories();
     return Container(
         padding: EdgeInsets.all(6.0),
         child: StreamBuilder<UnmodifiableListView<Map<String, String>>>(
@@ -627,7 +628,7 @@ class _BlogPageState extends State<BlogPage> {
                 AsyncSnapshot<UnmodifiableListView<Map<String, String>>>
                     snapshot) {
               if (!snapshot.hasData || snapshot.data == null) {
-                return Text("No Filters Found");
+                return Text("No Filters");
               }
               var categories_1 = snapshot.data;
               return MultiSelectDialogField<String>(

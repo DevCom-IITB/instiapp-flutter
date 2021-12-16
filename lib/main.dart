@@ -25,7 +25,7 @@ import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/routes/achievement_form.dart';
 import 'package:InstiApp/src/routes/your_achievements.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
@@ -96,7 +96,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void dispose() async {
-    _appLinksSub?.cancel();
+    _appLinksSub.cancel();
     WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
@@ -105,7 +105,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
-      widget?.bloc?.saveToCache();
+      widget.bloc.saveToCache();
     }
   }
 
@@ -134,12 +134,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
           primaryColor: widget.bloc.primaryColor,
           colorScheme: theme.colorScheme.copyWith(secondary: widget.bloc.accentColor),
-          primarySwatch: Colors.primaries.singleWhere(
-              (c) { print(c.value);
-                    print(widget.bloc.accentColor.value);
-                 return c.value == widget.bloc.accentColor.value; }),
-              // orElse: () => MaterialColor(, swatch)),
-
+          primarySwatch: Colors.primaries.firstWhereOrNull(
+              (c) => c.value == widget.bloc.accentColor.value),
+              
           toggleableActiveColor: widget.bloc.accentColor,
           textSelectionTheme:
               TextSelectionThemeData(selectionColor: widget.bloc.accentColor),
@@ -303,7 +300,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         RichNotification notif = RichNotification.fromJson(message.data);
 
         StyleInformation style;
-        AndroidNotificationStyle styleType;
+        // AndroidNotificationStyle styleType;
 
         if (notif.notificationImage != null) {
           var bigPictureResponse = await http.get(Uri.parse(notif.notificationImage ?? ""));
@@ -316,15 +313,15 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             FilePathAndroidBitmap(bigPicturePath),
             summaryText: notif.notificationLargeContent,
           );
-          styleType = AndroidNotificationStyle.bigPicture;
+          // styleType = AndroidNotificationStyle.bigPicture;
         } else if (notif.notificationLargeContent != null) {
           style = BigTextStyleInformation(
             notif.notificationLargeContent?? "",
           );
-          styleType = AndroidNotificationStyle.bigText;
+          // styleType = AndroidNotificationStyle.bigText;
         } else {
           style = DefaultStyleInformation(false, false);
-          styleType = AndroidNotificationStyle.defaultStyle;
+          // styleType = AndroidNotificationStyle.defaultStyle;
         }
 
         String largeIconPath = "";
@@ -416,10 +413,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void handleAppLink(Uri? uri) {
     if (uri == null) return;
     var routeName = {
-      "user": "/user/${uri.pathSegments[1] ?? ""}",
-      "event": "/event/${uri.pathSegments[1] ?? ""}",
+      "user": "/user/${uri.pathSegments[1]}",
+      "event": "/event/${uri.pathSegments[1]}",
       "map": "/map",
-      "org": "/body/${uri.pathSegments[1] ?? ""}",
+      "org": "/body/${uri.pathSegments[1]}",
     }[uri.pathSegments[0]];
     _navigatorKey.currentState?.pushNamed(routeName!);
   }
@@ -443,5 +440,14 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     } on FormatException {
       print('Bad parse the initial link as Uri.');
     }
+  }
+}
+
+extension FirstWhereOrNullExtension<E> on Iterable<E> {
+  E? firstWhereOrNull(bool Function(E) test) {
+    for (E element in this) {
+      if (test(element)) return element;
+    }
+    return null;
   }
 }

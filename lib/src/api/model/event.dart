@@ -69,7 +69,6 @@ class Event extends elt.Event {
   @JsonKey(ignore: true)
   UES get eventUserUes => UES.values[eventUserUesInt ?? 0];
 
-  @JsonKey(ignore: true)
   set eventUserUes(UES ues) {
     eventUserUesInt = ues.index;
   }
@@ -79,14 +78,17 @@ class Event extends elt.Event {
 
   DateTime? eventStartDate;
 
-  @JsonKey(ignore: true)
   String getSubTitle() {
     String subtitle = "";
 
-    DateTime startTime = DateTime.parse(eventStartTime!);
+    DateTime? startTime;
+    if(eventStartTime != null){
+      startTime = DateTime.parse(eventStartTime!);
+    }
+      
     DateTime endTime = DateTime.parse(eventEndTime!);
     DateTime timeNow = DateTime.now();
-    bool eventStarted = timeNow.compareTo(startTime) > 0;
+    bool eventStarted = timeNow.compareTo(startTime?? timeNow) > 0;
     bool eventEnded = timeNow.compareTo(endTime) > 0;
 
     if (eventEnded)

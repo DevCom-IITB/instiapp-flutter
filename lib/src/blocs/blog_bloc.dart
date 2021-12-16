@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:ui';
+// import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:InstiApp/src/api/model/post.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'dart:math';
@@ -103,12 +103,12 @@ class PostBloc {
     return posts;
   }
 
-  void _setCategories() async {
-    var list_categories;
-    list_categories =
+  void setCategories() async {
+    var listCategories;
+    listCategories =
         await bloc.client.getQueryCategories(bloc.getSessionIdHeader());
     List<Map<String, String>> categories = [];
-    list_categories.forEach((val) {
+    listCategories.forEach((val) {
       categories.add({'value': val, 'name': val});
     });
      _blogSubject1.add(UnmodifiableListView<Map<String, String>>(categories));

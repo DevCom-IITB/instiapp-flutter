@@ -20,7 +20,7 @@ class _QueryAddPageState extends State<QueryAddPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   final _formKey = GlobalKey<FormState>();
 
-  String? _selectedCategory;
+  // String? _selectedCategory;
   PostFAQRequest currRequest = PostFAQRequest();
 
   List<String> categories = [
@@ -79,7 +79,7 @@ class _QueryAddPageState extends State<QueryAddPage> {
   void onCategoryChange(String? category) {
     setState(() {
       currRequest.category = category;
-      _selectedCategory = category;
+      // _selectedCategory = category;
     });
   }
 
@@ -236,9 +236,9 @@ class _QueryAddPageState extends State<QueryAddPage> {
                                 onPressed: () async {
                                   if (_formKey.currentState?.validate() ??
                                       false) {
-                                    var resp = await bloc.postFAQ(currRequest);
-                                    // if (resp.result == "success") {
-                                    Navigator.of(context).pushNamed("/query");
+                                    try{
+                                      await bloc.postFAQ(currRequest);
+                                      Navigator.of(context).pushNamed("/query");
                                     // } else {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(SnackBar(
@@ -248,7 +248,14 @@ class _QueryAddPageState extends State<QueryAddPage> {
                                               (currRequest.category ?? "")),
                                       duration: new Duration(seconds: 10),
                                     ));
-                                    // }
+                                      }
+                                      catch (e){
+                                        ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: new Text("Error: " + e.toString()),
+                                      duration: new Duration(seconds: 10),
+                                    ));
+                                      }
                                   }
 
                                   //log(currRequest.description);
