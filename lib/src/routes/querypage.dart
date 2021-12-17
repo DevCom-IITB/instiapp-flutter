@@ -8,7 +8,7 @@ class QueryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlogPage(
-      loginNeeded: false,
+      loginNeeded: true,
       postType: PostType.Query,
       title: "FAQs",
     );

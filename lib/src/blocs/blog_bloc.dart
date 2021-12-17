@@ -104,12 +104,14 @@ class PostBloc {
   }
 
   void setCategories() async {
-    var listCategories;
+    List<String?> listCategories;
     listCategories =
         await bloc.client.getQueryCategories(bloc.getSessionIdHeader());
     List<Map<String, String>> categories = [];
     listCategories.forEach((val) {
-      categories.add({'value': val, 'name': val});
+      if(val!= null){
+        categories.add({'value': val, 'name': val});
+      }
     });
      _blogSubject1.add(UnmodifiableListView<Map<String, String>>(categories));
   }
@@ -214,6 +216,9 @@ class PostBloc {
           }
           posts.addAll(_fetchPages[i]!);
         }
+      }
+      if(postType == PostType.Query){
+        posts.add(Post());
       }
     }
 
