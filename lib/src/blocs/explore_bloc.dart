@@ -49,7 +49,7 @@ class ExploreBloc {
     if (prefs.getKeys().contains(storageID)) {
       var x = prefs.getString(storageID);
       if (x != null) {
-        allBodies = json.decode(x).map((e) => Body.fromJson(e)).toList();
+        allBodies = json.decode(x).map((e) => Body.fromJson(e)).toList().cast<Body>();
         _push(ExploreResponse(bodies: allBodies));
       }
     }
