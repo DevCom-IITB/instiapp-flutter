@@ -517,7 +517,7 @@ class InstiAppBloc {
     if (prefs.getKeys().contains(messStorageID)) {
       var x = prefs.getString(messStorageID);
       if (x != null) {
-        _hostels = json.decode(x).map((e) => Hostel.fromJson(e)).toList();
+        _hostels = json.decode(x).map((e) => Hostel.fromJson(e)).toList().cast<Hostel>();
         _hostelsSubject.add(UnmodifiableListView(_hostels));
       }
     }
@@ -525,8 +525,7 @@ class InstiAppBloc {
     if (prefs.getKeys().contains(eventStorageID)) {
       var x = prefs.getString(eventStorageID);
       if (x != null) {
-        _events = json.decode(x).map((e) => Event.fromJson(e)).toList()
-            as List<Event>;
+        _events = json.decode(x).map((e) => Event.fromJson(e)).toList().cast<Event>();
         if (_events.length >= 1) {
           _events[0].eventBigImage = true;
         }
@@ -538,7 +537,7 @@ class InstiAppBloc {
       var x = prefs.getString(achievementStorageID);
       if (x != null) {
         _achievements =
-            json.decode(x).map((e) => Achievement.fromJson(e)).toList();
+            json.decode(x).map((e) => Achievement.fromJson(e)).toList().cast<Achievement>();
         _achievementSubject.add(UnmodifiableListView(_achievements));
       }
     }
@@ -547,7 +546,7 @@ class InstiAppBloc {
       var x = prefs.getString(notificationsStorageID);
       if (x != null) {
         _notifications =
-            json.decode(x).map((e) => ntf.Notification.fromJson(e)).toList();
+            json.decode(x).map((e) => ntf.Notification.fromJson(e)).toList().cast<ntf.Notification>();
         _notificationsSubject.add(UnmodifiableListView(_notifications));
       }
     }
