@@ -60,7 +60,6 @@ class Bloc extends Object {
     try {
       SecretResponse response = await bloc.client
           .postInterests(bloc.getSessionIdHeader(), interest);
-      print(response.message);
       return response;
     } catch (ex) {
       print(ex);
@@ -70,7 +69,6 @@ class Bloc extends Object {
 
   Future<SecretResponse?> postDelInterest(String title) async {
     try {
-      await bloc.client.getUserMe(bloc.getSessionIdHeader());
       SecretResponse response = await bloc.client
           .postDelInterests(bloc.getSessionIdHeader(), title);
       // log(response.message);

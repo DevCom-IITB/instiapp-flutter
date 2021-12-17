@@ -52,24 +52,28 @@ class _UserPageState extends State<UserPage> {
   List<Interest>? interests=[];
 
   void onBodyChange(Interest? body) async {
-    print("ppp");
-    print(body?.title);
-    print(body?.id);
     var bloc = BlocProvider.of(context)?.bloc;
-    var res=await bloc?.achievementBloc.postInterest(body?.id??"",body!);
-    print(res?.message);
-    setState(() {
-      List<Interest>? k= interests;
-      k?.add(body!);
-      interests=k;
-      print(interests?[0].title??"");
-      print("popop");
-      // _selectedInterest = body!;
-
-    });
+    var res = await bloc?.achievementBloc.postInterest(body?.id??"",body!);
+    if(res != null) {
+      setState(() {
+        List<Interest>? k= interests;
+        k?.add(body!);
+        interests=k;
+      });
+    }
+    else{
+        ScaffoldMessenger.of(
+            context)
+            .showSnackBar(SnackBar(
+          content:
+          new Text('Error: Interest already exists'),
+          duration: new Duration(
+              seconds: 10),
+        ));
+    }
   }
 
-  late bool cansee;
+  bool cansee = false;
 
   Widget _buildChips(BuildContext context){
     List<Widget> w=[];
@@ -160,26 +164,29 @@ class _UserPageState extends State<UserPage> {
 
 
   @override
-  void initState()async{
+  void initState() {
     super.initState();
 
     user = widget.initialUser;
-    interests = user?.interests!;
-    print(interests);
-    print("aaaa");
-    var bloc = BlocProvider.of(context)?.bloc;
-    User curr= await bloc?.client.getUserMe(bloc.client.getSessionIdHeader());
-    cansee= user?.userLDAPId==curr.userLDAPId;
 
     //interests=[Interest(id:"123",title: "lll")];
     widget.userFuture?.then((u) {
       if (this.mounted) {
         setState(() {
           user = u;
+          interests = user?.interests!;
         });
       } else {
         user = u;
       }
+    });
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      var bloc = BlocProvider.of(context)?.bloc;
+      bloc?.getUser("me").then((result){
+        if(result.userLDAPId == widget.initialUser?.userLDAPId){
+          setState(() {cansee = true;});
+        }
+      });
     });
   }
 

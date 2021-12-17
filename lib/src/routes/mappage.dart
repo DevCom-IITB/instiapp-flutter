@@ -4,9 +4,9 @@ import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:jaguar/jaguar.dart' as jag;
 import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class MapPage extends StatefulWidget {
   @override
@@ -14,7 +14,6 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  final flutterWebviewPlugin = FlutterWebviewPlugin();
 
   late jag.Jaguar server;
 
@@ -28,7 +27,7 @@ class _MapPageState extends State<MapPage> {
   // final String mapUrl = "https://varunpatil.me/instimapweb-standalone/";
 
   StreamSubscription<String>? onUrlChangedSub;
-  StreamSubscription<WebViewStateChanged>? onStateChangedSub;
+   WebViewController? webViewController;
 
   // Storing for dispose
   ThemeData? theme;
@@ -41,32 +40,11 @@ class _MapPageState extends State<MapPage> {
     //   flutterWebviewPlugin.reloadUrl(mapUrl);
     //   flutterWebviewPlugin.hide();
     // });
-
-    onUrlChangedSub = flutterWebviewPlugin.onUrlChanged.listen((String url) {
-      print("Changed URL: $url");
-      if (!url.contains(hostUrl)) {
-        flutterWebviewPlugin.reloadUrl(mapUrl);
-        flutterWebviewPlugin.hide();
-      }
-    });
-
-    onStateChangedSub =
-        flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged state) {
-      print(state.type);
-      if (state.type == WebViewState.finishLoad) {
-        if (state.url.startsWith(hostUrl)) {
-          print("onStateChanged: Showing Web View");
-          flutterWebviewPlugin.show();
-        }
-      }
-    });
   }
 
   @override
   void dispose() {
-    onStateChangedSub?.cancel();
     onUrlChangedSub?.cancel();
-    flutterWebviewPlugin.dispose();
     server.close();
 
     super.dispose();
@@ -79,19 +57,7 @@ class _MapPageState extends State<MapPage> {
     var bloc = BlocProvider.of(context)!.bloc;
 
     print("This is the URL: $mapUrl");
-    return SafeWebviewScaffold(
-      url: mapUrl,
-      hidden: true,
-      withZoom: false,
-      scrollBar: false,
-      withJavascript: true,
-      withLocalStorage: true,
-      headers: {
-        "Cookie": bloc.getSessionIdHeader(),
-      },
-      primary: true,
-      geolocationEnabled: true,
-      bottomNavigationBar: MyBottomAppBar(
+    return Scaffold(bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -104,13 +70,26 @@ class _MapPageState extends State<MapPage> {
                 semanticLabel: "Refresh",
               ),
               onPressed: () {
-                flutterWebviewPlugin.reload();
+                webViewController?.reload();
               },
             ),
           ],
         ),
       ),
-    );
+      body: WebView(
+      javascriptMode: JavascriptMode.unrestricted,
+      onWebViewCreated: (controller){
+        webViewController = controller;
+      },
+      initialUrl: mapUrl,
+      onPageStarted: (url) async{
+        print("Changed URL: $url");
+      },
+      onPageFinished: (url){
+        
+      },
+      gestureNavigationEnabled: true,
+    ),);
   }
 
   Future startMapServerIfNotStarted() {

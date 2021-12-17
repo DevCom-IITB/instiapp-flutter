@@ -139,7 +139,7 @@ class CalendarBloc {
         var values =
             (json.decode(prefs.getString(mteValuesStorageID) ?? '') as List)
                 .map((evs) =>
-                    evs.map((e) => Event.fromJson(e)).toList() as List<Event>);
+                    evs.map((e) => Event.fromJson(e)).toList().cast<Event>()).toList().cast<List<Event>>();
         monthToEvents = Map.fromIterables(keys, values);
       }
     }

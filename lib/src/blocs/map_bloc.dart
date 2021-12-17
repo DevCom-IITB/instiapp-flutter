@@ -42,7 +42,7 @@ class MapBloc {
     if (prefs.getKeys().contains(locationsStorageID)) {
       var x = prefs.getString(locationsStorageID);
       if(x != null){
-        _locations = json.decode(x).map((e)=>Venue.fromJson(e)).toList();
+        _locations = json.decode(x).map((e)=>Venue.fromJson(e)).toList().cast<Venue>();
       _locationsSubject.add(UnmodifiableListView(_locations));
       }
     }

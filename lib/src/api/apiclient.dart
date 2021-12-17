@@ -230,10 +230,10 @@ abstract class InstiAppApi {
       @rt.Header("Cookie") String sessionId,
       @rt.Body() Interest interest);
 
-  @rt.POST("/interests/:title")
+  @rt.DELETE("/interests/{title}")
   Future<SecretResponse> postDelInterests(
       @rt.Header("Cookie") String sessionId,
-      @rt.Path() String id);
+      @rt.Path() String title);
 
   @rt.GET("/achievements")
   Future<List<Achievement>> getYourAchievements(

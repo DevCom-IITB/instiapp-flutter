@@ -90,10 +90,7 @@ class MySwitchListTile extends StatelessWidget {
     this.selected = false,
     this.contentPadding,
   })  : _switchListTileType = _SwitchListTileType.material,
-        assert(value != null),
-        assert(isThreeLine != null),
         assert(!isThreeLine || subtitle != null),
-        assert(selected != null),
         super(key: key);
 
   /// Creates the wrapped switch with [Switch.adaptive].
@@ -122,10 +119,7 @@ class MySwitchListTile extends StatelessWidget {
     this.selected = false,
     this.contentPadding,
   })  : _switchListTileType = _SwitchListTileType.adaptive,
-        assert(value != null),
-        assert(isThreeLine != null),
         assert(!isThreeLine || subtitle != null),
-        assert(selected != null),
         super(key: key);
 
   /// Whether this switch is checked.
@@ -271,7 +265,7 @@ class MySwitchListTile extends StatelessWidget {
     }
     return MergeSemantics(
       child: ListTileTheme.merge(
-        selectedColor: activeColor ?? Theme.of(context).accentColor,
+        selectedColor: activeColor ?? Theme.of(context).colorScheme.secondary,
         child: ListTile(
           leading: secondary,
           title: title,

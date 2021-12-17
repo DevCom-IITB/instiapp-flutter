@@ -1,7 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: unnecessary_brace_in_string_interps
-
 part of 'apiclient.dart';
 
 // **************************************************************************
@@ -795,7 +793,7 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<SecretResponse> postDelInterests(sessionId, id) async {
+  Future<SecretResponse> postDelInterests(sessionId, title) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
@@ -803,8 +801,8 @@ class _InstiAppApi implements InstiAppApi {
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<SecretResponse>(
-            Options(method: 'POST', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/interests/:title',
+            Options(method: 'DELETE', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/interests/${title}',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = SecretResponse.fromJson(_result.data!);
