@@ -520,7 +520,7 @@ class _NavExpansionTileState extends State<NavExpansionTile> {
     var theme = Theme.of(context);
     ListTileThemeData listTileTheme = ListTileTheme.of(context);
     return ListTileTheme(
-      dense: true,
+      data: listTileTheme.copyWith(dense: true),
       child: ExpansionTile(
         key: Key(widget.title + widget.initiallyExpanded.toString()),
         title: Text(
