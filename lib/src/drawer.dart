@@ -91,16 +91,11 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                       highlight: indexSnapshot.data == 3,
                     ),
-                    4: ExpansionTile(
-                      title: Text((indexSnapshot.data == null
-                              ? false
-                              : (indexSnapshot.data! <= 6 &&
-                                  indexSnapshot.data! >= 4))
-                          .toString()),
-                      initiallyExpanded: ((indexSnapshot.data == null)
-                          ? false
-                          : (indexSnapshot.data! <= 6 &&
-                              indexSnapshot.data! >= 4)),
+                    4: NavExpansionTile(
+                      leading: Icons.work_outline,
+                      title: "Blogs",
+                      initiallyExpanded:
+                          indexSnapshot.data! <= 6 && indexSnapshot.data! >= 4,
                       children: [
                         NavListTile(
                           icon: Icons.work_outline,
@@ -144,16 +139,6 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                       highlight: indexSnapshot.data == 7,
                     ),
-                    8: NavListTile(
-                      icon: Icons.map_outlined,
-                      title: "Map",
-                      onTap: () {
-                        changeSelection(8, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/map');
-                      },
-                      highlight: indexSnapshot.data == 8,
-                    ),
                     9: NavListTile(
                       icon: Icons.verified_outlined,
                       title: "Achievements",
@@ -164,35 +149,44 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                       highlight: indexSnapshot.data == 9,
                     ),
-                    10: NavListTile(
-                      icon: Icons.feedback_outlined,
-                      title: "Complaints/Suggestions",
-                      onTap: () {
-                        changeSelection(10, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/complaints');
-                      },
-                      highlight: indexSnapshot.data == 10,
-                    ),
-                    11: NavListTile(
-                      icon: Icons.link_outlined,
-                      title: "Quick Links",
-                      onTap: () {
-                        changeSelection(11, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/quicklinks');
-                      },
-                      highlight: indexSnapshot.data == 11,
-                    ),
-                    12: NavListTile(
-                      icon: Icons.settings_outlined,
-                      title: "Settings",
-                      onTap: () {
-                        changeSelection(12, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/settings');
-                      },
-                      highlight: indexSnapshot.data == 12,
+                    8: NavExpansionTile(
+                      title: "Utilities",
+                      initiallyExpanded: indexSnapshot.data == 8 ||
+                          indexSnapshot.data == 11 ||
+                          indexSnapshot.data == 12,
+                      leading: Icons.construction_outlined,
+                      children: [
+                        NavListTile(
+                          icon: Icons.map_outlined,
+                          title: "Map",
+                          onTap: () {
+                            changeSelection(8, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/map');
+                          },
+                          highlight: indexSnapshot.data == 8,
+                        ),
+                        NavListTile(
+                          icon: Icons.link_outlined,
+                          title: "Quick Links",
+                          onTap: () {
+                            changeSelection(11, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/quicklinks');
+                          },
+                          highlight: indexSnapshot.data == 11,
+                        ),
+                        NavListTile(
+                          icon: Icons.settings_outlined,
+                          title: "Settings",
+                          onTap: () {
+                            changeSelection(12, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/settings');
+                          },
+                          highlight: indexSnapshot.data == 12,
+                        ),
+                      ],
                     ),
                     13: NavListTile(
                       icon: Icons.query_stats,
@@ -467,6 +461,87 @@ class NavListTile extends StatelessWidget {
         return selected ? theme.primaryColor : Colors.black54;
       case Brightness.dark:
         return selected
+            ? null
+            : theme
+                .colorScheme.secondary; // null - use current icon theme color
+    }
+    // return null;
+  }
+}
+
+class NavExpansionTile extends StatefulWidget {
+  final IconData? leading;
+  final String title;
+  final bool initiallyExpanded;
+  final List<Widget> children;
+
+  const NavExpansionTile({
+    Key? key,
+    this.leading,
+    required this.title,
+    this.initiallyExpanded = false,
+    this.children = const [],
+  }) : super(key: key);
+
+  @override
+  State<NavExpansionTile> createState() => _NavExpansionTileState();
+}
+
+class _NavExpansionTileState extends State<NavExpansionTile> {
+  bool isOpened = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isOpened = widget.initiallyExpanded;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+    ListTileThemeData listTileTheme = ListTileTheme.of(context);
+    return ListTileTheme(
+      dense: true,
+      child: ExpansionTile(
+        key: Key(widget.initiallyExpanded.toString()),
+        title: Text(
+          widget.title,
+          style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: _iconAndTextColor(theme, listTileTheme)),
+        ),
+        leading: Icon(widget.leading),
+        initiallyExpanded: widget.initiallyExpanded,
+        children: widget.children,
+        // textColor: _iconAndTextColor(theme, listTileTheme),
+        iconColor: listTileTheme.iconColor,
+        collapsedIconColor: listTileTheme.iconColor,
+        onExpansionChanged: (val) {
+          setState(() {
+            isOpened = val;
+          });
+        },
+      ),
+    );
+  }
+
+  Color? _iconAndTextColor(ThemeData theme, ListTileThemeData tileTheme) {
+    if (isOpened && tileTheme.selectedColor != null) {
+      // log("Hi");
+      return tileTheme.selectedColor!;
+    }
+
+    if (!isOpened && tileTheme.iconColor != null) {
+      // log("Hi2");
+      return tileTheme.iconColor!;
+    }
+    // assert(theme.brightness != null);
+    print(theme.brightness);
+    switch (theme.brightness) {
+      case Brightness.light:
+        return isOpened ? theme.primaryColor : Colors.black54;
+      case Brightness.dark:
+        return isOpened
             ? null
             : theme
                 .colorScheme.secondary; // null - use current icon theme color
