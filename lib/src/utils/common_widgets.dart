@@ -251,6 +251,7 @@ class CommonHtml extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     print(data);
     return data != null
         ? Html(
@@ -291,14 +292,77 @@ class CommonHtml extends StatelessWidget {
               },
               "p":(context, child) {
                 String text =context.tree.element?.innerHtml??"";
-                return RichText(
+                var nodes=context.tree.element?.children;
+                var nodes1=context.tree.element?.nodes;
+                print(nodes1);
+                print(nodes);
+                List<Widget> w=[];int j=0;
+
+                // for(int i=0;i<(nodes1?.length??0);i++ ){
+                //
+                // }
+
+                for(int i=0;i<(nodes1?.length??0);i++ ){
+                  if(j>=(nodes?.length??0)) j=(nodes?.length??0)-1;
+                    nodes?.length==0?print(""):print(nodes![j].localName)   ;
+                  print(nodes1![i].runtimeType);
+                  String type= nodes1[i].runtimeType.toString();
+                  if(type=="Text"){
+                    w.add(RichText(
                       textScaleFactor:1,
-                      text: highlight(refineText(text),query?? ''),
+                      text: highlight(refineText(nodes1[i].text!),query?? ''),
+                    )
                     );
+
+                  }
+                  else if(type=="Element"){
+                    if(nodes![j].localName=="a"){
+
+                      var attributes=nodes[j].attributes;
+                      var innerHtml= nodes[j].innerHtml;
+                      w.add(
+                          InkWell(
+                            onTap: () async {
+                              if (await canLaunch(attributes['href']!)) {
+                                await launch(attributes['href']!);
+                              }
+                            },
+                            child: Text(
+                              innerHtml??"",
+                              style: TextStyle(
+                                  color: Colors.lightBlue,
+                                  decoration: TextDecoration.underline),
+                            ),
+                            // child: RichText(
+                            //   textScaleFactor:2,
+                            //   text: highlight(node.innerHtml,"electro"),
+                            // )
+                          )
+                      );
+                    }
+                    else if(nodes![j].localName=="strong"){
+                      w.add(RichText(
+                        textScaleFactor:1,
+                        text: highlight(refineText(nodes[j].text!),query?? ''),
+                          strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
+                              .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
+                      )
+                      );
+                    }
+                    j++;
+                  }
+                }
+                return Wrap(
+                  children: w,
+                );
+                // return RichText(
+                //       textScaleFactor:1,
+                //       text: highlight(refineText(text),query?? ''),
+                //     );
               },
               "td":(context, child) {
                 String text =context.tree.element?.innerHtml??"";
-                text="    "+text+"   ";
+                //text="    "+text+"   ";
                 return RichText(
                   textScaleFactor:1,
                   text: highlight(refineText(text),query?? ''),
@@ -306,12 +370,15 @@ class CommonHtml extends StatelessWidget {
               },
               "th":(context, child) {
                 String text =context.tree.element?.innerHtml??"";
-                text="    "+text+"   ";
+                //text="    "+text+"   ";
                 return RichText(
                   textScaleFactor:1,
                   text: highlight(refineText(text),query?? ''),
                 );
               },
+              "table":(context,child){
+
+              }
               // "td":(context,child){
               //   context.tree.style.padding=const EdgeInsets.only(
               //     left: 12.0,
