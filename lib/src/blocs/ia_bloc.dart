@@ -462,7 +462,10 @@ class InstiAppBloc {
 
   void _persistSession(Session? sess) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (sess == null) {prefs.setString("session", ""); return;}
+    if (sess == null) {
+      prefs.setString("session", "");
+      return;
+    }
     prefs.setString("session", json.encode(sess.toJson()));
   }
 
@@ -522,7 +525,8 @@ class InstiAppBloc {
     if (prefs.getKeys().contains(eventStorageID)) {
       var x = prefs.getString(eventStorageID);
       if (x != null) {
-        _events = json.decode(x).map((e) => Event.fromJson(e)).toList();
+        _events = json.decode(x).map((e) => Event.fromJson(e)).toList()
+            as List<Event>;
         if (_events.length >= 1) {
           _events[0].eventBigImage = true;
         }
