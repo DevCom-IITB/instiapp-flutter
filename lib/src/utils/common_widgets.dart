@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -9,6 +10,8 @@ import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
 // ignore: unnecessary_import
 import 'dart:ui' show Brightness;
+
+import '../bloc_provider.dart';
 
 String capitalize(String name) {
   if (name.isNotEmpty) {
@@ -251,8 +254,9 @@ class CommonHtml extends StatelessWidget {
   CommonHtml({this.data, required this.defaultTextStyle, this.query});
 
   @override
-  Widget build(BuildContext context) {
-    var theme = Theme.of(context);
+  Widget build(BuildContext context1) {
+    var theme = Theme.of(context1);
+    var bloc = BlocProvider.of(context1)!.bloc;
     print(data);
     return data != null
         ? Html(
@@ -311,7 +315,8 @@ class CommonHtml extends StatelessWidget {
                   if(type=="Text"){
                     w.add(RichText(
                       textScaleFactor:1,
-                      text: highlight(refineText(nodes1[i].text!),query?? ''),
+                      text: highlight(refineText(nodes1[i].text!),query?? '',context1),
+                      //strutStyle: StrutStyle.fromTextStyle(theme.textTheme.subtitle1!.copyWith(color: Colors.lightBlue)),
                     )
                     );
 
@@ -344,9 +349,19 @@ class CommonHtml extends StatelessWidget {
                     else if(nodes![j].localName=="strong"){
                       w.add(RichText(
                         textScaleFactor:1,
-                        text: highlight(refineText(nodes[j].text!),query?? ''),
-                          strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
-                              .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
+                        text: highlight(refineText(nodes[j].text!),query?? '',context1,isStrong:true),
+                          // strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
+                          //     .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
+                      )
+                      );
+                    }
+
+                    else if(nodes![j].localName=="br"){
+                      w.add(RichText(
+                        textScaleFactor:1,
+                        text: highlight(" \n",query?? '',context1),
+                        // strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
+                        //     .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
                       )
                       );
                     }
@@ -363,18 +378,18 @@ class CommonHtml extends StatelessWidget {
               },
               "td":(context, child) {
                 String text =context.tree.element?.innerHtml??"";
-                //text="    "+text+"   ";
+                text="    "+text+"   ";
                 return RichText(
                   textScaleFactor:1,
-                  text: highlight(refineText(text),query?? ''),
+                  text: highlight(refineText(text),query?? '',context1),
                 );
               },
               "th":(context, child) {
                 String text =context.tree.element?.innerHtml??"";
-                //text="    "+text+"   ";
+                text="    "+text+"   ";
                 return RichText(
                   textScaleFactor:1,
-                  text: highlight(refineText(text),query?? ''),
+                  text: highlight(refineText(text),query?? '',context1),
                 );
               },
               "table":(context,child){
@@ -397,9 +412,11 @@ class CommonHtml extends StatelessWidget {
             label: Text("Loading content"),
           );
   }
-  TextSpan highlight(String result,String query){
+  TextSpan highlight(String result,String query,BuildContext context, {bool isStrong= false}){
+    var bloc = BlocProvider.of(context)!.bloc;
+    var theme = Theme.of(context);
     TextStyle posRes = TextStyle(color: Colors.white,backgroundColor: Colors.red);
-    TextStyle negRes = TextStyle(color: Colors.black,backgroundColor: Colors.white);
+    TextStyle? negRes = isStrong?theme.textTheme.headline6:theme.textTheme.subtitle2;// TextStyle(backgroundColor: bloc.bloc.brightness.toColor().withOpacity(1.0),);
     if(result=="" || query=="") return TextSpan(text:result,style:negRes);
     result.replaceAll('\n'," ").replaceAll("  ", "");
 
@@ -409,7 +426,7 @@ class CommonHtml extends StatelessWidget {
     if(refinedMatch.contains(refinedsearch)){
       if(refinedMatch.substring(0,refinedsearch.length)==refinedsearch){
         return TextSpan(style:posRes,text:result.substring(0,refinedsearch.length),children:[
-          highlight(result.substring(refinedsearch.length),query),
+          highlight(result.substring(refinedsearch.length),query,context),
         ]);
       }
       else if(refinedsearch.length==refinedMatch.length){
@@ -417,7 +434,7 @@ class CommonHtml extends StatelessWidget {
       }
       else{
         return TextSpan(style:negRes,text:result.substring(0,refinedMatch.indexOf(refinedsearch)),
-            children:[highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query)]);
+            children:[highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query,context)]);
       }
     }
     else if(!refinedMatch.contains(refinedsearch)){
@@ -428,7 +445,7 @@ class CommonHtml extends StatelessWidget {
       text: result.substring(0, refinedMatch.indexOf(refinedsearch)),
       style: negRes,
       children: [
-        highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query)
+        highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query,context)
       ],
     );
 
