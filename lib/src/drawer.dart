@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:developer';
 
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
@@ -30,151 +31,187 @@ class _NavDrawerState extends State<NavDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    var bloc = BlocProvider.of(context).bloc;
-    var drawerState = bloc.drawerState;
+    var bloc = BlocProvider.of(context)?.bloc;
+    var drawerState = bloc?.drawerState;
 
     return Drawer(
       child: SafeArea(
-        child: StreamBuilder<Session>(
-          stream: bloc.session,
-          builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
+        child: StreamBuilder<Session?>(
+          stream: bloc?.session,
+          builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
             var theme = Theme.of(context);
             if (snapshot.hasData &&
                 snapshot.data != null &&
                 !loggingOutLoading) {
-              bloc.updateNotifications();
+              bloc?.updateNotifications();
             }
             return StreamBuilder<int>(
-                stream: drawerState.highlightPageIndex,
+                stream: drawerState?.highlightPageIndex,
                 initialData: 0,
                 builder:
                     (BuildContext context, AsyncSnapshot<int> indexSnapshot) {
-                  Map<int, NavListTile> navMap = {
+                  log("Snapshot " + indexSnapshot.data!.toString());
+                  Map<int, Widget> navMap = {
                     0: NavListTile(
                       icon: Icons.dashboard_outlined,
                       title: "Feed",
                       onTap: () {
-                        changeSelection(0, drawerState);
+                        changeSelection(0, drawerState!);
                         var navi = Navigator.of(context);
                         navi.pushReplacementNamed('/feed');
                       },
+                      highlight: indexSnapshot.data == 0,
+                      selected: indexSnapshot.data == 0,
                     ),
                     1: NavListTile(
                       icon: Icons.rss_feed_outlined,
                       title: "News",
                       onTap: () {
-                        changeSelection(1, drawerState);
+                        changeSelection(1, drawerState!);
                         var navi = Navigator.of(context);
                         navi.pushReplacementNamed('/news');
                       },
+                      highlight: indexSnapshot.data == 1,
+                      selected: indexSnapshot.data == 1,
                     ),
                     2: NavListTile(
                       icon: Icons.search_outlined,
                       title: "Explore",
                       onTap: () {
-                        changeSelection(2, drawerState);
+                        changeSelection(2, drawerState!);
                         var navi = Navigator.of(context);
                         navi.pushReplacementNamed('/explore');
                       },
+                      highlight: indexSnapshot.data == 2,
+                      selected: indexSnapshot.data == 2,
                     ),
                     3: NavListTile(
                       icon: Icons.restaurant_outlined,
                       title: "Mess Menu",
                       onTap: () {
-                        changeSelection(3, drawerState);
+                        changeSelection(3, drawerState!);
                         var navi = Navigator.of(context);
                         navi.pushReplacementNamed('/mess');
                       },
+                      highlight: indexSnapshot.data == 3,
+                      selected: indexSnapshot.data == 3,
                     ),
-                    4: NavListTile(
-                      icon: Icons.work_outline,
-                      title: "Placement Blog",
-                      onTap: () {
-                        changeSelection(4, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/placeblog');
-                      },
-                    ),
-                    5: NavListTile(
-                      icon: Icons.work_outline,
-                      title: "Internship Blog",
-                      onTap: () {
-                        changeSelection(5, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/trainblog');
-                      },
-                    ),
-                    6: NavListTile(
-                      icon: Icons.work_outline,
-                      title: "External Blog",
-                      onTap: () {
-                        changeSelection(6, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/externalblog');
-                      },
+                    4: NavExpansionTile(
+                      leading: Icons.work_outline,
+                      title: "Blogs",
+                      initiallyExpanded:
+                          indexSnapshot.data! <= 6 && indexSnapshot.data! >= 4,
+                      children: [
+                        NavListTile(
+                          icon: Icons.work_outline,
+                          title: "Placement Blog",
+                          onTap: () {
+                            changeSelection(4, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/placeblog');
+                          },
+                          highlight: indexSnapshot.data == 4,
+                          selected: indexSnapshot.data == 4,
+                        ),
+                        NavListTile(
+                          icon: Icons.work_outline,
+                          title: "Internship Blog",
+                          onTap: () {
+                            changeSelection(5, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/trainblog');
+                          },
+                          highlight: indexSnapshot.data == 5,
+                          selected: indexSnapshot.data == 5,
+                        ),
+                        NavListTile(
+                          // key: Key((indexSnapshot.data == 6).toString()),
+                          icon: Icons.work_outline,
+                          title: "External Blog",
+                          onTap: () {
+                            changeSelection(6, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/externalblog');
+                          },
+                          highlight: indexSnapshot.data == 6,
+                          selected: indexSnapshot.data == 6,
+                        ),
+                      ],
                     ),
                     7: NavListTile(
                       icon: Icons.date_range_outlined,
                       title: "Calendar",
                       onTap: () {
-                        changeSelection(7, drawerState);
+                        changeSelection(7, drawerState!);
                         var navi = Navigator.of(context);
                         navi.pushReplacementNamed('/calendar');
                       },
-                    ),
-                    8: NavListTile(
-                      icon: Icons.map_outlined,
-                      title: "Map",
-                      onTap: () {
-                        changeSelection(8, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/map');
-                      },
+                      highlight: indexSnapshot.data == 7,
+                      selected: indexSnapshot.data == 7,
                     ),
                     9: NavListTile(
                       icon: Icons.verified_outlined,
                       title: "Achievements",
                       onTap: () {
-                        changeSelection(9, drawerState);
+                        changeSelection(9, drawerState!);
                         var navi = Navigator.of(context);
                         navi.pushReplacementNamed('/achievements');
                       },
+                      highlight: indexSnapshot.data == 9,
+                      selected: indexSnapshot.data == 9,
                     ),
-                    10: NavListTile(
-                      icon: Icons.feedback_outlined,
-                      title: "Complaints/Suggestions",
-                      onTap: () {
-                        changeSelection(10, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/complaints');
-                      },
-                    ),
-                    11: NavListTile(
-                      icon: Icons.link_outlined,
-                      title: "Quick Links",
-                      onTap: () {
-                        changeSelection(11, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/quicklinks');
-                      },
-                    ),
-                    12: NavListTile(
-                      icon: Icons.settings_outlined,
-                      title: "Settings",
-                      onTap: () {
-                        changeSelection(12, drawerState);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/settings');
-                      },
+                    8: NavExpansionTile(
+                      title: "Utilities",
+                      initiallyExpanded: indexSnapshot.data == 8 ||
+                          indexSnapshot.data == 11 ||
+                          indexSnapshot.data == 12,
+                      leading: Icons.construction_outlined,
+                      children: [
+                        NavListTile(
+                          icon: Icons.map_outlined,
+                          title: "Map",
+                          onTap: () {
+                            changeSelection(8, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/map');
+                          },
+                          highlight: indexSnapshot.data == 8,
+                          selected: indexSnapshot.data == 8,
+                        ),
+                        NavListTile(
+                          icon: Icons.link_outlined,
+                          title: "Quick Links",
+                          onTap: () {
+                            changeSelection(11, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/quicklinks');
+                          },
+                          highlight: indexSnapshot.data == 11,
+                          selected: indexSnapshot.data == 11,
+                        ),
+                        NavListTile(
+                          icon: Icons.settings_outlined,
+                          title: "Settings",
+                          onTap: () {
+                            changeSelection(12, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/settings');
+                          },
+                          highlight: indexSnapshot.data == 12,
+                          selected: indexSnapshot.data == 12,
+                        ),
+                      ],
                     ),
                     13: NavListTile(
                       icon: Icons.query_stats,
                       title: "FAQs",
                       onTap: () {
-                        changeSelection(13, drawerState);
+                        changeSelection(13, drawerState!);
                         var navi = Navigator.of(context);
                         navi.pushReplacementNamed('/query');
                       },
+                      highlight: indexSnapshot.data == 13,
+                      selected: indexSnapshot.data == 13,
                     ),
                   };
 
@@ -195,7 +232,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                         bottomRight:
                                             const Radius.circular(48.0),
                                         topRight: const Radius.circular(48.0)))
-                                : snapshot?.data?.profile?.userName != null
+                                : snapshot.data?.profile?.userName != null
                                     ? BoxDecoration(
                                         color: theme.primaryColor.withAlpha(60),
                                         borderRadius: BorderRadius.only(
@@ -206,17 +243,20 @@ class _NavDrawerState extends State<NavDrawer> {
                                     : null,
                             child: ListTile(
                               leading: NullableCircleAvatar(
-                                snapshot.data?.profile?.userProfilePictureUrl,
+                                snapshot.data?.profile?.userProfilePictureUrl ??
+                                    "",
                                 Icons.person_outline_outlined,
                               ),
                               title: Text(
-                                snapshot?.data?.profile?.userName ??
+                                snapshot.data?.profile?.userName ??
                                     'Not Logged in',
                                 style: theme.textTheme.bodyText2
-                                    .copyWith(fontWeight: FontWeight.bold),
+                                    ?.copyWith(fontWeight: FontWeight.bold),
                               ),
                               subtitle: snapshot.data != null
-                                  ? Text(snapshot.data?.profile?.userRollNumber,
+                                  ? Text(
+                                      snapshot.data?.profile?.userRollNumber ??
+                                          "",
                                       style: theme.textTheme.bodyText2)
                                   : ElevatedButton(
                                       child: Text(
@@ -229,10 +269,10 @@ class _NavDrawerState extends State<NavDrawer> {
                                     ),
                               onTap: snapshot.data != null
                                   ? () {
-                                      changeSelection(-2, drawerState);
+                                      changeSelection(-2, drawerState!);
                                       Navigator.pop(context);
-                                      UserPage.navigateWith(context, bloc,
-                                          bloc.currSession.profile);
+                                      UserPage.navigateWith(context, bloc!,
+                                          bloc.currSession?.profile);
                                     }
                                   : null,
                             ),
@@ -241,12 +281,13 @@ class _NavDrawerState extends State<NavDrawer> {
                       ]..addAll(snapshot.data != null
                           ? [
                               StreamBuilder(
-                                stream: bloc.notifications,
+                                stream: bloc?.notifications,
                                 builder: (BuildContext context,
                                     AsyncSnapshot<
                                             UnmodifiableListView<
                                                 ntf.Notification>>
                                         snapshot) {
+                                  bool ex = snapshot.data?.isNotEmpty ?? false;
                                   return Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Stack(
@@ -260,9 +301,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                             child: IconButton(
                                               tooltip: "Notifications",
                                               icon: Icon(
-                                                (snapshot.hasData &&
-                                                            snapshot.data
-                                                                .isNotEmpty) ||
+                                                (snapshot.hasData && ex) ||
                                                         (!snapshot.hasData)
                                                     ? Icons
                                                         .notifications_active_outlined
@@ -274,7 +313,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                               ),
                                               onPressed: () {
                                                 changeSelection(
-                                                    -1, drawerState);
+                                                    -1, drawerState!);
                                                 var navi =
                                                     Navigator.of(context);
                                                 navi.pop();
@@ -284,8 +323,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                             ),
                                           ),
                                         ),
-                                      ]..addAll((snapshot.hasData &&
-                                                  snapshot.data.isNotEmpty) ||
+                                      ]..addAll((snapshot.hasData && ex) ||
                                               (!snapshot.hasData)
                                           ? [
                                               Positioned(
@@ -297,17 +335,23 @@ class _NavDrawerState extends State<NavDrawer> {
                                                             EdgeInsets.all(3.0),
                                                         decoration:
                                                             BoxDecoration(
-                                                          color:
-                                                              theme.accentColor,
+                                                          color: theme
+                                                              .colorScheme
+                                                              .secondary,
                                                           shape:
                                                               BoxShape.circle,
                                                         ),
                                                         child: Center(
                                                           child: Text(
-                                                            "${snapshot.data.length}",
+                                                            "${snapshot.data?.length}",
                                                             style: theme
-                                                                .accentTextTheme
-                                                                .overline,
+                                                                .textTheme
+                                                                .overline
+                                                                ?.copyWith(
+                                                              color: theme
+                                                                  .colorScheme
+                                                                  .onSecondary,
+                                                            ),
                                                           ),
                                                         ),
                                                       )
@@ -338,7 +382,7 @@ class _NavDrawerState extends State<NavDrawer> {
                               setState(() {
                                 loggingOutLoading = true;
                               });
-                              await bloc.logout();
+                              await bloc?.logout();
                               setState(() {
                                 loggingOutLoading = false;
                               });
@@ -351,8 +395,8 @@ class _NavDrawerState extends State<NavDrawer> {
                   }
 
                   // Selecting which NavListTile to highlight
-                  if (indexSnapshot.data > -1) {
-                    navMap[indexSnapshot.data].setHighlighted(true);
+                  if (indexSnapshot.data! > -1) {
+                    // navMap[indexSnapshot.data]?.setHighlighted(true);
                   }
 
                   return ListTileTheme(
@@ -369,46 +413,49 @@ class _NavDrawerState extends State<NavDrawer> {
   }
 }
 
+// ignore: must_be_immutable
 class NavListTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final GestureTapCallback onTap;
-  bool selected;
-  bool highlight;
-  final Widget trailing;
+  final IconData? icon;
+  final String? title;
+  final GestureTapCallback? onTap;
+  final bool selected;
+  final bool highlight;
+  final Widget? trailing;
 
-  void setHighlighted(bool selection) {
-    highlight = selection;
-    selected = selection;
-  }
-
-  NavListTile(
-      {this.icon,
-      this.title,
-      this.onTap,
-      this.selected = false,
-      this.highlight = false,
-      this.trailing});
+  NavListTile({
+    // Key? key,
+    this.icon,
+    this.title,
+    this.onTap,
+    this.selected = false,
+    this.highlight = false,
+    this.trailing,
+  });
 
   @override
   Widget build(BuildContext context) {
+    if (title == "External Blog") {
+      log("External " + highlight.toString());
+    }
+
     var theme = Theme.of(context);
-    var listTileTheme = ListTileTheme.of(context);
+    ListTileThemeData listTileTheme = ListTileTheme.of(context);
     return Container(
       decoration: !highlight
           ? null
           : BoxDecoration(
-              color: listTileTheme.selectedColor.withAlpha(100),
+              color: listTileTheme.selectedColor?.withAlpha(100),
               borderRadius: BorderRadius.only(
                   bottomRight: const Radius.circular(48.0),
                   topRight: const Radius.circular(48.0))),
       child: ListTile(
+        // key: Key(highlight.toString()),
         selected: selected,
         enabled: true,
         leading: Icon(this.icon),
         dense: true,
         title: Text(
-          this.title,
+          this.title!,
           style: TextStyle(
               fontWeight: FontWeight.w700,
               color: _iconAndTextColor(theme, listTileTheme)),
@@ -419,22 +466,107 @@ class NavListTile extends StatelessWidget {
     );
   }
 
-  Color _iconAndTextColor(ThemeData theme, ListTileTheme tileTheme) {
-    if (selected && tileTheme?.selectedColor != null)
-      return tileTheme.selectedColor;
+  Color? _iconAndTextColor(ThemeData theme, ListTileThemeData tileTheme) {
+    if (selected && tileTheme.selectedColor != null)
+      return tileTheme.selectedColor!;
 
-    if (!selected && tileTheme?.iconColor != null) return tileTheme.iconColor;
-
+    if (!selected && tileTheme.iconColor != null) return tileTheme.iconColor!;
+    // assert(theme.brightness != null);
+    print(theme.brightness);
     switch (theme.brightness) {
       case Brightness.light:
         return selected ? theme.primaryColor : Colors.black54;
       case Brightness.dark:
         return selected
-            ? theme.accentColor
-            : null; // null - use current icon theme color
+            ? null
+            : theme
+                .colorScheme.secondary; // null - use current icon theme color
     }
-    assert(theme.brightness != null);
-    return null;
+    // return null;
+  }
+}
+
+class NavExpansionTile extends StatefulWidget {
+  final IconData? leading;
+  final String title;
+  final bool initiallyExpanded;
+  final List<NavListTile> children;
+
+  const NavExpansionTile({
+    Key? key,
+    this.leading,
+    required this.title,
+    this.initiallyExpanded = false,
+    this.children = const [],
+  }) : super(key: key);
+
+  @override
+  State<NavExpansionTile> createState() => _NavExpansionTileState();
+}
+
+class _NavExpansionTileState extends State<NavExpansionTile> {
+  bool isOpened = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isOpened = widget.initiallyExpanded;
+    if (widget.children[2].title == "External Blog")
+      log("Expansion" + widget.children[2].highlight.toString());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+    ListTileThemeData listTileTheme = ListTileTheme.of(context);
+    return ListTileTheme(
+      data: listTileTheme.copyWith(dense: true),
+      child: ExpansionTile(
+        key: Key(widget.title + widget.initiallyExpanded.toString()),
+        title: Text(
+          widget.title,
+          style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: _iconAndTextColor(theme, listTileTheme)),
+        ),
+        leading: Icon(widget.leading),
+        initiallyExpanded: widget.initiallyExpanded,
+        children: widget.children,
+        // textColor: _iconAndTextColor(theme, listTileTheme),
+        iconColor: listTileTheme.iconColor,
+        collapsedIconColor: listTileTheme.iconColor,
+        onExpansionChanged: (val) {
+          setState(() {
+            isOpened = val;
+          });
+        },
+        // maintainState: true,
+      ),
+    );
+  }
+
+  Color? _iconAndTextColor(ThemeData theme, ListTileThemeData tileTheme) {
+    if (isOpened && tileTheme.selectedColor != null) {
+      // log("Hi");
+      return tileTheme.selectedColor!;
+    }
+
+    if (!isOpened && tileTheme.iconColor != null) {
+      // log("Hi2");
+      return tileTheme.iconColor!;
+    }
+    // assert(theme.brightness != null);
+    print(theme.brightness);
+    switch (theme.brightness) {
+      case Brightness.light:
+        return isOpened ? theme.primaryColor : Colors.black54;
+      case Brightness.dark:
+        return isOpened
+            ? null
+            : theme
+                .colorScheme.secondary; // null - use current icon theme color
+    }
+    // return null;
   }
 }
 
@@ -502,29 +634,26 @@ class MNavigatorObserver extends NavigatorObserver {
   Queue<String> navStack = Queue<String>();
   MNavigatorObserver(this.bloc);
 
-  ValueStream<String> get secondTopRouteName =>
+  ValueStream<String?> get secondTopRouteName =>
       _secondTopRouteNameSubject.stream;
-  final _secondTopRouteNameSubject = BehaviorSubject<String>();
+  final _secondTopRouteNameSubject = BehaviorSubject<String?>();
 
   @override
-  void didPush(Route route, Route previousRoute) {
-    navStack.addLast(route?.settings?.name ?? "n/a");
+  void didPush(Route route, Route? previousRoute) {
+    navStack.addLast(route.settings.name ?? "n/a");
     try {
       var el = navStack.elementAt(navStack.length - 2);
       _secondTopRouteNameSubject.add(routeToName[el] ?? startsWith(el));
     } catch (e) {
       _secondTopRouteNameSubject.add("");
     }
-    int pageIndex = routeToNavPos[route.settings.name];
-    if (pageIndex == null) {
-      return;
-    }
+    int? pageIndex = routeToNavPos[route.settings.name];
 
     NavDrawer.setPageIndex(bloc, pageIndex ?? -1);
   }
 
   @override
-  void didPop(Route route, Route previousRoute) {
+  void didPop(Route route, Route? previousRoute) {
     try {
       navStack.removeLast();
     } catch (e) {}
@@ -534,20 +663,17 @@ class MNavigatorObserver extends NavigatorObserver {
     } catch (e) {
       _secondTopRouteNameSubject.add("");
     }
-    int pageIndex = routeToNavPos[previousRoute.settings.name];
-    if (pageIndex == null) {
-      return;
-    }
+    int? pageIndex = routeToNavPos[previousRoute?.settings.name];
 
     NavDrawer.setPageIndex(bloc, pageIndex ?? -1);
   }
 
   @override
-  void didReplace({Route newRoute, Route oldRoute}) {
+  void didReplace({Route? newRoute, Route? oldRoute}) {
     try {
       navStack.removeLast();
     } catch (e) {}
-    navStack.addLast(newRoute?.settings?.name ?? "n/a");
+    navStack.addLast(newRoute?.settings.name ?? "n/a");
     try {
       var el = navStack.elementAt(navStack.length - 2);
       _secondTopRouteNameSubject.add(routeToName[el] ?? startsWith(el));
@@ -555,16 +681,13 @@ class MNavigatorObserver extends NavigatorObserver {
       _secondTopRouteNameSubject.add("");
     }
 
-    int pageIndex = routeToNavPos[newRoute.settings.name];
-    if (pageIndex == null) {
-      return;
-    }
+    int? pageIndex = routeToNavPos[newRoute?.settings.name];
 
     NavDrawer.setPageIndex(bloc, pageIndex ?? -1);
   }
 
   @override
-  void didStartUserGesture(Route route, Route previousRoute) {
+  void didStartUserGesture(Route route, Route? previousRoute) {
     _secondTopRouteNameSubject.add(null);
   }
 

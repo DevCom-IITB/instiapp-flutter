@@ -1,12 +1,16 @@
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-part 'secret_response.jser.dart';
+part 'secret_response.g.dart';
 
+@JsonSerializable()
 class SecretResponse {
-  String message;
-}
+  String? message;
 
-@GenSerializer()
-class SecretResponseSerializer
-    extends Serializer<SecretResponse>
-    with _$SecretResponseSerializer {}
+  SecretResponse({
+    this.message,
+  });
+  factory SecretResponse.fromJson(Map<String, dynamic> json) =>
+      _$SecretResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SecretResponseToJson(this);
+}

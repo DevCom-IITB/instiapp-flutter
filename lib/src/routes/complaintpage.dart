@@ -18,21 +18,21 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class ComplaintPage extends StatefulWidget {
   final String title = "Complaint";
-  final Complaint initialComplaint;
-  final Future<Complaint> complaintFuture;
+  final Complaint? initialComplaint;
+  final Future<Complaint?>? complaintFuture;
 
-  ComplaintPage({this.complaintFuture, this.initialComplaint});
+  ComplaintPage({required this.complaintFuture, this.initialComplaint});
 
   static void navigateWith(
       BuildContext context, InstiAppBloc bloc, Complaint complaint,
       {bool replace = false}) {
     var route = MaterialPageRoute(
       settings: RouteSettings(
-        name: "/complaint/${complaint?.complaintID ?? ""}",
+        name: "/complaint/${complaint.complaintID ?? ""}",
       ),
       builder: (context) => ComplaintPage(
         initialComplaint: complaint,
-        complaintFuture: bloc.getComplaint(complaint.complaintID),
+        complaintFuture: bloc.getComplaint(complaint.complaintID ?? "")?? null,
       ),
     );
     replace
@@ -48,10 +48,10 @@ class _ComplaintPageState extends State<ComplaintPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   // GlobalKey<GoogleMapState> _mapsKey = GlobalKey();
   // LocalKey _mapsKey = Key("GoogleMapKey");
-  Complaint complaint;
+  Complaint? complaint;
 
-  FocusNode _commentFocusNode;
-  TextEditingController _commentController;
+  FocusNode? _commentFocusNode;
+  TextEditingController? _commentController;
   bool loadingUpvote = false;
   bool loadingComment = false;
 
@@ -60,18 +60,18 @@ class _ComplaintPageState extends State<ComplaintPage> {
   // Completer<GoogleMapController> _mapController = Completer();
   // LocationManager.Location _location;
 
-  Comment deletingComment;
+  Comment? deletingComment;
 
   bool loadingEditComment = false;
-  Comment editingComment;
-  FocusNode _editingCommentFocusNode;
-  TextEditingController _editingCommentController;
+  Comment? editingComment;
+  FocusNode? _editingCommentFocusNode;
+  TextEditingController? _editingCommentController;
 
   @override
   void initState() {
     super.initState();
     complaint = widget.initialComplaint;
-    widget.complaintFuture.then((c) {
+    widget.complaintFuture?.then((c) {
       if (this.mounted) {
         setState(() {
           complaint = c;
@@ -89,23 +89,23 @@ class _ComplaintPageState extends State<ComplaintPage> {
 
   @override
   void dispose() {
-    _commentFocusNode.dispose();
-    _editingCommentFocusNode.dispose();
-    _commentController.dispose();
-    _editingCommentController.dispose();
+    _commentFocusNode?.dispose();
+    _editingCommentFocusNode?.dispose();
+    _commentController?.dispose();
+    _editingCommentController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     var theme = Theme.of(context);
     var complaintBloc = bloc.complaintsBloc;
     var fab;
     fab = null;
 
     if (complaint != null) {
-      var userVoted = complaint.voteCount == 1;
+      var userVoted = complaint!.voteCount == 1;
       fab = FloatingActionButton.extended(
         foregroundColor: userVoted ? theme.accentColor : null,
         backgroundColor: userVoted ? theme.colorScheme.surface : null,
@@ -126,7 +126,8 @@ class _ComplaintPageState extends State<ComplaintPage> {
           setState(() {
             loadingUpvote = true;
           });
-          await complaintBloc.updateUpvote(complaint, 1 - complaint.voteCount);
+          await complaintBloc.updateUpvote(
+              complaint!, 1 - (complaint!.voteCount ?? 0));
           setState(() {
             loadingUpvote = false;
           });
@@ -148,7 +149,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -164,9 +165,9 @@ class _ComplaintPageState extends State<ComplaintPage> {
               )
             : GestureDetector(
                 onTap: () {
-                  _commentFocusNode.unfocus();
+                  _commentFocusNode?.unfocus();
                   if (editingComment != null) {
-                    _editingCommentFocusNode.unfocus();
+                    _editingCommentFocusNode?.unfocus();
                   }
                 },
                 child: ListView(
@@ -177,7 +178,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                         style: theme.textTheme.headline3,
                       ),
                     ),
-                    complaint.images.isNotEmpty
+                    (complaint!.images?.isNotEmpty ?? false)
                         ? Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Container(
@@ -190,16 +191,17 @@ class _ComplaintPageState extends State<ComplaintPage> {
                               child: ListView(
                                 padding: EdgeInsets.all(8.0),
                                 scrollDirection: Axis.horizontal,
-                                children: complaint.images.map((im) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: PhotoViewableImage(
-                                      url: im,
-                                      heroTag: "$im",
-                                      fit: BoxFit.scaleDown,
-                                    ),
-                                  );
-                                }).toList(),
+                                children: complaint!.images?.map((im) {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: PhotoViewableImage(
+                                          url: im,
+                                          heroTag: "$im",
+                                          fit: BoxFit.scaleDown,
+                                        ),
+                                      );
+                                    }).toList() ??
+                                    [],
                               ),
                             ))
                         : Padding(
@@ -209,8 +211,8 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                 TextSpan(text: "No "),
                                 TextSpan(
                                     text: "images ",
-                                    style: theme.textTheme.bodyText2
-                                        .copyWith(fontWeight: FontWeight.bold)),
+                                    style: theme.textTheme.bodyText2?.copyWith(
+                                        fontWeight: FontWeight.bold)),
                                 TextSpan(text: "uploaded."),
                               ]),
                             ),
@@ -222,7 +224,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Hero(
-                            tag: complaint.complaintID,
+                            tag: complaint!.complaintID ?? "",
                             child: Material(
                               type: MaterialType.transparency,
                               child: Row(
@@ -236,17 +238,20 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
-                                            complaint
-                                                .complaintCreatedBy.userName,
+                                            complaint!.complaintCreatedBy
+                                                    ?.userName ??
+                                                "",
                                             style: theme.textTheme.headline6
-                                                .copyWith(
+                                                ?.copyWith(
                                                     fontWeight:
                                                         FontWeight.bold)),
                                         Text(
-                                          DateTimeUtil.getDate(
-                                              complaint.complaintReportDate),
+                                          complaint!.complaintReportDate != null
+                                              ? DateTimeUtil.getDate(complaint!
+                                                  .complaintReportDate!)
+                                              : "",
                                           style: theme.textTheme.caption
-                                              .copyWith(fontSize: 14),
+                                              ?.copyWith(fontSize: 14),
                                         ),
                                       ],
                                     ),
@@ -256,7 +261,8 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                       IconButton(
                                         icon: loadingSubs
                                             ? CircularProgressIndicatorExtended()
-                                            : Icon((complaint.isSubscribed
+                                            : Icon(((complaint!.isSubscribed ??
+                                                    false)
                                                 ? Icons
                                                     .notifications_active_outlined
                                                 : Icons
@@ -266,8 +272,10 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                             loadingSubs = true;
                                           });
                                           await bloc.complaintsBloc.updateSubs(
-                                              complaint,
-                                              complaint.isSubscribed ? 0 : 1);
+                                              complaint!,
+                                              (complaint!.isSubscribed ?? false)
+                                                  ? 0
+                                                  : 1);
                                           setState(() {
                                             loadingSubs = false;
                                           });
@@ -275,18 +283,18 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                             ..hideCurrentSnackBar()
                                             ..showSnackBar(SnackBar(
                                                 content: Text(
-                                                    "You are now ${complaint.isSubscribed ? "" : "un"}subscribed to this complaint")));
+                                                    "You are now ${(complaint!.isSubscribed ?? false) ? "" : "un"}subscribed to this complaint")));
                                         },
                                       ),
                                       OutlinedButton(
                                         style: OutlinedButton.styleFrom(
                                           side: BorderSide(
-                                              color: complaint.status
-                                                          .toLowerCase() ==
+                                              color: complaint!.status
+                                                          ?.toLowerCase() ==
                                                       "Reported".toLowerCase()
                                                   ? Colors.red
-                                                  : complaint.status
-                                                              .toLowerCase() ==
+                                                  : complaint!.status
+                                                              ?.toLowerCase() ==
                                                           "In Progress"
                                                               .toLowerCase()
                                                       ? Colors.yellow
@@ -299,12 +307,16 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                               MainAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
-                                              capitalize(complaint.status),
+                                              complaint!.status != null
+                                                  ? capitalize(
+                                                      complaint!.status!)
+                                                  : "",
                                               style: theme.textTheme.subtitle1,
                                             ),
                                           ]..insertAll(
                                               0,
-                                              complaint.tags.isNotEmpty
+                                              (complaint!.tags?.isNotEmpty ??
+                                                      false)
                                                   ? [
                                                       Container(
                                                         color:
@@ -327,9 +339,9 @@ class _ComplaintPageState extends State<ComplaintPage> {
                             ),
                           ),
                           Text(
-                            complaint.locationDescription,
+                            complaint!.locationDescription ?? "",
                             style:
-                                theme.textTheme.caption.copyWith(fontSize: 14),
+                                theme.textTheme.caption?.copyWith(fontSize: 14),
                           ),
                         ],
                       ),
@@ -342,8 +354,8 @@ class _ComplaintPageState extends State<ComplaintPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        complaint.suggestions.isNotEmpty ||
-                                complaint.suggestions.isNotEmpty
+                        (complaint!.suggestions?.isNotEmpty ?? false) ||
+                                (complaint!.suggestions?.isNotEmpty ?? false)
                             ? Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 28.0),
@@ -357,12 +369,12 @@ class _ComplaintPageState extends State<ComplaintPage> {
                           padding: const EdgeInsets.only(
                               left: 28.0, right: 28.0, bottom: 16.0),
                           child: Text(
-                            complaint.description,
+                            complaint!.description ?? "",
                             style: theme.textTheme.subtitle1,
                           ),
                         ),
                       ]
-                        ..addAll(complaint.suggestions.isNotEmpty
+                        ..addAll((complaint!.suggestions?.isNotEmpty ?? false)
                             ? [
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -376,32 +388,35 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                   padding: const EdgeInsets.only(
                                       left: 28.0, right: 28.0, bottom: 16.0),
                                   child: Text(
-                                    complaint.suggestions,
+                                    complaint!.suggestions ?? "",
                                     style: theme.textTheme.subtitle1,
                                   ),
                                 ),
                               ]
                             : [])
-                        ..addAll(complaint.locationDetails.isNotEmpty
-                            ? [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 28.0),
-                                  child: Text(
-                                    "Location Details: ",
-                                    style: theme.textTheme.subtitle1,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 28.0, right: 28.0, bottom: 16.0),
-                                  child: Text(
-                                    complaint.locationDetails,
-                                    style: theme.textTheme.subtitle1,
-                                  ),
-                                ),
-                              ]
-                            : []),
+                        ..addAll(
+                            (complaint!.locationDetails?.isNotEmpty ?? false)
+                                ? [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 28.0),
+                                      child: Text(
+                                        "Location Details: ",
+                                        style: theme.textTheme.subtitle1,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 28.0,
+                                          right: 28.0,
+                                          bottom: 16.0),
+                                      child: Text(
+                                        complaint!.locationDetails ?? "",
+                                        style: theme.textTheme.subtitle1,
+                                      ),
+                                    ),
+                                  ]
+                                : []),
                     ),
                     SizedBox(
                       height: 16.0,
@@ -417,16 +432,16 @@ class _ComplaintPageState extends State<ComplaintPage> {
                         ].toSet(),
                         onMapCreated: null,
                         initialCameraPosition: CameraPosition(
-                            target:
-                                LatLng(complaint.latitude, complaint.longitude),
+                            target: LatLng(complaint!.latitude ?? 0,
+                                complaint!.longitude ?? 0),
                             zoom: 16.0),
                         markers: Set.from([
                           Marker(
-                            markerId: MarkerId(complaint.complaintID),
+                            markerId: MarkerId(complaint!.complaintID ?? ""),
                             infoWindow: InfoWindow(
-                                title: "${complaint.locationDescription}"),
-                            position:
-                                LatLng(complaint.latitude, complaint.longitude),
+                                title: "${complaint!.locationDescription}"),
+                            position: LatLng(complaint!.latitude ?? 0,
+                                complaint!.longitude ?? 0),
                           )
                         ]),
                         compassEnabled: true,
@@ -437,7 +452,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                         tiltGesturesEnabled: false,
                       ),
                     ),
-                    complaint.tags?.isNotEmpty ?? false
+                    complaint!.tags?.isNotEmpty ?? false
                         ? Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 28.0, vertical: 8.0),
@@ -453,7 +468,8 @@ class _ComplaintPageState extends State<ComplaintPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 28.0),
                       child: EditableChipList(
                         editable: false,
-                        tags: Set.from(complaint.tags.map((t) => t.tagUri)),
+                        tags: Set.from(
+                            complaint!.tags?.map((t) => t.tagUri) ?? []),
                       ),
                     ),
                     Divider(),
@@ -472,13 +488,14 @@ class _ComplaintPageState extends State<ComplaintPage> {
                             width: 8,
                           ),
                           Text(
-                              "${complaint.comments.isEmpty ? "No" : complaint.comments.length} comment${complaint.comments.length == 1 ? "" : "s"}",
+                              "${(complaint!.comments?.isEmpty ?? false) ? "No" : complaint!.comments?.length} comment${complaint!.comments?.length == 1 ? "" : "s"}",
                               style: theme.textTheme.headline6),
                         ],
                       ),
                     ))
-                    ..addAll(complaint.comments
-                        .map((v) => _buildComment(bloc, theme, v)))
+                    ..addAll(complaint!.comments
+                            ?.map((v) => _buildComment(bloc, theme, v)) ??
+                        [])
                     ..add(_buildCommentBox(bloc, theme))
                     ..addAll(<Widget>[
                       Divider(),
@@ -496,14 +513,15 @@ class _ComplaintPageState extends State<ComplaintPage> {
                               width: 8,
                             ),
                             Text(
-                                "${complaint.usersUpVoted.isEmpty ? "No" : complaint.usersUpVoted.length} upvote${complaint.usersUpVoted.length == 1 ? "" : "s"}",
+                                "${complaint!.usersUpVoted?.isEmpty != null ? "No" : complaint!.usersUpVoted?.length} upvote${complaint!.usersUpVoted?.length == 1 ? "" : "s"}",
                                 style: theme.textTheme.headline6),
                           ],
                         ),
                       ),
                     ])
-                    ..addAll(complaint.usersUpVoted
-                        .map((u) => _buildUserTile(bloc, theme, u)))
+                    ..addAll(complaint!.usersUpVoted
+                            ?.map((u) => _buildUserTile(bloc, theme, u)) ??
+                        [])
                     ..addAll([
                       Divider(),
                       SizedBox(
@@ -528,22 +546,23 @@ class _ComplaintPageState extends State<ComplaintPage> {
           children: <Widget>[
             ListTile(
               onTap: () {
-                UserPage.navigateWith(context, bloc, v.commentedBy);
+                UserPage.navigateWith(context, bloc, v.commentedBy!);
               },
               contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
               leading: NullableCircleAvatar(
-                v.commentedBy.userProfilePictureUrl,
+                v.commentedBy!.userProfilePictureUrl ?? "",
                 Icons.person_outline_outlined,
-                heroTag: v.id,
+                heroTag: v.id!,
               ),
-              title: Text(v.commentedBy.userName),
-              subtitle: Text(DateTimeUtil.getDate(v.time)),
-              trailing: (deletingComment?.id?.compareTo(v.id) ?? -1) != 0
-                  ? (v.commentedBy.userID == bloc?.currSession?.profile?.userID
+              title: Text(v.commentedBy!.userName ?? ""),
+              subtitle: Text(DateTimeUtil.getDate(v.time ?? "")),
+              trailing: (deletingComment?.id?.compareTo(v.id!) ?? -1) != 0
+                  ? ((v.commentedBy!.userID ?? "") ==
+                          bloc.currSession?.profile?.userID
                       ? PopupMenuButton<String>(
                           onSelected: (s) async {
                             if (s == "Edit") {
-                              _editingCommentController.text = v.text;
+                              _editingCommentController?.text = v.text ?? "";
                               setState(() {
                                 editingComment = v;
                               });
@@ -552,7 +571,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                                 deletingComment = v;
                               });
                               await bloc.complaintsBloc
-                                  .deleteComment(complaint, v);
+                                  .deleteComment(complaint!, v);
                               setState(() {
                                 deletingComment = null;
                               });
@@ -584,15 +603,15 @@ class _ComplaintPageState extends State<ComplaintPage> {
             InkWell(
               onTap: () {
                 setState(() {
-                  _commentController.text =
-                      "@${v.commentedBy.userLDAPId} ${_commentController.text}";
+                  _commentController?.text =
+                      "@${v.commentedBy!.userLDAPId} ${_commentController?.text}";
                 });
                 FocusScope.of(context).requestFocus(_commentFocusNode);
               },
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
-                child: (editingComment == null || editingComment.id != v.id)
-                    ? Text(v.text, style: theme.textTheme.subtitle1)
+                child: (editingComment == null || editingComment?.id != v.id)
+                    ? Text(v.text ?? "", style: theme.textTheme.subtitle1)
                     : TextField(
                         focusNode: _editingCommentFocusNode,
                         controller: _editingCommentController,
@@ -619,12 +638,13 @@ class _ComplaintPageState extends State<ComplaintPage> {
                               setState(() {
                                 loadingEditComment = true;
                               });
-                              if (_editingCommentController.text.isNotEmpty) {
+                              if ((_editingCommentController?.text.isNotEmpty ??
+                                  false)) {
                                 CommentCreateRequest req =
                                     CommentCreateRequest();
-                                req.text = _editingCommentController.text;
+                                req.text = _editingCommentController?.text;
                                 await bloc.complaintsBloc
-                                    .updateComment(complaint, v, req);
+                                    .updateComment(complaint!, v, req);
 
                                 setState(() {
                                   editingComment = null;
@@ -666,7 +686,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           NullableCircleAvatar(
-            bloc.currSession.profile.userProfilePictureUrl,
+            bloc.currSession?.profile?.userProfilePictureUrl ?? "",
             Icons.person_outline_outlined,
           ),
           SizedBox(
@@ -699,12 +719,12 @@ class _ComplaintPageState extends State<ComplaintPage> {
                     setState(() {
                       loadingComment = true;
                     });
-                    if (_commentController.text.isNotEmpty) {
+                    if ((_commentController?.text.isNotEmpty ?? false)) {
                       CommentCreateRequest req = CommentCreateRequest();
-                      req.text = _commentController.text;
-                      await bloc.complaintsBloc.postComment(complaint, req);
+                      req.text = _commentController?.text;
+                      await bloc.complaintsBloc.postComment(complaint!, req);
                       setState(() {
-                        _commentController.text = "";
+                        _commentController?.text = "";
                       });
                     } else {
                       ScaffoldMessenger.of(context)
@@ -730,11 +750,11 @@ class _ComplaintPageState extends State<ComplaintPage> {
   Widget _buildUserTile(InstiAppBloc bloc, ThemeData theme, User u) {
     return ListTile(
       leading: NullableCircleAvatar(
-        u.userProfilePictureUrl,
+        u.userProfilePictureUrl ?? "",
         Icons.person_outline_outlined,
-        heroTag: u.userID,
+        heroTag: u.userID ?? "",
       ),
-      title: Text(u.userName),
+      title: Text(u.userName ?? ""),
       contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
       onTap: () {
         UserPage.navigateWith(context, bloc, u);

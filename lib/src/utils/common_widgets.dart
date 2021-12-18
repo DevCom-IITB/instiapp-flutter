@@ -7,10 +7,11 @@ import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
+// ignore: unnecessary_import
 import 'dart:ui' show Brightness;
 
 String capitalize(String name) {
-  if (name != null && name.isNotEmpty) {
+  if (name.isNotEmpty) {
     return name.substring(0, 1).toUpperCase() + name.substring(1);
   }
   return name;
@@ -25,9 +26,9 @@ class NullableCircleAvatar extends StatelessWidget {
   final String url;
   final IconData fallbackIcon;
   final double radius;
-  final String heroTag;
+  final String? heroTag;
   final bool photoViewable;
-  final Color backgroundColor;
+  final Color? backgroundColor;
   NullableCircleAvatar(this.url, this.fallbackIcon,
       {this.radius = 24,
       this.heroTag,
@@ -36,7 +37,7 @@ class NullableCircleAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return url != null
+    return url != ""
         ? (photoViewable
             ? InkWell(
                 onTap: () {
@@ -45,7 +46,7 @@ class NullableCircleAvatar extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (context) => HeroPhotoViewWrapper(
                           imageProvider: CachedNetworkImageProvider(url),
-                          heroTag: heroTag,
+                          heroTag: heroTag!,
                           minScale: PhotoViewComputedScale.contained * 0.9,
                           maxScale: PhotoViewComputedScale.contained * 2.0,
                         ),
@@ -53,7 +54,7 @@ class NullableCircleAvatar extends StatelessWidget {
                 },
                 child: heroTag != null
                     ? Hero(
-                        tag: heroTag,
+                        tag: heroTag!,
                         child: CircleAvatar(
                           radius: radius,
                           backgroundImage: CachedNetworkImageProvider(
@@ -74,7 +75,7 @@ class NullableCircleAvatar extends StatelessWidget {
               )
             : heroTag != null
                 ? Hero(
-                    tag: heroTag,
+                    tag: heroTag!,
                     child: CircleAvatar(
                       radius: radius,
                       backgroundImage: CachedNetworkImageProvider(
@@ -94,7 +95,7 @@ class NullableCircleAvatar extends StatelessWidget {
                   ))
         : heroTag != null
             ? Hero(
-                tag: heroTag,
+                tag: heroTag!,
                 child: CircleAvatar(
                   radius: radius,
                   child: Icon(fallbackIcon, size: radius),
@@ -110,21 +111,21 @@ class NullableCircleAvatar extends StatelessWidget {
 
 class HeroPhotoViewWrapper extends StatefulWidget {
   const HeroPhotoViewWrapper(
-      {this.imageProvider,
+      {required this.imageProvider,
       this.loadingChild,
       this.backgroundDecoration,
       this.minScale,
       this.maxScale,
-      this.heroTag,
+      required this.heroTag,
       this.theme});
 
   final ImageProvider imageProvider;
-  final Widget loadingChild;
-  final Decoration backgroundDecoration;
+  final Widget? loadingChild;
+  final BoxDecoration? backgroundDecoration;
   final dynamic minScale;
   final dynamic maxScale;
   final String heroTag;
-  final ThemeData theme;
+  final ThemeData? theme;
 
   @override
   HeroPhotoViewWrapperState createState() {
@@ -133,12 +134,12 @@ class HeroPhotoViewWrapper extends StatefulWidget {
 }
 
 class HeroPhotoViewWrapperState extends State<HeroPhotoViewWrapper> {
-  SystemUiOverlayStyle saveStyle;
+  late SystemUiOverlayStyle saveStyle;
 
   @override
   void initState() {
     super.initState();
-    saveStyle = SystemChrome.latestStyle;
+    saveStyle = SystemChrome.latestStyle!;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
   }
 
@@ -161,8 +162,8 @@ class HeroPhotoViewWrapperState extends State<HeroPhotoViewWrapper> {
           ),
           child: PhotoView(
             imageProvider: widget.imageProvider,
-            loadingBuilder: (_, __) => widget.loadingChild,
-            backgroundDecoration: widget.backgroundDecoration,
+            loadingBuilder: (_, __) => widget.loadingChild!,
+            backgroundDecoration: widget.backgroundDecoration!,
             minScale: widget.minScale,
             maxScale: widget.maxScale,
             heroAttributes: PhotoViewHeroAttributes(tag: widget.heroTag),
@@ -172,18 +173,18 @@ class HeroPhotoViewWrapperState extends State<HeroPhotoViewWrapper> {
 }
 
 class PhotoViewableImage extends StatelessWidget {
-  final String url;
-  final ImageProvider imageProvider;
+  final String? url;
+  final ImageProvider? imageProvider;
   final String heroTag;
-  final BoxFit fit;
-  final ShapeBorder customBorder;
+  final BoxFit? fit;
+  final ShapeBorder? customBorder;
   // final double height;
   // final double width;
 
   PhotoViewableImage({
     this.url,
     this.imageProvider,
-    @required this.heroTag,
+    required this.heroTag,
     this.fit,
     this.customBorder,
   }) : assert(url != null || imageProvider != null);
@@ -199,7 +200,7 @@ class PhotoViewableImage extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => HeroPhotoViewWrapper(
                   imageProvider:
-                      imageProvider ?? CachedNetworkImageProvider(url),
+                      imageProvider ?? CachedNetworkImageProvider(url??""),
                   heroTag: heroTag,
                   minScale: PhotoViewComputedScale.contained * 0.9,
                   maxScale: PhotoViewComputedScale.contained * 2.0,
@@ -211,11 +212,11 @@ class PhotoViewableImage extends StatelessWidget {
           tag: heroTag,
           child: imageProvider != null
               ? Image(
-                  image: imageProvider,
+                  image: imageProvider!,
                   fit: fit,
                 )
               : CachedNetworkImage(
-                  imageUrl: url,
+                  imageUrl: url??"",
                   placeholder: (context, url) => CachedNetworkImage(
                     imageUrl: thumbnailUrl(url),
                     fit: fit,
@@ -234,49 +235,136 @@ class PhotoViewableImage extends StatelessWidget {
   }
 }
 
+
+String refineText(String text){
+  text=text.replaceAll("<br>", "\n");
+  text=text.replaceAll("<strong>", " ");
+  text=text.replaceAll("</strong>", " ");
+  text=text.replaceAll("&nbsp;", "       ");
+  return text;
+}
 class CommonHtml extends StatelessWidget {
-  final String data;
+  final String? data;
+  final String? query;
   final TextStyle defaultTextStyle;
 
-  CommonHtml({@required this.data, this.defaultTextStyle});
+  CommonHtml({this.data, required this.defaultTextStyle, this.query});
 
   @override
   Widget build(BuildContext context) {
+    print(data);
     return data != null
         ? Html(
             data: data,
-            onLinkTap: (link) async {
-              print(link);
-              if (await canLaunch(link)) {
+            onLinkTap: (link,_,__,____) async {
+              //print(link);
+              if (await canLaunch(link!)) {
                 await launch(link);
               } else {
                 throw "Couldn't launch $link";
               }
             },
             customRender: {
-              "img": (_, __, attributes, ___) {
+              "img": (context, child) {
+                var attributes=context.tree.element!.attributes;
                 return Text(attributes['src'] ?? attributes['href'] ?? "<img>");
               },
-              "a": (_, __, ___, node) {
+              "a": (context, child) {
+                var attributes=context.tree.element!.attributes;
+                var innerHtml= context.tree.element?.innerHtml;
                 return InkWell(
                   onTap: () async {
-                    if (await canLaunch(node.attributes['href'])) {
-                      await launch(node.attributes['href']);
+                    if (await canLaunch(attributes['href']!)) {
+                      await launch(attributes['href']!);
                     }
                   },
                   child: Text(
-                    node.innerHtml,
+                    innerHtml??"",
                     style: TextStyle(
                         color: Colors.lightBlue,
                         decoration: TextDecoration.underline),
                   ),
+                  // child: RichText(
+                  //   textScaleFactor:2,
+                  //   text: highlight(node.innerHtml,"electro"),
+                  // )
                 );
-              }
+              },
+              "p":(context, child) {
+                String text =context.tree.element?.innerHtml??"";
+                return RichText(
+                      textScaleFactor:1,
+                      text: highlight(refineText(text),query?? ''),
+                    );
+              },
+              "td":(context, child) {
+                String text =context.tree.element?.innerHtml??"";
+                text="    "+text+"   ";
+                return RichText(
+                  textScaleFactor:1,
+                  text: highlight(refineText(text),query?? ''),
+                );
+              },
+              "th":(context, child) {
+                String text =context.tree.element?.innerHtml??"";
+                text="    "+text+"   ";
+                return RichText(
+                  textScaleFactor:1,
+                  text: highlight(refineText(text),query?? ''),
+                );
+              },
+              // "td":(context,child){
+              //   context.tree.style.padding=const EdgeInsets.only(
+              //     left: 12.0,
+              //     top: 12.0,
+              //     right: 12.0,
+              //   );
+              //   context.tree.style.width=500;
+              //   print(context.tree.style.width);
+              // }
+
+
             },
           )
         : CircularProgressIndicatorExtended(
             label: Text("Loading content"),
           );
+  }
+  TextSpan highlight(String result,String query){
+    TextStyle posRes = TextStyle(color: Colors.white,backgroundColor: Colors.red);
+    TextStyle negRes = TextStyle(color: Colors.black,backgroundColor: Colors.white);
+    if(result=="" || query=="") return TextSpan(text:result,style:negRes);
+    result.replaceAll('\n'," ").replaceAll("  ", "");
+
+    var refinedMatch=result.toLowerCase();
+    var refinedsearch=query.toLowerCase();
+
+    if(refinedMatch.contains(refinedsearch)){
+      if(refinedMatch.substring(0,refinedsearch.length)==refinedsearch){
+        return TextSpan(style:posRes,text:result.substring(0,refinedsearch.length),children:[
+          highlight(result.substring(refinedsearch.length),query),
+        ]);
+      }
+      else if(refinedsearch.length==refinedMatch.length){
+        return TextSpan(text:result,style:posRes);
+      }
+      else{
+        return TextSpan(style:negRes,text:result.substring(0,refinedMatch.indexOf(refinedsearch)),
+            children:[highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query)]);
+      }
+    }
+    else if(!refinedMatch.contains(refinedsearch)){
+      return TextSpan(text:result,style:negRes);
+    }
+
+    return TextSpan(
+      text: result.substring(0, refinedMatch.indexOf(refinedsearch)),
+      style: negRes,
+      children: [
+        highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query)
+      ],
+    );
+
   }
 }
 
@@ -299,7 +387,7 @@ class RoundedNotchedRectangle implements NotchedShape {
   /// The notch is curve that smoothly connects the host's top edge and
   /// the guest circle.
   @override
-  Path getOuterPath(Rect host, Rect guest) {
+  Path getOuterPath(Rect host, Rect? guest) {
     if (guest == null || !host.overlaps(guest)) return Path()..addRect(host);
 
     // The guest's shape is a circle bounded by the guest rectangle.
@@ -416,7 +504,7 @@ class MyBottomAppBar extends StatelessWidget {
   ///
   /// The [color], [elevation], and [clipBehavior] arguments must not be null.
   const MyBottomAppBar({
-    Key key,
+    Key? key,
     this.color,
     this.elevation = 8.0,
     this.shape,
@@ -424,9 +512,7 @@ class MyBottomAppBar extends StatelessWidget {
     this.notchMargin = 4.0,
     this.child,
     this.iconSize,
-  })  : assert(elevation != null),
-        assert(elevation >= 0.0),
-        assert(clipBehavior != null),
+  })  : assert(elevation >= 0.0),
         super(key: key);
 
   /// The widget below this widget in the tree.
@@ -435,12 +521,12 @@ class MyBottomAppBar extends StatelessWidget {
   ///
   /// Typically this the child will be a [Row], with the first child
   /// being an [IconButton] with the [Icons.menu] icon.
-  final Widget child;
+  final Widget? child;
 
   /// The bottom app bar's background color.
   ///
   /// When null defaults to [ThemeData.bottomAppBarColor].
-  final Color color;
+  final Color? color;
 
   /// The z-coordinate at which to place this bottom app bar. This controls the
   /// size of the shadow below the bottom app bar.
@@ -451,7 +537,7 @@ class MyBottomAppBar extends StatelessWidget {
   /// The notch that is made for the floating action button.
   ///
   /// If null the bottom app bar will be rectangular with no notch.
-  final NotchedShape shape;
+  final NotchedShape? shape;
 
   /// {@macro flutter.widgets.Clip}
   final Clip clipBehavior;
@@ -465,7 +551,7 @@ class MyBottomAppBar extends StatelessWidget {
   /// The default icon size of all [Icon]'s and [IconButton]'s in [child]
   ///
   /// Default value is 24.0
-  final double iconSize;
+  final double? iconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -482,7 +568,7 @@ class MyBottomAppBar extends StatelessWidget {
           color: theme.primaryIconTheme.color,
           size: iconSize ?? 64.0,
         ),
-        child: child,
+        child: child!,
       ),
     );
   }
@@ -490,12 +576,12 @@ class MyBottomAppBar extends StatelessWidget {
 
 class CircularProgressIndicatorExtended extends StatelessWidget {
   CircularProgressIndicatorExtended({
-    Key key,
+    Key? key,
     this.label,
     this.size = 18,
   }) : super(key: key);
 
-  final Widget label;
+  final Widget? label;
   final double size;
 
   @override
@@ -509,7 +595,7 @@ class CircularProgressIndicatorExtended extends StatelessWidget {
           height: size,
           width: size,
           child: CircularProgressIndicator(
-            valueColor: new AlwaysStoppedAnimation<Color>(theme.accentColor),
+            valueColor: new AlwaysStoppedAnimation<Color>(theme.colorScheme.secondary),
             strokeWidth: 2,
           ),
         ),
@@ -518,7 +604,7 @@ class CircularProgressIndicatorExtended extends StatelessWidget {
               SizedBox(
                 width: 12.0,
               ),
-              label
+              label!
             ]
           : []),
     );
@@ -527,9 +613,9 @@ class CircularProgressIndicatorExtended extends StatelessWidget {
 
 class EditableChipList extends StatefulWidget {
   EditableChipList({
-    Key key,
+    Key? key,
     this.editable = false,
-    this.tags,
+    required this.tags,
     this.preDefinedTags,
     this.controller,
   }) : super(key: key);
@@ -541,13 +627,13 @@ class EditableChipList extends StatefulWidget {
   /// Useful when [editable] is true
   ///
   /// Uses these tags to search
-  final FutureOr<List<String>> preDefinedTags;
+  final FutureOr<List<String>>? preDefinedTags;
 
   /// Tags to be shown initially
   final Set<String> tags;
 
   /// [TextEditingController] for controller to get new tags to add
-  final TextEditingController controller;
+  final TextEditingController? controller;
 
   @override
   EditableChipListState createState() => EditableChipListState();
@@ -563,7 +649,7 @@ class EditableChipListState extends State<EditableChipList> {
     tags.addAll(widget.tags);
 
     if (widget.controller != null) {
-      widget.controller.addListener(_onCreate);
+      widget.controller?.addListener(_onCreate);
     }
   }
 
@@ -571,13 +657,13 @@ class EditableChipListState extends State<EditableChipList> {
     String newTag;
     if ((widget.preDefinedTags is List<String> &&
             (widget.preDefinedTags as List<String>)
-                .contains(widget.controller.text)) ||
+                .contains(widget.controller?.text)) ||
         (widget.preDefinedTags is Future<List<String>> &&
             (await (widget.preDefinedTags as Future<List<String>>))
-                .contains(widget.controller.text))) {
-      newTag = widget.controller.text;
+                .contains(widget.controller?.text))) {
+      newTag = widget.controller!.text;
     } else {
-      newTag = "${widget.controller.text} (U)";
+      newTag = "${widget.controller?.text} (U)";
     }
     setState(() {
       tags.add(newTag);
@@ -586,7 +672,7 @@ class EditableChipListState extends State<EditableChipList> {
 
   @override
   void dispose() {
-    widget?.controller?.removeListener(_onCreate);
+    widget.controller?.removeListener(_onCreate);
     super.dispose();
   }
 
@@ -640,7 +726,7 @@ class EditableChipListState extends State<EditableChipList> {
   }
 
   String _capitalize(String name) {
-    assert(name != null && name.isNotEmpty);
+    assert(name.isNotEmpty);
     return name.substring(0, 1).toUpperCase() + name.substring(1);
   }
 }
@@ -648,7 +734,7 @@ class EditableChipListState extends State<EditableChipList> {
 class SliverHeaderDelegate extends SliverPersistentHeaderDelegate {
   final PreferredSize child;
 
-  SliverHeaderDelegate({this.child});
+  SliverHeaderDelegate({required this.child});
 
   @override
   Widget build(
@@ -669,17 +755,17 @@ class SliverHeaderDelegate extends SliverPersistentHeaderDelegate {
 }
 
 class DefListItem extends StatelessWidget {
-  final String title;
-  final String company;
-  final String icon;
-  final String forText;
-  final String importance;
-  final bool isVerified;
-  final bool isDismissed;
-  final String adminNote;
+  final String? title;
+  final String? company;
+  final String? icon;
+  final String? forText;
+  final String? importance;
+  final bool? isVerified;
+  final bool? isDismissed;
+  final String? adminNote;
 
   const DefListItem(
-      {Key key,
+      {Key? key,
       this.title,
       this.company,
       this.icon,
@@ -691,7 +777,7 @@ class DefListItem extends StatelessWidget {
       : super(key: key);
 
   Widget verifiedText() {
-    if (isVerified) {
+    if (isVerified!) {
       return Text(
         "Verified",
         style: TextStyle(
@@ -699,7 +785,7 @@ class DefListItem extends StatelessWidget {
           color: Colors.green,
         ),
       );
-    } else if (isDismissed) {
+    } else if (isDismissed!) {
       return Text(
         "Dismissed",
         style: TextStyle(
@@ -727,10 +813,10 @@ class DefListItem extends StatelessWidget {
           leading: icon == null
               ? null
               : CircleAvatar(
-                  foregroundImage: NetworkImage(icon),
+                  foregroundImage: NetworkImage(icon!),
                 ),
-          title: Text(title),
-          subtitle: Text(company),
+          title: Text(title!),
+          subtitle: Text(company!),
         ),
         forText == null
             ? SizedBox()
@@ -738,19 +824,19 @@ class DefListItem extends StatelessWidget {
                 children: [
                   Text("For: "),
                   Text(
-                    forText,
+                    forText!,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
-        importance == null ? SizedBox() : Text(importance),
+        importance == null ? SizedBox() : Text(importance!),
         adminNote == null
             ? SizedBox()
             : Row(
                 children: [
                   Text("Admin Note: "),
                   Text(
-                    adminNote,
+                    adminNote!,
                   ),
                 ],
               ),

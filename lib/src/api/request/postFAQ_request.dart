@@ -1,15 +1,22 @@
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-part 'postFAQ_request.jser.dart';
+part 'postFAQ_request.g.dart';
 
+@JsonSerializable()
 class PostFAQRequest {
-  @Alias("question")
-  String question;
+  @JsonKey(name: "question")
+  String? question;
 
-  @Alias("category")
-  String category;
+  @JsonKey(name: "category")
+  String? category;
+
+  PostFAQRequest({
+    this.category,
+    this.question
+  });
+
+  factory PostFAQRequest.fromJson(Map<String, dynamic> json) =>
+      _$PostFAQRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PostFAQRequestToJson(this);
 }
-
-@GenSerializer()
-class PostFAQRequestSerializer extends Serializer<PostFAQRequest>
-    with _$PostFAQRequestSerializer {}
