@@ -462,7 +462,10 @@ class InstiAppBloc {
 
   void _persistSession(Session? sess) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (sess == null) {prefs.setString("session", ""); return;}
+    if (sess == null) {
+      prefs.setString("session", "");
+      return;
+    }
     prefs.setString("session", json.encode(sess.toJson()));
   }
 

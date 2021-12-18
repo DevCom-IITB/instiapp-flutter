@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:developer';
 
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
@@ -49,7 +50,8 @@ class _NavDrawerState extends State<NavDrawer> {
                 initialData: 0,
                 builder:
                     (BuildContext context, AsyncSnapshot<int> indexSnapshot) {
-                  Map<int, NavListTile> navMap = {
+                  log("Snapshot " + indexSnapshot.data!.toString());
+                  Map<int, Widget> navMap = {
                     0: NavListTile(
                       icon: Icons.dashboard_outlined,
                       title: "Feed",
@@ -58,6 +60,8 @@ class _NavDrawerState extends State<NavDrawer> {
                         var navi = Navigator.of(context);
                         navi.pushReplacementNamed('/feed');
                       },
+                      highlight: indexSnapshot.data == 0,
+                      selected: indexSnapshot.data == 0,
                     ),
                     1: NavListTile(
                       icon: Icons.rss_feed_outlined,
@@ -67,6 +71,8 @@ class _NavDrawerState extends State<NavDrawer> {
                         var navi = Navigator.of(context);
                         navi.pushReplacementNamed('/news');
                       },
+                      highlight: indexSnapshot.data == 1,
+                      selected: indexSnapshot.data == 1,
                     ),
                     2: NavListTile(
                       icon: Icons.search_outlined,
@@ -76,6 +82,8 @@ class _NavDrawerState extends State<NavDrawer> {
                         var navi = Navigator.of(context);
                         navi.pushReplacementNamed('/explore');
                       },
+                      highlight: indexSnapshot.data == 2,
+                      selected: indexSnapshot.data == 2,
                     ),
                     3: NavListTile(
                       icon: Icons.restaurant_outlined,
@@ -85,33 +93,50 @@ class _NavDrawerState extends State<NavDrawer> {
                         var navi = Navigator.of(context);
                         navi.pushReplacementNamed('/mess');
                       },
+                      highlight: indexSnapshot.data == 3,
+                      selected: indexSnapshot.data == 3,
                     ),
-                    4: NavListTile(
-                      icon: Icons.work_outline,
-                      title: "Placement Blog",
-                      onTap: () {
-                        changeSelection(4, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/placeblog');
-                      },
-                    ),
-                    5: NavListTile(
-                      icon: Icons.work_outline,
-                      title: "Internship Blog",
-                      onTap: () {
-                        changeSelection(5, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/trainblog');
-                      },
-                    ),
-                    6: NavListTile(
-                      icon: Icons.work_outline,
-                      title: "External Blog",
-                      onTap: () {
-                        changeSelection(6, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/externalblog');
-                      },
+                    4: NavExpansionTile(
+                      leading: Icons.work_outline,
+                      title: "Blogs",
+                      initiallyExpanded:
+                          indexSnapshot.data! <= 6 && indexSnapshot.data! >= 4,
+                      children: [
+                        NavListTile(
+                          icon: Icons.work_outline,
+                          title: "Placement Blog",
+                          onTap: () {
+                            changeSelection(4, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/placeblog');
+                          },
+                          highlight: indexSnapshot.data == 4,
+                          selected: indexSnapshot.data == 4,
+                        ),
+                        NavListTile(
+                          icon: Icons.work_outline,
+                          title: "Internship Blog",
+                          onTap: () {
+                            changeSelection(5, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/trainblog');
+                          },
+                          highlight: indexSnapshot.data == 5,
+                          selected: indexSnapshot.data == 5,
+                        ),
+                        NavListTile(
+                          // key: Key((indexSnapshot.data == 6).toString()),
+                          icon: Icons.work_outline,
+                          title: "External Blog",
+                          onTap: () {
+                            changeSelection(6, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/externalblog');
+                          },
+                          highlight: indexSnapshot.data == 6,
+                          selected: indexSnapshot.data == 6,
+                        ),
+                      ],
                     ),
                     7: NavListTile(
                       icon: Icons.date_range_outlined,
@@ -121,15 +146,8 @@ class _NavDrawerState extends State<NavDrawer> {
                         var navi = Navigator.of(context);
                         navi.pushReplacementNamed('/calendar');
                       },
-                    ),
-                    8: NavListTile(
-                      icon: Icons.map_outlined,
-                      title: "Map",
-                      onTap: () {
-                        changeSelection(8, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/map');
-                      },
+                      highlight: indexSnapshot.data == 7,
+                      selected: indexSnapshot.data == 7,
                     ),
                     9: NavListTile(
                       icon: Icons.verified_outlined,
@@ -139,33 +157,50 @@ class _NavDrawerState extends State<NavDrawer> {
                         var navi = Navigator.of(context);
                         navi.pushReplacementNamed('/achievements');
                       },
+                      highlight: indexSnapshot.data == 9,
+                      selected: indexSnapshot.data == 9,
                     ),
-                    10: NavListTile(
-                      icon: Icons.feedback_outlined,
-                      title: "Complaints/Suggestions",
-                      onTap: () {
-                        changeSelection(10, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/complaints');
-                      },
-                    ),
-                    11: NavListTile(
-                      icon: Icons.link_outlined,
-                      title: "Quick Links",
-                      onTap: () {
-                        changeSelection(11, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/quicklinks');
-                      },
-                    ),
-                    12: NavListTile(
-                      icon: Icons.settings_outlined,
-                      title: "Settings",
-                      onTap: () {
-                        changeSelection(12, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/settings');
-                      },
+                    8: NavExpansionTile(
+                      title: "Utilities",
+                      initiallyExpanded: indexSnapshot.data == 8 ||
+                          indexSnapshot.data == 11 ||
+                          indexSnapshot.data == 12,
+                      leading: Icons.construction_outlined,
+                      children: [
+                        NavListTile(
+                          icon: Icons.map_outlined,
+                          title: "Map",
+                          onTap: () {
+                            changeSelection(8, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/map');
+                          },
+                          highlight: indexSnapshot.data == 8,
+                          selected: indexSnapshot.data == 8,
+                        ),
+                        NavListTile(
+                          icon: Icons.link_outlined,
+                          title: "Quick Links",
+                          onTap: () {
+                            changeSelection(11, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/quicklinks');
+                          },
+                          highlight: indexSnapshot.data == 11,
+                          selected: indexSnapshot.data == 11,
+                        ),
+                        NavListTile(
+                          icon: Icons.settings_outlined,
+                          title: "Settings",
+                          onTap: () {
+                            changeSelection(12, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/settings');
+                          },
+                          highlight: indexSnapshot.data == 12,
+                          selected: indexSnapshot.data == 12,
+                        ),
+                      ],
                     ),
                     13: NavListTile(
                       icon: Icons.query_stats,
@@ -175,6 +210,8 @@ class _NavDrawerState extends State<NavDrawer> {
                         var navi = Navigator.of(context);
                         navi.pushReplacementNamed('/query');
                       },
+                      highlight: indexSnapshot.data == 13,
+                      selected: indexSnapshot.data == 13,
                     ),
                   };
 
@@ -206,7 +243,8 @@ class _NavDrawerState extends State<NavDrawer> {
                                     : null,
                             child: ListTile(
                               leading: NullableCircleAvatar(
-                                snapshot.data?.profile?.userProfilePictureUrl ?? "",
+                                snapshot.data?.profile?.userProfilePictureUrl ??
+                                    "",
                                 Icons.person_outline_outlined,
                               ),
                               title: Text(
@@ -216,7 +254,9 @@ class _NavDrawerState extends State<NavDrawer> {
                                     ?.copyWith(fontWeight: FontWeight.bold),
                               ),
                               subtitle: snapshot.data != null
-                                  ? Text(snapshot.data?.profile?.userRollNumber ?? "",
+                                  ? Text(
+                                      snapshot.data?.profile?.userRollNumber ??
+                                          "",
                                       style: theme.textTheme.bodyText2)
                                   : ElevatedButton(
                                       child: Text(
@@ -247,7 +287,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                             UnmodifiableListView<
                                                 ntf.Notification>>
                                         snapshot) {
-                                  bool ex=snapshot.data?.isNotEmpty?? false;
+                                  bool ex = snapshot.data?.isNotEmpty ?? false;
                                   return Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Stack(
@@ -261,8 +301,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                             child: IconButton(
                                               tooltip: "Notifications",
                                               icon: Icon(
-                                                (snapshot.hasData  &&
-                                                            ex ) ||
+                                                (snapshot.hasData && ex) ||
                                                         (!snapshot.hasData)
                                                     ? Icons
                                                         .notifications_active_outlined
@@ -284,8 +323,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                             ),
                                           ),
                                         ),
-                                      ]..addAll((snapshot.hasData &&
-                                                  ex) ||
+                                      ]..addAll((snapshot.hasData && ex) ||
                                               (!snapshot.hasData)
                                           ? [
                                               Positioned(
@@ -297,8 +335,9 @@ class _NavDrawerState extends State<NavDrawer> {
                                                             EdgeInsets.all(3.0),
                                                         decoration:
                                                             BoxDecoration(
-                                                          color:
-                                                              theme.colorScheme.secondary,
+                                                          color: theme
+                                                              .colorScheme
+                                                              .secondary,
                                                           shape:
                                                               BoxShape.circle,
                                                         ),
@@ -306,7 +345,13 @@ class _NavDrawerState extends State<NavDrawer> {
                                                           child: Text(
                                                             "${snapshot.data?.length}",
                                                             style: theme
-                                                                .textTheme.overline?.copyWith(color: theme.colorScheme.onSecondary,),
+                                                                .textTheme
+                                                                .overline
+                                                                ?.copyWith(
+                                                              color: theme
+                                                                  .colorScheme
+                                                                  .onSecondary,
+                                                            ),
                                                           ),
                                                         ),
                                                       )
@@ -351,7 +396,7 @@ class _NavDrawerState extends State<NavDrawer> {
 
                   // Selecting which NavListTile to highlight
                   if (indexSnapshot.data! > -1) {
-                    navMap[indexSnapshot.data]?.setHighlighted(true);
+                    // navMap[indexSnapshot.data]?.setHighlighted(true);
                   }
 
                   return ListTileTheme(
@@ -373,25 +418,26 @@ class NavListTile extends StatelessWidget {
   final IconData? icon;
   final String? title;
   final GestureTapCallback? onTap;
-  bool selected;
-  bool highlight;
+  final bool selected;
+  final bool highlight;
   final Widget? trailing;
 
-  void setHighlighted(bool selection) {
-    highlight = selection;
-    selected = selection;
-  }
-
-  NavListTile(
-      {this.icon,
-      this.title,
-      this.onTap,
-      this.selected = false,
-      this.highlight = false,
-      this.trailing});
+  NavListTile({
+    // Key? key,
+    this.icon,
+    this.title,
+    this.onTap,
+    this.selected = false,
+    this.highlight = false,
+    this.trailing,
+  });
 
   @override
   Widget build(BuildContext context) {
+    if (title == "External Blog") {
+      log("External " + highlight.toString());
+    }
+
     var theme = Theme.of(context);
     ListTileThemeData listTileTheme = ListTileTheme.of(context);
     return Container(
@@ -403,6 +449,7 @@ class NavListTile extends StatelessWidget {
                   bottomRight: const Radius.circular(48.0),
                   topRight: const Radius.circular(48.0))),
       child: ListTile(
+        // key: Key(highlight.toString()),
         selected: selected,
         enabled: true,
         leading: Icon(this.icon),
@@ -430,7 +477,94 @@ class NavListTile extends StatelessWidget {
       case Brightness.light:
         return selected ? theme.primaryColor : Colors.black54;
       case Brightness.dark:
-        return selected?null: theme.colorScheme.secondary; // null - use current icon theme color
+        return selected
+            ? null
+            : theme
+                .colorScheme.secondary; // null - use current icon theme color
+    }
+    // return null;
+  }
+}
+
+class NavExpansionTile extends StatefulWidget {
+  final IconData? leading;
+  final String title;
+  final bool initiallyExpanded;
+  final List<NavListTile> children;
+
+  const NavExpansionTile({
+    Key? key,
+    this.leading,
+    required this.title,
+    this.initiallyExpanded = false,
+    this.children = const [],
+  }) : super(key: key);
+
+  @override
+  State<NavExpansionTile> createState() => _NavExpansionTileState();
+}
+
+class _NavExpansionTileState extends State<NavExpansionTile> {
+  bool isOpened = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isOpened = widget.initiallyExpanded;
+    if (widget.children[2].title == "External Blog")
+      log("Expansion" + widget.children[2].highlight.toString());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+    ListTileThemeData listTileTheme = ListTileTheme.of(context);
+    return ListTileTheme(
+      data: listTileTheme.copyWith(dense: true),
+      child: ExpansionTile(
+        key: Key(widget.title + widget.initiallyExpanded.toString()),
+        title: Text(
+          widget.title,
+          style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: _iconAndTextColor(theme, listTileTheme)),
+        ),
+        leading: Icon(widget.leading),
+        initiallyExpanded: widget.initiallyExpanded,
+        children: widget.children,
+        // textColor: _iconAndTextColor(theme, listTileTheme),
+        iconColor: listTileTheme.iconColor,
+        collapsedIconColor: listTileTheme.iconColor,
+        onExpansionChanged: (val) {
+          setState(() {
+            isOpened = val;
+          });
+        },
+        // maintainState: true,
+      ),
+    );
+  }
+
+  Color? _iconAndTextColor(ThemeData theme, ListTileThemeData tileTheme) {
+    if (isOpened && tileTheme.selectedColor != null) {
+      // log("Hi");
+      return tileTheme.selectedColor!;
+    }
+
+    if (!isOpened && tileTheme.iconColor != null) {
+      // log("Hi2");
+      return tileTheme.iconColor!;
+    }
+    // assert(theme.brightness != null);
+    print(theme.brightness);
+    switch (theme.brightness) {
+      case Brightness.light:
+        return isOpened ? theme.primaryColor : Colors.black54;
+      case Brightness.dark:
+        return isOpened
+            ? null
+            : theme
+                .colorScheme.secondary; // null - use current icon theme color
     }
     // return null;
   }
