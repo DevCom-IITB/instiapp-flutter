@@ -19,9 +19,11 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:flutter/foundation.dart';
-TextSpan highlight(String result,String query){
+TextSpan highlight(String result,String query,BuildContext context){
+  var bloc = BlocProvider.of(context)!.bloc;
+  var theme = Theme.of(context);
   TextStyle posRes = TextStyle(color: Colors.white,backgroundColor: Colors.red);
-  TextStyle negRes = TextStyle(color: Colors.black,backgroundColor: Colors.white);
+  TextStyle? negRes = theme.textTheme.subtitle1;// TextStyle(backgroundColor: bloc.bloc.brightness.toColor().withOpacity(1.0),);
   if(result=="" || query=="") return TextSpan(text:result,style:negRes);
   result.replaceAll('\n'," ").replaceAll("  ", "");
 
@@ -31,7 +33,7 @@ TextSpan highlight(String result,String query){
   if(refinedMatch.contains(refinedsearch)){
     if(refinedMatch.substring(0,refinedsearch.length)==refinedsearch){
       return TextSpan(style:posRes,text:result.substring(0,refinedsearch.length),children:[
-        highlight(result.substring(refinedsearch.length),query),
+        highlight(result.substring(refinedsearch.length),query,context),
       ]);
     }
     else if(refinedsearch.length==refinedMatch.length){
@@ -39,7 +41,7 @@ TextSpan highlight(String result,String query){
     }
     else{
       return TextSpan(style:negRes,text:result.substring(0,refinedMatch.indexOf(refinedsearch)),
-          children:[highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query)]);
+          children:[highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query,context)]);
     }
   }
   else if(!refinedMatch.contains(refinedsearch)){
@@ -50,7 +52,7 @@ TextSpan highlight(String result,String query){
     text: result.substring(0, refinedMatch.indexOf(refinedsearch)),
     style: negRes,
     children: [
-      highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query)
+      highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query,context)
     ],
   );
 
@@ -311,7 +313,7 @@ class _BlogPageState extends State<BlogPage> {
                           RichText(
                           textScaleFactor:1.55,
                          // textHeightBehavior: ,
-                          text: highlight(post.title,bloc.query),
+                          text: highlight(post.title,bloc.query,context),
                             textAlign: TextAlign.start,
                               strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
                                        .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
@@ -383,10 +385,13 @@ class _BlogPageState extends State<BlogPage> {
                 left: 12.0,
                 right: 12.0,
               ),
-              child: CommonHtml(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                                child: CommonHtml(
                 data: post.content,
                 defaultTextStyle: theme.textTheme.subtitle1 ?? TextStyle(), query: bloc.query,
               ),
+            )
             ),
             widget.postType == PostType.External
                 ? Padding(
