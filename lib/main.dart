@@ -402,6 +402,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       "newsentry": "/news",
       "complaintcomment":
           "/complaint/${fromMap.notificationExtra ?? ""}?reload=true",
+      "unresolvedquery": "/query",
     }[fromMap.notificationType];
 
     _navigatorKey.currentState?.pushNamed(routeName ?? '/');
