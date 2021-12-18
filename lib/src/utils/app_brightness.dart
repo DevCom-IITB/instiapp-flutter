@@ -39,6 +39,6 @@ class AppBrightness {
   }
 
   Color toColor() {
-    return brightnessToCanvasColor[this];
+    return brightnessToCanvasColor[this]!;
   }
 }

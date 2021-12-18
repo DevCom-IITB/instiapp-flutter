@@ -23,11 +23,11 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
   bool firstBuild = true;
 
   bool loadingSubs = false;
-  Complaint loadingComplaint;
+  Complaint? loadingComplaint;
 
   @override
   Widget build(BuildContext context) {
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     var theme = Theme.of(context);
     var complaintsBloc = bloc.complaintsBloc;
 
@@ -55,7 +55,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                   semanticLabel: "Show bottom sheet",
                 ),
                 onPressed: () {
-                  _scaffoldKey.currentState.openDrawer();
+                  _scaffoldKey.currentState?.openDrawer();
                 },
               ),
             ],
@@ -77,7 +77,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                 StreamBuilder(
                   stream: bloc.session,
                   builder:
-                      (BuildContext context, AsyncSnapshot<Session> snapshot) {
+                      (BuildContext context, AsyncSnapshot<Session?> snapshot) {
                     return (snapshot.hasData && snapshot.data != null)
                         ? SliverPersistentHeader(
                             floating: true,
@@ -115,7 +115,8 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
             },
             body: StreamBuilder(
               stream: bloc.session,
-              builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
+              builder:
+                  (BuildContext context, AsyncSnapshot<Session?> snapshot) {
                 return (snapshot.hasData && snapshot.data != null)
                     ? TabBarView(
                         // These are the contents of the tab views, below the tabs.
@@ -123,7 +124,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                           return RefreshIndicator(
                             onRefresh: () => name == "Home"
                                 ? complaintsBloc.refreshAllComplaints(
-                                    force: true) 
+                                    force: true)
                                 : complaintsBloc.updateMyComplaints(),
                             child: SafeArea(
                               top: false,
@@ -153,13 +154,15 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                           },
                                           childCount: (snapshot.data == null
                                                   ? 0
-                                                  : ((snapshot.data
+                                                  : ((snapshot.data!
                                                               .isNotEmpty &&
-                                                          snapshot.data.last
+                                                          snapshot.data!.last
                                                                   .complaintID ==
                                                               null)
-                                                      ? snapshot.data.length - 1
-                                                      : snapshot.data.length)) +
+                                                      ? snapshot.data!.length -
+                                                          1
+                                                      : snapshot
+                                                          .data!.length)) +
                                               1,
                                         ));
                                       },
@@ -172,7 +175,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                                       Complaint>>
                                               snapshot) {
                                         return snapshot.hasData &&
-                                                snapshot.data.isEmpty
+                                                snapshot.data!.isEmpty
                                             ? SliverToBoxAdapter(
                                                 child: Center(
                                                   child: Padding(
@@ -182,7 +185,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                                     child: Text("No complaints",
                                                         style: theme
                                                             .textTheme.headline6
-                                                            .copyWith(
+                                                            ?.copyWith(
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold)),
@@ -198,7 +201,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                                       ? _buildComplaint(
                                                           bloc,
                                                           theme,
-                                                          snapshot.data[index])
+                                                          snapshot.data![index])
                                                       : Center(
                                                           child: Padding(
                                                             padding:
@@ -213,7 +216,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                                         );
                                                 },
                                                 childCount: snapshot.hasData
-                                                    ? snapshot.data.length
+                                                    ? snapshot.data!.length
                                                     : 1,
                                               ));
                                       },
@@ -249,7 +252,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
         ),
         floatingActionButton: StreamBuilder(
           stream: bloc.session,
-          builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
+          builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
             return snapshot.hasData && snapshot.data != null
                 ? FloatingActionButton.extended(
                     label: Text("New Complaint"),
@@ -270,10 +273,10 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
   }
 
   Widget _buildInfiniteScrollComplaint(ComplaintsBloc bloc, int index,
-      List<Complaint> complaints, ThemeData theme) {
+      List<Complaint>? complaints, ThemeData theme) {
     bloc.inComplaintIndex.add(index);
 
-    final Complaint complaint =
+    final Complaint? complaint =
         (complaints != null && complaints.length > index)
             ? complaints[index]
             : null;
@@ -318,7 +321,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Hero(
-                  tag: complaint.complaintID,
+                  tag: complaint.complaintID ?? "",
                   child: Material(
                     type: MaterialType.transparency,
                     child: Row(
@@ -329,14 +332,14 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(complaint.complaintCreatedBy.userName,
+                              Text(complaint.complaintCreatedBy?.userName ?? "",
                                   style: theme.textTheme.headline6
-                                      .copyWith(fontWeight: FontWeight.bold)),
+                                      ?.copyWith(fontWeight: FontWeight.bold)),
                               Text(
                                 DateTimeUtil.getDate(
-                                    complaint.complaintReportDate),
+                                    complaint.complaintReportDate ?? ""),
                                 style: theme.textTheme.caption
-                                    .copyWith(fontSize: 14),
+                                    ?.copyWith(fontSize: 14),
                               ),
                             ],
                           ),
@@ -346,9 +349,9 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                             IconButton(
                               icon: (loadingSubs &&
                                       complaint.complaintID ==
-                                          loadingComplaint.complaintID)
+                                          loadingComplaint?.complaintID)
                                   ? CircularProgressIndicatorExtended()
-                                  : Icon((complaint.isSubscribed
+                                  : Icon(((complaint.isSubscribed ?? false)
                                       ? Icons.notifications_active_outlined
                                       : Icons.notifications_off_outlined)),
                               onPressed: () async {
@@ -356,8 +359,8 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                   loadingSubs = true;
                                   loadingComplaint = complaint;
                                 });
-                                await bloc.complaintsBloc.updateSubs(
-                                    complaint, complaint.isSubscribed ? 0 : 1);
+                                await bloc.complaintsBloc.updateSubs(complaint,
+                                    (complaint.isSubscribed ?? false) ? 0 : 1);
                                 setState(() {
                                   loadingSubs = false;
                                   loadingComplaint = null;
@@ -366,16 +369,16 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                   ..hideCurrentSnackBar()
                                   ..showSnackBar(SnackBar(
                                       content: Text(
-                                          "You are now ${complaint.isSubscribed ? "" : "un"}subscribed to this complaint")));
+                                          "You are now ${(complaint.isSubscribed ?? false) ? "" : "un"}subscribed to this complaint")));
                               },
                             ),
                             OutlinedButton(
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide(
-                                    color: complaint.status.toLowerCase() ==
+                                    color: complaint.status?.toLowerCase() ==
                                             "Reported".toLowerCase()
                                         ? Colors.red
-                                        : complaint.status.toLowerCase() ==
+                                        : complaint.status?.toLowerCase() ==
                                                 "In Progress".toLowerCase()
                                             ? Colors.yellow
                                             : Colors.green),
@@ -386,12 +389,12 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    capitalize(complaint.status),
+                                    capitalize(complaint.status ?? ""),
                                     style: theme.textTheme.subtitle1,
                                   ),
                                 ]..insertAll(
                                     0,
-                                    complaint.tags.isNotEmpty
+                                    (complaint.tags?.isNotEmpty ?? false)
                                         ? [
                                             Container(
                                               color: theme.accentColor,
@@ -413,8 +416,8 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                   ),
                 ),
                 Text(
-                  complaint.locationDescription,
-                  style: theme.textTheme.caption.copyWith(fontSize: 14),
+                  complaint.locationDescription ?? "",
+                  style: theme.textTheme.caption?.copyWith(fontSize: 14),
                 ),
                 SizedBox(
                   height: 16,
@@ -424,8 +427,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    complaint.suggestions.isNotEmpty ||
-                            complaint.suggestions.isNotEmpty
+                    (complaint.suggestions?.isNotEmpty ?? false)
                         ? Text(
                             "Description: ",
                             style: theme.textTheme.subtitle1,
@@ -434,12 +436,12 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: Text(
-                        complaint.description,
+                        complaint.description ?? "",
                         style: theme.textTheme.subtitle1,
                       ),
                     ),
                   ]
-                    ..addAll(complaint.suggestions.isNotEmpty
+                    ..addAll((complaint.suggestions?.isNotEmpty ?? false)
                         ? [
                             Text(
                               "Suggestions: ",
@@ -448,13 +450,13 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 16.0),
                               child: Text(
-                                complaint.suggestions,
+                                complaint.suggestions ?? "",
                                 style: theme.textTheme.subtitle1,
                               ),
                             ),
                           ]
                         : [])
-                    ..addAll(complaint.locationDetails.isNotEmpty
+                    ..addAll((complaint.locationDetails?.isNotEmpty ?? false)
                         ? [
                             Text(
                               "Location Details: ",
@@ -463,7 +465,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 16.0),
                               child: Text(
-                                complaint.locationDetails,
+                                complaint.locationDetails ?? "",
                                 style: theme.textTheme.subtitle1,
                               ),
                             ),
@@ -487,7 +489,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                             width: 8,
                           ),
                           Text(
-                              "${complaint.comments.isEmpty ? "No" : complaint.comments.length} comment${complaint.comments.length == 1 ? "" : "s"}",
+                              "${(complaint.comments?.isEmpty ?? false) ? "No" : complaint.comments?.length} comment${complaint.comments?.length == 1 ? "" : "s"}",
                               style: theme.textTheme.caption),
                         ],
                       ),
@@ -502,7 +504,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
                             width: 8,
                           ),
                           Text(
-                              "${complaint.usersUpVoted.isEmpty ? "No" : complaint.usersUpVoted.length} upvote${complaint.usersUpVoted.length == 1 ? "" : "s"}",
+                              "${(complaint.usersUpVoted?.isEmpty ?? false) ? "No" : complaint.usersUpVoted?.length} upvote${complaint.usersUpVoted?.length == 1 ? "" : "s"}",
                               style: theme.textTheme.caption),
                         ],
                       ),

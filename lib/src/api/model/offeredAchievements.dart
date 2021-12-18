@@ -1,37 +1,51 @@
 import 'package:InstiApp/src/api/model/user.dart';
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-part 'offeredAchievements.jser.dart';
+part 'offeredAchievements.g.dart';
 
+@JsonSerializable()
 class OfferedAchievements {
-  @Alias("id")
-  String achievementID;
+  @JsonKey(name: "id")
+  String? achievementID;
 
-  @Alias("title")
-  String title;
+  @JsonKey(name: "title")
+  String? title;
 
-  @Alias("description")
-  String desc;
+  @JsonKey(name: "description")
+  String? desc;
 
-  @Alias("body")
-  String body;
+  @JsonKey(name: "body")
+  String? body;
 
-  @Alias("event")
-  String event;
+  @JsonKey(name: "event")
+  String? event;
 
-  @Alias("priority")
-  int priority;
+  @JsonKey(name: "priority")
+  int? priority;
 
-  @Alias("secret")
-  String secret;
+  @JsonKey(name: "secret")
+  String? secret;
 
-  @Alias("users")
-  List<User> users;
+  @JsonKey(name: "users")
+  List<User>? users;
 
-  @Alias("stat")
-  int stat;
+  @JsonKey(name: "stat")
+  int? stat;
+
+  OfferedAchievements(
+      {this.achievementID,
+      this.title,
+      this.desc,
+      this.body,
+      this.event,
+      this.priority,
+      this.secret,
+      this.stat,
+      this.users
+      });
+  
+  factory OfferedAchievements.fromJson(Map<String, dynamic> json) =>
+      _$OfferedAchievementsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$OfferedAchievementsToJson(this);
 }
-
-@GenSerializer()
-class OfferedAchievementsSerializer extends Serializer<OfferedAchievements>
-    with _$OfferedAchievementsSerializer {}

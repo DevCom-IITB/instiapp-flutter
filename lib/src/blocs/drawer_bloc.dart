@@ -6,7 +6,7 @@ class DrawerBloc {
   final _pageIndexSubject = BehaviorSubject<int>();
 
   String currentRoute;
-  int _highlightPageIndex;
+  late int _highlightPageIndex;
 
   bool reloadNotifications = true;
 
