@@ -173,7 +173,7 @@ class _NavDrawerState extends State<NavDrawer> {
                           onTap: () {
                             changeSelection(8, drawerState!);
                             var navi = Navigator.of(context);
-                            navi.pushReplacementNamed('/map');
+                            navi.pushNamed('/map');
                           },
                           highlight: indexSnapshot.data == 8,
                           selected: indexSnapshot.data == 8,
