@@ -280,6 +280,7 @@ class _BlogPageState extends State<BlogPage> {
   }
 
   Widget _post(dynamic post, PostBloc bloc) {
+    double width = MediaQuery.of(context).size.width;
     var theme = Theme.of(context);
     //print(post.title);
     return Card(
@@ -387,11 +388,14 @@ class _BlogPageState extends State<BlogPage> {
               ),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                                child: CommonHtml(
-                data: post.content,
-                defaultTextStyle: theme.textTheme.subtitle1 ?? TextStyle(), query: bloc.query,
-              ),
-            )
+                child: Container(
+                  constraints: BoxConstraints(minWidth: 0.9*width, maxWidth: width*1.5),
+                  child: CommonHtml(
+                    data: post.content,
+                    defaultTextStyle: theme.textTheme.subtitle1 ?? TextStyle(), query: bloc.query,
+                  ),
+                ),
+              )
             ),
             widget.postType == PostType.External
                 ? Padding(
