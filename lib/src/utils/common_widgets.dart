@@ -257,9 +257,10 @@ class CommonHtml extends StatelessWidget {
   Widget build(BuildContext context1) {
     var theme = Theme.of(context1);
     var bloc = BlocProvider.of(context1)!.bloc;
-    print(data);
+    // print(data);
     return data != null
         ? Html(
+            shrinkWrap: true,
             data: data,
             onLinkTap: (link,_,__,____) async {
               //print(link);
@@ -296,11 +297,11 @@ class CommonHtml extends StatelessWidget {
                 );
               },
               "p":(context, child) {
-                String text =context.tree.element?.innerHtml??"";
+                // String text =context.tree.element?.innerHtml??"";
                 var nodes=context.tree.element?.children;
                 var nodes1=context.tree.element?.nodes;
-                print(nodes1);
-                print(nodes);
+                // print(nodes1);
+                // print(nodes);
                 List<Widget> w=[];int j=0;
 
                 // for(int i=0;i<(nodes1?.length??0);i++ ){
@@ -308,10 +309,11 @@ class CommonHtml extends StatelessWidget {
                 // }
 
                 for(int i=0;i<(nodes1?.length??0);i++ ){
-                  if(j>=(nodes?.length??0)) j=(nodes?.length??0)-1;
-                    nodes?.length==0?print(""):print(nodes![j].localName)   ;
-                  print(nodes1![i].runtimeType);
-                  String type= nodes1[i].runtimeType.toString();
+                  if(j>=(nodes?.length??0)) 
+                    j=(nodes?.length??0)-1;
+                  // nodes?.length==0?print(""):print(nodes![j].localName);
+                  // print(nodes1![i].runtimeType);
+                  String type= nodes1![i].runtimeType.toString();
                   if(type=="Text"){
                     w.add(RichText(
                       textScaleFactor:1,
@@ -334,7 +336,7 @@ class CommonHtml extends StatelessWidget {
                               }
                             },
                             child: Text(
-                              innerHtml??"",
+                              innerHtml,
                               style: TextStyle(
                                   color: Colors.lightBlue,
                                   decoration: TextDecoration.underline),
@@ -346,17 +348,17 @@ class CommonHtml extends StatelessWidget {
                           )
                       );
                     }
-                    else if(nodes![j].localName=="strong"){
+                    else if(nodes[j].localName=="strong"){
                       w.add(RichText(
                         textScaleFactor:1,
-                        text: highlight(refineText(nodes[j].text!),query?? '',context1,isStrong:true),
+                        text: highlight(refineText(nodes[j].text),query?? '',context1,isStrong:true),
                           // strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
                           //     .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
                       )
                       );
                     }
 
-                    else if(nodes![j].localName=="br"){
+                    else if(nodes[j].localName=="br"){
                       w.add(RichText(
                         textScaleFactor:1,
                         text: highlight(" \n",query?? '',context1),
@@ -378,18 +380,24 @@ class CommonHtml extends StatelessWidget {
               },
               "td":(context, child) {
                 String text =context.tree.element?.innerHtml??"";
-                text="    "+text+"   ";
-                return RichText(
-                  textScaleFactor:1,
-                  text: highlight(refineText(text),query?? '',context1),
+                // text="    "+text+"   ";
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: RichText(
+                    textScaleFactor:1,
+                    text: highlight(refineText(text),query?? '',context1),
+                  ),
                 );
               },
               "th":(context, child) {
                 String text =context.tree.element?.innerHtml??"";
-                text="    "+text+"   ";
-                return RichText(
-                  textScaleFactor:1,
-                  text: highlight(refineText(text),query?? '',context1),
+                // text="    "+text+"   ";
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: RichText(
+                    textScaleFactor:1,
+                    text: highlight(refineText(text),query?? '',context1),
+                  ),
                 );
               },
               "table":(context,child){
@@ -415,8 +423,8 @@ class CommonHtml extends StatelessWidget {
   TextSpan highlight(String result,String query,BuildContext context, {bool isStrong= false}){
     var bloc = BlocProvider.of(context)!.bloc;
     var theme = Theme.of(context);
-    TextStyle posRes = TextStyle(color: Colors.white,backgroundColor: Colors.red);
-    TextStyle? negRes = isStrong?theme.textTheme.headline6:theme.textTheme.subtitle2;// TextStyle(backgroundColor: bloc.bloc.brightness.toColor().withOpacity(1.0),);
+    TextStyle posRes = TextStyle(color: Colors.white, backgroundColor: bloc.accentColor);
+    TextStyle? negRes = isStrong?theme.textTheme.subtitle2?.copyWith(fontWeight: FontWeight.w700, fontSize: 13):theme.textTheme.subtitle2?.copyWith(fontSize: 13);// TextStyle(backgroundColor: bloc.bloc.brightness.toColor().withOpacity(1.0),);
     if(result=="" || query=="") return TextSpan(text:result,style:negRes);
     result.replaceAll('\n'," ").replaceAll("  ", "");
 
