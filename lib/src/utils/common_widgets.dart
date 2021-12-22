@@ -243,7 +243,8 @@ String refineText(String text){
   text=text.replaceAll("<br>", "\n");
   text=text.replaceAll("<strong>", " ");
   text=text.replaceAll("</strong>", " ");
-  text=text.replaceAll("&nbsp;", "       ");
+  text=text.replaceAll("&nbsp;", "  ");
+  text=text.replaceAll("&amp;", "&");
   return text;
 }
 class CommonHtml extends StatelessWidget {
@@ -315,9 +316,8 @@ class CommonHtml extends StatelessWidget {
                   // print(nodes1![i].runtimeType);
                   String type= nodes1![i].runtimeType.toString();
                   if(type=="Text"){
-                    w.add(RichText(
-                      textScaleFactor:1,
-                      text: highlight(refineText(nodes1[i].text!),query?? '',context1),
+                    w.add(SelectableText.rich(
+                      highlight(refineText(nodes1[i].text!),query?? '',context1),
                       //strutStyle: StrutStyle.fromTextStyle(theme.textTheme.subtitle1!.copyWith(color: Colors.lightBlue)),
                     )
                     );
@@ -349,9 +349,8 @@ class CommonHtml extends StatelessWidget {
                       );
                     }
                     else if(nodes[j].localName=="strong"){
-                      w.add(RichText(
-                        textScaleFactor:1,
-                        text: highlight(refineText(nodes[j].text),query?? '',context1,isStrong:true),
+                      w.add(SelectableText.rich(
+                        highlight(refineText(nodes[j].text),query?? '',context1,isStrong:true),
                           // strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
                           //     .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
                       )
@@ -359,9 +358,8 @@ class CommonHtml extends StatelessWidget {
                     }
 
                     else if(nodes[j].localName=="br"){
-                      w.add(RichText(
-                        textScaleFactor:1,
-                        text: highlight(" \n",query?? '',context1),
+                      w.add(SelectableText.rich(
+                        highlight(" \n",query?? '',context1),
                         // strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
                         //     .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
                       )
@@ -370,8 +368,12 @@ class CommonHtml extends StatelessWidget {
                     j++;
                   }
                 }
-                return Wrap(
-                  children: w,
+                return Container(
+                  padding: const EdgeInsets.all(4.0),
+                  alignment: Alignment.centerLeft,
+                  child: Wrap(
+                    children: w,
+                  ),
                 );
                 // return RichText(
                 //       textScaleFactor:1,
@@ -382,7 +384,7 @@ class CommonHtml extends StatelessWidget {
                 String text =context.tree.element?.innerHtml??"";
                 // text="    "+text+"   ";
                 return Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(4.0),
                   child: RichText(
                     textScaleFactor:1,
                     text: highlight(refineText(text),query?? '',context1),
@@ -393,14 +395,16 @@ class CommonHtml extends StatelessWidget {
                 String text =context.tree.element?.innerHtml??"";
                 // text="    "+text+"   ";
                 return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: RichText(
-                    textScaleFactor:1,
-                    text: highlight(refineText(text),query?? '',context1),
+                  padding: const EdgeInsets.all(4.0),
+                  child: SelectableText.rich(
+                    highlight(refineText(text),query?? '',context1),
                   ),
                 );
               },
               "table":(context,child){
+
+              },
+              "thread":(context,child){
 
               }
               // "td":(context,child){
@@ -423,10 +427,11 @@ class CommonHtml extends StatelessWidget {
   TextSpan highlight(String result,String query,BuildContext context, {bool isStrong= false}){
     var bloc = BlocProvider.of(context)!.bloc;
     var theme = Theme.of(context);
+    // print(result);
     TextStyle posRes = TextStyle(color: Colors.white, backgroundColor: bloc.accentColor);
     TextStyle? negRes = isStrong?theme.textTheme.subtitle2?.copyWith(fontWeight: FontWeight.w700, fontSize: 13):theme.textTheme.subtitle2?.copyWith(fontSize: 13);// TextStyle(backgroundColor: bloc.bloc.brightness.toColor().withOpacity(1.0),);
     if(result=="" || query=="") return TextSpan(text:result,style:negRes);
-    result.replaceAll('\n'," ").replaceAll("  ", "");
+    result.replaceAll('\n'," ").replaceAll(" ", "");
 
     var refinedMatch=result.toLowerCase();
     var refinedsearch=query.toLowerCase();
