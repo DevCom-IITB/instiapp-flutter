@@ -257,7 +257,7 @@ class CommonHtml extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return data != null
-        ? Html(
+        ? SelectableHtml(
             data: data,
             onLinkTap: (link, _, __, ___) async {
               if (await canLaunch(link!)) {
@@ -266,28 +266,6 @@ class CommonHtml extends StatelessWidget {
                 throw "Couldn't launch $link";
               }
             },
-            customRender: {
-              "img": (context, child) {
-                var attributes=context.tree.element!.attributes;
-                return Text(attributes['src'] ?? attributes['href'] ?? "<img>");
-              },
-              "a": (context, child) {
-                var attributes=context.tree.element!.attributes;
-                var innerHtml= context.tree.element?.innerHtml;
-                return InkWell(
-                  onTap: () async {
-                    if (await canLaunch(attributes['href']!)) {
-                      await launch(attributes['href']!);
-                    }
-                  },
-                  child: Text(
-                    innerHtml??"",
-                    style: TextStyle(
-                        color: Colors.lightBlue,
-                        decoration: TextDecoration.underline),
-                  ),
-                );}
-              },
           )
         : CircularProgressIndicatorExtended(
             label: Text("Loading content"),
@@ -433,9 +411,8 @@ class CommonHtmlBlog extends StatelessWidget {
                 // text="    "+text+"   ";
                 return Padding(
                   padding: const EdgeInsets.all(4.0),
-                  child: RichText(
-                    textScaleFactor:1,
-                    text: highlight(refineText(text),query?? '',context1),
+                  child: SelectableText.rich(
+                    highlight(refineText(text),query?? '',context1),
                   ),
                 );
               },
