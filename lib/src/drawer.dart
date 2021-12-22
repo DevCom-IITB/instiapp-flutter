@@ -138,17 +138,6 @@ class _NavDrawerState extends State<NavDrawer> {
                         ),
                       ],
                     ),
-                    7: NavListTile(
-                      icon: Icons.date_range_outlined,
-                      title: "Calendar",
-                      onTap: () {
-                        changeSelection(7, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/calendar');
-                      },
-                      highlight: indexSnapshot.data == 7,
-                      selected: indexSnapshot.data == 7,
-                    ),
                     9: NavListTile(
                       icon: Icons.verified_outlined,
                       title: "Achievements",
@@ -164,9 +153,20 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "Utilities",
                       initiallyExpanded: indexSnapshot.data == 8 ||
                           indexSnapshot.data == 11 ||
-                          indexSnapshot.data == 12,
+                          indexSnapshot.data == 12 || indexSnapshot.data == 7,
                       leading: Icons.construction_outlined,
                       children: [
+                        NavListTile(
+                          icon: Icons.date_range_outlined,
+                          title: "Calendar",
+                          onTap: () {
+                            changeSelection(7, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/calendar');
+                          },
+                          highlight: indexSnapshot.data == 7,
+                          selected: indexSnapshot.data == 7,
+                        ),
                         NavListTile(
                           icon: Icons.map_outlined,
                           title: "Map",
