@@ -65,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
         ((_bloc!.brightness.toBrightness() == Brightness.dark)
             ? "login_dark.html"
             : "login.html");
-    print("Formed URL: $loginurl");
+    // print("Formed URL: $loginurl");
 
     checkLogin().then((Session? sess) {
       // If session already exists, continue to homepage with current session
@@ -80,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
 
       // No stored session found
       startLoginPageServer().then((_) async {
-        print("startLoginPageServer.then: Launching Web View");
+        // print("startLoginPageServer.then: Launching Web View");
         await Future.delayed(Duration(milliseconds: 200));
         // var mqdata = MediaQuery.of(context);
         setState((){loading = false;});
@@ -273,7 +273,7 @@ class _LoginPageState extends State<LoginPage> {
 
       this.onUrlChangedSub?.cancel();
       // this.onStateChangedSub?.cancel();
-      print("login: Closing Web View");
+      // print("login: Closing Web View");
       // flutterWebviewPlugin.close();
     } else {
       setState(() {
@@ -282,9 +282,9 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Authentication Failed"),
       ));
-      print("login: Showing Web View");
+      // print("login: Showing Web View");
       // flutterWebviewPlugin.show();
-      print("login: Launching Web View");
+      // print("login: Launching Web View");
       // flutterWebviewPlugin.launch(loginurl ?? "");
     }
   }

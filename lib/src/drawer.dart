@@ -472,7 +472,7 @@ class NavListTile extends StatelessWidget {
 
     if (!selected && tileTheme.iconColor != null) return tileTheme.iconColor!;
     // assert(theme.brightness != null);
-    print(theme.brightness);
+    // print(theme.brightness);
     switch (theme.brightness) {
       case Brightness.light:
         return selected ? theme.primaryColor : Colors.black54;
@@ -556,7 +556,7 @@ class _NavExpansionTileState extends State<NavExpansionTile> {
       return tileTheme.iconColor!;
     }
     // assert(theme.brightness != null);
-    print(theme.brightness);
+    // print(theme.brightness);
     switch (theme.brightness) {
       case Brightness.light:
         return isOpened ? theme.primaryColor : Colors.black54;

@@ -26,7 +26,7 @@ class VerifyBloc extends Object {
   }
 
   Future<void> dismissAchievement(bool verify, Achievement achievement) async {
-    print("Entered dismiss achievement");
+    // print("Entered dismiss achievement");
     var req = AchVerifyRequest();
     req.adminNote = achievement.adminNote;
     req.body = achievement.body;

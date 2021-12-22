@@ -76,7 +76,7 @@ class _PutEntityPageState extends State<PutEntityPage> {
       },
       initialUrl: url,
       onPageStarted: (url) async{
-        print("Changed URL: $url");
+        // print("Changed URL: $url");
         if (url.contains("/event/")) {
           var uri = url.substring(url.lastIndexOf("/") + 1);
 

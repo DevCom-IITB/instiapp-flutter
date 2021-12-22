@@ -33,7 +33,7 @@ class _CalendarPageState extends State<CalendarPage> {
     var bloc = BlocProvider.of(context)!.bloc;
     var calBloc = bloc.calendarBloc;
 
-    print("Width: ${MediaQuery.of(context).size.width}");
+    // print("Width: ${MediaQuery.of(context).size.width}");
 
     _eventIcon = Material(
       type: MaterialType.transparency,
@@ -119,8 +119,8 @@ class _CalendarPageState extends State<CalendarPage> {
                             this.setState(() => _currentDate = date);
                           },
                           onCalendarChanged: (date) {
-                            print(
-                                "Fetching events around ${date.month}/${date.year}");
+                            // print(
+                            //     "Fetching events around ${date.month}/${date.year}");
                             calBloc.fetchEvents(
                                 DateTime(date.year, date.month, 1),
                                 _eventIcon!);

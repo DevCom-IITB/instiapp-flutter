@@ -259,7 +259,7 @@ class _AchListItemState extends State<AchListItem> {
 
   @override
   void initState() {
-    print(widget.company);
+    // print(widget.company);
     isSwitchOn = widget.isHidden;
     super.initState();
   }

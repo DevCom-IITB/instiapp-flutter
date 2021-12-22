@@ -26,7 +26,7 @@ class _VerifyAchPageState extends State<VerifyAchPage> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
     var verifyBloc = bloc.bodyAchBloc;
-    print("Body id:" + (widget.bodyId ?? ""));
+    // print("Body id:" + (widget.bodyId ?? ""));
 
     if (bloc.currSession == null) {
       Navigator.pop(context);
@@ -93,16 +93,16 @@ class _VerifyAchPageState extends State<VerifyAchPage> {
                           snapshot) {
                     if (snapshot.hasData) {
                       if (snapshot.data!.length > 0) {
-                        print(snapshot.data);
+                        // print(snapshot.data);
                         return SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
-                              print(index);
+                              // print(index);
                               var data = snapshot.data![index];
-                              print("Data " +
-                                  index.toString() +
-                                  ": " +
-                                  data.title.toString());
+                              // print("Data " +
+                              //     index.toString() +
+                              //     ": " +
+                              //     data.title.toString());
                               return VerifyListItem(
                                 achievement: data,
                               );
