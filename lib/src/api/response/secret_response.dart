@@ -1,9 +1,10 @@
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'secret_response.g.dart';
 
+@JsonSerializable()
 class SecretResponse {
-  String message;
+  String? message;
 
   SecretResponse({
     this.message,
@@ -13,8 +14,3 @@ class SecretResponse {
 
   Map<String, dynamic> toJson() => _$SecretResponseToJson(this);
 }
-
-@GenSerializer()
-class SecretResponseSerializer
-    extends Serializer<SecretResponse>
-    with _$SecretResponseSerializer {}

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:convert';
 
-import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:rxdart/rxdart.dart';
@@ -20,7 +20,7 @@ class MapBloc {
   final _locationsSubject = BehaviorSubject<UnmodifiableListView<Venue>>();
 
   // State
-  List<Venue> _locations;
+  List<Venue> _locations = <Venue>[];
 
   MapBloc(this.bloc);
 
@@ -29,20 +29,22 @@ class MapBloc {
     _locationsSubject.add(UnmodifiableListView(_locations));
   }
 
-  Future saveToCache({SharedPreferences sharedPrefs}) async {
+  Future saveToCache({SharedPreferences? sharedPrefs}) async {
     var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
-    if (_locations?.isNotEmpty ?? false) {
+    if (_locations.isNotEmpty) {
       prefs.setString(
-          locationsStorageID, standardSerializers.encode(_locations));
+          locationsStorageID, json.encode(_locations.map((e)=> e.toJson()).toList()));
     }
   }
 
-  Future restoreFromCache({SharedPreferences sharedPrefs}) async {
+  Future restoreFromCache({SharedPreferences? sharedPrefs}) async {
     var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
     if (prefs.getKeys().contains(locationsStorageID)) {
-      _locations = standardSerializers
-          .decodeList<Venue>(prefs.getString(locationsStorageID));
+      var x = prefs.getString(locationsStorageID);
+      if(x != null){
+        _locations = json.decode(x).map((e)=>Venue.fromJson(e)).toList().cast<Venue>();
       _locationsSubject.add(UnmodifiableListView(_locations));
+      }
     }
   }
 }

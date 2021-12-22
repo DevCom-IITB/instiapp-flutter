@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+// import 'package:flutter/widgets.dart';
 
 // Examples can assume:
 // void setState(VoidCallback fn) { }
@@ -73,9 +73,9 @@ class MySwitchListTile extends StatelessWidget {
   /// * [value] determines whether this switch is on or off.
   /// * [onChanged] is called when the user toggles the switch on or off.
   const MySwitchListTile({
-    Key key,
-    @required this.value,
-    @required this.onChanged,
+    Key? key,
+    required this.value,
+    this.onChanged,
     this.activeColor,
     this.activeTrackColor,
     this.inactiveThumbColor,
@@ -90,10 +90,7 @@ class MySwitchListTile extends StatelessWidget {
     this.selected = false,
     this.contentPadding,
   })  : _switchListTileType = _SwitchListTileType.material,
-        assert(value != null),
-        assert(isThreeLine != null),
         assert(!isThreeLine || subtitle != null),
-        assert(selected != null),
         super(key: key);
 
   /// Creates the wrapped switch with [Switch.adaptive].
@@ -105,9 +102,9 @@ class MySwitchListTile extends StatelessWidget {
   /// ignored: [activeTrackColor], [inactiveThumbColor], [inactiveTrackColor],
   /// [activeThumbImage], [inactiveThumbImage], [materialTapTargetSize].
   const MySwitchListTile.adaptive({
-    Key key,
-    @required this.value,
-    @required this.onChanged,
+    Key? key,
+    required this.value,
+    this.onChanged,
     this.activeColor,
     this.activeTrackColor,
     this.inactiveThumbColor,
@@ -122,10 +119,7 @@ class MySwitchListTile extends StatelessWidget {
     this.selected = false,
     this.contentPadding,
   })  : _switchListTileType = _SwitchListTileType.adaptive,
-        assert(value != null),
-        assert(isThreeLine != null),
         assert(!isThreeLine || subtitle != null),
-        assert(selected != null),
         super(key: key);
 
   /// Whether this switch is checked.
@@ -156,56 +150,56 @@ class MySwitchListTile extends StatelessWidget {
   ///   title: Text('Lights'),
   /// )
   /// ```
-  final ValueChanged<bool> onChanged;
+  final ValueChanged<bool>? onChanged;
 
   /// The color to use when this switch is on.
   ///
   /// Defaults to accent color of the current [Theme].
-  final Color activeColor;
+  final Color? activeColor;
 
   /// The color to use on the track when this switch is on.
   ///
   /// Defaults to [ThemeData.toggleableActiveColor] with the opacity set at 50%.
   ///
   /// Ignored if created with [MySwitchListTile.adaptive].
-  final Color activeTrackColor;
+  final Color? activeTrackColor;
 
   /// The color to use on the thumb when this switch is off.
   ///
   /// Defaults to the colors described in the Material design specification.
   ///
   /// Ignored if created with [MySwitchListTile.adaptive].
-  final Color inactiveThumbColor;
+  final Color? inactiveThumbColor;
 
   /// The color to use on the track when this switch is off.
   ///
   /// Defaults to the colors described in the Material design specification.
   ///
   /// Ignored if created with [MySwitchListTile.adaptive].
-  final Color inactiveTrackColor;
+  final Color? inactiveTrackColor;
 
   /// An image to use on the thumb of this switch when the switch is on.
-  final ImageProvider activeThumbImage;
+  final ImageProvider? activeThumbImage;
 
   /// An image to use on the thumb of this switch when the switch is off.
   ///
   /// Ignored if created with [MySwitchListTile.adaptive].
-  final ImageProvider inactiveThumbImage;
+  final ImageProvider? inactiveThumbImage;
 
   /// The primary content of the list tile.
   ///
   /// Typically a [Text] widget.
-  final Widget title;
+  final Widget? title;
 
   /// Additional content displayed below the title.
   ///
   /// Typically a [Text] widget.
-  final Widget subtitle;
+  final Widget? subtitle;
 
   /// A widget to display on the opposite side of the tile from the switch.
   ///
   /// Typically an [Icon] widget.
-  final Widget secondary;
+  final Widget? secondary;
 
   /// Whether this list tile is intended to display three lines of text.
   ///
@@ -216,7 +210,7 @@ class MySwitchListTile extends StatelessWidget {
   /// Whether this list tile is part of a vertically dense list.
   ///
   /// If this property is null then its value is based on [ListTileTheme.dense].
-  final bool dense;
+  final bool? dense;
 
   /// Whether to render icons and text in the [activeColor].
   ///
@@ -233,7 +227,7 @@ class MySwitchListTile extends StatelessWidget {
   /// and [trailing] widgets.
   ///
   /// If null, `EdgeInsets.symmetric(horizontal: 16.0)` is used.
-  final EdgeInsetsGeometry contentPadding;
+  final EdgeInsetsGeometry? contentPadding;
 
   /// If adaptive, creates the switch with [Switch.adaptive].
   final _SwitchListTileType _switchListTileType;
@@ -271,7 +265,7 @@ class MySwitchListTile extends StatelessWidget {
     }
     return MergeSemantics(
       child: ListTileTheme.merge(
-        selectedColor: activeColor ?? Theme.of(context).accentColor,
+        selectedColor: activeColor ?? Theme.of(context).colorScheme.secondary,
         child: ListTile(
           leading: secondary,
           title: title,
@@ -282,7 +276,7 @@ class MySwitchListTile extends StatelessWidget {
           enabled: onChanged != null,
           onTap: onChanged != null
               ? () {
-                  onChanged(!value);
+                  onChanged!(!value);
                 }
               : null,
           selected: selected,

@@ -1,24 +1,25 @@
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'complaint_create_request.g.dart';
 
+@JsonSerializable()
 class ComplaintCreateRequest {
-  @JsonKey("description")
-  String complaintDescription;
-  @JsonKey("suggestions")
-  String complaintSuggestions;
-  @JsonKey("location_details")
-  String complaintLocationDetails;
-  @JsonKey("location_description")
-  String complaintLocation;
-  @JsonKey("latitude")
-  double complaintLatitude;
-  @JsonKey("longitude")
-  double complaintLongitude;
-  @JsonKey("tags")
-  List<String> tags;
-  @JsonKey("images")
-  List<String> images;
+  @JsonKey(name: "description")
+  String? complaintDescription;
+  @JsonKey(name: "suggestions")
+  String? complaintSuggestions;
+  @JsonKey(name: "location_details")
+  String? complaintLocationDetails;
+  @JsonKey(name: "location_description")
+  String? complaintLocation;
+  @JsonKey(name: "latitude")
+  double? complaintLatitude;
+  @JsonKey(name: "longitude")
+  double? complaintLongitude;
+  @JsonKey(name: "tags")
+  List<String>? tags;
+  @JsonKey(name: "images")
+  List<String>? images;
 
   ComplaintCreateRequest(
       {this.complaintDescription,
@@ -34,8 +35,3 @@ class ComplaintCreateRequest {
       _$ComplaintCreateRequestFromJson(json);
   Map<String, dynamic> toJson() => _$ComplaintCreateRequestToJson(this);
 }
-
-@GenSerializer()
-class ComplaintCreateRequestSerializer
-    extends Serializer<ComplaintCreateRequest>
-    with _$ComplaintCreateRequestSerializer {}
