@@ -1,58 +1,59 @@
 import 'package:InstiApp/src/api/model/user.dart';
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 
 part 'ach_verify_request.g.dart';
 
+@JsonSerializable()
 class AchVerifyRequest {
-  @JsonKey("id")
-  String id;
+  @JsonKey(name: "id")
+  String? id;
 
-  @JsonKey("time_of_creation")
-  String timeOfCreation;
+  @JsonKey(name: "time_of_creation")
+  String? timeOfCreation;
 
-  @JsonKey("time_of_modification")
-  String timeOfModification;
+  @JsonKey(name: "time_of_modification")
+  String? timeOfModification;
 
-  @JsonKey("user")
-  User user;
+  @JsonKey(name: "user")
+  User? user;
 
-  @JsonKey("hidden")
-  bool hidden;
+  @JsonKey(name: "hidden")
+  bool? hidden;
 
-  @JsonKey("dismissed")
-  bool dismissed;
+  @JsonKey(name: "dismissed")
+  bool? dismissed;
 
-  @JsonKey("verified")
-  bool verified;
+  @JsonKey(name: "verified")
+  bool? verified;
 
-  @JsonKey("verified_by")
-  User verifiedBy;
+  @JsonKey(name: "verified_by")
+  User? verifiedBy;
 
-  @JsonKey("title")
-  String title;
+  @JsonKey(name: "title")
+  String? title;
 
-  @JsonKey("description")
-  String description;
+  @JsonKey(name: "description")
+  String? description;
 
-  @JsonKey("admin_note")
-  String adminNote;
+  @JsonKey(name: "admin_note")
+  String? adminNote;
 
-  @JsonKey("body")
-  String bodyID;
+  @JsonKey(name: "body")
+  String? bodyID;
 
-  @JsonKey("body_detail")
-  Body body;
+  @JsonKey(name: "body_detail")
+  Body? body;
 
-  @JsonKey("event_detail")
-  Event event;
+  @JsonKey(name: "event_detail")
+  Event? event;
 
-  @JsonKey("offer")
-  String offer;
+  @JsonKey(name: "offer")
+  String? offer;
 
-  AchVerifyRequest(
+  AchVerifyRequest({
       this.id,
       this.timeOfCreation,
       this.timeOfModification,
@@ -67,12 +68,8 @@ class AchVerifyRequest {
       this.bodyID,
       this.body,
       this.event,
-      this.offer);
+      this.offer});
   factory AchVerifyRequest.fromJson(Map<String, dynamic> json) =>
       _$AchVerifyRequestFromJson(json);
   Map<String, dynamic> toJson() => _$AchVerifyRequestToJson(this);
 }
-
-@GenSerializer()
-class AchVerifyRequestSerializer extends Serializer<AchVerifyRequest>
-    with _$AchVerifyRequestSerializer {}

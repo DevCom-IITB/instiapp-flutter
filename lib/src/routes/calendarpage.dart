@@ -24,27 +24,27 @@ class _CalendarPageState extends State<CalendarPage> {
   DateTime _currentDate =
       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
-  static Widget _eventIcon;
+  static Widget? _eventIcon;
   bool firstBuild = true;
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     var calBloc = bloc.calendarBloc;
 
-    print("Width: ${MediaQuery.of(context).size.width}");
+    // print("Width: ${MediaQuery.of(context).size.width}");
 
     _eventIcon = Material(
       type: MaterialType.transparency,
       shape: CircleBorder(
         side: BorderSide(
-          color: theme.accentColor,
+          color: theme.colorScheme.secondary,
         ),
       ),
     );
     if (firstBuild) {
-      calBloc.fetchEvents(DateTime.now(), _eventIcon);
+      calBloc.fetchEvents(DateTime.now(), _eventIcon!);
       firstBuild = false;
     }
 
@@ -63,7 +63,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -94,11 +94,11 @@ class _CalendarPageState extends State<CalendarPage> {
                             initialData: true,
                             builder: (BuildContext context,
                                 AsyncSnapshot<bool> snapshot) {
-                              return snapshot.data
+                              return snapshot.data != null
                                   ? CircularProgressIndicator(
                                       valueColor:
                                           new AlwaysStoppedAnimation<Color>(
-                                              theme.accentColor),
+                                              theme.colorScheme.secondary),
                                       strokeWidth: 2,
                                     )
                                   : Container();
@@ -119,28 +119,29 @@ class _CalendarPageState extends State<CalendarPage> {
                             this.setState(() => _currentDate = date);
                           },
                           onCalendarChanged: (date) {
-                            print(
-                                "Fetching events around ${date.month}/${date.year}");
+                            // print(
+                            //     "Fetching events around ${date.month}/${date.year}");
                             calBloc.fetchEvents(
-                                DateTime(date.year, date.month, 1), _eventIcon);
+                                DateTime(date.year, date.month, 1),
+                                _eventIcon!);
                           },
 
                           headerTextStyle: theme.textTheme.headline6,
 
                           weekendTextStyle: theme.textTheme.headline6
-                              .copyWith(fontSize: 18)
+                              ?.copyWith(fontSize: 18)
                               .copyWith(color: Colors.red[800]),
                           daysTextStyle:
-                              theme.textTheme.headline6.copyWith(fontSize: 18),
+                              theme.textTheme.headline6?.copyWith(fontSize: 18),
                           inactiveDaysTextStyle:
-                              theme.textTheme.headline6.copyWith(fontSize: 18),
+                              theme.textTheme.headline6?.copyWith(fontSize: 18),
                           nextDaysTextStyle: theme.textTheme.headline6
-                              .copyWith(fontSize: 18)
+                              ?.copyWith(fontSize: 18)
                               .copyWith(
                                   color: theme.colorScheme.onSurface
                                       .withAlpha(150)),
                           prevDaysTextStyle: theme.textTheme.headline6
-                              .copyWith(fontSize: 18)
+                              ?.copyWith(fontSize: 18)
                               .copyWith(
                                   color: theme.colorScheme.onSurface
                                       .withAlpha(150)),
@@ -154,7 +155,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
                           markedDateIconBuilder: (e) => Container(
                               decoration: BoxDecoration(
-                            color: theme.accentColor.withOpacity(0.2),
+                            color: theme.colorScheme.secondary.withOpacity(0.2),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(1000.0)),
                           )),
@@ -169,8 +170,10 @@ class _CalendarPageState extends State<CalendarPage> {
                           // ),
 
                           todayButtonColor: theme.primaryColor.withOpacity(0.3),
-                          selectedDayButtonColor: theme.accentColor,
-                          selectedDayTextStyle: theme.accentTextTheme.headline6,
+                          selectedDayButtonColor: theme.colorScheme.secondary,
+                          selectedDayTextStyle: theme.textTheme.headline6?.copyWith(
+                            color: theme.colorScheme.secondary
+                          ),
 
                           // height: min(MediaQuery.of(context).size.shortestSide, 600) * 1.6,
                           height: 440.0,
@@ -182,7 +185,7 @@ class _CalendarPageState extends State<CalendarPage> {
                           daysHaveCircularBorder: null,
                           staticSixWeekFormat: true,
 
-                          iconColor: theme.accentColor,
+                          iconColor: theme.colorScheme.secondary,
                           weekdayTextStyle: TextStyle(
                               // color: theme.accentColor.withOpacity(0.9),
                               color: Colors.grey,
@@ -191,18 +194,22 @@ class _CalendarPageState extends State<CalendarPage> {
                       ),
                       Center(
                         child: RawMaterialButton(
-                          fillColor: theme.accentColor,
+                          fillColor: theme.colorScheme.secondary,
                           shape: StadiumBorder(),
-                          splashColor: theme.accentColor.withOpacity(0.8),
+                          splashColor: theme.colorScheme.secondary.withOpacity(0.8),
                           onPressed: () {},
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                                 snapshot.data != null &&
-                                        snapshot.data.containsKey(_currentDate)
-                                    ? "${snapshot.data[_currentDate].length} Events"
+                                        (snapshot.data
+                                                ?.containsKey(_currentDate) ??
+                                            false)
+                                    ? "${snapshot.data?[_currentDate]?.length} Events"
                                     : "No events",
-                                style: theme.accentTextTheme.button),
+                                style: theme.textTheme.button?.copyWith(
+                                  color: theme.colorScheme.secondary
+                                )),
                           ),
                         ),
                       )
@@ -241,14 +248,14 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget _buildEventTile(InstiAppBloc bloc, ThemeData theme, Event event) {
     return ListTile(
       title: Text(
-        event.eventName,
+        event.eventName ?? "",
         style: theme.textTheme.headline6,
       ),
       enabled: true,
       leading: NullableCircleAvatar(
-        event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+        event.eventImageURL ?? event.eventBodies?[0].bodyImageURL ?? "",
         Icons.event_outlined,
-        heroTag: event.eventID,
+        heroTag: event.eventID ?? "",
       ),
       subtitle: Text(event.getSubTitle()),
       onTap: () {

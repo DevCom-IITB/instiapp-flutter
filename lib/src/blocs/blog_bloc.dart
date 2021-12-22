@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:collection';
+// import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:InstiApp/src/api/model/post.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+// import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'dart:math';
@@ -36,9 +38,9 @@ class PostBloc {
   // For categories
   String category = "";
 
-  PostBloc(this.bloc, {@required this.postType}) {
+  PostBloc(this.bloc, {required this.postType}) {
     // if (postType == PostType.Query) {
-    //   postType = PostType.NewsArticle;
+    //   _setCategories();
     // }
     _setIndexListener();
   }
@@ -85,12 +87,10 @@ class PostBloc {
       PostType.Query: bloc.client.getQueries
     }[postType];
     var posts;
-    print(query.toString());
-    print(category.toString());
     if (postType == PostType.Query)
-      posts = await httpGetFunc(bloc.getSessionIdHeader(), query, category);
+      posts = await httpGetFunc!(bloc.getSessionIdHeader(), query, category);
     else
-      posts = await httpGetFunc(bloc.getSessionIdHeader(),
+      posts = await httpGetFunc!(bloc.getSessionIdHeader(),
           page * _noOfPostsPerPage, _noOfPostsPerPage, query);
     var tableParse = markdown.TableSyntax();
     posts.forEach((p) {
@@ -103,21 +103,23 @@ class PostBloc {
     return posts;
   }
 
-  void getCategories() async {
-    var list_categories;
-    list_categories =
+  void setCategories() async {
+    List<String?> listCategories;
+    listCategories =
         await bloc.client.getQueryCategories(bloc.getSessionIdHeader());
-    List<Map<String, String>> categories;
-    list_categories.forEach((val) {
-      categories.add({'value': val, 'name': val});
+    List<Map<String, String>> categories = [];
+    listCategories.forEach((val) {
+      if(val!= null){
+        categories.add({'value': val, 'name': val});
+      }
     });
-    _blogSubject1.add(categories);
+     _blogSubject1.add(UnmodifiableListView<Map<String, String>>(categories));
   }
 
   void _handleIndexes(List<int> indexes) {
-    var pages = query.isEmpty ? _fetchPages : _searchFetchPages;
+    var pages = (query.isEmpty && category.isEmpty) ? _fetchPages : _searchFetchPages;
     var pagesBeingFetched =
-        query.isEmpty ? _pagesBeingFetched : _searchPagesBeingFetched;
+        (query.isEmpty && category.isEmpty) ? _pagesBeingFetched : _searchPagesBeingFetched;
     indexes.forEach((int index) {
       final int pageIndex = ((index + 1) ~/ _noOfPostsPerPage);
 
@@ -143,9 +145,9 @@ class PostBloc {
   /// 2) notify everyone who might be interested in knowing it
   ///
   void _handleFetchedPage(List<Post> page, int pageIndex) {
-    var pages = query.isEmpty ? _fetchPages : _searchFetchPages;
+    var pages = (query.isEmpty && category.isEmpty) ? _fetchPages : _searchFetchPages;
     var pagesBeingFetched =
-        query.isEmpty ? _pagesBeingFetched : _searchPagesBeingFetched;
+        (query.isEmpty && category.isEmpty) ? _pagesBeingFetched : _searchPagesBeingFetched;
 
     // Remember the page
     pages[pageIndex] = page;
@@ -172,11 +174,15 @@ class PostBloc {
           break;
         }
         // Add the list of fetched posts to the list
-        posts.addAll(pages[i]);
+        var temp = pages[i];
+        if(temp != null){
+          posts.addAll(temp);
+        }
+        
       }
     }
 
-    if (pages[maxPageIndex].length < _noOfPostsPerPage) {
+    if (pages[maxPageIndex]!.length < _noOfPostsPerPage) {
       posts.add(Post());
     }
 
@@ -196,7 +202,7 @@ class PostBloc {
     if (force) {
       _fetchPages.clear();
       _pagesBeingFetched.clear();
-    } else if (_fetchPages.isNotEmpty && query.isEmpty) {
+    } else if (_fetchPages.isNotEmpty && (query.isEmpty && category.isEmpty)) {
       List<int> pageIndexes = _fetchPages.keys.toList();
 
       final int minPageIndex = pageIndexes.reduce(min);
@@ -208,8 +214,11 @@ class PostBloc {
             // As soon as there is a hole, stop
             break;
           }
-          posts.addAll(_fetchPages[i]);
+          posts.addAll(_fetchPages[i]!);
         }
+      }
+      if(postType == PostType.Query){
+        posts.add(Post());
       }
     }
 
@@ -223,17 +232,31 @@ class PostBloc {
     String sel = "$reaction";
     int sendReaction = article.userReaction == reaction ? -1 : reaction;
     await bloc.client.updateUserNewsReaction(
-        bloc.getSessionIdHeader(), article.id, sendReaction);
+        bloc.getSessionIdHeader(), article.id!, sendReaction);
     if (article.userReaction == -1) {
       article.userReaction = sendReaction;
-      article.reactionCount[sel] += 1;
+      var x = article.reactionCount![sel];
+      if(x != null){
+        x += 1;
+        article.reactionCount![sel] = x;
+      }
     } else if (article.userReaction != reaction) {
-      article.reactionCount["${article.userReaction}"] -= 1;
-      article.userReaction = sendReaction;
-      article.reactionCount[sel] += 1;
+      var x = article.reactionCount!["${article.userReaction}"];
+      var y = article.reactionCount![sel];
+      if(x!= null && y!= null){
+        x -= 1;
+        y += 1;
+        article.reactionCount!["${article.userReaction}"] = x;
+        article.userReaction = sendReaction;
+        article.reactionCount![sel] = y;
+      }
     } else {
       article.userReaction = -1;
-      article.reactionCount[sel] -= 1;
+      var x = article.reactionCount![sel];
+      if(x != null){
+        x -= 1;
+        article.reactionCount![sel] = x;
+      }
     }
     return Future.delayed(Duration(milliseconds: 0));
   }

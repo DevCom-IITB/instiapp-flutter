@@ -1,10 +1,11 @@
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'user_scn_patch_request.g.dart';
 
+@JsonSerializable()
 class UserSCNPatchRequest {
-  @JsonKey("show_contact_no")
-  bool userShowContactNumber;
+  @JsonKey(name: "show_contact_no")
+  bool? userShowContactNumber;
 
   UserSCNPatchRequest({this.userShowContactNumber});
 
@@ -13,7 +14,3 @@ class UserSCNPatchRequest {
 
   Map<String, dynamic> toJson() => _$UserSCNPatchRequestToJson(this);
 }
-
-@GenSerializer()
-class UserSCNPatchRequestSerializer extends Serializer<UserSCNPatchRequest>
-    with _$UserSCNPatchRequestSerializer {}

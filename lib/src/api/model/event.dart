@@ -1,8 +1,11 @@
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
-import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'package:date_format/date_format.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_calendar_carousel/classes/event.dart' as elt;
+
+import 'package:json_annotation/json_annotation.dart';
 
 part 'event.g.dart';
 
@@ -13,75 +16,79 @@ enum UES {
   Going,
 }
 
-class Event {
-  @JsonKey("id")
-  String eventID;
+@JsonSerializable()
+class Event extends elt.Event {
+  @JsonKey(name: "id")
+  String? eventID;
 
-  @JsonKey("str_id")
-  String eventStrID;
+  @JsonKey(name: "str_id")
+  String? eventStrID;
 
-  @JsonKey("name")
-  String eventName;
+  @JsonKey(name: "name")
+  String? eventName;
 
-  @JsonKey("description")
-  String eventDescription;
+  @JsonKey(name: "description")
+  String? eventDescription;
 
-  @JsonKey("image_url")
-  String eventImageURL;
+  @JsonKey(name: "image_url")
+  String? eventImageURL;
 
-  @JsonKey("start_time")
-  String eventStartTime;
+  @JsonKey(name: "start_time")
+  String? eventStartTime;
 
-  @JsonKey("end_time")
-  String eventEndTime;
+  @JsonKey(name: "end_time")
+  String? eventEndTime;
 
-  @JsonKey("all_day")
-  bool allDayEvent;
+  @JsonKey(name: "all_day")
+  bool? allDayEvent;
 
-  @JsonKey("venues")
-  List<Venue> eventVenues;
+  @JsonKey(name: "venues")
+  List<Venue>? eventVenues;
 
-  @JsonKey("bodies")
-  List<Body> eventBodies;
+  @JsonKey(name: "bodies")
+  List<Body>? eventBodies;
 
-  @JsonKey("interested_count")
+  @JsonKey(name: "interested_count")
   int eventInterestedCount;
 
-  @JsonKey("going_count")
+  @JsonKey(name: "going_count")
   int eventGoingCount;
 
-  @JsonKey("interested")
-  List<User> eventInterested;
+  @JsonKey(name: "interested")
+  List<User>? eventInterested;
 
-  @JsonKey("going")
-  List<User> eventGoing;
+  @JsonKey(name: "going")
+  List<User>? eventGoing;
 
-  @JsonKey("website_url")
-  String eventWebsiteURL;
+  @JsonKey(name: "website_url")
+  String? eventWebsiteURL;
 
-  @JsonKey("user_ues")
-  int eventUserUesInt;
+  @JsonKey(name: "user_ues")
+  int? eventUserUesInt;
 
-  @@JsonKey(ignore: true)()
+  @JsonKey(ignore: true)
   UES get eventUserUes => UES.values[eventUserUesInt ?? 0];
 
-  @@JsonKey(ignore: true)()
   set eventUserUes(UES ues) {
     eventUserUesInt = ues.index;
   }
 
-  @@JsonKey(ignore: true)()
+  @JsonKey(ignore: true)
   bool eventBigImage = false;
 
-  DateTime eventStartDate;
+  DateTime? eventStartDate;
 
   String getSubTitle() {
     String subtitle = "";
 
-    DateTime startTime = DateTime.parse(eventStartTime);
-    DateTime endTime = DateTime.parse(eventEndTime);
+    DateTime? startTime;
+    if(eventStartTime != null){
+      startTime = DateTime.parse(eventStartTime!);
+    }
+      
+    DateTime endTime = DateTime.parse(eventEndTime!);
     DateTime timeNow = DateTime.now();
-    bool eventStarted = timeNow.compareTo(startTime) > 0;
+    bool eventStarted = timeNow.compareTo(startTime?? timeNow) > 0;
     bool eventEnded = timeNow.compareTo(endTime) > 0;
 
     if (eventEnded)
@@ -106,7 +113,7 @@ class Event {
           formatDate(startTime.toLocal(), [dd, " ", M, " | ", HH, ":", nn]);
     }
     String eventVenueName = "";
-    for (var venue in eventVenues) {
+    for (var venue in eventVenues!) {
       eventVenueName += ", ${venue.venueShortName}";
     }
     if (eventVenueName != "") {
@@ -127,19 +134,23 @@ class Event {
     this.allDayEvent,
     this.eventVenues,
     this.eventBodies,
-    this.eventInterestedCount,
-    this.eventGoingCount,
+    this.eventInterestedCount = 0,
+    this.eventGoingCount = 0,
     this.eventInterested,
     this.eventGoing,
     this.eventWebsiteURL,
     this.eventUserUesInt,
-  });
+  }) : super(
+          date: DateTime.parse(eventStartTime!),
+          title: eventName,
+          description: eventDescription,
+          location: eventVenues?.map((e) => e.venueName).toList().join(", "),
+          icon: eventImageURL == null
+              ? null
+              : Image(image: NetworkImage(eventImageURL)),
+        );
 
-  factory Event.fromJson(Map<String, dynamic> json) =>
-      _$EventFromJson(json);
-      
+  factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
+
   Map<String, dynamic> toJson() => _$EventToJson(this);
 }
-
-@GenSerializer()
-class EventSerializer extends Serializer<Event> with _$EventSerializer {}

@@ -1,11 +1,11 @@
-
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'offersecret.g.dart';
 
+@JsonSerializable()
 class Offersecret {
-  @JsonKey("secret")
-  String secret;
+  @JsonKey(name: "secret")
+  String? secret;
 
   Offersecret({this.secret});
 
@@ -15,7 +15,3 @@ class Offersecret {
   Map<String, dynamic> toJson() => _$OffersecretToJson(this);
 
 }
-
-@GenSerializer()
-class OffersecretSerializer extends Serializer<Offersecret> with _$OffersecretSerializer {}
-
