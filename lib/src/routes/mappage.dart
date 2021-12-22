@@ -53,10 +53,10 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     theme = Theme.of(context);
-    print(theme?.canvasColor);
+    // print(theme?.canvasColor);
     // var bloc = BlocProvider.of(context)!.bloc;
 
-    print("This is the URL: $mapUrl");
+    // print("This is the URL: $mapUrl");
     return Scaffold(bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
@@ -83,7 +83,7 @@ class _MapPageState extends State<MapPage> {
       },
       initialUrl: mapUrl,
       onPageStarted: (url) async{
-        print("Changed URL: $url");
+        // print("Changed URL: $url");
       },
       onPageFinished: (url){
         

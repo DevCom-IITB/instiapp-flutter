@@ -458,7 +458,7 @@ class _EventPageState extends State<EventPage> {
               [];
 
       if ((await Future.wait(futures)).every((res) {
-        print(res?.data);
+        // print(res?.data);
         return res?.isSuccess ?? false;
       })) {
         showDialog<void>(

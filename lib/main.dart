@@ -43,7 +43,7 @@ import 'package:uni_links/uni_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
-  print("Runnning main");
+  // print("Runnning main");
   GlobalKey<MyAppState> key = GlobalKey();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -170,7 +170,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
               headline5: TextStyle()),
         ),
         onGenerateRoute: (RouteSettings settings) {
-          print(settings.name);
+          // print(settings.name);
           var temp = settings.name;
           if(temp!=null){
           if (temp.startsWith("/event/")) {
@@ -220,7 +220,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
               case "/":
                 return _buildRoute(settings, LoginPage(widget.bloc));
               case "/mess":
-                print("Entereing here mess");
+                // print("Entereing here mess");
                 return _buildRoute(settings, MessPage());
               case "/placeblog":
                 return _buildRoute(settings, PlacementBlogPage());
@@ -292,7 +292,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         onSelectNotification: onSelectNotification);
 
     FirebaseMessaging.onMessage.listen( (RemoteMessage message) async {
-        print("onMessage: $message");
+        // print("onMessage: $message");
         var appDocDir = await getApplicationDocumentsDirectory();
 
         String payload = jsonEncode(message.data);
@@ -357,7 +357,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       },
     );
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
+      // print('A new onMessageOpenedApp event was published!');
       navigateFromNotification(RichNotification.fromJson(message.data));
     });
 
@@ -379,7 +379,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     widget.bloc.firebaseMessaging.getToken().then((String? token) {
       assert(token != null);
-      print("Push Messaging token: $token");
+      // print("Push Messaging token: $token");
     });
   }
 
@@ -428,7 +428,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       handleAppLink(uri);
     }, onError: (err) {
       if (!mounted) return;
-      print('Failed to get latest link: $err.');
+      // print('Failed to get latest link: $err.');
     });
     try {
       Uri? initialUri = await getInitialUri();
@@ -439,7 +439,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       // Handle exception by warning the user their action did not succeed
       // return?
     } on FormatException {
-      print('Bad parse the initial link as Uri.');
+      // print('Bad parse the initial link as Uri.');
     }
   }
 }

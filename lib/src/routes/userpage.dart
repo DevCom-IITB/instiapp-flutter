@@ -126,7 +126,7 @@ class _UserPageState extends State<UserPage> {
 
   Widget buildDropdownMenuItemsInterest(
       BuildContext context, Interest? body) {
-    print("Entered build dropdown menu items");
+    // print("Entered build dropdown menu items");
     if (body == null) {
       return Container(
         child: Text(
@@ -135,7 +135,7 @@ class _UserPageState extends State<UserPage> {
         ),
       );
     }
-    print(body);
+    // print(body);
     return Container(
       child: ListTile(
         title: Text(body.title!),

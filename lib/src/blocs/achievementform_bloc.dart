@@ -36,7 +36,7 @@ class Bloc extends Object {
     //try {
       var comment = await bloc.client.postForm(bloc.getSessionIdHeader(), req);
       comment.result = "success";
-      print(comment.result);
+      // print(comment.result);
       return comment;
     // } catch (ex) {
     //   return null;
@@ -51,7 +51,7 @@ class Bloc extends Object {
           .postAchievementOffer(bloc.getSessionIdHeader(), id, secretclass);
       return response;
     } catch (ex) {
-      print(ex);
+      // print(ex);
       return null;
     }
   }
@@ -62,7 +62,7 @@ class Bloc extends Object {
           .postInterests(bloc.getSessionIdHeader(), interest);
       return response;
     } catch (ex) {
-      print(ex);
+      // print(ex);
       return null;
     }
   }
@@ -74,7 +74,7 @@ class Bloc extends Object {
       // log(response.message);
       return response;
     } catch (ex) {
-      print(ex);
+      // print(ex);
       return null;
     }
   }
@@ -116,62 +116,61 @@ class Bloc extends Object {
   }
 
   Future<List<Body>> searchForBody(String? query) async {
-    print("Search called");
+    // print("Search called");
     if (query == null) return <Body>[];
     if (query.length < 3) {
       return [];
     }
     var searchResponse =
         await bloc.client.search(bloc.getSessionIdHeader(), query);
-    print("Search responed");
+    // print("Search responed");
 
     if (searchResponse.bodies == null) {
       return [];
     }
 
     _bodies = searchResponse.bodies!;
-    print(_bodies.map((e) => e.bodyName));
+    // print(_bodies.map((e) => e.bodyName));
     return _bodies;
   }
 
   Future<List<Interest>> searchForInterest(String? query) async {
-    print("Search called");
+    // print("Search called");
     if (query == null) return <Interest>[];
     if (query.length < 3) {
       return [];
     }
     ExploreResponse searchResponse =
     await bloc.client.searchType(bloc.getSessionIdHeader(), query,"interests");
-    print("Search responed");
-    print(searchResponse.interest);
+    // print("Search responed");
+    // print(searchResponse.interest);
     if (searchResponse.interest == null) {
       return [];
     }
 
     _Interests = searchResponse.interest!;
-    print("llll");
-    print(_Interests.map((e) => e.title));
+    // print(_Interests.map((e) => e.title));
     //_Interests=[Interest(id: "123",title: "hi")];
     return _Interests;
   }
 
   Future<List<Skill>> searchForSkill(String? query) async {
-    print("Search called");
+    // print("Search called");
     if (query == null) return <Skill>[];
     if (query.length < 3) {
       return [];
     }
     ExploreResponse searchResponse =
     await bloc.client.searchType(bloc.getSessionIdHeader(), query,"skills");
-    print("Search responed");
-    print(searchResponse.skills);
+    // print("Search responed");
+    // print(searchResponse.skills);
     if (searchResponse.skills == null) {
       return [];
     }
 
     _Skills = searchResponse.skills!;
-    print("llll");
-    print(_Skills.map((e) => e.title));
+    // print("llll");
+    // print(_Skills.map((e) => e.title));
     //_Interests=[Interest(id: "123",title: "hi")];
     return _Skills;
   }

@@ -33,7 +33,7 @@ class _NativeMapPageState extends State<NativeMapPage> {
         .bufferTime(Duration(milliseconds: 800))
         .listen((List<PhotoViewControllerValue> values) {
       if (values.isNotEmpty) {
-        print(values.last.scale);
+        // print(values.last.scale);
         if (mounted) {
           setState(() {
             markerScale = values.last.scale ?? 0.069;
@@ -42,7 +42,7 @@ class _NativeMapPageState extends State<NativeMapPage> {
           markerScale = values.last.scale ?? 0.069;
         }
       }
-      print("Called");
+      // print("Called");
     });
   }
 
@@ -137,7 +137,7 @@ class _NativeMapPageState extends State<NativeMapPage> {
               child: IconButton(
                 iconSize: 96,
                 onPressed: () {
-                  print(v.venueName);
+                  // print(v.venueName);
                 },
                 icon: Icon(
                   Icons.location_on_outlined,
