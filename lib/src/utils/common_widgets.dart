@@ -247,12 +247,60 @@ String refineText(String text){
   text=text.replaceAll("&amp;", "&");
   return text;
 }
+
 class CommonHtml extends StatelessWidget {
+  final String? data;
+  final TextStyle defaultTextStyle;
+
+  CommonHtml({this.data, required this.defaultTextStyle});
+
+  @override
+  Widget build(BuildContext context) {
+    return data != null
+        ? Html(
+            data: data,
+            onLinkTap: (link, _, __, ___) async {
+              if (await canLaunch(link!)) {
+                await launch(link);
+              } else {
+                throw "Couldn't launch $link";
+              }
+            },
+            customRender: {
+              "img": (context, child) {
+                var attributes=context.tree.element!.attributes;
+                return Text(attributes['src'] ?? attributes['href'] ?? "<img>");
+              },
+              "a": (context, child) {
+                var attributes=context.tree.element!.attributes;
+                var innerHtml= context.tree.element?.innerHtml;
+                return InkWell(
+                  onTap: () async {
+                    if (await canLaunch(attributes['href']!)) {
+                      await launch(attributes['href']!);
+                    }
+                  },
+                  child: Text(
+                    innerHtml??"",
+                    style: TextStyle(
+                        color: Colors.lightBlue,
+                        decoration: TextDecoration.underline),
+                  ),
+                );}
+              },
+          )
+        : CircularProgressIndicatorExtended(
+            label: Text("Loading content"),
+          );
+  }
+}
+
+class CommonHtmlBlog extends StatelessWidget {
   final String? data;
   final String? query;
   final TextStyle defaultTextStyle;
 
-  CommonHtml({this.data, required this.defaultTextStyle, this.query});
+  CommonHtmlBlog({this.data, required this.defaultTextStyle, this.query});
 
   @override
   Widget build(BuildContext context1) {

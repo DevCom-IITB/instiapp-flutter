@@ -390,7 +390,7 @@ class _BlogPageState extends State<BlogPage> {
                 scrollDirection: Axis.horizontal,
                 child: Container(
                   constraints: BoxConstraints(minWidth: 0.9*width, maxWidth: width*1.5),
-                  child: CommonHtml(
+                  child: CommonHtmlBlog(
                     data: post.content,
                     defaultTextStyle: theme.textTheme.subtitle1 ?? TextStyle(), query: bloc.query,
                   ),

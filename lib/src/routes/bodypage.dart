@@ -183,7 +183,7 @@ class _BodyPageState extends State<BodyPage> {
                     child: CommonHtml(
                       data: body?.bodyDescription ?? "",
                       defaultTextStyle:
-                          theme.textTheme.subtitle1 ?? TextStyle(), query: '',
+                          theme.textTheme.subtitle1 ?? TextStyle()
                     ),
                   ),
                   body?.bodyDescription != null

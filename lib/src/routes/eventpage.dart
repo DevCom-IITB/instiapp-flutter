@@ -192,7 +192,6 @@ class _EventPageState extends State<EventPage> {
                         data: event!.eventDescription ?? "",
                         defaultTextStyle:
                             theme.textTheme.subtitle1 ?? TextStyle(),
-                        //query: query,
                       ),
                     ),
                     SizedBox(
