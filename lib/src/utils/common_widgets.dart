@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:InstiApp/src/blocs/ia_bloc.dart';
+// import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -137,19 +137,19 @@ class HeroPhotoViewWrapper extends StatefulWidget {
 }
 
 class HeroPhotoViewWrapperState extends State<HeroPhotoViewWrapper> {
-  late SystemUiOverlayStyle saveStyle;
+  // late SystemUiOverlayStyle saveStyle;
 
   @override
   void initState() {
     super.initState();
-    saveStyle = SystemChrome.latestStyle!;
+    // saveStyle = SystemChrome.latestStyle!;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
   }
 
   @override
   void dispose() {
     super.dispose();
-    SystemChrome.setSystemUIOverlayStyle(saveStyle);
+    // SystemChrome.setSystemUIOverlayStyle(saveStyle);
   }
 
   @override
@@ -255,8 +255,8 @@ class CommonHtml extends StatelessWidget {
 
   @override
   Widget build(BuildContext context1) {
-    var theme = Theme.of(context1);
-    var bloc = BlocProvider.of(context1)!.bloc;
+    // var theme = Theme.of(context1);
+    // var bloc = BlocProvider.of(context1)!.bloc;
     // print(data);
     return data != null
         ? Html(

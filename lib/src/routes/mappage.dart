@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:InstiApp/src/bloc_provider.dart';
+// import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
-import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
+// import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:jaguar/jaguar.dart' as jag;
 import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
@@ -54,7 +54,7 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     theme = Theme.of(context);
     print(theme?.canvasColor);
-    var bloc = BlocProvider.of(context)!.bloc;
+    // var bloc = BlocProvider.of(context)!.bloc;
 
     print("This is the URL: $mapUrl");
     return Scaffold(bottomNavigationBar: MyBottomAppBar(

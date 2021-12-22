@@ -20,7 +20,7 @@ import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:flutter/foundation.dart';
 TextSpan highlight(String result,String query,BuildContext context){
-  var bloc = BlocProvider.of(context)!.bloc;
+  // var bloc = BlocProvider.of(context)!.bloc;
   var theme = Theme.of(context);
   TextStyle posRes = TextStyle(color: Colors.white,backgroundColor: Colors.red);
   TextStyle? negRes = theme.textTheme.subtitle1;// TextStyle(backgroundColor: bloc.bloc.brightness.toColor().withOpacity(1.0),);
