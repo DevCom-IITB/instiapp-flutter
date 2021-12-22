@@ -5,14 +5,14 @@ import 'package:InstiApp/src/api/model/rich_notification.dart';
 import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
-import 'package:InstiApp/src/routes/complaintpage.dart';
-import 'package:InstiApp/src/routes/complaintspage.dart';
+// import 'package:InstiApp/src/routes/complaintpage.dart';
+// import 'package:InstiApp/src/routes/complaintspage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/routes/externalblogpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:InstiApp/src/routes/mappage.dart';
-import 'package:InstiApp/src/routes/newcomplaintpage.dart';
+// import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
 import 'package:InstiApp/src/routes/notificationspage.dart';
 import 'package:InstiApp/src/routes/putentitypage.dart';
@@ -192,16 +192,16 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 UserPage(
                     userFuture:
                         widget.bloc.getUser(temp.split("/user/")[1])));
-          } else if (temp.startsWith("/complaint/")) {
-            Uri uri = Uri.parse(temp);
+          // } else if (temp.startsWith("/complaint/")) {
+          //   Uri uri = Uri.parse(temp);
 
-            return _buildRoute(
-                settings,
-                ComplaintPage(
-                    complaintFuture: widget.bloc.getComplaint(
-                        uri.pathSegments[1],
-                        reload: uri.queryParameters.containsKey("reload") &&
-                            uri.queryParameters["reload"] == "true")));
+          //   return _buildRoute(
+          //       settings,
+          //       ComplaintPage(
+          //           complaintFuture: widget.bloc.getComplaint(
+          //               uri.pathSegments[1],
+          //               reload: uri.queryParameters.containsKey("reload") &&
+          //                   uri.queryParameters["reload"] == "true")));
           } else if (temp.startsWith("/putentity/event/")) {
             return _buildRoute(
                 settings,
@@ -236,10 +236,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 return _buildRoute(settings, ExplorePage());
               case "/calendar":
                 return _buildRoute(settings, CalendarPage());
-              case "/complaints":
-                return _buildRoute(settings, ComplaintsPage());
-              case "/newcomplaint":
-                return _buildRoute(settings, NewComplaintPage());
+              // case "/complaints":
+              //   return _buildRoute(settings, ComplaintsPage());
+              // case "/newcomplaint":
+              //   return _buildRoute(settings, NewComplaintPage());
               case "/putentity/event":
                 return _buildRoute(settings,
                     PutEntityPage(cookie: widget.bloc.getSessionIdHeader()));

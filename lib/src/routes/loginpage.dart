@@ -22,7 +22,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late WebViewController _controller;
+  // late WebViewController _controller;
   jag.Jaguar? server;
   final Dio dio = Dio();
 
@@ -198,9 +198,9 @@ class _LoginPageState extends State<LoginPage> {
     ) : WebView(
       javascriptMode: JavascriptMode.unrestricted,
       initialUrl: loginurl,
-      onWebViewCreated: (controller){
-        this._controller = controller;
-      },
+      // onWebViewCreated: (controller){
+      //   this._controller = controller;
+      // },
       onPageStarted: (url) async{
         if (url.startsWith(successUrl)) {
           var uri = Uri.parse(url);
