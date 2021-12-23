@@ -395,7 +395,7 @@ class CommonHtmlBlog extends StatelessWidget {
                   }
                 }
                 return Container(
-                  padding: const EdgeInsets.all(4.0),
+                  padding: const EdgeInsets.fromLTRB(0, 2, 6, 2),
                   alignment: Alignment.centerLeft,
                   child: Wrap(
                     children: w,
@@ -410,7 +410,7 @@ class CommonHtmlBlog extends StatelessWidget {
                 String text =context.tree.element?.innerHtml??"";
                 // text="    "+text+"   ";
                 return Padding(
-                  padding: const EdgeInsets.all(4.0),
+                  padding: const EdgeInsets.fromLTRB(0, 2, 6, 2),
                   child: SelectableText.rich(
                     highlight(refineText(text),query?? '',context1),
                   ),
@@ -420,7 +420,7 @@ class CommonHtmlBlog extends StatelessWidget {
                 String text =context.tree.element?.innerHtml??"";
                 // text="    "+text+"   ";
                 return Padding(
-                  padding: const EdgeInsets.all(4.0),
+                  padding: const EdgeInsets.fromLTRB(0, 2, 6, 2),
                   child: SelectableText.rich(
                     highlight(refineText(text),query?? '',context1),
                   ),
