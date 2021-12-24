@@ -130,7 +130,7 @@ class _UserPageState extends State<UserPage> {
     if (body == null) {
       return Container(
         child: Text(
-          "Search for an organisation",
+          "Search for an interest",
           style: Theme.of(context).textTheme.bodyText1,
         ),
       );
@@ -394,7 +394,7 @@ class _UserPageState extends State<UserPage> {
                                                     EdgeInsets.all(
                                                         20),
                                                     child: Text(
-                                                      "No verifying authorities found. Refine your search!",
+                                                      "No interests found. Refine your search!",
                                                       style: theme
                                                           .textTheme
                                                           .subtitle1,
