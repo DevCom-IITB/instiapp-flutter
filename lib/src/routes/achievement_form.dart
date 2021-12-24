@@ -111,7 +111,7 @@ class _CreateAchievementPage extends State<Home> {
     if (body == null) {
       return Container(
         child: Text(
-          "Search for an Skill",
+          "Search for a skill",
           style: Theme.of(context).textTheme.bodyText1,
         ),
       );
