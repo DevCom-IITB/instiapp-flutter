@@ -136,10 +136,10 @@ class Bloc extends Object {
 
   Future<List<Interest>> searchForInterest(String? query) async {
     // print("Search called");
-    if (query == null) return <Interest>[];
-    if (query.length < 3) {
-      return [];
-    }
+    // if (query == null) return <Interest>[];
+    // if (query.length < 3) {
+    //   return [];
+    // }
     ExploreResponse searchResponse =
     await bloc.client.searchType(bloc.getSessionIdHeader(), query,"interests");
     // print("Search responed");
@@ -156,10 +156,10 @@ class Bloc extends Object {
 
   Future<List<Skill>> searchForSkill(String? query) async {
     // print("Search called");
-    if (query == null) return <Skill>[];
-    if (query.length < 3) {
-      return [];
-    }
+    // if (query == null) return <Skill>[];
+    // if (query.length < 3) {
+    //   return [];
+    // }
     ExploreResponse searchResponse =
     await bloc.client.searchType(bloc.getSessionIdHeader(), query,"skills");
     // print("Search responed");
