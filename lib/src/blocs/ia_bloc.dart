@@ -102,7 +102,14 @@ class InstiAppBloc {
 
   // default homepage
   String homepageName = "/feed";
-
+  bool isAlumni = false;
+  String msg = "";
+  String alumniLoginPage = "/alumniLoginPage";
+  String ldap = "";
+  //to implement method for toggling isAlumnReg
+  String alumni_OTP_Page = "/alumni-OTP-Page";
+  String _alumniOTP = "";
+  // to create method to update this from apiclient.dart
   // default theme
   AppBrightness _brightness = AppBrightness.light;
   // Color _primaryColor = Color.fromARGB(255, 63, 81, 181);
@@ -264,6 +271,32 @@ class InstiAppBloc {
       _events[0].eventBigImage = true;
     }
     _eventsSubject.add(UnmodifiableListView(_events));
+  }
+
+  // alumniLoginAndOTP bloc
+
+  String get alumniID => ldap;
+  setAlumniID(updtAlumniID) {
+    ldap = updtAlumniID;
+  }
+
+  String get alumniOTP => _alumniOTP;
+  setAlumniOTP(updtAlumniOTP) {
+    _alumniOTP = updtAlumniOTP;
+  }
+
+  Future<void> updateAlumni() async {
+    var _alumniLoginResponse = await client.AlumniLogin(ldap);
+    isAlumni = _alumniLoginResponse.exist;
+    msg = _alumniLoginResponse.msg;
+  }
+
+  Future<void> logAlumniIn(bool resend) async {
+    var _alumniLoginResponse = resend
+        ? await client.ResendAlumniOTP(ldap)
+        : await client.AlumniOTP(ldap, _alumniOTP);
+    isAlumni = !_alumniLoginResponse.error_status;
+    msg = _alumniLoginResponse.msg;
   }
 
   // Your Achievement Bloc
@@ -517,7 +550,11 @@ class InstiAppBloc {
     if (prefs.getKeys().contains(messStorageID)) {
       var x = prefs.getString(messStorageID);
       if (x != null) {
-        _hostels = json.decode(x).map((e) => Hostel.fromJson(e)).toList().cast<Hostel>();
+        _hostels = json
+            .decode(x)
+            .map((e) => Hostel.fromJson(e))
+            .toList()
+            .cast<Hostel>();
         _hostelsSubject.add(UnmodifiableListView(_hostels));
       }
     }
@@ -525,7 +562,8 @@ class InstiAppBloc {
     if (prefs.getKeys().contains(eventStorageID)) {
       var x = prefs.getString(eventStorageID);
       if (x != null) {
-        _events = json.decode(x).map((e) => Event.fromJson(e)).toList().cast<Event>();
+        _events =
+            json.decode(x).map((e) => Event.fromJson(e)).toList().cast<Event>();
         if (_events.length >= 1) {
           _events[0].eventBigImage = true;
         }
@@ -536,8 +574,11 @@ class InstiAppBloc {
     if (prefs.getKeys().contains(achievementStorageID)) {
       var x = prefs.getString(achievementStorageID);
       if (x != null) {
-        _achievements =
-            json.decode(x).map((e) => Achievement.fromJson(e)).toList().cast<Achievement>();
+        _achievements = json
+            .decode(x)
+            .map((e) => Achievement.fromJson(e))
+            .toList()
+            .cast<Achievement>();
         _achievementSubject.add(UnmodifiableListView(_achievements));
       }
     }
@@ -545,8 +586,11 @@ class InstiAppBloc {
     if (prefs.getKeys().contains(notificationsStorageID)) {
       var x = prefs.getString(notificationsStorageID);
       if (x != null) {
-        _notifications =
-            json.decode(x).map((e) => ntf.Notification.fromJson(e)).toList().cast<ntf.Notification>();
+        _notifications = json
+            .decode(x)
+            .map((e) => ntf.Notification.fromJson(e))
+            .toList()
+            .cast<ntf.Notification>();
         _notificationsSubject.add(UnmodifiableListView(_notifications));
       }
     }
