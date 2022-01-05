@@ -17,6 +17,7 @@ import 'package:InstiApp/src/api/request/postFAQ_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
+import 'package:InstiApp/src/api/response/alumni_login_response.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
@@ -43,13 +44,28 @@ abstract class InstiAppApi {
       @rt.Query("password") String password);
 
   @rt.GET("/pass-login")
-  Future<Session> passwordLoginFcm(
-      @rt.Query("username") String username,
-      @rt.Query("password") String password,
-      @rt.Query("fcm_id") String fcmId);
+  Future<Session> passwordLoginFcm(@rt.Query("username") String username,
+      @rt.Query("password") String password, @rt.Query("fcm_id") String fcmId);
 
   @rt.GET("/login")
-  Future<Session> login(@rt.Query('code') String code, @rt.Query('redir') String redir);
+  Future<Session> login(
+      @rt.Query('code') String code, @rt.Query('redir') String redir);
+
+  @rt.GET("/alumniLogin")
+  Future<alumniLoginResponse> AlumniLogin(
+    @rt.Query("ldap") String ldap,
+  );
+
+  @rt.GET("/alumniOTP")
+  Future<alumniLoginResponse> AlumniOTP(
+    @rt.Query("ldap") String ldap,
+    @rt.Query("otp") String otp,
+  );
+
+  @rt.GET("/resendAlumniOTP")
+  Future<alumniLoginResponse> ResendAlumniOTP(
+    @rt.Query("ldap") String ldap,
+  );
 
   @rt.GET("/placement-blog")
   Future<List<PlacementBlogPost>> getPlacementBlogFeed(
@@ -166,8 +182,8 @@ abstract class InstiAppApi {
       @rt.Header("Cookie") String sessionID, @rt.Query("query") String query);
 
   @rt.GET("/search")
-  Future<ExploreResponse> searchType(
-      @rt.Header("Cookie") String sessionID, @rt.Query("query") String query, @rt.Query("types") String type);
+  Future<ExploreResponse> searchType(@rt.Header("Cookie") String sessionID,
+      @rt.Query("query") String query, @rt.Query("types") String type);
 
   // Venter
   @rt.GET("/venter/complaints")
@@ -178,7 +194,8 @@ abstract class InstiAppApi {
       @rt.Query("search") String query);
 
   @rt.GET("/venter/complaints?filter=me")
-  Future<List<Complaint>> getUserComplaints(@rt.Header("Cookie") String sessionId);
+  Future<List<Complaint>> getUserComplaints(
+      @rt.Header("Cookie") String sessionId);
 
   @rt.GET("/venter/complaints/{complaintId}")
   Future<Complaint> getComplaint(
@@ -216,7 +233,8 @@ abstract class InstiAppApi {
   Future<List<TagUri>> getAllTags(@rt.Header("Cookie") String sessionId);
 
   @rt.POST("/achievements")
-  Future<AchievementCreateResponse> postForm(@rt.Header("Cookie") String sessionId,
+  Future<AchievementCreateResponse> postForm(
+      @rt.Header("Cookie") String sessionId,
       @rt.Body() AchievementCreateRequest achievementCreateRequest);
 
   @rt.POST("/achievements-offer/{id}")
@@ -227,13 +245,11 @@ abstract class InstiAppApi {
 
   @rt.POST("/interests")
   Future<SecretResponse> postInterests(
-      @rt.Header("Cookie") String sessionId,
-      @rt.Body() Interest interest);
+      @rt.Header("Cookie") String sessionId, @rt.Body() Interest interest);
 
   @rt.DELETE("/interests/{title}")
   Future<SecretResponse> postDelInterests(
-      @rt.Header("Cookie") String sessionId,
-      @rt.Path() String title);
+      @rt.Header("Cookie") String sessionId, @rt.Path() String title);
 
   @rt.GET("/achievements")
   Future<List<Achievement>> getYourAchievements(
@@ -268,5 +284,6 @@ abstract class InstiAppApi {
       @rt.Header("Cookie") String sessionId, @rt.Body() PostFAQRequest request);
 
   @rt.GET("/query/categories")
-  Future<List<String>> getQueryCategories(@rt.Header("Cookie") String sessionId);
+  Future<List<String>> getQueryCategories(
+      @rt.Header("Cookie") String sessionId);
 }
