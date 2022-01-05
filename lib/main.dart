@@ -33,6 +33,8 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:InstiApp/src/routes/messpage.dart';
 import 'package:InstiApp/src/routes/loginpage.dart';
+import 'package:InstiApp/src/routes/alumniLoginPage.dart';
+import 'package:InstiApp/src/routes/alumni_OTP_Page.dart';
 import 'package:InstiApp/src/routes/placementblogpage.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -48,7 +50,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
-  
+
   await bloc.restorePrefs();
 
   runApp(MyApp(
@@ -133,10 +135,12 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           fontFamily: "IBMPlexSans",
 
           primaryColor: widget.bloc.primaryColor,
-          colorScheme: theme.colorScheme.copyWith(secondary: widget.bloc.accentColor, brightness: widget.bloc.brightness.toBrightness()),
+          colorScheme: theme.colorScheme.copyWith(
+              secondary: widget.bloc.accentColor,
+              brightness: widget.bloc.brightness.toBrightness()),
           primarySwatch: Colors.primaries.firstWhereOrNull(
               (c) => c.value == widget.bloc.accentColor.value),
-              
+
           toggleableActiveColor: widget.bloc.accentColor,
           textSelectionTheme:
               TextSelectionThemeData(selectionColor: widget.bloc.accentColor),
@@ -172,100 +176,104 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         onGenerateRoute: (RouteSettings settings) {
           print(settings.name);
           var temp = settings.name;
-          if(temp!=null){
-          if (temp.startsWith("/event/")) {
-            return _buildRoute(
-                settings,
-                EventPage(
-                  eventFuture:
-                      widget.bloc.getEvent(temp.split("/event/")[1]),
-                ));
-          } else if (temp.startsWith("/body/")) {
-            return _buildRoute(
-                settings,
-                BodyPage(
-                    bodyFuture:
-                        widget.bloc.getBody(temp.split("/body/")[1])));
-          } else if (temp.startsWith("/user/")) {
-            return _buildRoute(
-                settings,
-                UserPage(
-                    userFuture:
-                        widget.bloc.getUser(temp.split("/user/")[1])));
-          } else if (temp.startsWith("/complaint/")) {
-            Uri uri = Uri.parse(temp);
+          if (temp != null) {
+            if (temp.startsWith("/event/")) {
+              return _buildRoute(
+                  settings,
+                  EventPage(
+                    eventFuture: widget.bloc.getEvent(temp.split("/event/")[1]),
+                  ));
+            } else if (temp.startsWith("/body/")) {
+              return _buildRoute(
+                  settings,
+                  BodyPage(
+                      bodyFuture:
+                          widget.bloc.getBody(temp.split("/body/")[1])));
+            } else if (temp.startsWith("/user/")) {
+              return _buildRoute(
+                  settings,
+                  UserPage(
+                      userFuture:
+                          widget.bloc.getUser(temp.split("/user/")[1])));
+            } else if (temp.startsWith("/complaint/")) {
+              Uri uri = Uri.parse(temp);
 
-            return _buildRoute(
-                settings,
-                ComplaintPage(
-                    complaintFuture: widget.bloc.getComplaint(
-                        uri.pathSegments[1],
-                        reload: uri.queryParameters.containsKey("reload") &&
-                            uri.queryParameters["reload"] == "true")));
-          } else if (temp.startsWith("/putentity/event/")) {
-            return _buildRoute(
-                settings,
-                PutEntityPage(
-                    entityID: temp.split("/putentity/event/")[1],
-                    cookie: widget.bloc.getSessionIdHeader()));
-          } else if (temp.startsWith("/putentity/body/")) {
-            return _buildRoute(
-                settings,
-                PutEntityPage(
-                    isBody: true,
-                    entityID: temp.split("/putentity/body/")[1],
-                    cookie: widget.bloc.getSessionIdHeader()));
-          } else {
-            switch (settings.name) {
-              case "/":
-                return _buildRoute(settings, LoginPage(widget.bloc));
-              case "/mess":
-                print("Entereing here mess");
-                return _buildRoute(settings, MessPage());
-              case "/placeblog":
-                return _buildRoute(settings, PlacementBlogPage());
-              case "/trainblog":
-                return _buildRoute(settings, TrainingBlogPage());
-              case "/feed":
-                return _buildRoute(settings, FeedPage());
-              case "/quicklinks":
-                return _buildRoute(settings, QuickLinksPage());
-              case "/news":
-                return _buildRoute(settings, NewsPage());
-              case "/explore":
-                return _buildRoute(settings, ExplorePage());
-              case "/calendar":
-                return _buildRoute(settings, CalendarPage());
-              case "/complaints":
-                return _buildRoute(settings, ComplaintsPage());
-              case "/newcomplaint":
-                return _buildRoute(settings, NewComplaintPage());
-              case "/putentity/event":
-                return _buildRoute(settings,
-                    PutEntityPage(cookie: widget.bloc.getSessionIdHeader()));
-              case "/map":
-                // return _buildRoute(settings, NativeMapPage());
-                return _buildRoute(settings, MapPage());
-              case "/settings":
-                return _buildRoute(settings, SettingsPage());
-              case "/notifications":
-                return _buildRoute(settings, NotificationsPage());
-              case "/about":
-                return _buildRoute(settings, AboutPage());
-              case "/achievements":
-                return _buildRoute(settings, YourAchievementPage());
-              case "/achievements/add":
-                return _buildRoute(settings, Home());
-              case "/externalblog":
-                return _buildRoute(settings, ExternalBlogPage());
-              case "/query":
-                return _buildRoute(settings, QueryPage());
-              case "/query/add":
-                return _buildRoute(settings, QueryAddPage());
+              return _buildRoute(
+                  settings,
+                  ComplaintPage(
+                      complaintFuture: widget.bloc.getComplaint(
+                          uri.pathSegments[1],
+                          reload: uri.queryParameters.containsKey("reload") &&
+                              uri.queryParameters["reload"] == "true")));
+            } else if (temp.startsWith("/putentity/event/")) {
+              return _buildRoute(
+                  settings,
+                  PutEntityPage(
+                      entityID: temp.split("/putentity/event/")[1],
+                      cookie: widget.bloc.getSessionIdHeader()));
+            } else if (temp.startsWith("/putentity/body/")) {
+              return _buildRoute(
+                  settings,
+                  PutEntityPage(
+                      isBody: true,
+                      entityID: temp.split("/putentity/body/")[1],
+                      cookie: widget.bloc.getSessionIdHeader()));
+            } else {
+              switch (settings.name) {
+                case "/":
+                  return _buildRoute(settings, LoginPage(widget.bloc));
+                case "/mess":
+                  print("Entereing here mess");
+                  return _buildRoute(settings, MessPage());
+                case "/placeblog":
+                  return _buildRoute(settings, PlacementBlogPage());
+                case "/trainblog":
+                  return _buildRoute(settings, TrainingBlogPage());
+                case "/feed":
+                  return _buildRoute(settings, FeedPage());
+                case "/alumniLoginPage":
+                  return _buildRoute(settings, alumniLoginPage());
+                case "/alumni-OTP-Page":
+                  return _buildRoute(settings, alumni_OTP_Page());
+                case "/quicklinks":
+                  return _buildRoute(settings, QuickLinksPage());
+                case "/news":
+                  return _buildRoute(settings, NewsPage());
+                case "/explore":
+                  return _buildRoute(settings, ExplorePage());
+                case "/calendar":
+                  return _buildRoute(settings, CalendarPage());
+                case "/complaints":
+                  return _buildRoute(settings, ComplaintsPage());
+                case "/newcomplaint":
+                  return _buildRoute(settings, NewComplaintPage());
+                case "/putentity/event":
+                  return _buildRoute(settings,
+                      PutEntityPage(cookie: widget.bloc.getSessionIdHeader()));
+                case "/map":
+                  // return _buildRoute(settings, NativeMapPage());
+                  return _buildRoute(settings, MapPage());
+                case "/settings":
+                  return _buildRoute(settings, SettingsPage());
+                case "/notifications":
+                  return _buildRoute(settings, NotificationsPage());
+                case "/about":
+                  return _buildRoute(settings, AboutPage());
+                case "/achievements":
+                  return _buildRoute(settings, YourAchievementPage());
+                case "/achievements/add":
+                  return _buildRoute(settings, Home());
+                case "/externalblog":
+                  return _buildRoute(settings, ExternalBlogPage());
+                case "/query":
+                  return _buildRoute(settings, QueryPage());
+                case "/query/add":
+                  return _buildRoute(settings, QueryAddPage());
+              }
             }
+            return _buildRoute(settings, MessPage());
           }
-          return _buildRoute(settings, MessPage());
-        }},
+        },
         navigatorObservers: [widget.bloc.navigatorObserver],
       ),
     );
@@ -291,7 +299,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: onSelectNotification);
 
-    FirebaseMessaging.onMessage.listen( (RemoteMessage message) async {
+    FirebaseMessaging.onMessage.listen(
+      (RemoteMessage message) async {
         print("onMessage: $message");
         var appDocDir = await getApplicationDocumentsDirectory();
 
@@ -303,12 +312,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         // AndroidNotificationStyle styleType;
 
         if (notif.notificationImage != null) {
-          var bigPictureResponse = await http.get(Uri.parse(notif.notificationImage ?? ""));
+          var bigPictureResponse =
+              await http.get(Uri.parse(notif.notificationImage ?? ""));
           var bigPicturePath =
               '${appDocDir.path}/bigPicture-${notif.notificationID}';
           var file = new File(bigPicturePath);
           await file.writeAsBytes(bigPictureResponse.bodyBytes);
-          
+
           style = BigPictureStyleInformation(
             FilePathAndroidBitmap(bigPicturePath),
             summaryText: notif.notificationLargeContent,
@@ -316,7 +326,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           // styleType = AndroidNotificationStyle.bigPicture;
         } else if (notif.notificationLargeContent != null) {
           style = BigTextStyleInformation(
-            notif.notificationLargeContent?? "",
+            notif.notificationLargeContent ?? "",
           );
           // styleType = AndroidNotificationStyle.bigText;
         } else {
@@ -326,7 +336,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
         String largeIconPath = "";
         if (notif.notificationLargeIcon != null) {
-          var largeIconResponse = await http.get(Uri.parse(notif.notificationLargeIcon ?? ""));
+          var largeIconResponse =
+              await http.get(Uri.parse(notif.notificationLargeIcon ?? ""));
           largeIconPath = '${appDocDir.path}/largeIcon-${notif.notificationID}';
           var file = new File(largeIconPath);
           await file.writeAsBytes(largeIconResponse.bodyBytes);
@@ -335,7 +346,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
           'Very Important',
           'Placement Blog Notifications',
-         channelDescription: 'All Placement Blog Notifications go here with high importance',
+          channelDescription:
+              'All Placement Blog Notifications go here with high importance',
           importance: Importance.max,
           priority: Priority.high,
           largeIcon: FilePathAndroidBitmap(largeIconPath),
@@ -345,7 +357,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         var iOSPlatformChannelSpecifics =
             new IOSNotificationDetails(presentAlert: true);
         var platformChannelSpecifics = new NotificationDetails(
-            android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
+            android: androidPlatformChannelSpecifics,
+            iOS: iOSPlatformChannelSpecifics);
 
         await flutterLocalNotificationsPlugin.show(
           0,
@@ -371,7 +384,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         provisional: false,
         sound: true,
       );
-    } 
+    }
     // widget.bloc.firebaseMessaging.onIosSettingsRegistered
     //     .listen((IosNotificationSettings settings) {
     //   print("Settings registered: $settings");
@@ -387,7 +400,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
     }
-    navigateFromNotification(RichNotification.fromJson(jsonDecode(payload ?? "")));
+    navigateFromNotification(
+        RichNotification.fromJson(jsonDecode(payload ?? "")));
   }
 
   Future navigateFromNotification(dynamic fromMap) async {

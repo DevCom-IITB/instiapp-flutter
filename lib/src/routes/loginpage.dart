@@ -28,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
 
   final String successUrl = "instiapp://insti.app/login";
   final String guestUrl = "https://guesturi";
+  final String alumniUrl = "https://alumniurl";
   final String gymkhanaUrl = "https://gymkhana.iitb.ac.in";
   final String httpGymkhanaUrl = "http://gymkhana.iitb.ac.in";
   final String ssoLogin = "https://sso.iitb.ac.in/login";
@@ -83,7 +84,9 @@ class _LoginPageState extends State<LoginPage> {
         print("startLoginPageServer.then: Launching Web View");
         await Future.delayed(Duration(milliseconds: 200));
         // var mqdata = MediaQuery.of(context);
-        setState((){loading = false;});
+        setState(() {
+          loading = false;
+        });
         // flutterWebviewPlugin.launch(
         //   loginurl!,
         //   hidden: false,
@@ -170,55 +173,68 @@ class _LoginPageState extends State<LoginPage> {
     _bloc = BlocProvider.of(context)!.bloc;
     // var mqdata = MediaQuery.of(context);
 
-    return loading? Material(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Image(
-              color: Theme.of(context).colorScheme.secondary,
-              image: AssetImage('assets/login/lotus.png'),
-              width: 250.0,
-              fit: BoxFit.scaleDown,
+    return loading
+        ? Material(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Image(
+                    color: Theme.of(context).colorScheme.secondary,
+                    image: AssetImage('assets/login/lotus.png'),
+                    width: 250.0,
+                    fit: BoxFit.scaleDown,
+                  ),
+                  Text(
+                    "InstiApp",
+                    style: Theme.of(context).textTheme.headline4?.copyWith(
+                        color: Theme.of(context).colorScheme.secondary),
+                  ),
+                  CircularProgressIndicatorExtended(
+                    label: Text(statusMessage),
+                    // backgroundColor: Theme.of(context).accentColor,
+                  ),
+                ],
+              ),
             ),
-            Text(
-              "InstiApp",
-              style: Theme.of(context)
-                  .textTheme
-                  .headline4
-                  ?.copyWith(color: Theme.of(context).colorScheme.secondary),
-            ),
-            CircularProgressIndicatorExtended(
-              label: Text(statusMessage),
-              // backgroundColor: Theme.of(context).accentColor,
-            ),
-          ],
-        ),
-      ),
-    ) : WebView(
-      javascriptMode: JavascriptMode.unrestricted,
-      initialUrl: loginurl,
-      onWebViewCreated: (controller){
-        this._controller = controller;
-      },
-      onPageStarted: (url) async{
-        if (url.startsWith(successUrl)) {
-          var uri = Uri.parse(url);
-          var code = uri.queryParameters['code'];
+          )
+        : WebView(
+            javascriptMode: JavascriptMode.unrestricted,
+            initialUrl: loginurl,
+            onWebViewCreated: (controller) {
+              this._controller = controller;
+            },
+            onPageStarted: (url) async {
+              if (url.startsWith(successUrl)) {
+                var uri = Uri.parse(url);
+                var code = uri.queryParameters['code'];
 
-          setState(() {loading = true;});
-          await login(code ?? "", "https://www.insti.app/login-android.html");
-          setState(() {loading = false;});
-        }else if (url.startsWith(guestUrl)) {
-          setState(() {loading = true;});
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil(_bloc!.homepageName, (r) => false);
-        }
-      },
-      onPageFinished: (url){
-      },
-      gestureNavigationEnabled: true,
-    );
+                setState(() {
+                  loading = true;
+                });
+                await login(
+                    code ?? "", "https://www.insti.app/login-android.html");
+                setState(() {
+                  loading = false;
+                });
+              } else if (url.startsWith(guestUrl)) {
+                setState(() {
+                  loading = true;
+                });
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil(_bloc!.homepageName, (r) => false);
+              } else if (url.startsWith(alumniUrl)) {
+                print(alumniUrl);
+                setState(() {
+                  loading = true;
+                });
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    _bloc!.alumniLoginPage, (r) => false);
+              }
+            },
+            onPageFinished: (url) {},
+            gestureNavigationEnabled: true,
+          );
 
     // return Material(
     //   child: Center(
