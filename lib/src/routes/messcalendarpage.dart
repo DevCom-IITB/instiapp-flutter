@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
@@ -9,16 +11,15 @@ import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart' as el;
-import 'dart:math';
 
-class CalendarPage extends StatefulWidget {
-  final String title = "Calendar";
+class MessCalendarPage extends StatefulWidget {
+  const MessCalendarPage({Key? key}) : super(key: key);
 
   @override
-  _CalendarPageState createState() => _CalendarPageState();
+  _MessCalendarPageState createState() => _MessCalendarPageState();
 }
 
-class _CalendarPageState extends State<CalendarPage> {
+class _MessCalendarPageState extends State<MessCalendarPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   DateTime _currentDate =
@@ -33,8 +34,6 @@ class _CalendarPageState extends State<CalendarPage> {
     var bloc = BlocProvider.of(context)!.bloc;
     var calBloc = bloc.calendarBloc;
 
-    // print("Width: ${MediaQuery.of(context).size.width}");
-
     _eventIcon = Material(
       type: MaterialType.transparency,
       shape: CircleBorder(
@@ -43,10 +42,6 @@ class _CalendarPageState extends State<CalendarPage> {
         ),
       ),
     );
-    if (firstBuild) {
-      calBloc.fetchEvents(DateTime.now(), _eventIcon!);
-      firstBuild = false;
-    }
 
     return Scaffold(
       key: _scaffoldKey,
@@ -83,7 +78,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        widget.title,
+                        "Mess Calendar",
                         style: theme.textTheme.headline3,
                       ),
                       SizedBox(
@@ -230,10 +225,11 @@ class _CalendarPageState extends State<CalendarPage> {
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton:
           (bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false)
-              ? FloatingActionButton(
-                  child: Icon(Icons.add_outlined),
+              ? FloatingActionButton.extended(
+                  icon: Icon(Icons.add_outlined),
+                  label: Text("Take your meal"),
                   onPressed: () {
-                    Navigator.of(context).pushNamed("/putentity/event");
+                    Navigator.of(context).pushNamed("/messcalendar/qr");
                   },
                 )
               : null,
