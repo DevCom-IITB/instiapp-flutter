@@ -215,6 +215,26 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
+  Future<List<MessCalEvent>> getMessEventsBetweenDates(
+      sessionId, start, end) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'start': start, r'end': end};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<List<MessCalEvent>>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/getUserMess',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    var value = _result.data!
+        .map((dynamic i) => MessCalEvent.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
   Future<EventCreateResponse> createEvent(sessionId, eventCreateRequest) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
