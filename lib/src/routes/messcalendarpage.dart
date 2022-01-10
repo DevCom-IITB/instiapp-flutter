@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'dart:math';
 
 import 'package:InstiApp/src/api/model/event.dart';
@@ -42,6 +43,11 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
         ),
       ),
     );
+
+    if (firstBuild) {
+      calBloc.fetchEvents(DateTime.now(), _eventIcon!);
+      firstBuild = false;
+    }
 
     return Scaffold(
       key: _scaffoldKey,
@@ -229,6 +235,7 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
                   icon: Icon(Icons.add_outlined),
                   label: Text("Take your meal"),
                   onPressed: () {
+                    dev.log("ENtered");
                     Navigator.of(context).pushNamed("/messcalendar/qr");
                   },
                 )
