@@ -1,10 +1,11 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 
-import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/messCalEvent.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/blocs/mess_calendar_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
@@ -33,7 +34,7 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
-    var calBloc = bloc.calendarBloc;
+    var calBloc = bloc.messCalendarBloc;
 
     _eventIcon = Material(
       type: MaterialType.transparency,
@@ -72,10 +73,10 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
       ),
       drawer: NavDrawer(),
       body: SafeArea(
-        child: StreamBuilder<Map<DateTime, List<Event>>>(
+        child: StreamBuilder<Map<DateTime, List<MessCalEvent>>>(
           stream: calBloc.events,
           builder: (BuildContext context,
-              AsyncSnapshot<Map<DateTime, List<Event>>> snapshot) {
+              AsyncSnapshot<Map<DateTime, List<MessCalEvent>>> snapshot) {
             return ListView(
               children: <Widget>[
                 TitleWithBackButton(
@@ -114,9 +115,10 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       Center(
-                        child: CalendarCarousel<Event>(
+                        child: CalendarCarousel<MessCalEvent>(
                           customGridViewPhysics: NeverScrollableScrollPhysics(),
-                          onDayPressed: (DateTime date, List<Event> evs) {
+                          onDayPressed:
+                              (DateTime date, List<MessCalEvent> evs) {
                             this.setState(() => _currentDate = date);
                           },
                           onCalendarChanged: (date) {
@@ -243,28 +245,29 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
     );
   }
 
-  Iterable<Widget> _buildEvents(CalendarBloc calBloc, ThemeData theme) {
+  Iterable<Widget> _buildEvents(MessCalendarBloc calBloc, ThemeData theme) {
     return calBloc.eventsMap[_currentDate]
             ?.map((e) => _buildEventTile(calBloc.bloc, theme, e)) ??
         [];
   }
 
-  Widget _buildEventTile(InstiAppBloc bloc, ThemeData theme, Event event) {
+  Widget _buildEventTile(
+      InstiAppBloc bloc, ThemeData theme, MessCalEvent event) {
     return ListTile(
       title: Text(
-        event.eventName ?? "",
+        event.title ?? "",
         style: theme.textTheme.headline6,
       ),
       enabled: true,
-      leading: NullableCircleAvatar(
-        event.eventImageURL ?? event.eventBodies?[0].bodyImageURL ?? "",
-        Icons.event_outlined,
-        heroTag: event.eventID ?? "",
-      ),
-      subtitle: Text(event.getSubTitle()),
-      onTap: () {
-        EventPage.navigateWith(context, bloc, event);
-      },
+      // leading: NullableCircleAvatar(
+      //   event.eventImageURL ?? event.eventBodies?[0].bodyImageURL ?? "",
+      //   Icons.event_outlined,
+      //   heroTag: event.eventID ?? "",
+      // ),
+      subtitle: Text(event.dateTime ?? ""),
+      // onTap: () {
+      //   EventPage.navigateWith(context, bloc, event);
+      // },
     );
   }
 }
