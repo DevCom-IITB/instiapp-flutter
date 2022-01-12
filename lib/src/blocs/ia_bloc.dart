@@ -22,6 +22,7 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
 import 'package:InstiApp/src/blocs/map_bloc.dart';
 import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
+import 'package:InstiApp/src/blocs/mess_calendar_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -84,6 +85,7 @@ class InstiAppBloc {
   late PostBloc queryBloc;
   late ExploreBloc exploreBloc;
   late CalendarBloc calendarBloc;
+  late MessCalendarBloc messCalendarBloc;
   late ComplaintsBloc complaintsBloc;
   late DrawerBloc drawerState;
   late MapBloc mapBloc;
@@ -220,6 +222,8 @@ class InstiAppBloc {
     mapBloc = MapBloc(this);
     achievementBloc = Bloc(this);
     bodyAchBloc = VerifyBloc(this);
+    messCalendarBloc = MessCalendarBloc(this);
+
     _initNotificationBatch();
   }
 
@@ -509,6 +513,7 @@ class InstiAppBloc {
     exploreBloc.saveToCache(sharedPrefs: prefs);
     // complaintsBloc?.saveToCache(sharedPrefs: prefs);
     calendarBloc.saveToCache(sharedPrefs: prefs);
+    messCalendarBloc.saveToCache(sharedPrefs: prefs);
     mapBloc.saveToCache(sharedPrefs: prefs);
   }
 
@@ -517,7 +522,11 @@ class InstiAppBloc {
     if (prefs.getKeys().contains(messStorageID)) {
       var x = prefs.getString(messStorageID);
       if (x != null) {
-        _hostels = json.decode(x).map((e) => Hostel.fromJson(e)).toList().cast<Hostel>();
+        _hostels = json
+            .decode(x)
+            .map((e) => Hostel.fromJson(e))
+            .toList()
+            .cast<Hostel>();
         _hostelsSubject.add(UnmodifiableListView(_hostels));
       }
     }
@@ -525,7 +534,8 @@ class InstiAppBloc {
     if (prefs.getKeys().contains(eventStorageID)) {
       var x = prefs.getString(eventStorageID);
       if (x != null) {
-        _events = json.decode(x).map((e) => Event.fromJson(e)).toList().cast<Event>();
+        _events =
+            json.decode(x).map((e) => Event.fromJson(e)).toList().cast<Event>();
         if (_events.length >= 1) {
           _events[0].eventBigImage = true;
         }
@@ -536,8 +546,11 @@ class InstiAppBloc {
     if (prefs.getKeys().contains(achievementStorageID)) {
       var x = prefs.getString(achievementStorageID);
       if (x != null) {
-        _achievements =
-            json.decode(x).map((e) => Achievement.fromJson(e)).toList().cast<Achievement>();
+        _achievements = json
+            .decode(x)
+            .map((e) => Achievement.fromJson(e))
+            .toList()
+            .cast<Achievement>();
         _achievementSubject.add(UnmodifiableListView(_achievements));
       }
     }
@@ -545,8 +558,11 @@ class InstiAppBloc {
     if (prefs.getKeys().contains(notificationsStorageID)) {
       var x = prefs.getString(notificationsStorageID);
       if (x != null) {
-        _notifications =
-            json.decode(x).map((e) => ntf.Notification.fromJson(e)).toList().cast<ntf.Notification>();
+        _notifications = json
+            .decode(x)
+            .map((e) => ntf.Notification.fromJson(e))
+            .toList()
+            .cast<ntf.Notification>();
         _notificationsSubject.add(UnmodifiableListView(_notifications));
       }
     }
@@ -554,6 +570,7 @@ class InstiAppBloc {
     exploreBloc.restoreFromCache(sharedPrefs: prefs);
     // complaintsBloc?.restoreFromCache(sharedPrefs: prefs);
     calendarBloc.restoreFromCache(sharedPrefs: prefs);
+    messCalendarBloc.restoreFromCache(sharedPrefs: prefs);
     mapBloc.restoreFromCache(sharedPrefs: prefs);
   }
 
