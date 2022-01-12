@@ -4,8 +4,10 @@ import 'dart:async';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 // import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:jaguar/jaguar.dart' as jag;
 import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class MapPage extends StatefulWidget {
@@ -27,7 +29,7 @@ class _MapPageState extends State<MapPage> {
   // final String mapUrl = "https://varunpatil.me/instimapweb-standalone/";
 
   StreamSubscription<String>? onUrlChangedSub;
-   WebViewController? webViewController;
+  InAppWebViewController? webViewController;
 
   // Storing for dispose
   ThemeData? theme;
@@ -76,20 +78,19 @@ class _MapPageState extends State<MapPage> {
           ],
         ),
       ),
-      body: WebView(
-      javascriptMode: JavascriptMode.unrestricted,
-      onWebViewCreated: (controller){
-        webViewController = controller;
-      },
-      initialUrl: mapUrl,
-      onPageStarted: (url) async{
-        // print("Changed URL: $url");
-      },
-      onPageFinished: (url){
-        
-      },
-      gestureNavigationEnabled: true,
-    ),);
+      body: InAppWebView(
+        onWebViewCreated: (controller){
+          webViewController = controller;
+        },
+        initialUrlRequest: URLRequest(url: Uri.parse(mapUrl)),
+        androidOnPermissionRequest: (controller, origin, resources) async {
+          await Permission.locationWhenInUse.request();
+          return PermissionRequestResponse(
+              resources: resources,
+              action: PermissionRequestResponseAction.GRANT);
+        },
+      ),
+    );
   }
 
   Future startMapServerIfNotStarted() {
