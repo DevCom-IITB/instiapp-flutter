@@ -218,7 +218,9 @@ abstract class InstiAppApi {
   @rt.POST("/achievements")
   Future<AchievementCreateResponse> postForm(@rt.Header("Cookie") String sessionId,
       @rt.Body() AchievementCreateRequest achievementCreateRequest);
-
+  @rt.POST("/events")
+  Future<EventCreateResponse> postEventForm(@rt.Header("Cookie") String sessionId,
+      @rt.Body() EventCreateRequest eventCreateRequest);
   @rt.POST("/achievements-offer/{id}")
   Future<SecretResponse> postAchievementOffer(
       @rt.Header("Cookie") String sessionId,
