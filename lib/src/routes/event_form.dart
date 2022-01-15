@@ -1,13 +1,24 @@
 
-import 'dart:math';
-
+import 'dart:convert';
+// import 'dart:html';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/user.dart';
+import 'package:InstiApp/src/api/model/venue.dart';
+import 'package:InstiApp/src/api/request/event_create_request.dart';
+import 'package:InstiApp/src/api/request/image_upload_request.dart';
+import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:analyzer/dart/ast/token.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
+// import 'package:flutter_html/shims/dart_ui_real.dart';
+// import 'package:flutter_html/flutter_html.dart';
+import 'package:image_picker/image_picker.dart';
+// import 'package:jaguar/http/http.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class CreateEventBtn extends StatefulWidget {
@@ -37,10 +48,7 @@ class _CreateEventBtnState extends State<CreateEventBtn> {
       ),
       child: TextButton(
         onPressed: () {
-          if(!widget.formKey.currentState!.validate()){
-            return;
-          }
-          formKey.currentState!.save();
+          widget.formPoster();
           //post formdata;
         },
         child: Text('Create'),
@@ -132,20 +140,21 @@ class _DatePickerFieldState extends State<DatePickerField> {
           }
         },
         validator: (String? s){
+          print('date validator');
           if(s!=null){
             DateTime newDate = parseDate(s);
-            if(newDate.microsecondsSinceEpoch!=zeroDateTime){
+            if(newDate.microsecondsSinceEpoch==zeroDateTime){
               return 'Date Not Parsed. Format: DD/MM/YYYY';
             }
-            else if((newDate.isBefore(lastDate)&&newDate.isAfter(initDate))){
+            else if(!(newDate.isBefore(lastDate)&&newDate.isAfter(initDate))){
               return 'Date must be within a year of today.';
             }
           }
-
+          return null;
         },
         onSaved: (String? dateStr){
           if(dateStr!=null){
-            widget.onSaved(dateStr);
+            widget.onSaved(parseDate(dateStr));
           }
         },
         decoration: InputDecoration(
@@ -186,7 +195,9 @@ class _DatePickerFieldState extends State<DatePickerField> {
   }
 }
 class AchievementAdder extends StatefulWidget {
-  const AchievementAdder({Key? key}) : super(key: key);
+  final Function postData;
+  final List<Body> eventBodies;
+  AchievementAdder({required this.postData, required this.eventBodies});
 
   @override
   _AchievementAdderState createState() => _AchievementAdderState();
@@ -202,8 +213,20 @@ class _AchievementAdderState extends State<AchievementAdder> {
     'Third',
     'Special'
   ];
+  void updateFormData(){
+    widget.postData(acheves);
+  }
+  String getAchevTitle(Achievement achev){
+    if(achev.title!=null && achev.title!.length>0){
+      return achev.title!;
+    }
+    else{
+      return 'Untitled Achievement';
+    }
+  }
   @override
   Widget build(BuildContext context) {
+    // print(widget.eventBodies);
     return Column(
       children: [
         Row(
@@ -259,55 +282,98 @@ class _AchievementAdderState extends State<AchievementAdder> {
             ),
             child: ExpansionTile(
               expandedCrossAxisAlignment: CrossAxisAlignment.end,
-              title: Text((acheve.title=="s")?acheve.title!:'Untitled Achievement'),
+              title: Text(getAchevTitle(acheve)),
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      TextField(
+                      TextFormField(
                         decoration: InputDecoration(
                             hintText: 'Title *'
                         ),
+                        validator: (String? acheveTitle){
+                          print('ac. title. validator');
+                          if(acheveTitle!.length==0||acheveTitle.length>50){
+                            return 'Title length must be 0 to 50';
+                          }
+                          return null;
+                        },
+                        onChanged: (String? s){
+                          setState(() {
+                            acheve.title = s!;
+                          });
+                        },
+                        onSaved: (String? acheveTitle){
+                          acheves[acheves.indexOf(acheve)].title = acheveTitle!;
+                        },
                       ),
-                      TextField(
+                      TextFormField(
                         keyboardType: TextInputType.multiline,
                         maxLines: 4,
                         decoration: InputDecoration(
                             hintText: 'Description'
                         ),
+                        //Validator?
+                        onSaved: (String? achevDesc){
+                          acheves[acheves.indexOf(acheve)].description = achevDesc!;
+                        },
                       ),
                       Container(
                         padding: EdgeInsets.symmetric(vertical:8),
                         width: double.infinity,
-                        child: DropdownButton<String>(
-                          onChanged: (String? v){},
-                          hint: Text('Authority'),
-                          items: [
-                            'Devcom',
-                            'Dead'
-                          ].map((String s){
+                        child: DropdownButtonFormField<String>(
+                          value: (acheve.body!=null)?acheve.body!.bodyName!:null,
+                          onChanged: (String? v){
+                            setState(() {
+                              acheve.body = widget.eventBodies.firstWhere((element) => element.bodyName==v);
+
+                            });
+                          },
+                          decoration: InputDecoration(
+                            label: Text('Authority'),
+                          ),
+                          items: widget.eventBodies.map((Body b){
                             return DropdownMenuItem<String>(
-                              value: s,
-                              child: Text(s),
+                              value: b.bodyName!,
+                              child: Text(b.bodyName!),
                             );
                           }).toList(),
+                          onSaved: (String? bodyName){
+                            acheves[acheves.indexOf(acheve)].body = widget.eventBodies.firstWhere((element) => element.bodyName==bodyName);
+                          },
                         ),
                       ),
                       Container(
                         padding: EdgeInsets.symmetric(vertical:8),
                         width: double.infinity,
-                        child: DropdownButton<String>(
-                          hint: Text('Type *'),
-                          onChanged: (String? v){},
-                          items: acheveTypes.map((String val){
-                            return DropdownMenuItem<String>(
-                              value: val,
-                              child: Text(val),
-                            );
-                          }).toList(),
+                        child: DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              label: Text('Type *')
+                            ),
+                            value: (acheve.offer!=null)?acheve.offer:null,
+                            //TODO: What to do with Type?Is model choice correct?
+                            onChanged: (String? v){
+                              setState(() {
+                                acheve.offer = v;
+                              });
+                            },
+                            items: acheveTypes.map((String val){
+                              return DropdownMenuItem<String>(
+                                value: val,
+                                child: Text(val),
+                              );
+                            }).toList(),
+                          onSaved: (String? type){
+                            acheves[acheves.indexOf(acheve)].offer = type;
+                            if(acheves.indexOf(acheve)==acheves.length-1){
+                              //last acheve;
+                              //last field saved;=>post data into form
+                              widget.postData(acheves);
+                            }
+                          },
+                          ),
                         ),
-                      )
                     ],
                   ),
                 ),
@@ -327,7 +393,8 @@ class _AchievementAdderState extends State<AchievementAdder> {
   }
 }
 class AudienceRestrictor extends StatefulWidget {
-  const AudienceRestrictor({Key? key}) : super(key: key);
+  final Function onSave;
+  AudienceRestrictor({required this.onSave});
 
   @override
   _AudienceRestrictorState createState() => _AudienceRestrictorState();
@@ -335,6 +402,25 @@ class AudienceRestrictor extends StatefulWidget {
 
 class _AudienceRestrictorState extends State<AudienceRestrictor> {
   int reach=0;
+  //TODO:API: Collect restrictables,allowedOptions from api;
+  //TODO:API: Implement reach calculation using api;
+  List<String> restrictables = ['Hostel', 'Department', 'Degree', 'Join Year'];
+  Map<String, List<String>> allowedOptions = {
+    'Hostel': ['1', '2', '3'],
+    'Join Year': ['1', '2', '3', '4'],
+    'Degree': ['Phd', 'M', 'B'],
+    'Department': ['CS', 'The Others']
+    };
+  Map<String,List<String>> allowed = {};
+  @override
+  void initState() {
+    setState(() {
+      allowed = restrictables.asMap().map((key, value) => MapEntry(restrictables[key], ['All']));
+    });
+    print(allowed);
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -366,10 +452,57 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
                 fontSize: 15
             ),
           ),
-          ExpansionTile(
-            title: Text('Hostel'),
-            children: [],
-          )
+        ...allowed.map((key, value) => MapEntry(key,ExpansionTile(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(key),
+            value[0].compareTo('All')==0?Text(
+              'All',
+              style: TextStyle(
+                  color: Colors.green
+              ),
+            ):Text(
+              'Restricted',
+              style: TextStyle(
+                  color: Colors.red
+              ),
+            )
+          ],
+        ),
+        children: [MultiSelectChipField<String?>(
+          chipColor: Colors.white,
+          // title: Text(''),
+          showHeader: false,
+          headerColor: Colors.white,
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(blurRadius: 1.0, spreadRadius: 3.0, color: Colors.grey[200]!)
+            ],
+          ),
+          textStyle: TextStyle(color: Colors.black),
+          selectedChipColor: Colors.amber,
+          items: allowedOptions[key]!.map((e) => MultiSelectItem<String?>(e, e)).toList(),
+          onTap: (List<String?> values){
+            if(values.length==0){
+              setState(() {
+                allowed[key] = ['All'];
+              });
+            }
+            else{
+              setState(() {
+                allowed[key]!.clear();
+                for(int i=0;i<values.length;i++){
+                  allowed[key]!.add(values[i]!);
+                }
+
+              });
+            }
+          },
+        ),]
+    )
+        )
+        ).values.toList()
         ],
       ),
     );
@@ -404,17 +537,19 @@ class _EventFormState extends State<EventForm> {
   // ];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   List<Body> bodyOptions = [];
+  List<Venue> venueOptions = [];
   List<Body> creatorBodies = [];
 
   //Form Fields
-  late String eventID;
+  late Future<String> eventID;
   late String StrID;
   late String eventName;
   late String eventDescription;
-  late String eventImageURL;
+  late List<Achievement> eventAchievementsOffered = [];
+  late String eventImageURL = '';//TODO: set this to an asset template image
   late String eventStartTime = DateTime.now().toString();
   late String eventEndTime = DateTime.now().toString();
-  late String eventIsAllDay;
+  late String eventIsAllDay = 'false';
   late List<String> eventVenues = ['Venue'];
   late List<Body> eventBodies = [];
   List<User> eventBlankGoing = [];
@@ -431,7 +566,7 @@ class _EventFormState extends State<EventForm> {
       //must be non-null since event form has been accessed.
       creator = widget.creator!;
     }
-    //TODO:Implemecnt code for loading an existing event into the form.
+    //TODO:Implement code for loading an existing event into the form.
     super.initState();
   }
 
@@ -442,20 +577,43 @@ class _EventFormState extends State<EventForm> {
 
   @override
   Widget build(BuildContext context) {
+    var bloc = BlocProvider.of(context)!.bloc;
+    theme = Theme.of(context);
+    // final eventBloc
     User? temp =  BlocProvider.of(context)!.bloc.currSession!.profile;
     if(temp!=null){
       creator = temp;
     }
     ()async{
-      List<Body> tempBodies= await BlocProvider.of(context)!.bloc.client.getAllBodies(BlocProvider.of(context)!.bloc.currSession!.sessionid!);
+      List<Body> tempBodies= await bloc.client.getAllBodies(BlocProvider.of(context)!.bloc.currSession!.sessionid!);
+      List<Venue> tempVenues = await bloc.client.getAllVenues();
+      // tempVenues.forEach((element) {print(element.venueName!);});
       setState(() {
-        bodyOptions = [tempBodies[0], tempBodies[1], tempBodies[2]];
+        List<Role>? roles = creator.userRoles;
+        if(roles!=null){
+          List<Body> realOptions = roles.map((e){
+            if(e.roleBodyDetails!=null){
+              return e.roleBodyDetails!;
+            }
+            else if(e.roleBodies!=null){
+              return e.roleBodies![0];
+            }
+            // else{
+              return tempBodies[0];
+            // }
+          }).toList();
+          bodyOptions = realOptions;
+        }
+        else{
+          bodyOptions = [tempBodies[0], tempBodies[1], tempBodies[2]];
+        }
+        venueOptions = tempVenues;
         // creatorBodies=[];
       });
     }();
-    theme = Theme.of(context);
-    final _bodyList = creatorBodies.map((body) =>
-        MultiSelectItem<Body?>(body, body.bodyName!)).toList();
+
+    // final _bodyList = creatorBodies.map((body) =>
+    //     MultiSelectItem<Body?>(body, body.bodyName!)).toList();
     return Scaffold(bottomNavigationBar: MyBottomAppBar(
       child: new Row(
         mainAxisSize: MainAxisSize.max,
@@ -482,17 +640,36 @@ class _EventFormState extends State<EventForm> {
             child: Column(
               children: [
                 Container(
-                  color: Colors.blue,
-                  height: 200,
+                  color: Colors.amber[200],
+                  width: double.infinity,
+                  height: 250,
+                  child: TextButton(
+                    onPressed: () async{
+                      //TODO:API: Resolve errors in image upload (api)
+                      final ImagePicker _picker = ImagePicker();
+                      final XFile? pi = await _picker.pickImage(source: ImageSource.gallery);
+                      String img64 = base64Encode(await pi!.readAsBytes());
+                      ImageUploadRequest IUReq = ImageUploadRequest(
+                      base64Image: img64
+                      );
+                      ImageUploadResponse resp = await bloc.client.uploadImage(widget.cookie,IUReq);
+                      setState(() {
+                        eventImageURL=resp.pictureURL!;
+                      });
+                    },
+                    child: Text((eventImageURL.length==0)?'Pick an Image':'Image saved'),
+                  ),
                 ),
                 TextFormField(
                   decoration: InputDecoration(
                       labelText: "Event Name"
                   ),
                   validator: (String? value){
+                    print('evnameval');
                     if(value!.isEmpty||value.length>50){
                       return 'Event Name length must be 0-50';
                     }
+                    return null;
                   },
                   onSaved: (String? evName){
                     if(evName!=null){
@@ -533,9 +710,13 @@ class _EventFormState extends State<EventForm> {
                         eventVenues[venues.indexOf(venue)] = venueval;
                       }
                     },
+                    //TODO: Fix autofillhints for Venues
+                    autofillHints:[...venueOptions].map((e) => e.venueName!).toList(),
+                    // enableInteractiveSelection: true,
+                    // autofillHints: ['sa', 'aa'],
                     decoration: InputDecoration(
+
                       label: Text('Venue'),
-                      //TODO:Make TextField with suggestions.
                       suffixIcon: IconButton(
                         icon: (venues.indexOf(venue)>0)?Icon(Icons.remove):Icon(Icons.add),
                         onPressed: (){
@@ -559,6 +740,8 @@ class _EventFormState extends State<EventForm> {
                 ),
                 ).toList(),
                 MultiSelectDialogField(
+                  title: Text('Bodies'),
+                  buttonText: eventBodies.isEmpty?Text('Bodies'):Text(eventBodies.map((e)=>e.bodyName!).toList().join(',')),
                   items: [...bodyOptions].map((e) => MultiSelectItem<Body?>(e,e.bodyName!)).toList(),
                   onConfirm: (values){
                     setState(() {
@@ -567,8 +750,8 @@ class _EventFormState extends State<EventForm> {
                         eventBodies.add(values[i] as Body);
                       }
                       values.clear();
-                      print(eventBodies);
-                      eventBodies.forEach((element) {print(element.bodyName!);});
+                      // print(eventBodies);
+                      // eventBodies.forEach((element) {print(element.bodyName!);});
                     });
                   },
                 ),
@@ -601,8 +784,20 @@ class _EventFormState extends State<EventForm> {
                     },
                   ),
                 ),
-                AchievementAdder(),
-                AudienceRestrictor(),
+                AchievementAdder(
+                  postData:(List<Achievement> achevs){
+                    // setState(() {
+                      eventAchievementsOffered = achevs;
+                    // });
+                    //Use eventID, filled after posting event.;
+                    //TODO:API: call to post achevs
+                  },
+                  eventBodies: bodyOptions
+                ),
+                AudienceRestrictor(
+                  onSave: (List<dynamic> rest){
+                  }
+                ),
                 GestureDetector(
                   onTap: () {
                     //value = !=value
@@ -618,9 +813,31 @@ class _EventFormState extends State<EventForm> {
                     ],
                   ),
                 ),
-                CreateEventBtn(formKey:_formKey, formPoster: (){
-                  //TODO:replace by a function using private members of EventForm
-                  //to make a post request to that url.
+                CreateEventBtn(formKey:_formKey, formPoster: ()async{
+                  if(!_formKey.currentState!.validate()){
+                    print('validation failed');
+                    return;
+                  }
+                  _formKey.currentState!.save();
+                  EventCreateRequest req = EventCreateRequest(
+                    eventName: eventName,
+                    eventDescription: eventDescription,
+                    eventImageURL: eventImageURL,
+                    eventStartTime: eventStartTime,
+                    eventEndTime: eventEndTime,
+                    allDayEvent: eventIsAllDay=='true',//TODO: add switch?
+                    eventVenueNames: eventVenues,
+                    eventBodiesID: eventBodies.map((e) => e.bodyID!).toList()
+                  );
+                  req;
+                  print(req.toJson());
+                  eventID = Future<String>(
+                      (){return 's';}
+                  );
+                  // final respo = await bloc.client.postEventForm(widget.cookie, req);
+                  // print(respo!);
+                  //update achevs in this widget
+                  //call post requests on the updated achevs
                 },),
               ],
             ),
