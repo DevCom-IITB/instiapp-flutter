@@ -91,10 +91,7 @@ class _QRPageState extends State<QRPage> {
                     alignment: Alignment.center,
                     height: MediaQuery.of(context).size.height / 2,
                     child: QrImage(
-                      data: json.encode({
-                        "id": bloc.currSession!.profile?.userRollNumber,
-                        "timestamp": currentTime,
-                      }),
+                      data: '${bloc.currSession!.profile?.userRollNumber},${currentTime}',
                       size: MediaQuery.of(context).size.width / 2,
                     ),
                   ),

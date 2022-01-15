@@ -25,6 +25,8 @@ class MessCalEvent extends elt.Event {
   @JsonKey(name: "hostel")
   int? hostel;
 
+  DateTime? eventStartDate;
+
   MessCalEvent({this.eid, this.title, this.dateTime, this.hostel})
       : super(
           date: DateTime.parse(dateTime ?? ""),

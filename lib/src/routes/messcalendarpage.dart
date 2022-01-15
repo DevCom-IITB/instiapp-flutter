@@ -3,11 +3,11 @@ import 'dart:math';
 
 import 'package:InstiApp/src/api/model/messCalEvent.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
-import 'package:InstiApp/src/blocs/calendar_bloc.dart';
+// import 'package:InstiApp/src/blocs/calendar_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/blocs/mess_calendar_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
-import 'package:InstiApp/src/routes/eventpage.dart';
+// import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
@@ -232,7 +232,7 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton:
-          (bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false)
+          (bloc.currSession?.profile != null)
               ? FloatingActionButton.extended(
                   icon: Icon(Icons.add_outlined),
                   label: Text("Take your meal"),

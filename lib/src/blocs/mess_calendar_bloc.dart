@@ -53,7 +53,7 @@ class MessCalendarBloc {
       _loading = true;
       _loadingSubject.add(_loading);
     }
-    var isoFormat = [yyyy, "-", mm, "-", dd, " ", HH, ":", nn, ":", ss];
+    var isoFormat = [yyyy, "-", mm, "-", dd, " ", HH, ":", mm, ":", ss];
 
     var currMonthStart = _getMonthStart(currMonth);
     var prevMonthStart =
@@ -73,6 +73,10 @@ class MessCalendarBloc {
             formatDate(prevMonthStart, isoFormat),
             formatDate(nextNextMonthStart, isoFormat));
     var evs = newsFeedResp;
+    evs.forEach((e) {
+      var time = DateTime.parse(e.dateTime!);
+      e.eventStartDate = DateTime(time.year, time.month, time.day);
+    });
 
     monthToEvents[prevMonthStart] = _getEventsOfMonth(evs, prevMonthStart);
     receivingMonths.remove(prevMonthStart);
@@ -81,7 +85,7 @@ class MessCalendarBloc {
     monthToEvents[nextMonthStart] = _getEventsOfMonth(evs, nextMonthStart);
     receivingMonths.remove(nextMonthStart);
     for (MessCalEvent e in evs) {
-      var dateList = eventsMap.putIfAbsent(e.date, () => []);
+      var dateList = eventsMap.putIfAbsent(e.eventStartDate!, () => []);
       dateList.removeWhere((e1) => e1.eid == e.eid);
       dateList.add(e);
     }
