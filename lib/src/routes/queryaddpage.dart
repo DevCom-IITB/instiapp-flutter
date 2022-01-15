@@ -42,7 +42,7 @@ class _QueryAddPageState extends State<QueryAddPage> {
   // builds dropdown menu for event choice
   Widget buildDropdownMenuItemsCategory(
       BuildContext context, String? category) {
-    print("Entered build dropdown menu items");
+    // print("Entered build dropdown menu items");
     if (category == null) {
       return Container(
         child: Text(

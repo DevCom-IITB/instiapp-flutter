@@ -7,9 +7,16 @@
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.VIDEO_CAPTURE" />
+    <uses-permission android:name="android.permission.AUDIO_CAPTURE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
 
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
@@ -19,6 +26,7 @@
     <application
         android:label="InstiApp"
         android:icon="@mipmap/ic_launcher_round"
+        android:usesCleartextTraffic="true"
         android:roundIcon="@mipmap/ic_launcher_round">
 
         <meta-data
@@ -105,4 +113,14 @@
             </intent-filter>
         </activity>
     </application>
+    <!-- <queries>
+            <intent>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+            </intent>
+            <intent>
+                <action android:name="android.media.action.IMAGE_CAPTURE" />
+            </intent>
+        </queries> -->
 </manifest>

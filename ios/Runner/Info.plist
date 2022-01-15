@@ -15,15 +15,19 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>21</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCalendarsUsageDescription</key>
+	<string>To add your interested/going events to your phone calendar</string>
 	<key>NSCameraUsageDescription</key>
-	<string>To upload photo from the camera</string>
+	<string>This app needs camera access to scan QR codes</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string></string>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -32,8 +36,6 @@
 	<string></string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>To upload photo from the gallery</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>To add your interested/going events to your phone calendar</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -56,11 +58,5 @@
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
-	<key>FirebaseAppDelegateProxyEnabled</key>
-	<false/>
-	<key>io.flutter.embedded_views_preview</key>
-    <true/>
-    <key>NSCameraUsageDescription</key>
-    <string>This app needs camera access to scan QR codes</string>
 </dict>
 </plist>

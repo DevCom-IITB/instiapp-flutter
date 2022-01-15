@@ -22,6 +22,7 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
 import 'package:InstiApp/src/blocs/map_bloc.dart';
 import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
+import 'package:InstiApp/src/blocs/mess_calendar_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -84,6 +85,7 @@ class InstiAppBloc {
   late PostBloc queryBloc;
   late ExploreBloc exploreBloc;
   late CalendarBloc calendarBloc;
+  late MessCalendarBloc messCalendarBloc;
   late ComplaintsBloc complaintsBloc;
   late DrawerBloc drawerState;
   late MapBloc mapBloc;
@@ -227,6 +229,8 @@ class InstiAppBloc {
     mapBloc = MapBloc(this);
     achievementBloc = Bloc(this);
     bodyAchBloc = VerifyBloc(this);
+    messCalendarBloc = MessCalendarBloc(this);
+
     _initNotificationBatch();
   }
 
@@ -324,7 +328,7 @@ class InstiAppBloc {
     await clearNotificationUsingID("${notification.notificationId}");
     var idx = _notifications
         .indexWhere((n) => n.notificationId == notification.notificationId);
-    print(idx);
+    // print(idx);
     if (idx != -1) {
       _notifications.removeAt(idx);
       _notificationsSubject.add(UnmodifiableListView(_notifications));
@@ -374,7 +378,7 @@ class InstiAppBloc {
   // User/Body/Event updates
   Future<void> updateUesEvent(Event e, UES ues) async {
     try {
-      print("updating Ues from ${e.eventUserUes} to $ues");
+      // print("updating Ues from ${e.eventUserUes} to $ues");
       await client.updateUserEventStatus(
           getSessionIdHeader(), e.eventID, ues.index);
       if (e.eventUserUes == UES.Going) {
@@ -388,23 +392,23 @@ class InstiAppBloc {
       } else if (ues == UES.Going) {
         e.eventGoingCount++;
       }
-      print("updated Ues from ${e.eventUserUes} to $ues");
+      // print("updated Ues from ${e.eventUserUes} to $ues");
       e.eventUserUes = ues;
     } catch (ex) {
-      print(ex);
+      // print(ex);
     }
   }
 
   Future<void> updateHiddenAchievement(
       Achievement achievement, bool hidden) async {
     try {
-      print("Updating hidden");
+      // print("Updating hidden");
       await client.toggleHidden(getSessionIdHeader(), achievement.id,
           AchievementHiddenPathRequest()..hidden = hidden);
       achievement.hidden = hidden;
-      print("Updated hidden");
+      // print("Updated hidden");
     } catch (e) {
-      print(e);
+      // print(e);
     }
   }
 
@@ -413,7 +417,7 @@ class InstiAppBloc {
     try {
       await client.postFAQ(getSessionIdHeader(), postFAQRequest);
     } catch (e) {
-      print(e);
+      // print(e);
     }
   }
 
@@ -425,7 +429,7 @@ class InstiAppBloc {
       b.bodyFollowersCount =
           b.bodyFollowersCount! + (b.bodyUserFollows! ? 1 : -1);
     } catch (ex) {
-      print(ex);
+      // print(ex);
     }
   }
 
@@ -444,7 +448,7 @@ class InstiAppBloc {
   // Section
   // Bloc state management
   Future<void> restorePrefs() async {
-    print("Restoring prefs");
+    // print("Restoring prefs");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.getKeys().contains("session")) {
       var x = prefs.getString("session");
@@ -542,6 +546,7 @@ class InstiAppBloc {
     exploreBloc.saveToCache(sharedPrefs: prefs);
     // complaintsBloc?.saveToCache(sharedPrefs: prefs);
     calendarBloc.saveToCache(sharedPrefs: prefs);
+    messCalendarBloc.saveToCache(sharedPrefs: prefs);
     mapBloc.saveToCache(sharedPrefs: prefs);
   }
 
@@ -598,6 +603,7 @@ class InstiAppBloc {
     exploreBloc.restoreFromCache(sharedPrefs: prefs);
     // complaintsBloc?.restoreFromCache(sharedPrefs: prefs);
     calendarBloc.restoreFromCache(sharedPrefs: prefs);
+    messCalendarBloc.restoreFromCache(sharedPrefs: prefs);
     mapBloc.restoreFromCache(sharedPrefs: prefs);
   }
 

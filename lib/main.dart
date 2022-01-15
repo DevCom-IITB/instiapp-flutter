@@ -5,17 +5,19 @@ import 'package:InstiApp/src/api/model/rich_notification.dart';
 import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
-import 'package:InstiApp/src/routes/complaintpage.dart';
-import 'package:InstiApp/src/routes/complaintspage.dart';
+// import 'package:InstiApp/src/routes/complaintpage.dart';
+// import 'package:InstiApp/src/routes/complaintspage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/routes/externalblogpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:InstiApp/src/routes/mappage.dart';
-import 'package:InstiApp/src/routes/newcomplaintpage.dart';
+import 'package:InstiApp/src/routes/messcalendarpage.dart';
+// import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
 import 'package:InstiApp/src/routes/notificationspage.dart';
 import 'package:InstiApp/src/routes/putentitypage.dart';
+import 'package:InstiApp/src/routes/qrpage.dart';
 import 'package:InstiApp/src/routes/queryaddpage.dart';
 import 'package:InstiApp/src/routes/querypage.dart';
 import 'package:InstiApp/src/routes/quicklinkspage.dart';
@@ -45,7 +47,7 @@ import 'package:uni_links/uni_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
-  print("Runnning main");
+  // print("Runnning main");
   GlobalKey<MyAppState> key = GlobalKey();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -174,7 +176,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
               headline5: TextStyle()),
         ),
         onGenerateRoute: (RouteSettings settings) {
-          print(settings.name);
+          // print(settings.name);
           var temp = settings.name;
           if (temp != null) {
             if (temp.startsWith("/event/")) {
@@ -195,16 +197,17 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   UserPage(
                       userFuture:
                           widget.bloc.getUser(temp.split("/user/")[1])));
-            } else if (temp.startsWith("/complaint/")) {
-              Uri uri = Uri.parse(temp);
 
-              return _buildRoute(
-                  settings,
-                  ComplaintPage(
-                      complaintFuture: widget.bloc.getComplaint(
-                          uri.pathSegments[1],
-                          reload: uri.queryParameters.containsKey("reload") &&
-                              uri.queryParameters["reload"] == "true")));
+              // } else if (temp.startsWith("/complaint/")) {
+              //   Uri uri = Uri.parse(temp);
+
+              //   return _buildRoute(
+              //       settings,
+              //       ComplaintPage(
+              //           complaintFuture: widget.bloc.getComplaint(
+              //               uri.pathSegments[1],
+              //               reload: uri.queryParameters.containsKey("reload") &&
+              //                   uri.queryParameters["reload"] == "true")));
             } else if (temp.startsWith("/putentity/event/")) {
               return _buildRoute(
                   settings,
@@ -223,7 +226,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 case "/":
                   return _buildRoute(settings, LoginPage(widget.bloc));
                 case "/mess":
-                  print("Entereing here mess");
+                  // print("Entereing here mess");
                   return _buildRoute(settings, MessPage());
                 case "/placeblog":
                   return _buildRoute(settings, PlacementBlogPage());
@@ -243,10 +246,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, ExplorePage());
                 case "/calendar":
                   return _buildRoute(settings, CalendarPage());
-                case "/complaints":
-                  return _buildRoute(settings, ComplaintsPage());
-                case "/newcomplaint":
-                  return _buildRoute(settings, NewComplaintPage());
+                // case "/complaints":
+                //   return _buildRoute(settings, ComplaintsPage());
+                // case "/newcomplaint":
+                //   return _buildRoute(settings, NewComplaintPage());
                 case "/putentity/event":
                   return _buildRoute(settings,
                       PutEntityPage(cookie: widget.bloc.getSessionIdHeader()));
@@ -269,6 +272,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, QueryPage());
                 case "/query/add":
                   return _buildRoute(settings, QueryAddPage());
+                case "/messcalendar":
+                  return _buildRoute(settings, MessCalendarPage());
+                case "/messcalendar/qr":
+                  return _buildRoute(settings, QRPage());
               }
             }
             return _buildRoute(settings, MessPage());
@@ -301,7 +308,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     FirebaseMessaging.onMessage.listen(
       (RemoteMessage message) async {
-        print("onMessage: $message");
+        // print("onMessage: $message");
         var appDocDir = await getApplicationDocumentsDirectory();
 
         String payload = jsonEncode(message.data);
@@ -370,7 +377,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       },
     );
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
+      // print('A new onMessageOpenedApp event was published!');
       navigateFromNotification(RichNotification.fromJson(message.data));
     });
 
@@ -392,7 +399,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     widget.bloc.firebaseMessaging.getToken().then((String? token) {
       assert(token != null);
-      print("Push Messaging token: $token");
+      // print("Push Messaging token: $token");
     });
   }
 
@@ -442,7 +449,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       handleAppLink(uri);
     }, onError: (err) {
       if (!mounted) return;
-      print('Failed to get latest link: $err.');
+      // print('Failed to get latest link: $err.');
     });
     try {
       Uri? initialUri = await getInitialUri();
@@ -453,7 +460,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       // Handle exception by warning the user their action did not succeed
       // return?
     } on FormatException {
-      print('Bad parse the initial link as Uri.');
+      // print('Bad parse the initial link as Uri.');
     }
   }
 }

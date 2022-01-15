@@ -13,7 +13,6 @@ environment:
   sdk: ">=2.15.0 <3.0.0"
 
 dependencies:
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   # cupertino_icons: ^1.0.1
@@ -54,6 +53,12 @@ dependencies:
   jaguar_flutter_asset: ^3.0.0
   webview_flutter: ^2.8.0
 
+  flutter_inappwebview: any
+  permission_handler: ^8.3.0
+  qr_flutter: ^4.0.0
+  intl: ^0.17.0
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -62,7 +67,7 @@ dev_dependencies:
   build_runner: any
   json_model: any
   json_serializable: ^6.1.1
-  firebase_core : ^1.10.5
+  firebase_core: ^1.10.5
 
   # test: 1.6.0
 
@@ -89,7 +94,6 @@ flutter:
           style: italic
           weight: 700
   uses-material-design: true
-
 # targets:
 #   $default:
 #     builders:
@@ -110,4 +114,3 @@ flutter:
 #           generic_argument_factories: false
 #           ignore_unannotated: false
 #           include_if_null: true
-        

@@ -126,16 +126,16 @@ class _UserPageState extends State<UserPage> {
 
   Widget buildDropdownMenuItemsInterest(
       BuildContext context, Interest? body) {
-    print("Entered build dropdown menu items");
+    // print("Entered build dropdown menu items");
     if (body == null) {
       return Container(
         child: Text(
-          "Search for an organisation",
+          "Search for an interest",
           style: Theme.of(context).textTheme.bodyText1,
         ),
       );
     }
-    print(body);
+    // print(body);
     return Container(
       child: ListTile(
         title: Text(body.title!),
@@ -394,7 +394,7 @@ class _UserPageState extends State<UserPage> {
                                                     EdgeInsets.all(
                                                         20),
                                                     child: Text(
-                                                      "No verifying authorities found. Refine your search!",
+                                                      "No interests found. Refine your search!",
                                                       style: theme
                                                           .textTheme
                                                           .subtitle1,

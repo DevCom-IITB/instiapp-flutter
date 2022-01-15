@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:InstiApp/src/utils/common_widgets.dart';
 // import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 
 class PutEntityPage extends StatefulWidget {
   final String? entityID;
@@ -27,15 +29,25 @@ class _PutEntityPageState extends State<PutEntityPage> {
 
   bool firstBuild = true;
   bool addedCookie = false;
+  bool hasPermission = false;
 
   StreamSubscription<String>? onUrlChangedSub;
-  WebViewController? webViewController;
+  InAppWebViewController? webViewController;
 
   // Storing for dispose
   ThemeData? theme;
 
   @override
   void initState() {
+    // Permission.camera.request();
+    Permission.storage.request().then((e){
+      if(e.isGranted){
+        setState(() {
+          hasPermission = true;
+        });
+      }
+    });
+
     super.initState();
   }
 
@@ -50,7 +62,10 @@ class _PutEntityPageState extends State<PutEntityPage> {
     theme = Theme.of(context);
     var url =
         "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + "/" + widget.entityID!)}?${widget.cookie}&$sandboxTrueQParam";
-    return Scaffold(bottomNavigationBar: MyBottomAppBar(
+    return hasPermission? Center(
+      child: Text("Permission Denined"),
+    ) : 
+      Scaffold(bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -69,28 +84,29 @@ class _PutEntityPageState extends State<PutEntityPage> {
           ],
         ),
       ),
-      body: WebView(
-      javascriptMode: JavascriptMode.unrestricted,
+      body: InAppWebView(
+      // javascriptMode: JavascriptMode.unrestricted,
       onWebViewCreated: (controller){
         webViewController = controller;
       },
-      initialUrl: url,
-      onPageStarted: (url) async{
-        print("Changed URL: $url");
-        if (url.contains("/event/")) {
-          var uri = url.substring(url.lastIndexOf("/") + 1);
+      initialUrlRequest: URLRequest(url: Uri.parse(url)),
+      onLoadStart: (_, url) async{
+        // print("Changed URL: $url");
+        if (url.toString().contains("/event/")) {
+          var uri = url.toString().substring(url.toString().lastIndexOf("/") + 1);
 
           Navigator.of(context).pushReplacementNamed("/event/$uri");
-        } else if (url.contains("/org/")) {
-          var uri = url.substring(url.lastIndexOf("/") + 1);
+        } else if (url.toString().contains("/org/")) {
+          var uri = url.toString().substring(url.toString().lastIndexOf("/") + 1);
 
           Navigator.of(context).pushReplacementNamed("/body/$uri");
         }
       },
-      onPageFinished: (url){
-        
+      androidOnPermissionRequest: (controller, origin, resources) async {
+        return PermissionRequestResponse(
+            resources: resources,
+            action: PermissionRequestResponseAction.GRANT);
       },
-      gestureNavigationEnabled: true,
     ),);
   }
 }

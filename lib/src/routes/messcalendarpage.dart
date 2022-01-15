@@ -1,24 +1,27 @@
-import 'package:InstiApp/src/api/model/event.dart';
+import 'dart:developer' as dev;
+import 'dart:math';
+
+import 'package:InstiApp/src/api/model/messCalEvent.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
-import 'package:InstiApp/src/blocs/calendar_bloc.dart';
+// import 'package:InstiApp/src/blocs/calendar_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/blocs/mess_calendar_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
-import 'package:InstiApp/src/routes/eventpage.dart';
+// import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart' as el;
-import 'dart:math';
 
-class CalendarPage extends StatefulWidget {
-  final String title = "Calendar";
+class MessCalendarPage extends StatefulWidget {
+  const MessCalendarPage({Key? key}) : super(key: key);
 
   @override
-  _CalendarPageState createState() => _CalendarPageState();
+  _MessCalendarPageState createState() => _MessCalendarPageState();
 }
 
-class _CalendarPageState extends State<CalendarPage> {
+class _MessCalendarPageState extends State<MessCalendarPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   DateTime _currentDate =
@@ -31,9 +34,7 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
-    var calBloc = bloc.calendarBloc;
-
-    // print("Width: ${MediaQuery.of(context).size.width}");
+    var calBloc = bloc.messCalendarBloc;
 
     _eventIcon = Material(
       type: MaterialType.transparency,
@@ -43,6 +44,7 @@ class _CalendarPageState extends State<CalendarPage> {
         ),
       ),
     );
+
     if (firstBuild) {
       calBloc.fetchEvents(DateTime.now(), _eventIcon!);
       firstBuild = false;
@@ -71,10 +73,10 @@ class _CalendarPageState extends State<CalendarPage> {
       ),
       drawer: NavDrawer(),
       body: SafeArea(
-        child: StreamBuilder<Map<DateTime, List<Event>>>(
+        child: StreamBuilder<Map<DateTime, List<MessCalEvent>>>(
           stream: calBloc.events,
           builder: (BuildContext context,
-              AsyncSnapshot<Map<DateTime, List<Event>>> snapshot) {
+              AsyncSnapshot<Map<DateTime, List<MessCalEvent>>> snapshot) {
             return ListView(
               children: <Widget>[
                 TitleWithBackButton(
@@ -83,7 +85,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        widget.title,
+                        "Mess Calendar",
                         style: theme.textTheme.headline3,
                       ),
                       SizedBox(
@@ -113,9 +115,10 @@ class _CalendarPageState extends State<CalendarPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       Center(
-                        child: CalendarCarousel<Event>(
+                        child: CalendarCarousel<MessCalEvent>(
                           customGridViewPhysics: NeverScrollableScrollPhysics(),
-                          onDayPressed: (DateTime date, List<Event> evs) {
+                          onDayPressed:
+                              (DateTime date, List<MessCalEvent> evs) {
                             this.setState(() => _currentDate = date);
                           },
                           onCalendarChanged: (date) {
@@ -229,39 +232,42 @@ class _CalendarPageState extends State<CalendarPage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton:
-          (bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false)
-              ? FloatingActionButton(
-                  child: Icon(Icons.add_outlined),
+          (bloc.currSession?.profile != null)
+              ? FloatingActionButton.extended(
+                  icon: Icon(Icons.add_outlined),
+                  label: Text("Take your meal"),
                   onPressed: () {
-                    Navigator.of(context).pushNamed("/putentity/event");
+                    dev.log("ENtered");
+                    Navigator.of(context).pushNamed("/messcalendar/qr");
                   },
                 )
               : null,
     );
   }
 
-  Iterable<Widget> _buildEvents(CalendarBloc calBloc, ThemeData theme) {
+  Iterable<Widget> _buildEvents(MessCalendarBloc calBloc, ThemeData theme) {
     return calBloc.eventsMap[_currentDate]
             ?.map((e) => _buildEventTile(calBloc.bloc, theme, e)) ??
         [];
   }
 
-  Widget _buildEventTile(InstiAppBloc bloc, ThemeData theme, Event event) {
+  Widget _buildEventTile(
+      InstiAppBloc bloc, ThemeData theme, MessCalEvent event) {
     return ListTile(
       title: Text(
-        event.eventName ?? "",
+        event.title ?? "",
         style: theme.textTheme.headline6,
       ),
       enabled: true,
-      leading: NullableCircleAvatar(
-        event.eventImageURL ?? event.eventBodies?[0].bodyImageURL ?? "",
-        Icons.event_outlined,
-        heroTag: event.eventID ?? "",
-      ),
-      subtitle: Text(event.getSubTitle()),
-      onTap: () {
-        EventPage.navigateWith(context, bloc, event);
-      },
+      // leading: NullableCircleAvatar(
+      //   event.eventImageURL ?? event.eventBodies?[0].bodyImageURL ?? "",
+      //   Icons.event_outlined,
+      //   heroTag: event.eventID ?? "",
+      // ),
+      subtitle: Text(event.dateTime ?? ""),
+      // onTap: () {
+      //   EventPage.navigateWith(context, bloc, event);
+      // },
     );
   }
 }

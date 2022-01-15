@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/messCalEvent.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
@@ -50,7 +51,6 @@ abstract class InstiAppApi {
   @rt.GET("/login")
   Future<Session> login(
       @rt.Query('code') String code, @rt.Query('redir') String redir);
-
   @rt.GET("/alumniLogin")
   Future<alumniLoginResponse> AlumniLogin(
     @rt.Query("ldap") String ldap,
@@ -98,6 +98,12 @@ abstract class InstiAppApi {
 
   @rt.GET("/events")
   Future<NewsFeedResponse> getEventsBetweenDates(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Query("start") String start,
+      @rt.Query("end") String end);
+
+  @rt.GET("/getUserMess")
+  Future<List<MessCalEvent>> getMessEventsBetweenDates(
       @rt.Header("Cookie") String sessionId,
       @rt.Query("start") String start,
       @rt.Query("end") String end);

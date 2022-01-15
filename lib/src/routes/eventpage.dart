@@ -192,7 +192,6 @@ class _EventPageState extends State<EventPage> {
                         data: event!.eventDescription ?? "",
                         defaultTextStyle:
                             theme.textTheme.subtitle1 ?? TextStyle(),
-                        //query: query,
                       ),
                     ),
                     SizedBox(
@@ -458,7 +457,7 @@ class _EventPageState extends State<EventPage> {
               [];
 
       if ((await Future.wait(futures)).every((res) {
-        print(res?.data);
+        // print(res?.data);
         return res?.isSuccess ?? false;
       })) {
         showDialog<void>(
