@@ -104,7 +104,14 @@ class InstiAppBloc {
 
   // default homepage
   String homepageName = "/feed";
-
+  bool isAlumni = false;
+  String msg = "";
+  String alumniLoginPage = "/alumniLoginPage";
+  String ldap = "";
+  //to implement method for toggling isAlumnReg
+  String alumni_OTP_Page = "/alumni-OTP-Page";
+  String _alumniOTP = "";
+  // to create method to update this from apiclient.dart
   // default theme
   AppBrightness _brightness = AppBrightness.light;
   // Color _primaryColor = Color.fromARGB(255, 63, 81, 181);
@@ -268,6 +275,32 @@ class InstiAppBloc {
       _events[0].eventBigImage = true;
     }
     _eventsSubject.add(UnmodifiableListView(_events));
+  }
+
+  // alumniLoginAndOTP bloc
+
+  String get alumniID => ldap;
+  setAlumniID(updtAlumniID) {
+    ldap = updtAlumniID;
+  }
+
+  String get alumniOTP => _alumniOTP;
+  setAlumniOTP(updtAlumniOTP) {
+    _alumniOTP = updtAlumniOTP;
+  }
+
+  Future<void> updateAlumni() async {
+    var _alumniLoginResponse = await client.AlumniLogin(ldap);
+    isAlumni = _alumniLoginResponse.exist;
+    msg = _alumniLoginResponse.msg;
+  }
+
+  Future<void> logAlumniIn(bool resend) async {
+    var _alumniLoginResponse = resend
+        ? await client.ResendAlumniOTP(ldap)
+        : await client.AlumniOTP(ldap, _alumniOTP);
+    isAlumni = !_alumniLoginResponse.error_status;
+    msg = _alumniLoginResponse.msg;
   }
 
   // Your Achievement Bloc
