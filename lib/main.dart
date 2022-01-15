@@ -35,6 +35,8 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:InstiApp/src/routes/messpage.dart';
 import 'package:InstiApp/src/routes/loginpage.dart';
+import 'package:InstiApp/src/routes/alumniLoginPage.dart';
+import 'package:InstiApp/src/routes/alumni_OTP_Page.dart';
 import 'package:InstiApp/src/routes/placementblogpage.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -195,6 +197,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   UserPage(
                       userFuture:
                           widget.bloc.getUser(temp.split("/user/")[1])));
+
               // } else if (temp.startsWith("/complaint/")) {
               //   Uri uri = Uri.parse(temp);
 
@@ -231,6 +234,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, TrainingBlogPage());
                 case "/feed":
                   return _buildRoute(settings, FeedPage());
+                case "/alumniLoginPage":
+                  return _buildRoute(settings, alumniLoginPage());
+                case "/alumni-OTP-Page":
+                  return _buildRoute(settings, alumni_OTP_Page());
                 case "/quicklinks":
                   return _buildRoute(settings, QuickLinksPage());
                 case "/news":

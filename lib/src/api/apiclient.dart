@@ -18,6 +18,7 @@ import 'package:InstiApp/src/api/request/postFAQ_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
+import 'package:InstiApp/src/api/response/alumni_login_response.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
@@ -50,6 +51,21 @@ abstract class InstiAppApi {
   @rt.GET("/login")
   Future<Session> login(
       @rt.Query('code') String code, @rt.Query('redir') String redir);
+  @rt.GET("/alumniLogin")
+  Future<alumniLoginResponse> AlumniLogin(
+    @rt.Query("ldap") String ldap,
+  );
+
+  @rt.GET("/alumniOTP")
+  Future<alumniLoginResponse> AlumniOTP(
+    @rt.Query("ldap") String ldap,
+    @rt.Query("otp") String otp,
+  );
+
+  @rt.GET("/resendAlumniOTP")
+  Future<alumniLoginResponse> ResendAlumniOTP(
+    @rt.Query("ldap") String ldap,
+  );
 
   @rt.GET("/placement-blog")
   Future<List<PlacementBlogPost>> getPlacementBlogFeed(
