@@ -32,7 +32,7 @@ import 'model/offersecret.dart';
 
 part 'apiclient.g.dart';
 
-@rt.RestApi(baseUrl: "https://api.insti.app/api")
+@rt.RestApi(baseUrl: "http://10.105.177.150/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
