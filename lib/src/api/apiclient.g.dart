@@ -89,6 +89,54 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
+  Future<alumniLoginResponse> AlumniLogin(ldap) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'ldap': ldap};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<alumniLoginResponse>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/alumniLogin',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = alumniLoginResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<alumniLoginResponse> AlumniOTP(ldap, otp) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'ldap': ldap, r'otp': otp};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<alumniLoginResponse>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/alumniOTP',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = alumniLoginResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<alumniLoginResponse> ResendAlumniOTP(ldap) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'ldap': ldap};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<alumniLoginResponse>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/resendAlumniOTP',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = alumniLoginResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<List<PlacementBlogPost>> getPlacementBlogFeed(
       sessionId, from, number, query) async {
     const _extra = <String, dynamic>{};
