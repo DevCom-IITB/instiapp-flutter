@@ -213,7 +213,7 @@ class ComplaintsBloc {
     try {
       return await bloc.client.getAllTags(bloc.getSessionIdHeader());
     } catch (ex) {
-      print(ex);
+      // print(ex);
       return Future.delayed(Duration(seconds: 0));
     }
   }
@@ -231,7 +231,7 @@ class ComplaintsBloc {
         complaint.usersUpVoted?.add(bloc.currSession!.profile!);
       }
     } catch (ex) {
-      print(ex);
+      // print(ex);
     }
   }
 
@@ -241,7 +241,7 @@ class ComplaintsBloc {
           bloc.getSessionIdHeader(), complaint.complaintID!, subsCount);
       complaint.isSubscribed = subsCount == 1;
     } catch (ex) {
-      print(ex);
+      // print(ex);
     }
   }
 
@@ -252,7 +252,7 @@ class ComplaintsBloc {
           .postComment(bloc.getSessionIdHeader(), complaint.complaintID!, req);
       complaint.comments!.add(comment);
     } catch (ex) {
-      print(ex);
+      // print(ex);
     }
   }
 
@@ -265,7 +265,7 @@ class ComplaintsBloc {
       complaint.comments![idx!].text = comment.text;
       complaint.comments![idx].time = comment.time;
     } catch (ex) {
-      print(ex);
+      // print(ex);
     }
   }
 
@@ -274,7 +274,7 @@ class ComplaintsBloc {
       await bloc.client.deleteComment(bloc.getSessionIdHeader(), comment.id!);
       complaint.comments?.removeWhere((c) => c.id == comment.id);
     } catch (ex) {
-      print(ex);
+      // print(ex);
     }
   }
 
@@ -282,7 +282,7 @@ class ComplaintsBloc {
     try {
       return bloc.client.postComplaint(bloc.getSessionIdHeader(), req);
     } catch (ex) {
-      print(ex);
+      // print(ex);
       return null;
     }
   }

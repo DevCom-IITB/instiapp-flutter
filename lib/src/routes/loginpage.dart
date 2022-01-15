@@ -22,7 +22,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late WebViewController _controller;
+  // late WebViewController _controller;
   jag.Jaguar? server;
   final Dio dio = Dio();
 
@@ -66,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
         ((_bloc!.brightness.toBrightness() == Brightness.dark)
             ? "login_dark.html"
             : "login.html");
-    print("Formed URL: $loginurl");
+    // print("Formed URL: $loginurl");
 
     checkLogin().then((Session? sess) {
       // If session already exists, continue to homepage with current session
@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
 
       // No stored session found
       startLoginPageServer().then((_) async {
-        print("startLoginPageServer.then: Launching Web View");
+        // print("startLoginPageServer.then: Launching Web View");
         await Future.delayed(Duration(milliseconds: 200));
         // var mqdata = MediaQuery.of(context);
         setState(() {
@@ -197,17 +197,20 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
-          )
-        : WebView(
-            javascriptMode: JavascriptMode.unrestricted,
-            initialUrl: loginurl,
-            onWebViewCreated: (controller) {
-              this._controller = controller;
-            },
-            onPageStarted: (url) async {
-              if (url.startsWith(successUrl)) {
-                var uri = Uri.parse(url);
-                var code = uri.queryParameters['code'];
+
+          ],
+        ),
+      ),
+    ) : WebView(
+      javascriptMode: JavascriptMode.unrestricted,
+      initialUrl: loginurl,
+      // onWebViewCreated: (controller){
+      //   this._controller = controller;
+      // },
+      onPageStarted: (url) async{
+        if (url.startsWith(successUrl)) {
+          var uri = Uri.parse(url);
+          var code = uri.queryParameters['code'];
 
                 setState(() {
                   loading = true;
@@ -289,7 +292,7 @@ class _LoginPageState extends State<LoginPage> {
 
       this.onUrlChangedSub?.cancel();
       // this.onStateChangedSub?.cancel();
-      print("login: Closing Web View");
+      // print("login: Closing Web View");
       // flutterWebviewPlugin.close();
     } else {
       setState(() {
@@ -298,9 +301,9 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Authentication Failed"),
       ));
-      print("login: Showing Web View");
+      // print("login: Showing Web View");
       // flutterWebviewPlugin.show();
-      print("login: Launching Web View");
+      // print("login: Launching Web View");
       // flutterWebviewPlugin.launch(loginurl ?? "");
     }
   }

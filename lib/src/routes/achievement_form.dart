@@ -34,7 +34,7 @@ class _CreateAchievementPage extends State<Home> {
   // builds dropdown menu for event choice
   Widget buildDropdownMenuItemsEvent(
       BuildContext context, Event? event) {
-    print("Entered build dropdown menu items");
+    // print("Entered build dropdown menu items");
     if (event == null) {
       return Container(
         child: Text(
@@ -70,7 +70,7 @@ class _CreateAchievementPage extends State<Home> {
 
   Widget buildDropdownMenuItemsBody(
       BuildContext context, Body? body) {
-    print("Entered build dropdown menu items");
+    // print("Entered build dropdown menu items");
     if (body == null) {
       return Container(
         child: Text(
@@ -79,7 +79,7 @@ class _CreateAchievementPage extends State<Home> {
         ),
       );
     }
-    print(body);
+    // print(body);
     return Container(
       child: ListTile(
         title: Text(body.bodyName!),
@@ -107,16 +107,16 @@ class _CreateAchievementPage extends State<Home> {
 
   Widget buildDropdownMenuItemsSkill(
       BuildContext context, Skill? body) {
-    print("Entered build dropdown menu items");
+    // print("Entered build dropdown menu items");
     if (body == null) {
       return Container(
         child: Text(
-          "Search for an Skill",
+          "Search for a skill",
           style: Theme.of(context).textTheme.bodyText1,
         ),
       );
     }
-    print(body);
+    // print(body);
     return Container(
       child: ListTile(
         title: Text(body.title!),
@@ -178,7 +178,7 @@ class _CreateAchievementPage extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    print(_selectedBody);
+    // print(_selectedBody);
     var bloc = BlocProvider.of(context)!.bloc;
     var theme = Theme.of(context);
     final achievementsBloc = bloc.achievementBloc;
@@ -677,7 +677,7 @@ class _CreateAchievementPage extends State<Home> {
                                               if (_formKey2.currentState!
                                                   .validate()) {
                                                 currRequest2.isSkill=true;
-                                                print(currRequest2.title);
+                                                // print(currRequest2.title);
                                                 var resp =
                                                 await achievementsBloc
                                                     .postForm(

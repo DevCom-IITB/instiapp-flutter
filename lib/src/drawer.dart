@@ -85,16 +85,35 @@ class _NavDrawerState extends State<NavDrawer> {
                       highlight: indexSnapshot.data == 2,
                       selected: indexSnapshot.data == 2,
                     ),
-                    3: NavListTile(
-                      icon: Icons.restaurant_outlined,
-                      title: "Mess Menu",
-                      onTap: () {
-                        changeSelection(3, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/mess');
-                      },
-                      highlight: indexSnapshot.data == 3,
-                      selected: indexSnapshot.data == 3,
+                    3: NavExpansionTile(
+                      title: "Mess",
+                      leading: Icons.restaurant_outlined,
+                      initiallyExpanded:
+                          indexSnapshot.data == 3 || indexSnapshot.data == 14,
+                      children: [
+                        NavListTile(
+                          icon: Icons.restaurant_outlined,
+                          title: "Mess Menu",
+                          onTap: () {
+                            changeSelection(3, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/mess');
+                          },
+                          highlight: indexSnapshot.data == 3,
+                          selected: indexSnapshot.data == 3,
+                        ),
+                        NavListTile(
+                          icon: Icons.restaurant_outlined,
+                          title: "Take your meal",
+                          onTap: () {
+                            changeSelection(3, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/messcalendar');
+                          },
+                          highlight: indexSnapshot.data == 14,
+                          selected: indexSnapshot.data == 14,
+                        ),
+                      ],
                     ),
                     4: NavExpansionTile(
                       leading: Icons.work_outline,
@@ -138,17 +157,6 @@ class _NavDrawerState extends State<NavDrawer> {
                         ),
                       ],
                     ),
-                    7: NavListTile(
-                      icon: Icons.date_range_outlined,
-                      title: "Calendar",
-                      onTap: () {
-                        changeSelection(7, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/calendar');
-                      },
-                      highlight: indexSnapshot.data == 7,
-                      selected: indexSnapshot.data == 7,
-                    ),
                     9: NavListTile(
                       icon: Icons.verified_outlined,
                       title: "Achievements",
@@ -164,16 +172,28 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "Utilities",
                       initiallyExpanded: indexSnapshot.data == 8 ||
                           indexSnapshot.data == 11 ||
-                          indexSnapshot.data == 12,
+                          indexSnapshot.data == 12 ||
+                          indexSnapshot.data == 7,
                       leading: Icons.construction_outlined,
                       children: [
+                        NavListTile(
+                          icon: Icons.date_range_outlined,
+                          title: "Calendar",
+                          onTap: () {
+                            changeSelection(7, drawerState!);
+                            var navi = Navigator.of(context);
+                            navi.pushReplacementNamed('/calendar');
+                          },
+                          highlight: indexSnapshot.data == 7,
+                          selected: indexSnapshot.data == 7,
+                        ),
                         NavListTile(
                           icon: Icons.map_outlined,
                           title: "Map",
                           onTap: () {
                             changeSelection(8, drawerState!);
                             var navi = Navigator.of(context);
-                            navi.pushReplacementNamed('/map');
+                            navi.pushNamed('/map');
                           },
                           highlight: indexSnapshot.data == 8,
                           selected: indexSnapshot.data == 8,
@@ -434,10 +454,6 @@ class NavListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (title == "External Blog") {
-      log("External " + highlight.toString());
-    }
-
     var theme = Theme.of(context);
     ListTileThemeData listTileTheme = ListTileTheme.of(context);
     return Container(
@@ -472,7 +488,7 @@ class NavListTile extends StatelessWidget {
 
     if (!selected && tileTheme.iconColor != null) return tileTheme.iconColor!;
     // assert(theme.brightness != null);
-    print(theme.brightness);
+    // print(theme.brightness);
     switch (theme.brightness) {
       case Brightness.light:
         return selected ? theme.primaryColor : Colors.black54;
@@ -511,8 +527,6 @@ class _NavExpansionTileState extends State<NavExpansionTile> {
   void initState() {
     super.initState();
     isOpened = widget.initiallyExpanded;
-    if (widget.children[2].title == "External Blog")
-      log("Expansion" + widget.children[2].highlight.toString());
   }
 
   @override
@@ -556,7 +570,7 @@ class _NavExpansionTileState extends State<NavExpansionTile> {
       return tileTheme.iconColor!;
     }
     // assert(theme.brightness != null);
-    print(theme.brightness);
+    // print(theme.brightness);
     switch (theme.brightness) {
       case Brightness.light:
         return isOpened ? theme.primaryColor : Colors.black54;
@@ -592,6 +606,8 @@ class MNavigatorObserver extends NavigatorObserver {
     "/quicklinks": 11,
     "/settings": 12,
     "/query": 13,
+    "/messcalendar": 14,
+    "/messcalendar/qr": 14,
   };
 
   static Map<String, String> routeToName = {
@@ -613,6 +629,8 @@ class MNavigatorObserver extends NavigatorObserver {
     "/achievements/add": "New Achievement",
     "/externalblog": "External Blog",
     "/query": "Query",
+    "/messcalendar": "Mess Calendar",
+    "/messcalendar/qr": "Show Mess QR",
     "n/a": "",
   };
 
