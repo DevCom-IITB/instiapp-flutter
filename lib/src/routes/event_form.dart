@@ -750,8 +750,6 @@ class _EventFormState extends State<EventForm> {
                         eventBodies.add(values[i] as Body);
                       }
                       values.clear();
-                      // print(eventBodies);
-                      // eventBodies.forEach((element) {print(element.bodyName!);});
                     });
                   },
                 ),
