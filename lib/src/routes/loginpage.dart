@@ -198,9 +198,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
 
-          ],
-        ),
-      ),
     ) : WebView(
       javascriptMode: JavascriptMode.unrestricted,
       initialUrl: loginurl,

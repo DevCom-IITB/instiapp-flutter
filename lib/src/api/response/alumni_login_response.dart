@@ -1,3 +1,4 @@
+import 'package:InstiApp/src/api/model/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'alumni_login_response.g.dart';
@@ -10,6 +11,13 @@ class alumniLoginResponse {
   String? msg;
   bool? exist;
   bool? error_status;
+  
+  String? sessionid;
+  String? user;
+
+  @JsonKey(name: "profile_id")
+  String? profileId;
+  User? profile;
 
   /// A necessary factory constructor for creating a new alumniLoginResponse instance
   /// from a map. Pass the map to the generated `_$alumniLoginResponseFromJson()` constructor.

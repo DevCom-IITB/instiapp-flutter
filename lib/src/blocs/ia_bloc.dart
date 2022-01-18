@@ -11,6 +11,7 @@ import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
 import 'package:InstiApp/src/api/request/postFAQ_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
+import 'package:InstiApp/src/api/response/alumni_login_response.dart';
 import 'package:InstiApp/src/blocs/ach_to_vefiry_bloc.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
@@ -296,11 +297,23 @@ class InstiAppBloc {
   }
 
   Future<void> logAlumniIn(bool resend) async {
-    var _alumniLoginResponse = resend
+    alumniLoginResponse _alumniLoginResponse = resend
         ? await client.ResendAlumniOTP(ldap)
         : await client.AlumniOTP(ldap, _alumniOTP);
-    isAlumni = !_alumniLoginResponse.error_status;
-    msg = _alumniLoginResponse.msg;
+    isAlumni = !(_alumniLoginResponse.error_status ?? true);
+    msg = _alumniLoginResponse.msg ?? "";
+    if(!resend){
+      if(isAlumni){
+        Session newSession = Session(
+          sessionid: _alumniLoginResponse.sessionid,
+          user: _alumniLoginResponse.user,
+          profile: _alumniLoginResponse.profile,
+          profileId: _alumniLoginResponse.profileId,
+        );
+        print(newSession.toJson());
+        updateSession(newSession);
+      }
+    }
   }
 
   // Your Achievement Bloc

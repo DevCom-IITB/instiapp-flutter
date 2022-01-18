@@ -69,6 +69,7 @@ class _alumni_OTP_PageState extends State<alumni_OTP_Page> {
                 ));
 
                 if (_formKey.currentState!.validate() && _bloc!.isAlumni) {
+                  // await _bloc!.reloadCurrentUser();
                   Navigator.pushNamedAndRemoveUntil(
                       context, _bloc!.homepageName, (r) => false);
                 }
