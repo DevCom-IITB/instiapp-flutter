@@ -966,7 +966,23 @@ class _InstiAppApi implements InstiAppApi {
     final value = _result.data!.cast<String>();
     return value;
   }
-
+  @override
+  Future<List<UserTagHolder>> getUserTags(String sessionId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<List<String>>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/user-tags',
+                queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = _result.data!.map((dynamic i) => UserTagHolder.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||
