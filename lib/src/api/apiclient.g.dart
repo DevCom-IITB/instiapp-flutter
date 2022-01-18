@@ -983,6 +983,24 @@ class _InstiAppApi implements InstiAppApi {
         .toList();
     return value;
   }
+  Future<int> getUserTagsReach(@rt.Header("Cookie") String sessionId, List<int> selectedTagIds)async{
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = selectedTagIds;
+    print('d: '+_data.toString());
+    // final _data = <String,dynamic>{}
+    final _result = await _dio.fetch(
+        _setStreamType<List<String>>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/user-tags/reach',
+                queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    // print();
+    final value = _result.data!['count'];
+    return value;
+  }
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

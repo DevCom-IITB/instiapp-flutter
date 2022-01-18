@@ -404,15 +404,16 @@ class AudienceRestrictor extends StatefulWidget {
 }
 
 class _AudienceRestrictorState extends State<AudienceRestrictor> {
-  int reach=0;
+  String reach='...';
   List<UserTagHolder> restrictors = [];
   //TODO:API: Implement reach calculation using api;
   List<String> restrictables = ['Hostel', 'Department', 'Degree', 'Join Year'];
   List<UserTagHolder> selectedTags = [];
+  List<int> selectedTagIds = [];
   @override
   void initState() {
     // print(widget.restrictors);
-
+    updateReach();
     ()async{
       List<UserTagHolder> tempTags = await widget.client.getUserTags(widget.cookie);
       setState(() {
@@ -456,11 +457,25 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
                 fontSize: 15
             ),
           ),
-          Text(
-            'Current estimated reach: ${reach}',
-            style: TextStyle(
-                fontSize: 15
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                  'Current estimated reach: ',
+                style: TextStyle(
+                    fontSize: 15
+                ),
+              ),
+              (reach.compareTo('...')!=0)?Text(
+                reach,
+                style: TextStyle(
+                    fontSize: 15
+                ),
+              ):Container(
+                height: 10,width: 10,
+                child: CircularProgressIndicator(strokeWidth: 2,)
+              ),
+            ],
           ),
         ...selectedTags.map((cat) => ExpansionTile(
         title: Row(
@@ -495,6 +510,9 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
           selectedChipColor: Colors.amber,
           items: restrictors.firstWhere((element) => element.holderID==cat.holderID).holderTags!.map((e) => MultiSelectItem<UserTag?>(e, e.tagName!)).toList(),
           onTap: (List<UserTag?> values){
+            setState(() {
+              reach = '...';
+            });
             print('v: '+values.toString());
               int index = selectedTags.indexOf(cat);
               setState(() {
@@ -503,6 +521,8 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
                 for(int i=0;i<values.length;i++){
                   selectedTags[index].holderTags!.add(values[i]!);
                 }
+                updateSelectedTagIds();
+                updateReach();
                 print(selectedTags[index].holderTags);
               });
           },
@@ -512,6 +532,21 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
         ],
       ),
     );
+  }
+
+  void updateSelectedTagIds() {
+    selectedTagIds.clear();
+    for(int i=0;i<selectedTags.length;i++){
+      selectedTagIds.addAll(selectedTags[i].holderTags!.map((e) => e.tagID!));
+    }
+  }
+
+  void updateReach()async {
+    int newReach = await widget.client.getUserTagsReach(widget.cookie, selectedTagIds);
+    // print(newReach);
+    setState(() {
+    reach = newReach.toString();
+    });
   }
 }
 
@@ -593,7 +628,7 @@ class _EventFormState extends State<EventForm> {
     }
 
     ()async{
-      List<Body> tempBodies= await bloc.client.getAllBodies(BlocProvider.of(context)!.bloc.currSession!.sessionid!);
+      List<Body> tempBodies= await bloc.client.getAllBodies(widget.cookie);
       List<Venue> tempVenues = await bloc.client.getAllVenues();
       setState(() {
         // tags = tempTags;
@@ -804,6 +839,7 @@ class _EventFormState extends State<EventForm> {
                   cookie:widget.cookie,
                   client: bloc.client,
                   onSave: (List<dynamic> rest){
+
                   },
                 ),
                 GestureDetector(

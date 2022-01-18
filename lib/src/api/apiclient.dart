@@ -275,4 +275,6 @@ abstract class InstiAppApi {
 
   @rt.GET("/user-tags")
   Future<List<UserTagHolder>> getUserTags(@rt.Header("Cookie") String sessionId);
+  @rt.GET("/user-tags/reach")
+  Future<int> getUserTagsReach(@rt.Header("Cookie") String sessionId, List<int> selectedTagIds);
 }
