@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 // import 'dart:html';
+import 'package:InstiApp/src/api/model/UserTag.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/role.dart';
@@ -11,10 +12,10 @@ import 'package:InstiApp/src/api/request/image_upload_request.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
-import 'package:analyzer/dart/ast/token.dart';
+// import 'package:analyzer/dart/ast/token.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_html/shims/dart_ui_real.dart';
+// import 'package:flutter_html/shims/dart_ui_real.dart';
 // import 'package:flutter_html/shims/dart_ui_real.dart';
 // import 'package:flutter_html/flutter_html.dart';
 import 'package:image_picker/image_picker.dart';
@@ -140,7 +141,7 @@ class _DatePickerFieldState extends State<DatePickerField> {
           }
         },
         validator: (String? s){
-          print('date validator');
+          // print('date validator');
           if(s!=null){
             DateTime newDate = parseDate(s);
             if(newDate.microsecondsSinceEpoch==zeroDateTime){
@@ -293,7 +294,7 @@ class _AchievementAdderState extends State<AchievementAdder> {
                             hintText: 'Title *'
                         ),
                         validator: (String? acheveTitle){
-                          print('ac. title. validator');
+                          // print('ac. title. validator');
                           if(acheveTitle!.length==0||acheveTitle.length>50){
                             return 'Title length must be 0 to 50';
                           }
@@ -394,7 +395,9 @@ class _AchievementAdderState extends State<AchievementAdder> {
 }
 class AudienceRestrictor extends StatefulWidget {
   final Function onSave;
-  AudienceRestrictor({required this.onSave});
+  final client;
+  final String cookie;
+  AudienceRestrictor({required this.onSave, required this.client, required this.cookie});
 
   @override
   _AudienceRestrictorState createState() => _AudienceRestrictorState();
@@ -402,27 +405,34 @@ class AudienceRestrictor extends StatefulWidget {
 
 class _AudienceRestrictorState extends State<AudienceRestrictor> {
   int reach=0;
-  //TODO:API: Collect restrictables,allowedOptions from api;
+  List<UserTagHolder> restrictors = [];
   //TODO:API: Implement reach calculation using api;
   List<String> restrictables = ['Hostel', 'Department', 'Degree', 'Join Year'];
-  Map<String, List<String>> allowedOptions = {
-    'Hostel': ['1', '2', '3'],
-    'Join Year': ['1', '2', '3', '4'],
-    'Degree': ['Phd', 'M', 'B'],
-    'Department': ['CS', 'The Others']
-    };
-  Map<String,List<String>> allowed = {};
+  List<UserTagHolder> selectedTags = [];
   @override
   void initState() {
-    setState(() {
-      allowed = restrictables.asMap().map((key, value) => MapEntry(restrictables[key], ['All']));
-    });
-    print(allowed);
+    // print(widget.restrictors);
+
+    ()async{
+      List<UserTagHolder> tempTags = await widget.client.getUserTags(widget.cookie);
+      setState(() {
+        restrictors = tempTags;
+        // print('Heres: '+widget.cookie.toString());
+        restrictables = restrictors.map((e) => e.holderName!).toList();
+        selectedTags = restrictors.map((cat) => UserTagHolder(holderID:cat.holderID, holderName: cat.holderName, holderTags: [])).toList();
+        // print(selectedTags);
+      });
+
+    }();
+
+
+    // print(allowed);
 
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
+    // print(restrictors);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -452,12 +462,12 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
                 fontSize: 15
             ),
           ),
-        ...allowed.map((key, value) => MapEntry(key,ExpansionTile(
+        ...selectedTags.map((cat) => ExpansionTile(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(key),
-            value[0].compareTo('All')==0?Text(
+            Text(cat.holderName!),
+            (cat.holderTags!.length==0)?Text(
               'All',
               style: TextStyle(
                   color: Colors.green
@@ -470,9 +480,10 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
             )
           ],
         ),
-        children: [MultiSelectChipField<String?>(
+        children: [MultiSelectChipField<UserTag?>(
           chipColor: Colors.white,
-          // title: Text(''),
+          scroll: false,
+          initialValue: [...selectedTags.firstWhere((element) => element.holderID==cat.holderID).holderTags!],
           showHeader: false,
           headerColor: Colors.white,
           decoration: BoxDecoration(
@@ -482,27 +493,22 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
           ),
           textStyle: TextStyle(color: Colors.black),
           selectedChipColor: Colors.amber,
-          items: allowedOptions[key]!.map((e) => MultiSelectItem<String?>(e, e)).toList(),
-          onTap: (List<String?> values){
-            if(values.length==0){
+          items: restrictors.firstWhere((element) => element.holderID==cat.holderID).holderTags!.map((e) => MultiSelectItem<UserTag?>(e, e.tagName!)).toList(),
+          onTap: (List<UserTag?> values){
+            print('v: '+values.toString());
+              int index = selectedTags.indexOf(cat);
               setState(() {
-                allowed[key] = ['All'];
-              });
-            }
-            else{
-              setState(() {
-                allowed[key]!.clear();
+                selectedTags[index].holderTags!.clear();
+                print(selectedTags[index].holderTags);
                 for(int i=0;i<values.length;i++){
-                  allowed[key]!.add(values[i]!);
+                  selectedTags[index].holderTags!.add(values[i]!);
                 }
-
+                print(selectedTags[index].holderTags);
               });
-            }
           },
         ),]
     )
-        )
-        ).values.toList()
+        ).toList()
         ],
       ),
     );
@@ -539,7 +545,7 @@ class _EventFormState extends State<EventForm> {
   List<Body> bodyOptions = [];
   List<Venue> venueOptions = [];
   List<Body> creatorBodies = [];
-
+  List<UserTagHolder> tags = [];
   //Form Fields
   late Future<String> eventID;
   late String StrID;
@@ -577,6 +583,7 @@ class _EventFormState extends State<EventForm> {
 
   @override
   Widget build(BuildContext context) {
+
     var bloc = BlocProvider.of(context)!.bloc;
     theme = Theme.of(context);
     // final eventBloc
@@ -584,11 +591,12 @@ class _EventFormState extends State<EventForm> {
     if(temp!=null){
       creator = temp;
     }
+
     ()async{
       List<Body> tempBodies= await bloc.client.getAllBodies(BlocProvider.of(context)!.bloc.currSession!.sessionid!);
       List<Venue> tempVenues = await bloc.client.getAllVenues();
-      // tempVenues.forEach((element) {print(element.venueName!);});
       setState(() {
+        // tags = tempTags;
         List<Role>? roles = creator.userRoles;
         if(roles!=null){
           List<Body> realOptions = roles.map((e){
@@ -665,7 +673,7 @@ class _EventFormState extends State<EventForm> {
                       labelText: "Event Name"
                   ),
                   validator: (String? value){
-                    print('evnameval');
+                    // print('evnameval');
                     if(value!.isEmpty||value.length>50){
                       return 'Event Name length must be 0-50';
                     }
@@ -793,8 +801,10 @@ class _EventFormState extends State<EventForm> {
                   eventBodies: bodyOptions
                 ),
                 AudienceRestrictor(
+                  cookie:widget.cookie,
+                  client: bloc.client,
                   onSave: (List<dynamic> rest){
-                  }
+                  },
                 ),
                 GestureDetector(
                   onTap: () {
@@ -813,7 +823,7 @@ class _EventFormState extends State<EventForm> {
                 ),
                 CreateEventBtn(formKey:_formKey, formPoster: ()async{
                   if(!_formKey.currentState!.validate()){
-                    print('validation failed');
+                    // print('validation failed');
                     return;
                   }
                   _formKey.currentState!.save();
@@ -828,7 +838,7 @@ class _EventFormState extends State<EventForm> {
                     eventBodiesID: eventBodies.map((e) => e.bodyID!).toList()
                   );
                   req;
-                  print(req.toJson());
+                  // print(req.toJson());
                   eventID = Future<String>(
                       (){return 's';}
                   );
