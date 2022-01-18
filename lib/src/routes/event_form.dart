@@ -12,6 +12,7 @@ import 'package:InstiApp/src/api/request/image_upload_request.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 // import 'package:analyzer/dart/ast/token.dart';
 
 import 'package:flutter/material.dart';
@@ -406,8 +407,7 @@ class AudienceRestrictor extends StatefulWidget {
 class _AudienceRestrictorState extends State<AudienceRestrictor> {
   String reach='...';
   List<UserTagHolder> restrictors = [];
-  //TODO:API: Implement reach calculation using api;
-  List<String> restrictables = ['Hostel', 'Department', 'Degree', 'Join Year'];
+  List<String> restrictables = [];
   List<UserTagHolder> selectedTags = [];
   List<int> selectedTagIds = [];
   @override
@@ -562,7 +562,7 @@ class EventForm extends StatefulWidget {
 }
 
 class _EventFormState extends State<EventForm> {
-
+  static const String placeHolderImage = 'https://i.imgur.com/vxP6SFl.png';
   // Event eventToMake = Event();
   final String addEventStr = "add-event";
   final String editEventStr = "edit-event";
@@ -587,7 +587,7 @@ class _EventFormState extends State<EventForm> {
   late String eventName;
   late String eventDescription;
   late List<Achievement> eventAchievementsOffered = [];
-  late String eventImageURL = '';//TODO: set this to an asset template image
+  late String eventImageURL = placeHolderImage;
   late String eventStartTime = DateTime.now().toString();
   late String eventEndTime = DateTime.now().toString();
   late String eventIsAllDay = 'false';
@@ -607,7 +607,7 @@ class _EventFormState extends State<EventForm> {
       //must be non-null since event form has been accessed.
       creator = widget.creator!;
     }
-    //TODO:Implement code for loading an existing event into the form.
+
     super.initState();
   }
 
@@ -683,24 +683,30 @@ class _EventFormState extends State<EventForm> {
             child: Column(
               children: [
                 Container(
-                  color: Colors.amber[200],
+                  // color: Colors.amber[200],
                   width: double.infinity,
                   height: 250,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: CachedNetworkImageProvider(eventImageURL)
+                    )
+                  ),
                   child: TextButton(
                     onPressed: () async{
-                      //TODO:API: Resolve errors in image upload (api)
                       final ImagePicker _picker = ImagePicker();
                       final XFile? pi = await _picker.pickImage(source: ImageSource.gallery);
-                      String img64 = base64Encode(await pi!.readAsBytes());
-                      ImageUploadRequest IUReq = ImageUploadRequest(
-                      base64Image: img64
-                      );
+                      // print(pi!.name);
+                      String img64 = base64Encode((await pi!.readAsBytes()).cast<int>());
+                      // print(img64.substring(0, 10));
+                      ImageUploadRequest IUReq = ImageUploadRequest(base64Image: img64);
                       ImageUploadResponse resp = await bloc.client.uploadImage(widget.cookie,IUReq);
+                      // print(resp.toJson());
                       setState(() {
                         eventImageURL=resp.pictureURL!;
                       });
                     },
-                    child: Text((eventImageURL.length==0)?'Pick an Image':'Image saved'),
+                    child: Text((eventImageURL.length==0)?'Pick an Image':''),
                   ),
                 ),
                 TextFormField(
@@ -890,3 +896,4 @@ class _EventFormState extends State<EventForm> {
     );
   }
 }
+//TODO: Implement code for loading an existing event into the form.

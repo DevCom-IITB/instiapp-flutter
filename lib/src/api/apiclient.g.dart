@@ -337,8 +337,8 @@ class _InstiAppApi implements InstiAppApi {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionID};
     _headers.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
-    _data.addAll(imageUploadRequest.toJson());
+    final FormData _data = FormData();
+    _data.files.add(MapEntry<String, MultipartFile>('picture',MultipartFile.fromBytes(base64Decode(imageUploadRequest.base64Image!),filename: DateTime.now().toString()+'.jpg')));
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<ImageUploadResponse>(
             Options(method: 'POST', headers: _headers, extra: _extra)
