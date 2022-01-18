@@ -29,7 +29,7 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:retrofit/retrofit.dart' as rt;
 import 'package:dio/dio.dart';
 import 'model/offersecret.dart';
-
+import 'dart:convert';
 part 'apiclient.g.dart';
 
 @rt.RestApi(baseUrl: "https://api.insti.app/api")
