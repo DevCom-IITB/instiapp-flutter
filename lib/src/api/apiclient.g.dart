@@ -792,6 +792,24 @@ class _InstiAppApi implements InstiAppApi {
     final value = SecretResponse.fromJson(_result.data!);
     return value;
   }
+  @override
+  Future<dynamic> createAchievement(sessionId,OfferedAchievements offeredAchievement) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(offeredAchievement.toJson());
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SecretResponse>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/achievements-offer',
+                queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    print(_result.data!);
+    final value = OfferedAchievements.fromJson(_result.data!);
+    return value;
+  }
 
   @override
   Future<SecretResponse> postInterests(sessionId, interest) async {

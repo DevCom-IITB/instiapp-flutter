@@ -331,24 +331,24 @@ class _AchievementAdderState extends State<AchievementAdder> {
                       Container(
                         padding: EdgeInsets.symmetric(vertical:8),
                         width: double.infinity,
-                        child: DropdownButtonFormField<String>(
-                          value: (acheve.body!=null)?acheve.body!:null,
-                          onChanged: (String? selectedBody){
+                        child: DropdownButtonFormField<Body>(
+                          value: (acheve.body!=null)?widget.eventBodies.firstWhere((element) => acheve.body==element.bodyID):null,
+                          onChanged: (Body? selectedBody){
                             setState(() {
-                              acheve.body = selectedBody;
+                              acheve.body = selectedBody!.bodyID;
                             });
                           },
                           decoration: InputDecoration(
                             label: Text('Authority'),
                           ),
                           items: widget.eventBodies.map((Body b){
-                            return DropdownMenuItem<String>(
-                              value: b.bodyName!,
+                            return DropdownMenuItem<Body>(
+                              value: b,
                               child: Text(b.bodyName!),
                             );
                           }).toList(),
-                          onSaved: (String? bodyName){
-                            acheves[acheves.indexOf(acheve)].body = bodyName!;
+                          onSaved: (Body? body){
+                            acheves[acheves.indexOf(acheve)].body = body!.bodyID;
                           },
                         ),
                       ),
@@ -953,8 +953,7 @@ class _EventFormState extends State<EventForm> {
                   // print(req.toJson());
                   final EventCreateResponse? respo = await bloc.client.createEvent(widget.cookie, req);
                   eventID = respo!.eventId!;
-
-                  // print();
+                  postOffers(eventID, widget.cookie,bloc.client);
                   //update achevs in this widget
                   //call post requests on the updated achevs
                 },),
@@ -963,6 +962,40 @@ class _EventFormState extends State<EventForm> {
           ),
         )
     );
+  }
+
+  void postOffers(String eventId, String cookie,client)async{
+    int index = 0;
+    for (OfferedAchievements offer in eventAchievementsOffered){
+      print(offer.toJson());
+      offer.event = eventId;
+      offer.priority = index;
+      bool noErrors = false;
+      // offer.body = bodyOptions.firstWhere((element) => offer.body==element.bodyName!).bodyID;
+      if(offer.achievementID!=null && offer.achievementID!=''){
+        //put
+      }
+      else{
+        //post
+        try{
+          var ans = await client.createAchievement(cookie, offer);
+          if(ans.toJson()['id']!=null){
+            noErrors = true;
+          }
+        }
+        catch(e){
+
+        }
+        if(!noErrors){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Achievement ${offer.title} failed. The event was updated."),
+            ),
+          );
+        }
+      }
+      index++;
+    }
   }
 }
 //TODO: Implement code for loading an existing event into the form.
