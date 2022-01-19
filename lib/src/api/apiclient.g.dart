@@ -229,6 +229,7 @@ class _InstiAppApi implements InstiAppApi {
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = EventCreateResponse.fromJson(_result.data!);
+    print(_result.data!);
     return value;
   }
 

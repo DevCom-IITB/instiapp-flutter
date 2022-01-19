@@ -1,3 +1,4 @@
+// import 'package:InstiApp/src/api/model/UserTag.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'event_create_request.g.dart';
@@ -20,6 +21,10 @@ class EventCreateRequest {
   List<String>? eventVenueNames;
   @JsonKey(name: "bodies_id")
   List<String>? eventBodiesID;
+  @JsonKey(name: "notify")
+  bool? notify;
+  @JsonKey(name: "user_tags")
+  List<int>? eventUserTags;
 
   EventCreateRequest(
       {this.eventName,
@@ -29,7 +34,9 @@ class EventCreateRequest {
       this.eventEndTime,
       this.allDayEvent,
       this.eventVenueNames,
-      this.eventBodiesID});
+      this.eventBodiesID,
+      this.notify,
+      this.eventUserTags});
   factory EventCreateRequest.fromJson(Map<String, dynamic> json) =>
       _$EventCreateRequestFromJson(json);
   Map<String, dynamic> toJson() => _$EventCreateRequestToJson(this);

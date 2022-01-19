@@ -14,12 +14,15 @@ EventCreateRequest _$EventCreateRequestFromJson(Map<String, dynamic> json) =>
       eventStartTime: json['start_time'] as String?,
       eventEndTime: json['end_time'] as String?,
       allDayEvent: json['all_day'] as bool?,
+      notify: json['notify'] as bool?,
+      eventUserTags: (json['user_tags'] as List<dynamic>?)?.map((e) => e as int).toList(),
       eventVenueNames: (json['venue_names'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
       eventBodiesID: (json['bodies_id'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
+      // eventUserTags: (json[''])
     );
 
 Map<String, dynamic> _$EventCreateRequestToJson(EventCreateRequest instance) =>
@@ -32,4 +35,6 @@ Map<String, dynamic> _$EventCreateRequestToJson(EventCreateRequest instance) =>
       'all_day': instance.allDayEvent,
       'venue_names': instance.eventVenueNames,
       'bodies_id': instance.eventBodiesID,
+      'notify':instance.notify,
+      'user_tags':instance.eventUserTags
     };
