@@ -5,6 +5,7 @@ import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
+import 'package:InstiApp/src/api/model/offeredAchievements.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
 import 'package:InstiApp/src/api/request/ach_verify_request.dart';
@@ -277,4 +278,6 @@ abstract class InstiAppApi {
   Future<List<UserTagHolder>> getUserTags(@rt.Header("Cookie") String sessionId);
   @rt.GET("/user-tags/reach")
   Future<int> getUserTagsReach(@rt.Header("Cookie") String sessionId, List<int> selectedTagIds);
+  @rt.POST('/achievements-offer')
+  Future<dynamic> createAchievement(sessionId,OfferedAchievements offeredAchievements);
 }
