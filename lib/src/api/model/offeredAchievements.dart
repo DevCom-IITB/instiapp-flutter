@@ -26,6 +26,9 @@ class OfferedAchievements {
   @JsonKey(name: "secret")
   String? secret;
 
+  @JsonKey(name: "generic")
+  String? generic;
+
   @JsonKey(name: "users")
   List<User>? users;
 
@@ -41,7 +44,8 @@ class OfferedAchievements {
       this.priority,
       this.secret,
       this.stat,
-      this.users
+      this.users,
+      this.generic
       });
   
   factory OfferedAchievements.fromJson(Map<String, dynamic> json) =>

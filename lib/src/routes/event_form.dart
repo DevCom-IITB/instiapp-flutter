@@ -2,24 +2,30 @@
 import 'dart:convert';
 // import 'dart:html';
 import 'package:InstiApp/src/api/model/UserTag.dart';
-import 'package:InstiApp/src/api/model/achievements.dart';
+// import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/offeredAchievements.dart';
 import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
 import 'package:InstiApp/src/api/request/image_upload_request.dart';
+import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 // import 'package:analyzer/dart/ast/token.dart';
-
+import 'package:flutter/src/widgets/form.dart' as flut;
 import 'package:flutter/material.dart';
+// import 'package:flutter_google_places/flutter_google_places.dart';
+// import 'package:flutter_html/shims/dart_ui_real.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 // import 'package:flutter_html/shims/dart_ui_real.dart';
 // import 'package:flutter_html/shims/dart_ui_real.dart';
 // import 'package:flutter_html/flutter_html.dart';
 import 'package:image_picker/image_picker.dart';
+// import 'package:jaguar/http/http.dart';
 // import 'package:jaguar/http/http.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
@@ -206,7 +212,7 @@ class AchievementAdder extends StatefulWidget {
 }
 
 class _AchievementAdderState extends State<AchievementAdder> {
-  List<Achievement> acheves = [];
+  List<OfferedAchievements> acheves = [];
   List<String> acheveTypes = [
     'Unspecified',
     'Participation',
@@ -218,7 +224,7 @@ class _AchievementAdderState extends State<AchievementAdder> {
   void updateFormData(){
     widget.postData(acheves);
   }
-  String getAchevTitle(Achievement achev){
+  String getAchevTitle(OfferedAchievements achev){
     if(achev.title!=null && achev.title!.length>0){
       return achev.title!;
     }
@@ -260,7 +266,8 @@ class _AchievementAdderState extends State<AchievementAdder> {
                 child: Text('Add'),
                 onPressed: (){
                   setState(() {
-                    acheves.add(Achievement(
+                    acheves.add(OfferedAchievements(
+
                     ));
                   });
                 },
@@ -318,18 +325,17 @@ class _AchievementAdderState extends State<AchievementAdder> {
                         ),
                         //Validator?
                         onSaved: (String? achevDesc){
-                          acheves[acheves.indexOf(acheve)].description = achevDesc!;
+                          acheves[acheves.indexOf(acheve)].desc = achevDesc!;
                         },
                       ),
                       Container(
                         padding: EdgeInsets.symmetric(vertical:8),
                         width: double.infinity,
                         child: DropdownButtonFormField<String>(
-                          value: (acheve.body!=null)?acheve.body!.bodyName!:null,
-                          onChanged: (String? v){
+                          value: (acheve.body!=null)?acheve.body!:null,
+                          onChanged: (String? selectedBody){
                             setState(() {
-                              acheve.body = widget.eventBodies.firstWhere((element) => element.bodyName==v);
-
+                              acheve.body = selectedBody;
                             });
                           },
                           decoration: InputDecoration(
@@ -342,7 +348,7 @@ class _AchievementAdderState extends State<AchievementAdder> {
                             );
                           }).toList(),
                           onSaved: (String? bodyName){
-                            acheves[acheves.indexOf(acheve)].body = widget.eventBodies.firstWhere((element) => element.bodyName==bodyName);
+                            acheves[acheves.indexOf(acheve)].body = bodyName!;
                           },
                         ),
                       ),
@@ -353,11 +359,10 @@ class _AchievementAdderState extends State<AchievementAdder> {
                             decoration: InputDecoration(
                               label: Text('Type *')
                             ),
-                            value: (acheve.offer!=null)?acheve.offer:null,
-                            //TODO: What to do with Type?Is model choice correct?
+                            value: (acheve.generic!=null)?acheve.generic:null,
                             onChanged: (String? v){
                               setState(() {
-                                acheve.offer = v;
+                                acheve.generic = v;
                               });
                             },
                             items: acheveTypes.map((String val){
@@ -367,7 +372,7 @@ class _AchievementAdderState extends State<AchievementAdder> {
                               );
                             }).toList(),
                           onSaved: (String? type){
-                            acheves[acheves.indexOf(acheve)].offer = type;
+                            acheves[acheves.indexOf(acheve)].generic = type;
                             if(acheves.indexOf(acheve)==acheves.length-1){
                               //last acheve;
                               //last field saved;=>post data into form
@@ -436,100 +441,105 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
     // print(restrictors);
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'Restricted Audience',
-            style: TextStyle(
-                fontSize: 20
+      child: flut.FormField(
+        onSaved: (_){
+          widget.onSave(this.selectedTagIds);
+        },
+        builder:(ctx)=>Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Restricted Audience',
+              style: TextStyle(
+                  fontSize: 20
+              ),
             ),
-          ),
-          Text(
-            'Event will be visible only to selected audiences',
-            style: TextStyle(
-                fontSize: 15
+            Text(
+              'Event will be visible only to selected audiences',
+              style: TextStyle(
+                  fontSize: 15
+              ),
             ),
-          ),
-          Text(
-            'Do not select anything if the event is open for everyone',
-            style: TextStyle(
-                fontSize: 15
+            Text(
+              'Do not select anything if the event is open for everyone',
+              style: TextStyle(
+                  fontSize: 15
+              ),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                    'Current estimated reach: ',
+                  style: TextStyle(
+                      fontSize: 15
+                  ),
+                ),
+                (reach.compareTo('...')!=0)?Text(
+                  reach,
+                  style: TextStyle(
+                      fontSize: 15
+                  ),
+                ):Container(
+                  height: 10,width: 10,
+                  child: CircularProgressIndicator(strokeWidth: 2,)
+                ),
+              ],
+            ),
+          ...selectedTags.map((cat) => ExpansionTile(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                  'Current estimated reach: ',
+              Text(cat.holderName!),
+              (cat.holderTags!.length==0)?Text(
+                'All',
                 style: TextStyle(
-                    fontSize: 15
+                    color: Colors.green
                 ),
-              ),
-              (reach.compareTo('...')!=0)?Text(
-                reach,
+              ):Text(
+                'Restricted',
                 style: TextStyle(
-                    fontSize: 15
+                    color: Colors.red
                 ),
-              ):Container(
-                height: 10,width: 10,
-                child: CircularProgressIndicator(strokeWidth: 2,)
-              ),
+              )
             ],
           ),
-        ...selectedTags.map((cat) => ExpansionTile(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(cat.holderName!),
-            (cat.holderTags!.length==0)?Text(
-              'All',
-              style: TextStyle(
-                  color: Colors.green
-              ),
-            ):Text(
-              'Restricted',
-              style: TextStyle(
-                  color: Colors.red
-              ),
-            )
+          children: [MultiSelectChipField<UserTag?>(
+            chipColor: Colors.white,
+            scroll: false,
+            initialValue: [...selectedTags.firstWhere((element) => element.holderID==cat.holderID).holderTags!],
+            showHeader: false,
+            headerColor: Colors.white,
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(blurRadius: 1.0, spreadRadius: 3.0, color: Colors.grey[200]!)
+              ],
+            ),
+            textStyle: TextStyle(color: Colors.black),
+            selectedChipColor: Colors.amber,
+            items: restrictors.firstWhere((element) => element.holderID==cat.holderID).holderTags!.map((e) => MultiSelectItem<UserTag?>(e, e.tagName!)).toList(),
+            onTap: (List<UserTag?> values){
+              setState(() {
+                reach = '...';
+              });
+              // print('v: '+values.toString());
+                int index = selectedTags.indexOf(cat);
+                setState(() {
+                  selectedTags[index].holderTags!.clear();
+                  // print(selectedTags[index].holderTags);
+                  for(int i=0;i<values.length;i++){
+                    selectedTags[index].holderTags!.add(values[i]!);
+                  }
+                  updateSelectedTagIds();
+                  updateReach();
+                  // print(selectedTags[index].holderTags);
+                });
+            },
+          ),]
+    )
+          ).toList()
           ],
         ),
-        children: [MultiSelectChipField<UserTag?>(
-          chipColor: Colors.white,
-          scroll: false,
-          initialValue: [...selectedTags.firstWhere((element) => element.holderID==cat.holderID).holderTags!],
-          showHeader: false,
-          headerColor: Colors.white,
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(blurRadius: 1.0, spreadRadius: 3.0, color: Colors.grey[200]!)
-            ],
-          ),
-          textStyle: TextStyle(color: Colors.black),
-          selectedChipColor: Colors.amber,
-          items: restrictors.firstWhere((element) => element.holderID==cat.holderID).holderTags!.map((e) => MultiSelectItem<UserTag?>(e, e.tagName!)).toList(),
-          onTap: (List<UserTag?> values){
-            setState(() {
-              reach = '...';
-            });
-            print('v: '+values.toString());
-              int index = selectedTags.indexOf(cat);
-              setState(() {
-                selectedTags[index].holderTags!.clear();
-                print(selectedTags[index].holderTags);
-                for(int i=0;i<values.length;i++){
-                  selectedTags[index].holderTags!.add(values[i]!);
-                }
-                updateSelectedTagIds();
-                updateReach();
-                print(selectedTags[index].holderTags);
-              });
-          },
-        ),]
-    )
-        ).toList()
-        ],
       ),
     );
   }
@@ -582,22 +592,24 @@ class _EventFormState extends State<EventForm> {
   List<Body> creatorBodies = [];
   List<UserTagHolder> tags = [];
   //Form Fields
-  late Future<String> eventID;
+  late String eventID;
   late String StrID;
   late String eventName;
   late String eventDescription;
-  late List<Achievement> eventAchievementsOffered = [];
+  late List<OfferedAchievements> eventAchievementsOffered = [];
   late String eventImageURL = placeHolderImage;
   late String eventStartTime = DateTime.now().toString();
   late String eventEndTime = DateTime.now().toString();
-  late String eventIsAllDay = 'false';
-  late List<String> eventVenues = ['Venue'];
+  late bool eventIsAllDay = false;
+  late List<Venue> eventVenues = [Venue()];
   late List<Body> eventBodies = [];
   List<User> eventBlankGoing = [];
   List<User> eventBlankInterested= [];
   late String eventWebsiteURL;
   late int eventUserUesInt;
   late User creator;
+  bool eventNotifications = true;
+  List<int> eventUserTags = [];
   // Storing for dispose
   ThemeData? theme;
 
@@ -630,6 +642,7 @@ class _EventFormState extends State<EventForm> {
     ()async{
       List<Body> tempBodies= await bloc.client.getAllBodies(widget.cookie);
       List<Venue> tempVenues = await bloc.client.getAllVenues();
+      // print(tempVenues.map((e) => e.venueShortName!));
       setState(() {
         // tags = tempTags;
         List<Role>? roles = creator.userRoles;
@@ -746,46 +759,94 @@ class _EventFormState extends State<EventForm> {
                     )),
                   ],
                 ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      eventIsAllDay = !eventIsAllDay;
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Switch(
+                        activeColor: Colors.amber,
+                        value: eventIsAllDay,
+                        onChanged: (bool v) {
+                          // print(v);
+                          eventIsAllDay = v;
+                        },
+                      ),
+                      Text('All day.')
+                    ],
+                  ),
+                ),
                 Row(//row for time pickers
                   children: [],
                 ),
-
                 ...venues.map((venue)=>Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: venue,
-                    onSaved: (String? venueval){
-                      if(venueval!=null){
-                        eventVenues[venues.indexOf(venue)] = venueval;
-                      }
-                    },
-                    //TODO: Fix autofillhints for Venues
-                    autofillHints:[...venueOptions].map((e) => e.venueName!).toList(),
-                    // enableInteractiveSelection: true,
-                    // autofillHints: ['sa', 'aa'],
-                    decoration: InputDecoration(
-
-                      label: Text('Venue'),
-                      suffixIcon: IconButton(
-                        icon: (venues.indexOf(venue)>0)?Icon(Icons.remove):Icon(Icons.add),
-                        onPressed: (){
-                          int index = venues.indexOf(venue);
-                          if(venues.length>1&&(index!=0)){
-                            setState(() {
-                              eventVenues.removeAt(index);
-                              venues.remove(venue);
-                            });
-                          }
-                          else{
-                            setState(() {
-                              eventVenues.add('Venue');
-                              venues.add(TextEditingController());
-                            });
-                          }
-                        },
-                      ),
+                  child: TypeAheadFormField<Venue>(
+                    noItemsFoundBuilder: (ctx)=>Text("No Venue Found."),
+                    // initialValue: eventVenues[venues.indexOf(venue)].venueShortName!,
+                    textFieldConfiguration: TextFieldConfiguration(
+                      controller: venue,
+                      decoration: InputDecoration(
+                        label: Text('Venue'),
+                        suffixIcon: IconButton(
+                                  icon: (venues.indexOf(venue)>0)?Icon(Icons.remove):Icon(Icons.add),
+                                  onPressed: (){
+                                    int index = venues.indexOf(venue);
+                                    if(venues.length>1&&(index!=0)){
+                                      setState(() {
+                                        eventVenues.removeAt(index);
+                                        venues.remove(venue);
+                                      });
+                                    }
+                                    else{
+                                      setState(() {
+                                        eventVenues.add(Venue());
+                                        venues.add(TextEditingController());
+                                      });
+                                    }
+                                  },
+                                ),
+                      )
                     ),
-                  ),
+                    suggestionsCallback: (String q)=>venueOptions.where((element) =>
+                    (element.venueName!+element.venueShortName!).toLowerCase().contains(q.toLowerCase())),
+
+                    onSuggestionSelected: (Venue v){
+                      int venueIndex = venues.indexOf(venue);
+                      setState(() {
+                        // venues[venueIndex].clear();
+                        venues[venueIndex].text = v.venueShortName!;
+                        eventVenues[venues.indexOf(venue)] = v;
+                      });
+
+                    },
+                    itemBuilder: (BuildContext ctx, Venue item)=>Container(
+                      padding: EdgeInsets.all(4),
+                        child: Text(
+                          item.venueShortName!,
+                          style: TextStyle(
+                            fontSize: 20
+                          ),
+                        )
+                    ),
+                  )
+                  // TextFormField(
+                  //   controller: venue,
+                  //   onSaved: (String? venueval){
+                  //     if(venueval!=null){
+                  //       eventVenues[venues.indexOf(venue)] = venueval;
+                  //     }
+                  //   },
+                  //   // enableInteractiveSelection: true,
+                  //   // autofillHints: ['sa', 'aa'],
+                  //   decoration: InputDecoration(
+                  //     label: Text('Venue'),
+                  //
+                  //   ),
+                  // ),
                 ),
                 ).toList(),
                 MultiSelectDialogField(
@@ -832,7 +893,7 @@ class _EventFormState extends State<EventForm> {
                   ),
                 ),
                 AchievementAdder(
-                  postData:(List<Achievement> achevs){
+                  postData:(List<OfferedAchievements> achevs){
                     // setState(() {
                       eventAchievementsOffered = achevs;
                     // });
@@ -844,20 +905,25 @@ class _EventFormState extends State<EventForm> {
                 AudienceRestrictor(
                   cookie:widget.cookie,
                   client: bloc.client,
-                  onSave: (List<dynamic> rest){
-
+                  onSave: (List<int> userTags){
+                    eventUserTags = userTags;
                   },
                 ),
                 GestureDetector(
                   onTap: () {
-                    //value = !=value
+                    setState(() {
+                      eventNotifications = !eventNotifications;
+                    });
                   },
                   child: Row(
                     children: [
                       Switch(
                         activeColor: Colors.amber,
-                        value: true,
-                        onChanged: (v) {},
+                        value: eventNotifications,
+                        onChanged: (bool v) {
+                          // print(v);
+                          eventNotifications = v;
+                        },
                       ),
                       Text('Notify followers on creation/updation')
                     ],
@@ -869,23 +935,26 @@ class _EventFormState extends State<EventForm> {
                     return;
                   }
                   _formKey.currentState!.save();
+                  //transfers data from1 formfields into respective parameters
+                  //collects data from AudieceRestrictor, AchievementAdder too.
                   EventCreateRequest req = EventCreateRequest(
                     eventName: eventName,
                     eventDescription: eventDescription,
                     eventImageURL: eventImageURL,
                     eventStartTime: eventStartTime,
                     eventEndTime: eventEndTime,
-                    allDayEvent: eventIsAllDay=='true',//TODO: add switch?
-                    eventVenueNames: eventVenues,
-                    eventBodiesID: eventBodies.map((e) => e.bodyID!).toList()
+                    allDayEvent: eventIsAllDay,
+                    eventVenueNames: eventVenues.where((element) => element.venueShortName!=null).map((e) => e.venueShortName!).toList(),
+                    eventBodiesID: eventBodies.map((e) => e.bodyID!).toList(),
+                    eventUserTags: eventUserTags,
+                    notify: eventNotifications
                   );
                   req;
                   // print(req.toJson());
-                  eventID = Future<String>(
-                      (){return 's';}
-                  );
-                  // final respo = await bloc.client.postEventForm(widget.cookie, req);
-                  // print(respo!);
+                  final EventCreateResponse? respo = await bloc.client.createEvent(widget.cookie, req);
+                  eventID = respo!.eventId!;
+
+                  // print();
                   //update achevs in this widget
                   //call post requests on the updated achevs
                 },),
