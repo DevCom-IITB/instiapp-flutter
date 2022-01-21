@@ -9,6 +9,8 @@ class EventCreateRequest {
   String? eventName;
   @JsonKey(name: "description")
   String? eventDescription;
+  @JsonKey(name:"website_url")
+  String? eventWebsiteURL;
   @JsonKey(name: "image_url")
   String? eventImageURL;
   @JsonKey(name: "start_time")
@@ -30,6 +32,7 @@ class EventCreateRequest {
       {this.eventName,
       this.eventDescription,
       this.eventImageURL,
+      this.eventWebsiteURL,
       this.eventStartTime,
       this.eventEndTime,
       this.allDayEvent,

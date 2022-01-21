@@ -316,13 +316,13 @@ class AchievementAdder extends StatefulWidget {
 
 class _AchievementAdderState extends State<AchievementAdder> {
   List<OfferedAchievements> acheves = [];
-  List<String> acheveTypes = [
-    'Unspecified',
-    'Participation',
-    'First',
-    'Second',
-    'Third',
-    'Special'
+  List<Map<String,String>> acheveTypes = [
+        {"code": "generic","name": "Unspecified"},
+        {"code": "participation","name": "Participation"},
+        {"code": "gold-medal","name": "First"},
+        {"code": "silver-medal","name": "Second"},
+        {"code": "bronze-medal","name": "Third"},
+        {"code": "medal","name": "Special"}
   ];
   void updateFormData(){
     widget.postData(acheves);
@@ -455,24 +455,24 @@ class _AchievementAdderState extends State<AchievementAdder> {
                         Container(
                           padding: EdgeInsets.symmetric(vertical:8),
                           width: double.infinity,
-                          child: DropdownButtonFormField<String>(
+                          child: DropdownButtonFormField<Map<String,String>>(
                               decoration: InputDecoration(
                                 label: Text('Type *')
                               ),
-                              value: (acheve.generic!=null)?acheve.generic:null,
-                              onChanged: (String? v){
+                              value: (acheve.generic!=null)?acheveTypes.firstWhere((element) => element['code']==acheve.generic):null,
+                              onChanged: (Map<String,String>? v){
                                 setState(() {
-                                  acheve.generic = v;
+                                  acheve.generic = v!['code'];
                                 });
                               },
-                              items: acheveTypes.map((String val){
-                                return DropdownMenuItem<String>(
-                                  value: val,
-                                  child: Text(val),
+                              items: acheveTypes.map((Map<String,String> offerType){
+                                return DropdownMenuItem<Map<String,String>>(
+                                  value: offerType,
+                                  child: Text(offerType['name']!),
                                 );
                               }).toList(),
-                            onSaved: (String? type){
-                              acheves[acheves.indexOf(acheve)].generic = type;
+                            onSaved: (Map<String,String>? type){
+                              acheves[acheves.indexOf(acheve)].generic = type!['code'];
                               if(acheves.indexOf(acheve)==acheves.length-1){
                                 //last acheve;
                                 //last field saved;=>post data into form
@@ -990,7 +990,7 @@ class _EventFormState extends State<EventForm> {
                       });
                     },
                     validator: (List<Body?>? values){
-                      if(values!.isEmpty){
+                      if(eventBodies.isEmpty){
                         return "Select at least one body.";
                       }
                       return null;
@@ -1004,6 +1004,7 @@ class _EventFormState extends State<EventForm> {
                       label: Text('Website URL'),
                     ),
                     onSaved: (String? url){
+                      // print(url!+' saved');
                       eventWebsiteURL = url!;
                     },
                   ),
@@ -1061,7 +1062,7 @@ class _EventFormState extends State<EventForm> {
                 ),
                 CreateEventBtn(formKey:_formKey, formPoster: ()async{
                   if(!_formKey.currentState!.validate()){
-                    // print('validation failed');
+                    print('validation failed');
                     return;
                   }
                   _formKey.currentState!.save();
@@ -1074,13 +1075,14 @@ class _EventFormState extends State<EventForm> {
                     eventStartTime: eventStartTime,
                     eventEndTime: eventEndTime,
                     allDayEvent: eventIsAllDay,
+                    // eventWebsiteURL: eventWebsiteURL,
                     eventVenueNames: eventVenues.where((element) => element.venueShortName!=null).map((e) => e.venueShortName!).toList(),
                     eventBodiesID: eventBodies.map((e) => e.bodyID!).toList(),
                     eventUserTags: eventUserTags,
                     notify: eventNotifications
                   );
                   req;
-                  // print(req.toJson());
+                  print(req.toJson());
                   final EventCreateResponse? respo = await bloc.client.createEvent(widget.cookie, req);
                   eventID = respo!.eventId!;
                   postOffers(eventID, widget.cookie,bloc.client);
@@ -1096,6 +1098,7 @@ class _EventFormState extends State<EventForm> {
 
   void postOffers(String eventId, String cookie,client)async{
     int index = 0;
+    print(eventAchievementsOffered);
     for (OfferedAchievements offer in eventAchievementsOffered){
       // print(offer.toJson());
       offer.event = eventId;
@@ -1108,6 +1111,7 @@ class _EventFormState extends State<EventForm> {
       else{
         //post
         try{
+          print(offer.toJson());
           var ans = await client.createAchievement(cookie, offer);
           if(ans.toJson()['id']!=null){
             noErrors = true;
