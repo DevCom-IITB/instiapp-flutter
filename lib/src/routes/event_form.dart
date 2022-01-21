@@ -18,6 +18,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 // import 'package:analyzer/dart/ast/token.dart';
 import 'package:flutter/src/widgets/form.dart' as flut;
 import 'package:flutter/material.dart';
+// import 'package:flutter_html/shims/dart_ui_real.dart';
 // import 'package:flutter_google_places/flutter_google_places.dart';
 // import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -70,6 +71,16 @@ class _CreateEventBtnState extends State<CreateEventBtn> {
     );
   }
 }
+//'
+//
+
+//
+//
+//
+//
+//
+//
+// '
 
 class DatePickerField extends StatefulWidget {
   final String labelText;
@@ -85,32 +96,16 @@ class _DatePickerFieldState extends State<DatePickerField> {
   DateTime initDate = DateTime.now();
   DateTime lastDate = DateTime.now();
   TextEditingController textEditingController = TextEditingController();
-  String formattedDate = "";
-  bool parseable = true;
   Color labelColor = Colors.grey;
   static int zeroDateTime = -62170003800000000;
   static DateTime parseDate(String s){
     DateTime d = DateTime(0,0,0,0,0,0,0,0);
-    List<String> numstr= s.split('/');
-    List<int> nums;
-    try{
-      nums=numstr.map((e) => int.parse(e)).toList();
-      d = DateTime(nums[2],nums[1],nums[0]);
-    }
-    catch(e){
-      // print(s);
-      // print("parse failed");
-      return d;
-    }
-
+    try{d = DateTime.parse(s);}
+    catch(e){return d;}
     return d;
   }
   static String formatDate(DateTime d) {
-    String s = "";
-    Function pad = (String s) => s.length == 1 ? '0' + s : s;
-    s = [pad(d.day.toString()), pad(d.month.toString()), pad(d.year.toString())]
-        .join('/');
-    return s;
+    return d.toString().split(' ')[0];
   }
 
   @override
@@ -121,8 +116,7 @@ class _DatePickerFieldState extends State<DatePickerField> {
           DateTime(yn - 1).millisecondsSinceEpoch);
       lastDate = DateTime.fromMillisecondsSinceEpoch(
           DateTime(yn + 1).millisecondsSinceEpoch);
-      formattedDate = formatDate(setDate);
-      textEditingController.text = formattedDate;
+      textEditingController.text = formatDate(setDate);
     });
     setDate = DateTime.now();
     super.initState();
@@ -138,13 +132,10 @@ class _DatePickerFieldState extends State<DatePickerField> {
           DateTime newDate = parseDate(s);
           // print(newDate.microsecondsSinceEpoch);
           if(newDate.microsecondsSinceEpoch!=zeroDateTime&&(newDate.isBefore(lastDate)&&newDate.isAfter(initDate))){
-            setState(() {parseable=true;labelColor = Colors.grey;
-            });
+            setState(() {labelColor = Colors.grey;});
           }
           else{
-            setState(() {parseable = false;labelColor = Colors.red;
-
-            });
+            setState(() {labelColor = Colors.red;});
           }
         },
         validator: (String? s){
@@ -189,11 +180,123 @@ class _DatePickerFieldState extends State<DatePickerField> {
                   setState(() {
                     setDate = newDate;
                     widget.onSaved(newDate);
-                    formattedDate = formatDate(newDate);
-                    textEditingController.text = formattedDate;
+                    textEditingController.text = formatDate(newDate);
                   });
                 }
                 newDate?.millisecond;
+                // showDateRangePicker()
+              },
+            )
+        ),
+      ),
+    );
+  }
+}
+class TimePickerField extends StatefulWidget {
+  final String labelText;
+  final Function onSaved;
+  TimePickerField({required this.labelText, required this.onSaved});
+
+  @override
+  _TimePickerFieldState createState() => _TimePickerFieldState();
+}
+
+class _TimePickerFieldState extends State<TimePickerField> {
+  TimeOfDay setTime = TimeOfDay.now();
+  DateTime initDate = DateTime.now();
+  DateTime lastDate = DateTime.now();
+  TextEditingController textEditingController = TextEditingController();
+  Color labelColor = Colors.grey;
+  // static int zeroDateTime = -62170003800000000;
+  static TimeOfDay parseTime(String s){
+    TimeOfDay d = TimeOfDay(hour:0,minute: 0);
+    try{d = TimeOfDay(hour: int.parse(s.split(':')[0]),minute: int.parse(s.split(':')[1]));}
+    catch(e){return d;}
+    return d;
+  }
+  String formatTime(TimeOfDay d) {
+    // print(d.format(context));
+    final Function pad = (int s)=>(s.toString().length)>1?s.toString():'0'+s.toString();
+    return '${pad(d.hour)}:${pad(d.minute)}';
+  }
+
+  @override
+  void initState() {
+
+      textEditingController.text = formatTime(setTime);
+    // });
+    setTime = TimeOfDay.now();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        controller: textEditingController,
+        onChanged: (String s) {
+          TimeOfDay newDate = parseTime(s);
+          if(newDate.hour==0&&newDate.minute==0){
+            try{
+              if(s.split(':').map((e) => int.parse(e)).reduce((value, element) => value+element)==0){
+                setState(() {
+                  labelColor = Colors.grey;
+                });
+                return;
+              }
+            }catch(e){
+              setState(() {
+                labelColor = Colors.red;
+              });
+            }
+            
+          }
+        },
+        validator: (String? s){
+          // print('date validator');
+          if(s!=null){
+            // TimeOfDay newTime = parseTime(s);
+            // if(newDate.microsecondsSinceEpoch==zeroDateTime){
+            //   return 'Date Not Parsed. Format: DD/MM/YYYY';
+            // }
+            // else if(!(newDate.isBefore(lastDate)&&newDate.isAfter(initDate))){
+            //   return 'Date must be within a year of today.';
+            // }
+          }
+          return null;
+        },
+        onSaved: (String? dateStr){
+          if(dateStr!=null){
+            widget.onSaved(parseTime(dateStr));
+          }
+        },
+        decoration: InputDecoration(
+            label: Text(
+              widget.labelText,
+              style: TextStyle(
+                  color:labelColor
+              ),
+            ),
+            suffix: TextButton(
+              child: Icon(
+                Icons.watch_later_outlined,
+                color: Colors.grey,
+              ),
+              onPressed: () async {
+                TimeOfDay? newTime = await showTimePicker(
+                  context: context,
+                  initialTime: setTime,
+
+                );
+                if (newTime != null) {
+                  setState(() {
+                    setTime = newTime;
+                    // print(setTime);
+                    widget.onSaved(newTime);
+                    textEditingController.text = formatTime(newTime);
+                  });
+                }
                 // showDateRangePicker()
               },
             )
@@ -283,118 +386,116 @@ class _AchievementAdderState extends State<AchievementAdder> {
         ),
         ...acheves.map((acheve) => Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(blurRadius: 1.0, spreadRadius: 3.0, color: Colors.grey[200]!)
-              ],
-            ),
-            child: ExpansionTile(
-              expandedCrossAxisAlignment: CrossAxisAlignment.end,
-              title: Text(getAchevTitle(acheve)),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        decoration: InputDecoration(
-                            hintText: 'Title *'
-                        ),
-                        validator: (String? acheveTitle){
-                          // print('ac. title. validator');
-                          if(acheveTitle!.length==0||acheveTitle.length>50){
-                            return 'Title length must be 0 to 50';
-                          }
-                          return null;
-                        },
-                        onChanged: (String? s){
-                          setState(() {
-                            acheve.title = s!;
-                          });
-                        },
-                        onSaved: (String? acheveTitle){
-                          acheves[acheves.indexOf(acheve)].title = acheveTitle!;
-                        },
-                      ),
-                      TextFormField(
-                        keyboardType: TextInputType.multiline,
-                        maxLines: 4,
-                        decoration: InputDecoration(
-                            hintText: 'Description'
-                        ),
-                        //Validator?
-                        onSaved: (String? achevDesc){
-                          acheves[acheves.indexOf(acheve)].desc = achevDesc!;
-                        },
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(vertical:8),
-                        width: double.infinity,
-                        child: DropdownButtonFormField<Body>(
-                          value: (acheve.body!=null)?widget.eventBodies.firstWhere((element) => acheve.body==element.bodyID):null,
-                          onChanged: (Body? selectedBody){
+          child: Card(
+            elevation: 10,
+            borderOnForeground: true,
+            child:  ExpansionTile(
+                expandedCrossAxisAlignment: CrossAxisAlignment.end,
+                title: Text(getAchevTitle(acheve)),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          decoration: InputDecoration(
+                              hintText: 'Title *'
+                          ),
+                          validator: (String? acheveTitle){
+                            // print('ac. title. validator');
+                            if(acheveTitle!.length==0||acheveTitle.length>50){
+                              return 'Title length must be 0 to 50';
+                            }
+                            return null;
+                          },
+                          onChanged: (String? s){
                             setState(() {
-                              acheve.body = selectedBody!.bodyID;
+                              acheve.title = s!;
                             });
                           },
-                          decoration: InputDecoration(
-                            label: Text('Authority'),
-                          ),
-                          items: widget.eventBodies.map((Body b){
-                            return DropdownMenuItem<Body>(
-                              value: b,
-                              child: Text(b.bodyName!),
-                            );
-                          }).toList(),
-                          onSaved: (Body? body){
-                            acheves[acheves.indexOf(acheve)].body = body!.bodyID;
+                          onSaved: (String? acheveTitle){
+                            acheves[acheves.indexOf(acheve)].title = acheveTitle!;
                           },
                         ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(vertical:8),
-                        width: double.infinity,
-                        child: DropdownButtonFormField<String>(
-                            decoration: InputDecoration(
-                              label: Text('Type *')
-                            ),
-                            value: (acheve.generic!=null)?acheve.generic:null,
-                            onChanged: (String? v){
+                        TextFormField(
+                          keyboardType: TextInputType.multiline,
+                          maxLines: 4,
+                          decoration: InputDecoration(
+                              hintText: 'Description'
+                          ),
+                          //Validator?
+                          onSaved: (String? achevDesc){
+                            acheves[acheves.indexOf(acheve)].desc = achevDesc!;
+                          },
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical:8),
+                          width: double.infinity,
+                          child: DropdownButtonFormField<Body>(
+                            value: (acheve.body!=null)?widget.eventBodies.firstWhere((element) => acheve.body==element.bodyID):null,
+                            onChanged: (Body? selectedBody){
                               setState(() {
-                                acheve.generic = v;
+                                acheve.body = selectedBody!.bodyID;
                               });
                             },
-                            items: acheveTypes.map((String val){
-                              return DropdownMenuItem<String>(
-                                value: val,
-                                child: Text(val),
+                            decoration: InputDecoration(
+                              label: Text('Authority'),
+                            ),
+                            items: widget.eventBodies.map((Body b){
+                              return DropdownMenuItem<Body>(
+                                value: b,
+                                child: Text(b.bodyName!),
                               );
                             }).toList(),
-                          onSaved: (String? type){
-                            acheves[acheves.indexOf(acheve)].generic = type;
-                            if(acheves.indexOf(acheve)==acheves.length-1){
-                              //last acheve;
-                              //last field saved;=>post data into form
-                              widget.postData(acheves);
-                            }
-                          },
+                            onSaved: (Body? body){
+                              acheves[acheves.indexOf(acheve)].body = body!.bodyID;
+                            },
                           ),
                         ),
-                    ],
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical:8),
+                          width: double.infinity,
+                          child: DropdownButtonFormField<String>(
+                              decoration: InputDecoration(
+                                label: Text('Type *')
+                              ),
+                              value: (acheve.generic!=null)?acheve.generic:null,
+                              onChanged: (String? v){
+                                setState(() {
+                                  acheve.generic = v;
+                                });
+                              },
+                              items: acheveTypes.map((String val){
+                                return DropdownMenuItem<String>(
+                                  value: val,
+                                  child: Text(val),
+                                );
+                              }).toList(),
+                            onSaved: (String? type){
+                              acheves[acheves.indexOf(acheve)].generic = type;
+                              if(acheves.indexOf(acheve)==acheves.length-1){
+                                //last acheve;
+                                //last field saved;=>post data into form
+                                widget.postData(acheves);
+                              }
+                            },
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextButton(
-                    child: Text('Remove'),
-                    onPressed: (){setState((){acheves.remove(acheve);});},
-                  ),
-                )
-              ],
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextButton(
+                      child: Text('Remove'),
+                      onPressed: (){setState((){acheves.remove(acheve);});},
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
-        )).toList()
+        ).toList()
       ],
     );
   }
@@ -594,8 +695,8 @@ class _EventFormState extends State<EventForm> {
   //Form Fields
   late String eventID;
   late String StrID;
-  late String eventName;
-  late String eventDescription;
+  late String eventName = "";
+  late String eventDescription ="";
   late List<OfferedAchievements> eventAchievementsOffered = [];
   late String eventImageURL = placeHolderImage;
   late String eventStartTime = DateTime.now().toString();
@@ -605,13 +706,15 @@ class _EventFormState extends State<EventForm> {
   late List<Body> eventBodies = [];
   List<User> eventBlankGoing = [];
   List<User> eventBlankInterested= [];
-  late String eventWebsiteURL;
-  late int eventUserUesInt;
+  late String eventWebsiteURL="";
+  late int eventUserUesInt=-1;
   late User creator;
   bool eventNotifications = true;
   List<int> eventUserTags = [];
   // Storing for dispose
   ThemeData? theme;
+
+  bool editingTitle = false;
 
   @override
   void initState() {
@@ -659,7 +762,9 @@ class _EventFormState extends State<EventForm> {
             // }
           }).toList();
           bodyOptions = realOptions;
+          //testing purposes: bodyOptions = [tempBodies[0], tempBodies[1], tempBodies[2]];
         }
+
         else{
           bodyOptions = [tempBodies[0], tempBodies[1], tempBodies[2]];
         }
@@ -722,22 +827,46 @@ class _EventFormState extends State<EventForm> {
                     child: Text((eventImageURL.length==0)?'Pick an Image':''),
                   ),
                 ),
-                TextFormField(
-                  decoration: InputDecoration(
-                      labelText: "Event Name"
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.blueAccent
                   ),
-                  validator: (String? value){
-                    // print('evnameval');
-                    if(value!.isEmpty||value.length>50){
-                      return 'Event Name length must be 0-50';
-                    }
-                    return null;
-                  },
-                  onSaved: (String? evName){
-                    if(evName!=null){
-                      eventName = evName;
-                    }
-                  },
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    onChanged: (String? v){
+                      setState(() {
+                        eventName = v!;
+                      });
+                    },
+                    onTap: (){setState((){editingTitle=true;});},
+                    decoration: InputDecoration(
+                        label: Text(
+                          "Event Name",
+                          style:TextStyle(
+                            color: editingTitle?Colors.amberAccent:Colors.white,
+                          )
+                        ),
+                      suffixText: '${eventName.length}/50',
+                      suffixStyle: TextStyle(
+                        color: Colors.amberAccent
+                      ),
+                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.amberAccent, width: 3)),
+                      focusColor: Colors.amberAccent,
+                      border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.amberAccent, width: 3))
+                    ),
+                    validator: (String? value){
+                      // print('evnameval');
+                      if(value!.isEmpty||value.length>50){
+                        return 'Event Name length must be 0-50';
+                      }
+                      return null;
+                    },
+                    onSaved: (String? evName){
+                      if(evName!=null){
+                        eventName = evName;
+                      }
+                    },
+                  ),
                 ),
                 Row(
                   children: [
@@ -779,8 +908,17 @@ class _EventFormState extends State<EventForm> {
                     ],
                   ),
                 ),
-                Row(//row for time pickers
-                  children: [],
+                Row(
+                  children: (!eventIsAllDay)?[
+                    Expanded(child: TimePickerField(labelText: 'From *', onSaved: (TimeOfDay d){
+                      DateTime temp = DateTime.parse(eventStartTime);
+                      eventStartTime = DateTime(temp.year, temp.month, temp.day, d.hour, d.minute).toString();
+                    },)),
+                    Expanded(child: TimePickerField(labelText: 'To *', onSaved:(TimeOfDay d){
+                      DateTime temp = DateTime.parse(eventEndTime);
+                      eventEndTime = DateTime(temp.year, temp.month, temp.day, d.hour, d.minute).toString();
+                    }))
+                  ]:[],
                 ),
                 ...venues.map((venue)=>Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -833,38 +971,31 @@ class _EventFormState extends State<EventForm> {
                         )
                     ),
                   )
-                  // TextFormField(
-                  //   controller: venue,
-                  //   onSaved: (String? venueval){
-                  //     if(venueval!=null){
-                  //       eventVenues[venues.indexOf(venue)] = venueval;
-                  //     }
-                  //   },
-                  //   // enableInteractiveSelection: true,
-                  //   // autofillHints: ['sa', 'aa'],
-                  //   decoration: InputDecoration(
-                  //     label: Text('Venue'),
-                  //
-                  //   ),
-                  // ),
                 ),
                 ).toList(),
-                MultiSelectDialogField(
-                  title: Text('Bodies'),
-                  buttonText: eventBodies.isEmpty?Text('Bodies'):Text(eventBodies.map((e)=>e.bodyName!).toList().join(',')),
-                  items: [...bodyOptions].map((e) => MultiSelectItem<Body?>(e,e.bodyName!)).toList(),
-                  onConfirm: (values){
-                    setState(() {
-                      eventBodies.clear();
-                      for(int i=0;i<values.length;i++){
-                        eventBodies.add(values[i] as Body);
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: MultiSelectDialogField(
+                    title: Text('Bodies'),
+                    initialValue: eventBodies,
+                    buttonText: eventBodies.isEmpty?Text('Bodies'):Text(eventBodies.map((e)=>e.bodyName!).toList().join(',')),
+                    items: [...bodyOptions].map((e) => MultiSelectItem<Body?>(e,e.bodyName!)).toList(),
+                    onConfirm: (values){
+                      setState(() {
+                        eventBodies.clear();
+                        for(int i=0;i<values.length;i++){
+                          eventBodies.add(values[i] as Body);
+                        }
+                        values.clear();
+                      });
+                    },
+                    validator: (List<Body?>? values){
+                      if(values!.isEmpty){
+                        return "Select at least one body.";
                       }
-                      values.clear();
-                    });
-                  },
-                ),
-                Text(
-                  eventBodies.map((e) => e.bodyName).join(',')
+                      return null;
+                    },
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -898,7 +1029,6 @@ class _EventFormState extends State<EventForm> {
                       eventAchievementsOffered = achevs;
                     // });
                     //Use eventID, filled after posting event.;
-                    //TODO:API: call to post achevs
                   },
                   eventBodies: bodyOptions
                 ),
@@ -967,7 +1097,7 @@ class _EventFormState extends State<EventForm> {
   void postOffers(String eventId, String cookie,client)async{
     int index = 0;
     for (OfferedAchievements offer in eventAchievementsOffered){
-      print(offer.toJson());
+      // print(offer.toJson());
       offer.event = eventId;
       offer.priority = index;
       bool noErrors = false;
