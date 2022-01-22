@@ -1007,6 +1007,13 @@ class _EventFormState extends State<EventForm> {
                       // print(url!+' saved');
                       eventWebsiteURL = url!;
                     },
+                    validator: (String? s){
+                      if(s==null){return null;}
+                      if(!s.startsWith('http')){
+                        return "URLs must start with 'https://'";
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 Padding(
@@ -1075,7 +1082,7 @@ class _EventFormState extends State<EventForm> {
                     eventStartTime: eventStartTime,
                     eventEndTime: eventEndTime,
                     allDayEvent: eventIsAllDay,
-                    // eventWebsiteURL: eventWebsiteURL,
+                    eventWebsiteURL: eventWebsiteURL,
                     eventVenueNames: eventVenues.where((element) => element.venueShortName!=null).map((e) => e.venueShortName!).toList(),
                     eventBodiesID: eventBodies.map((e) => e.bodyID!).toList(),
                     eventUserTags: eventUserTags,
