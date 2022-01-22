@@ -1,9 +1,11 @@
 
 import 'dart:convert';
 // import 'dart:html';
+// import 'dart:html';
 import 'package:InstiApp/src/api/model/UserTag.dart';
 // import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/offeredAchievements.dart';
 import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/user.dart';
@@ -19,6 +21,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/src/widgets/form.dart' as flut;
 import 'package:flutter/material.dart';
 // import 'package:flutter_html/shims/dart_ui_real.dart';
+// import 'package:flutter_html/shims/dart_ui_real.dart';
 // import 'package:flutter_google_places/flutter_google_places.dart';
 // import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -33,7 +36,8 @@ import 'package:multi_select_flutter/multi_select_flutter.dart';
 class CreateEventBtn extends StatefulWidget {
   final GlobalKey<FormState> formKey;
   final Function formPoster;
-  CreateEventBtn({required this.formKey, required this.formPoster});
+  final bool isEditing;
+  CreateEventBtn({required this.formKey, required this.isEditing, required this.formPoster});
 
   @override
   _CreateEventBtnState createState() => _CreateEventBtnState();
@@ -52,7 +56,7 @@ class _CreateEventBtnState extends State<CreateEventBtn> {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.symmetric(
-          vertical: 10.0,
+          vertical: 0,
           horizontal: 15.0
       ),
       child: TextButton(
@@ -60,7 +64,7 @@ class _CreateEventBtnState extends State<CreateEventBtn> {
           widget.formPoster();
           //post formdata;
         },
-        child: Text('Create'),
+        child: Text(widget.isEditing?'Update':'Create'),
         style: TextButton.styleFrom(
             primary: Colors.black,
             backgroundColor: Colors.amber,
@@ -71,28 +75,59 @@ class _CreateEventBtnState extends State<CreateEventBtn> {
     );
   }
 }
-//'
-//
+class DeleteEventBtn extends StatefulWidget {
+  final Function delete;
+  DeleteEventBtn({required this.delete});
+  @override
+  _DeleteEventBtnState createState() => _DeleteEventBtnState();
 
-//
-//
-//
-//
-//
-//
-// '
+}
+
+class _DeleteEventBtnState extends State<DeleteEventBtn> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(
+          vertical: 0,
+          horizontal: 15.0
+      ),
+      child: TextButton(
+        onPressed: () {
+          widget.delete();
+          //post formdata;
+        },
+        child: Text(
+          'Delete',
+          style: TextStyle(color: Colors.white),
+        ),
+        style: TextButton.styleFrom(
+            primary: Colors.black,
+            backgroundColor: Colors.red,
+            onSurface: Colors.grey,
+            elevation: 5.0
+        ),
+      ),
+    );
+  }
+}
+
 
 class DatePickerField extends StatefulWidget {
   final String labelText;
   final Function onSaved;
-  DatePickerField({required this.labelText, required this.onSaved});
+  final DateTime? loadDate;
+  final Key key;
+  DatePickerField({required this.labelText,this.loadDate, required this.onSaved, required this.key});
 
   @override
-  _DatePickerFieldState createState() => _DatePickerFieldState();
+  _DatePickerFieldState createState() => _DatePickerFieldState(key: key);
 }
 
 class _DatePickerFieldState extends State<DatePickerField> {
-  DateTime setDate = DateTime.now();
+  final Key key;
+  _DatePickerFieldState({required this.key});
+  late DateTime setDate;
   DateTime initDate = DateTime.now();
   DateTime lastDate = DateTime.now();
   TextEditingController textEditingController = TextEditingController();
@@ -110,6 +145,13 @@ class _DatePickerFieldState extends State<DatePickerField> {
 
   @override
   void initState() {
+
+    if(widget.loadDate!=null){
+      setDate = widget.loadDate!;
+    }
+    else{
+      setDate = DateTime.now();
+    }
     int yn = setDate.year;
     setState(() {
       initDate = DateTime.fromMillisecondsSinceEpoch(
@@ -118,7 +160,7 @@ class _DatePickerFieldState extends State<DatePickerField> {
           DateTime(yn + 1).millisecondsSinceEpoch);
       textEditingController.text = formatDate(setDate);
     });
-    setDate = DateTime.now();
+
     super.initState();
   }
 
@@ -195,14 +237,15 @@ class _DatePickerFieldState extends State<DatePickerField> {
 class TimePickerField extends StatefulWidget {
   final String labelText;
   final Function onSaved;
-  TimePickerField({required this.labelText, required this.onSaved});
+  final TimeOfDay? loadTime;
+  TimePickerField({required this.labelText, this.loadTime,required this.onSaved});
 
   @override
   _TimePickerFieldState createState() => _TimePickerFieldState();
 }
 
 class _TimePickerFieldState extends State<TimePickerField> {
-  TimeOfDay setTime = TimeOfDay.now();
+  late TimeOfDay setTime;
   DateTime initDate = DateTime.now();
   DateTime lastDate = DateTime.now();
   TextEditingController textEditingController = TextEditingController();
@@ -222,10 +265,15 @@ class _TimePickerFieldState extends State<TimePickerField> {
 
   @override
   void initState() {
-
-      textEditingController.text = formatTime(setTime);
+    if(widget.loadTime!=null){
+      setTime = widget.loadTime!;
+    }
+    else{
+      setTime = TimeOfDay.now();
+    }
+    textEditingController.text = formatTime(setTime);
     // });
-    setTime = TimeOfDay.now();
+
     super.initState();
   }
 
@@ -503,8 +551,9 @@ class _AchievementAdderState extends State<AchievementAdder> {
 class AudienceRestrictor extends StatefulWidget {
   final Function onSave;
   final client;
+  final List<int> loadTags;
   final String cookie;
-  AudienceRestrictor({required this.onSave, required this.client, required this.cookie});
+  AudienceRestrictor({required this.onSave,required this.loadTags, required this.client, required this.cookie});
 
   @override
   _AudienceRestrictorState createState() => _AudienceRestrictorState();
@@ -518,6 +567,19 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
   List<int> selectedTagIds = [];
   @override
   void initState() {
+    // setState(() {
+    // setState(() {
+      selectedTagIds = widget.loadTags;
+      selectedTags = [...restrictors.map((cat) => UserTagHolder(
+          holderID:cat.holderID,
+          holderName: cat.holderName,
+          holderTags: cat.holderTags!.where((element) => selectedTagIds.contains(element.tagID)).toList()
+      )//UserTagHolder
+      )//map
+      ];
+      print([selectedTags.map((e) => e.toJson())]);
+    // });
+    // });
     // print(widget.restrictors);
     updateReach();
     ()async{
@@ -587,57 +649,60 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
                 ),
               ],
             ),
-          ...selectedTags.map((cat) => ExpansionTile(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(cat.holderName!),
-              (cat.holderTags!.length==0)?Text(
-                'All',
-                style: TextStyle(
-                    color: Colors.green
-                ),
-              ):Text(
-                'Restricted',
-                style: TextStyle(
-                    color: Colors.red
-                ),
-              )
-            ],
-          ),
-          children: [MultiSelectChipField<UserTag?>(
-            chipColor: Colors.white,
-            scroll: false,
-            initialValue: [...selectedTags.firstWhere((element) => element.holderID==cat.holderID).holderTags!],
-            showHeader: false,
-            headerColor: Colors.white,
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(blurRadius: 1.0, spreadRadius: 3.0, color: Colors.grey[200]!)
+          ...selectedTags.map((cat) => Card(
+            elevation: 10,
+            child: ExpansionTile(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(cat.holderName!),
+                (cat.holderTags!.length==0)?Text(
+                  'All',
+                  style: TextStyle(
+                      color: Colors.green
+                  ),
+                ):Text(
+                  'Restricted',
+                  style: TextStyle(
+                      color: Colors.red
+                  ),
+                )
               ],
             ),
-            textStyle: TextStyle(color: Colors.black),
-            selectedChipColor: Colors.amber,
-            items: restrictors.firstWhere((element) => element.holderID==cat.holderID).holderTags!.map((e) => MultiSelectItem<UserTag?>(e, e.tagName!)).toList(),
-            onTap: (List<UserTag?> values){
-              setState(() {
-                reach = '...';
-              });
-              // print('v: '+values.toString());
-                int index = selectedTags.indexOf(cat);
+            children: [MultiSelectChipField<UserTag?>(
+              chipColor: Colors.white,
+              scroll: false,
+              initialValue: [...selectedTags.firstWhere((element) => element.holderID==cat.holderID).holderTags!],
+              showHeader: false,
+              headerColor: Colors.white,
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(blurRadius: 1.0, spreadRadius: 3.0, color: Colors.white)
+                ],
+              ),
+              textStyle: TextStyle(color: Colors.black),
+              selectedChipColor: Colors.amber,
+              items: restrictors.firstWhere((element) => element.holderID==cat.holderID).holderTags!.map((e) => MultiSelectItem<UserTag?>(e, e.tagName!)).toList(),
+              onTap: (List<UserTag?> values){
                 setState(() {
-                  selectedTags[index].holderTags!.clear();
-                  // print(selectedTags[index].holderTags);
-                  for(int i=0;i<values.length;i++){
-                    selectedTags[index].holderTags!.add(values[i]!);
-                  }
-                  updateSelectedTagIds();
-                  updateReach();
-                  // print(selectedTags[index].holderTags);
+                  reach = '...';
                 });
-            },
-          ),]
-    )
+                // print('v: '+values.toString());
+                  int index = selectedTags.indexOf(cat);
+                  setState(() {
+                    selectedTags[index].holderTags!.clear();
+                    // print(selectedTags[index].holderTags);
+                    for(int i=0;i<values.length;i++){
+                      selectedTags[index].holderTags!.add(values[i]!);
+                    }
+                    updateSelectedTagIds();
+                    updateReach();
+                    // print(selectedTags[index].holderTags);
+                  });
+              },
+            ),]
+    ),
+          )
           ).toList()
           ],
         ),
@@ -695,10 +760,11 @@ class _EventFormState extends State<EventForm> {
   //Form Fields
   late String eventID;
   late String StrID;
-  late String eventName = "";
-  late String eventDescription ="";
+  TextEditingController eventNameController = TextEditingController();
+  TextEditingController eventDescController = TextEditingController();
   late List<OfferedAchievements> eventAchievementsOffered = [];
   late String eventImageURL = placeHolderImage;
+  TextEditingController eventImageURLController = TextEditingController();
   late String eventStartTime = DateTime.now().toString();
   late String eventEndTime = DateTime.now().toString();
   late bool eventIsAllDay = false;
@@ -706,22 +772,30 @@ class _EventFormState extends State<EventForm> {
   late List<Body> eventBodies = [];
   List<User> eventBlankGoing = [];
   List<User> eventBlankInterested= [];
-  late String eventWebsiteURL="";
+  TextEditingController eventWesbiteURLController = TextEditingController();
   late int eventUserUesInt=-1;
   late User creator;
   bool eventNotifications = true;
   List<int> eventUserTags = [];
   // Storing for dispose
   ThemeData? theme;
-
+  bool editingEvent = false;
   bool editingTitle = false;
+
+  String dataLastLoadedFor = '';
 
   @override
   void initState() {
-    if(widget.creator!=null){
-      //must be non-null since event form has been accessed.
-      creator = widget.creator!;
+    if(widget.entityID!=null){
+      eventID = widget.entityID!;
+      setState(() {
+        editingEvent = true;
+      });
     }
+    // if(widget.creator!=null){
+    //   //must be non-null since event form has been accessed.
+    //   creator = widget.creator!;
+    // }
 
     super.initState();
   }
@@ -741,7 +815,9 @@ class _EventFormState extends State<EventForm> {
     if(temp!=null){
       creator = temp;
     }
-
+    if(editingEvent&&(dataLastLoadedFor!=eventID)){
+      loadData(eventID, bloc.client, widget.cookie);
+    }
     ()async{
       List<Body> tempBodies= await bloc.client.getAllBodies(widget.cookie);
       List<Venue> tempVenues = await bloc.client.getAllVenues();
@@ -833,10 +909,11 @@ class _EventFormState extends State<EventForm> {
                   ),
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: eventNameController,
                     onChanged: (String? v){
-                      setState(() {
-                        eventName = v!;
-                      });
+                      // setState(() {
+                        // eventName = v!;
+                      // });
                     },
                     onTap: (){setState((){editingTitle=true;});},
                     decoration: InputDecoration(
@@ -846,7 +923,7 @@ class _EventFormState extends State<EventForm> {
                             color: editingTitle?Colors.amberAccent:Colors.white,
                           )
                         ),
-                      suffixText: '${eventName.length}/50',
+                      suffixText: '${eventNameController.text.length}/50',
                       suffixStyle: TextStyle(
                         color: Colors.amberAccent
                       ),
@@ -862,9 +939,9 @@ class _EventFormState extends State<EventForm> {
                       return null;
                     },
                     onSaved: (String? evName){
-                      if(evName!=null){
-                        eventName = evName;
-                      }
+                      // if(evName!=null){
+                      //   eventName = evName;
+                      // }
                     },
                   ),
                 ),
@@ -872,6 +949,8 @@ class _EventFormState extends State<EventForm> {
                   children: [
                     Expanded(child: DatePickerField(
                       labelText: 'From *',
+                      key:UniqueKey(),
+                      loadDate: DateTime.parse(eventStartTime),
                       onSaved: (DateTime d){
                         DateTime temp = DateTime.parse(eventStartTime);
                         temp = DateTime(d.year, d.month, d.day,temp.hour, temp.minute);
@@ -880,6 +959,8 @@ class _EventFormState extends State<EventForm> {
                     )),
                     Expanded(child: DatePickerField(
                       labelText: 'To *',
+                      key: UniqueKey(),
+                      loadDate: DateTime.parse(eventEndTime),
                       onSaved: (DateTime d){
                         DateTime temp = DateTime.parse(eventEndTime);
                         temp = DateTime(d.year, d.month, d.day,temp.hour, temp.minute);
@@ -910,11 +991,16 @@ class _EventFormState extends State<EventForm> {
                 ),
                 Row(
                   children: (!eventIsAllDay)?[
-                    Expanded(child: TimePickerField(labelText: 'From *', onSaved: (TimeOfDay d){
-                      DateTime temp = DateTime.parse(eventStartTime);
-                      eventStartTime = DateTime(temp.year, temp.month, temp.day, d.hour, d.minute).toString();
+                    Expanded(child: TimePickerField(
+                      labelText: 'From *',
+                      loadTime: TimeOfDay.fromDateTime(DateTime.parse(eventStartTime)),
+                      onSaved: (TimeOfDay d){
+                        DateTime temp = DateTime.parse(eventStartTime);
+                        eventStartTime = DateTime(temp.year, temp.month, temp.day, d.hour, d.minute).toString();
                     },)),
-                    Expanded(child: TimePickerField(labelText: 'To *', onSaved:(TimeOfDay d){
+                    Expanded(child: TimePickerField(
+                      loadTime: TimeOfDay.fromDateTime(DateTime.parse(eventEndTime)),
+                      labelText: 'To *', onSaved:(TimeOfDay d){
                       DateTime temp = DateTime.parse(eventEndTime);
                       eventEndTime = DateTime(temp.year, temp.month, temp.day, d.hour, d.minute).toString();
                     }))
@@ -1000,15 +1086,16 @@ class _EventFormState extends State<EventForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: eventWesbiteURLController,
                     decoration: InputDecoration(
                       label: Text('Website URL'),
                     ),
                     onSaved: (String? url){
                       // print(url!+' saved');
-                      eventWebsiteURL = url!;
+                      // eventWebsiteURL = url!;
                     },
                     validator: (String? s){
-                      if(s==null){return null;}
+                      if(s==null||s==''){return null;}
                       if(!s.startsWith('http')){
                         return "URLs must start with 'https://'";
                       }
@@ -1021,13 +1108,14 @@ class _EventFormState extends State<EventForm> {
                   child: TextFormField(
                     keyboardType: TextInputType.multiline,
                     maxLines: 4,
+                    controller: eventDescController,
                     decoration: InputDecoration(
                       label: Text('Description'),
                     ),
                     style: TextStyle(
                     ),
                     onSaved: (String? desc){
-                      eventDescription = desc!;
+                      // eventDescription = desc!;
                     },
                   ),
                 ),
@@ -1043,6 +1131,7 @@ class _EventFormState extends State<EventForm> {
                 AudienceRestrictor(
                   cookie:widget.cookie,
                   client: bloc.client,
+                  loadTags: eventUserTags,
                   onSave: (List<int> userTags){
                     eventUserTags = userTags;
                   },
@@ -1067,35 +1156,41 @@ class _EventFormState extends State<EventForm> {
                     ],
                   ),
                 ),
-                CreateEventBtn(formKey:_formKey, formPoster: ()async{
+                CreateEventBtn(formKey:_formKey, isEditing: editingEvent,formPoster: ()async{
                   if(!_formKey.currentState!.validate()){
-                    print('validation failed');
+                    // print('validation failed');
                     return;
                   }
                   _formKey.currentState!.save();
                   //transfers data from1 formfields into respective parameters
                   //collects data from AudieceRestrictor, AchievementAdder too.
                   EventCreateRequest req = EventCreateRequest(
-                    eventName: eventName,
-                    eventDescription: eventDescription,
+                    eventName: eventNameController.text,
+                    eventDescription: eventDescController.text,
                     eventImageURL: eventImageURL,
                     eventStartTime: eventStartTime,
                     eventEndTime: eventEndTime,
                     allDayEvent: eventIsAllDay,
-                    eventWebsiteURL: eventWebsiteURL,
+                    eventWebsiteURL: eventWesbiteURLController.text,
                     eventVenueNames: eventVenues.where((element) => element.venueShortName!=null).map((e) => e.venueShortName!).toList(),
                     eventBodiesID: eventBodies.map((e) => e.bodyID!).toList(),
                     eventUserTags: eventUserTags,
                     notify: eventNotifications
                   );
                   req;
-                  print(req.toJson());
+                  // print(req.toJson());
                   final EventCreateResponse? respo = await bloc.client.createEvent(widget.cookie, req);
                   eventID = respo!.eventId!;
                   postOffers(eventID, widget.cookie,bloc.client);
                   //update achevs in this widget
                   //call post requests on the updated achevs
                 },),
+                editingEvent?DeleteEventBtn(
+                  delete: (){
+                    //TODO:Write api to delete event.
+                    // bloc.client
+                  },
+                ):Container()
               ],
             ),
           ),
@@ -1105,7 +1200,7 @@ class _EventFormState extends State<EventForm> {
 
   void postOffers(String eventId, String cookie,client)async{
     int index = 0;
-    print(eventAchievementsOffered);
+    // print(eventAchievementsOffered);
     for (OfferedAchievements offer in eventAchievementsOffered){
       // print(offer.toJson());
       offer.event = eventId;
@@ -1118,7 +1213,7 @@ class _EventFormState extends State<EventForm> {
       else{
         //post
         try{
-          print(offer.toJson());
+          // print(offer.toJson());
           var ans = await client.createAchievement(cookie, offer);
           if(ans.toJson()['id']!=null){
             noErrors = true;
@@ -1137,6 +1232,27 @@ class _EventFormState extends State<EventForm> {
       }
       index++;
     }
+  }
+
+  void loadData(String eventID, client, String sessionID)async{
+    print(eventID);
+    Event prevEv = await client.getEvent(sessionID, eventID);
+    print(prevEv.toJson());
+    setState(() {
+      eventNameController.text = prevEv.eventName!;
+      eventStartTime = DateTime.parse(prevEv.eventStartTime!).toString();
+      eventEndTime = DateTime.parse(prevEv.eventEndTime!).toString();
+      if(prevEv.eventDescription!=null){eventDescController.text = prevEv.description!;}
+      if(prevEv.eventWebsiteURL!=null){eventWesbiteURLController.text = prevEv.eventWebsiteURL!;}
+
+      eventIsAllDay = prevEv.allDayEvent!;
+      eventVenues = prevEv.eventVenues!;
+      eventUserTags = prevEv.eventUserTags!;
+      venues = eventVenues.map((e) => TextEditingController(text: e.venueShortName!)).toList();
+      eventBodies = prevEv.eventBodies!;
+
+    });
+    dataLastLoadedFor = eventID;
   }
 }
 //TODO: Implement code for loading an existing event into the form.
