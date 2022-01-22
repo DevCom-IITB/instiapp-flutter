@@ -21,6 +21,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       eventBodies: (json['bodies'] as List<dynamic>?)
           ?.map((e) => Body.fromJson(e as Map<String, dynamic>))
           .toList(),
+      eventUserTags: (json['user_tags'] as List<dynamic>?)?.map((e) => e as int).toList(),
       eventInterestedCount: json['interested_count'] as int? ?? 0,
       eventGoingCount: json['going_count'] as int? ?? 0,
       eventInterested: (json['interested'] as List<dynamic>?)
@@ -52,5 +53,6 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'going': instance.eventGoing,
       'website_url': instance.eventWebsiteURL,
       'user_ues': instance.eventUserUesInt,
+      'user_tags':instance.eventUserTags,
       'eventStartDate': instance.eventStartDate?.toIso8601String(),
     };
