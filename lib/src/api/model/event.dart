@@ -1,4 +1,5 @@
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/offeredAchievements.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
 import 'package:date_format/date_format.dart';
@@ -47,6 +48,9 @@ class Event extends elt.Event {
 
   @JsonKey(name: "bodies")
   List<Body>? eventBodies;
+
+  @JsonKey(name: "offered_achievements")
+  List<OfferedAchievements>? eventOfferedAchievements;
 
   @JsonKey(name: "interested_count")
   int eventInterestedCount;
@@ -137,6 +141,7 @@ class Event extends elt.Event {
     this.allDayEvent,
     this.eventVenues,
     this.eventBodies,
+    this.eventOfferedAchievements,
     this.eventInterestedCount = 0,
     this.eventGoingCount = 0,
     this.eventUserTags,
