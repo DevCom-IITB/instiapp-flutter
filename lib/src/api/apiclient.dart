@@ -78,6 +78,13 @@ abstract class InstiAppApi {
   @rt.GET("/events/{uuid}")
   Future<Event> getEvent(
       @rt.Header("Cookie") String sessionId, @rt.Path() String uuid);
+  @rt.PUT('/events/{uuid}')
+  Future<EventCreateResponse> updateEvent( @rt.Header('Cookie') String sessionId,event, @rt.Path() String uuid);
+  @rt.POST("/events")
+  Future<EventCreateResponse> postEventForm(@rt.Header("Cookie") String sessionId,
+      @rt.Body() EventCreateRequest eventCreateRequest);
+  @rt.DELETE('/events/{uuid}')
+  Future<void> deleteEvent(@rt.Header('Cookie') String sessionId, String uuid);
 
   @rt.GET("/events")
   Future<NewsFeedResponse> getNewsFeed(@rt.Header("Cookie") String sessionId);
@@ -220,9 +227,8 @@ abstract class InstiAppApi {
   @rt.POST("/achievements")
   Future<AchievementCreateResponse> postForm(@rt.Header("Cookie") String sessionId,
       @rt.Body() AchievementCreateRequest achievementCreateRequest);
-  @rt.POST("/events")
-  Future<EventCreateResponse> postEventForm(@rt.Header("Cookie") String sessionId,
-      @rt.Body() EventCreateRequest eventCreateRequest);
+  @rt.PUT('/achievements-offer/{id}')
+  Future<dynamic> updateAchievement(@rt.Header('Cookie') String sessionId, @rt.Body() OfferedAchievements offeredAchievements, @rt.Path() String id);
   @rt.POST("/achievements-offer/{id}")
   Future<SecretResponse> postAchievementOffer(
       @rt.Header("Cookie") String sessionId,
@@ -255,7 +261,7 @@ abstract class InstiAppApi {
   Future<void> dismissAchievement(@rt.Header("Cookie") String? sessionID,
       @rt.Path() String? id, @rt.Body() AchVerifyRequest achievement);
 
-  @rt.DELETE("/achievements/:id")
+  @rt.DELETE("/achievements-offer/{id}")
   Future<void> deleteAchievement(
       @rt.Header("Cookie") String sessionID, @rt.Path() String id);
 
@@ -280,4 +286,5 @@ abstract class InstiAppApi {
   Future<int> getUserTagsReach(@rt.Header("Cookie") String sessionId, List<int> selectedTagIds);
   @rt.POST('/achievements-offer')
   Future<dynamic> createAchievement(sessionId,OfferedAchievements offeredAchievements);
+
 }

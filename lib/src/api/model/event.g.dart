@@ -18,6 +18,9 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       eventVenues: (json['venues'] as List<dynamic>?)
           ?.map((e) => Venue.fromJson(e as Map<String, dynamic>))
           .toList(),
+      eventOfferedAchievements: (json['offered_achievements'] as List<dynamic>?)
+          ?.map((e) => OfferedAchievements.fromJson(e as Map<String, dynamic>))
+          .toList(),
       eventBodies: (json['bodies'] as List<dynamic>?)
           ?.map((e) => Body.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -47,6 +50,7 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'all_day': instance.allDayEvent,
       'venues': instance.eventVenues,
       'bodies': instance.eventBodies,
+      // 'offered_achievements':instance.eventOfferedAchievements,
       'interested_count': instance.eventInterestedCount,
       'going_count': instance.eventGoingCount,
       'interested': instance.eventInterested,
