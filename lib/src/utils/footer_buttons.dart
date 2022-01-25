@@ -7,7 +7,7 @@ class FooterButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width * 3 / 4,
+      width: MediaQuery.of(context).size.width * 7 / 8,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: footerButtons.map((e) {
