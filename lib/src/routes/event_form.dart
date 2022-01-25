@@ -32,7 +32,7 @@ import 'package:image_picker/image_picker.dart';
 // import 'package:jaguar/http/http.dart';
 // import 'package:jaguar/http/http.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
-
+//TODO:remove autofocus on Event Name
 class CreateEventBtn extends StatefulWidget {
   final GlobalKey<FormState> formKey;
   final Function formPoster;
@@ -837,7 +837,7 @@ class _EventFormState extends State<EventForm> {
   TextEditingController eventDescController = TextEditingController();
   late List<OfferedAchievements> eventAchievementsOffered = [];
   late String eventImageURL = placeHolderImage;
-  TextEditingController eventImageURLController = TextEditingController();
+  // TextEditingController eventImageURLController = TextEditingController();
   late String eventStartTime = DateTime.now().toString();
   late String eventEndTime = DateTime.now().toString();
   late bool eventIsAllDay = false;
