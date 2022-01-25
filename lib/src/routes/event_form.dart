@@ -1,9 +1,6 @@
 
 import 'dart:convert';
-// import 'dart:html';
-// import 'dart:html';
 import 'package:InstiApp/src/api/model/UserTag.dart';
-// import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/offeredAchievements.dart';
@@ -16,43 +13,21 @@ import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/event_form_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-// import 'package:analyzer/dart/ast/token.dart';
 import 'package:flutter/src/widgets/form.dart' as flut;
 import 'package:flutter/material.dart';
-// import 'package:flutter_html/shims/dart_ui_real.dart';
-// import 'package:flutter_html/shims/dart_ui_real.dart';
-// import 'package:flutter_google_places/flutter_google_places.dart';
-// import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-// import 'package:flutter_html/shims/dart_ui_real.dart';
-// import 'package:flutter_html/shims/dart_ui_real.dart';
-// import 'package:flutter_html/flutter_html.dart';
 import 'package:image_picker/image_picker.dart';
-// import 'package:jaguar/http/http.dart';
-// import 'package:jaguar/http/http.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
-//TODO:remove autofocus on Event Name
-class CreateEventBtn extends StatefulWidget {
+//TODO:remove autofocus on Event Name?
+class CreateEventBtn extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final Function formPoster;
   final bool isEditing;
   CreateEventBtn({required this.formKey, required this.isEditing, required this.formPoster});
-
-  @override
-  _CreateEventBtnState createState() => _CreateEventBtnState();
-}
-
-class _CreateEventBtnState extends State<CreateEventBtn> {
-  late GlobalKey<FormState> formKey;
-  @override
-  void initState() {
-    formKey = widget.formKey;
-    super.initState();
-  }
   @override
   Widget build(BuildContext context) {
-    formKey = widget.formKey;
     return Container(
       width: double.infinity,
       margin: EdgeInsets.symmetric(
@@ -61,10 +36,9 @@ class _CreateEventBtnState extends State<CreateEventBtn> {
       ),
       child: TextButton(
         onPressed: () {
-          widget.formPoster();
-          //post formdata;
+          formPoster();
         },
-        child: Text(widget.isEditing?'Update':'Create'),
+        child: Text(isEditing?'Update':'Create'),
         style: TextButton.styleFrom(
             primary: Colors.black,
             backgroundColor: Colors.amber,
@@ -75,15 +49,9 @@ class _CreateEventBtnState extends State<CreateEventBtn> {
     );
   }
 }
-class DeleteEventBtn extends StatefulWidget {
+class DeleteEventBtn extends StatelessWidget {
   final Function delete;
   DeleteEventBtn({required this.delete});
-  @override
-  _DeleteEventBtnState createState() => _DeleteEventBtnState();
-
-}
-
-class _DeleteEventBtnState extends State<DeleteEventBtn> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -94,8 +62,7 @@ class _DeleteEventBtnState extends State<DeleteEventBtn> {
       ),
       child: TextButton(
         onPressed: () {
-          widget.delete();
-          //post formdata;
+          delete();
         },
         child: Text(
           'Delete',
@@ -113,262 +80,9 @@ class _DeleteEventBtnState extends State<DeleteEventBtn> {
 }
 
 
-class DatePickerField extends StatefulWidget {
-  final String labelText;
-  final Function onSaved;
-  final Future<DateTime>? loadDate;
-  // final Key key;
-  DatePickerField({required this.labelText,this.loadDate, required this.onSaved});
 
-  @override
-  _DatePickerFieldState createState() => _DatePickerFieldState();
-}
 
-class _DatePickerFieldState extends State<DatePickerField> {
-  // final Key key;
-  _DatePickerFieldState();
-  DateTime setDate = DateTime.now();
-  DateTime initDate = DateTime.now();
-  DateTime lastDate = DateTime.now();
-  TextEditingController textEditingController = TextEditingController();
-  Color labelColor = Colors.grey;
-  static int zeroDateTime = -62170003800000000;
-  static DateTime parseDate(String s){
-    DateTime d = DateTime(0,0,0,0,0,0,0,0);
-    try{d = DateTime.parse(s);}
-    catch(e){return d;}
-    return d;
-  }
-  static String formatDate(DateTime d) {
-    return d.toString().split(' ')[0];
-  }
 
-  @override
-  void initState() {
-    if(widget.loadDate!=null){
-      // setState(() {
-        widget.loadDate!.then((value){
-          setState(() {
-            setDate = value;
-          });
-          textEditingController.text = formatDate(setDate);
-        });
-        // print('I set the date'+setDate.toString());
-      // });
-
-    }
-    else{
-      setDate = DateTime.now();
-    }
-    int yn = setDate.year;
-    setState(() {
-      initDate = DateTime.fromMillisecondsSinceEpoch(
-          DateTime(yn - 1).millisecondsSinceEpoch);
-      lastDate = DateTime.fromMillisecondsSinceEpoch(
-          DateTime(yn + 1).millisecondsSinceEpoch);
-      textEditingController.text = formatDate(setDate);
-    });
-
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextFormField(
-        controller: textEditingController,
-        // initialValue: formatDate(setDate),
-        onChanged: (String s) {
-          DateTime newDate = parseDate(s);
-          // print(newDate.microsecondsSinceEpoch);
-          if(newDate.microsecondsSinceEpoch!=zeroDateTime&&(newDate.isBefore(lastDate)&&newDate.isAfter(initDate))){
-            setState(() {labelColor = Colors.grey;});
-          }
-          else{
-            setState(() {labelColor = Colors.red;});
-          }
-        },
-        validator: (String? s){
-          // print('date validator');
-          if(s!=null){
-            DateTime newDate = parseDate(s);
-            if(newDate.microsecondsSinceEpoch==zeroDateTime){
-              return 'Date Not Parsed. Format: DD/MM/YYYY';
-            }
-            else if(!(newDate.isBefore(lastDate)&&newDate.isAfter(initDate))){
-              return 'Date must be within a year of today.';
-            }
-          }
-          return null;
-        },
-        onSaved: (String? dateStr){
-          if(dateStr!=null){
-            widget.onSaved(parseDate(dateStr));
-          }
-        },
-        decoration: InputDecoration(
-            label: Text(
-              widget.labelText,
-              style: TextStyle(
-                  color:labelColor
-              ),
-            ),
-            suffix: TextButton(
-              child: Icon(
-                Icons.calendar_today,
-                color: Colors.grey,
-              ),
-              onPressed: () async {
-                DateTime? newDate = await showDatePicker(
-                  firstDate: initDate,
-                  lastDate: lastDate,
-                  initialDate: setDate
-                  context: context,
-
-                );
-                if (newDate != null) {
-                  setState(() {
-                    setDate = newDate;
-                    textEditingController.text = formatDate(newDate);
-
-                  });
-                }
-                newDate?.millisecond;
-                // showDateRangePicker()
-              },
-            )
-        ),
-      ),
-    );
-  }
-}
-class TimePickerField extends StatefulWidget {
-  final String labelText;
-  final Function onSaved;
-  final Future<DateTime>? loadTime;
-  TimePickerField({required this.labelText, this.loadTime,required this.onSaved});
-
-  @override
-  _TimePickerFieldState createState() => _TimePickerFieldState();
-}
-
-class _TimePickerFieldState extends State<TimePickerField> {
-  TimeOfDay setTime = TimeOfDay.now();
-  DateTime initDate = DateTime.now();
-  DateTime lastDate = DateTime.now();
-  TextEditingController textEditingController = TextEditingController();
-  Color labelColor = Colors.grey;
-  // static int zeroDateTime = -62170003800000000;
-  static TimeOfDay parseTime(String s){
-    TimeOfDay d = TimeOfDay(hour:0,minute: 0);
-    try{d = TimeOfDay(hour: int.parse(s.split(':')[0]),minute: int.parse(s.split(':')[1]));}
-    catch(e){return d;}
-    return d;
-  }
-  String formatTime(TimeOfDay d) {
-    // print(d.format(context));
-    final Function pad = (int s)=>(s.toString().length)>1?s.toString():'0'+s.toString();
-    return '${pad(d.hour)}:${pad(d.minute)}';
-  }
-
-  @override
-  void initState() {
-    if(widget.loadTime!=null){
-      widget.loadTime!.then((value){
-        setState(() {
-          // DateTime.now().toLocal();
-          // print(value);
-          setTime = TimeOfDay.fromDateTime(value);
-        });
-        textEditingController.text = formatTime(setTime);
-      });
-    }
-    else{
-      setTime = TimeOfDay.now();
-    }
-    textEditingController.text = formatTime(setTime);
-    // });
-
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextFormField(
-        controller: textEditingController,
-        onChanged: (String s) {
-          TimeOfDay newDate = parseTime(s);
-          if(newDate.hour==0&&newDate.minute==0){
-            try{
-              if(s.split(':').map((e) => int.parse(e)).reduce((value, element) => value+element)==0){
-                setState(() {
-                  labelColor = Colors.grey;
-                });
-                return;
-              }
-            }catch(e){
-              setState(() {
-                labelColor = Colors.red;
-              });
-            }
-            
-          }
-        },
-        validator: (String? s){
-          // print('date validator');
-          if(s!=null){
-            // TimeOfDay newTime = parseTime(s);
-            // if(newDate.microsecondsSinceEpoch==zeroDateTime){
-            //   return 'Date Not Parsed. Format: DD/MM/YYYY';
-            // }
-            // else if(!(newDate.isBefore(lastDate)&&newDate.isAfter(initDate))){
-            //   return 'Date must be within a year of today.';
-            // }
-          }
-          return null;
-        },
-        onSaved: (String? dateStr){
-          if(dateStr!=null){
-            widget.onSaved(parseTime(dateStr));
-          }
-        },
-        decoration: InputDecoration(
-            label: Text(
-              widget.labelText,
-              style: TextStyle(
-                  color:labelColor
-              ),
-            ),
-            suffix: TextButton(
-              child: Icon(
-                Icons.watch_later_outlined,
-                color: Colors.grey,
-              ),
-              onPressed: () async {
-                TimeOfDay? newTime = await showTimePicker(
-                  context: context,
-                  initialTime: setTime,
-
-                );
-                if (newTime != null) {
-                  setState(() {
-                    setTime = newTime;
-                    // print(setTime);
-                    widget.onSaved(newTime);
-                    textEditingController.text = formatTime(newTime);
-                  });
-                }
-                // showDateRangePicker()
-              },
-            )
-        ),
-      ),
-    );
-  }
-}
 class AchievementAdder extends StatefulWidget {
   final Function postData;
   final List<Body> eventBodies;
@@ -383,6 +97,7 @@ class AchievementAdder extends StatefulWidget {
 class _AchievementAdderState extends State<AchievementAdder> {
   List<OfferedAchievements> acheves = [];
   List<Map<String,String>> acheveTypes = [
+        //ng code loads it from local json file.
         {"code": "generic","name": "Unspecified"},
         {"code": "participation","name": "Participation"},
         {"code": "gold-medal","name": "First"},
@@ -414,7 +129,6 @@ class _AchievementAdderState extends State<AchievementAdder> {
   }
   @override
   Widget build(BuildContext context) {
-    // print(widget.eventBodies);
     return Column(
       children: [
         Row(
@@ -480,7 +194,6 @@ class _AchievementAdderState extends State<AchievementAdder> {
                               hintText: 'Title *'
                           ),
                           validator: (String? acheveTitle){
-                            // print('ac. title. validator');
                             if(acheveTitle!.length==0||acheveTitle.length>50){
                               return 'Title length must be 0 to 50';
                             }
@@ -626,15 +339,11 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
   List<int> selectedTagIds = [];
   @override
   void initState() {
-    // setState(() {
-    // setState(() {
     ()async{
       List<UserTagHolder> tempTags = await widget.client.getUserTags(widget.cookie);
       setState(() {
         restrictors = tempTags;
-        // print('Heres: '+widget.cookie.toString());
         restrictables = restrictors.map((e) => e.holderName!).toList();
-        // selectedTags = restrictors.map((cat) => UserTagHolder(holderID:cat.holderID, holderName: cat.holderName, holderTags: [])).toList();
         if(widget.loadableTags!=null){
           widget.loadableTags!.then((value){
             setState(() {
@@ -659,22 +368,14 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
           )//UserTagHolder
           )//map
           ];
-        }// print([selectedTags.map((e) => e.toJson())]);
+        }
       });
       updateReach();
     }();
-
-
-
-
-
-    // print(allowed);
-
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
-    // print(selectedTags);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: flut.FormField(
@@ -760,17 +461,14 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
                 setState(() {
                   reach = '...';
                 });
-                // print('v: '+values.toString());
                   int index = selectedTags.indexOf(cat);
                   setState(() {
                     selectedTags[index].holderTags!.clear();
-                    // print(selectedTags[index].holderTags);
                     for(int i=0;i<values.length;i++){
                       selectedTags[index].holderTags!.add(values[i]!);
                     }
                     updateSelectedTagIds();
                     updateReach();
-                    // print(selectedTags[index].holderTags);
                   });
               },
             ),]
@@ -792,7 +490,6 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
 
   void updateReach()async {
     int newReach = await widget.client.getUserTagsReach(widget.cookie, selectedTagIds);
-    // print(newReach);
     setState(() {
     reach = newReach.toString();
     });
@@ -865,6 +562,8 @@ class _EventFormState extends State<EventForm> {
 
   Future<List<OfferedAchievements>>? loadableOfferedAchevs = null;
 
+  Event? loadedEvent;
+
   @override
   void initState() {
     if(widget.entityID!=null){
@@ -897,14 +596,14 @@ class _EventFormState extends State<EventForm> {
       creator = temp;
     }
     if(editingEvent&&(dataLastLoadedFor!=eventID)){
-      loadData(eventID, bloc.client, widget.cookie);
+      try{
+        loadData(eventID, bloc.client, widget.cookie);
+      }
+      catch(e){}
     }
     ()async{
       List<Body> tempBodies= await bloc.client.getAllBodies(widget.cookie);
       List<Venue> tempVenues = await bloc.client.getAllVenues();
-      // print(tempVenues.map((e) => e.venueShortName!));
-      // setState(() {
-        // tags = tempTags;
         List<Role>? roles = creator.userRoles;
         if(roles!=null){
           List<Body> realOptions = roles.map((e){
@@ -914,20 +613,15 @@ class _EventFormState extends State<EventForm> {
             else if(e.roleBodies!=null){
               return e.roleBodies![0];
             }
-            // else{
-              return tempBodies[0];
-            // }
+          return tempBodies[0];
           }).toList();
           bodyOptions = realOptions;
-          //testing purposes: bodyOptions = [tempBodies[0], tempBodies[1], tempBodies[2]];
         }
 
         else{
           bodyOptions = [tempBodies[0], tempBodies[1], tempBodies[2]];
         }
         venueOptions = tempVenues;
-        // creatorBodies=[];
-      // });
     }();
 
     // final _bodyList = creatorBodies.map((body) =>
@@ -971,12 +665,9 @@ class _EventFormState extends State<EventForm> {
                     onPressed: () async{
                       final ImagePicker _picker = ImagePicker();
                       final XFile? pi = await _picker.pickImage(source: ImageSource.gallery);
-                      // print(pi!.name);
                       String img64 = base64Encode((await pi!.readAsBytes()).cast<int>());
-                      // print(img64.substring(0, 10));
                       ImageUploadRequest IUReq = ImageUploadRequest(base64Image: img64);
                       ImageUploadResponse resp = await bloc.client.uploadImage(widget.cookie,IUReq);
-                      // print(resp.toJson());
                       setState(() {
                         eventImageURL=resp.pictureURL!;
                       });
@@ -991,11 +682,6 @@ class _EventFormState extends State<EventForm> {
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
                     controller: eventNameController,
-                    onChanged: (String? v){
-                      // setState(() {
-                        // eventName = v!;
-                      // });
-                    },
                     onTap: (){setState((){editingTitle=true;});},
                     decoration: InputDecoration(
                         label: Text(
@@ -1013,16 +699,10 @@ class _EventFormState extends State<EventForm> {
                       border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.amberAccent, width: 3))
                     ),
                     validator: (String? value){
-                      // print('evnameval');
                       if(value!.isEmpty||value.length>50){
                         return 'Event Name length must be 0-50';
                       }
                       return null;
-                    },
-                    onSaved: (String? evName){
-                      // if(evName!=null){
-                      //   eventName = evName;
-                      // }
                     },
                   ),
                 ),
@@ -1030,12 +710,12 @@ class _EventFormState extends State<EventForm> {
                   children: [
                     Expanded(child: DatePickerField(
                       labelText: 'From *',
-                      // key:UniqueKey(),
                       loadDate: loadableStartTime,
                       onSaved: (DateTime d){
                         DateTime temp = DateTime.parse(eventStartTime);
                         temp = DateTime(d.year, d.month, d.day,temp.hour, temp.minute);
                         eventStartTime = temp.toString();
+
                       },
                     )),
                     Expanded(child: DatePickerField(
@@ -1062,7 +742,6 @@ class _EventFormState extends State<EventForm> {
                         activeColor: Colors.amber,
                         value: eventIsAllDay,
                         onChanged: (bool v) {
-                          // print(v);
                           eventIsAllDay = v;
                         },
                       ),
@@ -1143,9 +822,9 @@ class _EventFormState extends State<EventForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: MultiSelectDialogField(
-                    title: Text('Bodies'),
+                    title: Text('Bodies *'),
                     initialValue: eventBodies,
-                    buttonText: eventBodies.isEmpty?Text('Bodies'):Text(eventBodies.map((e)=>e.bodyName!).toList().join(',')),
+                    buttonText: eventBodies.isEmpty?Text('Bodies *'):Text(eventBodies.map((e)=>e.bodyName!).toList().join(',')),
                     items: [...bodyOptions].map((e) => MultiSelectItem<Body?>(e,e.bodyName!)).toList(),
                     onConfirm: (values){
                       setState(() {
@@ -1171,10 +850,6 @@ class _EventFormState extends State<EventForm> {
                     decoration: InputDecoration(
                       label: Text('Website URL'),
                     ),
-                    onSaved: (String? url){
-                      // print(url!+' saved');
-                      // eventWebsiteURL = url!;
-                    },
                     validator: (String? s){
                       if(s==null||s==''){return null;}
                       if(!s.startsWith('http')){
@@ -1195,18 +870,15 @@ class _EventFormState extends State<EventForm> {
                     ),
                     style: TextStyle(
                     ),
-                    onSaved: (String? desc){
-                      // eventDescription = desc!;
-                    },
                   ),
                 ),
                 AchievementAdder(
                   postData:(List<OfferedAchievements> achevs){
                       eventAchievementsOffered = achevs;
-                    //Use eventID, filled after posting event.;
+                      //called when form.save() is ran. updates local var with widget's data.
                   },
                   deleter: (String id){
-                    var resp = bloc.client.deleteAchievement(widget.cookie, id);
+                    bloc.client.deleteAchievement(widget.cookie, id);
                   },
                   loadableOffers: loadableOfferedAchevs,
                   eventBodies: bodyOptions
@@ -1231,7 +903,6 @@ class _EventFormState extends State<EventForm> {
                         activeColor: Colors.amber,
                         value: eventNotifications,
                         onChanged: (bool v) {
-                          // print(v);
                           eventNotifications = v;
                         },
                       ),
@@ -1241,12 +912,21 @@ class _EventFormState extends State<EventForm> {
                 ),
                 CreateEventBtn(formKey:_formKey, isEditing: editingEvent,formPoster: ()async{
                   if(!_formKey.currentState!.validate()){
-                    // print('validation failed');
                     return;
                   }
+
                   _formKey.currentState!.save();
                   //transfers data from1 formfields into respective parameters
                   //collects data from AudieceRestrictor, AchievementAdder too.
+                  //validation after saving:
+                  if(DateTime.parse(eventStartTime).millisecondsSinceEpoch>DateTime.parse(eventEndTime).millisecondsSinceEpoch){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Event can't start after it ends!"),
+                      ),
+                    );
+                    return;
+                  }
                   EventCreateRequest req = EventCreateRequest(
                     eventName: eventNameController.text,
                     eventDescription: eventDescController.text,
@@ -1260,32 +940,35 @@ class _EventFormState extends State<EventForm> {
                     eventUserTags: eventUserTags,
                     notify: eventNotifications
                   );
-                  req;
-                  // print(req.toJson());
                   if(!editingEvent){
+                    //assuming all validators are written right, try-catch is unnecessary.
                     final EventCreateResponse? respo = await bloc.client.createEvent(widget.cookie, req);
                     eventID = respo!.eventId!;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text("Event created!"),
+                      ),
+                    );
+                    Navigator.of(context).popAndPushNamed('/event/'+eventID);
                   }
                   else{
-                    final EventCreateResponse? respo = await bloc.client.updateEvent(widget.cookie,req,eventID);
-                    print(respo!.toJson());
+                    await bloc.client.updateEvent(widget.cookie,req,eventID);
                   }
-
                   postOffers(eventID, widget.cookie,bloc.client);
                   //update achevs in this widget
                   //call post requests on the updated achevs
                 },),
-                editingEvent?DeleteEventBtn(
+                (editingEvent&&(loadedEvent!=null?bloc.deleteEventAccess(loadedEvent!):false))?DeleteEventBtn(
                   delete: (){
                     showDialog(
                         builder: (ctx)=>(AlertDialog(
-                          title: Text('Delete Achievement?'),
-                          content: Text('Remove this achievement? This action is irreversible!'),
+                          title: Text('Delete Event?'),
+                          content: Text('Remove this event? This action is irreversible!'),
                           actions: [
                             TextButton(
                               child: Text('Yes'),
                               onPressed: ()async{
-                                Navigator.of(context).pushNamed('');
+                                Navigator.of(context).pop();
                                 Navigator.popAndPushNamed(context, '/feed');
                                 await bloc.client.deleteEvent(widget.cookie, eventID);
                               },
@@ -1313,30 +996,20 @@ class _EventFormState extends State<EventForm> {
 
   void postOffers(String eventId, String cookie,client)async{
     int index = 0;
-    // print(eventAchievementsOffered);
     for (OfferedAchievements offer in eventAchievementsOffered){
-      // print(offer.toJson());
       offer.event = eventId;
       offer.priority = index;
       bool noErrors = false;
-      // offer.body = bodyOptions.firstWhere((element) => offer.body==element.bodyName!).bodyID;
       if(offer.achievementID!=null && offer.achievementID!=''){
         //put
-        var ans = await client.updateAchievement(widget.cookie, offer,offer.achievementID);
-        print(ans.toJson());
+        await client.updateAchievement(widget.cookie, offer,offer.achievementID);
       }
       else{
         //post
-        try{
-          // print(offer.toJson());
-          var ans = await client.createAchievement(cookie, offer);
+          OfferedAchievements ans = await client.createAchievement(cookie, offer);
           if(ans.toJson()['id']!=null){
             noErrors = true;
           }
-        }
-        catch(e){
-
-        }
         if(!noErrors){
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -1350,10 +1023,10 @@ class _EventFormState extends State<EventForm> {
   }
 
   void loadData(String eventID, client, String sessionID){
-    // print(eventID);
     Future<Event> eventOnItsWay = client.getEvent(sessionID, eventID);
     eventOnItsWay.then((prevEv){
       setState(() {
+        loadedEvent = prevEv;
         eventNameController.text = prevEv.eventName!;
         if(prevEv.eventDescription!=null){eventDescController.text = prevEv.description!;}
         if(prevEv.eventWebsiteURL!=null){eventWesbiteURLController.text = prevEv.eventWebsiteURL!;}
@@ -1361,6 +1034,7 @@ class _EventFormState extends State<EventForm> {
         eventVenues = prevEv.eventVenues!;
         venues = eventVenues.map((e) => TextEditingController(text: e.venueShortName!)).toList();
         eventBodies = prevEv.eventBodies!;
+        eventImageURL = prevEv.eventImageURL!;
       });
     });
     loadableUserTags = eventOnItsWay.then((value){
@@ -1380,8 +1054,5 @@ class _EventFormState extends State<EventForm> {
       return d;
     });
 
-    // });
-    // dataLastLoadedFor = eventID;
   }
 }
-//TODO: Implement code for loading an existing event into the form.

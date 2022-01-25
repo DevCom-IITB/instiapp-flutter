@@ -825,7 +825,7 @@ class _InstiAppApi implements InstiAppApi {
     return value;
   }
   @override
-  Future<dynamic> createAchievement(sessionId,OfferedAchievements offeredAchievement) async {
+  Future<OfferedAchievements> createAchievement(sessionId,OfferedAchievements offeredAchievement) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
@@ -844,7 +844,7 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<dynamic> updateAchievement(sessionId,OfferedAchievements offeredAchievement, String id) async {
+  Future<OfferedAchievements> updateAchievement(sessionId,OfferedAchievements offeredAchievement, String id) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
@@ -1059,7 +1059,6 @@ class _InstiAppApi implements InstiAppApi {
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final _data = selectedTagIds;
-    print('d: '+_data.toString());
     // final _data = <String,dynamic>{}
     final _result = await _dio.fetch(
         _setStreamType<List<String>>(
