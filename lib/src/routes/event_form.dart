@@ -79,10 +79,6 @@ class DeleteEventBtn extends StatelessWidget {
   }
 }
 
-
-
-
-
 class AchievementAdder extends StatefulWidget {
   final Function postData;
   final List<Body> eventBodies;
@@ -93,9 +89,9 @@ class AchievementAdder extends StatefulWidget {
   @override
   _AchievementAdderState createState() => _AchievementAdderState();
 }
-
 class _AchievementAdderState extends State<AchievementAdder> {
   List<OfferedAchievements> acheves = [];
+  List<Body> authOptions = [];
   List<Map<String,String>> acheveTypes = [
         //ng code loads it from local json file.
         {"code": "generic","name": "Unspecified"},
@@ -125,6 +121,7 @@ class _AchievementAdderState extends State<AchievementAdder> {
         });
       });
     }
+    authOptions = widget.eventBodies;
     super.initState();
   }
   @override
@@ -224,7 +221,7 @@ class _AchievementAdderState extends State<AchievementAdder> {
                           padding: EdgeInsets.symmetric(vertical:8),
                           width: double.infinity,
                           child: DropdownButtonFormField<Body>(
-                            value: (acheve.body!=null && widget.eventBodies.where((element) => element.bodyID==acheve.body).length>0)?widget.eventBodies.firstWhere((element) => acheve.body==element.bodyID):null,
+                            value: (acheve.body!=null && authOptions.where((element) => element.bodyID==acheve.body).length>0)?authOptions.firstWhere((element) => acheve.body==element.bodyID):authOptions[0],
                             onChanged: (Body? selectedBody){
                               setState(() {
                                 acheve.body = selectedBody!.bodyID;
@@ -233,7 +230,7 @@ class _AchievementAdderState extends State<AchievementAdder> {
                             decoration: InputDecoration(
                               label: Text('Authority'),
                             ),
-                            items: widget.eventBodies.map((Body b){
+                            items: authOptions.map((Body b){
                               return DropdownMenuItem<Body>(
                                 value: b,
                                 child: Text(b.bodyName!),
@@ -330,7 +327,6 @@ class AudienceRestrictor extends StatefulWidget {
   @override
   _AudienceRestrictorState createState() => _AudienceRestrictorState();
 }
-
 class _AudienceRestrictorState extends State<AudienceRestrictor> {
   String reach='...';
   List<UserTagHolder> restrictors = [];
@@ -495,7 +491,6 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
     });
   }
 }
-
 class EventForm extends StatefulWidget {
   final String? entityID;
   final String cookie;
@@ -506,7 +501,6 @@ class EventForm extends StatefulWidget {
   @override
   _EventFormState createState() => _EventFormState();
 }
-
 class _EventFormState extends State<EventForm> {
   static const String placeHolderImage = 'https://i.imgur.com/vxP6SFl.png';
   // Event eventToMake = Event();
@@ -601,29 +595,20 @@ class _EventFormState extends State<EventForm> {
       }
       catch(e){}
     }
+    List<Body> tempbodyOptions = [];
+    if(bloc.currSession!.profile!.userRoles!=null){
+      for(Role role in bloc.currSession!.profile!.userRoles!){
+        (role.roleBodies!=null)?tempbodyOptions.addAll(role.roleBodies!):(){}();
+        //TODO:Confirm if this will work
+        // (role.roleBodyDetails!=null)?tempbodyOptions.add(role.roleBodyDetails!):(){}();
+      }
+    }
+    bodyOptions = tempbodyOptions;
     ()async{
-      List<Body> tempBodies= await bloc.client.getAllBodies(widget.cookie);
+      // Future<List<Body>> tempBodies= await bloc.client.getAllBodies(widget.cookie);
       List<Venue> tempVenues = await bloc.client.getAllVenues();
-        List<Role>? roles = creator.userRoles;
-        if(roles!=null){
-          List<Body> realOptions = roles.map((e){
-            if(e.roleBodyDetails!=null){
-              return e.roleBodyDetails!;
-            }
-            else if(e.roleBodies!=null){
-              return e.roleBodies![0];
-            }
-          return tempBodies[0];
-          }).toList();
-          bodyOptions = realOptions;
-        }
-
-        else{
-          bodyOptions = [tempBodies[0], tempBodies[1], tempBodies[2]];
-        }
         venueOptions = tempVenues;
     }();
-
     // final _bodyList = creatorBodies.map((body) =>
     //     MultiSelectItem<Body?>(body, body.bodyName!)).toList();
     return Scaffold(bottomNavigationBar: MyBottomAppBar(
