@@ -21,6 +21,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 //TODO:remove autofocus on Event Name?
+//TODO:mention dio errors.
 class CreateEventBtn extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final Function formPoster;
@@ -562,15 +563,8 @@ class _EventFormState extends State<EventForm> {
   void initState() {
     if(widget.entityID!=null){
       eventID = widget.entityID!;
-      // setState(() {
-        editingEvent = true;
-      // });
+      editingEvent = true;
     }
-    // if(widget.creator!=null){
-    //   //must be non-null since event form has been accessed.
-    //   creator = widget.creator!;
-    // }
-
     super.initState();
   }
 
