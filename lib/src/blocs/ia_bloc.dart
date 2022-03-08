@@ -268,6 +268,10 @@ class InstiAppBloc {
     _hostelsSubject.add(UnmodifiableListView(_hostels));
   }
 
+  Future<String> getQRString() async {
+    return await client.getEncr(getSessionIdHeader()).qrstring;
+  }
+
   // Event bloc
   Future<void> updateEvents() async {
     var newsFeedResponse = await client.getNewsFeed(getSessionIdHeader());
@@ -302,8 +306,8 @@ class InstiAppBloc {
         : await client.AlumniOTP(ldap, _alumniOTP);
     isAlumni = !(_alumniLoginResponse.error_status ?? true);
     msg = _alumniLoginResponse.msg ?? "";
-    if(!resend){
-      if(isAlumni){
+    if (!resend) {
+      if (isAlumni) {
         Session newSession = Session(
           sessionid: _alumniLoginResponse.sessionid,
           user: _alumniLoginResponse.user,

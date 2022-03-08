@@ -21,20 +21,32 @@ class QRPage extends StatefulWidget {
 class _QRPageState extends State<QRPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  String? currentTime;
+  String? qrString;
+  bool first = true;
+  bool loading = true;
 
   @override
   void initState() {
     super.initState();
+  }
 
-    // currentTime = DateFormat.jm().format(DateTime.now());
-    currentTime = DateTime.now().toString();
+  void getQRString(bloc) async {
+    String qr = await bloc.getQRString();
+    setState(() {
+      qrString = qr;
+      loading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
+
+    if (first) {
+      getQRString(bloc);
+      first = false;
+    }
 
     return Scaffold(
       key: _scaffoldKey,
@@ -91,8 +103,10 @@ class _QRPageState extends State<QRPage> {
                     alignment: Alignment.center,
                     height: MediaQuery.of(context).size.height / 2,
                     child: QrImage(
-                      data: '${bloc.currSession!.profile?.userRollNumber},${currentTime}',
+                      // data: '',
+                      data: '${qrString}',
                       size: MediaQuery.of(context).size.width / 2,
+                      foregroundColor: theme.colorScheme.onBackground,
                     ),
                   ),
                 ],

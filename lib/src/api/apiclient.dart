@@ -21,6 +21,7 @@ import 'package:InstiApp/src/api/response/achievement_create_response.dart';
 import 'package:InstiApp/src/api/response/alumni_login_response.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
+import 'package:InstiApp/src/api/response/getencr_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/api/response/news_feed_response.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
@@ -107,6 +108,9 @@ abstract class InstiAppApi {
       @rt.Header("Cookie") String sessionId,
       @rt.Query("start") String start,
       @rt.Query("end") String end);
+
+  @rt.GET("/getEncr")
+  Future<GetEncrResponse> getEncr(@rt.Header("Cookie") String sessionId);
 
   @rt.POST("/events")
   Future<EventCreateResponse> createEvent(@rt.Header("Cookie") String sessionId,
