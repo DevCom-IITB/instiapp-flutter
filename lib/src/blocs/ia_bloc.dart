@@ -12,6 +12,7 @@ import 'package:InstiApp/src/api/request/postFAQ_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/api/response/alumni_login_response.dart';
+import 'package:InstiApp/src/api/response/getencr_response.dart';
 import 'package:InstiApp/src/blocs/ach_to_vefiry_bloc.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
@@ -101,7 +102,7 @@ class InstiAppBloc {
   var _notifications = <ntf.Notification>[];
 
   // api functions
-  late final client;
+  late final InstiAppApi client;
 
   // default homepage
   String homepageName = "/feed";
@@ -268,14 +269,15 @@ class InstiAppBloc {
     _hostelsSubject.add(UnmodifiableListView(_hostels));
   }
 
-  Future<String> getQRString() async {
-    return await client.getEncr(getSessionIdHeader()).qrstring;
+  Future<String?> getQRString() async {
+    GetEncrResponse res = await client.getEncr(getSessionIdHeader());
+    return res.qrstring;
   }
 
   // Event bloc
   Future<void> updateEvents() async {
     var newsFeedResponse = await client.getNewsFeed(getSessionIdHeader());
-    _events = newsFeedResponse.events;
+    _events = newsFeedResponse.events ?? [];
     if (_events.length >= 1) {
       _events[0].eventBigImage = true;
     }
@@ -296,8 +298,8 @@ class InstiAppBloc {
 
   Future<void> updateAlumni() async {
     var _alumniLoginResponse = await client.AlumniLogin(ldap);
-    isAlumni = _alumniLoginResponse.exist;
-    msg = _alumniLoginResponse.msg;
+    isAlumni = _alumniLoginResponse.exist ?? false;
+    msg = _alumniLoginResponse.msg ?? "";
   }
 
   Future<void> logAlumniIn(bool resend) async {
@@ -314,7 +316,7 @@ class InstiAppBloc {
           profile: _alumniLoginResponse.profile,
           profileId: _alumniLoginResponse.profileId,
         );
-        print(newSession.toJson());
+        // print(newSession.toJson());
         updateSession(newSession);
       }
     }
@@ -372,8 +374,8 @@ class InstiAppBloc {
 
   Future<User> getUser(String uuid) async {
     return uuid == "me"
-        ? (currSession?.profile ?? client.getUserMe(getSessionIdHeader()))
-        : client.getUser(getSessionIdHeader(), uuid);
+        ? (currSession?.profile ?? await client.getUserMe(getSessionIdHeader()))
+        : await client.getUser(getSessionIdHeader(), uuid);
   }
 
   Future<Complaint?>? getComplaint(String uuid, {bool reload = false}) async {
@@ -397,7 +399,7 @@ class InstiAppBloc {
     try {
       // print("updating Ues from ${e.eventUserUes} to $ues");
       await client.updateUserEventStatus(
-          getSessionIdHeader(), e.eventID, ues.index);
+          getSessionIdHeader(), e.eventID ?? "", ues.index);
       if (e.eventUserUes == UES.Going) {
         e.eventGoingCount--;
       }
@@ -420,7 +422,7 @@ class InstiAppBloc {
       Achievement achievement, bool hidden) async {
     try {
       // print("Updating hidden");
-      await client.toggleHidden(getSessionIdHeader(), achievement.id,
+      await client.toggleHidden(getSessionIdHeader(), achievement.id ?? "",
           AchievementHiddenPathRequest()..hidden = hidden);
       achievement.hidden = hidden;
       // print("Updated hidden");
@@ -441,7 +443,7 @@ class InstiAppBloc {
   Future<void> updateFollowBody(Body b) async {
     try {
       await client.updateBodyFollowing(
-          getSessionIdHeader(), b.bodyID, b.bodyUserFollows! ? 0 : 1);
+          getSessionIdHeader(), b.bodyID ?? "", b.bodyUserFollows! ? 0 : 1);
       b.bodyUserFollows = !b.bodyUserFollows!;
       b.bodyFollowersCount =
           b.bodyFollowersCount! + (b.bodyUserFollows! ? 1 : -1);
