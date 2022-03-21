@@ -3,14 +3,14 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:flutter/material.dart';
 
-class alumni_OTP_Page extends StatefulWidget {
-  const alumni_OTP_Page({Key? key}) : super(key: key);
+class AlumniOTPPage extends StatefulWidget {
+  const AlumniOTPPage({Key? key}) : super(key: key);
 
   @override
-  _alumni_OTP_PageState createState() => _alumni_OTP_PageState();
+  _AlumniOTPPageState createState() => _AlumniOTPPageState();
 }
 
-class _alumni_OTP_PageState extends State<alumni_OTP_Page> {
+class _AlumniOTPPageState extends State<AlumniOTPPage> {
   InstiAppBloc? _bloc;
   final _formKey = GlobalKey<FormState>();
   dynamic routedData = {};
@@ -18,10 +18,10 @@ class _alumni_OTP_PageState extends State<alumni_OTP_Page> {
   @override
   Widget build(BuildContext context) {
     routedData = ModalRoute.of(context)!.settings.arguments;
-    print(routedData);
+    // print(routedData);
     _bloc = BlocProvider.of(context)!.bloc;
     _bloc!.setAlumniID(routedData["ldap"]);
-    print(_bloc!.alumniID);
+    // print(_bloc!.alumniID);
 
     return Scaffold(
       drawer: NavDrawer(),
@@ -74,7 +74,7 @@ class _alumni_OTP_PageState extends State<alumni_OTP_Page> {
                       context, _bloc!.homepageName, (r) => false);
                 }
 
-                print(_bloc!.alumniOTP.length);
+                // print(_bloc!.alumniOTP.length);
               },
             ),
             SizedBox(

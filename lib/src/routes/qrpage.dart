@@ -1,14 +1,14 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:ffi';
+// import 'dart:convert';
+// import 'dart:developer';
+// import 'dart:ffi';
 
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/shims/dart_ui_real.dart';
-import 'package:intl/intl.dart';
+// import 'package:flutter_html/shims/dart_ui_real.dart';
+// import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QRPage extends StatefulWidget {

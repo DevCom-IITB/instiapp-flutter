@@ -297,7 +297,7 @@ class InstiAppBloc {
   }
 
   Future<void> logAlumniIn(bool resend) async {
-    alumniLoginResponse _alumniLoginResponse = resend
+    AlumniLoginResponse _alumniLoginResponse = resend
         ? await client.ResendAlumniOTP(ldap)
         : await client.AlumniOTP(ldap, _alumniOTP);
     isAlumni = !(_alumniLoginResponse.error_status ?? true);
@@ -310,7 +310,7 @@ class InstiAppBloc {
           profile: _alumniLoginResponse.profile,
           profileId: _alumniLoginResponse.profileId,
         );
-        print(newSession.toJson());
+        // print(newSession.toJson());
         updateSession(newSession);
       }
     }

@@ -224,7 +224,7 @@ class _LoginPageState extends State<LoginPage> {
                 Navigator.of(context)
                     .pushNamedAndRemoveUntil(_bloc!.homepageName, (r) => false);
               } else if (url.startsWith(alumniUrl)) {
-                print(alumniUrl);
+                // print(alumniUrl);
                 setState(() {
                   loading = true;
                 });
