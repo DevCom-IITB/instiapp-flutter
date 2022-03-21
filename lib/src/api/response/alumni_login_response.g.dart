@@ -6,8 +6,8 @@ part of 'alumni_login_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-alumniLoginResponse _$alumniLoginResponseFromJson(Map<String, dynamic> json) =>
-    alumniLoginResponse(
+AlumniLoginResponse _$AlumniLoginResponseFromJson(Map<String, dynamic> json) =>
+    AlumniLoginResponse(
       ldap: json['ldap'] as String?,
       msg: json['msg'] as String?,
       exist: json['exist'] as bool?,
@@ -20,8 +20,8 @@ alumniLoginResponse _$alumniLoginResponseFromJson(Map<String, dynamic> json) =>
           ? null
           : User.fromJson(json['profile'] as Map<String, dynamic>);
 
-Map<String, dynamic> _$alumniLoginResponseToJson(
-        alumniLoginResponse instance) =>
+Map<String, dynamic> _$AlumniLoginResponseToJson(
+        AlumniLoginResponse instance) =>
     <String, dynamic>{
       'ldap': instance.ldap,
       'msg': instance.msg,
