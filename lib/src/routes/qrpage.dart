@@ -21,20 +21,40 @@ class QRPage extends StatefulWidget {
 class _QRPageState extends State<QRPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  String? currentTime;
+  String? qrString;
+  bool first = true;
+  bool loading = true;
+  bool error = false;
 
   @override
   void initState() {
     super.initState();
+  }
 
-    // currentTime = DateFormat.jm().format(DateTime.now());
-    currentTime = DateTime.now().toString();
+  void getQRString(bloc) async {
+    String qr = await bloc.getQRString();
+    if (qr == "Error") {
+      setState(() {
+        error = true;
+        loading = false;
+      });
+    } else {
+      setState(() {
+        qrString = qr;
+        loading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
+
+    if (first && bloc.currSession != null) {
+      getQRString(bloc);
+      first = false;
+    }
 
     return Scaffold(
       key: _scaffoldKey,
@@ -87,14 +107,40 @@ class _QRPageState extends State<QRPage> {
                       style: theme.textTheme.headline3,
                     ),
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    height: MediaQuery.of(context).size.height / 2,
-                    child: QrImage(
-                      data: '${bloc.currSession!.profile?.userRollNumber},${currentTime}',
-                      size: MediaQuery.of(context).size.width / 2,
-                    ),
-                  ),
+                  loading
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : error
+                          ? Container(
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.all(50),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.cloud,
+                                    size: 200,
+                                    color: Colors.grey[600],
+                                  ),
+                                  Text(
+                                    "Some error in generating QR",
+                                    style: theme.textTheme.headline5,
+                                    textAlign: TextAlign.center,
+                                  )
+                                ],
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                              ),
+                            )
+                          : Container(
+                              alignment: Alignment.center,
+                              height: MediaQuery.of(context).size.height / 2,
+                              child: QrImage(
+                                // data: '',
+                                data: '${qrString}',
+                                size: MediaQuery.of(context).size.width / 2,
+                                foregroundColor: theme.colorScheme.onBackground,
+                              ),
+                            ),
                 ],
               ),
       ),

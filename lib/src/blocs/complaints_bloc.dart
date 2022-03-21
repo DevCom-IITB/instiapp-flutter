@@ -198,7 +198,7 @@ class ComplaintsBloc {
     try {
       c = (reload
           ? await bloc.client.getComplaint(bloc.getSessionIdHeader(), uuid)
-          : _allComplaints.firstWhere((c) => c.complaintID == uuid))!;
+          : _allComplaints.firstWhere((c) => c.complaintID == uuid));
     } catch (ex) {
       c = await bloc.client.getComplaint(bloc.getSessionIdHeader(), uuid);
     }

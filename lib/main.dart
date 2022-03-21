@@ -138,8 +138,12 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
           primaryColor: widget.bloc.primaryColor,
           colorScheme: theme.colorScheme.copyWith(
-              secondary: widget.bloc.accentColor,
-              brightness: widget.bloc.brightness.toBrightness()),
+            secondary: widget.bloc.accentColor,
+            brightness: widget.bloc.brightness.toBrightness(),
+            onBackground: widget.bloc.brightness == AppBrightness.light
+                ? Colors.black
+                : Colors.white,
+          ),
           primarySwatch: Colors.primaries.firstWhereOrNull(
               (c) => c.value == widget.bloc.accentColor.value),
 

@@ -283,6 +283,23 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
+  Future<GetEncrResponse> getEncr(sessionId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetEncrResponse>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/getEncr',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetEncrResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<EventCreateResponse> createEvent(sessionId, eventCreateRequest) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
