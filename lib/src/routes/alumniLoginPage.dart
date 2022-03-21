@@ -3,14 +3,14 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:flutter/material.dart';
 
-class alumniLoginPage extends StatefulWidget {
-  const alumniLoginPage({Key? key}) : super(key: key);
+class AlumniLoginPage extends StatefulWidget {
+  const AlumniLoginPage({Key? key}) : super(key: key);
 
   @override
-  _alumniLoginPageState createState() => _alumniLoginPageState();
+  _AlumniLoginPageState createState() => _AlumniLoginPageState();
 }
 
-class _alumniLoginPageState extends State<alumniLoginPage> {
+class _AlumniLoginPageState extends State<AlumniLoginPage> {
   final _formKey = GlobalKey<FormState>();
   InstiAppBloc? _bloc;
 
@@ -69,8 +69,8 @@ class _alumniLoginPageState extends State<alumniLoginPage> {
                       });
                 }
 
-                print(_bloc!.alumniID);
-                print(_bloc!.isAlumni);
+                // print(_bloc!.alumniID);
+                // print(_bloc!.isAlumni);
               },
             ),
           ]),

@@ -52,18 +52,18 @@ abstract class InstiAppApi {
   Future<Session> login(
       @rt.Query('code') String code, @rt.Query('redir') String redir);
   @rt.GET("/alumniLogin")
-  Future<alumniLoginResponse> AlumniLogin(
+  Future<AlumniLoginResponse> AlumniLogin(
     @rt.Query("ldap") String ldap,
   );
 
   @rt.GET("/alumniOTP")
-  Future<alumniLoginResponse> AlumniOTP(
+  Future<AlumniLoginResponse> AlumniOTP(
     @rt.Query("ldap") String ldap,
     @rt.Query("otp") String otp,
   );
 
   @rt.GET("/resendAlumniOTP")
-  Future<alumniLoginResponse> ResendAlumniOTP(
+  Future<AlumniLoginResponse> ResendAlumniOTP(
     @rt.Query("ldap") String ldap,
   );
 

@@ -4,8 +4,8 @@ import 'package:json_annotation/json_annotation.dart';
 part 'alumni_login_response.g.dart';
 
 @JsonSerializable()
-class alumniLoginResponse {
-  alumniLoginResponse({this.ldap, this.msg, this.exist, this.error_status});
+class AlumniLoginResponse {
+  AlumniLoginResponse({this.ldap, this.msg, this.exist, this.error_status});
 
   String? ldap;
   String? msg;
@@ -22,7 +22,7 @@ class alumniLoginResponse {
   /// A necessary factory constructor for creating a new alumniLoginResponse instance
   /// from a map. Pass the map to the generated `_$alumniLoginResponseFromJson()` constructor.
   /// The constructor is named after the source class, in this case, alumniLoginResponse.
-  factory alumniLoginResponse.fromJson(Map<String, dynamic> json) =>
+  factory AlumniLoginResponse.fromJson(Map<String, dynamic> json) =>
       _$alumniLoginResponseFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
