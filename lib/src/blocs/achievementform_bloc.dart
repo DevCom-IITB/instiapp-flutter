@@ -141,7 +141,7 @@ class Bloc extends Object {
     //   return [];
     // }
     ExploreResponse searchResponse =
-    await bloc.client.searchType(bloc.getSessionIdHeader(), query,"interests");
+    await bloc.client.searchType(bloc.getSessionIdHeader(), query??"","interests");
     // print("Search responed");
     // print(searchResponse.interest);
     if (searchResponse.interest == null) {
@@ -161,7 +161,7 @@ class Bloc extends Object {
     //   return [];
     // }
     ExploreResponse searchResponse =
-    await bloc.client.searchType(bloc.getSessionIdHeader(), query,"skills");
+    await bloc.client.searchType(bloc.getSessionIdHeader(), query??"","skills");
     // print("Search responed");
     // print(searchResponse.skills);
     if (searchResponse.skills == null) {
