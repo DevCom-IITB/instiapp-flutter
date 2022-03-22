@@ -20,13 +20,13 @@ class AlumniLoginResponse {
   User? profile;
 
   /// A necessary factory constructor for creating a new alumniLoginResponse instance
-  /// from a map. Pass the map to the generated `_$alumniLoginResponseFromJson()` constructor.
+  /// from a map. Pass the map to the generated `_$AlumniLoginResponseFromJson()` constructor.
   /// The constructor is named after the source class, in this case, alumniLoginResponse.
   factory AlumniLoginResponse.fromJson(Map<String, dynamic> json) =>
-      _$alumniLoginResponseFromJson(json);
+      _$AlumniLoginResponseFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
-  /// helper method `_$alumniLoginResponseToJson`.
-  Map<String, dynamic> toJson() => _$alumniLoginResponseToJson(this);
+  /// helper method `_$AlumniLoginResponseToJson`.
+  Map<String, dynamic> toJson() => _$AlumniLoginResponseToJson(this);
 }
