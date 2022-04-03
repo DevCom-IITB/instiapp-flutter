@@ -36,6 +36,11 @@
 	<string></string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>To upload photo from the gallery</string>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>Hostel_numberIntent</string>
+		<string>IntentIntent</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
