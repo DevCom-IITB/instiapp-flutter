@@ -817,7 +817,7 @@ class EditableChipListState extends State<EditableChipList> {
             backgroundColor: chipColor,
             deleteIconColor: contentColor,
             labelStyle:
-                theme.chipTheme.labelStyle.copyWith(color: contentColor),
+                theme.chipTheme.labelStyle!.copyWith(color: contentColor),
             label: Text(
               _capitalize(name),
             ),
