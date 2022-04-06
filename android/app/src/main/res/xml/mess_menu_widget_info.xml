@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:initialKeyguardLayout="@layout/mess_menu_widget"
+    android:initialLayout="@layout/mess_menu_widget"
+    android:configure="app.insti.flutter.MessMenuWidgetWithHostelConfigureActivity"
+    android:minWidth="250dp"
+    android:minHeight="110dp"
+    android:previewImage="@mipmap/ic_launcher_foreground"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="1800000"
+    android:widgetCategory="home_screen|keyguard" />
