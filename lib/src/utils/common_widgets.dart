@@ -203,7 +203,7 @@ class PhotoViewableImage extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => HeroPhotoViewWrapper(
                   imageProvider:
-                      imageProvider ?? CachedNetworkImageProvider(url??""),
+                      imageProvider ?? CachedNetworkImageProvider(url ?? ""),
                   heroTag: heroTag,
                   minScale: PhotoViewComputedScale.contained * 0.9,
                   maxScale: PhotoViewComputedScale.contained * 2.0,
@@ -219,7 +219,7 @@ class PhotoViewableImage extends StatelessWidget {
                   fit: fit,
                 )
               : CachedNetworkImage(
-                  imageUrl: url??"",
+                  imageUrl: url ?? "",
                   placeholder: (context, url) => CachedNetworkImage(
                     imageUrl: thumbnailUrl(url),
                     fit: fit,
@@ -238,13 +238,12 @@ class PhotoViewableImage extends StatelessWidget {
   }
 }
 
-
-String refineText(String text){
-  text=text.replaceAll("<br>", "\n");
-  text=text.replaceAll("<strong>", " ");
-  text=text.replaceAll("</strong>", " ");
-  text=text.replaceAll("&nbsp;", "  ");
-  text=text.replaceAll("&amp;", "&");
+String refineText(String text) {
+  text = text.replaceAll("<br>", "\n");
+  text = text.replaceAll("<strong>", " ");
+  text = text.replaceAll("</strong>", " ");
+  text = text.replaceAll("&nbsp;", "  ");
+  text = text.replaceAll("&amp;", "&");
   return text;
 }
 
@@ -289,7 +288,7 @@ class CommonHtmlBlog extends StatelessWidget {
         ? Html(
             shrinkWrap: true,
             data: data,
-            onLinkTap: (link,_,__,____) async {
+            onLinkTap: (link, _, __, ____) async {
               //print(link);
               if (await canLaunch(link!)) {
                 await launch(link);
@@ -299,12 +298,12 @@ class CommonHtmlBlog extends StatelessWidget {
             },
             customRender: {
               "img": (context, child) {
-                var attributes=context.tree.element!.attributes;
+                var attributes = context.tree.element!.attributes;
                 return Text(attributes['src'] ?? attributes['href'] ?? "<img>");
               },
               "a": (context, child) {
-                var attributes=context.tree.element!.attributes;
-                var innerHtml= context.tree.element?.innerHtml;
+                var attributes = context.tree.element!.attributes;
+                var innerHtml = context.tree.element?.innerHtml;
                 return InkWell(
                   onTap: () async {
                     if (await canLaunch(attributes['href']!)) {
@@ -312,7 +311,7 @@ class CommonHtmlBlog extends StatelessWidget {
                     }
                   },
                   child: Text(
-                    innerHtml??"",
+                    innerHtml ?? "",
                     style: TextStyle(
                         color: Colors.lightBlue,
                         decoration: TextDecoration.underline),
@@ -323,73 +322,65 @@ class CommonHtmlBlog extends StatelessWidget {
                   // )
                 );
               },
-              "p":(context, child) {
+              "p": (context, child) {
                 // String text =context.tree.element?.innerHtml??"";
-                var nodes=context.tree.element?.children;
-                var nodes1=context.tree.element?.nodes;
+                var nodes = context.tree.element?.children;
+                var nodes1 = context.tree.element?.nodes;
                 // print(nodes1);
                 // print(nodes);
-                List<Widget> w=[];int j=0;
+                List<Widget> w = [];
+                int j = 0;
 
                 // for(int i=0;i<(nodes1?.length??0);i++ ){
                 //
                 // }
 
-                for(int i=0;i<(nodes1?.length??0);i++ ){
-                  if(j>=(nodes?.length??0)) 
-                    j=(nodes?.length??0)-1;
+                for (int i = 0; i < (nodes1?.length ?? 0); i++) {
+                  if (j >= (nodes?.length ?? 0)) j = (nodes?.length ?? 0) - 1;
                   // nodes?.length==0?print(""):print(nodes![j].localName);
                   // print(nodes1![i].runtimeType);
-                  String type= nodes1![i].runtimeType.toString();
-                  if(type=="Text"){
+                  String type = nodes1![i].runtimeType.toString();
+                  if (type == "Text") {
                     w.add(SelectableText.rich(
-                      highlight(refineText(nodes1[i].text!),query?? '',context1),
+                      highlight(
+                          refineText(nodes1[i].text!), query ?? '', context1),
                       //strutStyle: StrutStyle.fromTextStyle(theme.textTheme.subtitle1!.copyWith(color: Colors.lightBlue)),
-                    )
-                    );
-
-                  }
-                  else if(type=="Element"){
-                    if(nodes![j].localName=="a"){
-
-                      var attributes=nodes[j].attributes;
-                      var innerHtml= nodes[j].innerHtml;
-                      w.add(
-                          InkWell(
-                            onTap: () async {
-                              if (await canLaunch(attributes['href']!)) {
-                                await launch(attributes['href']!);
-                              }
-                            },
-                            child: Text(
-                              innerHtml,
-                              style: TextStyle(
-                                  color: Colors.lightBlue,
-                                  decoration: TextDecoration.underline),
-                            ),
-                            // child: RichText(
-                            //   textScaleFactor:2,
-                            //   text: highlight(node.innerHtml,"electro"),
-                            // )
-                          )
-                      );
-                    }
-                    else if(nodes[j].localName=="strong"){
+                    ));
+                  } else if (type == "Element") {
+                    if (nodes![j].localName == "a") {
+                      var attributes = nodes[j].attributes;
+                      var innerHtml = nodes[j].innerHtml;
+                      w.add(InkWell(
+                        onTap: () async {
+                          if (await canLaunch(attributes['href']!)) {
+                            await launch(attributes['href']!);
+                          }
+                        },
+                        child: Text(
+                          innerHtml,
+                          style: TextStyle(
+                              color: Colors.lightBlue,
+                              decoration: TextDecoration.underline),
+                        ),
+                        // child: RichText(
+                        //   textScaleFactor:2,
+                        //   text: highlight(node.innerHtml,"electro"),
+                        // )
+                      ));
+                    } else if (nodes[j].localName == "strong") {
                       w.add(SelectableText.rich(
-                        highlight(refineText(nodes[j].text),query?? '',context1,isStrong:true),
-                          // strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
-                          //     .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
-                      )
-                      );
-                    }
-
-                    else if(nodes[j].localName=="br"){
-                      w.add(SelectableText.rich(
-                        highlight(" \n",query?? '',context1),
+                        highlight(
+                            refineText(nodes[j].text), query ?? '', context1,
+                            isStrong: true),
                         // strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
                         //     .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
-                      )
-                      );
+                      ));
+                    } else if (nodes[j].localName == "br") {
+                      w.add(SelectableText.rich(
+                        highlight(" \n", query ?? '', context1),
+                        // strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
+                        //     .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
+                      ));
                     }
                     j++;
                   }
@@ -406,32 +397,28 @@ class CommonHtmlBlog extends StatelessWidget {
                 //       text: highlight(refineText(text),query?? ''),
                 //     );
               },
-              "td":(context, child) {
-                String text =context.tree.element?.innerHtml??"";
+              "td": (context, child) {
+                String text = context.tree.element?.innerHtml ?? "";
                 // text="    "+text+"   ";
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(0, 2, 6, 2),
                   child: SelectableText.rich(
-                    highlight(refineText(text),query?? '',context1),
+                    highlight(refineText(text), query ?? '', context1),
                   ),
                 );
               },
-              "th":(context, child) {
-                String text =context.tree.element?.innerHtml??"";
+              "th": (context, child) {
+                String text = context.tree.element?.innerHtml ?? "";
                 // text="    "+text+"   ";
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(0, 2, 6, 2),
                   child: SelectableText.rich(
-                    highlight(refineText(text),query?? '',context1),
+                    highlight(refineText(text), query ?? '', context1),
                   ),
                 );
               },
-              "table":(context,child){
-
-              },
-              "thread":(context,child){
-
-              }
+              "table": (context, child) {},
+              "thread": (context, child) {}
               // "td":(context,child){
               //   context.tree.style.padding=const EdgeInsets.only(
               //     left: 12.0,
@@ -441,52 +428,64 @@ class CommonHtmlBlog extends StatelessWidget {
               //   context.tree.style.width=500;
               //   print(context.tree.style.width);
               // }
-
-
             },
           )
         : CircularProgressIndicatorExtended(
             label: Text("Loading content"),
           );
   }
-  TextSpan highlight(String result,String query,BuildContext context, {bool isStrong= false}){
+
+  TextSpan highlight(String result, String query, BuildContext context,
+      {bool isStrong = false}) {
     var bloc = BlocProvider.of(context)!.bloc;
     var theme = Theme.of(context);
     // print(result);
-    TextStyle posRes = TextStyle(color: Colors.white, backgroundColor: bloc.accentColor);
-    TextStyle? negRes = isStrong?theme.textTheme.subtitle2?.copyWith(fontWeight: FontWeight.w700, fontSize: 13):theme.textTheme.subtitle2?.copyWith(fontSize: 13);// TextStyle(backgroundColor: bloc.bloc.brightness.toColor().withOpacity(1.0),);
-    if(result=="" || query=="") return TextSpan(text:result,style:negRes);
-    result.replaceAll('\n'," ").replaceAll(" ", "");
+    TextStyle posRes =
+        TextStyle(color: Colors.white, backgroundColor: bloc.accentColor);
+    TextStyle? negRes = isStrong
+        ? theme.textTheme.subtitle2
+            ?.copyWith(fontWeight: FontWeight.w700, fontSize: 13)
+        : theme.textTheme.subtitle2?.copyWith(
+            fontSize:
+                13); // TextStyle(backgroundColor: bloc.bloc.brightness.toColor().withOpacity(1.0),);
+    if (result == "" || query == "")
+      return TextSpan(text: result, style: negRes);
+    result.replaceAll('\n', " ").replaceAll(" ", "");
 
-    var refinedMatch=result.toLowerCase();
-    var refinedsearch=query.toLowerCase();
+    var refinedMatch = result.toLowerCase();
+    var refinedsearch = query.toLowerCase();
 
-    if(refinedMatch.contains(refinedsearch)){
-      if(refinedMatch.substring(0,refinedsearch.length)==refinedsearch){
-        return TextSpan(style:posRes,text:result.substring(0,refinedsearch.length),children:[
-          highlight(result.substring(refinedsearch.length),query,context),
-        ]);
+    if (refinedMatch.contains(refinedsearch)) {
+      if (refinedMatch.substring(0, refinedsearch.length) == refinedsearch) {
+        return TextSpan(
+            style: posRes,
+            text: result.substring(0, refinedsearch.length),
+            children: [
+              highlight(result.substring(refinedsearch.length), query, context),
+            ]);
+      } else if (refinedsearch.length == refinedMatch.length) {
+        return TextSpan(text: result, style: posRes);
+      } else {
+        return TextSpan(
+            style: negRes,
+            text: result.substring(0, refinedMatch.indexOf(refinedsearch)),
+            children: [
+              highlight(result.substring(refinedMatch.indexOf(refinedsearch)),
+                  query, context)
+            ]);
       }
-      else if(refinedsearch.length==refinedMatch.length){
-        return TextSpan(text:result,style:posRes);
-      }
-      else{
-        return TextSpan(style:negRes,text:result.substring(0,refinedMatch.indexOf(refinedsearch)),
-            children:[highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query,context)]);
-      }
-    }
-    else if(!refinedMatch.contains(refinedsearch)){
-      return TextSpan(text:result,style:negRes);
+    } else if (!refinedMatch.contains(refinedsearch)) {
+      return TextSpan(text: result, style: negRes);
     }
 
     return TextSpan(
       text: result.substring(0, refinedMatch.indexOf(refinedsearch)),
       style: negRes,
       children: [
-        highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query,context)
+        highlight(result.substring(refinedMatch.indexOf(refinedsearch)), query,
+            context)
       ],
     );
-
   }
 }
 
@@ -717,7 +716,8 @@ class CircularProgressIndicatorExtended extends StatelessWidget {
           height: size,
           width: size,
           child: CircularProgressIndicator(
-            valueColor: new AlwaysStoppedAnimation<Color>(theme.colorScheme.secondary),
+            valueColor:
+                new AlwaysStoppedAnimation<Color>(theme.colorScheme.secondary),
             strokeWidth: 2,
           ),
         ),
@@ -817,7 +817,7 @@ class EditableChipListState extends State<EditableChipList> {
             backgroundColor: chipColor,
             deleteIconColor: contentColor,
             labelStyle:
-                theme.chipTheme.labelStyle.copyWith(color: contentColor),
+                theme.chipTheme.labelStyle?.copyWith(color: contentColor),
             label: Text(
               _capitalize(name),
             ),
