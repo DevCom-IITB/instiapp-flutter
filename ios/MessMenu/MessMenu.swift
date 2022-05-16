@@ -78,7 +78,7 @@ struct Provider: IntentTimelineProvider {
             return 18
             
         default:
-            return 9;
+            return 3;
         }
     }
     
@@ -233,14 +233,17 @@ struct MessMenuEntryView : View {
     
     var body: some View {
         Text("Hostel "+String(entry.day))
-            .font(.headline)
+            .font(.largeTitle)
             .padding(EdgeInsets(top: 10, leading: 0, bottom: 5, trailing: 0))
+            .foregroundColor(.blue)
         Text(entry.mealType)
-            .font(.subheadline)
+            .font(.headline)
             .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
+            .multilineTextAlignment(.leading)
         Text(entry.menuOfMeal)
-            .font(.body)
+            .font(.subheadline)
             .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+            .multilineTextAlignment(.leading)
         
     }
     
@@ -261,7 +264,7 @@ struct MessMenu: Widget {
                     Image("devcom")
                         .resizable()
                         .scaledToFit()
-                        .opacity(0.2)
+                        .opacity(0.03)
                 )
         }
         .configurationDisplayName("Mess Menu")
