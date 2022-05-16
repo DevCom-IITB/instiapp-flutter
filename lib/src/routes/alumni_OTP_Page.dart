@@ -49,6 +49,7 @@ class _AlumniOTPPageState extends State<AlumniOTPPage> {
                     _bloc!.alumniOTP.isEmpty) {
                   return "Please enter the correct OTP";
                 }
+                return null;
               },
               initialValue: "",
               decoration: InputDecoration(labelText: "Enter the OTP here."),
