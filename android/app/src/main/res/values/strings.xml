@@ -1,0 +1,8 @@
+<resources>
+    <string name="appwidget_text">3</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">Helps you display realtime mess menu on Homescreen!!</string>
+    <string name="hostelno">Enter Your Hostel Number!</string>
+    <string name="add_widget1">Add Realtime Mess Menu To Your Homescreen.</string>
+</resources>

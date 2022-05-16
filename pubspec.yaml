@@ -52,6 +52,7 @@ dependencies:
   jaguar: ^3.0.12
   jaguar_flutter_asset: ^3.0.0
   webview_flutter: ^2.8.0
+  home_widget: ^0.1.5
 
   flutter_inappwebview: any
   permission_handler: ^8.3.0
@@ -61,6 +62,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+
 
   retrofit_generator: any
   build_runner: any
@@ -113,3 +116,18 @@ flutter:
 #           generic_argument_factories: false
 #           ignore_unannotated: false
 #           include_if_null: true
+
+
+
+dependency_overrides:
+  firebase_messaging_platform_interface: 3.1.6
+  firebase_crashlytics_platform_interface: 3.1.13
+  cloud_firestore_platform_interface: 5.4.13
+  firebase_auth_platform_interface: 6.1.11
+  firebase_storage_platform_interface: 4.0.14
+  cloud_functions_platform_interface: 5.0.21
+  firebase_analytics_platform_interface: 3.0.5
+  firebase_remote_config_platform_interface: 1.0.5
+  firebase_dynamic_links_platform_interface: 0.2.0+5
+  firebase_performance_platform_interface: 0.1.0+5
+  firebase_app_installations_platform_interface: 0.1.0+6
