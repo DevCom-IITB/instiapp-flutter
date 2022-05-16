@@ -284,6 +284,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             }
             return _buildRoute(settings, MessPage());
           }
+          return null;
         },
         navigatorObservers: [widget.bloc.navigatorObserver],
       ),

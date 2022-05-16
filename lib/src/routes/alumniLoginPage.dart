@@ -41,6 +41,7 @@ class _AlumniLoginPageState extends State<AlumniLoginPage> {
                     ) {
                   return "Please enter the correct LDAP";
                 }
+                return null;
               },
               initialValue: "",
               decoration: InputDecoration(labelText: "Enter your LDAP here."),
