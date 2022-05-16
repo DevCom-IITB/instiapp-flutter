@@ -687,7 +687,7 @@ class MyBottomAppBar extends StatelessWidget {
       child: IconTheme.merge(
         data: IconThemeData(
           color: theme.primaryIconTheme.color,
-          size: iconSize ?? 64.0,
+          size: iconSize ?? 30.0,
         ),
         child: child!,
       ),
