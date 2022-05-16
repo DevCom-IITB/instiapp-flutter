@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:background="@drawable/round_background"
     android:orientation="vertical"
-    android:padding= "3dp">
+    android:padding= "10dp"
+    >
 
 
 
@@ -14,7 +15,8 @@
         android:layout_height="wrap_content"
         android:textColor="@color/colorPrimary"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textAlignment="center"/>
 
     <LinearLayout
         android:layout_width="match_parent"
