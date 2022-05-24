@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -266,7 +266,7 @@
 				TargetAttributes = {
 					15B703D127F86A110040D0AD = {
 						CreatedOnToolsVersion = 13.3;
-						DevelopmentTeam = NZH7T8Y3FC;
+						DevelopmentTeam = N6L674AW8L;
 						ProvisioningStyle = Automatic;
 					};
 					97C146ED1CF9000F007C117D = {
@@ -400,6 +400,7 @@
 				"${BUILT_PRODUCTS_DIR}/flutter_keyboard_visibility/flutter_keyboard_visibility.framework",
 				"${BUILT_PRODUCTS_DIR}/flutter_local_notifications/flutter_local_notifications.framework",
 				"${BUILT_PRODUCTS_DIR}/flutter_native_timezone/flutter_native_timezone.framework",
+				"${BUILT_PRODUCTS_DIR}/home_widget/home_widget.framework",
 				"${BUILT_PRODUCTS_DIR}/image_picker/image_picker.framework",
 				"${BUILT_PRODUCTS_DIR}/libwebp/libwebp.framework",
 				"${BUILT_PRODUCTS_DIR}/location/location.framework",
@@ -438,6 +439,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_keyboard_visibility.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_local_notifications.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_native_timezone.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/home_widget.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/image_picker.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/libwebp.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/location.framework",
@@ -553,7 +555,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = NZH7T8Y3FC;
+				DEVELOPMENT_TEAM = N6L674AW8L;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MessMenu/Info.plist;
@@ -591,7 +593,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = NZH7T8Y3FC;
+				DEVELOPMENT_TEAM = N6L674AW8L;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MessMenu/Info.plist;
@@ -627,7 +629,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = NZH7T8Y3FC;
+				DEVELOPMENT_TEAM = N6L674AW8L;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MessMenu/Info.plist;
@@ -713,10 +715,7 @@
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -850,10 +849,7 @@
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -888,10 +884,7 @@
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
