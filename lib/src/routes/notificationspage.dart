@@ -192,7 +192,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
         onTap: () {
           if (notification.isBlogPost) {
             Navigator.of(context).pushNamed(
-                (notification.getBlogPost().link?.contains("training") ?? false)
+                (notification.getBlogPost().link?.contains("internship") ??
+                        false)
                     ? "/trainblog"
                     : "/placeblog");
           } else if (notification.isEvent) {

@@ -418,8 +418,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   Future navigateFromNotification(dynamic fromMap) async {
     // Navigating to correct page
+    print(fromMap.notificationType);
+    print(fromMap.notificationExtra?.contains("/trainingblog"));
     var routeName = {
-      "blogentry": fromMap.notificationExtra?.contains("/trainingblog") ?? false
+      "blogentry": fromMap.notificationExtra?.contains("/internship") ?? false
           ? "/trainblog"
           : "/placeblog",
       "body": "/body/${fromMap.notificationObjectID ?? ""}",
