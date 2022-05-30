@@ -5,6 +5,7 @@ import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
+import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -19,6 +20,10 @@ class _FeedPageState extends State<FeedPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   bool firstBuild = true;
+
+  IconData actionIcon = Icons.search_outlined;
+
+  bool searchMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -71,9 +76,43 @@ class _FeedPageState extends State<FeedPage> {
             slivers: [
               SliverToBoxAdapter(
                 child: TitleWithBackButton(
-                  child: Text(
-                    "Feed",
-                    style: theme.textTheme.headline3,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          "Feed",
+                          style: theme.textTheme.headline3,
+                        ),
+                      ),
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 500),
+                        width: searchMode ? 0.0 : null,
+                        height: searchMode ? 0.0 : null,
+                        decoration: ShapeDecoration(
+                            shape: CircleBorder(
+                                side: BorderSide(color: theme.primaryColor))),
+                        child: searchMode
+                            ? SizedBox()
+                            : IconButton(
+                                tooltip: "Search ${""}",
+                                padding: EdgeInsets.all(16.0),
+                                icon: Icon(
+                                  actionIcon,
+                                  color: theme.primaryColor,
+                                ),
+                                color: theme.cardColor,
+                                onPressed: () {
+                                  setState(() {
+                                    actionIcon = Icons.close_outlined;
+                                    ExplorePage.navigateWith(context, true);
+                                  });
+                                },
+                              ),
+                      )
+                    ],
                   ),
                 ),
               ),
