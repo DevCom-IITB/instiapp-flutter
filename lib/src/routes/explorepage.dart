@@ -12,9 +12,28 @@ import 'package:flutter/material.dart';
 
 class ExplorePage extends StatefulWidget {
   final String title = "Explore";
+  final bool searchMode;
+  final bool fromNavigate;
+
+  ExplorePage({this.searchMode = false, this.fromNavigate = false});
 
   @override
   _ExplorePageState createState() => _ExplorePageState();
+
+  static void navigateWith(BuildContext context, bool searchMode) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        settings: RouteSettings(
+          name: "/explore?searchMode=${searchMode ? "true" : "false"}",
+        ),
+        builder: (context) => ExplorePage(
+          searchMode: searchMode,
+          fromNavigate: true,
+        ),
+      ),
+    );
+  }
 }
 
 class _ExplorePageState extends State<ExplorePage> {
@@ -35,6 +54,7 @@ class _ExplorePageState extends State<ExplorePage> {
   @override
   void initState() {
     super.initState();
+
     _searchFieldController = TextEditingController();
     _hideButtonController = ScrollController();
     _hideButtonController!.addListener(() {
@@ -65,6 +85,10 @@ class _ExplorePageState extends State<ExplorePage> {
     if (firstBuild) {
       exploreBloc.query = "";
       exploreBloc.refresh();
+      searchMode = widget.searchMode;
+      if (widget.fromNavigate) {
+        bloc.drawerState.setPageIndex(2);
+      }
       firstBuild = false;
     }
 
@@ -168,9 +192,7 @@ class _ExplorePageState extends State<ExplorePage> {
                           ),
                           suffixIcon: IconButton(
                             tooltip: "Search events, bodies, users...",
-                            icon: Icon(
-                              actionIcon,
-                            ),
+                            icon: Icon(Icons.close_outlined),
                             onPressed: () {
                               setState(() {
                                 actionIcon = Icons.search_outlined;
@@ -192,6 +214,7 @@ class _ExplorePageState extends State<ExplorePage> {
                           exploreBloc.query = query;
                           await exploreBloc.refresh();
                         },
+                        autofocus: true,
                       ),
                     ),
                   ),

@@ -300,7 +300,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   // Section
   // Handling Notifications
-  void setupNotifications() {
+  void setupNotifications() async {
     // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
     var initializationSettingsAndroid =
         new AndroidInitializationSettings('@mipmap/ic_launcher_foreground');
@@ -381,10 +381,20 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         );
       },
     );
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      // print('A new onMessageOpenedApp event was published!');
-      navigateFromNotification(RichNotification.fromJson(message.data));
-    });
+
+    // Get any messages which caused the application to open from
+    // a terminated state.
+    RemoteMessage? initialMessage =
+        await widget.bloc.firebaseMessaging.getInitialMessage();
+
+    // If the message also contains a data property with a "type" of "chat",
+    // navigate to a chat screen
+    if (initialMessage != null) {
+      _handleMessage(initialMessage);
+    }
+
+    // Called when app is open in background and message is opened
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
 
     if (Platform.isIOS) {
       widget.bloc.firebaseMessaging.requestPermission(
@@ -397,6 +407,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         sound: true,
       );
     }
+
     // widget.bloc.firebaseMessaging.onIosSettingsRegistered
     //     .listen((IosNotificationSettings settings) {
     //   print("Settings registered: $settings");
@@ -406,6 +417,11 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       assert(token != null);
       // print("Push Messaging token: $token");
     });
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    // print('A new onMessageOpenedApp event was published!');
+    navigateFromNotification(RichNotification.fromJson(message.data));
   }
 
   Future onSelectNotification(String? payload) async {
