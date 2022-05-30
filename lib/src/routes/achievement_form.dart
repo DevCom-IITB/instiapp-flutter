@@ -25,15 +25,14 @@ class _CreateAchievementPage extends State<Home> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   final _formKey1 = GlobalKey<FormState>();
   final _formKey2 = GlobalKey<FormState>();
-   Event? _selectedEvent;
-   Body? _selectedBody;
-   Skill? _selectedSkill;
+  Event? _selectedEvent;
+  Body? _selectedBody;
+  Skill? _selectedSkill;
   AchievementCreateRequest currRequest1 = AchievementCreateRequest();
   AchievementCreateRequest currRequest2 = AchievementCreateRequest();
 
   // builds dropdown menu for event choice
-  Widget buildDropdownMenuItemsEvent(
-      BuildContext context, Event? event) {
+  Widget buildDropdownMenuItemsEvent(BuildContext context, Event? event) {
     // print("Entered build dropdown menu items");
     if (event == null) {
       return Container(
@@ -57,10 +56,10 @@ class _CreateAchievementPage extends State<Home> {
       decoration: !isSelected
           ? null
           : BoxDecoration(
-        border: Border.all(color: Theme.of(context).primaryColor),
-        borderRadius: BorderRadius.circular(5),
-        color: Colors.white,
-      ),
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
       child: ListTile(
         selected: isSelected,
         title: Text(event.eventName!),
@@ -68,8 +67,7 @@ class _CreateAchievementPage extends State<Home> {
     );
   }
 
-  Widget buildDropdownMenuItemsBody(
-      BuildContext context, Body? body) {
+  Widget buildDropdownMenuItemsBody(BuildContext context, Body? body) {
     // print("Entered build dropdown menu items");
     if (body == null) {
       return Container(
@@ -94,10 +92,10 @@ class _CreateAchievementPage extends State<Home> {
       decoration: !isSelected
           ? null
           : BoxDecoration(
-        border: Border.all(color: Theme.of(context).primaryColor),
-        borderRadius: BorderRadius.circular(5),
-        color: Colors.white,
-      ),
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
       child: ListTile(
         selected: isSelected,
         title: Text(body.bodyName!),
@@ -105,8 +103,7 @@ class _CreateAchievementPage extends State<Home> {
     );
   }
 
-  Widget buildDropdownMenuItemsSkill(
-      BuildContext context, Skill? body) {
+  Widget buildDropdownMenuItemsSkill(BuildContext context, Skill? body) {
     // print("Entered build dropdown menu items");
     if (body == null) {
       return Container(
@@ -131,10 +128,10 @@ class _CreateAchievementPage extends State<Home> {
       decoration: !isSelected
           ? null
           : BoxDecoration(
-        border: Border.all(color: Theme.of(context).primaryColor),
-        borderRadius: BorderRadius.circular(5),
-        color: Colors.white,
-      ),
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
       child: ListTile(
         selected: isSelected,
         title: Text(body.title!),
@@ -224,544 +221,590 @@ class _CreateAchievementPage extends State<Home> {
           body: SafeArea(
             child: bloc.currSession == null
                 ? Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.all(50),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.cloud,
-                    size: 200,
-                    color: Colors.grey[600],
-                  ),
-                  Text(
-                    "Login To View Achievements",
-                    style: theme.textTheme.headline5,
-                    textAlign: TextAlign.center,
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(50),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.cloud,
+                          size: 200,
+                          color: Colors.grey[600],
+                        ),
+                        Text(
+                          "Login To View Achievements",
+                          style: theme.textTheme.headline5,
+                          textAlign: TextAlign.center,
+                        )
+                      ],
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                    ),
                   )
-                ],
-                crossAxisAlignment: CrossAxisAlignment.center,
-              ),
-            )
                 : NestedScrollView(
-              headerSliverBuilder:
-                  (BuildContext context, bool innerBoxIsScrolled) {
-                return <Widget>[
-                  SliverPersistentHeader(
-                    floating: true,
-                    pinned: true,
-                    delegate: _SliverTabBarDelegate(
-                      child: PreferredSize(
-                        preferredSize: Size.fromHeight(72),
-                        child: Material(
-                          elevation: 4.0,
-                          child: TabBar(
-                            labelColor: theme.colorScheme.secondary,
-                            unselectedLabelColor: theme.disabledColor,
-                            tabs: [
-                              Tab(
-                                  text: "Associations",
-                                  icon: Icon(Icons.work_outline_outlined)),
-                              Tab(
-                                  text: "Events",
-                                  icon: Icon(Icons.event_outlined)),
-                            ],
+                    headerSliverBuilder:
+                        (BuildContext context, bool innerBoxIsScrolled) {
+                      return <Widget>[
+                        SliverPersistentHeader(
+                          floating: true,
+                          pinned: true,
+                          delegate: _SliverTabBarDelegate(
+                            child: PreferredSize(
+                              preferredSize: Size.fromHeight(72),
+                              child: Material(
+                                elevation: 4.0,
+                                child: TabBar(
+                                  labelColor: theme.colorScheme.secondary,
+                                  unselectedLabelColor: theme.disabledColor,
+                                  tabs: [
+                                    Tab(
+                                        text: "Associations",
+                                        icon:
+                                            Icon(Icons.work_outline_outlined)),
+                                    Tab(
+                                        text: "Events",
+                                        icon: Icon(Icons.event_outlined)),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ];
+                    },
+                    body: TabBarView(
+                      // These are the contents of the tab views, below the tabs.
+                      children: ["Associations", "Skills"].map((name) {
+                        return SafeArea(
+                          top: false,
+                          bottom: false,
+                          child: Builder(
+                            // This Builder is needed to provide a BuildContext that is "inside"
+                            // the NestedScrollView, so that sliverOverlapAbsorberHandleFor() can
+                            // find the NestedScrollView.
+                            builder: (BuildContext context) {
+                              var delegates = {
+                                "Associations": RefreshIndicator(
+                                  onRefresh: () => bloc.updateEvents(),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(7.0),
+                                    child: SingleChildScrollView(
+                                      child: Form(
+                                        key: _formKey1,
+                                        child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                  margin: EdgeInsets.fromLTRB(
+                                                      15.0, 15.0, 10.0, 5.0),
+                                                  child: Text(
+                                                    'Verification Request',
+                                                    style: theme
+                                                        .textTheme.headline4,
+                                                  )),
+                                              SizedBox(
+                                                height: 40,
+                                              ),
+                                              Container(
+                                                  margin: EdgeInsets.fromLTRB(
+                                                      15.0, 5.0, 15.0, 10.0),
+                                                  child: TextFormField(
+                                                    maxLength: 50,
+                                                    decoration: InputDecoration(
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      labelText: "Title",
+                                                    ),
+                                                    autocorrect: true,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        currRequest1.title =
+                                                            value;
+                                                      });
+                                                    },
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty) {
+                                                        return 'Title should not be empty';
+                                                      }
+                                                      return null;
+                                                    },
+                                                  )),
+                                              Container(
+                                                  margin: EdgeInsets.fromLTRB(
+                                                      15.0, 5.0, 15.0, 10.0),
+                                                  child: TextFormField(
+                                                    decoration: InputDecoration(
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      labelText: "Description",
+                                                    ),
+                                                    autocorrect: true,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        currRequest1
+                                                                .description =
+                                                            value;
+                                                      });
+                                                    },
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty) {
+                                                        return 'Description should not be empty';
+                                                      }
+                                                      return null;
+                                                    },
+                                                  )),
+                                              Container(
+                                                  margin: EdgeInsets.fromLTRB(
+                                                      15.0, 5.0, 15.0, 10.0),
+                                                  child: TextFormField(
+                                                    decoration: InputDecoration(
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      labelText: "Admin Note",
+                                                    ),
+                                                    autocorrect: true,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        currRequest1.adminNote =
+                                                            value;
+                                                      });
+                                                    },
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty) {
+                                                        return 'Admin Note should not be empty';
+                                                      }
+                                                      return null;
+                                                    },
+                                                  )),
+                                              Container(
+                                                  margin: EdgeInsets.fromLTRB(
+                                                      15.0, 5.0, 15.0, 0.0),
+                                                  child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        SizedBox(
+                                                          height: 20.0,
+                                                        ),
+                                                        DropdownSearch<Event>(
+                                                          mode: Mode.DIALOG,
+                                                          dropdownSearchDecoration:
+                                                              InputDecoration(
+                                                            labelText:
+                                                                "Event (Optional)",
+                                                            hintText:
+                                                                "Event (Optional)",
+                                                          ),
+                                                          maxHeight: 700,
+                                                          isFilteredOnline:
+                                                              true,
+                                                          showSearchBox: true,
+                                                          onChanged:
+                                                              onEventChange,
+                                                          onFind: bloc
+                                                              .achievementBloc
+                                                              .searchForEvent,
+                                                          dropdownBuilder:
+                                                              buildDropdownMenuItemsEvent,
+                                                          popupItemBuilder:
+                                                              _customPopupItemBuilderEvent,
+                                                          // popupSafeArea:
+                                                          // PopupSafeArea(
+                                                          //     top: true,
+                                                          //     bottom: true),
+                                                          scrollbarProps:
+                                                              ScrollbarProps(
+                                                            isAlwaysShown: true,
+                                                            thickness: 7,
+                                                          ),
+                                                          emptyBuilder:
+                                                              (BuildContext
+                                                                      context,
+                                                                  String? _) {
+                                                            return Container(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(20),
+                                                              child: Text(
+                                                                "No events found. Refine your search!",
+                                                                style: theme
+                                                                    .textTheme
+                                                                    .subtitle1,
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                        SizedBox(
+                                                          height: this.selectedE
+                                                              ? 20.0
+                                                              : 0,
+                                                        ),
+                                                        _selectedEvent != null
+                                                            ? VerifyCard(
+                                                                thing: this
+                                                                    ._selectedEvent!,
+                                                                selected: this
+                                                                    .selectedE)
+                                                            : SizedBox(),
+                                                      ])),
+                                              Container(
+                                                  // width: double.infinity,
+                                                  margin: EdgeInsets.fromLTRB(
+                                                      15.0, 0.0, 15.0, 10.0),
+                                                  child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        SizedBox(
+                                                          height: 20.0,
+                                                        ),
+
+                                                        DropdownSearch<Body>(
+                                                          mode: Mode.DIALOG,
+                                                          maxHeight: 700,
+                                                          isFilteredOnline:
+                                                              true,
+                                                          showSearchBox: true,
+                                                          dropdownSearchDecoration:
+                                                              InputDecoration(
+                                                                  labelText:
+                                                                      "Verifying Authority",
+                                                                  hintText:
+                                                                      "Verifying Authority"),
+                                                          validator: (value) {
+                                                            if (value == null) {
+                                                              return 'Please select a organization';
+                                                            }
+                                                            return null;
+                                                          },
+                                                          onChanged:
+                                                              onBodyChange,
+                                                          onFind: bloc
+                                                              .achievementBloc
+                                                              .searchForBody,
+                                                          dropdownBuilder:
+                                                              buildDropdownMenuItemsBody,
+                                                          popupItemBuilder:
+                                                              _customPopupItemBuilderBody,
+                                                          // popupSafeArea:
+                                                          // PopupSafeArea(
+                                                          //     top: true,
+                                                          //     bottom: true),
+                                                          scrollbarProps:
+                                                              ScrollbarProps(
+                                                            isAlwaysShown: true,
+                                                            thickness: 7,
+                                                          ),
+                                                          selectedItem:
+                                                              _selectedBody,
+                                                          emptyBuilder:
+                                                              (BuildContext
+                                                                      context,
+                                                                  String? _) {
+                                                            return Container(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(20),
+                                                              child: Text(
+                                                                "No verifying authorities found. Refine your search!",
+                                                                style: theme
+                                                                    .textTheme
+                                                                    .subtitle1,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                        SizedBox(
+                                                          height: this.selectedB
+                                                              ? 20.0
+                                                              : 0,
+                                                        ),
+                                                        _selectedBody != null
+                                                            ? BodyCard(
+                                                                thing: this
+                                                                    ._selectedBody!,
+                                                                selected: this
+                                                                    .selectedB)
+                                                            : SizedBox(),
+                                                        //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
+                                                      ])),
+                                              Container(
+                                                width: double.infinity,
+                                                margin: EdgeInsets.symmetric(
+                                                    vertical: 10.0,
+                                                    horizontal: 15.0),
+                                                child: TextButton(
+                                                  onPressed: () async {
+                                                    if (_formKey1.currentState!
+                                                        .validate()) {
+                                                      currRequest1.isSkill =
+                                                          false;
+                                                      var resp =
+                                                          await achievementsBloc
+                                                              .postForm(
+                                                                  currRequest1);
+                                                      if (resp!.result ==
+                                                          "success") {
+                                                        Navigator.of(context)
+                                                            .pushNamed(
+                                                                "/achievements");
+                                                      } else {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                                SnackBar(
+                                                          content:
+                                                              new Text('Error'),
+                                                          duration:
+                                                              new Duration(
+                                                                  seconds: 10),
+                                                        ));
+                                                      }
+                                                    }
+
+                                                    //log(currRequest.description);
+                                                  },
+                                                  child: Text(
+                                                      'Request Verification'),
+                                                  style: TextButton.styleFrom(
+                                                      primary: Colors.black,
+                                                      backgroundColor:
+                                                          Color(0xffffd740),
+                                                      onSurface: Colors.grey,
+                                                      elevation: 5.0),
+                                                ),
+                                              ),
+                                            ]),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                "Skills": RefreshIndicator(
+                                  onRefresh: () => bloc.updateEvents(),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(7.0),
+                                    child: SingleChildScrollView(
+                                      child: Form(
+                                        key: _formKey2,
+                                        child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                  // width: double.infinity,
+                                                  margin: EdgeInsets.fromLTRB(
+                                                      15.0, 0.0, 15.0, 10.0),
+                                                  child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        SizedBox(
+                                                          height: 20.0,
+                                                        ),
+
+                                                        DropdownSearch<Skill>(
+                                                          mode: Mode.DIALOG,
+                                                          maxHeight: 700,
+                                                          isFilteredOnline:
+                                                              true,
+                                                          showSearchBox: true,
+                                                          dropdownSearchDecoration:
+                                                              InputDecoration(
+                                                                  labelText:
+                                                                      "Title",
+                                                                  hintText:
+                                                                      "Titile"),
+                                                          validator: (value) {
+                                                            if (value == null) {
+                                                              return 'Please select a Skill';
+                                                            }
+                                                            return null;
+                                                          },
+                                                          onChanged:
+                                                              onSkillChange,
+                                                          onFind: bloc
+                                                              .achievementBloc
+                                                              .searchForSkill,
+                                                          dropdownBuilder:
+                                                              buildDropdownMenuItemsSkill,
+                                                          popupItemBuilder:
+                                                              _customPopupItemBuilderSkill,
+                                                          // popupSafeArea:
+                                                          // PopupSafeArea(
+                                                          //     top: true,
+                                                          //     bottom: true),
+                                                          scrollbarProps:
+                                                              ScrollbarProps(
+                                                            isAlwaysShown: true,
+                                                            thickness: 7,
+                                                          ),
+                                                          selectedItem:
+                                                              _selectedSkill,
+                                                          emptyBuilder:
+                                                              (BuildContext
+                                                                      context,
+                                                                  String? _) {
+                                                            return Container(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(20),
+                                                              child: Text(
+                                                                "No skills found. Refine your search!",
+                                                                style: theme
+                                                                    .textTheme
+                                                                    .subtitle1,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                        SizedBox(
+                                                          height: this.selectedB
+                                                              ? 20.0
+                                                              : 0,
+                                                        ),
+                                                        _selectedSkill?.body !=
+                                                                null
+                                                            ? BodyCard(
+                                                                thing: this
+                                                                    ._selectedSkill
+                                                                    ?.body,
+                                                                selected: this
+                                                                    .selectedS)
+                                                            : SizedBox(),
+                                                        //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
+                                                      ])),
+                                              Container(
+                                                width: double.infinity,
+                                                margin: EdgeInsets.symmetric(
+                                                    vertical: 10.0,
+                                                    horizontal: 15.0),
+                                                child: TextButton(
+                                                  onPressed: () async {
+                                                    if (_formKey2.currentState!
+                                                        .validate()) {
+                                                      currRequest2.isSkill =
+                                                          true;
+                                                      // print(currRequest2.title);
+                                                      var resp =
+                                                          await achievementsBloc
+                                                              .postForm(
+                                                                  currRequest2);
+                                                      if (resp?.result ==
+                                                          "success") {
+                                                        Navigator.of(context)
+                                                            .pushNamed(
+                                                                "/achievements");
+                                                      } else {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                                SnackBar(
+                                                          content:
+                                                              new Text('Error'),
+                                                          duration:
+                                                              new Duration(
+                                                                  seconds: 10),
+                                                        ));
+                                                      }
+                                                    }
+
+                                                    //log(currRequest.description);
+                                                  },
+                                                  child: Text(
+                                                      'Request Verification'),
+                                                  style: TextButton.styleFrom(
+                                                      primary: Colors.black,
+                                                      backgroundColor:
+                                                          Color(0xffffd740),
+                                                      onSurface: Colors.grey,
+                                                      elevation: 5.0),
+                                                ),
+                                              ),
+                                            ]),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              };
+                              return delegates[name]!;
+                              // return CustomScrollView(
+                              //   // The "controller" and "primary" members should be left
+                              //   // unset, so that the NestedScrollView can control this
+                              //   // inner scroll view.
+                              //   // If the "controller" property is set, then this scroll
+                              //   // view will not be associated with the NestedScrollView.
+                              //   // The PageStorageKey should be unique to this ScrollView;
+                              //   // it allows the list to remember its scroll position when
+                              //   // the tab view is not on the screen.
+                              //   key: PageStorageKey<String>(name),
+                              //   slivers: <Widget>[
+                              //     // SliverOverlapInjector(
+                              //     //   // This is the flip side of the SliverOverlapAbsorber above.
+                              //     //   handle: NestedScrollView
+                              //     //       .sliverOverlapAbsorberHandleFor(context),
+                              //     // ),
+                              //     SliverPadding(
+                              //       padding: const EdgeInsets.all(8.0),
+                              //       // In this example, the inner scroll view has
+                              //       // fixed-height list items, hence the use of
+                              //       // SliverFixedExtentList. However, one could use any
+                              //       // sliver widget here, e.g. SliverList or SliverGrid.
+                              //       sliver: delegates[name].childCount == 0
+                              //           ? SliverToBoxAdapter(
+                              //               child: Center(
+                              //                 child: Padding(
+                              //                   padding: const EdgeInsets.all(8.0),
+                              //                   child: Text(
+                              //                     "No $name",
+                              //                   ),
+                              //                 ),
+                              //               ),
+                              //             )
+                              //           : SliverList(
+                              //               delegate: delegates[name],
+                              //             ),
+                              //     ),
+                              //   ],
+                              // );
+                            },
+                          ),
+                        );
+                      }).toList(),
                     ),
                   ),
-                ];
-              },
-              body: TabBarView(
-                // These are the contents of the tab views, below the tabs.
-                children: ["Associations", "Skills"].map((name) {
-                  return SafeArea(
-                    top: false,
-                    bottom: false,
-                    child: Builder(
-                      // This Builder is needed to provide a BuildContext that is "inside"
-                      // the NestedScrollView, so that sliverOverlapAbsorberHandleFor() can
-                      // find the NestedScrollView.
-                      builder: (BuildContext context) {
-                        var delegates = {
-                          "Associations": RefreshIndicator(
-                            onRefresh: () => bloc.updateEvents(),
-                            child: Padding(
-                              padding: const EdgeInsets.all(7.0),
-                              child: SingleChildScrollView(
-                                child: Form(
-                                  key: _formKey1,
-                                  child: Column(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                            margin: EdgeInsets.fromLTRB(
-                                                15.0, 15.0, 10.0, 5.0),
-                                            child: Text(
-                                              'Verification Request',
-                                              style:
-                                              theme.textTheme.headline4,
-                                            )),
-                                        SizedBox(
-                                          height: 40,
-                                        ),
-                                        Container(
-                                            margin: EdgeInsets.fromLTRB(
-                                                15.0, 5.0, 15.0, 10.0),
-                                            child: TextFormField(
-                                              maxLength: 50,
-                                              decoration: InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                labelText: "Title",
-                                              ),
-                                              autocorrect: true,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  currRequest1.title = value;
-                                                });
-                                              },
-                                              validator: (value) {
-                                                if (value == null ||
-                                                    value.isEmpty) {
-                                                  return 'Title should not be empty';
-                                                }
-                                                return null;
-                                              },
-                                            )),
-                                        Container(
-                                            margin: EdgeInsets.fromLTRB(
-                                                15.0, 5.0, 15.0, 10.0),
-                                            child: TextFormField(
-                                              decoration: InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                labelText: "Description",
-                                              ),
-                                              autocorrect: true,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  currRequest1.description =
-                                                      value;
-                                                });
-                                              },
-                                              validator: (value) {
-                                                if (value == null ||
-                                                    value.isEmpty) {
-                                                  return 'Description should not be empty';
-                                                }
-                                                return null;
-                                              },
-                                            )),
-                                        Container(
-                                            margin: EdgeInsets.fromLTRB(
-                                                15.0, 5.0, 15.0, 10.0),
-                                            child: TextFormField(
-                                              decoration: InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                labelText: "Admin Note",
-                                              ),
-                                              autocorrect: true,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  currRequest1.adminNote =
-                                                      value;
-                                                });
-                                              },
-                                              validator: (value) {
-                                                if (value == null ||
-                                                    value.isEmpty) {
-                                                  return 'Admin Note should not be empty';
-                                                }
-                                                return null;
-                                              },
-                                            )),
-                                        Container(
-                                            margin: EdgeInsets.fromLTRB(
-                                                15.0, 5.0, 15.0, 0.0),
-                                            child: Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  SizedBox(
-                                                    height: 20.0,
-                                                  ),
-                                                  DropdownSearch<Event>(
-                                                    mode: Mode.DIALOG,
-                                                    dropdownSearchDecoration: InputDecoration(
-                                                      labelText: "Event (Optional)",
-                                                      hintText: "Event (Optional)",
-                                                    ),
-                                                    maxHeight: 700,
-                                                    isFilteredOnline: true,
-                                                    showSearchBox: true,
-                                                    onChanged: onEventChange,
-                                                    onFind: bloc
-                                                        .achievementBloc
-                                                        .searchForEvent,
-                                                    dropdownBuilder:
-                                                    buildDropdownMenuItemsEvent,
-                                                    popupItemBuilder:
-                                                    _customPopupItemBuilderEvent,
-                                                    // popupSafeArea:
-                                                    // PopupSafeArea(
-                                                    //     top: true,
-                                                    //     bottom: true),
-                                                    scrollbarProps:
-                                                    ScrollbarProps(
-                                                      isAlwaysShown: true,
-                                                      thickness: 7,
-                                                    ),
-                                                    emptyBuilder:
-                                                        (BuildContext context,
-                                                        String? _) {
-                                                      return Container(
-                                                        alignment:
-                                                        Alignment.center,
-                                                        padding:
-                                                        EdgeInsets.all(
-                                                            20),
-                                                        child: Text(
-                                                          "No events found. Refine your search!",
-                                                          style: theme
-                                                              .textTheme
-                                                              .subtitle1,
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                                  SizedBox(
-                                                    height: this.selectedE
-                                                        ? 20.0
-                                                        : 0,
-                                                  ),
-                                                  _selectedEvent!=null
-                                                    ?VerifyCard(
-                                                      thing:
-                                                      this._selectedEvent!,
-                                                      selected:
-                                                      this.selectedE):SizedBox(),
-                                                ])),
-                                        Container(
-                                          // width: double.infinity,
-                                            margin: EdgeInsets.fromLTRB(
-                                                15.0, 0.0, 15.0, 10.0),
-                                            child: Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  SizedBox(
-                                                    height: 20.0,
-                                                  ),
-
-                                                  DropdownSearch<Body>(
-                                                    mode: Mode.DIALOG,
-                                                    maxHeight: 700,
-                                                    isFilteredOnline: true,
-                                                    showSearchBox: true,
-                                                    dropdownSearchDecoration: InputDecoration(
-                                                      labelText: "Verifying Authority",
-                                                      hintText: "Verifying Authority"
-                                                    ),
-                                                    validator: (value) {
-                                                      if (value == null) {
-                                                        return 'Please select a organization';
-                                                      }
-                                                      return null;
-                                                    },
-                                                    onChanged: onBodyChange,
-                                                    onFind: bloc
-                                                        .achievementBloc
-                                                        .searchForBody,
-                                                    dropdownBuilder:
-                                                    buildDropdownMenuItemsBody,
-                                                    popupItemBuilder:
-                                                    _customPopupItemBuilderBody,
-                                                    // popupSafeArea:
-                                                    // PopupSafeArea(
-                                                    //     top: true,
-                                                    //     bottom: true),
-                                                    scrollbarProps:
-                                                    ScrollbarProps(
-                                                      isAlwaysShown: true,
-                                                      thickness: 7,
-                                                    ),
-                                                    selectedItem:
-                                                    _selectedBody,
-                                                    emptyBuilder:
-                                                        (BuildContext context,
-                                                        String? _) {
-                                                      return Container(
-                                                        alignment:
-                                                        Alignment.center,
-                                                        padding:
-                                                        EdgeInsets.all(
-                                                            20),
-                                                        child: Text(
-                                                          "No verifying authorities found. Refine your search!",
-                                                          style: theme
-                                                              .textTheme
-                                                              .subtitle1,
-                                                          textAlign: TextAlign
-                                                              .center,
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                                  SizedBox(
-                                                    height: this.selectedB
-                                                        ? 20.0
-                                                        : 0,
-                                                  ),
-                                                  _selectedBody!=null?
-                                                  BodyCard(
-                                                      thing:
-                                                      this._selectedBody!,
-                                                      selected:
-                                                      this.selectedB):SizedBox(),
-                                                  //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
-                                                ])),
-                                        Container(
-                                          width: double.infinity,
-                                          margin: EdgeInsets.symmetric(
-                                              vertical: 10.0,
-                                              horizontal: 15.0),
-                                          child: TextButton(
-                                            onPressed: () async {
-                                              if (_formKey1.currentState!
-                                                  .validate()) {
-                                                currRequest1.isSkill=false;
-                                                var resp =
-                                                await achievementsBloc
-                                                    .postForm(
-                                                    currRequest1);
-                                                if (resp!.result ==
-                                                    "success") {
-                                                  Navigator.of(context)
-                                                      .pushNamed(
-                                                      "/achievements");
-                                                } else {
-                                                  ScaffoldMessenger.of(
-                                                      context)
-                                                      .showSnackBar(SnackBar(
-                                                    content:
-                                                    new Text('Error'),
-                                                    duration: new Duration(
-                                                        seconds: 10),
-                                                  ));
-                                                }
-                                              }
-
-                                              //log(currRequest.description);
-                                            },
-                                            child:
-                                            Text('Request Verification'),
-                                            style: TextButton.styleFrom(
-                                                primary: Colors.black,
-                                                backgroundColor: Colors.amber,
-                                                onSurface: Colors.grey,
-                                                elevation: 5.0),
-                                          ),
-                                        ),
-                                      ]),
-                                ),
-                              ),
-                            ),
-                          ),
-                          "Skills":RefreshIndicator(
-                            onRefresh: () => bloc.updateEvents(),
-                            child: Padding(
-                              padding: const EdgeInsets.all(7.0),
-                              child: SingleChildScrollView(
-                                child: Form(
-                                  key: _formKey2,
-                                  child: Column(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          // width: double.infinity,
-                                            margin: EdgeInsets.fromLTRB(
-                                                15.0, 0.0, 15.0, 10.0),
-                                            child: Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  SizedBox(
-                                                    height: 20.0,
-                                                  ),
-
-                                                  DropdownSearch<Skill>(
-                                                    mode: Mode.DIALOG,
-                                                    maxHeight: 700,
-                                                    isFilteredOnline: true,
-                                                    showSearchBox: true,
-                                                    dropdownSearchDecoration: InputDecoration(
-                                                      labelText: "Title",
-                                                      hintText: "Titile"
-                                                    ),
-                                                    validator: (value) {
-                                                      if (value == null) {
-                                                        return 'Please select a Skill';
-                                                      }
-                                                      return null;
-                                                    },
-                                                    onChanged: onSkillChange,
-                                                    onFind: bloc
-                                                        .achievementBloc
-                                                        .searchForSkill,
-                                                    dropdownBuilder:
-                                                    buildDropdownMenuItemsSkill,
-                                                    popupItemBuilder:
-                                                    _customPopupItemBuilderSkill,
-                                                    // popupSafeArea:
-                                                    // PopupSafeArea(
-                                                    //     top: true,
-                                                    //     bottom: true),
-                                                    scrollbarProps:
-                                                    ScrollbarProps(
-                                                      isAlwaysShown: true,
-                                                      thickness: 7,
-                                                    ),
-                                                    selectedItem:
-                                                    _selectedSkill,
-                                                    emptyBuilder:
-                                                        (BuildContext context,
-                                                        String? _) {
-                                                      return Container(
-                                                        alignment:
-                                                        Alignment.center,
-                                                        padding:
-                                                        EdgeInsets.all(
-                                                            20),
-                                                        child: Text(
-                                                          "No skills found. Refine your search!",
-                                                          style: theme
-                                                              .textTheme
-                                                              .subtitle1,
-                                                          textAlign: TextAlign
-                                                              .center,
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                                  SizedBox(
-                                                    height: this.selectedB
-                                                        ? 20.0
-                                                        : 0,
-                                                  ),
-                                                  _selectedSkill?.body!=null?
-                                                  BodyCard(
-                                                      thing:
-                                                      this._selectedSkill?.body,
-                                                      selected:
-                                                      this.selectedS):SizedBox(),
-                                                  //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
-                                                ])),
-                                        Container(
-                                          width: double.infinity,
-                                          margin: EdgeInsets.symmetric(
-                                              vertical: 10.0,
-                                              horizontal: 15.0),
-                                          child: TextButton(
-                                            onPressed: () async {
-                                              if (_formKey2.currentState!
-                                                  .validate()) {
-                                                currRequest2.isSkill=true;
-                                                // print(currRequest2.title);
-                                                var resp =
-                                                await achievementsBloc
-                                                    .postForm(
-                                                    currRequest2);
-                                                if (resp?.result ==
-                                                    "success") {
-                                                  Navigator.of(context)
-                                                      .pushNamed(
-                                                      "/achievements");
-                                                } else {
-                                                  ScaffoldMessenger.of(
-                                                      context)
-                                                      .showSnackBar(SnackBar(
-                                                    content:
-                                                    new Text('Error'),
-                                                    duration: new Duration(
-                                                        seconds: 10),
-                                                  ));
-                                                }
-                                              }
-
-                                              //log(currRequest.description);
-                                            },
-                                            child:
-                                            Text('Request Verification'),
-                                            style: TextButton.styleFrom(
-                                                primary: Colors.black,
-                                                backgroundColor: Colors.amber,
-                                                onSurface: Colors.grey,
-                                                elevation: 5.0),
-                                          ),
-                                        ),
-                                      ]),
-                                ),
-                              ),
-                            ),
-                          ),
-                        };
-                        return delegates[name]!;
-                        // return CustomScrollView(
-                        //   // The "controller" and "primary" members should be left
-                        //   // unset, so that the NestedScrollView can control this
-                        //   // inner scroll view.
-                        //   // If the "controller" property is set, then this scroll
-                        //   // view will not be associated with the NestedScrollView.
-                        //   // The PageStorageKey should be unique to this ScrollView;
-                        //   // it allows the list to remember its scroll position when
-                        //   // the tab view is not on the screen.
-                        //   key: PageStorageKey<String>(name),
-                        //   slivers: <Widget>[
-                        //     // SliverOverlapInjector(
-                        //     //   // This is the flip side of the SliverOverlapAbsorber above.
-                        //     //   handle: NestedScrollView
-                        //     //       .sliverOverlapAbsorberHandleFor(context),
-                        //     // ),
-                        //     SliverPadding(
-                        //       padding: const EdgeInsets.all(8.0),
-                        //       // In this example, the inner scroll view has
-                        //       // fixed-height list items, hence the use of
-                        //       // SliverFixedExtentList. However, one could use any
-                        //       // sliver widget here, e.g. SliverList or SliverGrid.
-                        //       sliver: delegates[name].childCount == 0
-                        //           ? SliverToBoxAdapter(
-                        //               child: Center(
-                        //                 child: Padding(
-                        //                   padding: const EdgeInsets.all(8.0),
-                        //                   child: Text(
-                        //                     "No $name",
-                        //                   ),
-                        //                 ),
-                        //               ),
-                        //             )
-                        //           : SliverList(
-                        //               delegate: delegates[name],
-                        //             ),
-                        //     ),
-                        //   ],
-                        // );
-                      },
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
           ),
           // body: SafeArea(
           //     child: bloc.currSession == null
@@ -1074,16 +1117,16 @@ class BodyCardState extends State<BodyCard> {
     if (widget.selected) {
       return ListTile(
         title: Text(
-          widget.thing?.bodyName??"",
+          widget.thing?.bodyName ?? "",
           style: theme.textTheme.headline6,
         ),
         enabled: true,
         leading: NullableCircleAvatar(
-          widget.thing?.bodyImageURL??widget.thing?.bodyImageURL??"",
+          widget.thing?.bodyImageURL ?? widget.thing?.bodyImageURL ?? "",
           Icons.event_outlined,
           heroTag: widget.thing?.bodyID,
         ),
-        subtitle: Text(widget.thing?.bodyShortDescription??""),
+        subtitle: Text(widget.thing?.bodyShortDescription ?? ""),
       );
     } else {
       return SizedBox(height: 10);
@@ -1129,7 +1172,7 @@ class _QRViewExampleState extends State<QRViewExample> {
 
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
-        MediaQuery.of(context).size.height < 400)
+            MediaQuery.of(context).size.height < 400)
         ? 250.0
         : 300.0;
 
@@ -1144,27 +1187,27 @@ class _QRViewExampleState extends State<QRViewExample> {
           bool? addToCal = await showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                title: Text("Invalid Achievement Code"),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text("Scan Again"),
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                      controller.resumeCamera();
-                      processing = false;
-                    },
-                  ),
-                  TextButton(
-                    child: Text("Return"),
-                    onPressed: () {
-                      controller.dispose();
-                      processing = false;
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ));
+                    title: Text("Invalid Achievement Code"),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text("Scan Again"),
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                          controller.resumeCamera();
+                          processing = false;
+                        },
+                      ),
+                      TextButton(
+                        child: Text("Return"),
+                        onPressed: () {
+                          controller.dispose();
+                          processing = false;
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ));
           if (addToCal == null) {
             return;
           }
@@ -1173,10 +1216,10 @@ class _QRViewExampleState extends State<QRViewExample> {
         else {
           var achievements = bloc?.achievementBloc;
           SecretResponse? offer =
-          await achievements?.postAchievementOffer(offerid, secret);
-          log(offer?.message??"");
+              await achievements?.postAchievementOffer(offerid, secret);
+          log(offer?.message ?? "");
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(offer?.message??"")),
+            SnackBar(content: Text(offer?.message ?? "")),
           );
           controller.dispose();
           processing = false;
@@ -1187,27 +1230,27 @@ class _QRViewExampleState extends State<QRViewExample> {
         bool? addToCal = await showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: Text("Invalid Qr Code"),
-              actions: <Widget>[
-                TextButton(
-                  child: Text("Scan Again"),
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                    controller.resumeCamera();
-                    processing = false;
-                  },
-                ),
-                TextButton(
-                  child: Text("Return"),
-                  onPressed: () {
-                    controller.dispose();
-                    processing = false;
-                    Navigator.of(context).pop(true);
-                    Navigator.of(context).pop(true);
-                  },
-                ),
-              ],
-            ));
+                  title: Text("Invalid Qr Code"),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text("Scan Again"),
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                        controller.resumeCamera();
+                        processing = false;
+                      },
+                    ),
+                    TextButton(
+                      child: Text("Return"),
+                      onPressed: () {
+                        controller.dispose();
+                        processing = false;
+                        Navigator.of(context).pop(true);
+                        Navigator.of(context).pop(true);
+                      },
+                    ),
+                  ],
+                ));
         if (addToCal == null) {
           return;
         }

@@ -299,7 +299,7 @@ class _AchListItemState extends State<AchListItem> {
                 toggleSwitch(value);
                 bloc.updateHiddenAchievement(widget.achievement, value);
               },
-              activeColor: Colors.yellow,
+              activeColor: Color(0xFFFFEB3B),
               activeTrackColor: Colors.yellow[200],
               inactiveThumbColor: Colors.grey[600],
               inactiveTrackColor: Colors.grey[400],
