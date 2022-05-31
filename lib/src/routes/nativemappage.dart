@@ -20,7 +20,7 @@ class _NativeMapPageState extends State<NativeMapPage> {
   PhotoViewControllerBase<PhotoViewControllerValue> controller =
       PhotoViewController();
 
-  StreamSubscription<List<PhotoViewControllerValue>> scaleSubscription;
+  StreamSubscription<List<PhotoViewControllerValue>>? scaleSubscription;
 
   bool firstBuild = true;
 
@@ -33,28 +33,28 @@ class _NativeMapPageState extends State<NativeMapPage> {
         .bufferTime(Duration(milliseconds: 800))
         .listen((List<PhotoViewControllerValue> values) {
       if (values.isNotEmpty) {
-        print(values.last.scale);
+        // print(values.last.scale);
         if (mounted) {
           setState(() {
-            markerScale = values.last.scale;
+            markerScale = values.last.scale ?? 0.069;
           });
         } else {
-          markerScale = values.last.scale;
+          markerScale = values.last.scale ?? 0.069;
         }
       }
-      print("Called");
+      // print("Called");
     });
   }
 
   @override
   void dispose() {
-    scaleSubscription.cancel();
+    scaleSubscription?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     var theme = Theme.of(context);
     var mapBloc = bloc.mapBloc;
 
@@ -76,7 +76,7 @@ class _NativeMapPageState extends State<NativeMapPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -91,7 +91,7 @@ class _NativeMapPageState extends State<NativeMapPage> {
                   AsyncSnapshot<UnmodifiableListView<Venue>> snapshot) {
                 if (snapshot.hasData && snapshot.data != null) {
                   return Stack(
-                    children: snapshot.data
+                    children: snapshot.data!
                         .map((v) => _buildMarker(bloc, theme, v))
                         .toList(),
                   );
@@ -115,8 +115,8 @@ class _NativeMapPageState extends State<NativeMapPage> {
 
   Widget _buildMarker(InstiAppBloc bloc, ThemeData theme, Venue v) {
     return Positioned(
-        left: v.venuePixelX.toDouble(),
-        top: v.venuePixelY.toDouble(),
+        left: v.venuePixelX?.toDouble(),
+        top: v.venuePixelY?.toDouble(),
         child: Column(
           children: <Widget>[
             Container(
@@ -125,8 +125,8 @@ class _NativeMapPageState extends State<NativeMapPage> {
                 color: theme.canvasColor,
               ),
               child: Text(
-                v.venueName,
-                style: theme.textTheme.display1,
+                v.venueName ?? "",
+                style: theme.textTheme.headline4,
               ),
             ),
             Container(
@@ -137,7 +137,7 @@ class _NativeMapPageState extends State<NativeMapPage> {
               child: IconButton(
                 iconSize: 96,
                 onPressed: () {
-                  print(v.venueName);
+                  // print(v.venueName);
                 },
                 icon: Icon(
                   Icons.location_on_outlined,

@@ -8,13 +8,32 @@ import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+// import 'package:flutter/rendering.dart';
 
 class ExplorePage extends StatefulWidget {
   final String title = "Explore";
+  final bool searchMode;
+  final bool fromNavigate;
+
+  ExplorePage({this.searchMode = false, this.fromNavigate = false});
 
   @override
   _ExplorePageState createState() => _ExplorePageState();
+
+  static void navigateWith(BuildContext context, bool searchMode) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        settings: RouteSettings(
+          name: "/explore?searchMode=${searchMode ? "true" : "false"}",
+        ),
+        builder: (context) => ExplorePage(
+          searchMode: searchMode,
+          fromNavigate: true,
+        ),
+      ),
+    );
+  }
 }
 
 class _ExplorePageState extends State<ExplorePage> {
@@ -23,8 +42,8 @@ class _ExplorePageState extends State<ExplorePage> {
       GlobalKey<RefreshIndicatorState>();
 
   FocusNode _focusNode = FocusNode();
-  ScrollController _hideButtonController;
-  TextEditingController _searchFieldController;
+  ScrollController? _hideButtonController;
+  TextEditingController? _searchFieldController;
   double isFabVisible = 0;
 
   bool searchMode = false;
@@ -35,14 +54,15 @@ class _ExplorePageState extends State<ExplorePage> {
   @override
   void initState() {
     super.initState();
+
     _searchFieldController = TextEditingController();
     _hideButtonController = ScrollController();
-    _hideButtonController.addListener(() {
-      if (isFabVisible == 1 && _hideButtonController.offset < 100) {
+    _hideButtonController!.addListener(() {
+      if (isFabVisible == 1 && _hideButtonController!.offset < 100) {
         setState(() {
           isFabVisible = 0;
         });
-      } else if (isFabVisible == 0 && _hideButtonController.offset > 100) {
+      } else if (isFabVisible == 0 && _hideButtonController!.offset > 100) {
         setState(() {
           isFabVisible = 1;
         });
@@ -52,19 +72,23 @@ class _ExplorePageState extends State<ExplorePage> {
 
   @override
   void dispose() {
-    _searchFieldController.dispose();
-    _hideButtonController.dispose();
+    _searchFieldController?.dispose();
+    _hideButtonController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     var exploreBloc = bloc.exploreBloc;
     if (firstBuild) {
       exploreBloc.query = "";
       exploreBloc.refresh();
+      searchMode = widget.searchMode;
+      if (widget.fromNavigate) {
+        bloc.drawerState.setPageIndex(2);
+      }
       firstBuild = false;
     }
 
@@ -85,7 +109,7 @@ class _ExplorePageState extends State<ExplorePage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -111,7 +135,7 @@ class _ExplorePageState extends State<ExplorePage> {
                     Expanded(
                       child: Text(
                         widget.title,
-                        style: theme.textTheme.display2,
+                        style: theme.textTheme.headline3,
                       ),
                     ),
                     AnimatedContainer(
@@ -155,22 +179,20 @@ class _ExplorePageState extends State<ExplorePage> {
                       duration: Duration(milliseconds: 500),
                       child: TextField(
                         controller: _searchFieldController,
-                        cursorColor: theme.textTheme.body1.color,
-                        style: theme.textTheme.body1,
+                        cursorColor: theme.textTheme.bodyText2?.color,
+                        style: theme.textTheme.bodyText2,
                         focusNode: _focusNode,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30)),
-                          labelStyle: theme.textTheme.body1,
-                          hintStyle: theme.textTheme.body1,
+                          labelStyle: theme.textTheme.bodyText2,
+                          hintStyle: theme.textTheme.bodyText2,
                           prefixIcon: Icon(
                             Icons.search_outlined,
                           ),
                           suffixIcon: IconButton(
                             tooltip: "Search events, bodies, users...",
-                            icon: Icon(
-                              actionIcon,
-                            ),
+                            icon: Icon(Icons.close_outlined),
                             onPressed: () {
                               setState(() {
                                 actionIcon = Icons.search_outlined;
@@ -192,6 +214,7 @@ class _ExplorePageState extends State<ExplorePage> {
                           exploreBloc.query = query;
                           await exploreBloc.refresh();
                         },
+                        autofocus: true,
                       ),
                     ),
                   ),
@@ -217,7 +240,7 @@ class _ExplorePageState extends State<ExplorePage> {
           : FloatingActionButton(
               tooltip: "Go to the Top",
               onPressed: () {
-                _hideButtonController.animateTo(0.0,
+                _hideButtonController!.animateTo(0.0,
                     curve: Curves.fastOutSlowIn,
                     duration: const Duration(milliseconds: 600));
               },
@@ -229,14 +252,17 @@ class _ExplorePageState extends State<ExplorePage> {
   List<Widget> _buildContent(AsyncSnapshot<ExploreResponse> snapshot,
       ThemeData theme, ExploreBloc exploreBloc) {
     if (snapshot.hasData) {
-      var bodies = snapshot.data.bodies;
-      var events = snapshot.data.events;
-      var users = snapshot.data.users;
-      if (bodies.isEmpty && events.isEmpty && users.isEmpty) {
+      var bodies = snapshot.data!.bodies;
+      var events = snapshot.data!.events;
+      var users = snapshot.data!.users;
+      if (bodies?.isEmpty == true &&
+          events?.isEmpty == true &&
+          users?.isEmpty == true) {
         return [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-            child: Text.rich(TextSpan(style: theme.textTheme.title, children: [
+            child:
+                Text.rich(TextSpan(style: theme.textTheme.headline6, children: [
               TextSpan(text: "Nothing found for the query "),
               TextSpan(
                   text: "\"${exploreBloc.query}\"",
@@ -248,38 +274,38 @@ class _ExplorePageState extends State<ExplorePage> {
       }
       return (bodies
                   ?.map((b) => _buildListTile(
-                      b.bodyID,
-                      b.bodyName,
-                      b.bodyShortDescription,
-                      b.bodyImageURL,
+                      b.bodyID ?? "",
+                      b.bodyName ?? "",
+                      b.bodyShortDescription ?? "",
+                      b.bodyImageURL ?? "",
                       Icons.people_outline_outlined,
                       () => BodyPage.navigateWith(context, exploreBloc.bloc,
                           body: b),
                       theme))
-                  ?.toList() ??
+                  .toList() ??
               []) +
           (events
                   ?.map((e) => _buildListTile(
-                      e.eventID,
-                      e.eventName,
+                      e.eventID ?? "",
+                      e.eventName ?? "",
                       e.getSubTitle(),
-                      e.eventImageURL ?? e.eventBodies[0]?.bodyImageURL,
+                      e.eventImageURL ?? e.eventBodies?[0].bodyImageURL ?? "",
                       Icons.event_outlined,
                       () =>
                           EventPage.navigateWith(context, exploreBloc.bloc, e),
                       theme))
-                  ?.toList() ??
+                  .toList() ??
               []) +
           (users
                   ?.map((u) => _buildListTile(
-                      u.userID,
-                      u.userName,
-                      u.userLDAPId,
-                      u.userProfilePictureUrl,
+                      u.userID ?? "",
+                      u.userName ?? "",
+                      u.userLDAPId ?? "",
+                      u.userProfilePictureUrl ?? "",
                       Icons.person_outline_outlined,
                       () => UserPage.navigateWith(context, exploreBloc.bloc, u),
                       theme))
-                  ?.toList() ??
+                  .toList() ??
               []);
     } else {
       return [
@@ -301,7 +327,7 @@ class _ExplorePageState extends State<ExplorePage> {
       ),
       title: Text(
         title,
-        style: theme.textTheme.title,
+        style: theme.textTheme.headline6,
       ),
       subtitle: Text(subtitle),
       onTap: onClick,

@@ -6,19 +6,24 @@ import 'package:url_launcher/url_launcher.dart';
 
 class QuickLinksPage extends StatefulWidget {
   final links = {
-    "CMS": {
-      "CMS": "https://gymkhana.iitb.ac.in/cms_new/",
-      "CMS - Maintenance": "https://support.iitb.ac.in",
-      "CMS - Network": "https://help-cc.iitb.ac.in/",
-      "Insti Eateries Feedback":
-          "https://gymkhana.iitb.ac.in/feedback/eateries/",
+    // "CMS": {
+    //   "CMS": "https://gymkhana.iitb.ac.in/cms_new/",
+    //   "CMS - Maintenance": "https://support.iitb.ac.in",
+    //   "CMS - Network": "https://help-cc.iitb.ac.in/",
+    //   "Insti Eateries Feedback":
+    //       "https://gymkhana.iitb.ac.in/feedback/eateries/",
+    // },
+    "DevCom":{
+      "Leave Portal": "https://gymkhana.iitb.ac.in/lap",
+      "Resume Portal": "https://resume.devcom-iitb.org/",
+      "AMS": "https://ams.iitb.ac.in/",
     },
     "Academics": {
       "ASC": "https://asc.iitb.ac.in",
       "External ASC": "https://portal.iitb.ac.in/asc",
       "Moodle": "https://moodle.iitb.ac.in",
-      "Placement Blog": "http://placements.iitb.ac.in/placements/login.jsp",
-      "Internship Blog": "http://placements.iitb.ac.in/internship/login.jsp",
+      "Placement Blog": "https://campus.placements.iitb.ac.in/blog/placement",
+      "Internship Blog": "https://campus.placements.iitb.ac.in/blog/internship",
       "Central Library": "http://www.library.iitb.ac.in/",
     },
     "Calendar": {
@@ -31,8 +36,8 @@ class QuickLinksPage extends StatefulWidget {
       "Course List": "https://portal.iitb.ac.in/asc/Courses",
     },
     "Services": {
-      "WebMail": "https://webmail.iitb.ac.in",
-      "GPO": "https://gpo.iitb.ac.in",
+      "WebMail": "https://webmail-sso.iitb.ac.in/",
+      // "GPO": "https://gpo.iitb.ac.in",
       "CAMP": "https://camp.iitb.ac.in/",
       "Microsoft Store": "http://msstore.iitb.ac.in/",
       "BigHome Cloud": "https://home.iitb.ac.in/",
@@ -71,7 +76,7 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -83,7 +88,7 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
           TitleWithBackButton(
             child: Text(
               "Quick Links",
-              style: theme.textTheme.display2,
+              style: theme.textTheme.headline3,
             ),
           ),
           Divider(),
