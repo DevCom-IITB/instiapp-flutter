@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <!-- Show a splash screen on the activity. Automatically removed when
              Flutter draws its first frame -->
@@ -8,5 +9,15 @@
 
     <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:windowBackground">@android:color/black</item>
+    </style>
+
+    <style name="Widget.Android.AppWidget.Container" parent="android:Widget">
+        <item name="android:id">@android:id/background</item>
+        <item name="android:background">?android:attr/colorBackground</item>
+    </style>
+
+    <style name="Widget.Android.AppWidget.InnerView" parent="android:Widget">
+        <item name="android:background">?android:attr/colorBackground</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 </resources>

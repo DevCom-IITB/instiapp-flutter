@@ -1,4 +1,3 @@
-import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
@@ -10,6 +9,12 @@ class AboutPage extends StatefulWidget {
 
   final Map<String, Map<String, Map<String, String>>> sectionToNameToImageUrl =
       {
+    "Maintainer": {
+      "Rishabh Arya": {
+        "img":
+            "https://raw.githubusercontent.com/wncc/devcomiitb.github.io/master/images/avatars/rishabh.jpg",
+      },
+    },
     "Core Developers": {
       "Varun Patil": {
         "img": "https://insti.app/team-pics/varun.jpg",
@@ -19,6 +24,10 @@ class AboutPage extends StatefulWidget {
       },
       "Harshith Goka": {
         "img": "https://insti.app/team-pics/harshith.jpg",
+      },
+      "Abeen": {
+        "img":
+            "https://raw.githubusercontent.com/wncc/devcomiitb.github.io/master/images/avatars/abeen.jpg",
       },
     },
     "Developers": {
@@ -42,6 +51,22 @@ class AboutPage extends StatefulWidget {
       },
       "Maitreya Verma": {
         "img": "https://insti.app/team-pics/maitreya.jpg",
+      },
+      "E Aakash": {
+        "img":
+            "https://raw.githubusercontent.com/wncc/devcomiitb.github.io/master/images/avatars/e%20aakash.jpg",
+      },
+      "Dev Desai": {
+        "img":
+            "https://raw.githubusercontent.com/wncc/devcomiitb.github.io/master/images/avatars/DevDesai.jpg",
+      },
+      "Ashwin Ramachandran": {
+        "img":
+            "https://raw.githubusercontent.com/wncc/devcomiitb.github.io/master/images/avatars/Ashwin%20Ram.jpg",
+      },
+      "Palash Mittal": {
+        "img":
+            "https://raw.githubusercontent.com/wncc/devcomiitb.github.io/master/images/avatars/Palash%20Mittal.jpg",
       },
     },
     "Design": {
@@ -115,7 +140,6 @@ class _AboutPageState extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -132,7 +156,7 @@ class _AboutPageState extends State<AboutPage> {
                 semanticLabel: "Show Navigation Drawer",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState!.openDrawer();
               },
             ),
           ],
@@ -144,7 +168,7 @@ class _AboutPageState extends State<AboutPage> {
             TitleWithBackButton(
               child: Text(
                 widget.title,
-                style: theme.textTheme.display2,
+                style: theme.textTheme.headline3,
               ),
             ),
           ]..addAll(_buildContent(theme, widget.sectionToNameToImageUrl)),
@@ -160,7 +184,7 @@ class _AboutPageState extends State<AboutPage> {
         Center(
           child: Text(
             entry.key,
-            style: theme.textTheme.display1,
+            style: theme.textTheme.headline4,
           ),
         ),
         Padding(
@@ -179,8 +203,8 @@ class _AboutPageState extends State<AboutPage> {
                       child: InkWell(
                         onTap: nameEntry.value.containsKey("url")
                             ? () async {
-                                if (await canLaunch(nameEntry.value["url"])) {
-                                  await launch(nameEntry.value["url"]);
+                                if (await canLaunch(nameEntry.value["url"]!)) {
+                                  await launch(nameEntry.value["url"]!);
                                 }
                               }
                             : null,
@@ -190,7 +214,7 @@ class _AboutPageState extends State<AboutPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             NullableCircleAvatar(
-                              nameEntry.value["img"],
+                              nameEntry.value["img"] ?? "",
                               Icons.person_outline_outlined,
                               radius: 48,
                               backgroundColor: Colors.transparent,

@@ -1,221 +1,299 @@
 import 'dart:async';
 
+import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/messCalEvent.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
+import 'package:InstiApp/src/api/request/ach_verify_request.dart';
+import 'package:InstiApp/src/api/request/achievement_create_request.dart';
+import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
 import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
 import 'package:InstiApp/src/api/request/image_upload_request.dart';
+import 'package:InstiApp/src/api/request/postFAQ_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
+import 'package:InstiApp/src/api/response/achievement_create_response.dart';
+import 'package:InstiApp/src/api/response/alumni_login_response.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
+import 'package:InstiApp/src/api/response/getencr_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/api/response/news_feed_response.dart';
-import 'package:flutter/foundation.dart';
-import 'package:http/io_client.dart';
-// import 'package:http/browser_client.dart';
+import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
 import 'package:InstiApp/src/api/model/post.dart';
 import 'package:InstiApp/src/api/model/user.dart';
-import 'package:jaguar_resty/jaguar_resty.dart';
-import 'package:jaguar_resty/jaguar_resty.dart' as resty;
-import 'package:jaguar_retrofit/jaguar_retrofit.dart';
-import 'package:jaguar_serializer/jaguar_serializer.dart';
-import 'package:InstiApp/src/api/model/serializers.dart';
+import 'package:retrofit/retrofit.dart' as rt;
+import 'package:dio/dio.dart';
+import 'model/offersecret.dart';
 
-part 'apiclient.jretro.dart';
+part 'apiclient.g.dart';
 
-@GenApiClient()
-class InstiAppApi extends ApiClient with _$InstiAppApiClient {
-  // static String endpoint = "http://10.4.66.222:8000/api";
-  static String endpoint = "https://api.insti.app/api";
-  final resty.Route base = Route(endpoint);
-  // final JsonRepo jsonConverter = standardSerializers;
-  // final SerializerRepo serializers = standardSerializers;
+@rt.RestApi(baseUrl: "https://api.insti.app/api")
+abstract class InstiAppApi {
+  factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
-  static InstiAppApi _instance = InstiAppApi.internal();
-  InstiAppApi.internal() {
-    // if (kIsWeb) {
-    //   globalClient = BrowserClient();
-    // } else {
-    globalClient = IOClient();
-    // }
-    jsonConverter = standardSerializers;
-  }
-  factory InstiAppApi() => _instance;
-
-  @GetReq(path: "/mess")
+  @rt.GET("/mess")
   Future<List<Hostel>> getHostelMess();
 
-  @GetReq(path: "/pass-login")
-  Future<Session> passwordLogin(@QueryParam("username") String username,
-      @QueryParam("password") String password);
+  @rt.GET("/pass-login")
+  Future<Session> passwordLogin(@rt.Query("username") String username,
+      @rt.Query("password") String password);
 
-  @GetReq(path: "/pass-login")
-  Future<Session> passwordLoginFcm(
-      @QueryParam("username") String username,
-      @QueryParam("password") String password,
-      @QueryParam("fcm_id") String fcmId);
+  @rt.GET("/pass-login")
+  Future<Session> passwordLoginFcm(@rt.Query("username") String username,
+      @rt.Query("password") String password, @rt.Query("fcm_id") String fcmId);
 
-  @GetReq(path: "/login")
-  Future<Session> login(@QueryParam() String code, @QueryParam() String redir);
+  @rt.GET("/login")
+  Future<Session> login(
+      @rt.Query('code') String code, @rt.Query('redir') String redir);
+  @rt.GET("/alumniLogin")
+  Future<AlumniLoginResponse> AlumniLogin(
+    @rt.Query("ldap") String ldap,
+  );
 
-  @GetReq(path: "/placement-blog")
+  @rt.GET("/alumniOTP")
+  Future<AlumniLoginResponse> AlumniOTP(
+    @rt.Query("ldap") String ldap,
+    @rt.Query("otp") String otp,
+  );
+
+  @rt.GET("/resendAlumniOTP")
+  Future<AlumniLoginResponse> ResendAlumniOTP(
+    @rt.Query("ldap") String ldap,
+  );
+
+  @rt.GET("/placement-blog")
   Future<List<PlacementBlogPost>> getPlacementBlogFeed(
-      @Header("Cookie") String sessionId,
-      @QueryParam("from") int from,
-      @QueryParam("num") int number,
-      @QueryParam("query") String query);
+      @rt.Header("Cookie") String sessionId,
+      @rt.Query("from") int from,
+      @rt.Query("num") int number,
+      @rt.Query("query") String query);
 
-  @GetReq(path: "/training-blog")
+  @rt.GET("/external-blog")
+  Future<List<ExternalBlogPost>> getExternalBlogFeed(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Query("from") int from,
+      @rt.Query("num") int number,
+      @rt.Query("query") String query);
+
+  @rt.GET("/training-blog")
   Future<List<TrainingBlogPost>> getTrainingBlogFeed(
-      @Header("Cookie") String sessionID,
-      @QueryParam("from") int from,
-      @QueryParam("num") int num,
-      @QueryParam("query") String query);
+      @rt.Header("Cookie") String sessionID,
+      @rt.Query("from") int from,
+      @rt.Query("num") int num,
+      @rt.Query("query") String query);
 
   // Events
-  @GetReq(path: "/events/:uuid")
+  @rt.GET("/events/{uuid}")
   Future<Event> getEvent(
-      @Header("Cookie") String sessionId, @PathParam() String uuid);
+      @rt.Header("Cookie") String sessionId, @rt.Path() String uuid);
 
-  @GetReq(path: "/events")
-  Future<NewsFeedResponse> getNewsFeed(@Header("Cookie") String sessionId);
+  @rt.GET("/events")
+  Future<NewsFeedResponse> getNewsFeed(@rt.Header("Cookie") String sessionId);
 
-  @GetReq(path: "/events")
+  @rt.GET("/events")
   Future<NewsFeedResponse> getEventsBetweenDates(
-      @Header("Cookie") String sessionId,
-      @QueryParam("start") String start,
-      @QueryParam("end") String end);
+      @rt.Header("Cookie") String sessionId,
+      @rt.Query("start") String start,
+      @rt.Query("end") String end);
 
-  @PostReq(path: "/events")
-  Future<EventCreateResponse> createEvent(@Header("Cookie") String sessionId,
-      @AsJson() EventCreateRequest eventCreateRequest);
+  @rt.GET("/getUserMess")
+  Future<List<MessCalEvent>> getMessEventsBetweenDates(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Query("start") String start,
+      @rt.Query("end") String end);
+
+  @rt.GET("/getEncr")
+  Future<GetEncrResponse> getEncr(@rt.Header("Cookie") String sessionId);
+
+  @rt.POST("/events")
+  Future<EventCreateResponse> createEvent(@rt.Header("Cookie") String sessionId,
+      @rt.Body() EventCreateRequest eventCreateRequest);
 
   // Venues
-  @GetReq(path: "/locations")
+  @rt.GET("/locations")
   Future<List<Venue>> getAllVenues();
 
-  @GetReq(path: "/locations/:id")
-  Future<List<Venue>> getVenue(@QueryParam("id") String id);
+  @rt.GET("/locations/{id}")
+  Future<List<Venue>> getVenue(@rt.Path() String id);
 
   // Users
-  @GetReq(path: "/users/:uuid")
+  @rt.GET("/users/{uuid}")
   Future<User> getUser(
-      @Header("Cookie") String sessionId, @PathParam() String uuid);
+      @rt.Header("Cookie") String sessionId, @rt.Path() String uuid);
 
   // Bodies
-  @GetReq(path: "/bodies/:uuid")
+  @rt.GET("/bodies/{uuid}")
   Future<Body> getBody(
-      @Header("Cookie") String sessionId, @PathParam() String uuid);
+      @rt.Header("Cookie") String sessionId, @rt.Path() String uuid);
 
-  @GetReq(path: "/bodies")
-  Future<List<Body>> getAllBodies(@Header("Cookie") String sessionId);
+  @rt.GET("/bodies")
+  Future<List<Body>> getAllBodies(@rt.Header("Cookie") String sessionId);
 
-  @GetReq(path: "/bodies/:bodyID/follow")
-  Future<void> updateBodyFollowing(@Header("Cookie") String sessionID,
-      @PathParam("bodyID") String eventID, @QueryParam("action") int action);
+  @rt.GET("/bodies/{bodyID}/follow")
+  Future<void> updateBodyFollowing(@rt.Header("Cookie") String sessionID,
+      @rt.Path("bodyID") String eventID, @rt.Query("action") int action);
 
   // Image upload
-  @PostReq(path: "/upload")
-  Future<ImageUploadResponse> uploadImage(@Header("Cookie") String sessionID,
-      @AsJson() ImageUploadRequest imageUploadRequest);
+  @rt.POST("/upload")
+  Future<ImageUploadResponse> uploadImage(@rt.Header("Cookie") String sessionID,
+      @rt.Body() ImageUploadRequest imageUploadRequest);
 
   // My data
-  @GetReq(path: "/user-me")
-  Future<User> getUserMe(@Header("Cookie") String sessionID);
+  @rt.GET("/user-me")
+  Future<User> getUserMe(@rt.Header("Cookie") String sessionID);
 
-  @GetReq(path: "/user-me/ues/:eventID")
-  Future<void> updateUserEventStatus(@Header("Cookie") String sessionID,
-      @PathParam() String eventID, @QueryParam("status") int status);
+  @rt.GET("/user-me/ues/{eventID}")
+  Future<void> updateUserEventStatus(@rt.Header("Cookie") String sessionID,
+      @rt.Path() String eventID, @rt.Query("status") int status);
 
-  @GetReq(
-    path: "/user-me/unr/:postID",
-  )
-  Future<void> updateUserNewsReaction(@Header("Cookie") String sessionID,
-      @PathParam() String postID, @QueryParam("reaction") int reaction);
+  @rt.GET("/user-me/unr/{postID}")
+  Future<void> updateUserNewsReaction(@rt.Header("Cookie") String sessionID,
+      @rt.Path() String postID, @rt.Query("reaction") int reaction);
 
-  @PatchReq(path: "/user-me")
-  Future<User> patchFCMUserMe(@Header("Cookie") String sessionID,
-      @AsJson() UserFCMPatchRequest userFCMPatchRequest);
+  @rt.PATCH("/user-me")
+  Future<User> patchFCMUserMe(@rt.Header("Cookie") String sessionID,
+      @rt.Body() UserFCMPatchRequest userFCMPatchRequest);
 
-  @PatchReq(path: "/user-me")
-  Future<User> patchSCNUserMe(@Header("Cookie") String sessionID,
-      @AsJson() UserSCNPatchRequest userSCNPatchRequest);
+  @rt.PATCH("/user-me")
+  Future<User> patchSCNUserMe(@rt.Header("Cookie") String sessionID,
+      @rt.Body() UserSCNPatchRequest userSCNPatchRequest);
 
-  @GetReq(path: "/news")
+  @rt.GET("/news")
   Future<List<NewsArticle>> getNews(
-      @Header("Cookie") String sessionID,
-      @QueryParam("from") int from,
-      @QueryParam("num") int num,
-      @QueryParam("query") String query);
+      @rt.Header("Cookie") String sessionID,
+      @rt.Query("from") int from,
+      @rt.Query("num") int num,
+      @rt.Query("query") String query);
 
-  @GetReq(path: "/notifications")
+  @rt.GET("/notifications")
   Future<List<Notification>> getNotifications(
-      @Header("Cookie") String sessionID);
+      @rt.Header("Cookie") String sessionID);
 
-  @GetReq(path: "/notifications/read/:notificationID")
+  @rt.GET("/notifications/read/{notificationID}")
   Future<void> markNotificationRead(
-      @Header("Cookie") String sessionID, @PathParam() String notificationID);
+      @rt.Header("Cookie") String sessionID, @rt.Path() String notificationID);
 
-  @GetReq(path: "/notifications/read")
-  Future<void> markAllNotificationsRead(@Header("Cookie") String sessionID);
+  @rt.GET("/notifications/read")
+  Future<void> markAllNotificationsRead(@rt.Header("Cookie") String sessionID);
 
-  @GetReq(path: "/logout")
-  Future<void> logout(@Header("Cookie") String sessionID);
+  @rt.GET("/logout")
+  Future<void> logout(@rt.Header("Cookie") String sessionID);
 
   // Explore search
-  @GetReq(path: "/search")
+  @rt.GET("/search")
   Future<ExploreResponse> search(
-      @Header("Cookie") String sessionID, @QueryParam("query") String query);
+      @rt.Header("Cookie") String sessionID, @rt.Query("query") String query);
+
+  @rt.GET("/search")
+  Future<ExploreResponse> searchType(@rt.Header("Cookie") String sessionID,
+      @rt.Query("query") String query, @rt.Query("types") String type);
 
   // Venter
-  @GetReq(path: "/venter/complaints")
+  @rt.GET("/venter/complaints")
   Future<List<Complaint>> getAllComplaints(
-      @Header("Cookie") String sessionId,
-      @QueryParam("from") int from,
-      @QueryParam("num") int number,
-      @QueryParam("search") String query);
+      @rt.Header("Cookie") String sessionId,
+      @rt.Query("from") int from,
+      @rt.Query("num") int number,
+      @rt.Query("search") String query);
 
-  @GetReq(path: "/venter/complaints?filter=me")
-  Future<List<Complaint>> getUserComplaints(@Header("Cookie") String sessionId);
+  @rt.GET("/venter/complaints?filter=me")
+  Future<List<Complaint>> getUserComplaints(
+      @rt.Header("Cookie") String sessionId);
 
-  @GetReq(path: "/venter/complaints/:complaintId")
+  @rt.GET("/venter/complaints/{complaintId}")
   Future<Complaint> getComplaint(
-      @Header("Cookie") String sessionId, @PathParam() String complaintId);
+      @rt.Header("Cookie") String sessionId, @rt.Path() String complaintId);
 
-  @GetReq(path: "/venter/complaints/:complaintId/upvote")
-  Future<Complaint> upVote(@Header("Cookie") String sessionId,
-      @PathParam() String complaintId, @QueryParam("action") int count);
+  @rt.GET("/venter/complaints/{complaintId}/upvote")
+  Future<Complaint> upVote(@rt.Header("Cookie") String sessionId,
+      @rt.Path() String complaintId, @rt.Query("action") int count);
 
-  @GetReq(path: "/venter/complaints/:complaintId/subscribe")
-  Future<Complaint> subscribleToComplaint(@Header("Cookie") String sessionId,
-      @PathParam() String complaintId, @QueryParam("action") int count);
+  @rt.GET("/venter/complaints/{complaintId}/subscribe")
+  Future<Complaint> subscribleToComplaint(@rt.Header("Cookie") String sessionId,
+      @rt.Path() String complaintId, @rt.Query("action") int count);
 
-  @PostReq(path: "/venter/complaints")
-  Future<Complaint> postComplaint(@Header("Cookie") String sessionId,
-      @AsJson() ComplaintCreateRequest complaintCreateRequest);
+  @rt.POST("/venter/complaints")
+  Future<Complaint> postComplaint(@rt.Header("Cookie") String sessionId,
+      @rt.Body() ComplaintCreateRequest complaintCreateRequest);
 
-  @PostReq(path: "/venter/complaints/:complaintId/comments")
+  @rt.POST("/venter/complaints/{complaintId}/comments")
   Future<Comment> postComment(
-      @Header("Cookie") String sessionId,
-      @PathParam() String complaintId,
-      @AsJson() CommentCreateRequest commentCreateRequest);
+      @rt.Header("Cookie") String sessionId,
+      @rt.Path() String complaintId,
+      @rt.Body() CommentCreateRequest commentCreateRequest);
 
-  @PutReq(path: "/venter/comments/:commentId")
+  @rt.PUT("/venter/comments/{commentId}")
   Future<Comment> updateComment(
-      @Header("Cookie") String sessionId,
-      @PathParam() String commentId,
-      @AsJson() CommentCreateRequest commentCreateRequest);
+      @rt.Header("Cookie") String sessionId,
+      @rt.Path() String commentId,
+      @rt.Body() CommentCreateRequest commentCreateRequest);
 
-  @DeleteReq(path: "/venter/comments/:commentId")
+  @rt.DELETE("/venter/comments/{commentId}")
   Future<void> deleteComment(
-      @Header("Cookie") String sessionId, @PathParam() String commentId);
+      @rt.Header("Cookie") String sessionId, @rt.Path() String commentId);
 
-  @GetReq(path: "/venter/tags")
-  Future<List<TagUri>> getAllTags(@Header("Cookie") String sessionId);
+  @rt.GET("/venter/tags")
+  Future<List<TagUri>> getAllTags(@rt.Header("Cookie") String sessionId);
+
+  @rt.POST("/achievements")
+  Future<AchievementCreateResponse> postForm(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Body() AchievementCreateRequest achievementCreateRequest);
+
+  @rt.POST("/achievements-offer/{id}")
+  Future<SecretResponse> postAchievementOffer(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Path() String id,
+      @rt.Body() Offersecret secret);
+
+  @rt.POST("/interests")
+  Future<SecretResponse> postInterests(
+      @rt.Header("Cookie") String sessionId, @rt.Body() Interest interest);
+
+  @rt.DELETE("/interests/{title}")
+  Future<SecretResponse> postDelInterests(
+      @rt.Header("Cookie") String sessionId, @rt.Path() String title);
+
+  @rt.GET("/achievements")
+  Future<List<Achievement>> getYourAchievements(
+      @rt.Header("Cookie") String sessionId);
+
+  @rt.PATCH("/achievements/{id}")
+  Future<void> toggleHidden(@rt.Header("Cookie") String sessionID,
+      @rt.Path() String id, @rt.Body() AchievementHiddenPathRequest hidden);
+
+  @rt.GET("/achievements-body/{id}")
+  Future<List<Achievement>> getBodyAchievements(
+      @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+
+  @rt.PUT("/achievements/{id}")
+  Future<void> dismissAchievement(@rt.Header("Cookie") String? sessionID,
+      @rt.Path() String? id, @rt.Body() AchVerifyRequest achievement);
+
+  @rt.DELETE("/achievements/:id")
+  Future<void> deleteAchievement(
+      @rt.Header("Cookie") String sessionID, @rt.Path() String id);
+
+  @rt.GET("/query")
+  Future<List<Query>> getQueries(
+      @rt.Header("Cookie") String sessionID,
+      // @QueryParam("from") int from,
+      // @QueryParam("num") int num,
+      @rt.Query("query") String query,
+      @rt.Query("category") String category);
+
+  @rt.POST("/query/add")
+  Future<void> postFAQ(
+      @rt.Header("Cookie") String sessionId, @rt.Body() PostFAQRequest request);
+
+  @rt.GET("/query/categories")
+  Future<List<String>> getQueryCategories(
+      @rt.Header("Cookie") String sessionId);
 }

@@ -26,7 +26,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -43,7 +43,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 semanticLabel: "Show Navigation Drawer",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -52,12 +52,12 @@ class _SettingsPageState extends State<SettingsPage> {
       body: SafeArea(
         child: StreamBuilder(
             stream: bloc.session,
-            builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
               var children = <Widget>[
                 TitleWithBackButton(
                   child: Text(
                     "Settings",
-                    style: theme.textTheme.display2,
+                    style: theme.textTheme.headline3,
                   ),
                 )
               ];
@@ -68,7 +68,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         horizontal: 28.0, vertical: 12.0),
                     child: Text(
                       "Profile settings",
-                      style: theme.textTheme.title.copyWith(
+                      style: theme.textTheme.headline6?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: theme.primaryColor),
                     ),
@@ -81,9 +81,10 @@ class _SettingsPageState extends State<SettingsPage> {
                         : Icon(Icons.contact_phone_outlined),
                     title: Text("Show contact number"),
                     subtitle: Text("Toggle visibility on your profile"),
-                    value: snapshot.data.profile.userShowContactNumber,
+                    value:
+                        snapshot.data?.profile?.userShowContactNumber ?? false,
                     onChanged: updatingSCN
-                        ? null
+                        ? (_) {}
                         : (bool showContactNumber) async {
                             setState(() {
                               updatingSCN = true;
@@ -137,7 +138,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       left: 28.0, right: 28.0, top: 8.0, bottom: 24.0),
                   child: Text(
                     "App settings",
-                    style: theme.textTheme.title.copyWith(
+                    style: theme.textTheme.headline6?.copyWith(
                         fontWeight: FontWeight.bold, color: theme.primaryColor),
                   ),
                 ),
@@ -145,8 +146,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 28.0),
                   child: Text(
                     "Default Homepage",
-                    style: theme.textTheme.body1.copyWith(
-                        fontWeight: FontWeight.bold, color: theme.accentColor),
+                    style: theme.textTheme.bodyText2?.copyWith(
+                        fontWeight: FontWeight.bold, color: theme.colorScheme.secondary),
                   ),
                 ),
                 Padding(
@@ -171,8 +172,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         child: Text(entry.value),
                       );
                     }).toList(),
-                    onChanged: (String s) {
-                      bloc.updateHomepage(s);
+                    onChanged: (String? s) {
+                      bloc.updateHomepage(s ?? "");
                       setState(() {});
                     },
                     value: bloc.homepageName,
@@ -183,8 +184,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       top: 16.0, bottom: 12.0, left: 28.0, right: 28.0),
                   child: Text(
                     "App Theme",
-                    style: theme.textTheme.body1.copyWith(
-                        fontWeight: FontWeight.bold, color: theme.accentColor),
+                    style: theme.textTheme.bodyText2?.copyWith(
+                        fontWeight: FontWeight.bold, color: theme.colorScheme.secondary),
                   ),
                 ),
                 RadioListTile<AppBrightness>(
@@ -192,7 +193,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: AppBrightness.light,
                   groupValue: bloc.brightness,
                   onChanged: (v) {
-                    bloc.brightness = v;
+                    if (v != null) bloc.brightness = v;
                   },
                 ),
                 RadioListTile<AppBrightness>(
@@ -200,7 +201,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: AppBrightness.dark,
                   groupValue: bloc.brightness,
                   onChanged: (v) {
-                    bloc.brightness = v;
+                    if (v != null) bloc.brightness = v;
                   },
                 ),
                 RadioListTile<AppBrightness>(
@@ -208,7 +209,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: AppBrightness.black,
                   groupValue: bloc.brightness,
                   onChanged: (v) {
-                    bloc.brightness = v;
+                    if (v != null) bloc.brightness = v;
                   },
                 ),
                 ListTile(
@@ -234,7 +235,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               selectedColor: bloc.primaryColor,
                             ),
                             actions: <Widget>[
-                              FlatButton(
+                              TextButton(
                                 child: Text("Okay"),
                                 onPressed: () {
                                   Navigator.of(context).pop();
@@ -267,7 +268,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               selectedColor: bloc.accentColor,
                             ),
                             actions: <Widget>[
-                              FlatButton(
+                              TextButton(
                                 child: Text("Okay"),
                                 onPressed: () {
                                   Navigator.of(context).pop();
@@ -280,7 +281,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 28.0),
-                  child: OutlineButton.icon(
+                  child: OutlinedButton.icon(
                     icon: Icon(Icons.restore_outlined),
                     label: Text("Restore Default Theme"),
                     onPressed: () {

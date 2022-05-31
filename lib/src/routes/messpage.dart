@@ -1,6 +1,6 @@
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
@@ -9,7 +9,7 @@ import 'package:InstiApp/src/api/model/mess.dart';
 import 'dart:collection';
 
 class MessPage extends StatefulWidget {
-  MessPage({Key key}) : super(key: key);
+  MessPage({Key? key}) : super(key: key);
 
   @override
   _MessPageState createState() => _MessPageState();
@@ -32,7 +32,7 @@ class _MessPageState extends State<MessPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
 
     if (firstBuild) {
       bloc.updateHostels();
@@ -54,7 +54,7 @@ class _MessPageState extends State<MessPage> {
                 semanticLabel: "Show navigation drawer",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -69,7 +69,7 @@ class _MessPageState extends State<MessPage> {
               TitleWithBackButton(
                 child: Text(
                   "Mess Menu",
-                  style: theme.textTheme.display2,
+                  style: theme.textTheme.headline3,
                 ),
               ),
               Padding(
@@ -81,13 +81,14 @@ class _MessPageState extends State<MessPage> {
                     if (currHostel == "0")
                       currHostel = bloc.currSession?.profile?.hostel ?? "1";
                     if (hostels.hasData) {
-                      var currMess = hostels.data
+                      var currMess = hostels.data!
                           .firstWhere((h) => h.shortName == currHostel)
                           .mess
-                        ..sort((h1, h2) => h1.compareTo(h2));
+                        ?..sort((h1, h2) => h1.compareTo(h2));
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: currMess.map(_buildSingleDayMess).toList(),
+                        children:
+                            currMess?.map(_buildSingleDayMess).toList() ?? [],
                       );
                     } else {
                       return Center(
@@ -106,7 +107,7 @@ class _MessPageState extends State<MessPage> {
       floatingActionButton: FloatingActionButton.extended(
         elevation: 8.0,
         backgroundColor: theme.colorScheme.surface,
-        foregroundColor: theme.accentColor,
+        foregroundColor: theme.colorScheme.secondary,
         icon: Icon(
           Icons.home_outlined,
           // color: theme.accentColor,
@@ -120,29 +121,30 @@ class _MessPageState extends State<MessPage> {
   }
 
   Widget buildDropdownButton(ThemeData theme) {
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     return StreamBuilder<UnmodifiableListView<Hostel>>(
       stream: bloc.hostels,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          var val = snapshot.data.indexWhere((h) => h.shortName == currHostel);
+          var val = snapshot.data!.indexWhere((h) => h.shortName == currHostel);
           return DropdownButton<int>(
             hint: Text("Reload"),
             value: val != -1 ? val : null,
-            items: snapshot.data
+            items: snapshot.data!
                 .asMap()
                 .entries
                 .map((entry) => DropdownMenuItem<int>(
                       child: Text(
-                        entry.value.name,
+                        entry.value.name ?? "",
                       ),
                       value: entry.key,
                     ))
                 .toList(),
-            style: theme.textTheme.subhead.copyWith(color: theme.accentColor),
+            style:
+                theme.textTheme.subtitle1?.copyWith(color: theme.colorScheme.secondary),
             onChanged: (h) {
               setState(() {
-                currHostel = snapshot.data[h].shortName;
+                currHostel = snapshot.data![h ?? 0].shortName ?? "0";
               });
             },
           );
@@ -151,7 +153,7 @@ class _MessPageState extends State<MessPage> {
             width: 18,
             height: 18,
             child: CircularProgressIndicator(
-              valueColor: new AlwaysStoppedAnimation<Color>(theme.accentColor),
+              valueColor: new AlwaysStoppedAnimation<Color>(theme.colorScheme.secondary),
               strokeWidth: 2,
             ),
           );
@@ -169,40 +171,40 @@ class _MessPageState extends State<MessPage> {
         children: <Widget>[
           Text(
             mess.getDayName(),
-            style: localTheme.headline.copyWith(fontWeight: FontWeight.bold),
+            style: localTheme.headline5?.copyWith(fontWeight: FontWeight.bold),
           ),
           SizedBox(
             height: 8.0,
           ),
           Text(
             "Breakfast",
-            style: localTheme.title.copyWith(color: theme.accentColor),
+            style: localTheme.headline6?.copyWith(color: theme.colorScheme.secondary),
           ),
-          ContentText(mess.breakfast, context),
+          ContentText(mess.breakfast ?? "", context),
           SizedBox(
             height: 8.0,
           ),
           Text(
             "Lunch",
-            style: localTheme.title.copyWith(color: theme.accentColor),
+            style: localTheme.headline6?.copyWith(color: theme.colorScheme.secondary),
           ),
-          ContentText(mess.lunch, context),
+          ContentText(mess.lunch ?? "", context),
           SizedBox(
             height: 8.0,
           ),
           Text(
             "Snacks",
-            style: localTheme.title.copyWith(color: theme.accentColor),
+            style: localTheme.headline6?.copyWith(color: theme.colorScheme.secondary),
           ),
-          ContentText(mess.snacks, context),
+          ContentText(mess.snacks ?? "", context),
           SizedBox(
             height: 8.0,
           ),
           Text(
             "Dinner",
-            style: localTheme.title.copyWith(color: theme.accentColor),
+            style: localTheme.headline6?.copyWith(color: theme.colorScheme.secondary),
           ),
-          ContentText(mess.dinner, context),
+          ContentText(mess.dinner ?? "", context),
           SizedBox(
             height: 8.0,
           ),
@@ -217,5 +219,5 @@ class _MessPageState extends State<MessPage> {
 
 class ContentText extends Text {
   ContentText(String data, BuildContext context)
-      : super(data, style: Theme.of(context).textTheme.subhead);
+      : super(data, style: Theme.of(context).textTheme.subtitle1);
 }
