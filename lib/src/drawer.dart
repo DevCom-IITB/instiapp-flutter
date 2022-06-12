@@ -233,6 +233,17 @@ class _NavDrawerState extends State<NavDrawer> {
                       highlight: indexSnapshot.data == 13,
                       selected: indexSnapshot.data == 13,
                     ),
+                    15: NavListTile(
+                      icon: Icons.rss_feed_outlined,
+                      title: "Groups",
+                      onTap: () {
+                        changeSelection(14, drawerState!);
+                        var navi = Navigator.of(context);
+                        navi.pushReplacementNamed('/groups');
+                      },
+                      highlight: indexSnapshot.data == 1,
+                      selected: indexSnapshot.data == 1,
+                    ),
                   };
 
                   List<Widget> navList, navDownList = <Widget>[];
@@ -608,6 +619,7 @@ class MNavigatorObserver extends NavigatorObserver {
     "/query": 13,
     "/messcalendar": 14,
     "/messcalendar/qr": 14,
+    "/groups": 15,
   };
 
   static Map<String, String> routeToName = {
@@ -631,6 +643,7 @@ class MNavigatorObserver extends NavigatorObserver {
     "/query": "Query",
     "/messcalendar": "Mess Calendar",
     "/messcalendar/qr": "Show Mess QR",
+    "/groups": "Groups",
     "n/a": "",
   };
 
