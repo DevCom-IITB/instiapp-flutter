@@ -399,14 +399,42 @@ class _NavDrawerState extends State<NavDrawer> {
                       onTap: loggingOutLoading
                           ? null
                           : () async {
-                              setState(() {
-                                loggingOutLoading = true;
-                              });
-                              await bloc?.logout();
-                              setState(() {
-                                loggingOutLoading = false;
-                              });
-                              Navigator.pushReplacementNamed(context, "/");
+                              bool confirmLogout = await showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                          "Are you sure you want to logout?"),
+                                      content: Text(
+                                          "You won't be able to see Blogs, Notifications, or Profile after logout."),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: Text("Cancel"),
+                                          onPressed: () {
+                                            Navigator.pop(context, false);
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: Text("Logout",
+                                              style:
+                                                  TextStyle(color: Colors.red)),
+                                          onPressed: () {
+                                            Navigator.pop(context, true);
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
+                              if (confirmLogout) {
+                                setState(() {
+                                  loggingOutLoading = true;
+                                });
+                                await bloc?.logout();
+                                setState(() {
+                                  loggingOutLoading = false;
+                                });
+                                Navigator.pushReplacementNamed(context, "/");
+                              }
                             },
                       trailing: loggingOutLoading
                           ? CircularProgressIndicatorExtended()

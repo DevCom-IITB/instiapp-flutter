@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
@@ -12,6 +13,7 @@ import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
 import 'package:markdown/markdown.dart' as markdown;
@@ -434,19 +436,40 @@ class _EventPageState extends State<EventPage> {
       List<Future<cal.Result<String>?>> futures =
           calendarsResult.data?.asMap().entries.expand((entry) {
                 if (selector?[entry.key] == true) {
+                  DateTime? startTime;
+                  if (event?.eventStartTime != null)
+                    startTime = DateTime.parse(event!.eventStartTime!);
+                  DateTime? endTime;
+                  if (event?.eventEndTime != null)
+                    endTime = DateTime.parse(event!.eventEndTime!);
+
                   cal.Event ev = cal.Event(
                     entry.value.id,
                     description: event?.eventDescription,
                     eventId: event?.eventID,
                     title: event?.eventName,
-                    start: event?.eventStartTime == null
+                    start: startTime == null
                         ? null
-                        : tz.TZDateTime.from(
-                            DateTime.parse(event!.eventStartTime!), tz.local),
-                    end: event?.eventEndTime == null
+                        : Platform.isAndroid
+                            ? tz.TZDateTime.utc(
+                                startTime.year,
+                                startTime.month,
+                                startTime.day,
+                                startTime.hour,
+                                startTime.minute,
+                                startTime.second)
+                            : tz.TZDateTime.from(startTime, tz.local),
+                    end: endTime == null
                         ? null
-                        : tz.TZDateTime.from(
-                            DateTime.parse(event!.eventStartTime!), tz.local),
+                        : Platform.isAndroid
+                            ? tz.TZDateTime.utc(
+                                endTime.year,
+                                endTime.month,
+                                endTime.day,
+                                endTime.hour,
+                                endTime.minute,
+                                endTime.second)
+                            : tz.TZDateTime.from(endTime, tz.local),
                   );
                   return <Future<cal.Result<String>?>>[
                     calendarPlugin.createOrUpdateEvent(ev)
@@ -457,19 +480,21 @@ class _EventPageState extends State<EventPage> {
               [];
 
       if ((await Future.wait(futures)).every((res) {
-        // print(res?.data);
         return res?.isSuccess ?? false;
       })) {
         showDialog<void>(
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text("Success"),
+                title: Text(
+                  "Success",
+                  style: TextStyle(color: Colors.green),
+                ),
                 content: Text(
-                    'Successfully added to ${futures.length} calendar${futures.length > 1 ? "s" : ""}'),
+                    'Event has been successfully added to ${futures.length} calendar${futures.length > 1 ? "s" : ""}.\n \nIt may take a few minutes to appear in your calendar.'),
                 actions: <Widget>[
                   TextButton(
-                    child: Text('Ok'),
+                    child: Text('OK'),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
