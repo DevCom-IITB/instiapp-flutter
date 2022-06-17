@@ -13,6 +13,7 @@ import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
 import 'package:markdown/markdown.dart' as markdown;
@@ -485,12 +486,15 @@ class _EventPageState extends State<EventPage> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text("Success"),
+                title: Text(
+                  "Success",
+                  style: TextStyle(color: Colors.green),
+                ),
                 content: Text(
-                    'Successfully added to ${futures.length} calendar${futures.length > 1 ? "s" : ""}'),
+                    'Event has been successfully added to ${futures.length} calendar${futures.length > 1 ? "s" : ""}.\n \nIt may take a few minutes to appear in your calendar.'),
                 actions: <Widget>[
                   TextButton(
-                    child: Text('Ok'),
+                    child: Text('OK'),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
