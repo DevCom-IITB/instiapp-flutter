@@ -18,45 +18,54 @@ import 'package:InstiApp/src/drawer.dart';
 // import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 // import 'package:flutter/foundation.dart';
-TextSpan highlight(String result,String query,BuildContext context){
+TextSpan highlight(String result, String query, BuildContext context) {
   // var bloc = BlocProvider.of(context)!.bloc;
   var theme = Theme.of(context);
-  TextStyle posRes = TextStyle(color: Colors.white,backgroundColor: Colors.red);
-  TextStyle? negRes = theme.textTheme.subtitle1;// TextStyle(backgroundColor: bloc.bloc.brightness.toColor().withOpacity(1.0),);
-  if(result=="" || query=="") return TextSpan(text:result,style:negRes);
-  result.replaceAll('\n'," ").replaceAll("  ", "");
+  TextStyle posRes =
+      TextStyle(color: Colors.white, backgroundColor: Colors.red);
+  TextStyle? negRes = theme.textTheme
+      .subtitle1; // TextStyle(backgroundColor: bloc.bloc.brightness.toColor().withOpacity(1.0),);
+  if (result == "" || query == "") return TextSpan(text: result, style: negRes);
+  result.replaceAll('\n', " ").replaceAll("  ", "");
 
-  var refinedMatch=result.toLowerCase();
-  var refinedsearch=query.toLowerCase();
+  var refinedMatch = result.toLowerCase();
+  var refinedsearch = query.toLowerCase();
 
-  if(refinedMatch.contains(refinedsearch)){
-    if(refinedMatch.substring(0,refinedsearch.length)==refinedsearch){
-      return TextSpan(style:posRes,text:result.substring(0,refinedsearch.length),children:[
-        highlight(result.substring(refinedsearch.length),query,context),
-      ]);
+  if (refinedMatch.contains(refinedsearch)) {
+    if (refinedMatch.substring(0, refinedsearch.length) == refinedsearch) {
+      return TextSpan(
+          style: posRes,
+          text: result.substring(0, refinedsearch.length),
+          children: [
+            highlight(result.substring(refinedsearch.length), query, context),
+          ]);
+    } else if (refinedsearch.length == refinedMatch.length) {
+      return TextSpan(text: result, style: posRes);
+    } else {
+      return TextSpan(
+          style: negRes,
+          text: result.substring(0, refinedMatch.indexOf(refinedsearch)),
+          children: [
+            highlight(result.substring(refinedMatch.indexOf(refinedsearch)),
+                query, context)
+          ]);
     }
-    else if(refinedsearch.length==refinedMatch.length){
-      return TextSpan(text:result,style:posRes);
-    }
-    else{
-      return TextSpan(style:negRes,text:result.substring(0,refinedMatch.indexOf(refinedsearch)),
-          children:[highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query,context)]);
-    }
-  }
-  else if(!refinedMatch.contains(refinedsearch)){
-    return TextSpan(text:result,style:negRes);
+  } else if (!refinedMatch.contains(refinedsearch)) {
+    return TextSpan(text: result, style: negRes);
   }
 
   return TextSpan(
     text: result.substring(0, refinedMatch.indexOf(refinedsearch)),
     style: negRes,
     children: [
-      highlight(result.substring(refinedMatch.indexOf(refinedsearch)),query,context)
+      highlight(
+          result.substring(refinedMatch.indexOf(refinedsearch)), query, context)
     ],
   );
-
 }
+
 class BlogPage extends StatefulWidget {
   final String title;
   final PostType postType;
@@ -311,14 +320,17 @@ class _BlogPageState extends State<BlogPage> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                          RichText(
-                          textScaleFactor:1.55,
-                         // textHeightBehavior: ,
-                          text: highlight(post.title,bloc.query,context),
-                            textAlign: TextAlign.start,
-                              strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
-                                       .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
-                        ),
+                            RichText(
+                                textScaleFactor: 1.55,
+                                // textHeightBehavior: ,
+                                text:
+                                    highlight(post.title, bloc.query, context),
+                                textAlign: TextAlign.start,
+                                strutStyle: StrutStyle.fromTextStyle(
+                                    theme.textTheme.headline5!
+                                        .copyWith(fontWeight: FontWeight.w900),
+                                    height: 0.7,
+                                    fontWeight: FontWeight.w900)),
                             // Text(
                             //   post.title,
                             //   textAlign: TextAlign.start,
@@ -382,25 +394,28 @@ class _BlogPageState extends State<BlogPage> {
               height: 4.0,
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                left: 12.0,
-                right: 12.0,
-              ),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Container(
-                  constraints: BoxConstraints(minWidth: 0.9*width, maxWidth: width*1.5),
-                  child: widget.postType == PostType.External? CommonHtml(
-                    data: post.content,
-                    defaultTextStyle: theme.textTheme.subtitle1 ?? TextStyle()
-                  ): 
-                  CommonHtmlBlog(
-                    data: post.content,
-                    defaultTextStyle: theme.textTheme.subtitle1 ?? TextStyle(), query: bloc.query,
-                  ),
+                padding: const EdgeInsets.only(
+                  left: 12.0,
+                  right: 12.0,
                 ),
-              )
-            ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Container(
+                    constraints: BoxConstraints(
+                        minWidth: 0.9 * width, maxWidth: width * 1.5),
+                    child: widget.postType == PostType.External
+                        ? CommonHtml(
+                            data: post.content,
+                            defaultTextStyle:
+                                theme.textTheme.subtitle1 ?? TextStyle())
+                        : CommonHtmlBlog(
+                            data: post.content,
+                            defaultTextStyle:
+                                theme.textTheme.subtitle1 ?? TextStyle(),
+                            query: bloc.query,
+                          ),
+                  ),
+                )),
             widget.postType == PostType.External
                 ? Padding(
                     padding: const EdgeInsets.only(
@@ -575,7 +590,6 @@ class _BlogPageState extends State<BlogPage> {
 
   Widget _blogHeader(BuildContext context, PostBloc blogBloc, var bloc) {
     var theme = Theme.of(context);
-    log(widget.postType.toString());
     return Column(
       children: <Widget>[
         TitleWithBackButton(
@@ -710,7 +724,7 @@ class _BlogPageState extends State<BlogPage> {
                 barrierColor: Colors.black.withOpacity(0.7),
                 onConfirm: (c) {
                   setState(() {
-                    currCat = c.map((element) =>element ?? "").toList();
+                    currCat = c.map((element) => element ?? "").toList();
                     String category = "";
                     currCat?.forEach((element) {
                       category += element + ",";

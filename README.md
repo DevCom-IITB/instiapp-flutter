@@ -23,3 +23,8 @@ For help getting started with Flutter, view online
 ## Useful links
 
 https://www.reddit.com/r/FlutterDev/comments/8ao6ty/how_to_make_bottom_appbar_that_sticks_to_the_top/
+
+## For Mac M1
+1. Run `sudo arch -x86_64 gem install ffi`
+2. Run `arch -x86_64 pod repo update`
+3. Run `arch -x86_64 pod install` error should be gone

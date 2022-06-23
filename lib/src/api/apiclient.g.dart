@@ -8,7 +8,8 @@ part of 'apiclient.dart';
 
 class _InstiAppApi implements InstiAppApi {
   _InstiAppApi(this._dio, {this.baseUrl}) {
-    baseUrl ??= 'https://api.insti.app/api';
+    baseUrl ??= 'http://192.168.79.98:8000/api';
+    // baseUrl ??= 'https://api.insti.app/api';
   }
 
   final Dio _dio;

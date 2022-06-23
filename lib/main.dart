@@ -27,6 +27,7 @@ import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/routes/achievement_form.dart';
 import 'package:InstiApp/src/routes/your_achievements.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
+import 'package:InstiApp/src/utils/notif_settings.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -46,12 +47,20 @@ import 'package:http/http.dart' as http;
 import 'package:uni_links/uni_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
+
 void main() async {
   // print("Runnning main");
   GlobalKey<MyAppState> key = GlobalKey();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(sendMessage);
   InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
+
+  AwesomeNotifications().initialize(
+    'resource://drawable/ic_launcher_foreground',
+    notifChannels,
+  );
 
   await bloc.restorePrefs();
 
@@ -91,17 +100,21 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     if (!kIsWeb) {
-      setupNotifications();
+      // setupNotifications();
+
       initAppLinksState();
     }
 
     WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance?.addPostFrameCallback(
+        (_) => setupNotifications1(context, widget.bloc, _navigatorKey));
   }
 
   @override
   void dispose() async {
     _appLinksSub.cancel();
     WidgetsBinding.instance?.removeObserver(this);
+    disposeNotification();
     super.dispose();
   }
 
@@ -301,16 +314,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   // Section
   // Handling Notifications
   void setupNotifications() async {
-    // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
-    var initializationSettingsAndroid =
-        new AndroidInitializationSettings('@mipmap/ic_launcher_foreground');
-
-    var initializationSettingsIOS = new IOSInitializationSettings();
-    var initializationSettings = new InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: onSelectNotification);
-
     FirebaseMessaging.onMessage.listen(
       (RemoteMessage message) async {
         // print("onMessage: $message");
@@ -371,14 +374,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         var platformChannelSpecifics = new NotificationDetails(
             android: androidPlatformChannelSpecifics,
             iOS: iOSPlatformChannelSpecifics);
-
-        await flutterLocalNotificationsPlugin.show(
-          0,
-          notif.notificationTitle,
-          notif.notificationVerb,
-          platformChannelSpecifics,
-          payload: payload,
-        );
       },
     );
 
