@@ -59,6 +59,8 @@ dependencies:
   qr_flutter: ^4.0.0
   intl: ^0.17.0
 
+  awesome_notifications: ^0.6.21
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

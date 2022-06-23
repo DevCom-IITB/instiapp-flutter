@@ -50,7 +50,6 @@ class _NavDrawerState extends State<NavDrawer> {
                 initialData: 0,
                 builder:
                     (BuildContext context, AsyncSnapshot<int> indexSnapshot) {
-                  log("Snapshot " + indexSnapshot.data!.toString());
                   Map<int, Widget> navMap = {
                     0: NavListTile(
                       icon: Icons.dashboard_outlined,
