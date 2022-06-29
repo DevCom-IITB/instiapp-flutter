@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:InstiApp/src/utils/common_widgets.dart';
 // import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 
 class PutEntityPage extends StatefulWidget {
   final String? entityID;
@@ -19,7 +19,6 @@ class PutEntityPage extends StatefulWidget {
 }
 
 class _PutEntityPageState extends State<PutEntityPage> {
-
   final String hostUrl = "https://insti.app/";
   final String addEventStr = "add-event";
   final String editEventStr = "edit-event";
@@ -40,13 +39,23 @@ class _PutEntityPageState extends State<PutEntityPage> {
   @override
   void initState() {
     // Permission.camera.request();
-    Permission.storage.request().then((e){
-      if(e.isGranted){
-        setState(() {
-          hasPermission = true;
-        });
-      }
-    });
+    if (Platform.isAndroid) {
+      Permission.storage.request().then((e) {
+        if (e.isGranted) {
+          setState(() {
+            hasPermission = true;
+          });
+        }
+      });
+    } else {
+      Permission.photos.request().then((e) {
+        if (e.isGranted) {
+          setState(() {
+            hasPermission = true;
+          });
+        }
+      });
+    }
 
     super.initState();
   }
@@ -59,13 +68,11 @@ class _PutEntityPageState extends State<PutEntityPage> {
 
   @override
   Widget build(BuildContext context) {
-    theme = Theme.of(context);
+    ThemeData theme = Theme.of(context);
     var url =
         "$hostUrl${widget.entityID == null ? addEventStr : ((widget.isBody ? editBodyStr : editEventStr) + "/" + widget.entityID!)}?${widget.cookie}&$sandboxTrueQParam";
-    return hasPermission? Center(
-      child: Text("Permission Denined"),
-    ) : 
-      Scaffold(bottomNavigationBar: MyBottomAppBar(
+    return Scaffold(
+      bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -84,29 +91,42 @@ class _PutEntityPageState extends State<PutEntityPage> {
           ],
         ),
       ),
-      body: InAppWebView(
-      // javascriptMode: JavascriptMode.unrestricted,
-      onWebViewCreated: (controller){
-        webViewController = controller;
-      },
-      initialUrlRequest: URLRequest(url: Uri.parse(url)),
-      onLoadStart: (_, url) async{
-        // print("Changed URL: $url");
-        if (url.toString().contains("/event/")) {
-          var uri = url.toString().substring(url.toString().lastIndexOf("/") + 1);
+      body: hasPermission
+          ? Center(
+              child: Text(
+                "Permission Denined",
+                style: theme.textTheme.headline1,
+              ),
+            )
+          : InAppWebView(
+              // javascriptMode: JavascriptMode.unrestricted,
+              onWebViewCreated: (controller) {
+                webViewController = controller;
+              },
+              initialUrlRequest: URLRequest(url: Uri.parse(url)),
+              onLoadStart: (_, url) async {
+                // print("Changed URL: $url");
+                if (url.toString().contains("/event/")) {
+                  var uri = url
+                      .toString()
+                      .substring(url.toString().lastIndexOf("/") + 1);
 
-          Navigator.of(context).pushReplacementNamed("/event/$uri");
-        } else if (url.toString().contains("/org/")) {
-          var uri = url.toString().substring(url.toString().lastIndexOf("/") + 1);
+                  Navigator.of(context).pushReplacementNamed("/event/$uri");
+                } else if (url.toString().contains("/org/")) {
+                  var uri = url
+                      .toString()
+                      .substring(url.toString().lastIndexOf("/") + 1);
 
-          Navigator.of(context).pushReplacementNamed("/body/$uri");
-        }
-      },
-      androidOnPermissionRequest: (controller, origin, resources) async {
-        return PermissionRequestResponse(
-            resources: resources,
-            action: PermissionRequestResponseAction.GRANT);
-      },
-    ),);
+                  Navigator.of(context).pushReplacementNamed("/body/$uri");
+                }
+              },
+              androidOnPermissionRequest:
+                  (controller, origin, resources) async {
+                return PermissionRequestResponse(
+                    resources: resources,
+                    action: PermissionRequestResponseAction.GRANT);
+              },
+            ),
+    );
   }
 }
