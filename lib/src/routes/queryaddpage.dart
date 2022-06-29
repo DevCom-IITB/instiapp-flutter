@@ -236,26 +236,28 @@ class _QueryAddPageState extends State<QueryAddPage> {
                                 onPressed: () async {
                                   if (_formKey.currentState?.validate() ??
                                       false) {
-                                    try{
+                                    try {
                                       await bloc.postFAQ(currRequest);
-                                      Navigator.of(context).pushNamed("/query");
-                                    // } else {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      content: new Text(
-                                          (currRequest.question ?? "") +
-                                              ":" +
-                                              (currRequest.category ?? "")),
-                                      duration: new Duration(seconds: 10),
-                                    ));
-                                      }
-                                      catch (e){
-                                        ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      content: new Text("Error: " + e.toString()),
-                                      duration: new Duration(seconds: 10),
-                                    ));
-                                      }
+                                      Navigator.of(context)
+                                          .pushNamedAndRemoveUntil<void>(
+                                              "/query", (_) => false);
+                                      // } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content: new Text(
+                                            (currRequest.question ?? "") +
+                                                ":" +
+                                                (currRequest.category ?? "")),
+                                        duration: new Duration(seconds: 10),
+                                      ));
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content:
+                                            new Text("Error: " + e.toString()),
+                                        duration: new Duration(seconds: 10),
+                                      ));
+                                    }
                                   }
 
                                   //log(currRequest.description);
