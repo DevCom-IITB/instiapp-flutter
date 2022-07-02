@@ -427,7 +427,6 @@ class _QRViewExampleState extends State<QRViewExample> {
           var achievements = bloc.achievementBloc;
           SecretResponse? offer =
               await achievements.postAchievementOffer(offerid, secret);
-          log(offer?.message ?? "");
           if (offer != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(offer.message ?? "")),
@@ -438,7 +437,6 @@ class _QRViewExampleState extends State<QRViewExample> {
           }
         }
       } else {
-        log('1');
         bool? addToCal = await showDialog(
             context: context,
             builder: (context) => AlertDialog(
@@ -481,7 +479,6 @@ class _QRViewExampleState extends State<QRViewExample> {
         controller.scannedDataStream.listen((scanData) {
           setState(() {
             result = scanData;
-            log(result!.code ?? "");
             if (!processing) {
               getOfferedAchievements(result!.code ?? "");
               processing = true;
@@ -501,7 +498,6 @@ class _QRViewExampleState extends State<QRViewExample> {
   }
 
   void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
-    log('${DateTime.now().toIso8601String()}_onPermissionSet $p');
     if (!p) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('no Permission')),
