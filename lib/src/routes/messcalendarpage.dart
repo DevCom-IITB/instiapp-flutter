@@ -231,17 +231,15 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-      floatingActionButton:
-          (bloc.currSession?.profile != null)
-              ? FloatingActionButton.extended(
-                  icon: Icon(Icons.add_outlined),
-                  label: Text("Take your meal"),
-                  onPressed: () {
-                    dev.log("ENtered");
-                    Navigator.of(context).pushNamed("/messcalendar/qr");
-                  },
-                )
-              : null,
+      floatingActionButton: (bloc.currSession?.profile != null)
+          ? FloatingActionButton.extended(
+              icon: Icon(Icons.add_outlined),
+              label: Text("Take your meal"),
+              onPressed: () {
+                Navigator.of(context).pushNamed("/messcalendar/qr");
+              },
+            )
+          : null,
     );
   }
 
