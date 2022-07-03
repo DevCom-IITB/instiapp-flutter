@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/createPost.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
-import 'package:InstiApp/src/routes/testgroup.dart';
 import '../bloc_provider.dart';
 import '../drawer.dart';
 
@@ -227,15 +226,15 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                   onPressed: () {
                                                     posts?.add(currRequest1);
 
-                                                    Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              Group(),
-                                                          settings:
-                                                              RouteSettings(
-                                                            arguments: posts,
-                                                          )),
-                                                    );
+                                                    // Navigator.of(context).push(
+                                                    //   MaterialPageRoute(
+                                                    //       builder: (context) =>
+                                                    //           Group(),
+                                                    //       settings:
+                                                    //           RouteSettings(
+                                                    //         arguments: posts,
+                                                    //       )),
+                                                    // );
                                                   },
                                                   child: Text('Post'),
                                                   style: TextButton.styleFrom(

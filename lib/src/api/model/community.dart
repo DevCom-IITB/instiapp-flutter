@@ -43,7 +43,7 @@ class Community {
   List<Role>? roles;
 
   @JsonKey(name: "posts")
-  CommunityPost? posts;
+  List<CommunityPost>? posts;
 
   Community({
     this.id,
