@@ -17,9 +17,9 @@ Community _$CommunityFromJson(Map<String, dynamic> json) => Community(
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
       isUserFollowing: json['is_user_following'] as bool?,
-      posts: json['posts'] == null
-          ? null
-          : CommunityPost.fromJson(json['posts'] as Map<String, dynamic>),
+      posts: (json['posts'] as List<dynamic>?)
+          ?.map((e) => CommunityPost.fromJson(e as Map<String, dynamic>))
+          .toList(),
       roles: (json['roles'] as List<dynamic>?)
           ?.map((e) => Role.fromJson(e as Map<String, dynamic>))
           .toList(),
