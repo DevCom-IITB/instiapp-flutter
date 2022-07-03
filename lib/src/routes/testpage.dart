@@ -7,7 +7,6 @@ import 'package:InstiApp/src/routes/testgroup.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/shims/dart_ui_real.dart';
 // import 'package:flutter/rendering.dart';
 
 class GroupsPage extends StatefulWidget {
@@ -204,7 +203,7 @@ class _GroupsPageState extends State<GroupsPage> {
                 builder: (BuildContext context,
                     AsyncSnapshot<ExploreResponse> snapshot) {
                   return Column(
-                    children: _buildContent(snapshot, theme, exploreBloc),
+                    children: _buildContent(snapshot, theme),
                   );
                 },
               ),
@@ -229,7 +228,7 @@ class _GroupsPageState extends State<GroupsPage> {
   }
 
   List<Widget> _buildContent(AsyncSnapshot<ExploreResponse> snapshot,
-      ThemeData theme, ExploreBloc exploreBloc) {
+    ThemeData theme) {
     if (snapshot.hasData) {
       var bodies = snapshot.data!.bodies;
       List<Group> groups = [
@@ -244,7 +243,7 @@ class _GroupsPageState extends State<GroupsPage> {
                 Text.rich(TextSpan(style: theme.textTheme.headline6, children: [
               TextSpan(text: "Nothing found for the query "),
               TextSpan(
-                  text: "\"${exploreBloc.query}\"",
+                  text: "here",
                   style: TextStyle(fontWeight: FontWeight.bold)),
               TextSpan(text: "."),
             ])),
