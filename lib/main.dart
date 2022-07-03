@@ -18,6 +18,7 @@ import 'package:InstiApp/src/routes/newspage.dart';
 import 'package:InstiApp/src/routes/testpage.dart';
 import 'package:InstiApp/src/routes/notificationspage.dart';
 import 'package:InstiApp/src/routes/putentitypage.dart';
+import 'package:InstiApp/src/routes/putpostpage.dart';
 import 'package:InstiApp/src/routes/qrpage.dart';
 import 'package:InstiApp/src/routes/queryaddpage.dart';
 import 'package:InstiApp/src/routes/querypage.dart';
@@ -217,7 +218,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
               return _buildRoute(
                   settings,
                   PutEntityPage(
-                      entityID: temp.split("/putentity/event/")[1],
+                      entityID: temp.split("//event/")[1],
                       cookie: widget.bloc.getSessionIdHeader()));
             } else if (temp.startsWith("/putentity/body/")) {
               return _buildRoute(
@@ -273,6 +274,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, YourAchievementPage());
                 case "/achievements/add":
                   return _buildRoute(settings, Home());
+                case "/posts/add":
+                  return _buildRoute(settings, CreatePostPage());
                 case "/externalblog":
                   return _buildRoute(settings, ExternalBlogPage());
                 case "/query":
