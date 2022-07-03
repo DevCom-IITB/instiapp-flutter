@@ -16,6 +16,7 @@ import 'package:InstiApp/src/api/response/getencr_response.dart';
 import 'package:InstiApp/src/blocs/ach_to_vefiry_bloc.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
+import 'package:InstiApp/src/blocs/community_bloc.dart';
 import 'package:InstiApp/src/blocs/complaints_bloc.dart';
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
 import 'package:InstiApp/src/api/apiclient.dart';
@@ -41,6 +42,36 @@ import 'package:InstiApp/src/api/model/notification.dart' as ntf;
 import 'package:dio/dio.dart';
 
 enum AddToCalendar { AlwaysAsk, Yes, No }
+
+ColorSwatch _getMatSwatch(int darkColor, int lightColor) {
+  return MaterialColor(
+    darkColor,
+    {
+      50: Color(lightColor),
+      100: Color(lightColor),
+      200: Color(lightColor),
+      300: Color(lightColor),
+      400: Color(lightColor),
+      500: Color(darkColor),
+      600: Color(darkColor),
+      700: Color(darkColor),
+      800: Color(darkColor),
+      900: Color(darkColor),
+    },
+  );
+}
+
+List<ColorSwatch<dynamic>> appColors = [
+  _getMatSwatch(0xFF9747FF, 0xFFE4CCFF),
+  _getMatSwatch(0xFF435FFE, 0xFFC0C9FF),
+  _getMatSwatch(0xFF0D99FF, 0xFFBDE3FF),
+  _getMatSwatch(0xFF14AE5C, 0xFFAFF4C6),
+  _getMatSwatch(0xFFFFCD29, 0xFFFFE8A3),
+  _getMatSwatch(0xFFFFA629, 0xFFFCD19C),
+  _getMatSwatch(0xFFF24822, 0xFFFFC7C2),
+  _getMatSwatch(0xFFB3B3B3, 0xFFE6E6E6),
+  _getMatSwatch(0xFF1E1E1E, 0xFF757575),
+];
 
 class InstiAppBloc {
   // Dio instance
@@ -93,6 +124,7 @@ class InstiAppBloc {
   late MapBloc mapBloc;
   late Bloc achievementBloc;
   late VerifyBloc bodyAchBloc;
+  late CommunityBloc communityBloc;
 
   // actual current state
   Session? currSession;
@@ -105,7 +137,7 @@ class InstiAppBloc {
   late final InstiAppApi client;
 
   // default homepage
-  String homepageName = "/feed";
+  String homepageName = "/groups";
   bool isAlumni = false;
   String msg = "";
   String alumniLoginPage = "/alumniLoginPage";
@@ -118,14 +150,14 @@ class InstiAppBloc {
   AppBrightness _brightness = AppBrightness.light;
   // Color _primaryColor = Color.fromARGB(255, 63, 81, 181);
   // Color _accentColor = Color.fromARGB(255, 139, 195, 74);
-  Color _primaryColor = Color.fromARGB(255, 0, 98, 255);
-  Color _accentColor = Color.fromARGB(255, 239, 83, 80);
+  ColorSwatch _primaryColor = appColors[0];
+  ColorSwatch _accentColor = appColors[3];
 
-  List<List<Color>> defaultThemes = [
+  List<List<ColorSwatch>> defaultThemes = [
     // default theme 1
     [
-      Color.fromARGB(255, 0, 98, 255),
-      Color.fromARGB(255, 239, 83, 80),
+      appColors[0],
+      appColors[3],
     ]
   ];
 
@@ -171,24 +203,24 @@ class InstiAppBloc {
     }
   }
 
-  Color get primaryColor => _primaryColor;
+  ColorSwatch get primaryColor => _primaryColor;
 
-  set primaryColor(Color newColor) {
+  set primaryColor(ColorSwatch newColor) {
     if (newColor != _primaryColor) {
       wholeAppKey.currentState?.setTheme(() => _primaryColor = newColor);
       SharedPreferences.getInstance().then((s) {
-        s.setInt("primaryColor", newColor.value);
+        s.setInt("primaryColor", appColors.indexOf(newColor));
       });
     }
   }
 
-  Color get accentColor => _accentColor;
+  ColorSwatch get accentColor => _accentColor;
 
-  set accentColor(Color newColor) {
+  set accentColor(ColorSwatch newColor) {
     if (newColor != _accentColor) {
       wholeAppKey.currentState?.setTheme(() => _accentColor = newColor);
       SharedPreferences.getInstance().then((s) {
-        s.setInt("accentColor", newColor.value);
+        s.setInt("accentColor", appColors.indexOf(newColor));
       });
     }
   }
@@ -207,6 +239,7 @@ class InstiAppBloc {
     '/quicklinks': 9,
     '/settings': 10,
     '/externalblog': 12,
+    '/groups': 15,
   };
 
   // MaterialApp reference
@@ -232,6 +265,7 @@ class InstiAppBloc {
     achievementBloc = Bloc(this);
     bodyAchBloc = VerifyBloc(this);
     messCalendarBloc = MessCalendarBloc(this);
+    communityBloc = CommunityBloc(this);
 
     _initNotificationBatch();
   }
@@ -489,11 +523,11 @@ class InstiAppBloc {
     }
     if (prefs.getKeys().contains("accentColor")) {
       int? x = prefs.getInt("accentColor");
-      if (x != null) _accentColor = Color(x);
+      if (x != null) _accentColor = appColors[x];
     }
     if (prefs.getKeys().contains("primaryColor")) {
       int? x = prefs.getInt("primaryColor");
-      if (x != null) _primaryColor = Color(x);
+      if (x != null) _primaryColor = appColors[x];
     }
     if (prefs.getKeys().contains("addToCalendarSetting")) {
       int? x = prefs.getInt("addToCalendarSetting");

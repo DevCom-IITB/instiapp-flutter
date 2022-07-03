@@ -80,6 +80,8 @@ flutter:
     - assets/
     - assets/login/
     - assets/map/
+    - assets/communities/
+    - assets/communities/emojis/
     - assets/map/assets/
     - assets/map/assets/map/
   fonts:

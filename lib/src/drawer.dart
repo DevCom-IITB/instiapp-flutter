@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:developer';
 
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
@@ -26,7 +25,6 @@ class _NavDrawerState extends State<NavDrawer> {
 
   void changeSelection(int idx, DrawerBloc bloc) {
     bloc.setPageIndex(idx);
-    // setState(() {});
   }
 
   @override
@@ -50,7 +48,6 @@ class _NavDrawerState extends State<NavDrawer> {
                 initialData: 0,
                 builder:
                     (BuildContext context, AsyncSnapshot<int> indexSnapshot) {
-                  log("Snapshot " + indexSnapshot.data!.toString());
                   Map<int, Widget> navMap = {
                     0: NavListTile(
                       icon: Icons.dashboard_outlined,
@@ -237,12 +234,12 @@ class _NavDrawerState extends State<NavDrawer> {
                       icon: Icons.rss_feed_outlined,
                       title: "Groups",
                       onTap: () {
-                        changeSelection(14, drawerState!);
+                        changeSelection(15, drawerState!);
                         var navi = Navigator.of(context);
                         navi.pushReplacementNamed('/groups');
                       },
-                      highlight: indexSnapshot.data == 1,
-                      selected: indexSnapshot.data == 1,
+                      highlight: indexSnapshot.data == 15,
+                      selected: indexSnapshot.data == 15,
                     ),
                   };
 
@@ -479,7 +476,10 @@ class NavListTile extends StatelessWidget {
         // key: Key(highlight.toString()),
         selected: selected,
         enabled: true,
-        leading: Icon(this.icon),
+        leading: Icon(
+          this.icon,
+          color: theme.colorScheme.onSurface,
+        ),
         dense: true,
         title: Text(
           this.title!,
@@ -495,7 +495,7 @@ class NavListTile extends StatelessWidget {
 
   Color? _iconAndTextColor(ThemeData theme, ListTileThemeData tileTheme) {
     if (selected && tileTheme.selectedColor != null)
-      return tileTheme.selectedColor!;
+      return theme.colorScheme.onSurface;
 
     if (!selected && tileTheme.iconColor != null) return tileTheme.iconColor!;
     // assert(theme.brightness != null);
@@ -507,7 +507,7 @@ class NavListTile extends StatelessWidget {
         return selected
             ? null
             : theme
-                .colorScheme.secondary; // null - use current icon theme color
+                .colorScheme.onSurface; // null - use current icon theme color
     }
     // return null;
   }
@@ -573,12 +573,12 @@ class _NavExpansionTileState extends State<NavExpansionTile> {
   Color? _iconAndTextColor(ThemeData theme, ListTileThemeData tileTheme) {
     if (isOpened && tileTheme.selectedColor != null) {
       // log("Hi");
-      return tileTheme.selectedColor!;
+      return theme.colorScheme.primary;
     }
 
     if (!isOpened && tileTheme.iconColor != null) {
       // log("Hi2");
-      return tileTheme.iconColor!;
+      return theme.colorScheme.primary;
     }
     // assert(theme.brightness != null);
     // print(theme.brightness);
@@ -589,7 +589,7 @@ class _NavExpansionTileState extends State<NavExpansionTile> {
         return isOpened
             ? null
             : theme
-                .colorScheme.secondary; // null - use current icon theme color
+                .colorScheme.onSurface; // null - use current icon theme color
     }
     // return null;
   }
