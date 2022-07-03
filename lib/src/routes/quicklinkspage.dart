@@ -13,7 +13,7 @@ class QuickLinksPage extends StatefulWidget {
     //   "Insti Eateries Feedback":
     //       "https://gymkhana.iitb.ac.in/feedback/eateries/",
     // },
-    "DevCom":{
+    "DevCom": {
       "Leave Portal": "https://gymkhana.iitb.ac.in/lap",
       "Resume Portal": "https://resume.devcom-iitb.org/",
       "AMS": "https://ams.iitb.ac.in/",
@@ -117,8 +117,8 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
       contentPadding: EdgeInsets.symmetric(horizontal: 28),
       title: Text(link.key, style: TextStyle(fontSize: 24)),
       onTap: () async {
-        if (await canLaunch(link.value)) {
-          await launch(link.value);
+        if (await canLaunchUrl(Uri.parse(link.value))) {
+          await launchUrl(Uri.parse(link.value));
         }
       },
     );

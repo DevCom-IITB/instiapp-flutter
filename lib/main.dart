@@ -15,7 +15,7 @@ import 'package:InstiApp/src/routes/mappage.dart';
 import 'package:InstiApp/src/routes/messcalendarpage.dart';
 // import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
-import 'package:InstiApp/src/routes/testpage.dart';
+import 'package:InstiApp/src/routes/communitypage.dart';
 import 'package:InstiApp/src/routes/notificationspage.dart';
 import 'package:InstiApp/src/routes/putentitypage.dart';
 import 'package:InstiApp/src/routes/qrpage.dart';
@@ -139,10 +139,25 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
           primaryColor: widget.bloc.primaryColor,
           colorScheme: theme.colorScheme.copyWith(
+            primary: widget.bloc.primaryColor,
             secondary: widget.bloc.accentColor,
+            primaryContainer: widget.bloc.primaryColor[200],
+            secondaryContainer: widget.bloc.accentColor[200],
             brightness: widget.bloc.brightness.toBrightness(),
             onBackground: widget.bloc.brightness == AppBrightness.light
                 ? Colors.black
+                : Colors.white,
+            surface: widget.bloc.brightness == AppBrightness.light
+                ? Colors.white
+                : widget.bloc.brightness.toColor(),
+            surfaceVariant: widget.bloc.brightness == AppBrightness.light
+                ? Color(0xFFE8ECF2)
+                : Color(0xFF121212),
+            onSurface: widget.bloc.brightness == AppBrightness.light
+                ? Colors.black
+                : Colors.white,
+            onSurfaceVariant: widget.bloc.brightness == AppBrightness.light
+                ? Color(0xFF767881)
                 : Colors.white,
           ),
           primarySwatch: Colors.primaries.firstWhereOrNull(
@@ -248,7 +263,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 case "/news":
                   return _buildRoute(settings, NewsPage());
                 case "/groups":
-                  return _buildRoute(settings, GroupsPage());
+                  return _buildRoute(settings, CommunityPage());
                 case "/explore":
                   return _buildRoute(settings, ExplorePage());
                 case "/calendar":
@@ -437,8 +452,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   Future navigateFromNotification(dynamic fromMap) async {
     // Navigating to correct page
-    print(fromMap.notificationType);
-    print(fromMap.notificationExtra?.contains("/trainingblog"));
     var routeName = {
       "blogentry": fromMap.notificationExtra?.contains("/internship") ?? false
           ? "/trainblog"

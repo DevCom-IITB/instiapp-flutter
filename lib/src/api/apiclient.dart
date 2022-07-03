@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/messCalEvent.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
@@ -34,7 +35,8 @@ import 'model/offersecret.dart';
 
 part 'apiclient.g.dart';
 
-@rt.RestApi(baseUrl: "https://api.insti.app/api")
+@rt.RestApi(baseUrl: "http://192.168.247.98:8000/api")
+// @rt.RestApi(baseUrl: "https://api.insti.app/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
@@ -296,4 +298,11 @@ abstract class InstiAppApi {
   @rt.GET("/query/categories")
   Future<List<String>> getQueryCategories(
       @rt.Header("Cookie") String sessionId);
+
+  @rt.GET("/communities")
+  Future<List<Community>> getCommunities(@rt.Header("Cookie") String sessionId);
+
+  @rt.GET("/communities/{id}")
+  Future<Community> getCommunity(
+      @rt.Header("Cookie") String sessionId, @rt.Path() String id);
 }

@@ -23,7 +23,8 @@ class UserPage extends StatefulWidget {
 
   UserPage({this.userFuture, this.initialUser});
 
-  static void navigateWith(BuildContext context, InstiAppBloc bloc, User? user) {
+  static void navigateWith(
+      BuildContext context, InstiAppBloc bloc, User? user) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -49,72 +50,71 @@ class _UserPageState extends State<UserPage> {
   List<Event>? events = [];
   Interest? _selectedInterest;
   late bool editable;
-  List<Interest>? interests=[];
+  List<Interest>? interests = [];
 
   void onBodyChange(Interest? body) async {
     var bloc = BlocProvider.of(context)?.bloc;
-    var res = await bloc?.achievementBloc.postInterest(body?.id??"",body!);
-    if(res != null) {
+    var res = await bloc?.achievementBloc.postInterest(body?.id ?? "", body!);
+    if (res != null) {
       setState(() {
-        List<Interest>? k= interests;
+        List<Interest>? k = interests;
         k?.add(body!);
-        interests=k;
+        interests = k;
       });
-    }
-    else{
-        ScaffoldMessenger.of(
-            context)
-            .showSnackBar(SnackBar(
-          content:
-          new Text('Error: Interest already exists'),
-          duration: new Duration(
-              seconds: 10),
-        ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: new Text('Error: Interest already exists'),
+        duration: new Duration(seconds: 10),
+      ));
     }
   }
 
   bool cansee = false;
 
-  Widget _buildChips(BuildContext context){
-    List<Widget> w=[];
+  Widget _buildChips(BuildContext context) {
+    List<Widget> w = [];
     var bloc = BlocProvider.of(context)?.bloc;
-    int length= interests?.length ?? 0;
-    for(int i=0;i< length;i++){
-      w.add(cansee?Chip(
-        labelPadding: EdgeInsets.all(2.0),
-        label: Text(
-          interests?[i].title?? "",
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: Colors.primaries[Random().nextInt(Colors.primaries.length)],
-        elevation: 6.0,
-        shadowColor: Colors.grey[60],
-        padding: EdgeInsets.all(8.0),
-
-        onDeleted: () async {
-          await bloc?.achievementBloc.postDelInterest(interests![i].title!);
-          interests?.removeAt(i);
-          //_selected.removeAt(i);
-          setState(() {
-            interests = interests;
-            //_selected = _selected;
-          });
-        },
-      ):Chip(
-        labelPadding: EdgeInsets.all(2.0),
-        label: Text(
-          interests?[i].title?? "",
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: Colors.primaries[Random().nextInt(Colors.primaries.length)],
-        elevation: 6.0,
-        shadowColor: Colors.grey[60],
-        padding: EdgeInsets.all(8.0),
-      ));
+    int length = interests?.length ?? 0;
+    for (int i = 0; i < length; i++) {
+      w.add(cansee
+          ? Chip(
+              labelPadding: EdgeInsets.all(2.0),
+              label: Text(
+                interests?[i].title ?? "",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              backgroundColor:
+                  Colors.primaries[Random().nextInt(Colors.primaries.length)],
+              elevation: 6.0,
+              shadowColor: Colors.grey[60],
+              padding: EdgeInsets.all(8.0),
+              onDeleted: () async {
+                await bloc?.achievementBloc
+                    .postDelInterest(interests![i].title!);
+                interests?.removeAt(i);
+                //_selected.removeAt(i);
+                setState(() {
+                  interests = interests;
+                  //_selected = _selected;
+                });
+              },
+            )
+          : Chip(
+              labelPadding: EdgeInsets.all(2.0),
+              label: Text(
+                interests?[i].title ?? "",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              backgroundColor:
+                  Colors.primaries[Random().nextInt(Colors.primaries.length)],
+              elevation: 6.0,
+              shadowColor: Colors.grey[60],
+              padding: EdgeInsets.all(8.0),
+            ));
       //w.add(_buildChip(interest.title, Colors.primaries[Random().nextInt(Colors.primaries.length)]));
     }
     return Wrap(
@@ -124,8 +124,7 @@ class _UserPageState extends State<UserPage> {
     );
   }
 
-  Widget buildDropdownMenuItemsInterest(
-      BuildContext context, Interest? body) {
+  Widget buildDropdownMenuItemsInterest(BuildContext context, Interest? body) {
     // print("Entered build dropdown menu items");
     if (body == null) {
       return Container(
@@ -142,6 +141,7 @@ class _UserPageState extends State<UserPage> {
       ),
     );
   }
+
   Widget _customPopupItemBuilderInterest(
       BuildContext context, Interest body, bool isSelected) {
     return Container(
@@ -149,19 +149,16 @@ class _UserPageState extends State<UserPage> {
       decoration: !isSelected
           ? null
           : BoxDecoration(
-        border: Border.all(color: Theme.of(context).primaryColor),
-        borderRadius: BorderRadius.circular(5),
-        color: Colors.white,
-      ),
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
       child: ListTile(
         selected: isSelected,
         title: Text(body.title!),
       ),
     );
   }
-
-
-
 
   @override
   void initState() {
@@ -182,9 +179,11 @@ class _UserPageState extends State<UserPage> {
     });
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       var bloc = BlocProvider.of(context)?.bloc;
-      bloc?.getUser("me").then((result){
-        if(result.userLDAPId == widget.initialUser?.userLDAPId){
-          setState(() {cansee = true;});
+      bloc?.getUser("me").then((result) {
+        if (result.userLDAPId == widget.initialUser?.userLDAPId) {
+          setState(() {
+            cansee = true;
+          });
         }
       });
     });
@@ -209,8 +208,8 @@ class _UserPageState extends State<UserPage> {
           icon: Icon(Icons.language_outlined),
           onPressed: () async {
             if (user!.userWebsiteURL != null) {
-              if (await canLaunch(user!.userWebsiteURL!)) {
-                await launch(user!.userWebsiteURL!);
+              if (await canLaunchUrl(Uri.parse(user!.userWebsiteURL!))) {
+                await launchUrl(Uri.parse(user!.userWebsiteURL!));
               }
             }
           },
@@ -333,77 +332,80 @@ class _UserPageState extends State<UserPage> {
                                         : []),
                                 ),
                               ),
-
                               Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      // width: double.infinity,
-                                        margin:
-                                        EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
+                                        // width: double.infinity,
+                                        margin: EdgeInsets.fromLTRB(
+                                            15.0, 0.0, 15.0, 10.0),
                                         child: Column(
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: <Widget>[
                                               SizedBox(
                                                 height: 20.0,
                                               ),
-                                              cansee?
-                                              DropdownSearch<Interest>(
-                                                mode: Mode.DIALOG,
-                                                maxHeight: 700,
-                                                isFilteredOnline: true,
-                                                showSearchBox: true,
-                                                dropdownSearchDecoration: InputDecoration(
-                                                  labelText: "Interests",
-                                                  hintText: "Interests",
-                                                ),
-                                                validator: (value) {
-                                                  if (value == null) {
-                                                    return 'Please select a organization';
-                                                  }
-                                                  return null;
-                                                },
-                                                onChanged: onBodyChange,
-                                                onFind:
-                                                bloc.achievementBloc.searchForInterest,
-                                                dropdownBuilder:
-                                                buildDropdownMenuItemsInterest,
-                                                popupItemBuilder:
-                                                _customPopupItemBuilderInterest,
-                                                // popupSafeArea:
-                                                // PopupSafeArea(
-                                                //     top: true,
-                                                //     bottom: true),
-                                                scrollbarProps:
-                                                ScrollbarProps(
-                                                  isAlwaysShown: true,
-                                                  thickness: 7,
-                                                ),
-                                                selectedItem:
-                                                _selectedInterest,
-                                                emptyBuilder:
-                                                    (BuildContext context,
-                                                    String? _) {
-                                                  return Container(
-                                                    alignment:
-                                                    Alignment.center,
-                                                    padding:
-                                                    EdgeInsets.all(
-                                                        20),
-                                                    child: Text(
-                                                      "No interests found. Refine your search!",
-                                                      style: theme
-                                                          .textTheme
-                                                          .subtitle1,
-                                                      textAlign: TextAlign
-                                                          .center,
-                                                    ),
-                                                  );
-                                                },
-                                              ):SizedBox(),
+                                              cansee
+                                                  ? DropdownSearch<Interest>(
+                                                      mode: Mode.DIALOG,
+                                                      maxHeight: 700,
+                                                      isFilteredOnline: true,
+                                                      showSearchBox: true,
+                                                      dropdownSearchDecoration:
+                                                          InputDecoration(
+                                                        labelText: "Interests",
+                                                        hintText: "Interests",
+                                                      ),
+                                                      validator: (value) {
+                                                        if (value == null) {
+                                                          return 'Please select a organization';
+                                                        }
+                                                        return null;
+                                                      },
+                                                      onChanged: onBodyChange,
+                                                      onFind: bloc
+                                                          .achievementBloc
+                                                          .searchForInterest,
+                                                      dropdownBuilder:
+                                                          buildDropdownMenuItemsInterest,
+                                                      popupItemBuilder:
+                                                          _customPopupItemBuilderInterest,
+                                                      // popupSafeArea:
+                                                      // PopupSafeArea(
+                                                      //     top: true,
+                                                      //     bottom: true),
+                                                      scrollbarProps:
+                                                          ScrollbarProps(
+                                                        isAlwaysShown: true,
+                                                        thickness: 7,
+                                                      ),
+                                                      selectedItem:
+                                                          _selectedInterest,
+                                                      emptyBuilder:
+                                                          (BuildContext context,
+                                                              String? _) {
+                                                        return Container(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  20),
+                                                          child: Text(
+                                                            "No interests found. Refine your search!",
+                                                            style: theme
+                                                                .textTheme
+                                                                .subtitle1,
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
+                                                        );
+                                                      },
+                                                    )
+                                                  : SizedBox(),
                                               _buildChips(context),
                                               //_buildChip('Gamer', Color(0xFFff6666))
                                               // SizedBox(
@@ -423,7 +425,6 @@ class _UserPageState extends State<UserPage> {
                           ),
                         ),
                       ),
-
                       SliverPersistentHeader(
                         floating: true,
                         pinned: true,
@@ -656,8 +657,8 @@ class _UserPageState extends State<UserPage> {
 
   _launchEmail(BuildContext context) async {
     var url = "mailto:${user?.userEmail}?subject=Let's Have Coffee";
-    if (await canLaunch(url)) {
-      await launch(url);
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
     } else {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -671,8 +672,8 @@ class _UserPageState extends State<UserPage> {
 
   _launchDialer(BuildContext context) async {
     var url = "tel:${user?.userContactNumber}";
-    if (await canLaunch(url)) {
-      await launch(url);
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
     } else {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()

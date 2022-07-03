@@ -1,5 +1,6 @@
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
@@ -104,8 +105,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     title: Text("Update Profile"),
                     subtitle: Text("Update personal details on SSO"),
                     onTap: () async {
-                      if (await canLaunch(updateProfileUrl)) {
-                        await launch(updateProfileUrl);
+                      if (await canLaunchUrl(Uri.parse(updateProfileUrl))) {
+                        await launchUrl(Uri.parse(updateProfileUrl));
                       }
                     },
                   ),
@@ -147,7 +148,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   child: Text(
                     "Default Homepage",
                     style: theme.textTheme.bodyText2?.copyWith(
-                        fontWeight: FontWeight.bold, color: theme.colorScheme.secondary),
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.secondary),
                   ),
                 ),
                 Padding(
@@ -166,6 +168,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       "/complaints": "Complaints/Suggestions",
                       // "/map": "Insti Map",
                       // "/settings": "Settings",
+                      "/groups": "Communities",
                     }.entries.map((entry) {
                       return DropdownMenuItem<String>(
                         value: entry.key,
@@ -185,7 +188,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   child: Text(
                     "App Theme",
                     style: theme.textTheme.bodyText2?.copyWith(
-                        fontWeight: FontWeight.bold, color: theme.colorScheme.secondary),
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.secondary),
                   ),
                 ),
                 RadioListTile<AppBrightness>(
@@ -228,11 +232,11 @@ class _SettingsPageState extends State<SettingsPage> {
                           return AlertDialog(
                             title: Text("Select Primary Color"),
                             content: MaterialColorPicker(
-                              allowShades: true,
-                              onColorChange: (c) {
-                                bloc.primaryColor = c;
+                              onMainColorChange: (c) {
+                                bloc.primaryColor = c ?? appColors[0];
                               },
                               selectedColor: bloc.primaryColor,
+                              colors: appColors,
                             ),
                             actions: <Widget>[
                               TextButton(
@@ -262,10 +266,11 @@ class _SettingsPageState extends State<SettingsPage> {
                           return AlertDialog(
                             title: Text("Select Accent Color"),
                             content: MaterialColorPicker(
-                              onColorChange: (c) {
-                                bloc.accentColor = c;
+                              onMainColorChange: (c) {
+                                bloc.accentColor = c ?? appColors[0];
                               },
                               selectedColor: bloc.accentColor,
+                              colors: appColors,
                             ),
                             actions: <Widget>[
                               TextButton(
@@ -298,8 +303,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   subtitle:
                       Text("Report technical issues or suggest new features"),
                   onTap: () async {
-                    if (await canLaunch(feedbackUrl)) {
-                      await launch(feedbackUrl);
+                    if (await canLaunchUrl(Uri.parse(feedbackUrl))) {
+                      await launchUrl(Uri.parse(feedbackUrl));
                     }
                   },
                 ),
