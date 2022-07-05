@@ -385,10 +385,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
   List<Widget> _buildPostList() {
     return [
       CommunityPostWidget(),
-      CommunityPostWidget(),
-      CommunityPostWidget(),
-      CommunityPostWidget(),
-      CommunityPostWidget(),
+      
     ];
   }
 }

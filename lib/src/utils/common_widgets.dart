@@ -1,6 +1,8 @@
 import 'dart:async';
 
 // import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/routes/communitypostpage.dart';
+import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -1205,6 +1207,7 @@ class _ImageGalleryState extends State<ImageGallery>
 
 class CommunityPostWidget extends StatefulWidget {
   const CommunityPostWidget({Key? key}) : super(key: key);
+ 
 
   @override
   State<CommunityPostWidget> createState() => _CommunityPostWidgetState();
@@ -1223,7 +1226,9 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    return Container(
+    return GestureDetector(
+        onTap: () => {CommunityPostPage.navigateWith(context)},
+        child: Container(
       margin: EdgeInsets.all(10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -1275,7 +1280,7 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
           _buildFooter(theme),
         ],
       ),
-    );
+        ));
   }
 
   Widget _buildFooter(ThemeData theme) {
