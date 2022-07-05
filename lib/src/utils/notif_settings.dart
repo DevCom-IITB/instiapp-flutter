@@ -59,6 +59,8 @@ class NotificationGroups {
 
 class NotificationType {
   static const String BLOG = "blogentry";
+  static const String PLACEMENT = "placement";
+  static const String INTERNSHIP = "internship";
   static const String BODY = "body";
   static const String EVENT = "event";
   static const String USER = "userprofile";
@@ -109,13 +111,15 @@ void setupNotifications1(BuildContext context, InstiAppBloc bloc,
 
   FirebaseMessaging.onMessage.listen(sendMessage);
 
-  String navigateFromNotification(dynamic fromMap) {
+  String navigateFromNotification(RichNotification fromMap) {
     // Navigating to correct page
     return {
           NotificationType.BLOG:
               fromMap.notificationExtra?.contains("/internship") ?? false
                   ? "/trainblog"
                   : "/placeblog",
+          NotificationType.PLACEMENT: "/placeblog",
+          NotificationType.INTERNSHIP: "/trainblog",
           NotificationType.BODY: "/body/${fromMap.notificationObjectID ?? ""}",
           NotificationType.EVENT:
               "/event/${fromMap.notificationObjectID ?? ""}",
@@ -172,8 +176,17 @@ void setupNotifications1(BuildContext context, InstiAppBloc bloc,
 }
 
 Future<void> sendMessage(RemoteMessage message) async {
-  log("message: ${message.data}");
   RichNotification notif = RichNotification.fromJson(message.data);
+
+  // change notification type for blogs.
+  if (notif.notificationType == NotificationType.BLOG) {
+    if (notif.notificationExtra?.contains("/internship") ?? false) {
+      notif.notificationType = NotificationType.INTERNSHIP;
+    } else {
+      notif.notificationType = NotificationType.PLACEMENT;
+    }
+  }
+
   createNotification(notif);
 }
 
