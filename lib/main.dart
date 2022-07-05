@@ -54,12 +54,14 @@ void main() async {
   GlobalKey<MyAppState> key = GlobalKey();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  FirebaseMessaging.onBackgroundMessage(sendMessage);
   InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
+  NotifSettings.bloc = bloc;
+  FirebaseMessaging.onBackgroundMessage(sendMessage);
 
   AwesomeNotifications().initialize(
     'resource://drawable/ic_launcher_foreground',
     notifChannels,
+    channelGroups: notifGroups,
   );
 
   await bloc.restorePrefs();
