@@ -21,34 +21,20 @@ class NotificationRouteArguments {
 
 List<NotificationChannel> notifChannels = [
   NotificationChannel(
-    channelGroupKey: 'Group1',
-    channelKey: 'basic_channel',
-    channelName: 'Basic notifications1',
-    channelDescription: 'Notification channel for basic tests',
+    channelGroupKey: NotificationGroups.MISCELLANEOUS_GROUP,
+    channelKey: NotificationChannels.MISCELLANEOUS_CHANNEL,
+    channelName: 'Miscellaneous',
+    channelDescription: 'Miscellaneous notifications from InstiApp',
     defaultColor: Color(0xFF9D50DD),
     ledColor: Colors.blue,
     importance: NotificationImportance.High,
-  ),
-  NotificationChannel(
-    channelGroupKey: 'Group2',
-    channelKey: 'basic_channel2',
-    channelName: 'Basic notifications2',
-    channelDescription: 'Notification channel for basic tests',
-    defaultColor: Color(0xFF9D50DD),
-    ledColor: Colors.white,
-    importance: NotificationImportance.High,
-    channelShowBadge: true,
   ),
 ];
 
 List<NotificationChannelGroup> notifGroups = [
   NotificationChannelGroup(
-    channelGroupkey: 'Group1',
-    channelGroupName: 'Basic tests1',
-  ),
-  NotificationChannelGroup(
-    channelGroupkey: 'Group2',
-    channelGroupName: 'Basic tests2',
+    channelGroupkey: NotificationGroups.MISCELLANEOUS_GROUP,
+    channelGroupName: 'Miscellaneous',
   ),
 ];
 
@@ -61,6 +47,14 @@ class ActionKeys {
   static const String LIKE_REACT = "LIKE_REACT";
   static const String OPEN_BROWSER = "ADD_TO_CALENDAR";
   static const String CHECKOUT = "CHECKOUT";
+}
+
+class NotificationChannels {
+  static const String MISCELLANEOUS_CHANNEL = "misc_channel";
+}
+
+class NotificationGroups {
+  static const String MISCELLANEOUS_GROUP = "misc_group";
 }
 
 class NotificationType {
@@ -147,7 +141,7 @@ void setupNotifications1(BuildContext context, InstiAppBloc bloc,
   }
 
   void _handleNotification(ReceivedAction notification) {
-    if (notification.channelKey == 'basic_channel' && Platform.isIOS) {
+    if (Platform.isIOS) {
       AwesomeNotifications().getGlobalBadgeCounter().then(
             (value) => AwesomeNotifications().setGlobalBadgeCounter(value - 1),
           );
@@ -196,10 +190,10 @@ NotificationContent getNotificationContent(RichNotification notif) {
 
   String getChannelKey(RichNotification notif) {
     switch (notif.notificationType) {
-      case "event":
-        return 'basic_channel2';
+      case NotificationType.BLOG:
+        return NotificationChannels.MISCELLANEOUS_CHANNEL;
       default:
-        return 'basic_channel';
+        return NotificationChannels.MISCELLANEOUS_CHANNEL;
     }
   }
 
