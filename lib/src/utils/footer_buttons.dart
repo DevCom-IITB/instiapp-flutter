@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class FooterButtons extends StatelessWidget {
   final List<Widget> footerButtons;
-  const FooterButtons({Key? key, required this.footerButtons}) : super(key: key);
+  const FooterButtons({Key? key, required this.footerButtons})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width * 7 / 8,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: footerButtons.map((e) {
