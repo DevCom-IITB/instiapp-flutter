@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:InstiApp/src/api/model/UserTag.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/messCalEvent.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
+import 'package:InstiApp/src/api/model/offeredAchievements.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
 import 'package:InstiApp/src/api/request/ach_verify_request.dart';
@@ -31,7 +33,7 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:retrofit/retrofit.dart' as rt;
 import 'package:dio/dio.dart';
 import 'model/offersecret.dart';
-
+import 'dart:convert';
 part 'apiclient.g.dart';
 
 @rt.RestApi(baseUrl: "https://api.insti.app/api")
@@ -93,6 +95,15 @@ abstract class InstiAppApi {
   @rt.GET("/events/{uuid}")
   Future<Event> getEvent(
       @rt.Header("Cookie") String sessionId, @rt.Path() String uuid);
+  @rt.PUT('/events/{uuid}')
+  Future<EventCreateResponse> updateEvent(
+      @rt.Header('Cookie') String sessionId, event, @rt.Path() String uuid);
+  @rt.POST("/events")
+  Future<EventCreateResponse> postEventForm(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Body() EventCreateRequest eventCreateRequest);
+  @rt.DELETE('/events/{uuid}')
+  Future<void> deleteEvent(@rt.Header('Cookie') String sessionId, String uuid);
 
   @rt.GET("/events")
   Future<NewsFeedResponse> getNewsFeed(@rt.Header("Cookie") String sessionId);
@@ -246,7 +257,9 @@ abstract class InstiAppApi {
   Future<AchievementCreateResponse> postForm(
       @rt.Header("Cookie") String sessionId,
       @rt.Body() AchievementCreateRequest achievementCreateRequest);
-
+  @rt.PUT('/achievements-offer/{id}')
+  Future<dynamic> updateAchievement(@rt.Header('Cookie') String sessionId,
+      @rt.Body() OfferedAchievements offeredAchievements, @rt.Path() String id);
   @rt.POST("/achievements-offer/{id}")
   Future<SecretResponse> postAchievementOffer(
       @rt.Header("Cookie") String sessionId,
@@ -277,7 +290,7 @@ abstract class InstiAppApi {
   Future<void> dismissAchievement(@rt.Header("Cookie") String? sessionID,
       @rt.Path() String? id, @rt.Body() AchVerifyRequest achievement);
 
-  @rt.DELETE("/achievements/:id")
+  @rt.DELETE("/achievements-offer/{id}")
   Future<void> deleteAchievement(
       @rt.Header("Cookie") String sessionID, @rt.Path() String id);
 
@@ -296,4 +309,14 @@ abstract class InstiAppApi {
   @rt.GET("/query/categories")
   Future<List<String>> getQueryCategories(
       @rt.Header("Cookie") String sessionId);
+
+  @rt.GET("/user-tags")
+  Future<List<UserTagHolder>> getUserTags(
+      @rt.Header("Cookie") String sessionId);
+  @rt.GET("/user-tags/reach")
+  Future<int> getUserTagsReach(
+      @rt.Header("Cookie") String sessionId, List<int> selectedTagIds);
+  @rt.POST('/achievements-offer')
+  Future<dynamic> createAchievement(
+      sessionId, OfferedAchievements offeredAchievements);
 }

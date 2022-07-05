@@ -82,7 +82,7 @@ class _EventPageState extends State<EventPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
-    var footerButtons;
+    var footerButtons = <Widget>[];
     var editAccess = false;
     if (event != null) {
       footerButtons = <Widget>[];
