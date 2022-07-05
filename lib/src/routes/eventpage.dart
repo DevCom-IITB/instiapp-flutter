@@ -13,7 +13,6 @@ import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
 import 'package:markdown/markdown.dart' as markdown;
@@ -82,7 +81,7 @@ class _EventPageState extends State<EventPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
-    var footerButtons;
+    var footerButtons = <Widget>[];
     var editAccess = false;
     if (event != null) {
       footerButtons = <Widget>[];
@@ -95,15 +94,18 @@ class _EventPageState extends State<EventPage> {
       }
 
       if ((event!.eventWebsiteURL ?? "") != "") {
-        footerButtons.add(IconButton(
-          tooltip: "Open website",
-          icon: Icon(Icons.language_outlined),
-          onPressed: () async {
-            if (await canLaunch(event!.eventWebsiteURL!)) {
-              await launch(event!.eventWebsiteURL!);
-            }
-          },
-        ));
+        footerButtons.add(
+          IconButton(
+            tooltip: "Open website",
+            icon: Icon(Icons.language_outlined),
+            padding: EdgeInsets.all(0),
+            onPressed: () async {
+              if (await canLaunch(event!.eventWebsiteURL!)) {
+                await launch(event!.eventWebsiteURL!);
+              }
+            },
+          ),
+        );
       }
       if ((event!.eventVenues?.isNotEmpty ?? false) &&
           event!.eventVenues![0].venueLatitude != null) {
@@ -121,17 +123,19 @@ class _EventPageState extends State<EventPage> {
         ));
       }
 
-      if (editAccess) {
-        footerButtons.add(IconButton(
+      footerButtons.add(
+        IconButton(
           icon: Icon(Icons.share_outlined),
           tooltip: "Share this event",
+          padding: EdgeInsets.all(0),
           onPressed: () async {
             await Share.share(
                 "Check this event: ${ShareURLMaker.getEventURL(event!)}");
           },
-        ));
-      }
+        ),
+      );
     }
+
     return Scaffold(
         key: _scaffoldKey,
         drawer: NavDrawer(),
