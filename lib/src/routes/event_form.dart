@@ -687,15 +687,17 @@ class _EventFormState extends State<EventForm> {
                       final ImagePicker _picker = ImagePicker();
                       final XFile? pi =
                           await _picker.pickImage(source: ImageSource.gallery);
-                      String img64 =
-                          base64Encode((await pi!.readAsBytes()).cast<int>());
-                      ImageUploadRequest IUReq =
-                          ImageUploadRequest(base64Image: img64);
-                      ImageUploadResponse resp =
-                          await bloc.client.uploadImage(widget.cookie, IUReq);
-                      setState(() {
-                        eventImageURL = resp.pictureURL!;
-                      });
+                      if (pi != null) {
+                        String img64 =
+                            base64Encode((await pi.readAsBytes()).cast<int>());
+                        ImageUploadRequest IUReq =
+                            ImageUploadRequest(base64Image: img64);
+                        ImageUploadResponse resp =
+                            await bloc.client.uploadImage(widget.cookie, IUReq);
+                        setState(() {
+                          eventImageURL = resp.pictureURL ?? "";
+                        });
+                      }
                     },
                     child: Text(
                         (eventImageURL.length == 0) ? 'Pick an Image' : ''),
