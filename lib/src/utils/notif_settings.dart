@@ -29,12 +29,34 @@ List<NotificationChannel> notifChannels = [
     ledColor: Colors.blue,
     importance: NotificationImportance.High,
   ),
+  NotificationChannel(
+    channelGroupKey: NotificationGroups.BLOG,
+    channelKey: NotificationChannels.PLACEMENT,
+    channelName: 'Placement blog',
+    channelDescription: 'Placement blog notifications from InstiApp',
+    defaultColor: Color(0xFF9D50DD),
+    ledColor: Colors.blue,
+    importance: NotificationImportance.Max,
+  ),
+  NotificationChannel(
+    channelGroupKey: NotificationGroups.BLOG,
+    channelKey: NotificationChannels.INTERNSHIP,
+    channelName: 'Internship blog',
+    channelDescription: 'Internship blog notifications from InstiApp',
+    defaultColor: Color(0xFF9D50DD),
+    ledColor: Colors.blue,
+    importance: NotificationImportance.Max,
+  ),
 ];
 
 List<NotificationChannelGroup> notifGroups = [
   NotificationChannelGroup(
     channelGroupkey: NotificationGroups.MISCELLANEOUS_GROUP,
     channelGroupName: 'Miscellaneous',
+  ),
+  NotificationChannelGroup(
+    channelGroupkey: NotificationGroups.BLOG,
+    channelGroupName: 'Blogs',
   ),
 ];
 
@@ -51,10 +73,13 @@ class ActionKeys {
 
 class NotificationChannels {
   static const String MISCELLANEOUS_CHANNEL = "misc_channel";
+  static const String PLACEMENT = "placement_channel";
+  static const String INTERNSHIP = "internship_channel";
 }
 
 class NotificationGroups {
   static const String MISCELLANEOUS_GROUP = "misc_group";
+  static const String BLOG = "blog_group";
 }
 
 class NotificationType {
@@ -203,8 +228,10 @@ NotificationContent getNotificationContent(RichNotification notif) {
 
   String getChannelKey(RichNotification notif) {
     switch (notif.notificationType) {
-      case NotificationType.BLOG:
-        return NotificationChannels.MISCELLANEOUS_CHANNEL;
+      case NotificationType.PLACEMENT:
+        return NotificationChannels.PLACEMENT;
+      case NotificationType.INTERNSHIP:
+        return NotificationChannels.INTERNSHIP;
       default:
         return NotificationChannels.MISCELLANEOUS_CHANNEL;
     }
