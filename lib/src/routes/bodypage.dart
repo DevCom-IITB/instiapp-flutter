@@ -162,7 +162,7 @@ class _BodyPageState extends State<BodyPage> {
                     padding: const EdgeInsets.all(8.0),
                     child: body?.bodyImageURL != null
                         ? PhotoViewableImage(
-                            url: body?.bodyImageURL ?? "",
+                            url: body?.bodyImageURL ?? defUrl,
                             heroTag: widget.heroTag ?? body?.bodyID ?? "",
                             fit: BoxFit.fitWidth,
                           )
@@ -181,10 +181,9 @@ class _BodyPageState extends State<BodyPage> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 28.0, vertical: 16.0),
                     child: CommonHtml(
-                      data: body?.bodyDescription ?? "",
-                      defaultTextStyle:
-                          theme.textTheme.subtitle1 ?? TextStyle()
-                    ),
+                        data: body?.bodyDescription ?? "",
+                        defaultTextStyle:
+                            theme.textTheme.subtitle1 ?? TextStyle()),
                   ),
                   body?.bodyDescription != null
                       ? SizedBox(

@@ -4,27 +4,77 @@ import 'dart:io';
 
 import 'package:InstiApp/src/api/model/rich_notification.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:jaguar/utils/string/string.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+class NotificationRouteArguments {
+  String key;
+  RichNotification notif;
+
+  NotificationRouteArguments(this.key, this.notif);
+}
 
 List<NotificationChannel> notifChannels = [
   NotificationChannel(
+    channelGroupKey: 'Group1',
     channelKey: 'basic_channel',
-    channelName: 'Basic notifications',
+    channelName: 'Basic notifications1',
+    channelDescription: 'Notification channel for basic tests',
+    defaultColor: Color(0xFF9D50DD),
+    ledColor: Colors.blue,
+    importance: NotificationImportance.High,
+  ),
+  NotificationChannel(
+    channelGroupKey: 'Group2',
+    channelKey: 'basic_channel2',
+    channelName: 'Basic notifications2',
     channelDescription: 'Notification channel for basic tests',
     defaultColor: Color(0xFF9D50DD),
     ledColor: Colors.white,
     importance: NotificationImportance.High,
+    channelShowBadge: true,
   ),
 ];
 
+List<NotificationChannelGroup> notifGroups = [
+  NotificationChannelGroup(
+    channelGroupkey: 'Group1',
+    channelGroupName: 'Basic tests1',
+  ),
+  NotificationChannelGroup(
+    channelGroupkey: 'Group2',
+    channelGroupName: 'Basic tests2',
+  ),
+];
+
+class NotifSettings {
+  static InstiAppBloc? bloc;
+}
+
+class ActionKeys {
+  static const String ADD_TO_CALENDAR = "ADD_TO_CALENDAR";
+  static const String LIKE_REACT = "LIKE_REACT";
+  static const String OPEN_BROWSER = "ADD_TO_CALENDAR";
+  static const String CHECKOUT = "CHECKOUT";
+}
+
+class NotificationType {
+  static const String BLOG = "blogentry";
+  static const String BODY = "body";
+  static const String EVENT = "event";
+  static const String USER = "userprofile";
+  static const String NEWS = "newsentry";
+  static const String COMPLAINTS = "complaintcomment";
+  static const String QUERY = "unresolvedquery";
+}
+
 void setupNotifications1(BuildContext context, InstiAppBloc bloc,
     GlobalKey<NavigatorState> _navigatorKey) async {
-  print("Setting up notifs");
-
   AwesomeNotifications().isNotificationAllowed().then(
     (isAllowed) {
       if (!isAllowed) {
@@ -68,19 +118,32 @@ void setupNotifications1(BuildContext context, InstiAppBloc bloc,
   String navigateFromNotification(dynamic fromMap) {
     // Navigating to correct page
     return {
-          "blogentry":
+          NotificationType.BLOG:
               fromMap.notificationExtra?.contains("/internship") ?? false
                   ? "/trainblog"
                   : "/placeblog",
-          "body": "/body/${fromMap.notificationObjectID ?? ""}",
-          "event": "/event/${fromMap.notificationObjectID ?? ""}",
-          "userprofile": "/user/${fromMap.notificationObjectID ?? ""}",
-          "newsentry": "/news",
-          "complaintcomment":
+          NotificationType.BODY: "/body/${fromMap.notificationObjectID ?? ""}",
+          NotificationType.EVENT:
+              "/event/${fromMap.notificationObjectID ?? ""}",
+          NotificationType.USER: "/user/${fromMap.notificationObjectID ?? ""}",
+          NotificationType.NEWS: "/news",
+          NotificationType.COMPLAINTS:
               "/complaint/${fromMap.notificationExtra ?? ""}?reload=true",
-          "unresolvedquery": "/query",
+          NotificationType.QUERY: "/query",
         }[fromMap.notificationType] ??
         "/";
+  }
+
+  void _handleActionKey(String actionKey, RichNotification notif) async {
+    // Open browser
+    if (actionKey == ActionKeys.OPEN_BROWSER) {
+      if (notif.notificationExtra != null) {
+        Uri uri = Uri.parse(notif.notificationExtra!);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri);
+        }
+      }
+    }
   }
 
   void _handleNotification(ReceivedAction notification) {
@@ -89,100 +152,108 @@ void setupNotifications1(BuildContext context, InstiAppBloc bloc,
             (value) => AwesomeNotifications().setGlobalBadgeCounter(value - 1),
           );
     }
-    log("Entered handle notif");
+
     if (notification.payload != null) {
       // Getting notification payload
       RichNotification notif = RichNotification.fromJson(notification.payload!);
 
       // Getting route depending on payload
       String routeName = navigateFromNotification(notif);
-      log(routeName);
+
+      // Get action button key if any
+      String actionKey = notification.buttonKeyPressed;
 
       // Navigate to Route
-      _navigatorKey.currentState?.pushNamed(routeName);
+      _navigatorKey.currentState?.pushReplacementNamed(routeName,
+          arguments: NotificationRouteArguments(actionKey, notif));
 
       // marking the notification as read
       bloc.clearNotificationUsingID(notif.notificationID!);
+
+      _handleActionKey(actionKey, notif);
     }
   }
 
   AwesomeNotifications().actionStream.listen(_handleNotification);
-
-  // Get any messages which caused the application to open from
-  // a terminated state.
-  RemoteMessage? initialMessage =
-      await bloc.firebaseMessaging.getInitialMessage();
-
-  // If the message also contains a data property with a "type" of "chat",
-  // navigate to a chat screen
-  if (initialMessage != null) {
-    log("Handing message");
-  }
-
-  // Called when app is open in background and message is opened
-  FirebaseMessaging.onMessageOpenedApp.listen((msg) {
-    log("Handle msg");
-  });
 }
 
 Future<void> sendMessage(RemoteMessage message) async {
-  log("onMessage: $message");
-  // var appDocDir = await getApplicationDocumentsDirectory();
-
-  // String payload = jsonEncode(message.data);
-
+  log("message: ${message.data}");
   RichNotification notif = RichNotification.fromJson(message.data);
-
   createNotification(notif);
 }
 
 Future<void> createNotification(RichNotification notif) async {
   await AwesomeNotifications().createNotification(
-    content: NotificationContent(
-      id: stringToInt(notif.notificationID ?? "") ??
-          (DateTime.now().millisecondsSinceEpoch % 10000000),
-      channelKey: 'basic_channel',
-      title:
-          // '${Emojis.money_money_bag + Emojis.plant_cactus} Buy Plant Food!!!',
-          notif.notificationTitle,
-      body: notif.notificationVerb,
-      payload: {
-        "extra": notif.notificationExtra ?? "",
-        "id": notif.notificationObjectID ?? "",
-        "type": notif.notificationType ?? "",
-        "notification_id": notif.notificationID ?? "",
-      },
-      // locked: true,
-    ),
-    actionButtons: [
-      NotificationActionButton(
-        key: 'AddCal',
-        label: 'Add to Calendar',
-      )
-    ],
-    // actionButtons: getActionButtons(notif),
+    content: getNotificationContent(notif),
+    actionButtons: getActionButtons(notif),
+  );
+}
+
+NotificationContent getNotificationContent(RichNotification notif) {
+  int id = stringToInt(notif.notificationID ?? "") ??
+      (DateTime.now().millisecondsSinceEpoch);
+
+  String getChannelKey(RichNotification notif) {
+    switch (notif.notificationType) {
+      case "event":
+        return 'basic_channel2';
+      default:
+        return 'basic_channel';
+    }
+  }
+
+  return NotificationContent(
+    id: id,
+    channelKey: getChannelKey(notif),
+    title: notif.notificationTitle ?? "New notification from InstiApp!",
+    body: notif.notificationVerb,
+    bigPicture: notif.notificationImage,
+    largeIcon: notif.notificationImage,
+    hideLargeIconOnExpand: true,
+    color: Colors.blue,
+    payload: {
+      "extra": notif.notificationExtra ?? "",
+      "id": notif.notificationObjectID ?? "",
+      "type": notif.notificationType ?? "",
+      "notification_id": notif.notificationID ?? "",
+    },
+    backgroundColor: Colors.blue,
+    notificationLayout: notif.notificationImage != null
+        ? NotificationLayout.BigPicture
+        : NotificationLayout.Default,
   );
 }
 
 List<NotificationActionButton>? getActionButtons(RichNotification notif) {
   switch (notif.notificationType) {
-    case "event":
+    case NotificationType.EVENT:
       return [
         NotificationActionButton(
-          key: 'AddCal',
+          key: ActionKeys.CHECKOUT,
+          label: 'Check it out',
+        ),
+        NotificationActionButton(
+          key: ActionKeys.ADD_TO_CALENDAR,
           label: 'Add to Calendar',
-        )
+        ),
+      ];
+    case NotificationType.NEWS:
+      return [
+        NotificationActionButton(
+          key: ActionKeys.OPEN_BROWSER,
+          label: 'Check it out',
+        ),
+        NotificationActionButton(
+          key: ActionKeys.LIKE_REACT,
+          label: 'Like/React',
+        ),
       ];
     default:
-      return [
-        NotificationActionButton(
-          key: 'AddCal',
-          label: 'Add to Calendar',
-        )
-      ];
+      return null;
   }
 }
 
 void disposeNotification() {
-  // AwesomeNotifications().actionSink.close();
+  AwesomeNotifications().actionSink.close();
 }
