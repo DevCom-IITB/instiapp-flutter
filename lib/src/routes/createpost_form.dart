@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/createPost.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
 import '../bloc_provider.dart';
 import '../drawer.dart';
 
@@ -169,14 +170,69 @@ class _CreatePostPage extends State<CreatePostPage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Container(
-                                                  margin: EdgeInsets.fromLTRB(
-                                                      15.0, 15.0, 10.0, 5.0),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Container(
+                                                    width: 50,
+                                                    child: TextButton(
+                                                      onPressed: () {
+                                                        posts
+                                                            ?.add(currRequest1);
+                                                      },
+                                                      child: Icon(Icons.close),
+                                                      style: TextButton.styleFrom(
+                                                          primary: Colors.black,
+                                                          backgroundColor:
+                                                              theme.canvasColor,
+                                                          onSurface:
+                                                              Colors.grey,
+                                                          elevation: 0.0),
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                     
                                                   child: Text(
-                                                    'New Discussion',
-                                                    style: theme
-                                                        .textTheme.headline4,
+                                                    'Create Post',
+                                                          style: TextStyle(
+                                                            fontSize: 20.0,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          )
+                                                        
                                                   )),
+                                                  Container(
+                                                    width: 100,
+                                                    child: TextButton(
+                                                      onPressed: () {
+                                                        posts
+                                                            ?.add(currRequest1);
+
+                                                        // Navigator.of(context).push(
+                                                        //   MaterialPageRoute(
+                                                        //       builder: (context) =>
+                                                        //           Group(),
+                                                        //       settings:
+                                                        //           RouteSettings(
+                                                        //         arguments: posts,
+                                                        //       )),
+                                                        // );
+                                                      },
+                                                      child: Text('Post'),
+                                                      style: TextButton.styleFrom(
+                                                          primary: Colors.black,
+                                                          backgroundColor: theme
+                                                              .primaryColor,
+                                                          onSurface:
+                                                              Colors.grey,
+                                                          elevation: 5.0),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              
                                               SizedBox(
                                                 height: 40,
                                               ),
@@ -184,21 +240,22 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                 margin: EdgeInsets.fromLTRB(
                                                     15.0, 5.0, 15.0, 10.0),
                                               ),
+                                              
                                               Container(
                                                   margin: EdgeInsets.fromLTRB(
                                                       15.0, 5.0, 15.0, 10.0),
                                                   child: TextFormField(
+                                                    
                                                     keyboardType:
                                                         TextInputType.multiline,
-                                                    maxLines: null,
+                                                    maxLines: 9999,
                                                     decoration: InputDecoration(
+                                                      hintText:
+                                                          "Write your Post",
                                                       contentPadding:
                                                           EdgeInsets.fromLTRB(
                                                               0, 0, 0, 100),
-                                                      border:
-                                                          OutlineInputBorder(),
-                                                      labelText:
-                                                          "Write something...",
+                              
                                                     ),
                                                     autocorrect: true,
                                                     onChanged: (value) {
@@ -217,34 +274,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                       return null;
                                                     },
                                                   )),
-                                              Container(
-                                                width: double.infinity,
-                                                margin: EdgeInsets.symmetric(
-                                                    vertical: 10.0,
-                                                    horizontal: 15.0),
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    posts?.add(currRequest1);
-
-                                                    // Navigator.of(context).push(
-                                                    //   MaterialPageRoute(
-                                                    //       builder: (context) =>
-                                                    //           Group(),
-                                                    //       settings:
-                                                    //           RouteSettings(
-                                                    //         arguments: posts,
-                                                    //       )),
-                                                    // );
-                                                  },
-                                                  child: Text('Post'),
-                                                  style: TextButton.styleFrom(
-                                                      primary: Colors.black,
-                                                      backgroundColor:
-                                                          Color(0xffffd740),
-                                                      onSurface: Colors.grey,
-                                                      elevation: 5.0),
-                                                ),
-                                              ),
+                                              
                                             ]),
                                       ),
                                     ),
