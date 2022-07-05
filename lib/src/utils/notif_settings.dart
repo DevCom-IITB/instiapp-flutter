@@ -47,6 +47,15 @@ List<NotificationChannel> notifChannels = [
     ledColor: Colors.blue,
     importance: NotificationImportance.Max,
   ),
+  NotificationChannel(
+    channelGroupKey: NotificationGroups.NEWS,
+    channelKey: NotificationChannels.NEWS,
+    channelName: 'News',
+    channelDescription: 'News notifications from InstiApp',
+    defaultColor: Color(0xFF9D50DD),
+    ledColor: Colors.blue,
+    importance: NotificationImportance.Max,
+  ),
 ];
 
 List<NotificationChannelGroup> notifGroups = [
@@ -58,6 +67,10 @@ List<NotificationChannelGroup> notifGroups = [
     channelGroupkey: NotificationGroups.BLOG,
     channelGroupName: 'Blogs',
   ),
+  NotificationChannelGroup(
+    channelGroupkey: NotificationGroups.NEWS,
+    channelGroupName: 'News',
+  ),
 ];
 
 class NotifSettings {
@@ -67,7 +80,7 @@ class NotifSettings {
 class ActionKeys {
   static const String ADD_TO_CALENDAR = "ADD_TO_CALENDAR";
   static const String LIKE_REACT = "LIKE_REACT";
-  static const String OPEN_BROWSER = "ADD_TO_CALENDAR";
+  static const String OPEN_BROWSER = "OPEN_BROWSER";
   static const String CHECKOUT = "CHECKOUT";
 }
 
@@ -75,11 +88,13 @@ class NotificationChannels {
   static const String MISCELLANEOUS_CHANNEL = "misc_channel";
   static const String PLACEMENT = "placement_channel";
   static const String INTERNSHIP = "internship_channel";
+  static const String NEWS = "news_channel";
 }
 
 class NotificationGroups {
   static const String MISCELLANEOUS_GROUP = "misc_group";
   static const String BLOG = "blog_group";
+  static const String NEWS = "news_group";
 }
 
 class NotificationType {
@@ -232,6 +247,8 @@ NotificationContent getNotificationContent(RichNotification notif) {
         return NotificationChannels.PLACEMENT;
       case NotificationType.INTERNSHIP:
         return NotificationChannels.INTERNSHIP;
+      case NotificationType.NEWS:
+        return NotificationChannels.NEWS;
       default:
         return NotificationChannels.MISCELLANEOUS_CHANNEL;
     }
