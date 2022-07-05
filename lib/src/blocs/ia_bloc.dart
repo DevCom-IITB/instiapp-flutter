@@ -432,7 +432,6 @@ class InstiAppBloc {
   }
 
   Future<void> postFAQ(PostFAQRequest postFAQRequest) async {
-    log("message");
     try {
       await client.postFAQ(getSessionIdHeader(), postFAQRequest);
     } catch (e) {
