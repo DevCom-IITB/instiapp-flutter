@@ -1,7 +1,6 @@
 // import 'dart:async';
 import 'dart:core';
 import 'dart:collection';
-import 'dart:developer';
 
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
@@ -590,7 +589,6 @@ class _BlogPageState extends State<BlogPage> {
 
   Widget _blogHeader(BuildContext context, PostBloc blogBloc, var bloc) {
     var theme = Theme.of(context);
-    log(widget.postType.toString());
     return Column(
       children: <Widget>[
         TitleWithBackButton(
@@ -733,7 +731,6 @@ class _BlogPageState extends State<BlogPage> {
                     if (category != "")
                       category = category.substring(0, category.length - 1);
                     blogBloc.category = category;
-                    // log(category);
                     blogBloc.refresh();
                   });
                 },

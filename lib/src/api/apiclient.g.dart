@@ -8,6 +8,7 @@ part of 'apiclient.dart';
 
 class _InstiAppApi implements InstiAppApi {
   _InstiAppApi(this._dio, {this.baseUrl}) {
+    // baseUrl ??= 'http://192.168.1.76:8000/api';
     baseUrl ??= 'https://api.insti.app/api';
   }
 
@@ -235,6 +236,7 @@ class _InstiAppApi implements InstiAppApi {
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
+    print(baseUrl);
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<NewsFeedResponse>(
             Options(method: 'GET', headers: _headers, extra: _extra)
