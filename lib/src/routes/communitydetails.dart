@@ -182,10 +182,13 @@ class _CommunityDetailsState extends State<CommunityDetails> {
       ),
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
-        icon: Icon(Icons.add),
-        label: Text("Create Post"),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed("/posts/add");
+        },
+        child: Icon(Icons.create_outlined),
+       
+        
       ),
     );
   }
