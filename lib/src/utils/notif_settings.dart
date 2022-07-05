@@ -56,6 +56,15 @@ List<NotificationChannel> notifChannels = [
     ledColor: Colors.blue,
     importance: NotificationImportance.Max,
   ),
+  NotificationChannel(
+    channelGroupKey: NotificationGroups.EVENT,
+    channelKey: NotificationChannels.EVENT,
+    channelName: 'Events',
+    channelDescription: 'Event notifications from InstiApp',
+    defaultColor: Color(0xFF9D50DD),
+    ledColor: Colors.blue,
+    importance: NotificationImportance.Max,
+  ),
 ];
 
 List<NotificationChannelGroup> notifGroups = [
@@ -70,6 +79,10 @@ List<NotificationChannelGroup> notifGroups = [
   NotificationChannelGroup(
     channelGroupkey: NotificationGroups.NEWS,
     channelGroupName: 'News',
+  ),
+  NotificationChannelGroup(
+    channelGroupkey: NotificationGroups.EVENT,
+    channelGroupName: 'Events',
   ),
 ];
 
@@ -89,12 +102,14 @@ class NotificationChannels {
   static const String PLACEMENT = "placement_channel";
   static const String INTERNSHIP = "internship_channel";
   static const String NEWS = "news_channel";
+  static const String EVENT = "events_channel";
 }
 
 class NotificationGroups {
   static const String MISCELLANEOUS_GROUP = "misc_group";
   static const String BLOG = "blog_group";
   static const String NEWS = "news_group";
+  static const String EVENT = "events_group";
 }
 
 class NotificationType {
@@ -249,6 +264,8 @@ NotificationContent getNotificationContent(RichNotification notif) {
         return NotificationChannels.INTERNSHIP;
       case NotificationType.NEWS:
         return NotificationChannels.NEWS;
+      case NotificationType.EVENT:
+        return NotificationChannels.EVENT;
       default:
         return NotificationChannels.MISCELLANEOUS_CHANNEL;
     }
