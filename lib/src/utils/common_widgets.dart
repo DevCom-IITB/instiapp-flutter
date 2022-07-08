@@ -1370,3 +1370,171 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
     );
   }
 }
+
+
+class CommunityCommentWidget extends StatefulWidget {
+  const CommunityCommentWidget({Key? key}) : super(key: key);
+
+  @override
+  State<CommunityCommentWidget> createState() => _CommunityCommentWidgetState();
+}
+
+class _CommunityCommentWidgetState extends State<CommunityCommentWidget> {
+  List<String> imgList = [
+    "https://media.pitchfork.com/photos/620e81cad8bc62857b465cc3/2:1/w_2560%2Cc_limit/Stranger-Things-Season-4.jpg",
+    "https://www.denofgeek.com/wp-content/uploads/2019/04/infinity-war-montage-main.jpg?resize=768%2C432",
+    "https://www.pluggedin.com/wp-content/uploads/2020/01/family-guy-scaled.jpg",
+    "https://www.thenexthint.com/wp-content/uploads/2021/09/Is-BoJack-Horseman-Season-7-Cancelled-by-Netflix-1.jpeg.webp",
+    "https://cdn.searchenginejournal.com/wp-content/uploads/2021/04/journalism-tactics-60812472af9db-1520x800.png",
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+
+    return GestureDetector(
+        onTap: () => {CommunityPostPage.navigateWith(context)},
+        child: Container(
+          margin: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: theme.colorScheme.surface,
+            // border: Border.all(
+            //   color: theme.colorScheme.onSurfaceVariant,
+            //   width: 1,
+            // ),
+          ),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(
+                            width: 1,
+                            color: theme.colorScheme.surfaceVariant))),
+                child: ListTile(
+                  leading: NullableCircleAvatar(
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
+                    Icons.person,
+                    radius: 18,
+                  ),
+                  title: Text(
+                    "Elon Musk",
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  subtitle: Text(
+                    "29 March",
+                    style: theme.textTheme.bodySmall,
+                  ),
+                  trailing:
+                      Icon(Icons.more_vert, color: theme.colorScheme.onSurface),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                  minVerticalPadding: 0,
+                  dense: true,
+                  horizontalTitleGap: 4,
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: Text(
+                  '''What steps are being taken by the HA council to ensure that there is any form of cheap transportation on campus?\n\nThere are very few mybyks, and only autos exist now for moving around the campus. Is there something new being implemented or shuttles reinstated or number of mybyks being increased? Please update here in the comments.''',
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: ImageGallery(images: imgList),
+              ),
+              _buildFooter(theme),
+            ],
+          ),
+        ));
+  }
+
+  Widget _buildFooter(ThemeData theme) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: theme.colorScheme.surface,
+      ),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        decoration: BoxDecoration(
+          // border:
+          //     Border(top: BorderSide(color: theme.colorScheme.surfaceVariant)),
+          color: theme.colorScheme.surface,
+          boxShadow: [
+            BoxShadow(
+              offset: Offset(0, 3),
+              blurRadius: 30,
+              spreadRadius: -18,
+              color: theme.colorScheme.onSurface,
+            ),
+          ],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.thumb_up_alt_outlined,
+                  size: 20,
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 5),
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: theme.colorScheme.surfaceVariant,
+                  ),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        "assets/communities/emojis/laugh.png",
+                        width: 20,
+                      ),
+                      Image.asset(
+                        "assets/communities/emojis/cry.png",
+                        width: 20,
+                      ),
+                      Image.asset(
+                        "assets/communities/emojis/angry.png",
+                        width: 20,
+                      ),
+                      Image.asset(
+                        "assets/communities/emojis/surprise.png",
+                        width: 20,
+                      ),
+                    ],
+                  ),
+                ),
+                Text("15", style: theme.textTheme.bodySmall),
+                Container(
+                  margin: EdgeInsets.only(left: 15),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.mode_comment_outlined,
+                        color: theme.colorScheme.onSurfaceVariant,
+                        size: 20,
+                      ),
+                      SizedBox(width: 3),
+                      Text("3", style: theme.textTheme.bodySmall),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            Icon(
+              Icons.share_outlined,
+              color: theme.colorScheme.onSurfaceVariant,
+              size: 20,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
