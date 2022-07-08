@@ -9,6 +9,7 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:markdown/markdown.dart';
 
 class CommunityPostPage extends StatefulWidget {
   final String? test;
@@ -176,7 +177,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
           Container(
             decoration: BoxDecoration(color: theme.colorScheme.surfaceVariant),
             child: Column(
-              children: _buildPostList(),
+              
             ),
           )
         ],
@@ -184,11 +185,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
     );
   }
 
-  List<Widget> _buildPostList() {
-    return [CommunityPostWidget()];
-  }
+ 
 
-  List<Widget> _buildCommentList() {
-    return [CommunityCommentWidget(), CommunityCommentWidget()];
-  }
+
 }

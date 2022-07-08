@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/community.dart';
+import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/messCalEvent.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
@@ -304,5 +305,13 @@ abstract class InstiAppApi {
 
   @rt.GET("/communities/{id}")
   Future<Community> getCommunity(
+      @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+
+  @rt.GET("/communityposts")
+  Future<List<CommunityPost>> getCommunityPosts(
+      @rt.Header("Cookie") String sessionId);
+
+  @rt.GET("/communityposts/{id}")
+  Future<CommunityPost> getCommunityPost(
       @rt.Header("Cookie") String sessionId, @rt.Path() String id);
 }
