@@ -180,16 +180,14 @@ class _CommunityDetailsState extends State<CommunityDetails> {
           ],
         ),
       ),
-      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton( 
+        child: Icon(
+          Icons.mode_edit,
+          ),
+        backgroundColor: Color.fromARGB(255, 28, 122, 230),
         onPressed: () {
-          Navigator.of(context).pushNamed("/posts/add");
-        },
-        child: Icon(Icons.create_outlined),
-       
-        
-      ),
+        Navigator.of(context).pushNamed("/posts/add");
+      }),
     );
   }
 

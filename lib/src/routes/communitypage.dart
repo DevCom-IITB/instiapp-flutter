@@ -197,7 +197,7 @@ class _CommunityPageState extends State<CommunityPage> {
     return Container(
       margin: EdgeInsets.all(5),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.transparent, width: 0),
+        border: Border.all(color: Color.fromARGB(0, 255, 255, 255), width: 0),
         borderRadius: BorderRadius.circular(10),
         image: DecorationImage(
           fit: BoxFit
@@ -253,12 +253,12 @@ class _CommunityPageState extends State<CommunityPage> {
               title: Text(
                 community.name ?? "Some community",
                 style: theme.textTheme.subtitle1?.copyWith(
-                  color: Colors.white,
+                  color: Color.fromARGB(255, 255, 255, 255),
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              textColor: Colors.white,
+              textColor: Color.fromARGB(255, 221, 215, 255),
               trailing: PopupMenuButton<int>(
                 itemBuilder: (context) => [
                   // popupmenu item 1
@@ -309,7 +309,7 @@ class _CommunityPageState extends State<CommunityPage> {
                 // offset: Offset(0, 100),
                 elevation: 2,
                 tooltip: "More",
-                icon: Icon(Icons.more_vert, color: Colors.white),
+                icon: Icon(Icons.more_vert, color: Color.fromARGB(255, 252, 250, 250)),
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,7 +320,7 @@ class _CommunityPageState extends State<CommunityPage> {
                   Text(
                     community.about ?? "",
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Color.fromARGB(255, 243, 243, 243),
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                     ),
