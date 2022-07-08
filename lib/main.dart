@@ -18,7 +18,7 @@ import 'package:InstiApp/src/routes/newspage.dart';
 import 'package:InstiApp/src/routes/communitypage.dart';
 import 'package:InstiApp/src/routes/notificationspage.dart';
 import 'package:InstiApp/src/routes/putentitypage.dart';
-import 'package:InstiApp/src/routes/putpostpage.dart';
+import 'package:InstiApp/src/routes/createpost_form.dart';
 import 'package:InstiApp/src/routes/qrpage.dart';
 import 'package:InstiApp/src/routes/queryaddpage.dart';
 import 'package:InstiApp/src/routes/querypage.dart';

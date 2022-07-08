@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/createPost.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
 import '../bloc_provider.dart';
 import '../drawer.dart';
 
@@ -186,14 +187,18 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                 margin: EdgeInsets.fromLTRB(
                                                     15.0, 5.0, 15.0, 10.0),
                                               ),
+                                              
                                               Container(
                                                   margin: EdgeInsets.fromLTRB(
                                                       15.0, 5.0, 15.0, 10.0),
                                                   child: TextFormField(
+                                                    
                                                     keyboardType:
                                                         TextInputType.multiline,
-                                                    maxLines: null,
+                                                    maxLines: 9999,
                                                     decoration: InputDecoration(
+                                                      hintText:
+                                                          "Write your Post",
                                                       contentPadding:
                                                           EdgeInsets.fromLTRB(
                                                               120, 0, 0, 400),
