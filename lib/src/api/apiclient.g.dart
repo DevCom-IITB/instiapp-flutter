@@ -8,7 +8,6 @@ part of 'apiclient.dart';
 
 class _InstiAppApi implements InstiAppApi {
   _InstiAppApi(this._dio, {this.baseUrl}) {
-    // baseUrl ??= 'http://192.168.1.76:8000/api';
     baseUrl ??= 'https://api.insti.app/api';
   }
 
@@ -229,20 +228,55 @@ class _InstiAppApi implements InstiAppApi {
     return value;
   }
 
-  Future<void> deleteEvent(
-      @rt.Header('Cookie') String sessionId, String uuid) async {
+  @override
+  Future<EventCreateResponse> updateEvent(sessionId, event, uuid) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
+    _data.addAll(event.toJson());
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<Event>(
-            Options(method: 'DELETE', headers: _headers, extra: _extra)
+        _setStreamType<EventCreateResponse>(
+            Options(method: 'PUT', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/events/${uuid}',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    // final value = Event.fromJson(_result.data!);
+    final value = EventCreateResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<EventCreateResponse> postEventForm(
+      sessionId, eventCreateRequest) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(eventCreateRequest.toJson());
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<EventCreateResponse>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/events',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = EventCreateResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<void> deleteEvent(sessionId, uuid) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    await _dio.fetch<void>(_setStreamType<void>(
+        Options(method: 'DELETE', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/events/${uuid}',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     return null;
   }
 
@@ -253,7 +287,6 @@ class _InstiAppApi implements InstiAppApi {
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    print(baseUrl);
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<NewsFeedResponse>(
             Options(method: 'GET', headers: _headers, extra: _extra)
@@ -333,27 +366,6 @@ class _InstiAppApi implements InstiAppApi {
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = EventCreateResponse.fromJson(_result.data!);
-    print(_result.data!);
-    return value;
-  }
-
-  @override
-  Future<EventCreateResponse> updateEvent(
-      String sessionId, event, String uuid) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'Cookie': sessionId};
-    _headers.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
-    _data.addAll(event.toJson());
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<EventCreateResponse>(
-            Options(method: 'PUT', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/events/${uuid}',
-                    queryParameters: queryParameters, data: _data)
-                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = EventCreateResponse.fromJson(_result.data!);
-    print(_result.data!);
     return value;
   }
 
@@ -462,11 +474,8 @@ class _InstiAppApi implements InstiAppApi {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionID};
     _headers.removeWhere((k, v) => v == null);
-    final FormData _data = FormData();
-    _data.files.add(MapEntry<String, MultipartFile>(
-        'picture',
-        MultipartFile.fromBytes(base64Decode(imageUploadRequest.base64Image!),
-            filename: DateTime.now().toString() + '.jpg')));
+    final _data = <String, dynamic>{};
+    _data.addAll(imageUploadRequest.toJson());
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<ImageUploadResponse>(
             Options(method: 'POST', headers: _headers, extra: _extra)
@@ -885,21 +894,19 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<EventCreateResponse> postEventForm(
-      sessionId, eventCreateRequest) async {
+  Future<dynamic> updateAchievement(sessionId, offeredAchievements, id) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    _data.addAll(eventCreateRequest.toJson());
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<EventCreateRequest>(
-            Options(method: 'POST', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/events',
-                    queryParameters: queryParameters, data: _data)
-                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = EventCreateResponse.fromJson(_result.data!);
+    _data.addAll(offeredAchievements.toJson());
+    final _result = await _dio.fetch(_setStreamType<dynamic>(
+        Options(method: 'PUT', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/achievements-offer/${id}',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = _result.data;
     return value;
   }
 
@@ -918,46 +925,6 @@ class _InstiAppApi implements InstiAppApi {
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = SecretResponse.fromJson(_result.data!);
-    return value;
-  }
-
-  @override
-  Future<OfferedAchievements> createAchievement(
-      sessionId, OfferedAchievements offeredAchievement) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'Cookie': sessionId};
-    _headers.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
-    _data.addAll(offeredAchievement.toJson());
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<SecretResponse>(
-            Options(method: 'POST', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/achievements-offer',
-                    queryParameters: queryParameters, data: _data)
-                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    print(_result.data!);
-    final value = OfferedAchievements.fromJson(_result.data!);
-    return value;
-  }
-
-  @override
-  Future<OfferedAchievements> updateAchievement(
-      sessionId, OfferedAchievements offeredAchievement, String id) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'Cookie': sessionId};
-    _headers.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
-    _data.addAll(offeredAchievement.toJson());
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<SecretResponse>(
-            Options(method: 'PUT', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/achievements-offer/${id}',
-                    queryParameters: queryParameters, data: _data)
-                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    print(_result.data!);
-    final value = OfferedAchievements.fromJson(_result.data!);
     return value;
   }
 
@@ -1137,39 +1104,55 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<List<UserTagHolder>> getUserTags(String sessionId) async {
+  Future<List<UserTagHolder>> getUserTags(sessionId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<List<String>>(
+        _setStreamType<List<UserTagHolder>>(
             Options(method: 'GET', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/user-tags',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = _result.data!
+    var value = _result.data!
         .map((dynamic i) => UserTagHolder.fromJson(i as Map<String, dynamic>))
         .toList();
     return value;
   }
 
-  Future<int> getUserTagsReach(
-      @rt.Header("Cookie") String sessionId, List<int> selectedTagIds) async {
+  @override
+  Future<UserTagsReachResponse> getUserTagsReach(
+      sessionId, selectedTagIds) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final _data = selectedTagIds;
-    // final _data = <String,dynamic>{}
-    final _result = await _dio.fetch(_setStreamType<List<String>>(
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<UserTagsReachResponse>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/user-tags/reach',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = UserTagsReachResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<dynamic> createAchievement(sessionId, offeredAchievements) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(offeredAchievements.toJson());
+    final _result = await _dio.fetch(_setStreamType<dynamic>(
         Options(method: 'POST', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/user-tags/reach',
+            .compose(_dio.options, '/achievements-offer',
                 queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    // print();
-    final value = _result.data!['count'];
+    final value = _result.data;
     return value;
   }
 

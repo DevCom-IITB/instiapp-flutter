@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:math';
+import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/UserTag.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
@@ -11,9 +13,11 @@ import 'package:InstiApp/src/api/request/image_upload_request.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/event_form_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/src/widgets/form.dart' as flut;
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -344,7 +348,7 @@ class _AchievementAdderState extends State<AchievementAdder> {
 
 class AudienceRestrictor extends StatefulWidget {
   final Function onSave;
-  final client;
+  final InstiAppApi client;
   final Future<List<int>>? loadableTags;
   final String cookie;
   AudienceRestrictor(
@@ -363,44 +367,44 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
   List<String> restrictables = [];
   List<UserTagHolder> selectedTags = [];
   List<int> selectedTagIds = [];
+
   @override
   void initState() {
     () async {
       List<UserTagHolder> tempTags =
           await widget.client.getUserTags(widget.cookie);
-      setState(() {
-        restrictors = tempTags;
-        restrictables = restrictors.map((e) => e.holderName!).toList();
-        if (widget.loadableTags != null) {
-          widget.loadableTags!.then((value) {
-            setState(() {
-              selectedTagIds = value;
-              selectedTags = [
-                ...restrictors.map((cat) => UserTagHolder(
-                        holderID: cat.holderID,
-                        holderName: cat.holderName,
-                        holderTags: cat.holderTags!
-                            .where((element) =>
-                                selectedTagIds.contains(element.tagID))
-                            .toList()) //UserTagHolder
-                    ) //map
-              ];
-            });
+      restrictors = tempTags;
+      restrictables = restrictors.map((e) => e.holderName!).toList();
+      if (widget.loadableTags != null) {
+        widget.loadableTags!.then((value) {
+          setState(() {
+            selectedTagIds = value;
+            selectedTags = [
+              ...restrictors.map((cat) => UserTagHolder(
+                      holderID: cat.holderID,
+                      holderName: cat.holderName,
+                      holderTags: cat.holderTags!
+                          .where((element) =>
+                              selectedTagIds.contains(element.tagID))
+                          .toList()) //UserTagHolder
+                  ) //map
+            ];
           });
-        } else {
-          selectedTagIds = [];
+        });
+      } else {
+        selectedTagIds = [];
 
-          selectedTags = [
-            ...restrictors.map((cat) => UserTagHolder(
-                    holderID: cat.holderID,
-                    holderName: cat.holderName,
-                    holderTags: []) //UserTagHolder
-                ) //map
-          ];
-        }
-      });
+        selectedTags = [
+          ...restrictors.map((cat) => UserTagHolder(
+                  holderID: cat.holderID,
+                  holderName: cat.holderName,
+                  holderTags: []) //UserTagHolder
+              ) //map
+        ];
+      }
       updateReach();
     }();
+
     super.initState();
   }
 
@@ -498,16 +502,14 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
                                   reach = '...';
                                 });
                                 int index = selectedTags.indexOf(cat);
-                                setState(() {
-                                  selectedTags[index].holderTags!.clear();
-                                  for (int i = 0; i < values.length; i++) {
-                                    selectedTags[index]
-                                        .holderTags!
-                                        .add(values[i]!);
-                                  }
-                                  updateSelectedTagIds();
-                                  updateReach();
-                                });
+                                selectedTags[index].holderTags!.clear();
+                                for (int i = 0; i < values.length; i++) {
+                                  selectedTags[index]
+                                      .holderTags!
+                                      .add(values[i]!);
+                                }
+                                updateSelectedTagIds();
+                                updateReach();
                               },
                             ),
                           ]),
@@ -528,10 +530,161 @@ class _AudienceRestrictorState extends State<AudienceRestrictor> {
 
   void updateReach() async {
     int newReach =
-        await widget.client.getUserTagsReach(widget.cookie, selectedTagIds);
+        (await widget.client.getUserTagsReach(widget.cookie, selectedTagIds))
+                .count ??
+            0;
     setState(() {
       reach = newReach.toString();
     });
+  }
+}
+
+class SelectInterests extends StatefulWidget {
+  final void Function(List<Interest>?) updateInterests;
+  final Future<List<Interest>>? loadableInterests;
+
+  const SelectInterests({
+    Key? key,
+    required this.updateInterests,
+    required this.loadableInterests,
+  }) : super(key: key);
+
+  @override
+  State<SelectInterests> createState() => _SelectInterestsState();
+}
+
+class _SelectInterestsState extends State<SelectInterests> {
+  List<Interest>? interests;
+
+  void onBodyChange(Interest? body) async {
+    if (body != null)
+      setState(() {
+        interests?.add(body);
+        widget.updateInterests(interests);
+      });
+  }
+
+  Widget _buildChips(BuildContext context) {
+    List<Widget> w = [];
+    int length = interests?.length ?? 0;
+    for (int i = 0; i < length; i++) {
+      w.add(
+        Chip(
+          labelPadding: EdgeInsets.all(2.0),
+          label: Text(
+            interests?[i].title ?? "",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: Colors.primaries[i],
+          elevation: 6.0,
+          shadowColor: Colors.grey[60],
+          padding: EdgeInsets.all(8.0),
+          onDeleted: () async {
+            interests?.removeAt(i);
+            widget.updateInterests(interests);
+            setState(() {});
+          },
+        ),
+      );
+    }
+    return Wrap(
+      spacing: 8.0, // gap between adjacent chips
+      runSpacing: 4.0,
+      children: w,
+    );
+  }
+
+  Widget buildDropdownMenuItemsInterest(BuildContext context, Interest? body) {
+    return Container(
+      child: Text(
+        "Search for an interest",
+        style: Theme.of(context).textTheme.bodyText1,
+      ),
+    );
+  }
+
+  Widget _customPopupItemBuilderInterest(
+      BuildContext context, Interest body, bool isSelected) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(body.title!),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    if (widget.loadableInterests != null) {
+      widget.loadableInterests!.then((value) {
+        setState(() {
+          interests = value;
+        });
+      });
+    } else {
+      interests = [];
+    }
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
+    ThemeData theme = Theme.of(context);
+
+    return Container(
+      // width: double.infinity,
+      margin: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(
+            height: 20.0,
+          ),
+          DropdownSearch<Interest>(
+            mode: Mode.DIALOG,
+            maxHeight: 700,
+            isFilteredOnline: true,
+            showSearchBox: true,
+            dropdownSearchDecoration: InputDecoration(
+              labelText: "Interests",
+              hintText: "Interests",
+            ),
+            onChanged: onBodyChange,
+            onFind: bloc.achievementBloc.searchForInterest,
+            dropdownBuilder: buildDropdownMenuItemsInterest,
+            popupItemBuilder: _customPopupItemBuilderInterest,
+            scrollbarProps: ScrollbarProps(
+              isAlwaysShown: true,
+              thickness: 7,
+            ),
+            emptyBuilder: (BuildContext context, String? _) {
+              return Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(20),
+                child: Text(
+                  "No interests found. Refine your search!",
+                  style: theme.textTheme.subtitle1,
+                  textAlign: TextAlign.center,
+                ),
+              );
+            },
+          ),
+          _buildChips(context),
+        ],
+      ),
+    );
   }
 }
 
@@ -572,6 +725,7 @@ class _EventFormState extends State<EventForm> {
   late String StrID;
   TextEditingController eventNameController = TextEditingController();
   TextEditingController eventDescController = TextEditingController();
+  late List<Interest> eventInterests = [];
   late List<OfferedAchievements> eventAchievementsOffered = [];
   late String eventImageURL = placeHolderImage;
   // TextEditingController eventImageURLController = TextEditingController();
@@ -601,6 +755,8 @@ class _EventFormState extends State<EventForm> {
   Future<List<int>>? loadableUserTags;
 
   Future<List<OfferedAchievements>>? loadableOfferedAchevs = null;
+
+  Future<List<Interest>>? loadableInterests = null;
 
   Event? loadedEvent;
 
@@ -934,6 +1090,14 @@ class _EventFormState extends State<EventForm> {
                     style: TextStyle(),
                   ),
                 ),
+                SelectInterests(
+                  loadableInterests: loadableInterests,
+                  updateInterests: (i) {
+                    setState(() {
+                      eventInterests = i ?? [];
+                    });
+                  },
+                ),
                 AchievementAdder(
                     postData: (List<OfferedAchievements> achevs) {
                       eventAchievementsOffered = achevs;
@@ -995,26 +1159,29 @@ class _EventFormState extends State<EventForm> {
                       return;
                     }
                     EventCreateRequest req = EventCreateRequest(
-                        eventName: eventNameController.text,
-                        eventDescription: eventDescController.text,
-                        eventImageURL: eventImageURL,
-                        eventStartTime: eventStartTime,
-                        eventEndTime: eventEndTime,
-                        allDayEvent: eventIsAllDay,
-                        eventWebsiteURL: eventWesbiteURLController.text,
-                        eventVenueNames: eventVenues
-                            .where((element) => element.venueShortName != null)
-                            .map((e) => e.venueShortName!)
-                            .toList(),
-                        eventBodiesID:
-                            eventBodies.map((e) => e.bodyID!).toList(),
-                        eventUserTags: eventUserTags,
-                        notify: eventNotifications);
+                      eventName: eventNameController.text,
+                      eventDescription: eventDescController.text,
+                      eventImageURL: eventImageURL,
+                      eventStartTime: eventStartTime,
+                      eventEndTime: eventEndTime,
+                      allDayEvent: eventIsAllDay,
+                      eventWebsiteURL: eventWesbiteURLController.text,
+                      eventVenueNames: eventVenues
+                          .where((element) => element.venueShortName != null)
+                          .map((e) => e.venueShortName!)
+                          .toList(),
+                      eventBodiesID: eventBodies.map((e) => e.bodyID!).toList(),
+                      eventInterest: eventInterests,
+                      eventInterestsID:
+                          eventInterests.map((e) => e.id!).toList(),
+                      eventUserTags: eventUserTags,
+                      notify: eventNotifications,
+                    );
                     if (!editingEvent) {
                       //assuming all validators are written right, try-catch is unnecessary.
-                      final EventCreateResponse? respo =
+                      final EventCreateResponse respo =
                           await bloc.client.createEvent(widget.cookie, req);
-                      eventID = respo!.eventId!;
+                      eventID = respo.eventId!;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text("Event created!"),
@@ -1025,6 +1192,7 @@ class _EventFormState extends State<EventForm> {
                     } else {
                       await bloc.client
                           .updateEvent(widget.cookie, req, eventID);
+                      Navigator.of(context).pop();
                     }
                     postOffers(eventID, widget.cookie, bloc.client);
                     //update achevs in this widget
@@ -1124,6 +1292,9 @@ class _EventFormState extends State<EventForm> {
     });
     loadableUserTags = eventOnItsWay.then((value) {
       return value.eventUserTags!;
+    });
+    loadableInterests = eventOnItsWay.then((value) {
+      return value.eventInterest ?? [];
     });
     loadableOfferedAchevs = eventOnItsWay.then((value) {
       return value.eventOfferedAchievements!;

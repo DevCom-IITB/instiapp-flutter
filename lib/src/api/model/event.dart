@@ -73,6 +73,9 @@ class Event extends elt.Event {
   @JsonKey(name: "user_tags")
   List<int>? eventUserTags;
 
+  @JsonKey(name: "event_interest")
+  List<Interest>? eventInterest;
+
   @JsonKey(ignore: true)
   UES get eventUserUes => UES.values[eventUserUesInt ?? 0];
 
@@ -89,13 +92,13 @@ class Event extends elt.Event {
     String subtitle = "";
 
     DateTime? startTime;
-    if(eventStartTime != null){
+    if (eventStartTime != null) {
       startTime = DateTime.parse(eventStartTime!);
     }
-      
+
     DateTime endTime = DateTime.parse(eventEndTime!);
     DateTime timeNow = DateTime.now();
-    bool eventStarted = timeNow.compareTo(startTime?? timeNow) > 0;
+    bool eventStarted = timeNow.compareTo(startTime ?? timeNow) > 0;
     bool eventEnded = timeNow.compareTo(endTime) > 0;
 
     if (eventEnded)
@@ -130,26 +133,27 @@ class Event extends elt.Event {
     return subtitle;
   }
 
-  Event({
-    this.eventID,
-    this.eventStrID,
-    this.eventName,
-    this.eventDescription,
-    this.eventImageURL,
-    this.eventStartTime,
-    this.eventEndTime,
-    this.allDayEvent,
-    this.eventVenues,
-    this.eventBodies,
-    this.eventOfferedAchievements,
-    this.eventInterestedCount = 0,
-    this.eventGoingCount = 0,
-    this.eventUserTags,
-    this.eventInterested,
-    this.eventGoing,
-    this.eventWebsiteURL,
-    this.eventUserUesInt,
-  }) : super(
+  Event(
+      {this.eventID,
+      this.eventStrID,
+      this.eventName,
+      this.eventDescription,
+      this.eventImageURL,
+      this.eventStartTime,
+      this.eventEndTime,
+      this.allDayEvent,
+      this.eventVenues,
+      this.eventBodies,
+      this.eventOfferedAchievements,
+      this.eventInterestedCount = 0,
+      this.eventGoingCount = 0,
+      this.eventUserTags,
+      this.eventInterested,
+      this.eventGoing,
+      this.eventWebsiteURL,
+      this.eventUserUesInt,
+      this.eventInterest})
+      : super(
           date: DateTime.parse(eventStartTime!),
           title: eventName,
           description: eventDescription,
