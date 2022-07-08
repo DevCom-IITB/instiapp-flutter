@@ -16,5 +16,5 @@ Map<String, dynamic> _$EventCreateResponseToJson(
         EventCreateResponse instance) =>
     <String, dynamic>{
       'result': instance.result,
-      'eventId': instance.eventId,
+      'id': instance.eventId,
     };
