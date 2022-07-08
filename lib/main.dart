@@ -301,6 +301,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, MessCalendarPage());
                 case "/messcalendar/qr":
                   return _buildRoute(settings, QRPage());
+                
               }
             }
             return _buildRoute(settings, MessPage());

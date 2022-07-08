@@ -172,11 +172,13 @@ class _CreatePostPage extends State<CreatePostPage> {
                                               Container(
                                                   margin: EdgeInsets.fromLTRB(
                                                       15.0, 15.0, 10.0, 5.0),
+                                                  
                                                   child: Text(
-                                                    'New Discussion',
+                                                    'Create Post',
                                                     style: theme
                                                         .textTheme.headline4,
-                                                  )),
+                                                   ), 
+                                                  ),
                                               SizedBox(
                                                 height: 40,
                                               ),
@@ -194,11 +196,11 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                     decoration: InputDecoration(
                                                       contentPadding:
                                                           EdgeInsets.fromLTRB(
-                                                              0, 0, 0, 100),
+                                                              120, 0, 0, 400),
                                                       border:
-                                                          OutlineInputBorder(),
+                                                          OutlineInputBorder(),  
                                                       labelText:
-                                                          "Write something...",
+                                                          "Write your post..",
                                                     ),
                                                     autocorrect: true,
                                                     onChanged: (value) {
@@ -217,11 +219,13 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                       return null;
                                                     },
                                                   )),
-                                              Container(
+                                             Container(
                                                 width: double.infinity,
                                                 margin: EdgeInsets.symmetric(
                                                     vertical: 10.0,
                                                     horizontal: 15.0),
+                                                child: Align(
+                                                alignment: Alignment.topRight,
                                                 child: TextButton(
                                                   onPressed: () {
                                                     posts?.add(currRequest1);
@@ -238,13 +242,19 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                   },
                                                   child: Text('Post'),
                                                   style: TextButton.styleFrom(
-                                                      primary: Colors.black,
+                                                      primary: Color.fromARGB(255, 255, 244, 244),
                                                       backgroundColor:
-                                                          Color(0xffffd740),
+                                                          Color.fromARGB(255, 70, 111, 224),
                                                       onSurface: Colors.grey,
-                                                      elevation: 5.0),
+                                                      elevation: 5.0
+                                                      
+                                                      ),
                                                 ),
-                                              ),
+                                                ),
+                                                
+                                             ),
+                                               
+                                             
                                             ]),
                                       ),
                                     ),
@@ -257,7 +267,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                         );
                       }).toList(),
                     ),
-                  ),
+                  ), 
           ),
         ));
   }
