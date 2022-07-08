@@ -170,69 +170,16 @@ class _CreatePostPage extends State<CreatePostPage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Container(
-                                                    width: 50,
-                                                    child: TextButton(
-                                                      onPressed: () {
-                                                        posts
-                                                            ?.add(currRequest1);
-                                                      },
-                                                      child: Icon(Icons.close),
-                                                      style: TextButton.styleFrom(
-                                                          primary: Colors.black,
-                                                          backgroundColor:
-                                                              theme.canvasColor,
-                                                          onSurface:
-                                                              Colors.grey,
-                                                          elevation: 0.0),
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                     
+                                              Container(
+                                                  margin: EdgeInsets.fromLTRB(
+                                                      15.0, 15.0, 10.0, 5.0),
+                                                  
                                                   child: Text(
                                                     'Create Post',
-                                                          style: TextStyle(
-                                                            fontSize: 20.0,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          )
-                                                        
-                                                  )),
-                                                  Container(
-                                                    width: 100,
-                                                    child: TextButton(
-                                                      onPressed: () {
-                                                        posts
-                                                            ?.add(currRequest1);
-
-                                                        // Navigator.of(context).push(
-                                                        //   MaterialPageRoute(
-                                                        //       builder: (context) =>
-                                                        //           Group(),
-                                                        //       settings:
-                                                        //           RouteSettings(
-                                                        //         arguments: posts,
-                                                        //       )),
-                                                        // );
-                                                      },
-                                                      child: Text('Post'),
-                                                      style: TextButton.styleFrom(
-                                                          primary: Colors.black,
-                                                          backgroundColor: theme
-                                                              .primaryColor,
-                                                          onSurface:
-                                                              Colors.grey,
-                                                          elevation: 5.0),
-                                                    ),
+                                                    style: theme
+                                                        .textTheme.headline4,
+                                                   ), 
                                                   ),
-                                                ],
-                                              ),
-                                              
                                               SizedBox(
                                                 height: 40,
                                               ),
@@ -254,8 +201,11 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                           "Write your Post",
                                                       contentPadding:
                                                           EdgeInsets.fromLTRB(
-                                                              0, 0, 0, 100),
-                              
+                                                              120, 0, 0, 400),
+                                                      border:
+                                                          OutlineInputBorder(),  
+                                                      labelText:
+                                                          "Write your post..",
                                                     ),
                                                     autocorrect: true,
                                                     onChanged: (value) {
@@ -274,7 +224,42 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                       return null;
                                                     },
                                                   )),
-                                              
+                                             Container(
+                                                width: double.infinity,
+                                                margin: EdgeInsets.symmetric(
+                                                    vertical: 10.0,
+                                                    horizontal: 15.0),
+                                                child: Align(
+                                                alignment: Alignment.topRight,
+                                                child: TextButton(
+                                                  onPressed: () {
+                                                    posts?.add(currRequest1);
+
+                                                    // Navigator.of(context).push(
+                                                    //   MaterialPageRoute(
+                                                    //       builder: (context) =>
+                                                    //           Group(),
+                                                    //       settings:
+                                                    //           RouteSettings(
+                                                    //         arguments: posts,
+                                                    //       )),
+                                                    // );
+                                                  },
+                                                  child: Text('Post'),
+                                                  style: TextButton.styleFrom(
+                                                      primary: Color.fromARGB(255, 255, 244, 244),
+                                                      backgroundColor:
+                                                          Color.fromARGB(255, 70, 111, 224),
+                                                      onSurface: Colors.grey,
+                                                      elevation: 5.0
+                                                      
+                                                      ),
+                                                ),
+                                                ),
+                                                
+                                             ),
+                                               
+                                             
                                             ]),
                                       ),
                                     ),
@@ -287,7 +272,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                         );
                       }).toList(),
                     ),
-                  ),
+                  ), 
           ),
         ));
   }
