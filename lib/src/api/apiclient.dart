@@ -30,6 +30,7 @@ import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
 import 'package:InstiApp/src/api/model/post.dart';
 import 'package:InstiApp/src/api/model/user.dart';
+import 'package:InstiApp/src/api/response/user_tags_reach_response.dart';
 import 'package:retrofit/retrofit.dart' as rt;
 import 'package:dio/dio.dart';
 import 'model/offersecret.dart';
@@ -97,14 +98,15 @@ abstract class InstiAppApi {
   Future<Event> getEvent(
       @rt.Header("Cookie") String sessionId, @rt.Path() String uuid);
   @rt.PUT('/events/{uuid}')
-  Future<EventCreateResponse> updateEvent(
-      @rt.Header('Cookie') String sessionId, event, @rt.Path() String uuid);
+  Future<EventCreateResponse> updateEvent(@rt.Header('Cookie') String sessionId,
+      @rt.Body() EventCreateRequest event, @rt.Path() String uuid);
   @rt.POST("/events")
   Future<EventCreateResponse> postEventForm(
       @rt.Header("Cookie") String sessionId,
       @rt.Body() EventCreateRequest eventCreateRequest);
   @rt.DELETE('/events/{uuid}')
-  Future<void> deleteEvent(@rt.Header('Cookie') String sessionId, String uuid);
+  Future<void> deleteEvent(
+      @rt.Header('Cookie') String sessionId, @rt.Path() String uuid);
 
   @rt.GET("/events")
   Future<NewsFeedResponse> getNewsFeed(@rt.Header("Cookie") String sessionId);
@@ -314,10 +316,13 @@ abstract class InstiAppApi {
   @rt.GET("/user-tags")
   Future<List<UserTagHolder>> getUserTags(
       @rt.Header("Cookie") String sessionId);
-  @rt.GET("/user-tags/reach")
-  Future<int> getUserTagsReach(
-      @rt.Header("Cookie") String sessionId, List<int> selectedTagIds);
+
+  @rt.POST("/user-tags/reach")
+  Future<UserTagsReachResponse> getUserTagsReach(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Body() List<int> selectedTagIds);
+
   @rt.POST('/achievements-offer')
   Future<dynamic> createAchievement(
-      sessionId, OfferedAchievements offeredAchievements);
+      sessionId, @rt.Body() OfferedAchievements offeredAchievements);
 }
