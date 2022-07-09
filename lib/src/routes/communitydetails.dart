@@ -5,6 +5,7 @@ import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/blocs/community_bloc.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
+import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
@@ -408,9 +409,9 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
 
   List<Widget> _buildPostList(AsyncSnapshot<List<CommunityPost>> snapshot,
       ThemeData theme, CommunityPostBloc communityPostBloc) {
-    print(snapshot.hasData);
+  
     if (snapshot.hasData) {
-      print("here");
+
       var communityPosts = snapshot.data!;
 
       if (communityPosts.isEmpty == true) {
@@ -458,7 +459,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
 
     return (community?.id == communityPost.community)
         ? GestureDetector(
-            onTap: () => {},
+            onTap: () =>
+                {CommunityPostPage.navigateWith(context, bloc, communityPost)},
             child: Container(
               margin: EdgeInsets.all(10),
               decoration: BoxDecoration(
