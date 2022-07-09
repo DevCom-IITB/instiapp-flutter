@@ -58,12 +58,9 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    var cPost = communityPost as CommunityPost;
-
     return Scaffold(
       key: _scaffoldKey,
       extendBodyBehindAppBar: true,
-      
       drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
         shape: RoundedNotchedRectangle(),
@@ -84,7 +81,12 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
           ],
         ),
       ),
-      body: SingleChildScrollView(child: _buildPost(theme, cPost)),
+      body: SingleChildScrollView(
+          child: Column(
+        children: [
+          _buildPost(theme, communityPost),
+        ],
+      )),
     );
   }
 
@@ -112,7 +114,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
     );
   }
 
-  Widget _buildPost(ThemeData theme, CommunityPost communityPost) {
+  Widget _buildPost(ThemeData theme, CommunityPost? communityPost) {
     List<String> imgList = [
       "https://media.pitchfork.com/photos/620e81cad8bc62857b465cc3/2:1/w_2560%2Cc_limit/Stranger-Things-Season-4.jpg",
       "https://www.denofgeek.com/wp-content/uploads/2019/04/infinity-war-montage-main.jpg?resize=768%2C432",
@@ -120,7 +122,6 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
       "https://www.thenexthint.com/wp-content/uploads/2021/09/Is-BoJack-Horseman-Season-7-Cancelled-by-Netflix-1.jpeg.webp",
       "https://cdn.searchenginejournal.com/wp-content/uploads/2021/04/journalism-tactics-60812472af9db-1520x800.png",
     ];
-    var borderRadius = const BorderRadius.all(Radius.circular(10));
 
     return (Container(
       margin: EdgeInsets.all(10),
@@ -137,13 +138,13 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                         width: 1, color: theme.colorScheme.surfaceVariant))),
             child: ListTile(
               leading: NullableCircleAvatar(
-                communityPost.postedBy?.userProfilePictureUrl ??
+                communityPost?.postedBy?.userProfilePictureUrl ??
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
                 Icons.person,
                 radius: 18,
               ),
               title: Text(
-                communityPost.postedBy?.userName ?? "user",
+                communityPost?.postedBy?.userName ?? "user",
                 style: theme.textTheme.bodyMedium,
               ),
               subtitle: Text(
@@ -161,24 +162,45 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Text(
-              communityPost.content ?? '''post''',
+              communityPost?.content ?? '''post''',
             ),
           ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10),
-            child: ImageGallery(images: imgList),
+            child: ImageGallery(images: communityPost?.imageUrl ?? imgList),
           ),
           _buildFooter(theme, communityPost),
+          Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Column(children: _buildCommentList(theme, communityPost)))
         ],
       ),
     ));
   }
 
-  Widget _buildCommentListTile(
-    CommunityPost communityPost,
-    ThemeData theme,
-    CommunityPostBloc bloc,
-  ) {
+  List<Widget> _buildCommentList(
+      ThemeData theme, CommunityPost? communityPost) {
+    if (communityPost?.comments?.isEmpty == true) {
+      return [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
+          child:
+              Text.rich(TextSpan(style: theme.textTheme.headline6, children: [
+            TextSpan(text: "Nothing found for the query "),
+            TextSpan(text: "."),
+          ])),
+        )
+      ];
+    }
+
+    return (communityPost?.comments
+                ?.map((c) => _buildListTile(c, theme, communityPost)) ??
+            [])
+        .toList();
+  }
+
+  Widget _buildListTile(
+      CommunityPost comment, ThemeData theme, CommunityPost post) {
     List<String> imgList = [
       "https://media.pitchfork.com/photos/620e81cad8bc62857b465cc3/2:1/w_2560%2Cc_limit/Stranger-Things-Season-4.jpg",
       "https://www.denofgeek.com/wp-content/uploads/2019/04/infinity-war-montage-main.jpg?resize=768%2C432",
@@ -188,10 +210,66 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
     ];
     var borderRadius = const BorderRadius.all(Radius.circular(10));
 
-    return Container();
+    return (comment.parent == post.id)
+        ? Container(
+            margin: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: theme.colorScheme.surface,
+            ),
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      border: Border(
+                          bottom: BorderSide(
+                              width: 1,
+                              color: theme.colorScheme.surfaceVariant))),
+                  child: ListTile(
+                    leading: NullableCircleAvatar(
+                      comment.postedBy?.userProfilePictureUrl ??
+                          "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
+                      Icons.person,
+                      radius: 18,
+                    ),
+                    title: Text(
+                      comment.postedBy?.userName ?? "user",
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    subtitle: Text(
+                      "30 March",
+                      style: theme.textTheme.bodySmall,
+                    ),
+                    trailing: Icon(Icons.more_vert,
+                        color: theme.colorScheme.onSurface),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                    minVerticalPadding: 0,
+                    dense: true,
+                    horizontalTitleGap: 4,
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Text(
+                    comment.content ?? '''post''',
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: ImageGallery(images: comment.imageUrl ?? imgList),
+                ),
+                _buildFooter(theme, comment),
+                Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Column(children: _buildCommentList(theme, comment)))
+              ],
+            ),
+          )
+        : Column();
   }
 
-  Widget _buildFooter(ThemeData theme, CommunityPost communityPost) {
+  Widget _buildFooter(ThemeData theme, CommunityPost? communityPost) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -250,7 +328,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                     ],
                   ),
                 ),
-                Text(communityPost.userReaction.toString(),
+                Text(communityPost?.userReaction.toString() ?? "filler",
                     style: theme.textTheme.bodySmall),
                 Container(
                   margin: EdgeInsets.only(left: 15),
@@ -262,7 +340,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                         size: 20,
                       ),
                       SizedBox(width: 3),
-                      Text(communityPost.comments.toString(),
+                      Text((communityPost?.commentsCount).toString(),
                           style: theme.textTheme.bodySmall),
                     ],
                   ),

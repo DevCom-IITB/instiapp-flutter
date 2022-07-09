@@ -409,9 +409,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
 
   List<Widget> _buildPostList(AsyncSnapshot<List<CommunityPost>> snapshot,
       ThemeData theme, CommunityPostBloc communityPostBloc) {
-  
     if (snapshot.hasData) {
-
       var communityPosts = snapshot.data!;
 
       if (communityPosts.isEmpty == true) {
@@ -456,7 +454,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
       "https://cdn.searchenginejournal.com/wp-content/uploads/2021/04/journalism-tactics-60812472af9db-1520x800.png",
     ];
     var borderRadius = const BorderRadius.all(Radius.circular(10));
-
+    print(communityPost.threadRank);
     return (community?.id == communityPost.community &&
             communityPost.threadRank == 1)
         ? GestureDetector(
@@ -508,7 +506,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                   ),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: ImageGallery(images: imgList),
+                    child:
+                        ImageGallery(images: communityPost.imageUrl ?? imgList),
                   ),
                   _buildFooter(theme, communityPost),
                 ],
@@ -588,7 +587,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                         size: 20,
                       ),
                       SizedBox(width: 3),
-                      Text(communityPost.comments.toString(),
+                      Text((communityPost.commentsCount).toString(),
                           style: theme.textTheme.bodySmall),
                     ],
                   ),
