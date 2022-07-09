@@ -457,7 +457,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
     ];
     var borderRadius = const BorderRadius.all(Radius.circular(10));
 
-    return (community?.id == communityPost.community)
+    return (community?.id == communityPost.community &&
+            communityPost.threadRank == 1)
         ? GestureDetector(
             onTap: () =>
                 {CommunityPostPage.navigateWith(context, bloc, communityPost)},
