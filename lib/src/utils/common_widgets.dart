@@ -1231,7 +1231,7 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
     ThemeData theme = Theme.of(context);
 
     return GestureDetector(
-        onTap: () => {CommunityPostPage.navigateWith(context)},
+        onTap: () => {},
         child: Container(
           margin: EdgeInsets.all(10),
           decoration: BoxDecoration(
