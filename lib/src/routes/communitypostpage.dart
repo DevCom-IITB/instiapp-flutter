@@ -125,13 +125,25 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
 
     return (Container(
       margin: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: theme.colorScheme.surface,
-      ),
+      
       child: Column(
         children: [
           Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: theme.colorScheme.surface,
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset(0, 3),
+                  blurRadius: 30,
+                  spreadRadius: -18,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Container(
             decoration: BoxDecoration(
                 border: Border(
                     bottom: BorderSide(
@@ -170,6 +182,10 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
             child: ImageGallery(images: communityPost?.imageUrl ?? imgList),
           ),
           _buildFooter(theme, communityPost),
+              ],
+            ),
+          ),
+          
           Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Column(children: _buildCommentList(theme, communityPost)))
@@ -212,26 +228,24 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
 
     return (comment.parent == post.id)
         ? Container(
-            margin: EdgeInsets.all(10),
+            margin: EdgeInsets.fromLTRB(10, 10, 0, 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: theme.colorScheme.surface,
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset(0, 3),
+                  blurRadius: 30,
+                  spreadRadius: -18,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ],
             ),
             child: Column(
               children: [
                 Container(
-                  decoration: BoxDecoration(
-                      border: Border(
-                          bottom: BorderSide(
-                              width: 1,
-                              color: theme.colorScheme.surfaceVariant))),
+                  
                   child: ListTile(
-                    leading: NullableCircleAvatar(
-                      comment.postedBy?.userProfilePictureUrl ??
-                          "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
-                      Icons.person,
-                      radius: 18,
-                    ),
                     title: Text(
                       comment.postedBy?.userName ?? "user",
                       style: theme.textTheme.bodyMedium,
@@ -255,10 +269,10 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                     comment.content ?? '''post''',
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: ImageGallery(images: comment.imageUrl ?? imgList),
-                ),
+                // Container(
+                //   padding: EdgeInsets.symmetric(horizontal: 10),
+                //   child: ImageGallery(images: comment.imageUrl ?? imgList),
+                // ),
                 _buildFooter(theme, comment),
                 Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
@@ -271,26 +285,10 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
 
   Widget _buildFooter(ThemeData theme, CommunityPost? communityPost) {
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: theme.colorScheme.surface,
-      ),
+      
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-        decoration: BoxDecoration(
-          // border:
-          //     Border(top: BorderSide(color: theme.colorScheme.surfaceVariant)),
-          color: theme.colorScheme.surface,
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(0, 3),
-              blurRadius: 30,
-              spreadRadius: -18,
-              color: theme.colorScheme.onSurface,
-            ),
-          ],
-          borderRadius: BorderRadius.circular(10),
-        ),
+        
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -303,10 +301,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 5),
                   padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: theme.colorScheme.surfaceVariant,
-                  ),
+                 
                   child: Row(
                     children: [
                       Image.asset(
