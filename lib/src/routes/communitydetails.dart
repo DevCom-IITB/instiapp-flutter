@@ -126,7 +126,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                 ),
                 _buildInfo(theme),
                 CommunityAboutSection(community: community),
-                CommunityPostSection(),
+                CommunityPostSection(community: community),
               ],
             ),
             Positioned(
@@ -307,14 +307,21 @@ class CommunityAboutSectionState extends State<CommunityAboutSection> {
 }
 
 class CommunityPostSection extends StatefulWidget {
-  const CommunityPostSection({Key? key}) : super(key: key);
+  final Community? community;
+
+  const CommunityPostSection({Key? key, required this.community})
+      : super(key: key);
 
   @override
-  State<CommunityPostSection> createState() => _CommunityPostSectionState();
+  State<CommunityPostSection> createState() =>
+      _CommunityPostSectionState(community: community);
 }
 
 class _CommunityPostSectionState extends State<CommunityPostSection> {
   bool firstBuild = true;
+  final Community? community;
+
+  _CommunityPostSectionState({required this.community});
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -421,6 +428,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
           )
         ];
       }
+
       return (communityPosts
           .map((c) => _buildListTile(c, theme, communityPostBloc))
           .toList());
@@ -447,59 +455,63 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
       "https://cdn.searchenginejournal.com/wp-content/uploads/2021/04/journalism-tactics-60812472af9db-1520x800.png",
     ];
     var borderRadius = const BorderRadius.all(Radius.circular(10));
-    return GestureDetector(
-        onTap: () => {},
-        child: Container(
-          margin: EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: theme.colorScheme.surface,
-          ),
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    border: Border(
-                        bottom: BorderSide(
-                            width: 1,
-                            color: theme.colorScheme.surfaceVariant))),
-                child: ListTile(
-                  leading: NullableCircleAvatar(
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
-                    Icons.person,
-                    radius: 18,
-                  ),
-                  title: Text(
-                    communityPost.postedBy?.userName ?? "user",
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                  subtitle: Text(
-                    "30 March",
-                    style: theme.textTheme.bodySmall,
-                  ),
-                  trailing:
-                      Icon(Icons.more_vert, color: theme.colorScheme.onSurface),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                  minVerticalPadding: 0,
-                  dense: true,
-                  horizontalTitleGap: 4,
-                ),
+
+    return (community?.id == communityPost.community)
+        ? GestureDetector(
+            onTap: () => {},
+            child: Container(
+              margin: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: theme.colorScheme.surface,
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: Text(
-                  communityPost.content ?? '''post''',
-                ),
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                                width: 1,
+                                color: theme.colorScheme.surfaceVariant))),
+                    child: ListTile(
+                      leading: NullableCircleAvatar(
+                        communityPost.postedBy?.userProfilePictureUrl ??
+                            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
+                        Icons.person,
+                        radius: 18,
+                      ),
+                      title: Text(
+                        communityPost.postedBy?.userName ?? "user",
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                      subtitle: Text(
+                        "30 March",
+                        style: theme.textTheme.bodySmall,
+                      ),
+                      trailing: Icon(Icons.more_vert,
+                          color: theme.colorScheme.onSurface),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                      minVerticalPadding: 0,
+                      dense: true,
+                      horizontalTitleGap: 4,
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    child: Text(
+                      communityPost.content ?? '''post''',
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: ImageGallery(images: imgList),
+                  ),
+                  _buildFooter(theme, communityPost),
+                ],
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: ImageGallery(images: imgList),
-              ),
-              _buildFooter(theme, communityPost),
-            ],
-          ),
-        ));
+            ))
+        : Column();
   }
 
   Widget _buildFooter(ThemeData theme, CommunityPost communityPost) {
