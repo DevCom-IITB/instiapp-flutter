@@ -31,7 +31,9 @@ CommunityPost _$CommunityPostFromJson(Map<String, dynamic> json) =>
           ? null
           : CommunityPost.fromJson(
               json['most_liked_comment'] as Map<String, dynamic>),
-        community: json['community'] as String?
+      community: json['community'] as String?,
+      threadRank: json['thread_rank'] as int?,
+      parent: json['parent'] as String?,
     );
 
 Map<String, dynamic> _$CommunityPostToJson(CommunityPost instance) =>
@@ -48,5 +50,7 @@ Map<String, dynamic> _$CommunityPostToJson(CommunityPost instance) =>
       'image_url': instance.imageUrl,
       'most_liked_comment': instance.mostLikedComment,
       'comments': instance.comments,
-      'community': instance.community
+      'community': instance.community,
+      'thread_rank': instance.threadRank,
+      'parent': instance.parent
     };

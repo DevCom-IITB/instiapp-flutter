@@ -31,10 +31,10 @@ class CommunityPostPage extends StatefulWidget {
   }
 
   @override
-  _CommunityDetailsState createState() => _CommunityDetailsState();
+  _CommunityPostPageState createState() => _CommunityPostPageState();
 }
 
-class _CommunityDetailsState extends State<CommunityPostPage> {
+class _CommunityPostPageState extends State<CommunityPostPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   CommunityPost? communityPost;
@@ -58,22 +58,12 @@ class _CommunityDetailsState extends State<CommunityPostPage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    double _avatarRadius = 50;
+    var cPost = communityPost as CommunityPost;
 
     return Scaffold(
       key: _scaffoldKey,
       extendBodyBehindAppBar: true,
-      appBar: CustomAppBar(
-        transparentBackground: true,
-        searchIcon: true,
-        
-        leadingStyle: LeadingStyle(
-          icon: Icons.arrow_back,
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
+      
       drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
         shape: RoundedNotchedRectangle(),
@@ -88,10 +78,202 @@ class _CommunityDetailsState extends State<CommunityPostPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                print("lol");
                 _scaffoldKey.currentState?.openDrawer();
               },
             ),
+          ],
+        ),
+      ),
+      body: SingleChildScrollView(child: _buildPost(theme, cPost)),
+    );
+  }
+
+  ButtonStyle _getButtonStyle(bool selected, ThemeData theme) {
+    return ButtonStyle(
+      padding: MaterialStateProperty.all<EdgeInsets>(
+          EdgeInsets.symmetric(horizontal: 15, vertical: 0)),
+      foregroundColor: MaterialStateProperty.all<Color>(
+        selected
+            ? theme.colorScheme.primary
+            : theme.colorScheme.onSurfaceVariant,
+      ),
+      backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100.0),
+          side: BorderSide(
+            width: selected ? 2 : 1,
+            color: selected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPost(ThemeData theme, CommunityPost communityPost) {
+    List<String> imgList = [
+      "https://media.pitchfork.com/photos/620e81cad8bc62857b465cc3/2:1/w_2560%2Cc_limit/Stranger-Things-Season-4.jpg",
+      "https://www.denofgeek.com/wp-content/uploads/2019/04/infinity-war-montage-main.jpg?resize=768%2C432",
+      "https://www.pluggedin.com/wp-content/uploads/2020/01/family-guy-scaled.jpg",
+      "https://www.thenexthint.com/wp-content/uploads/2021/09/Is-BoJack-Horseman-Season-7-Cancelled-by-Netflix-1.jpeg.webp",
+      "https://cdn.searchenginejournal.com/wp-content/uploads/2021/04/journalism-tactics-60812472af9db-1520x800.png",
+    ];
+    var borderRadius = const BorderRadius.all(Radius.circular(10));
+
+    return (Container(
+      margin: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: theme.colorScheme.surface,
+      ),
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                border: Border(
+                    bottom: BorderSide(
+                        width: 1, color: theme.colorScheme.surfaceVariant))),
+            child: ListTile(
+              leading: NullableCircleAvatar(
+                communityPost.postedBy?.userProfilePictureUrl ??
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
+                Icons.person,
+                radius: 18,
+              ),
+              title: Text(
+                communityPost.postedBy?.userName ?? "user",
+                style: theme.textTheme.bodyMedium,
+              ),
+              subtitle: Text(
+                "30 March",
+                style: theme.textTheme.bodySmall,
+              ),
+              trailing:
+                  Icon(Icons.more_vert, color: theme.colorScheme.onSurface),
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+              minVerticalPadding: 0,
+              dense: true,
+              horizontalTitleGap: 4,
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: Text(
+              communityPost.content ?? '''post''',
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: ImageGallery(images: imgList),
+          ),
+          _buildFooter(theme, communityPost),
+        ],
+      ),
+    ));
+  }
+
+  Widget _buildCommentListTile(
+    CommunityPost communityPost,
+    ThemeData theme,
+    CommunityPostBloc bloc,
+  ) {
+    List<String> imgList = [
+      "https://media.pitchfork.com/photos/620e81cad8bc62857b465cc3/2:1/w_2560%2Cc_limit/Stranger-Things-Season-4.jpg",
+      "https://www.denofgeek.com/wp-content/uploads/2019/04/infinity-war-montage-main.jpg?resize=768%2C432",
+      "https://www.pluggedin.com/wp-content/uploads/2020/01/family-guy-scaled.jpg",
+      "https://www.thenexthint.com/wp-content/uploads/2021/09/Is-BoJack-Horseman-Season-7-Cancelled-by-Netflix-1.jpeg.webp",
+      "https://cdn.searchenginejournal.com/wp-content/uploads/2021/04/journalism-tactics-60812472af9db-1520x800.png",
+    ];
+    var borderRadius = const BorderRadius.all(Radius.circular(10));
+
+    return Container();
+  }
+
+  Widget _buildFooter(ThemeData theme, CommunityPost communityPost) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: theme.colorScheme.surface,
+      ),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        decoration: BoxDecoration(
+          // border:
+          //     Border(top: BorderSide(color: theme.colorScheme.surfaceVariant)),
+          color: theme.colorScheme.surface,
+          boxShadow: [
+            BoxShadow(
+              offset: Offset(0, 3),
+              blurRadius: 30,
+              spreadRadius: -18,
+              color: theme.colorScheme.onSurface,
+            ),
+          ],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.thumb_up_alt_outlined,
+                  size: 20,
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 5),
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: theme.colorScheme.surfaceVariant,
+                  ),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        "assets/communities/emojis/laugh.png",
+                        width: 20,
+                      ),
+                      Image.asset(
+                        "assets/communities/emojis/cry.png",
+                        width: 20,
+                      ),
+                      Image.asset(
+                        "assets/communities/emojis/angry.png",
+                        width: 20,
+                      ),
+                      Image.asset(
+                        "assets/communities/emojis/surprise.png",
+                        width: 20,
+                      ),
+                    ],
+                  ),
+                ),
+                Text(communityPost.userReaction.toString(),
+                    style: theme.textTheme.bodySmall),
+                Container(
+                  margin: EdgeInsets.only(left: 15),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.mode_comment_outlined,
+                        color: theme.colorScheme.onSurfaceVariant,
+                        size: 20,
+                      ),
+                      SizedBox(width: 3),
+                      Text(communityPost.comments.toString(),
+                          style: theme.textTheme.bodySmall),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            Icon(
+              Icons.share_outlined,
+              color: theme.colorScheme.onSurfaceVariant,
+              size: 20,
+            )
           ],
         ),
       ),
