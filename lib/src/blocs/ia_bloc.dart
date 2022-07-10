@@ -17,6 +17,7 @@ import 'package:InstiApp/src/blocs/ach_to_vefiry_bloc.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
 import 'package:InstiApp/src/blocs/community_bloc.dart';
+import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/blocs/complaints_bloc.dart';
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
 import 'package:InstiApp/src/api/apiclient.dart';
@@ -125,7 +126,7 @@ class InstiAppBloc {
   late Bloc achievementBloc;
   late VerifyBloc bodyAchBloc;
   late CommunityBloc communityBloc;
-
+  late CommunityPostBloc communityPostBloc;
   // actual current state
   Session? currSession;
   var _hostels = <Hostel>[];
@@ -266,6 +267,7 @@ class InstiAppBloc {
     bodyAchBloc = VerifyBloc(this);
     messCalendarBloc = MessCalendarBloc(this);
     communityBloc = CommunityBloc(this);
+    communityPostBloc = CommunityPostBloc(this);
 
     _initNotificationBatch();
   }
