@@ -6,6 +6,7 @@ import 'package:InstiApp/src/blocs/community_bloc.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
+import 'package:InstiApp/src/routes/createpost_form.dart';
 import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
@@ -230,6 +231,7 @@ class CommunityAboutSectionState extends State<CommunityAboutSection> {
   int _selectedIndex = 0;
 
   bool aboutExpanded = false;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -320,6 +322,7 @@ class CommunityPostSection extends StatefulWidget {
 
 class _CommunityPostSectionState extends State<CommunityPostSection> {
   bool firstBuild = true;
+  bool contentExpanded = false;
   final Community? community;
 
   _CommunityPostSectionState({required this.community});
@@ -453,8 +456,11 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
       "https://www.thenexthint.com/wp-content/uploads/2021/09/Is-BoJack-Horseman-Season-7-Cancelled-by-Netflix-1.jpeg.webp",
       "https://cdn.searchenginejournal.com/wp-content/uploads/2021/04/journalism-tactics-60812472af9db-1520x800.png",
     ];
+    
+    var content = communityPost.content ?? "";
+
     var borderRadius = const BorderRadius.all(Radius.circular(10));
-    print(communityPost.threadRank);
+    //print(communityPost.threadRank);
     return (community?.id == communityPost.community &&
             communityPost.threadRank == 1)
         ? GestureDetector(
@@ -499,11 +505,32 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    child: Text(
-                      communityPost.content ?? '''post''',
-                    ),
-                  ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      child: Text.rich(
+                        new TextSpan(
+                          text: content.length > 400 && !contentExpanded
+                              ? content.substring(0, 390) +
+                                  (contentExpanded ? "" : "...")
+                              : content,
+                          children: !contentExpanded && content.length > 400
+                              ? [
+                                  new TextSpan(
+                                    text: 'Read More.',
+                                    style: theme.textTheme.subtitle2?.copyWith(
+                                        color: theme.colorScheme.primary),
+                                    recognizer: new TapGestureRecognizer()
+                                      ..onTap = () => setState(() {
+                                            contentExpanded = true;
+                                          }),
+                                  )
+                                ]
+                              : [],
+                        ),
+                        //child: Text(
+                        // communityPost.content ?? '''post''',
+                        //),
+                      )),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     child:
