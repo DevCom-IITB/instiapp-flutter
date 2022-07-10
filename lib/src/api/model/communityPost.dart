@@ -41,6 +41,15 @@ class CommunityPost {
   @JsonKey(name: "comments")
   List<CommunityPost>? comments;
 
+  @JsonKey(name: "community")
+  String? community;
+
+  @JsonKey(name: "thread_rank")
+  int? threadRank;
+
+  @JsonKey(name: "parent")
+  String? parent;
+
   CommunityPost({
     this.id,
     this.strId,
@@ -54,6 +63,9 @@ class CommunityPost {
     this.timeOfModification,
     this.userReaction,
     this.mostLikedComment,
+    this.community,
+      this.threadRank,
+      this.parent
   });
 
   factory CommunityPost.fromJson(Map<String, dynamic> json) =>
