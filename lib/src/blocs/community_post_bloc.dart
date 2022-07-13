@@ -28,9 +28,11 @@ class CommunityPostBloc {
   Future refresh() async {
     // _communityPosts = defCommunities;
     // _communitySubject.add(defCommunities);
-
+    // print("refresh");
     _communityPosts =
-        await bloc.client.getCommunityPosts(bloc.getSessionIdHeader());
+        (await bloc.client.getCommunityPosts(bloc.getSessionIdHeader())).data ??
+            [];
+    // print("community" + _communityPosts.toString());
     _communitySubject.add(_communityPosts);
   }
 }
