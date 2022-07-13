@@ -52,5 +52,5 @@ Map<String, dynamic> _$CommunityPostToJson(CommunityPost instance) =>
       'comments': instance.comments,
       'community': instance.community,
       'thread_rank': instance.threadRank,
-      'parent': instance.parent
+      'parent': instance.parent,
     };
