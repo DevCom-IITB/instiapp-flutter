@@ -7,6 +7,8 @@ import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 
+import '../bloc_provider.dart';
+
 class CommunityPostPage extends StatefulWidget {
   final CommunityPost? initialCommunityPost;
   final Future<CommunityPost?> communityPostFuture;
@@ -52,12 +54,30 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
         });
       }
     });
+    //print(communityPost?.comments);
   }
+
+  // void initComment(CommunityPost? comment) {
+  //   var bloc = BlocProvider.of(context)!.bloc;
+  //   var communityPostBloc = bloc.communityPostBloc;
+  //   final Future<CommunityPost?> commentFuture =
+  //       communityPostBloc.getCommunityPost(comment?.id ?? "");
+  //   CommunityPost? finalComment;
+  //   commentFuture.then((comment) {
+  //     if (this.mounted) {
+  //       setState(() {
+  //         finalComment = comment;
+  //       });
+  //     }
+  //   });
+  //   print("object");
+  //   print(comment?.comments);
+  // }
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-
+    // initState();
     return Scaffold(
       key: _scaffoldKey,
       extendBodyBehindAppBar: true,
@@ -125,7 +145,6 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
 
     return (Container(
       margin: EdgeInsets.all(10),
-      
       child: Column(
         children: [
           Container(
@@ -144,48 +163,50 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
             child: Column(
               children: [
                 Container(
-            decoration: BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(
-                        width: 1, color: theme.colorScheme.surfaceVariant))),
-            child: ListTile(
-              leading: NullableCircleAvatar(
-                communityPost?.postedBy?.userProfilePictureUrl ??
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
-                Icons.person,
-                radius: 18,
-              ),
-              title: Text(
-                communityPost?.postedBy?.userName ?? "user",
-                style: theme.textTheme.bodyMedium,
-              ),
-              subtitle: Text(
-                "30 March",
-                style: theme.textTheme.bodySmall,
-              ),
-              trailing:
-                  Icon(Icons.more_vert, color: theme.colorScheme.onSurface),
-              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-              minVerticalPadding: 0,
-              dense: true,
-              horizontalTitleGap: 4,
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Text(
-              communityPost?.content ?? '''post''',
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: ImageGallery(images: communityPost?.imageUrl ?? imgList),
-          ),
-          _buildFooter(theme, communityPost),
+                  decoration: BoxDecoration(
+                      border: Border(
+                          bottom: BorderSide(
+                              width: 1,
+                              color: theme.colorScheme.surfaceVariant))),
+                  child: ListTile(
+                    leading: NullableCircleAvatar(
+                      communityPost?.postedBy?.userProfilePictureUrl ??
+                          "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
+                      Icons.person,
+                      radius: 18,
+                    ),
+                    title: Text(
+                      communityPost?.postedBy?.userName ?? "user",
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    subtitle: Text(
+                      "30 March",
+                      style: theme.textTheme.bodySmall,
+                    ),
+                    trailing: Icon(Icons.more_vert,
+                        color: theme.colorScheme.onSurface),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                    minVerticalPadding: 0,
+                    dense: true,
+                    horizontalTitleGap: 4,
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Text(
+                    communityPost?.content ?? '''post''',
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child:
+                      ImageGallery(images: communityPost?.imageUrl ?? imgList),
+                ),
+                _buildFooter(theme, communityPost),
               ],
             ),
           ),
-          
           Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Column(children: _buildCommentList(theme, communityPost)))
@@ -208,7 +229,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
         )
       ];
     }
-
+    // initComment(communityPost);
     return (communityPost?.comments
                 ?.map((c) => _buildListTile(c, theme, communityPost)) ??
             [])
@@ -227,7 +248,15 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
     var borderRadius = const BorderRadius.all(Radius.circular(10));
 
     return (comment.parent == post.id)
-        ? Container(
+        ? Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            Container(
+                child: NullableCircleAvatar(
+              communityPost?.postedBy?.userProfilePictureUrl ??
+                  "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
+              Icons.person,
+              radius: 18,
+            )),
+            Container(
             margin: EdgeInsets.fromLTRB(10, 10, 0, 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
@@ -243,8 +272,11 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
             ),
             child: Column(
               children: [
-                Container(
                   
+                  Container(
+                  
+                    
+                    width: 300,
                   child: ListTile(
                     title: Text(
                       comment.postedBy?.userName ?? "user",
@@ -279,16 +311,15 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                     child: Column(children: _buildCommentList(theme, comment)))
               ],
             ),
-          )
+            )
+          ])
         : Column();
   }
 
   Widget _buildFooter(ThemeData theme, CommunityPost? communityPost) {
     return Container(
-      
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-        
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -301,7 +332,6 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 5),
                   padding: EdgeInsets.all(5),
-                 
                   child: Row(
                     children: [
                       Image.asset(
