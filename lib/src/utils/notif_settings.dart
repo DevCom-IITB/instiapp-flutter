@@ -1,24 +1,27 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:InstiApp/src/api/model/rich_notification.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
-import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:jaguar/utils/string/string.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+/// Arguments to route from notification screen.
+/// Typically used with notification buttons
+///
+/// [key] is the one among [ActionKeys]
+/// [notif] is the notification object
 class NotificationRouteArguments {
+  /// Action key used to detect the argument
   String key;
+
+  /// Notification object
   RichNotification notif;
 
   NotificationRouteArguments(this.key, this.notif);
 }
 
+/// List of notification channels used in the app
 List<NotificationChannel> notifChannels = [
   NotificationChannel(
     channelGroupKey: NotificationGroups.MISCELLANEOUS_GROUP,
@@ -67,6 +70,7 @@ List<NotificationChannel> notifChannels = [
   ),
 ];
 
+/// List of channel groups used in the app
 List<NotificationChannelGroup> notifGroups = [
   NotificationChannelGroup(
     channelGroupkey: NotificationGroups.MISCELLANEOUS_GROUP,
@@ -86,10 +90,7 @@ List<NotificationChannelGroup> notifGroups = [
   ),
 ];
 
-class NotifSettings {
-  static InstiAppBloc? bloc;
-}
-
+/// Action keys for notification actions
 class ActionKeys {
   static const String ADD_TO_CALENDAR = "ADD_TO_CALENDAR";
   static const String LIKE_REACT = "LIKE_REACT";
@@ -97,6 +98,7 @@ class ActionKeys {
   static const String CHECKOUT = "CHECKOUT";
 }
 
+/// Channels used in the app
 class NotificationChannels {
   static const String MISCELLANEOUS_CHANNEL = "misc_channel";
   static const String PLACEMENT = "placement_channel";
@@ -105,6 +107,7 @@ class NotificationChannels {
   static const String EVENT = "events_channel";
 }
 
+/// Channel groups used in the app
 class NotificationGroups {
   static const String MISCELLANEOUS_GROUP = "misc_group";
   static const String BLOG = "blog_group";
@@ -112,6 +115,7 @@ class NotificationGroups {
   static const String EVENT = "events_group";
 }
 
+/// Type of notification to handle
 class NotificationType {
   static const String BLOG = "blogentry";
   static const String PLACEMENT = "placement";
@@ -124,8 +128,14 @@ class NotificationType {
   static const String QUERY = "unresolvedquery";
 }
 
-void setupNotifications1(BuildContext context, InstiAppBloc bloc,
+/// Setup notifications with awesome notifications
+///
+/// [context] is the [BuildContext] of the app
+/// [bloc] is the instance of [InstiAppBloc] used in the app
+/// [_navigatorKey] is the [GlobalKey] of the [Navigator] used in the app
+void setupNotifications(BuildContext context, InstiAppBloc bloc,
     GlobalKey<NavigatorState> _navigatorKey) async {
+  // Check for permission (if not granted, request it)
   AwesomeNotifications().isNotificationAllowed().then(
     (isAllowed) {
       if (!isAllowed) {
@@ -164,9 +174,11 @@ void setupNotifications1(BuildContext context, InstiAppBloc bloc,
     },
   );
 
+  /// Listen for incoming notifs and send a notification to the user
   FirebaseMessaging.onMessage.listen(sendMessage);
 
-  String navigateFromNotification(RichNotification fromMap) {
+  /// Gives the route to navigate to from a notification
+  String routeFromNotification(RichNotification fromMap) {
     // Navigating to correct page
     return {
           NotificationType.BLOG:
@@ -187,6 +199,7 @@ void setupNotifications1(BuildContext context, InstiAppBloc bloc,
         "/";
   }
 
+  /// Handle what action to take depending on key
   void _handleActionKey(String actionKey, RichNotification notif) async {
     // Open browser
     if (actionKey == ActionKeys.OPEN_BROWSER) {
@@ -199,19 +212,14 @@ void setupNotifications1(BuildContext context, InstiAppBloc bloc,
     }
   }
 
+  /// Handle notification on press
   void _handleNotification(ReceivedAction notification) {
-    if (Platform.isIOS) {
-      AwesomeNotifications().getGlobalBadgeCounter().then(
-            (value) => AwesomeNotifications().setGlobalBadgeCounter(value - 1),
-          );
-    }
-
     if (notification.payload != null) {
       // Getting notification payload
       RichNotification notif = RichNotification.fromJson(notification.payload!);
 
       // Getting route depending on payload
-      String routeName = navigateFromNotification(notif);
+      String routeName = routeFromNotification(notif);
 
       // Get action button key if any
       String actionKey = notification.buttonKeyPressed;
@@ -223,14 +231,20 @@ void setupNotifications1(BuildContext context, InstiAppBloc bloc,
       // marking the notification as read
       bloc.clearNotificationUsingID(notif.notificationID!);
 
+      // Handling action key
       _handleActionKey(actionKey, notif);
     }
   }
 
+  // Listen to app opens from notifications
   AwesomeNotifications().actionStream.listen(_handleNotification);
 }
 
+/// Send a notification to the user
+///
+/// [message] is the message recieved from firebase
 Future<void> sendMessage(RemoteMessage message) async {
+  // Get notif from message data
   RichNotification notif = RichNotification.fromJson(message.data);
 
   // change notification type for blogs.
@@ -242,9 +256,11 @@ Future<void> sendMessage(RemoteMessage message) async {
     }
   }
 
+  // Create the actual notification
   createNotification(notif);
 }
 
+/// Create a notification
 Future<void> createNotification(RichNotification notif) async {
   await AwesomeNotifications().createNotification(
     content: getNotificationContent(notif),
@@ -252,10 +268,12 @@ Future<void> createNotification(RichNotification notif) async {
   );
 }
 
+/// Get the content of the notification
 NotificationContent getNotificationContent(RichNotification notif) {
   int id = stringToInt(notif.notificationID ?? "") ??
       (DateTime.now().millisecondsSinceEpoch);
 
+  /// Get the channel name to which the notification should be sent
   String getChannelKey(RichNotification notif) {
     switch (notif.notificationType) {
       case NotificationType.PLACEMENT:
@@ -293,6 +311,7 @@ NotificationContent getNotificationContent(RichNotification notif) {
   );
 }
 
+/// Get the action buttons of the notification
 List<NotificationActionButton>? getActionButtons(RichNotification notif) {
   switch (notif.notificationType) {
     case NotificationType.EVENT:
@@ -322,6 +341,7 @@ List<NotificationActionButton>? getActionButtons(RichNotification notif) {
   }
 }
 
+/// Remember to dispose the notification sink when app is closed
 void disposeNotification() {
   AwesomeNotifications().actionSink.close();
 }

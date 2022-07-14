@@ -1,10 +1,8 @@
 // import 'dart:async';
 import 'dart:core';
 import 'dart:collection';
-import 'dart:developer';
 
 import 'package:InstiApp/src/api/model/body.dart';
-import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/notif_settings.dart';
