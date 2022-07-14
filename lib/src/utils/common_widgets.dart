@@ -1,6 +1,7 @@
 import 'dart:async';
 
 // import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
@@ -1020,6 +1021,9 @@ class _ImageGalleryState extends State<ImageGallery>
   @override
   void initState() {
     super.initState();
+    print(widget.images);
+    print(widget.images.length);
+
     if (widget.images.length == 0 || widget.images.length == 1) {
       return;
     }
@@ -1229,9 +1233,13 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
+
+    print(communityPost.imageUrl);
 
     return GestureDetector(
-        onTap: () => {},
+        onTap: () => CommunityPostPage.navigateWith(
+            context, bloc.communityPostBloc, communityPost),
         child: Container(
           margin: EdgeInsets.all(10),
           decoration: BoxDecoration(
@@ -1278,7 +1286,7 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
               ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10),
-                child: ImageGallery(images: communityPost.imageUrl ?? imgList),
+                child: ImageGallery(images: communityPost.imageUrl ?? []),
               ),
               _buildFooter(theme, communityPost),
             ],
@@ -1357,7 +1365,7 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                         size: 20,
                       ),
                       SizedBox(width: 3),
-                      Text(communityPost.comments.toString(),
+                      Text((communityPost.commentsCount ?? 0).toString(),
                           style: theme.textTheme.bodySmall),
                     ],
                   ),

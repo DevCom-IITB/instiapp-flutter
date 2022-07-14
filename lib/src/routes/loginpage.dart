@@ -197,17 +197,17 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
-
-    ) : WebView(
-      javascriptMode: JavascriptMode.unrestricted,
-      initialUrl: loginurl,
-      // onWebViewCreated: (controller){
-      //   this._controller = controller;
-      // },
-      onPageStarted: (url) async{
-        if (url.startsWith(successUrl)) {
-          var uri = Uri.parse(url);
-          var code = uri.queryParameters['code'];
+          )
+        : WebView(
+            javascriptMode: JavascriptMode.unrestricted,
+            initialUrl: loginurl,
+            // onWebViewCreated: (controller){
+            //   this._controller = controller;
+            // },
+            onPageStarted: (url) async {
+              if (url.startsWith(successUrl)) {
+                var uri = Uri.parse(url);
+                var code = uri.queryParameters['code'];
 
                 setState(() {
                   loading = true;
@@ -276,8 +276,12 @@ class _LoginPageState extends State<LoginPage> {
     });
     var response;
     try {
+      print(authCode);
+      print(redirectUrl);
       response = await InstiAppApi(dio).login(authCode, redirectUrl);
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
     if (response?.sessionid != null) {
       _bloc?.updateSession(response);
       setState(() {

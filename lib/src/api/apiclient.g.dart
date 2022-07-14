@@ -1071,21 +1071,19 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<List<CommunityPost>> getCommunityPosts(sessionId) async {
+  Future<CommunityPostListResponse> getCommunityPosts(sessionId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<List<CommunityPost>>(
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<CommunityPostListResponse>(
             Options(method: 'GET', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/communityposts',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    var value = _result.data!
-        .map((dynamic i) => CommunityPost.fromJson(i as Map<String, dynamic>))
-        .toList();
+    final value = CommunityPostListResponse.fromJson(_result.data!);
     return value;
   }
 
