@@ -37,7 +37,7 @@ import 'model/offersecret.dart';
 
 part 'apiclient.g.dart';
 
-@rt.RestApi(baseUrl: "http://192.168.0.132:8000/api")
+@rt.RestApi(baseUrl: "http://192.168.0.108:8000/api")
 // @rt.RestApi(baseUrl: "https://api.insti.app/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
@@ -315,4 +315,8 @@ abstract class InstiAppApi {
   @rt.GET("/communityposts/{id}")
   Future<CommunityPost> getCommunityPost(
       @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+
+  @rt.POST("/communityposts")
+  Future<void> createCommunityPost(
+      @rt.Header("Cookie") String sessionId, @rt.Body() CommunityPost post);
 }
