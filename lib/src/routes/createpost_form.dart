@@ -43,70 +43,6 @@ class _CreatePostPage extends State<CreatePostPage> {
   List<String> location = ["Gymkhana", "IIT Bombay"];
   List<String> interests = ["tennis", "anime"];
 
-  Widget buildDropdownMenuItemsBody(BuildContext context, Body? body) {
-    // print("Entered build dropdown menu items");
-    if (body == null) {
-      return Container(
-        child: Text(
-          "Search for an organisation",
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
-      );
-    }
-    // print(body);
-    return Container(
-      child: ListTile(
-        title: Text(body.bodyName!),
-      ),
-    );
-  }
-
-  Widget buildDropdownMenuItemsSkill(BuildContext context, Skill? body) {
-    // print("Entered build dropdown menu items");
-    if (body == null) {
-      return Container(
-        child: Text(
-          "Search for a skill",
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
-      );
-    }
-    // print(body);
-    return Container(
-      child: ListTile(
-        title: Text(body.title!),
-      ),
-    );
-  }
-
-  void onBodyChange(Body? body) {
-    setState(() {
-      selectedB = true;
-      // currRequest1.body = body;
-      // currRequest1.bodyID = body?.bodyID!;
-      // _selectedBody = body!;
-    });
-  }
-
-  void onSkillChange(Skill? body) {
-    setState(() {
-      selectedS = true;
-      // currRequest2.title = body?.title;
-      // currRequest2.body = body?.body!;
-      //_selectedSkill = body!;
-    });
-  }
-
-  // void getImage({required ImageSource source}) async {
-  //   final file = await ImagePicker().pickImage(source: source);
-
-  //   if(file?.path != null){
-  //     setState(() {
-  //        imageFile = File(file!.path);
-  //     });
-  //   }
-  // }
-
   @override
   void initState() {
     super.initState();
@@ -119,6 +55,7 @@ class _CreatePostPage extends State<CreatePostPage> {
     // print(_selectedBody);
     var bloc = BlocProvider.of(context)!.bloc;
     var theme = Theme.of(context);
+    var profile = bloc.currSession?.profile;
     if (firstBuild) {
       final args = ModalRoute.of(context)!.settings.arguments as String?;
       if (args != null) {
@@ -127,7 +64,6 @@ class _CreatePostPage extends State<CreatePostPage> {
 
       firstBuild = false;
     }
-    //final isKeyboard = MediaQuery.of(context).viewInsets.bottom != 0;
     return DefaultTabController(
       initialIndex: 0,
       length: 2,
@@ -212,6 +148,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                   child: TextButton(
                                     onPressed: () {
                                       // CommunityPost post = )
+
                                       bloc.communityPostBloc
                                           .createCommunityPost(currRequest1);
 
@@ -255,14 +192,14 @@ class _CreatePostPage extends State<CreatePostPage> {
                               child: ListTile(
                                 leading: NullableCircleAvatar(
                                   (click == true)
-                                      ? "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg"
+                                      ? profile?.userProfilePictureUrl ?? " "
                                       : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSM9q9XJKxlskry5gXTz1OXUyem5Ap59lcEGg&usqp=CAU",
                                   Icons.person,
                                   radius: 22,
                                 ),
                                 title: Text(
                                   (click == true)
-                                      ? "Account Name"
+                                      ? profile?.userName ?? " "
                                       : 'Anonymous',
                                   style: TextStyle(
                                     fontSize: 17.0,
