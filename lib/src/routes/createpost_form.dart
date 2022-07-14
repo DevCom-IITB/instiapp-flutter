@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:InstiApp/src/api/model/community.dart';
+import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,6 @@ import '../drawer.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
-
 class CreatePostPage extends StatefulWidget {
   // initiate widgetstate Form
   _CreatePostPage createState() => _CreatePostPage();
@@ -31,14 +31,14 @@ class _CreatePostPage extends State<CreatePostPage> {
   bool click = true;
   // File? imageFile;
 
-  List<CreatePost>? posts;
+  // List<CreatePost>? posts;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   final _formKey1 = GlobalKey<FormState>();
 
-  CreatePost currRequest1 = CreatePost();
+  CommunityPost currRequest1 = CommunityPost();
 
-  Community? get community => null;
-  
+  // Community? get community => null;
+
   List<String> tags = ["InstiApp", "IIT Bombay"];
   List<String> location = ["Gymkhana", "IIT Bombay"];
   List<String> interests = ["tennis", "anime"];
@@ -112,7 +112,6 @@ class _CreatePostPage extends State<CreatePostPage> {
     super.initState();
   }
 
-
   bool firstBuild = true;
 
   @override
@@ -121,6 +120,11 @@ class _CreatePostPage extends State<CreatePostPage> {
     var bloc = BlocProvider.of(context)!.bloc;
     var theme = Theme.of(context);
     if (firstBuild) {
+      final args = ModalRoute.of(context)!.settings.arguments as String?;
+      if (args != null) {
+        currRequest1.community = args;
+      }
+
       firstBuild = false;
     }
     //final isKeyboard = MediaQuery.of(context).viewInsets.bottom != 0;
@@ -207,15 +211,11 @@ class _CreatePostPage extends State<CreatePostPage> {
                                   width: 65,
                                   child: TextButton(
                                     onPressed: () {
+                                      // CommunityPost post = )
+                                      bloc.communityPostBloc
+                                          .createCommunityPost(currRequest1);
+
                                       Navigator.of(context).pop();
-                                      //   MaterialPageRoute(
-                                      //       builder: (context) =>
-                                      //           Group(),
-                                      //       settings:
-                                      //           RouteSettings(
-                                      //         arguments: posts,
-                                      //       )),
-                                      // );
                                     },
                                     child: Text(
                                       'POST',
@@ -326,7 +326,6 @@ class _CreatePostPage extends State<CreatePostPage> {
                                     onChanged: (value) {
                                       setState(() {
                                         currRequest1.content = value;
-                                        currRequest1.user = "test user";
                                       });
                                     },
                                     validator: (value) {
@@ -363,12 +362,12 @@ class _CreatePostPage extends State<CreatePostPage> {
                         if (pi != null) {
                           String img64 = base64Encode(
                               (await pi.readAsBytes()).cast<int>());
-                             // print(img64);
+                          // print(img64);
                           ImageUploadRequest IUReq =
                               ImageUploadRequest(base64Image: img64);
                           ImageUploadResponse resp = await bloc.client
                               .uploadImage(bloc.getSessionIdHeader(), IUReq);
-                             // print(resp.pictureURL);
+                          // print(resp.pictureURL);
                           setState(() {
                             //eventImageURL = resp.pictureURL ?? "";
                           });
@@ -392,39 +391,45 @@ class _CreatePostPage extends State<CreatePostPage> {
                     title: Text('Tags'),
                     children: [
                       TextFieldTags(
-                       textSeparators: [ 
+                        textSeparators: [
                           " ", //seperate with space
                           ',' //sepearate with comma as well
-                              
-                       ],
-                       initialTags: tags,
-                       onTag: (tag){
+                        ],
+                        initialTags: tags,
+                        onTag: (tag) {
                           tags.add(tag);
-                       },
-                       onDelete: (tag){
+                        },
+                        onDelete: (tag) {
                           tags.remove(tag);
-                       },
-                       validator: (tag){
+                        },
+                        validator: (tag) {
                           //add validation for tags
-                          if(tag.length < 2){
-                               return "Enter tag up to 2 characters.";
+                          if (tag.length < 2) {
+                            return "Enter tag up to 2 characters.";
                           }
                           return null;
-                       },
-                       tagsStyler: TagsStyler( //styling tag style
-                           tagTextStyle: TextStyle(fontWeight: FontWeight.normal),
-                            tagDecoration: BoxDecoration(color: Color.fromARGB(255, 210, 216, 221), borderRadius: BorderRadius.circular(10.0),
+                        },
+                        tagsStyler: TagsStyler(
+                            //styling tag style
+                            tagTextStyle:
+                                TextStyle(fontWeight: FontWeight.normal),
+                            tagDecoration: BoxDecoration(
+                              color: Color.fromARGB(255, 210, 216, 221),
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                            tagCancelIcon: Icon(Icons.cancel_outlined, size: 18.0, color: Color.fromARGB(255, 6, 10, 15)),
-                            tagPadding: EdgeInsets.all(6.0)
-                       ),
-                       textFieldStyler: TextFieldStyler( //styling tag text field
+                            tagCancelIcon: Icon(Icons.cancel_outlined,
+                                size: 18.0,
+                                color: Color.fromARGB(255, 6, 10, 15)),
+                            tagPadding: EdgeInsets.all(6.0)),
+                        textFieldStyler: TextFieldStyler(
+                            //styling tag text field
                             textFieldBorder: OutlineInputBorder(
-                               borderSide: BorderSide(color: Color.fromARGB(255, 140, 160, 175), width: 2),
-                               borderRadius: BorderRadius.circular(10.0),
-                            )
-                       ),
-                    ),
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 140, 160, 175),
+                              width: 2),
+                          borderRadius: BorderRadius.circular(10.0),
+                        )),
+                      ),
                     ],
                   ),
                   // ListTile(
@@ -438,39 +443,45 @@ class _CreatePostPage extends State<CreatePostPage> {
                     title: Text('Location'),
                     children: [
                       TextFieldTags(
-                       textSeparators: [ 
+                        textSeparators: [
                           " ", //seperate with space
                           ',' //sepearate with comma as well
-                              
-                       ],
-                       initialTags: location,
-                       onTag: (tag){
+                        ],
+                        initialTags: location,
+                        onTag: (tag) {
                           location.add(tag);
-                       },
-                       onDelete: (tag){
+                        },
+                        onDelete: (tag) {
                           location.remove(tag);
-                       },
-                       validator: (tag){
+                        },
+                        validator: (tag) {
                           //add validation for tags
-                          if(location.length < 2){
-                               return "Enter location up to 2 characters.";
+                          if (location.length < 2) {
+                            return "Enter location up to 2 characters.";
                           }
                           return null;
-                       },
-                       tagsStyler: TagsStyler( //styling tag style
-                           tagTextStyle: TextStyle(fontWeight: FontWeight.normal),
-                            tagDecoration: BoxDecoration(color: Color.fromARGB(255, 210, 216, 221), borderRadius: BorderRadius.circular(10.0),
+                        },
+                        tagsStyler: TagsStyler(
+                            //styling tag style
+                            tagTextStyle:
+                                TextStyle(fontWeight: FontWeight.normal),
+                            tagDecoration: BoxDecoration(
+                              color: Color.fromARGB(255, 210, 216, 221),
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                            tagCancelIcon: Icon(Icons.cancel_outlined, size: 18.0, color: Color.fromARGB(255, 6, 10, 15)),
-                            tagPadding: EdgeInsets.all(6.0)
-                       ),
-                       textFieldStyler: TextFieldStyler( //styling tag text field
+                            tagCancelIcon: Icon(Icons.cancel_outlined,
+                                size: 18.0,
+                                color: Color.fromARGB(255, 6, 10, 15)),
+                            tagPadding: EdgeInsets.all(6.0)),
+                        textFieldStyler: TextFieldStyler(
+                            //styling tag text field
                             textFieldBorder: OutlineInputBorder(
-                               borderSide: BorderSide(color: Color.fromARGB(255, 140, 160, 175), width: 2),
-                               borderRadius: BorderRadius.circular(10.0),
-                            )
-                       ),
-                    ),
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 140, 160, 175),
+                              width: 2),
+                          borderRadius: BorderRadius.circular(10.0),
+                        )),
+                      ),
                     ],
                   ),
                   // ListTile(
@@ -484,39 +495,45 @@ class _CreatePostPage extends State<CreatePostPage> {
                     title: Text('Interests'),
                     children: [
                       TextFieldTags(
-                       textSeparators: [ 
+                        textSeparators: [
                           " ", //seperate with space
                           ',' //sepearate with comma as well
-                              
-                       ],
-                       initialTags: interests,
-                       onTag: (tag){
+                        ],
+                        initialTags: interests,
+                        onTag: (tag) {
                           interests.add(tag);
-                       },
-                       onDelete: (tag){
+                        },
+                        onDelete: (tag) {
                           interests.remove(tag);
-                       },
-                       validator: (tag){
+                        },
+                        validator: (tag) {
                           //add validation for tags
-                          if(interests.length < 2){
-                               return "Enter interests up to 2 characters.";
+                          if (interests.length < 2) {
+                            return "Enter interests up to 2 characters.";
                           }
                           return null;
-                       },
-                       tagsStyler: TagsStyler( //styling tag style
-                           tagTextStyle: TextStyle(fontWeight: FontWeight.normal),
-                            tagDecoration: BoxDecoration(color: Color.fromARGB(255, 210, 216, 221), borderRadius: BorderRadius.circular(10.0),
+                        },
+                        tagsStyler: TagsStyler(
+                            //styling tag style
+                            tagTextStyle:
+                                TextStyle(fontWeight: FontWeight.normal),
+                            tagDecoration: BoxDecoration(
+                              color: Color.fromARGB(255, 210, 216, 221),
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                            tagCancelIcon: Icon(Icons.cancel_outlined, size: 18.0, color: Color.fromARGB(255, 6, 10, 15)),
-                            tagPadding: EdgeInsets.all(6.0)
-                       ),
-                       textFieldStyler: TextFieldStyler( //styling tag text field
+                            tagCancelIcon: Icon(Icons.cancel_outlined,
+                                size: 18.0,
+                                color: Color.fromARGB(255, 6, 10, 15)),
+                            tagPadding: EdgeInsets.all(6.0)),
+                        textFieldStyler: TextFieldStyler(
+                            //styling tag text field
                             textFieldBorder: OutlineInputBorder(
-                               borderSide: BorderSide(color: Color.fromARGB(255, 140, 160, 175), width: 2),
-                               borderRadius: BorderRadius.circular(10.0),
-                            )
-                       ),
-                    ),
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 140, 160, 175),
+                              width: 2),
+                          borderRadius: BorderRadius.circular(10.0),
+                        )),
+                      ),
                     ],
                   ),
                 ],

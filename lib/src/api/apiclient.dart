@@ -316,4 +316,8 @@ abstract class InstiAppApi {
   @rt.GET("/communityposts/{id}")
   Future<CommunityPost> getCommunityPost(
       @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+
+  @rt.POST("/communityposts")
+  Future<void> createCommunityPost(
+      @rt.Header("Cookie") String sessionId, @rt.Body() CommunityPost post);
 }
