@@ -21,6 +21,7 @@ import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
 import 'package:InstiApp/src/api/response/alumni_login_response.dart';
+import 'package:InstiApp/src/api/response/community_post_list_response.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/api/response/getencr_response.dart';
@@ -37,6 +38,7 @@ import 'model/offersecret.dart';
 part 'apiclient.g.dart';
 
 @rt.RestApi(baseUrl: "http://192.168.0.7:8000//api")
+
 // @rt.RestApi(baseUrl: "https://api.insti.app/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
@@ -308,7 +310,7 @@ abstract class InstiAppApi {
       @rt.Header("Cookie") String sessionId, @rt.Path() String id);
 
   @rt.GET("/communityposts")
-  Future<List<CommunityPost>> getCommunityPosts(
+  Future<CommunityPostListResponse> getCommunityPosts(
       @rt.Header("Cookie") String sessionId);
 
   @rt.GET("/communityposts/{id}")
