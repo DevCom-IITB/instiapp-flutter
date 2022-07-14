@@ -51,6 +51,15 @@ List<NotificationChannel> notifChannels = [
     importance: NotificationImportance.Max,
   ),
   NotificationChannel(
+    channelGroupKey: NotificationGroups.BLOG,
+    channelKey: NotificationChannels.EXTERNAL,
+    channelName: 'External blog',
+    channelDescription: 'External blog notifications from InstiApp',
+    defaultColor: Color(0xFF9D50DD),
+    ledColor: Colors.blue,
+    importance: NotificationImportance.Max,
+  ),
+  NotificationChannel(
     channelGroupKey: NotificationGroups.NEWS,
     channelKey: NotificationChannels.NEWS,
     channelName: 'News',
@@ -103,6 +112,7 @@ class NotificationChannels {
   static const String MISCELLANEOUS_CHANNEL = "misc_channel";
   static const String PLACEMENT = "placement_channel";
   static const String INTERNSHIP = "internship_channel";
+  static const String EXTERNAL = "external_channel";
   static const String NEWS = "news_channel";
   static const String EVENT = "events_channel";
 }
@@ -126,6 +136,7 @@ class NotificationType {
   static const String NEWS = "newsentry";
   static const String COMPLAINTS = "complaintcomment";
   static const String QUERY = "unresolvedquery";
+  static const String EXTERNAL = "externalblogentry";
 }
 
 /// Setup notifications with awesome notifications
@@ -195,6 +206,7 @@ void setupNotifications(BuildContext context, InstiAppBloc bloc,
           NotificationType.COMPLAINTS:
               "/complaint/${fromMap.notificationExtra ?? ""}?reload=true",
           NotificationType.QUERY: "/query",
+          NotificationType.EXTERNAL: "/externalblog",
         }[fromMap.notificationType] ??
         "/";
   }
@@ -220,7 +232,7 @@ void setupNotifications(BuildContext context, InstiAppBloc bloc,
 
       // Getting route depending on payload
       String routeName = routeFromNotification(notif);
-
+      print(routeName);
       // Get action button key if any
       String actionKey = notification.buttonKeyPressed;
 
@@ -244,6 +256,7 @@ void setupNotifications(BuildContext context, InstiAppBloc bloc,
 ///
 /// [message] is the message recieved from firebase
 Future<void> sendMessage(RemoteMessage message) async {
+  print("Message received: ${message.data}");
   // Get notif from message data
   RichNotification notif = RichNotification.fromJson(message.data);
 
@@ -284,6 +297,8 @@ NotificationContent getNotificationContent(RichNotification notif) {
         return NotificationChannels.NEWS;
       case NotificationType.EVENT:
         return NotificationChannels.EVENT;
+      case NotificationType.EXTERNAL:
+        return NotificationChannels.EXTERNAL;
       default:
         return NotificationChannels.MISCELLANEOUS_CHANNEL;
     }
