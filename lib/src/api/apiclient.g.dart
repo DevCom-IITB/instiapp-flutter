@@ -8,7 +8,7 @@ part of 'apiclient.dart';
 
 class _InstiAppApi implements InstiAppApi {
   _InstiAppApi(this._dio, {this.baseUrl}) {
-    baseUrl ??= 'http://192.168.0.132:8000/api';
+    baseUrl ??= 'http://192.168.0.108:8000/api';
   }
 
   final Dio _dio;
@@ -1102,6 +1102,23 @@ class _InstiAppApi implements InstiAppApi {
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = CommunityPost.fromJson(_result.data!);
     return value;
+  }
+
+  @override
+  Future<void> createCommunityPost(sessionId, post) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(post.toJson());
+    print(_data);
+    await _dio.fetch<void>(_setStreamType<void>(
+        Options(method: 'POST', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/communityposts',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    return null;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {

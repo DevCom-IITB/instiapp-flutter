@@ -193,7 +193,8 @@ class _CommunityDetailsState extends State<CommunityDetails> {
           ),
           backgroundColor: Color.fromARGB(255, 28, 122, 230),
           onPressed: () {
-            Navigator.of(context).pushNamed("/posts/add");
+            Navigator.of(context)
+                .pushNamed("/posts/add", arguments: community?.id);
           }),
     );
   }

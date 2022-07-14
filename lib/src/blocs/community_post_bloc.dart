@@ -35,4 +35,8 @@ class CommunityPostBloc {
     // print("community" + _communityPosts.toString());
     _communitySubject.add(_communityPosts);
   }
+
+  Future<void> createCommunityPost(CommunityPost post) async {
+    await bloc.client.createCommunityPost(bloc.getSessionIdHeader(), post);
+  }
 }
