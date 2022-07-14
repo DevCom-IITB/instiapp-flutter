@@ -12,6 +12,9 @@ import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
+
+import 'package:flutter/gestures.dart';
+
 // ignore: unnecessary_import
 import 'dart:ui' show Brightness;
 
@@ -1222,6 +1225,7 @@ class CommunityPostWidget extends StatefulWidget {
 
 class _CommunityPostWidgetState extends State<CommunityPostWidget> {
   final CommunityPost communityPost;
+  bool contentExpanded = false;
   List<String> imgList = [
     "https://media.pitchfork.com/photos/620e81cad8bc62857b465cc3/2:1/w_2560%2Cc_limit/Stranger-Things-Season-4.jpg",
     "https://www.denofgeek.com/wp-content/uploads/2019/04/infinity-war-montage-main.jpg?resize=768%2C432",
@@ -1234,6 +1238,9 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
+
+   
+    String content = communityPost.content ?? "";
 
     print(communityPost.imageUrl);
 
@@ -1280,9 +1287,30 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
               ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: Text(
-                  communityPost.content ?? '''post''',
+                child: Text.rich(
+                  new TextSpan(
+                    text: content.length > 310 && !contentExpanded
+                        ? content.substring(0, 300) +
+                            (contentExpanded ? "" : "...")
+                        : content,
+                    children: !contentExpanded && content.length > 310
+                        ? [
+                            new TextSpan(
+                              text: 'Read More.',
+                              style: theme.textTheme.subtitle2
+                                  ?.copyWith(color: theme.colorScheme.primary),
+                              recognizer: new TapGestureRecognizer()
+                                ..onTap = () => setState(() {
+                                      contentExpanded = true;
+                                    }),
+                            )
+                          ]
+                        : [],
+                  ),
                 ),
+                // child: Text(
+                //   communityPost.content ?? '''post''',
+                // ),
               ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10),

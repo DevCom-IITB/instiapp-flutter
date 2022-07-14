@@ -431,11 +431,9 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
           )
         ];
       }
-
       return (communityPosts
           .map(
             (c) =>
-                // _buildListTile(c, theme, communityPostBloc),
                 CommunityPostWidget(communityPost: c),
           )
           .toList());
