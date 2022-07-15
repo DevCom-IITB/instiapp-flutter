@@ -262,7 +262,9 @@ class _CreatePostPage extends State<CreatePostPage> {
                                     autocorrect: true,
                                     onChanged: (value) {
                                       setState(() {
+                              
                                         currRequest1.content = value;
+                                        currRequest1.postedBy = profile;
                                       });
                                     },
                                     validator: (value) {
@@ -306,7 +308,9 @@ class _CreatePostPage extends State<CreatePostPage> {
                               .uploadImage(bloc.getSessionIdHeader(), IUReq);
                           // print(resp.pictureURL);
                           setState(() {
-                            //eventImageURL = resp.pictureURL ?? "";
+                            List<String>? listOfUrls = [];
+                            listOfUrls.add(resp.pictureURL ?? "");
+                            currRequest1.imageUrl = listOfUrls;
                           });
                         }
                       } // => getImage(source: ImageSource.camera),

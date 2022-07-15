@@ -1024,8 +1024,6 @@ class _ImageGalleryState extends State<ImageGallery>
   @override
   void initState() {
     super.initState();
-    print(widget.images);
-    print(widget.images.length);
 
     if (widget.images.length == 0 || widget.images.length == 1) {
       return;
@@ -1216,110 +1214,177 @@ class _ImageGalleryState extends State<ImageGallery>
 class CommunityPostWidget extends StatefulWidget {
   // const CommunityPostWidget({Key? key}) : super(key: key);
   final CommunityPost communityPost;
+  final String? communityId;
 
-  CommunityPostWidget({required this.communityPost});
+  CommunityPostWidget({required this.communityPost, required this.communityId});
   @override
-  State<CommunityPostWidget> createState() =>
-      _CommunityPostWidgetState(communityPost: communityPost);
+  State<CommunityPostWidget> createState() => _CommunityPostWidgetState(
+      communityPost: communityPost, communityId: communityId);
 }
 
 class _CommunityPostWidgetState extends State<CommunityPostWidget> {
   final CommunityPost communityPost;
+  final String? communityId;
   bool contentExpanded = false;
-  List<String> imgList = [
-    "https://media.pitchfork.com/photos/620e81cad8bc62857b465cc3/2:1/w_2560%2Cc_limit/Stranger-Things-Season-4.jpg",
-    "https://www.denofgeek.com/wp-content/uploads/2019/04/infinity-war-montage-main.jpg?resize=768%2C432",
-    "https://www.pluggedin.com/wp-content/uploads/2020/01/family-guy-scaled.jpg",
-    "https://www.thenexthint.com/wp-content/uploads/2021/09/Is-BoJack-Horseman-Season-7-Cancelled-by-Netflix-1.jpeg.webp",
-    "https://cdn.searchenginejournal.com/wp-content/uploads/2021/04/journalism-tactics-60812472af9db-1520x800.png",
-  ];
-  _CommunityPostWidgetState({required this.communityPost});
+  _CommunityPostWidgetState(
+      {required this.communityPost, required this.communityId});
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
-
-   
+    CommunityPostBloc communityPostBloc = bloc.communityPostBloc;
     String content = communityPost.content ?? "";
+    return (communityPost.threadRank == 1 &&
+            communityPost.community == communityId)
+        ? GestureDetector(
+            onTap: () => CommunityPostPage.navigateWith(
+                context, bloc.communityPostBloc, communityPost),
+            child: Container(
+              margin: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: theme.colorScheme.surface,
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                                width: 1,
+                                color: theme.colorScheme.surfaceVariant))),
+                    child: ListTile(
+                      leading: NullableCircleAvatar(
+                        communityPost.postedBy?.userProfilePictureUrl ??
+                            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
+                        Icons.person,
+                        radius: 18,
+                      ),
+                      title: Text(
+                        communityPost.postedBy?.userName ?? "user",
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                      subtitle: Text(
+                        "30 March",
+                        style: theme.textTheme.bodySmall,
+                      ),
+                      trailing: PopupMenuButton<int>(
+                        itemBuilder: (context) => [
+                          // popupmenu item 1
+                          PopupMenuItem(
+                            value: 1,
+                            // row has two child icon and text.
+                            child: Row(
+                              children: [
+                                Icon(Icons.edit),
+                                SizedBox(
+                                  // sized box with width 10
+                                  width: 10,
+                                ),
+                                Text("Edit")
+                              ],
+                            ),
+                          ),
+                          // popupmenu item 2
+                          PopupMenuItem(
+                            value: 2,
+                            // row has two child icon and text
+                            child: Row(
+                              children: [
+                                Icon(Icons.delete),
+                                SizedBox(
+                                  // sized box with width 10
+                                  width: 10,
+                                ),
+                                Text("Delete")
+                              ],
+                            ),
+                            onTap: () => {
+                              communityPostBloc
+                                  .deleteCommunityPost(communityPost.id ?? "")
+                            },
+                          ),
+                          PopupMenuItem(
+                            value: 3,
+                            // row has two child icon and text
+                            child: Row(
+                              children: [
+                                Icon(Icons.push_pin_outlined),
+                                SizedBox(
+                                  // sized box with width 10
+                                  width: 10,
+                                ),
+                                Text("Pin")
+                              ],
+                            ),
+                            onTap: () => {},
+                          ),
 
-    print(communityPost.imageUrl);
-
-    return GestureDetector(
-        onTap: () => CommunityPostPage.navigateWith(
-            context, bloc.communityPostBloc, communityPost),
-        child: Container(
-          margin: EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: theme.colorScheme.surface,
-          ),
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    border: Border(
-                        bottom: BorderSide(
-                            width: 1,
-                            color: theme.colorScheme.surfaceVariant))),
-                child: ListTile(
-                  leading: NullableCircleAvatar(
-                    communityPost.postedBy?.userProfilePictureUrl ??
-                        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
-                    Icons.person,
-                    radius: 18,
+                          PopupMenuItem(
+                            value: 4,
+                            // row has two child icon and text
+                            child: Row(
+                              children: [
+                                Icon(Icons.share),
+                                SizedBox(
+                                  // sized box with width 10
+                                  width: 10,
+                                ),
+                                Text("Share")
+                              ],
+                            ),
+                          ),
+                        ],
+                        // offset: Offset(0, 100),
+                        elevation: 2,
+                        tooltip: "More",
+                        icon: Icon(
+                          Icons.more_vert,
+                        ),
+                      ),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                      minVerticalPadding: 0,
+                      dense: true,
+                      horizontalTitleGap: 4,
+                    ),
                   ),
-                  title: Text(
-                    communityPost.postedBy?.userName ?? "user",
-                    style: theme.textTheme.bodyMedium,
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    child: Text.rich(
+                      new TextSpan(
+                        text: content.length > 310 && !contentExpanded
+                            ? content.substring(0, 300) +
+                                (contentExpanded ? "" : "...")
+                            : content,
+                        children: !contentExpanded && content.length > 310
+                            ? [
+                                new TextSpan(
+                                  text: 'Read More.',
+                                  style: theme.textTheme.subtitle2?.copyWith(
+                                      color: theme.colorScheme.primary),
+                                  recognizer: new TapGestureRecognizer()
+                                    ..onTap = () => setState(() {
+                                          contentExpanded = true;
+                                        }),
+                                )
+                              ]
+                            : [],
+                      ),
+                    ),
+                    // child: Text(
+                    //   communityPost.content ?? '''post''',
+                    // ),
                   ),
-                  subtitle: Text(
-                    "30 March",
-                    style: theme.textTheme.bodySmall,
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: ImageGallery(images: []),
                   ),
-                  trailing:
-                      Icon(Icons.more_vert, color: theme.colorScheme.onSurface),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                  minVerticalPadding: 0,
-                  dense: true,
-                  horizontalTitleGap: 4,
-                ),
+                  _buildFooter(theme, communityPost),
+                ],
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: Text.rich(
-                  new TextSpan(
-                    text: content.length > 310 && !contentExpanded
-                        ? content.substring(0, 300) +
-                            (contentExpanded ? "" : "...")
-                        : content,
-                    children: !contentExpanded && content.length > 310
-                        ? [
-                            new TextSpan(
-                              text: 'Read More.',
-                              style: theme.textTheme.subtitle2
-                                  ?.copyWith(color: theme.colorScheme.primary),
-                              recognizer: new TapGestureRecognizer()
-                                ..onTap = () => setState(() {
-                                      contentExpanded = true;
-                                    }),
-                            )
-                          ]
-                        : [],
-                  ),
-                ),
-                // child: Text(
-                //   communityPost.content ?? '''post''',
-                // ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: ImageGallery(images: communityPost.imageUrl ?? []),
-              ),
-              _buildFooter(theme, communityPost),
-            ],
-          ),
-        ));
+            ))
+        : Container();
   }
 
   Widget _buildFooter(ThemeData theme, CommunityPost communityPost) {
