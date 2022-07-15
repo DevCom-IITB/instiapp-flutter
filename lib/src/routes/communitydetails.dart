@@ -191,7 +191,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
           child: Icon(
             Icons.mode_edit,
           ),
-          backgroundColor: Color.fromARGB(255, 28, 122, 230),
+          backgroundColor: Color.fromARGB(255, 33, 89, 243),
           onPressed: () {
             Navigator.of(context).pushNamed("/posts/add");
           }),
@@ -333,9 +333,149 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
       communityPostBloc.refresh();
       firstBuild = false;
     }
+    var communityPost;
     return Container(
       child: Column(
         children: [
+          Container(
+            height: 37,
+            child: Text('Featured',
+                style: TextStyle(
+                  fontSize: 23.0,
+                  fontWeight: FontWeight.bold,
+                )),
+          ),
+          Container(
+              height: 239,
+              child: ListView(scrollDirection: Axis.horizontal, children: [
+                Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 0.8, color: Colors.grey),
+                        borderRadius: BorderRadius.all(Radius.circular(15))
+                         ),
+                      height: 223,
+                      width: 285,
+                      margin: EdgeInsets.all(8),
+                      child: 
+                      Column(
+                        children: [
+                          ListTile(
+                            leading: NullableCircleAvatar(
+                              //communityPost.postedBy?.userProfilePictureUrl ??
+                              "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
+                              Icons.person,
+                              radius: 18,
+                            ),
+                            title: Text(
+                              //communityPost.postedBy?.userName ??
+                              "Prime Minister",
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                            subtitle: Text(
+                              "30 March",
+                              style: theme.textTheme.bodySmall,
+                            ),
+                            // trailing: Icon(Icons.more_vert,
+                            //     color: theme.colorScheme.onSurface),
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                            minVerticalPadding: 0,
+                            dense: true,
+                            horizontalTitleGap: 4,
+                          ),
+                          Container(
+                            height: 14,
+                            child: Text('anmol is boinn to clai uesss'),
+                          ),
+                          SizedBox(height: 2),
+                          Container(
+                            height: 130,
+                            margin: EdgeInsets.fromLTRB(14, 2, 14, 7),
+                            decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjGHyud7_PeGNa1uWQVfgOT4Zzidr8UlesDA&usqp=CAU",
+                              ),
+                              fit: BoxFit.cover,
+                              ) ,
+                            ),
+                           // padding:  EdgeInsets.symmetric(horizontal: 10),
+                           
+                          ),
+                        ],
+                      ),
+                      
+                      
+                    ),
+                    SizedBox(width: 1),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 0.8, color: Colors.grey),
+                        borderRadius: BorderRadius.all(Radius.circular(15))
+                         ),
+                      height: 223,
+                      width: 285,
+                      margin: EdgeInsets.all(8),
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: NullableCircleAvatar(
+                              //communityPost.postedBy?.userProfilePictureUrl ??
+                              "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
+                              Icons.person,
+                              radius: 18,
+                            ),
+                            title: Text(
+                              //communityPost.postedBy?.userName ??
+                              "Chai wala",
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                            subtitle: Text(
+                              "32 March",
+                              style: theme.textTheme.bodySmall,
+                            ),
+                            // trailing: Icon(Icons.more_vert,
+                            //     color: theme.colorScheme.onSurface),
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                            minVerticalPadding: 0,
+                            dense: true,
+                            horizontalTitleGap: 4,
+                          ),
+                          Container(
+                            height: 14,
+                            child: Text('uio uioioi o uone !!!'),
+                          ),
+                          SizedBox(height: 2),
+                          Container(
+                            height: 130,
+                            margin: EdgeInsets.fromLTRB(14, 2, 14, 7),
+                            decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSL2VQ8U5Ab0juZsdw8AIhX1qLjvo6OScVTTQ&usqp=CAU",
+                              ),
+                              fit: BoxFit.cover,
+                              ) ,
+                            ),
+                           // padding:  EdgeInsets.symmetric(horizontal: 10),
+                           
+                          ),
+                        ],
+                      ),
+                      
+                    ),
+                  ],
+                )
+              ])
+              //   ],
+              // ),
+
+              ),
           Container(
             decoration: BoxDecoration(
                 color: theme.colorScheme.surfaceVariant.withOpacity(0.4)),
