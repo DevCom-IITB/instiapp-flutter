@@ -64,5 +64,7 @@ class Community {
   factory Community.fromJson(Map<String, dynamic> json) =>
       _$CommunityFromJson(json);
 
+  get communityStrId => null;
+
   Map<String, dynamic> toJson() => _$CommunityToJson(this);
 }
