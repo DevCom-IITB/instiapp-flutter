@@ -5,6 +5,7 @@ import 'dart:io' show Platform;
 import 'package:InstiApp/main.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
@@ -483,6 +484,17 @@ class InstiAppBloc {
       b.bodyUserFollows = !b.bodyUserFollows!;
       b.bodyFollowersCount =
           b.bodyFollowersCount! + (b.bodyUserFollows! ? 1 : -1);
+    } catch (ex) {
+      // print(ex);
+    }
+  }
+
+  Future<void> updateFollowCommunity(Community c) async {
+    try {
+      await client.updateBodyFollowing(
+          getSessionIdHeader(), c.body ?? "", c.isUserFollowing! ? 0 : 1);
+      c.isUserFollowing = !c.isUserFollowing!;
+      c.followersCount = c.followersCount! + (c.isUserFollowing! ? 1 : -1);
     } catch (ex) {
       // print(ex);
     }
