@@ -320,4 +320,8 @@ abstract class InstiAppApi {
   @rt.POST("/communityposts")
   Future<void> createCommunityPost(
       @rt.Header("Cookie") String sessionId, @rt.Body() CommunityPost post);
+
+  @rt.POST("/communityposts")
+  Future<void> deleteCommunityPost(
+      @rt.Header("Cookie") String sessionId, @rt.Body() String id);
 }
