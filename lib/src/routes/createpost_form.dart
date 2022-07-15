@@ -315,12 +315,12 @@ class _CreatePostPage extends State<CreatePostPage> {
                         }
                       } // => getImage(source: ImageSource.camera),
                       ),
-                  ListTile(
-                    dense: true,
-                    title: Text('Insert Links'),
-                    leading: Icon(Icons.link),
-                    onTap: () {},
-                  ),
+                  // ListTile(
+                  //   dense: true,
+                  //   title: Text('Insert Links'),
+                  //   leading: Icon(Icons.link),
+                  //   onTap: () {},
+                  // ),
                   // ListTile(
                   //   dense: true,
                   //   title: Text('Tags'),

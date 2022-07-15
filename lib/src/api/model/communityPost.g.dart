@@ -9,7 +9,7 @@ part of 'communityPost.dart';
 CommunityPost _$CommunityPostFromJson(Map<String, dynamic> json) =>
     CommunityPost(
       id: json['id'] as String?,
-      strId: json['str_id'] as String?,
+      communityPostStrId: json['str_id'] as String?,
       comments: (json['comments'] as List<dynamic>?)
           ?.map((e) => CommunityPost.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -39,7 +39,7 @@ CommunityPost _$CommunityPostFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$CommunityPostToJson(CommunityPost instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'str_id': instance.strId,
+      'str_id': instance.communityPostStrId,
       'content': instance.content,
       'posted_by': instance.postedBy,
       'reactions_count': instance.reactionCount,

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:InstiApp/src/api/model/community.dart';
+import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/community_bloc.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
@@ -12,6 +13,7 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
 
 import 'package:json_annotation/json_annotation.dart';
 import '../bloc_provider.dart';
@@ -248,6 +250,7 @@ class CommunityAboutSectionState extends State<CommunityAboutSection> {
   int _selectedIndex = 0;
 
   bool aboutExpanded = false;
+  bool memberExpanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -321,7 +324,69 @@ class CommunityAboutSectionState extends State<CommunityAboutSection> {
   }
 
   Widget _buildMembers(ThemeData theme) {
-    return Text("");
+    //String member = widget.community?.description ?? "";
+    return Container(
+      //child: Padding(
+       padding: const EdgeInsets.all(5.0),
+      
+        child: ConstrainedBox(
+          constraints: new BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height / 6,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // ElevatedButton(
+                //   child: Text(
+                //     'SEE ALL',
+                //     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                //   ),
+                //   style: ElevatedButton.styleFrom(
+                //     primary: Colors.white,
+                //     onPrimary: Colors.blue,
+                //     minimumSize: Size(400, 20),
+                //   ),
+                //   onPressed: () {},
+                // ),
+              ]
+              ..addAll(
+                  widget.community?.roles?.expand((r) {
+                        if (r.roleUsersDetail != null) {
+                          return r.roleUsersDetail!
+                              .map((u) => u..currentRole = r.roleName)
+                              .toList();
+                        }
+                        return [];
+                      }).map((u) => _buildUserTile(theme, u)) ??
+                      [],
+                ),
+            ),
+          ),
+        ),
+     // ),
+    );
+  }
+
+  Widget _buildUserTile(ThemeData theme, User u) {
+    return ListTile(
+      leading: NullableCircleAvatar(
+        u.userProfilePictureUrl ?? "",
+        Icons.person_outline_outlined,
+        heroTag: u.userID ?? "",
+      ),
+      title: Text(
+        u.userName ?? "",
+        style: theme.textTheme.headline6,
+      ),
+      subtitle: Text(
+        u.getSubTitle() ?? "",
+        style: theme.textTheme.bodySmall,
+      ),
+      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+      minVerticalPadding: 0,
+      dense: true,
+      horizontalTitleGap: 4,
+    );
   }
 }
 
@@ -371,14 +436,12 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        border: Border.all(width: 0.8, color: Colors.grey),
-                        borderRadius: BorderRadius.all(Radius.circular(15))
-                         ),
+                          border: Border.all(width: 0.8, color: Colors.grey),
+                          borderRadius: BorderRadius.all(Radius.circular(15))),
                       height: 223,
                       width: 285,
                       margin: EdgeInsets.all(8),
-                      child: 
-                      Column(
+                      child: Column(
                         children: [
                           ListTile(
                             leading: NullableCircleAvatar(
@@ -398,8 +461,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                             ),
                             // trailing: Icon(Icons.more_vert,
                             //     color: theme.colorScheme.onSurface),
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 0),
                             minVerticalPadding: 0,
                             dense: true,
                             horizontalTitleGap: 4,
@@ -413,28 +476,25 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                             height: 130,
                             margin: EdgeInsets.fromLTRB(14, 2, 14, 7),
                             decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjGHyud7_PeGNa1uWQVfgOT4Zzidr8UlesDA&usqp=CAU",
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjGHyud7_PeGNa1uWQVfgOT4Zzidr8UlesDA&usqp=CAU",
+                                ),
+                                fit: BoxFit.cover,
                               ),
-                              fit: BoxFit.cover,
-                              ) ,
                             ),
-                           // padding:  EdgeInsets.symmetric(horizontal: 10),
-                           
+                            // padding:  EdgeInsets.symmetric(horizontal: 10),
                           ),
                         ],
                       ),
-                      
-                      
                     ),
                     SizedBox(width: 1),
                     Container(
                       decoration: BoxDecoration(
-                        border: Border.all(width: 0.8, color: Colors.grey),
-                        borderRadius: BorderRadius.all(Radius.circular(15))
-                         ),
+                          border: Border.all(width: 0.8, color: Colors.grey),
+                          borderRadius: BorderRadius.all(Radius.circular(15))),
                       height: 223,
                       width: 285,
                       margin: EdgeInsets.all(8),
@@ -458,8 +518,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                             ),
                             // trailing: Icon(Icons.more_vert,
                             //     color: theme.colorScheme.onSurface),
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 0),
                             minVerticalPadding: 0,
                             dense: true,
                             horizontalTitleGap: 4,
@@ -473,20 +533,19 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                             height: 130,
                             margin: EdgeInsets.fromLTRB(14, 2, 14, 7),
                             decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSL2VQ8U5Ab0juZsdw8AIhX1qLjvo6OScVTTQ&usqp=CAU",
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSL2VQ8U5Ab0juZsdw8AIhX1qLjvo6OScVTTQ&usqp=CAU",
+                                ),
+                                fit: BoxFit.cover,
                               ),
-                              fit: BoxFit.cover,
-                              ) ,
                             ),
-                           // padding:  EdgeInsets.symmetric(horizontal: 10),
-                           
+                            // padding:  EdgeInsets.symmetric(horizontal: 10),
                           ),
                         ],
                       ),
-                      
                     ),
                   ],
                 )

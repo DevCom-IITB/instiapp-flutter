@@ -9,7 +9,7 @@ class CommunityPost {
   String? id;
 
   @JsonKey(name: "str_id")
-  String? strId;
+  String? communityPostStrId;
 
   @JsonKey(name: "content")
   String? content;
@@ -52,7 +52,7 @@ class CommunityPost {
 
   CommunityPost({
     this.id,
-    this.strId,
+    this.communityPostStrId,
     this.comments,
     this.content,
     this.commentsCount,

@@ -1,5 +1,6 @@
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/community.dart';
+import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 
@@ -20,5 +21,9 @@ class ShareURLMaker {
 
   static String getCommunityURL(Community community) {
     return webHost + "community/" + community.strId!;
+  }
+
+  static String getCommunityPostURL(CommunityPost communityPost) {
+    return webHost + "community/" + "post/" + communityPost.communityPostStrId!;
   }
 }
