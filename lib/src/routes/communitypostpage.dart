@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
@@ -58,23 +59,6 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
     });
     //print(communityPost?.comments);
   }
-
-  // void initComment(CommunityPost? comment) {
-  //   var bloc = BlocProvider.of(context)!.bloc;
-  //   var communityPostBloc = bloc.communityPostBloc;
-  //   final Future<CommunityPost?> commentFuture =
-  //       communityPostBloc.getCommunityPost(comment?.id ?? "");
-  //   CommunityPost? finalComment;
-  //   commentFuture.then((comment) {
-  //     if (this.mounted) {
-  //       setState(() {
-  //         finalComment = comment;
-  //       });
-  //     }
-  //   });
-  //   print("object");
-  //   print(comment?.comments);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -213,95 +197,187 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
 
   List<Widget> _buildCommentList(
       ThemeData theme, CommunityPost? communityPost) {
+    var bloc = BlocProvider.of(context)!.bloc;
     if (communityPost?.comments?.isEmpty == true) {
-      return [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-          child:
-              Text.rich(TextSpan(style: theme.textTheme.headline6, children: [
-            TextSpan(text: "Nothing found for the query "),
-            TextSpan(text: "."),
-          ])),
-        )
-      ];
+      return [];
     }
-    // initComment(communityPost);
     return (communityPost?.comments
-                ?.map((c) => _buildListTile(c, theme, communityPost)) ??
+                ?.map((c) => Comment(bloc: bloc, initialComment: c)) ??
             [])
         .toList();
   }
 
-  Widget _buildListTile(
-      CommunityPost comment, ThemeData theme, CommunityPost post) {
-    List<String> imgList = [];
-    var borderRadius = const BorderRadius.all(Radius.circular(10));
-
-    return (comment.parent == post.id)
-        ? Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-            Container(
-                child: NullableCircleAvatar(
-              communityPost?.postedBy?.userProfilePictureUrl ??
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
-              Icons.person,
-              radius: 18,
-            )),
-            Container(
-              margin: EdgeInsets.fromLTRB(10, 10, 0, 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: theme.colorScheme.surface,
-                boxShadow: [
-                  BoxShadow(
-                    offset: Offset(0, 3),
-                    blurRadius: 30,
-                    spreadRadius: -18,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    width: 300,
-                    child: ListTile(
-                      title: Text(
-                        comment.postedBy?.userName ?? "user",
-                        style: theme.textTheme.bodyMedium,
+  Widget _buildFooter(ThemeData theme, CommunityPost? communityPost) {
+    return Container(
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.thumb_up_alt_outlined,
+                  size: 20,
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 5),
+                  padding: EdgeInsets.all(5),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        "assets/communities/emojis/laugh.png",
+                        width: 20,
                       ),
-                      subtitle: Text(
-                        "30 March",
-                        style: theme.textTheme.bodySmall,
+                      Image.asset(
+                        "assets/communities/emojis/cry.png",
+                        width: 20,
                       ),
-                      trailing: Icon(Icons.more_vert,
-                          color: theme.colorScheme.onSurface),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                      minVerticalPadding: 0,
-                      dense: true,
-                      horizontalTitleGap: 4,
-                    ),
+                      Image.asset(
+                        "assets/communities/emojis/angry.png",
+                        width: 20,
+                      ),
+                      Image.asset(
+                        "assets/communities/emojis/surprise.png",
+                        width: 20,
+                      ),
+                    ],
                   ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    child: Text(
-                      comment.content ?? '''post''',
-                    ),
+                ),
+                Text(communityPost?.userReaction.toString() ?? "filler",
+                    style: theme.textTheme.bodySmall),
+                Container(
+                  margin: EdgeInsets.only(left: 15),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.mode_comment_outlined,
+                        color: theme.colorScheme.onSurfaceVariant,
+                        size: 20,
+                      ),
+                      SizedBox(width: 3),
+                      Text((communityPost?.commentsCount).toString(),
+                          style: theme.textTheme.bodySmall),
+                    ],
                   ),
-                  // Container(
-                  //   padding: EdgeInsets.symmetric(horizontal: 10),
-                  //   child: ImageGallery(images: comment.imageUrl ?? imgList),
-                  // ),
-                  _buildFooter(theme, comment),
-                  Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child:
-                          Column(children: _buildCommentList(theme, comment)))
-                ],
-              ),
+                )
+              ],
+            ),
+            Icon(
+              Icons.share_outlined,
+              color: theme.colorScheme.onSurfaceVariant,
+              size: 20,
             )
-          ])
-        : Column();
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class Comment extends StatefulWidget {
+  final InstiAppBloc bloc;
+  final CommunityPost initialComment;
+
+  Comment({required this.bloc, required this.initialComment});
+  @override
+  State<Comment> createState() =>
+      _CommentState(initialComment: initialComment, bloc: bloc);
+}
+
+class _CommentState extends State<Comment> {
+  final CommunityPost initialComment;
+  final InstiAppBloc bloc;
+  CommunityPost? comment;
+  _CommentState({required this.initialComment, required this.bloc});
+  @override
+  void initState() {
+    super.initState();
+
+    var commentFuture =
+        bloc.communityPostBloc.getCommunityPost(initialComment.id ?? "");
+    commentFuture.then((value) {
+      if (this.mounted) {
+        setState(() {
+          this.comment = value;
+        });
+      }
+    });
+    //print(communityPost?.comments);
+  }
+
+  Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+    print(comment?.comments);
+    return Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+      Container(
+          child: NullableCircleAvatar(
+        comment?.postedBy?.userProfilePictureUrl ??
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
+        Icons.person,
+        radius: 18,
+      )),
+      Container(
+        margin: EdgeInsets.fromLTRB(10, 10, 0, 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: theme.colorScheme.surface,
+          boxShadow: [
+            BoxShadow(
+              offset: Offset(0, 3),
+              blurRadius: 30,
+              spreadRadius: -18,
+              color: theme.colorScheme.onSurface,
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 300,
+              child: ListTile(
+                title: Text(
+                  comment?.postedBy?.userName ?? "user",
+                  style: theme.textTheme.bodyMedium,
+                ),
+                subtitle: Text(
+                  "30 March",
+                  style: theme.textTheme.bodySmall,
+                ),
+                trailing:
+                    Icon(Icons.more_vert, color: theme.colorScheme.onSurface),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                minVerticalPadding: 0,
+                dense: true,
+                horizontalTitleGap: 4,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: Text(
+                comment?.content ?? '''post''',
+              ),
+            ),
+            _buildFooter(theme, comment),
+            Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Column(children: _buildCommentList(theme, comment)))
+          ],
+        ),
+      )
+    ]);
+  }
+
+  List<Widget> _buildCommentList(
+      ThemeData theme, CommunityPost? communityPost) {
+    if (communityPost?.comments?.isEmpty == true) {
+      return [];
+    }
+    return (communityPost?.comments
+                ?.map((c) => Comment(bloc: bloc, initialComment: c)) ??
+            [])
+        .toList();
   }
 
   Widget _buildFooter(ThemeData theme, CommunityPost? communityPost) {
