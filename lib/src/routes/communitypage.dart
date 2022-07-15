@@ -4,6 +4,7 @@ import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/routes/communitydetails.dart';
+import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -20,11 +21,12 @@ class CommunityPage extends StatefulWidget {
 
 class _CommunityPageState extends State<CommunityPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-
+  Body? body;
   FocusNode _focusNode = FocusNode();
   ScrollController? _hideButtonController;
   TextEditingController? _searchFieldController;
   double isFabVisible = 0;
+  bool loadingFollow = false;
 
   bool searchMode = false;
   IconData actionIcon = Icons.search_outlined;
@@ -177,6 +179,7 @@ class _CommunityPageState extends State<CommunityPage> {
         ];
       }
       //move to next page
+
       return (communities
           .map((c) => _buildListTile(c, theme, communityBloc))
           .toList());
@@ -197,6 +200,8 @@ class _CommunityPageState extends State<CommunityPage> {
     CommunityBloc bloc,
   ) {
     var borderRadius = const BorderRadius.all(Radius.circular(10));
+    var InstiBloc = BlocProvider.of(context)!.bloc;
+    
     return Container(
       margin: EdgeInsets.all(5),
       decoration: BoxDecoration(
@@ -275,9 +280,25 @@ class _CommunityPageState extends State<CommunityPage> {
                           // sized box with width 10
                           width: 10,
                         ),
-                        Text("Join")
+                        Text((community.isUserFollowing ?? false)
+                            ? "Leave"
+                            : "Join")
                       ],
                     ),
+                    onTap: () async {
+                      if (InstiBloc.currSession == null) {
+                        return;
+                      }
+                      setState(() {
+                        loadingFollow = true;
+                      });
+
+                      await InstiBloc.updateFollowCommunity(community);
+                      setState(() {
+                        loadingFollow = false;
+                        // event has changes
+                      });
+                    },
                   ),
                   // popupmenu item 2
                   PopupMenuItem(
