@@ -1,10 +1,12 @@
 import 'dart:async';
 
 // import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -1472,6 +1474,155 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
             )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class SelectInterests extends StatefulWidget {
+  final void Function(List<Interest>?) updateInterests;
+  final Future<List<Interest>>? loadableInterests;
+
+  const SelectInterests({
+    Key? key,
+    required this.updateInterests,
+    required this.loadableInterests,
+  }) : super(key: key);
+
+  @override
+  State<SelectInterests> createState() => _SelectInterestsState();
+}
+
+class _SelectInterestsState extends State<SelectInterests> {
+  List<Interest>? interests;
+
+  void onBodyChange(Interest? body) async {
+    if (body != null)
+      setState(() {
+        interests?.add(body);
+        widget.updateInterests(interests);
+      });
+  }
+
+  Widget _buildChips(BuildContext context) {
+    List<Widget> w = [];
+    int length = interests?.length ?? 0;
+    for (int i = 0; i < length; i++) {
+      w.add(
+        Chip(
+          labelPadding: EdgeInsets.all(2.0),
+          label: Text(
+            interests?[i].title ?? "",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: Colors.primaries[i],
+          elevation: 6.0,
+          shadowColor: Colors.grey[60],
+          padding: EdgeInsets.all(8.0),
+          onDeleted: () async {
+            interests?.removeAt(i);
+            widget.updateInterests(interests);
+            setState(() {});
+          },
+        ),
+      );
+    }
+    return Wrap(
+      spacing: 8.0, // gap between adjacent chips
+      runSpacing: 4.0,
+      children: w,
+    );
+  }
+
+  Widget buildDropdownMenuItemsInterest(BuildContext context, Interest? body) {
+    return Container(
+      child: Text(
+        "Search for an interest",
+        style: Theme.of(context).textTheme.bodyText1,
+      ),
+    );
+  }
+
+  Widget _customPopupItemBuilderInterest(
+      BuildContext context, Interest body, bool isSelected) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(body.title!),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    if (widget.loadableInterests != null) {
+      widget.loadableInterests!.then((value) {
+        setState(() {
+          interests = value;
+        });
+      });
+    } else {
+      interests = [];
+    }
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
+    ThemeData theme = Theme.of(context);
+
+    return Container(
+      // width: double.infinity,
+      margin: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(
+            height: 20.0,
+          ),
+          DropdownSearch<Interest>(
+            mode: Mode.DIALOG,
+            maxHeight: 700,
+            isFilteredOnline: true,
+            showSearchBox: true,
+            dropdownSearchDecoration: InputDecoration(
+              labelText: "Interests",
+              hintText: "Interests",
+            ),
+            onChanged: onBodyChange,
+            onFind: bloc.achievementBloc.searchForInterest,
+            dropdownBuilder: buildDropdownMenuItemsInterest,
+            popupItemBuilder: _customPopupItemBuilderInterest,
+            scrollbarProps: ScrollbarProps(
+              isAlwaysShown: true,
+              thickness: 7,
+            ),
+            emptyBuilder: (BuildContext context, String? _) {
+              return Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(20),
+                child: Text(
+                  "No interests found. Refine your search!",
+                  style: theme.textTheme.subtitle1,
+                  textAlign: TextAlign.center,
+                ),
+              );
+            },
+          ),
+          _buildChips(context),
+        ],
       ),
     );
   }
