@@ -447,6 +447,15 @@ class _BlogPageState extends State<BlogPage> {
                 : SizedBox(),
             widget.postType == PostType.NewsArticle
                 ? Builder(builder: (BuildContext context) {
+                    const Map<String, String> reactionToEmoji = {
+                      "0": "👍",
+                      "1": "❤️", //heart
+                      "2": "😂",
+                      "3": "😯",
+                      "4": "😢",
+                      "5": "😡",
+                    };
+
                     // const Map<String, String> reactionToName = {
                     //   "0": "Like",
                     //   "1": "Love",
@@ -736,7 +745,6 @@ class _BlogPageState extends State<BlogPage> {
                     if (category != "")
                       category = category.substring(0, category.length - 1);
                     blogBloc.category = category;
-                    // log(category);
                     blogBloc.refresh();
                   });
                 },

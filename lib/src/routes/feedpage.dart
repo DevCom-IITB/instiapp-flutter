@@ -180,7 +180,7 @@ class _FeedPageState extends State<FeedPage> {
                         event.eventBodies?[0].bodyImageURL ??
                         "",
                   ),
-                  height: 200,
+                  height: MediaQuery.of(context).size.width * 0.6,
                   fit: BoxFit.cover,
                 ),
               ),
