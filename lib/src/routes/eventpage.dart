@@ -105,15 +105,18 @@ class _EventPageState extends State<EventPage> {
       }
 
       if ((event!.eventWebsiteURL ?? "") != "") {
-        footerButtons.add(IconButton(
-          tooltip: "Open website",
-          icon: Icon(Icons.language_outlined),
-          onPressed: () async {
-            if (await canLaunch(event!.eventWebsiteURL!)) {
-              await launch(event!.eventWebsiteURL!);
-            }
-          },
-        ));
+        footerButtons.add(
+          IconButton(
+            tooltip: "Open website",
+            icon: Icon(Icons.language_outlined),
+            padding: EdgeInsets.all(0),
+            onPressed: () async {
+              if (await canLaunch(event!.eventWebsiteURL!)) {
+                await launch(event!.eventWebsiteURL!);
+              }
+            },
+          ),
+        );
       }
       if ((event!.eventVenues?.isNotEmpty ?? false) &&
           event!.eventVenues![0].venueLatitude != null) {
@@ -131,17 +134,19 @@ class _EventPageState extends State<EventPage> {
         ));
       }
 
-      if (editAccess) {
-        footerButtons.add(IconButton(
+      footerButtons.add(
+        IconButton(
           icon: Icon(Icons.share_outlined),
           tooltip: "Share this event",
+          padding: EdgeInsets.all(0),
           onPressed: () async {
             await Share.share(
                 "Check this event: ${ShareURLMaker.getEventURL(event!)}");
           },
-        ));
-      }
+        ),
+      );
     }
+
     return Scaffold(
         key: _scaffoldKey,
         drawer: NavDrawer(),

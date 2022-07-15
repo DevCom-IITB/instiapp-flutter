@@ -5,6 +5,7 @@ import 'dart:collection';
 // import 'package:flutter/foundation.dart';
 import 'package:InstiApp/src/api/model/post.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/utils/demo_data.dart';
 // import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:markdown/markdown.dart' as markdown;
@@ -87,13 +88,18 @@ class PostBloc {
       PostType.Query: bloc.client.getQueries
     }[postType];
     var posts;
-    if (postType == PostType.Query)
-      posts = await httpGetFunc!(bloc.getSessionIdHeader(), query, category);
-    else
-      posts = await httpGetFunc!(bloc.getSessionIdHeader(),
-          page * _noOfPostsPerPage, _noOfPostsPerPage, query);
+    if (bloc.currSession?.user != 'demouser') {
+      if (postType == PostType.Query)
+        posts = await httpGetFunc!(bloc.getSessionIdHeader(), query, category);
+      else
+        posts = await httpGetFunc!(bloc.getSessionIdHeader(),
+            page * _noOfPostsPerPage, _noOfPostsPerPage, query);
+    } else {
+      posts = await _getDemoPosts(page, httpGetFunc);
+    }
     var tableParse = markdown.TableSyntax();
     posts.forEach((p) {
+      print(p.published);
       p.content = markdown.markdownToHtml(
           p.content.split('\n').map((s) => s.trimRight()).toList().join('\n'),
           blockSyntaxes: [tableParse]);
@@ -103,23 +109,48 @@ class PostBloc {
     return posts;
   }
 
+  Future<List<Post>> _getDemoPosts(int page, Function? httpGetFunc) async {
+    List<Post> posts = [];
+    switch (postType) {
+      case PostType.Placement:
+        posts = placementPosts();
+        break;
+      case PostType.Training:
+        posts = trainingPosts();
+        break;
+      case PostType.NewsArticle:
+        posts = posts = await httpGetFunc!(bloc.getSessionIdHeader(),
+            page * _noOfPostsPerPage, _noOfPostsPerPage, query);
+        break;
+      case PostType.External:
+        posts = externalBlogPosts();
+        break;
+      case PostType.Query:
+        posts = queryPosts();
+        break;
+    }
+    return posts;
+  }
+
   void setCategories() async {
     List<String?> listCategories;
     listCategories =
         await bloc.client.getQueryCategories(bloc.getSessionIdHeader());
     List<Map<String, String>> categories = [];
     listCategories.forEach((val) {
-      if(val!= null){
+      if (val != null) {
         categories.add({'value': val, 'name': val});
       }
     });
-     _blogSubject1.add(UnmodifiableListView<Map<String, String>>(categories));
+    _blogSubject1.add(UnmodifiableListView<Map<String, String>>(categories));
   }
 
   void _handleIndexes(List<int> indexes) {
-    var pages = (query.isEmpty && category.isEmpty) ? _fetchPages : _searchFetchPages;
-    var pagesBeingFetched =
-        (query.isEmpty && category.isEmpty) ? _pagesBeingFetched : _searchPagesBeingFetched;
+    var pages =
+        (query.isEmpty && category.isEmpty) ? _fetchPages : _searchFetchPages;
+    var pagesBeingFetched = (query.isEmpty && category.isEmpty)
+        ? _pagesBeingFetched
+        : _searchPagesBeingFetched;
     indexes.forEach((int index) {
       final int pageIndex = ((index + 1) ~/ _noOfPostsPerPage);
 
@@ -145,9 +176,11 @@ class PostBloc {
   /// 2) notify everyone who might be interested in knowing it
   ///
   void _handleFetchedPage(List<Post> page, int pageIndex) {
-    var pages = (query.isEmpty && category.isEmpty) ? _fetchPages : _searchFetchPages;
-    var pagesBeingFetched =
-        (query.isEmpty && category.isEmpty) ? _pagesBeingFetched : _searchPagesBeingFetched;
+    var pages =
+        (query.isEmpty && category.isEmpty) ? _fetchPages : _searchFetchPages;
+    var pagesBeingFetched = (query.isEmpty && category.isEmpty)
+        ? _pagesBeingFetched
+        : _searchPagesBeingFetched;
 
     // Remember the page
     pages[pageIndex] = page;
@@ -175,10 +208,9 @@ class PostBloc {
         }
         // Add the list of fetched posts to the list
         var temp = pages[i];
-        if(temp != null){
+        if (temp != null) {
           posts.addAll(temp);
         }
-        
       }
     }
 
@@ -217,7 +249,7 @@ class PostBloc {
           posts.addAll(_fetchPages[i]!);
         }
       }
-      if(postType == PostType.Query){
+      if (postType == PostType.Query) {
         posts.add(Post());
       }
     }
@@ -236,14 +268,14 @@ class PostBloc {
     if (article.userReaction == -1) {
       article.userReaction = sendReaction;
       var x = article.reactionCount![sel];
-      if(x != null){
+      if (x != null) {
         x += 1;
         article.reactionCount![sel] = x;
       }
     } else if (article.userReaction != reaction) {
       var x = article.reactionCount!["${article.userReaction}"];
       var y = article.reactionCount![sel];
-      if(x!= null && y!= null){
+      if (x != null && y != null) {
         x -= 1;
         y += 1;
         article.reactionCount!["${article.userReaction}"] = x;
@@ -253,7 +285,7 @@ class PostBloc {
     } else {
       article.userReaction = -1;
       var x = article.reactionCount![sel];
-      if(x != null){
+      if (x != null) {
         x -= 1;
         article.reactionCount![sel] = x;
       }

@@ -13,7 +13,7 @@ class QuickLinksPage extends StatefulWidget {
     //   "Insti Eateries Feedback":
     //       "https://gymkhana.iitb.ac.in/feedback/eateries/",
     // },
-    "DevCom":{
+    "DevCom": {
       "Leave Portal": "https://gymkhana.iitb.ac.in/lap",
       "Resume Portal": "https://resume.devcom-iitb.org/",
       "AMS": "https://ams.iitb.ac.in/",
@@ -45,8 +45,6 @@ class QuickLinksPage extends StatefulWidget {
     "Miscellaneous": {
       "Intercom Extensions": "https://portal.iitb.ac.in/TelephoneDirectory/",
       "Hospital": "http://www.iitb.ac.in/hospital/",
-      "VPN Guide":
-          "https://www.cc.iitb.ac.in/engservices/engaccessingiitffromoutside/19-vpn",
     },
   };
 

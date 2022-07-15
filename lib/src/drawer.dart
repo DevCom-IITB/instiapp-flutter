@@ -22,16 +22,22 @@ class NavDrawer extends StatefulWidget {
 
 class _NavDrawerState extends State<NavDrawer> {
   bool loggingOutLoading = false;
+  NavigatorState? navi;
 
   void changeSelection(int idx, DrawerBloc bloc) {
     bloc.setPageIndex(idx);
     // setState(() {});
   }
 
+  void navigateNamed(String routeName) {
+    navi?.pushNamedAndRemoveUntil(routeName, (_) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of(context)?.bloc;
     var drawerState = bloc?.drawerState;
+    navi = Navigator.of(context);
 
     return Drawer(
       child: SafeArea(
@@ -55,8 +61,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "Feed",
                       onTap: () {
                         changeSelection(0, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/feed');
+                        navigateNamed('/feed');
                       },
                       highlight: indexSnapshot.data == 0,
                       selected: indexSnapshot.data == 0,
@@ -66,8 +71,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "News",
                       onTap: () {
                         changeSelection(1, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/news');
+                        navigateNamed('/news');
                       },
                       highlight: indexSnapshot.data == 1,
                       selected: indexSnapshot.data == 1,
@@ -77,8 +81,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "Explore",
                       onTap: () {
                         changeSelection(2, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/explore');
+                        navigateNamed('/explore');
                       },
                       highlight: indexSnapshot.data == 2,
                       selected: indexSnapshot.data == 2,
@@ -94,8 +97,7 @@ class _NavDrawerState extends State<NavDrawer> {
                           title: "Mess Menu",
                           onTap: () {
                             changeSelection(3, drawerState!);
-                            var navi = Navigator.of(context);
-                            navi.pushReplacementNamed('/mess');
+                            navigateNamed('/mess');
                           },
                           highlight: indexSnapshot.data == 3,
                           selected: indexSnapshot.data == 3,
@@ -105,8 +107,7 @@ class _NavDrawerState extends State<NavDrawer> {
                           title: "Take your meal",
                           onTap: () {
                             changeSelection(3, drawerState!);
-                            var navi = Navigator.of(context);
-                            navi.pushReplacementNamed('/messcalendar');
+                            navigateNamed('/messcalendar');
                           },
                           highlight: indexSnapshot.data == 14,
                           selected: indexSnapshot.data == 14,
@@ -124,8 +125,7 @@ class _NavDrawerState extends State<NavDrawer> {
                           title: "Placement Blog",
                           onTap: () {
                             changeSelection(4, drawerState!);
-                            var navi = Navigator.of(context);
-                            navi.pushReplacementNamed('/placeblog');
+                            navigateNamed('/placeblog');
                           },
                           highlight: indexSnapshot.data == 4,
                           selected: indexSnapshot.data == 4,
@@ -135,8 +135,7 @@ class _NavDrawerState extends State<NavDrawer> {
                           title: "Internship Blog",
                           onTap: () {
                             changeSelection(5, drawerState!);
-                            var navi = Navigator.of(context);
-                            navi.pushReplacementNamed('/trainblog');
+                            navigateNamed('/trainblog');
                           },
                           highlight: indexSnapshot.data == 5,
                           selected: indexSnapshot.data == 5,
@@ -147,8 +146,7 @@ class _NavDrawerState extends State<NavDrawer> {
                           title: "External Blog",
                           onTap: () {
                             changeSelection(6, drawerState!);
-                            var navi = Navigator.of(context);
-                            navi.pushReplacementNamed('/externalblog');
+                            navigateNamed('/externalblog');
                           },
                           highlight: indexSnapshot.data == 6,
                           selected: indexSnapshot.data == 6,
@@ -160,8 +158,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "Achievements",
                       onTap: () {
                         changeSelection(9, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/achievements');
+                        navigateNamed('/achievements');
                       },
                       highlight: indexSnapshot.data == 9,
                       selected: indexSnapshot.data == 9,
@@ -179,8 +176,7 @@ class _NavDrawerState extends State<NavDrawer> {
                           title: "Calendar",
                           onTap: () {
                             changeSelection(7, drawerState!);
-                            var navi = Navigator.of(context);
-                            navi.pushReplacementNamed('/calendar');
+                            navigateNamed('/calendar');
                           },
                           highlight: indexSnapshot.data == 7,
                           selected: indexSnapshot.data == 7,
@@ -190,8 +186,7 @@ class _NavDrawerState extends State<NavDrawer> {
                           title: "Map",
                           onTap: () {
                             changeSelection(8, drawerState!);
-                            var navi = Navigator.of(context);
-                            navi.pushNamed('/map');
+                            navigateNamed('/map');
                           },
                           highlight: indexSnapshot.data == 8,
                           selected: indexSnapshot.data == 8,
@@ -201,8 +196,7 @@ class _NavDrawerState extends State<NavDrawer> {
                           title: "Quick Links",
                           onTap: () {
                             changeSelection(11, drawerState!);
-                            var navi = Navigator.of(context);
-                            navi.pushReplacementNamed('/quicklinks');
+                            navigateNamed('/quicklinks');
                           },
                           highlight: indexSnapshot.data == 11,
                           selected: indexSnapshot.data == 11,
@@ -212,8 +206,7 @@ class _NavDrawerState extends State<NavDrawer> {
                           title: "Settings",
                           onTap: () {
                             changeSelection(12, drawerState!);
-                            var navi = Navigator.of(context);
-                            navi.pushReplacementNamed('/settings');
+                            navigateNamed('/settings');
                           },
                           highlight: indexSnapshot.data == 12,
                           selected: indexSnapshot.data == 12,
@@ -225,8 +218,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       title: "FAQs",
                       onTap: () {
                         changeSelection(13, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/query');
+                        navigateNamed('/query');
                       },
                       highlight: indexSnapshot.data == 13,
                       selected: indexSnapshot.data == 13,

@@ -19,6 +19,7 @@ OfferedAchievements _$OfferedAchievementsFromJson(Map<String, dynamic> json) =>
       users: (json['users'] as List<dynamic>?)
           ?.map((e) => User.fromJson(e as Map<String, dynamic>))
           .toList(),
+      generic: json['generic'] as String?,
     );
 
 Map<String, dynamic> _$OfferedAchievementsToJson(
@@ -31,6 +32,7 @@ Map<String, dynamic> _$OfferedAchievementsToJson(
       'event': instance.event,
       'priority': instance.priority,
       'secret': instance.secret,
+      'generic': instance.generic,
       'users': instance.users,
       'stat': instance.stat,
     };

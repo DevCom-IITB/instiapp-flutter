@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
+import 'package:InstiApp/src/routes/event_form.dart';
 // import 'package:InstiApp/src/routes/complaintpage.dart';
 // import 'package:InstiApp/src/routes/complaintspage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
@@ -221,10 +222,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
               //                   uri.queryParameters["reload"] == "true")));
             } else if (temp.startsWith("/putentity/event/")) {
               return _buildRoute(
-                  settings,
-                  PutEntityPage(
-                      entityID: temp.split("/putentity/event/")[1],
-                      cookie: widget.bloc.getSessionIdHeader()));
+                settings,
+                EventForm(
+                  entityID: temp.split("/putentity/event/")[1],
+                  cookie: widget.bloc.getSessionIdHeader(),
+                  creator: widget.bloc.currSession!.profile!,
+                ),
+              );
             } else if (temp.startsWith("/putentity/body/")) {
               return _buildRoute(
                   settings,
@@ -263,7 +267,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 //   return _buildRoute(settings, NewComplaintPage());
                 case "/putentity/event":
                   return _buildRoute(settings,
-                      PutEntityPage(cookie: widget.bloc.getSessionIdHeader()));
+                      EventForm(cookie: widget.bloc.getSessionIdHeader()));
                 case "/map":
                   // return _buildRoute(settings, NativeMapPage());
                   return _buildRoute(settings, MapPage());

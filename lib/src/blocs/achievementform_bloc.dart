@@ -5,7 +5,9 @@ import 'dart:collection';
 // import 'dart:developer';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
+import 'package:InstiApp/src/api/request/event_create_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
+import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
@@ -14,8 +16,6 @@ import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/role.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:InstiApp/src/api/model/offersecret.dart';
-
-
 
 class Bloc extends Object {
   InstiAppBloc bloc;
@@ -34,15 +34,21 @@ class Bloc extends Object {
   Future<AchievementCreateResponse?> postForm(
       AchievementCreateRequest req) async {
     //try {
-      var comment = await bloc.client.postForm(bloc.getSessionIdHeader(), req);
-      comment.result = "success";
-      // print(comment.result);
-      return comment;
+    var comment = await bloc.client.postForm(bloc.getSessionIdHeader(), req);
+    comment.result = "success";
+    // print(comment.result);
+    return comment;
     // } catch (ex) {
     //   return null;
     // }
   }
 
+  // Future<EventCreateResponse?> postEvent(
+  //     EventCreateRequest req)async{
+  //     var comment = await bloc.client.postForm(bloc.getSessionIdHeader(), req);
+  //     comment.result = "success";
+  //     return comment;
+  // }
   Future<SecretResponse?> postAchievementOffer(String id, String secret) async {
     try {
       Offersecret secretclass = Offersecret();
@@ -56,10 +62,10 @@ class Bloc extends Object {
     }
   }
 
-  Future<SecretResponse?> postInterest(String id,Interest interest) async {
+  Future<SecretResponse?> postInterest(String id, Interest interest) async {
     try {
-      SecretResponse response = await bloc.client
-          .postInterests(bloc.getSessionIdHeader(), interest);
+      SecretResponse response =
+          await bloc.client.postInterests(bloc.getSessionIdHeader(), interest);
       return response;
     } catch (ex) {
       // print(ex);
@@ -69,8 +75,8 @@ class Bloc extends Object {
 
   Future<SecretResponse?> postDelInterest(String title) async {
     try {
-      SecretResponse response = await bloc.client
-          .postDelInterests(bloc.getSessionIdHeader(), title);
+      SecretResponse response =
+          await bloc.client.postDelInterests(bloc.getSessionIdHeader(), title);
       // log(response.message);
       return response;
     } catch (ex) {
@@ -140,8 +146,8 @@ class Bloc extends Object {
     // if (query.length < 3) {
     //   return [];
     // }
-    ExploreResponse searchResponse =
-    await bloc.client.searchType(bloc.getSessionIdHeader(), query??"","interests");
+    ExploreResponse searchResponse = await bloc.client
+        .searchType(bloc.getSessionIdHeader(), query ?? "", "interests");
     // print("Search responed");
     // print(searchResponse.interest);
     if (searchResponse.interest == null) {
@@ -160,8 +166,8 @@ class Bloc extends Object {
     // if (query.length < 3) {
     //   return [];
     // }
-    ExploreResponse searchResponse =
-    await bloc.client.searchType(bloc.getSessionIdHeader(), query??"","skills");
+    ExploreResponse searchResponse = await bloc.client
+        .searchType(bloc.getSessionIdHeader(), query ?? "", "skills");
     // print("Search responed");
     // print(searchResponse.skills);
     if (searchResponse.skills == null) {
