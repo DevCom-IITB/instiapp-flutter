@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
+import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:share/share.dart';
 
 import '../bloc_provider.dart';
 
@@ -358,10 +360,16 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                 )
               ],
             ),
-            Icon(
-              Icons.share_outlined,
-              color: theme.colorScheme.onSurfaceVariant,
-              size: 20,
+            FloatingActionButton(
+              child: Icon(
+                Icons.share_outlined,
+                color: theme.colorScheme.onSurfaceVariant,
+                size: 20,
+              ),
+              onPressed: () async {
+                      await Share.share(
+                          "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost!)}");
+                    },
             )
           ],
         ),
