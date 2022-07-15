@@ -9,6 +9,9 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
+import 'package:share/share.dart';
+
+import '../utils/share_url_maker.dart';
 // import 'package:flutter/rendering.dart';
 
 class CommunityPage extends StatefulWidget {
@@ -302,6 +305,10 @@ class _CommunityPageState extends State<CommunityPage> {
                   PopupMenuItem(
                     value: 2,
                     // row has two child icon and text
+                    onTap: ()  {
+                       Share.share(
+                          "Check this community: ${ShareURLMaker.getCommunityURL(community)}");
+                    },
                     child: Row(
                       children: [
                         Icon(Icons.share),
@@ -309,7 +316,7 @@ class _CommunityPageState extends State<CommunityPage> {
                           // sized box with width 10
                           width: 10,
                         ),
-                        Text("Share")
+                        Text("Share"),
                       ],
                     ),
                   ),
