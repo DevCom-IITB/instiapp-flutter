@@ -199,9 +199,10 @@ class _CommunityPageState extends State<CommunityPage> {
     ThemeData theme,
     CommunityBloc bloc,
   ) {
+    
     var borderRadius = const BorderRadius.all(Radius.circular(10));
     var InstiBloc = BlocProvider.of(context)!.bloc;
-    
+    // print(community.isUserFollowing);
     return Container(
       margin: EdgeInsets.all(5),
       decoration: BoxDecoration(
