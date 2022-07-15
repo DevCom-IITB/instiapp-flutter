@@ -2,16 +2,11 @@
 
 import 'dart:convert';
 
-import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
-import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:flutter/material.dart';
 
-import 'package:InstiApp/src/api/model/body.dart';
-import 'package:InstiApp/src/api/model/createPost.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
-import 'package:location/location.dart';
 import '../api/request/image_upload_request.dart';
 import '../bloc_provider.dart';
 import '../drawer.dart';

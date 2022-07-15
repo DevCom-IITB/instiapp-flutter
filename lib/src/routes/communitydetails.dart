@@ -69,7 +69,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
 
     var bloc = BlocProvider.of(context)!.bloc;
     double _avatarRadius = 50;
-
+    // print(community?.isUserFollowing);
     return Scaffold(
       key: _scaffoldKey,
       extendBodyBehindAppBar: true,
@@ -81,6 +81,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
         leadingStyle: LeadingStyle(
             icon: Icons.arrow_back,
             onPressed: () async {
+              // print(community?.isUserFollowing);
               bloc.communityBloc.refresh();
               await Navigator.of(context).pushNamed("/groups");
             }),
@@ -171,6 +172,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                       ),
                     ),
                     onPressed: () async {
+                      
                       if (bloc.currSession == null) {
                         return;
                       }
