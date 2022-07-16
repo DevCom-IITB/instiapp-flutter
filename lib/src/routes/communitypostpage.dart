@@ -308,65 +308,74 @@ class _CommentState extends State<Comment> {
 
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    print(comment?.comments);
-    return Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-      Container(
-          child: NullableCircleAvatar(
-        comment?.postedBy?.userProfilePictureUrl ??
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
-        Icons.person,
-        radius: 18,
-      )),
-      Container(
-        margin: EdgeInsets.fromLTRB(10, 10, 0, 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: theme.colorScheme.surface,
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(0, 3),
-              blurRadius: 30,
-              spreadRadius: -18,
-              color: theme.colorScheme.onSurface,
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Container(
-              width: 300,
-              child: ListTile(
-                title: Text(
-                  comment?.postedBy?.userName ?? "user",
-                  style: theme.textTheme.bodyMedium,
+
+    return Container(
+      margin: EdgeInsets.fromLTRB(10, 10, 0, 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: theme.colorScheme.surface,
+        boxShadow: [
+          BoxShadow(
+            offset: Offset(0, 3),
+            blurRadius: 30,
+            spreadRadius: -18,
+            color: theme.colorScheme.onSurface,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                width: 300,
+                decoration: BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(
+                            width: 1,
+                            color: theme.colorScheme.surfaceVariant))),
+                child: ListTile(
+                  leading: NullableCircleAvatar(
+                    comment?.postedBy?.userProfilePictureUrl ??
+                        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
+                    Icons.person,
+                    radius: 18,
+                  ),
+                  title: Text(
+                    comment?.postedBy?.userName ?? "user",
+                    style: theme.textTheme.bodyMedium,
+                    textAlign: TextAlign.left,
+                  ),
+                  subtitle: Text(
+                    "30 March",
+                    style: theme.textTheme.bodySmall,
+                  ),
+                  trailing:
+                      Icon(Icons.more_vert, color: theme.colorScheme.onSurface),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                  minVerticalPadding: 0,
+                  dense: true,
+                  horizontalTitleGap: 4,
                 ),
-                subtitle: Text(
-                  "30 March",
-                  style: theme.textTheme.bodySmall,
-                ),
-                trailing:
-                    Icon(Icons.more_vert, color: theme.colorScheme.onSurface),
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                minVerticalPadding: 0,
-                dense: true,
-                horizontalTitleGap: 4,
               ),
+            ],
+          ),
+          Container(
+            // padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: Text(
+              comment?.content ?? '''post''',
+              textAlign: TextAlign.left,
             ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: Text(
-                comment?.content ?? '''post''',
-              ),
-            ),
-            _buildFooter(theme, comment),
-            Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Column(children: _buildCommentList(theme, comment)))
-          ],
-        ),
-      )
-    ]);
+          ),
+          _buildFooter(theme, comment),
+          Container(
+              // padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Column(children: _buildCommentList(theme, comment)))
+        ],
+      ),
+    );
   }
 
   List<Widget> _buildCommentList(
