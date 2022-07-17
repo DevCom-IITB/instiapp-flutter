@@ -10,6 +10,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:location/location.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -1218,8 +1219,15 @@ class CommunityPostWidget extends StatefulWidget {
   // const CommunityPostWidget({Key? key}) : super(key: key);
   final CommunityPost communityPost;
   final String? communityId;
+  final void Function()? onPressedComment;
+  final bool shouldTap;
 
-  CommunityPostWidget({required this.communityPost, required this.communityId});
+  CommunityPostWidget({
+    required this.communityPost,
+    required this.communityId,
+    this.onPressedComment,
+    this.shouldTap = true,
+  });
   @override
   State<CommunityPostWidget> createState() => _CommunityPostWidgetState(
       communityPost: communityPost, communityId: communityId);
@@ -1237,157 +1245,157 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
     CommunityPostBloc communityPostBloc = bloc.communityPostBloc;
     String content = communityPost.content ?? "";
-    return (communityPost.threadRank == 1 // &&
-            //communityPost.community == communityId)
-        ? GestureDetector(
-            onTap: () => CommunityPostPage.navigateWith(
-                context, bloc.communityPostBloc, communityPost),
-            child: Container(
-              margin: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: theme.colorScheme.surface,
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                                width: 1,
-                                color: theme.colorScheme.surfaceVariant))),
-                    child: ListTile(
-                      leading: NullableCircleAvatar(
-                        communityPost.postedBy?.userProfilePictureUrl ??
-                            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
-                        Icons.person,
-                        radius: 18,
-                      ),
-                      title: Text(
-                        communityPost.postedBy?.userName ?? "user",
-                        style: theme.textTheme.bodyMedium,
-                      ),
-                      subtitle: Text(
-                        "30 March",
-                        style: theme.textTheme.bodySmall,
-                      ),
-                      trailing: PopupMenuButton<int>(
-                        itemBuilder: (context) => [
-                          // popupmenu item 1
-                          PopupMenuItem(
-                            value: 1,
-                            // row has two child icon and text.
-                            child: Row(
-                              children: [
-                                Icon(Icons.edit),
-                                SizedBox(
-                                  // sized box with width 10
-                                  width: 10,
-                                ),
-                                Text("Edit")
-                              ],
+    return GestureDetector(
+        onTap: widget.shouldTap
+            ? () => CommunityPostPage.navigateWith(
+                context, bloc.communityPostBloc, communityPost)
+            : null,
+        child: Container(
+          margin: widget.shouldTap
+              ? EdgeInsets.all(10)
+              : EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: theme.colorScheme.surface,
+          ),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    border: Border(
+                        bottom: BorderSide(
+                            width: 1,
+                            color: theme.colorScheme.surfaceVariant))),
+                child: ListTile(
+                  leading: NullableCircleAvatar(
+                    communityPost.postedBy?.userProfilePictureUrl ?? "",
+                    Icons.person,
+                    radius: 18,
+                  ),
+                  title: Text(
+                    communityPost.postedBy?.userName ?? "Anonymous user",
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  subtitle: Text(
+                    "30 March",
+                    style: theme.textTheme.bodySmall,
+                  ),
+                  trailing: PopupMenuButton<int>(
+                    itemBuilder: (context) => [
+                      // popupmenu item 1
+                      PopupMenuItem(
+                        value: 1,
+                        // row has two child icon and text.
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit),
+                            SizedBox(
+                              // sized box with width 10
+                              width: 10,
                             ),
-                          ),
-                          // popupmenu item 2
-                          PopupMenuItem(
-                            value: 2,
-                            // row has two child icon and text
-                            child: Row(
-                              children: [
-                                Icon(Icons.delete),
-                                SizedBox(
-                                  // sized box with width 10
-                                  width: 10,
-                                ),
-                                Text("Delete")
-                              ],
-                            ),
-                            onTap: () => {
-                              communityPostBloc
-                                  .deleteCommunityPost(communityPost.id ?? "")
-                            },
-                          ),
-                          PopupMenuItem(
-                            value: 3,
-                            // row has two child icon and text
-                            child: Row(
-                              children: [
-                                Icon(Icons.push_pin_outlined),
-                                SizedBox(
-                                  // sized box with width 10
-                                  width: 10,
-                                ),
-                                Text("Pin")
-                              ],
-                            ),
-                            onTap: () => {},
-                          ),
-
-                          PopupMenuItem(
-                            value: 4,
-                            // row has two child icon and text
-                            child: Row(
-                              children: [
-                                Icon(Icons.share),
-                                SizedBox(
-                                  // sized box with width 10
-                                  width: 10,
-                                ),
-                                Text("Share")
-                              ],
-                            ),
-                          ),
-                        ],
-                        // offset: Offset(0, 100),
-                        elevation: 2,
-                        tooltip: "More",
-                        icon: Icon(
-                          Icons.more_vert,
+                            Text("Edit")
+                          ],
                         ),
                       ),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                      minVerticalPadding: 0,
-                      dense: true,
-                      horizontalTitleGap: 4,
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    child: Text.rich(
-                      new TextSpan(
-                        text: content.length > 310 && !contentExpanded
-                            ? content.substring(0, 300) +
-                                (contentExpanded ? "" : "...")
-                            : content,
-                        children: !contentExpanded && content.length > 310
-                            ? [
-                                new TextSpan(
-                                  text: 'Read More.',
-                                  style: theme.textTheme.subtitle2?.copyWith(
-                                      color: theme.colorScheme.primary),
-                                  recognizer: new TapGestureRecognizer()
-                                    ..onTap = () => setState(() {
-                                          contentExpanded = true;
-                                        }),
-                                )
-                              ]
-                            : [],
+                      // popupmenu item 2
+                      PopupMenuItem(
+                        value: 2,
+                        // row has two child icon and text
+                        child: Row(
+                          children: [
+                            Icon(Icons.delete),
+                            SizedBox(
+                              // sized box with width 10
+                              width: 10,
+                            ),
+                            Text("Delete")
+                          ],
+                        ),
+                        onTap: () => {
+                          communityPostBloc
+                              .deleteCommunityPost(communityPost.id ?? "")
+                        },
                       ),
+                      PopupMenuItem(
+                        value: 3,
+                        // row has two child icon and text
+                        child: Row(
+                          children: [
+                            Icon(Icons.push_pin_outlined),
+                            SizedBox(
+                              // sized box with width 10
+                              width: 10,
+                            ),
+                            Text("Pin")
+                          ],
+                        ),
+                        onTap: () => {},
+                      ),
+
+                      PopupMenuItem(
+                        value: 4,
+                        // row has two child icon and text
+                        child: Row(
+                          children: [
+                            Icon(Icons.share),
+                            SizedBox(
+                              // sized box with width 10
+                              width: 10,
+                            ),
+                            Text("Share")
+                          ],
+                        ),
+                      ),
+                    ],
+                    // offset: Offset(0, 100),
+                    elevation: 2,
+                    tooltip: "More",
+                    icon: Icon(
+                      Icons.more_vert,
                     ),
-                    // child: Text(
-                    //   communityPost.content ?? '''post''',
-                    // ),
                   ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: ImageGallery(images: []),
-                  ),
-                  _buildFooter(theme, communityPost),
-                ],
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                  minVerticalPadding: 0,
+                  dense: true,
+                  horizontalTitleGap: 4,
+                ),
               ),
-            ))
-        : Container());
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: Text.rich(
+                  new TextSpan(
+                    text: content.length > 310 && !contentExpanded
+                        ? content.substring(0, 300) +
+                            (contentExpanded ? "" : "...")
+                        : content,
+                    children: !contentExpanded && content.length > 310
+                        ? [
+                            new TextSpan(
+                              text: 'Read More.',
+                              style: theme.textTheme.subtitle2
+                                  ?.copyWith(color: theme.colorScheme.primary),
+                              recognizer: new TapGestureRecognizer()
+                                ..onTap = () => setState(() {
+                                      contentExpanded = true;
+                                    }),
+                            )
+                          ]
+                        : [],
+                  ),
+                ),
+                // child: Text(
+                //   communityPost.content ?? '''post''',
+                // ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: ImageGallery(images: communityPost.imageUrl ?? []),
+              ),
+              _buildFooter(theme, communityPost),
+            ],
+          ),
+        ));
   }
 
   Widget _buildFooter(ThemeData theme, CommunityPost communityPost) {
@@ -1455,10 +1463,15 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                   margin: EdgeInsets.only(left: 15),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.mode_comment_outlined,
-                        color: theme.colorScheme.onSurfaceVariant,
-                        size: 20,
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: BoxConstraints(),
+                        icon: Icon(
+                          Icons.mode_comment_outlined,
+                          color: theme.colorScheme.onSurfaceVariant,
+                          size: 20,
+                        ),
+                        onPressed: widget.onPressedComment ?? () {},
                       ),
                       SizedBox(width: 3),
                       Text((communityPost.commentsCount ?? 0).toString(),
@@ -1629,151 +1642,151 @@ class _SelectInterestsState extends State<SelectInterests> {
   }
 }
 
-class SelectLocations extends StatefulWidget {
-  final void Function(List<Location>?) updateLocations;
-  final Future<List<Location>>? loadableLocations;
+// class SelectLocations extends StatefulWidget {
+//   final void Function(List<Location>?) updateLocations;
+//   final Future<List<Location>>? loadableLocations;
 
-  const SelectLocations({
-    Key? key,
-    required this.updateLocations,
-    required this.loadableLocations,
-  }) : super(key: key);
+//   const SelectLocations({
+//     Key? key,
+//     required this.updateLocations,
+//     required this.loadableLocations,
+//   }) : super(key: key);
 
-  @override
-  State<SelectLocations> createState() => _SelectLocationsState();
-}
+//   @override
+//   State<SelectLocations> createState() => _SelectLocationsState();
+// }
 
-class _SelectLocationsState extends State<SelectLocations> {
-  List<Location>? location;
+// class _SelectLocationsState extends State<SelectLocations> {
+//   List<Location>? location;
 
-  void onBodyChange(Interest? body) async {
-    if (body != null)
-      setState(() {
-        location?.add(body);
-        widget.updateLocations(location);
-      });
-  }
+//   void onBodyChange(Interest? body) async {
+//     if (body != null)
+//       setState(() {
+//         location?.add(body);
+//         widget.updateLocations(location);
+//       });
+//   }
 
-  Widget _buildChips(BuildContext context) {
-    List<Widget> w = [];
-    int length = location?.length ?? 0;
-    for (int i = 0; i < length; i++) {
-      w.add(
-        Chip(
-          labelPadding: EdgeInsets.all(2.0),
-          label: Text(
-            location?[i].title ?? "",
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-          backgroundColor: Colors.primaries[i],
-          elevation: 6.0,
-          shadowColor: Colors.grey[60],
-          padding: EdgeInsets.all(8.0),
-          onDeleted: () async {
-            location?.removeAt(i);
-            widget.updateLocations(location);
-            setState(() {});
-          },
-        ),
-      );
-    }
-    return Wrap(
-      spacing: 8.0, // gap between adjacent chips
-      runSpacing: 4.0,
-      children: w,
-    );
-  }
+//   Widget _buildChips(BuildContext context) {
+//     List<Widget> w = [];
+//     int length = location?.length ?? 0;
+//     for (int i = 0; i < length; i++) {
+//       w.add(
+//         Chip(
+//           labelPadding: EdgeInsets.all(2.0),
+//           label: Text(
+//             location?[i].title ?? "",
+//             style: TextStyle(
+//               color: Colors.white,
+//             ),
+//           ),
+//           backgroundColor: Colors.primaries[i],
+//           elevation: 6.0,
+//           shadowColor: Colors.grey[60],
+//           padding: EdgeInsets.all(8.0),
+//           onDeleted: () async {
+//             location?.removeAt(i);
+//             widget.updateLocations(location);
+//             setState(() {});
+//           },
+//         ),
+//       );
+//     }
+//     return Wrap(
+//       spacing: 8.0, // gap between adjacent chips
+//       runSpacing: 4.0,
+//       children: w,
+//     );
+//   }
 
-  Widget buildDropdownMenuItemsLocation(BuildContext context, Interest? body) {
-    return Container(
-      child: Text(
-        "Search for a location",
-        style: Theme.of(context).textTheme.bodyText1,
-      ),
-    );
-  }
+//   Widget buildDropdownMenuItemsLocation(BuildContext context, Interest? body) {
+//     return Container(
+//       child: Text(
+//         "Search for a location",
+//         style: Theme.of(context).textTheme.bodyText1,
+//       ),
+//     );
+//   }
 
-  Widget _customPopupItemBuilderLocation(
-      BuildContext context, Interest body, bool isSelected) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 8),
-      decoration: !isSelected
-          ? null
-          : BoxDecoration(
-              border: Border.all(color: Theme.of(context).primaryColor),
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.white,
-            ),
-      child: ListTile(
-        selected: isSelected,
-        title: Text(body.title!),
-      ),
-    );
-  }
+//   Widget _customPopupItemBuilderLocation(
+//       BuildContext context, Interest body, bool isSelected) {
+//     return Container(
+//       margin: EdgeInsets.symmetric(horizontal: 8),
+//       decoration: !isSelected
+//           ? null
+//           : BoxDecoration(
+//               border: Border.all(color: Theme.of(context).primaryColor),
+//               borderRadius: BorderRadius.circular(5),
+//               color: Colors.white,
+//             ),
+//       child: ListTile(
+//         selected: isSelected,
+//         title: Text(body.title!),
+//       ),
+//     );
+//   }
 
-  @override
-  void initState() {
-    if (widget.loadableLocations != null) {
-      widget.loadableLocations!.then((value) {
-        setState(() {
-          location = value;
-        });
-      });
-    } else {
-      location = [];
-    }
-    super.initState();
-  }
+//   @override
+//   void initState() {
+//     if (widget.loadableLocations != null) {
+//       widget.loadableLocations!.then((value) {
+//         setState(() {
+//           location = value;
+//         });
+//       });
+//     } else {
+//       location = [];
+//     }
+//     super.initState();
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
-    ThemeData theme = Theme.of(context);
+//   @override
+//   Widget build(BuildContext context) {
+//     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
+//     ThemeData theme = Theme.of(context);
 
-    return Container(
-      // width: double.infinity,
-      margin: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          SizedBox(
-            height: 20.0,
-          ),
-          DropdownSearch<Interest>(
-            mode: Mode.DIALOG,
-            maxHeight: 700,
-            isFilteredOnline: true,
-            showSearchBox: true,
-            dropdownSearchDecoration: InputDecoration(
-              labelText: "location",
-              hintText: "location",
-            ),
-            onChanged: onBodyChange,
-            onFind: bloc.achievementBloc.searchForInterest,
-            dropdownBuilder: buildDropdownMenuItemsLocation,
-            popupItemBuilder: _customPopupItemBuilderLocation,
-            scrollbarProps: ScrollbarProps(
-              isAlwaysShown: true,
-              thickness: 7,
-            ),
-            emptyBuilder: (BuildContext context, String? _) {
-              return Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(20),
-                child: Text(
-                  "No location found. Refine your search!",
-                  style: theme.textTheme.subtitle1,
-                  textAlign: TextAlign.center,
-                ),
-              );
-            },
-          ),
-          _buildChips(context),
-        ],
-      ),
-    );
-  }
-}
+//     return Container(
+//       // width: double.infinity,
+//       margin: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.center,
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: <Widget>[
+//           SizedBox(
+//             height: 20.0,
+//           ),
+//           DropdownSearch<Interest>(
+//             mode: Mode.DIALOG,
+//             maxHeight: 700,
+//             isFilteredOnline: true,
+//             showSearchBox: true,
+//             dropdownSearchDecoration: InputDecoration(
+//               labelText: "location",
+//               hintText: "location",
+//             ),
+//             onChanged: onBodyChange,
+//             onFind: bloc.achievementBloc.searchForInterest,
+//             dropdownBuilder: buildDropdownMenuItemsLocation,
+//             popupItemBuilder: _customPopupItemBuilderLocation,
+//             scrollbarProps: ScrollbarProps(
+//               isAlwaysShown: true,
+//               thickness: 7,
+//             ),
+//             emptyBuilder: (BuildContext context, String? _) {
+//               return Container(
+//                 alignment: Alignment.center,
+//                 padding: EdgeInsets.all(20),
+//                 child: Text(
+//                   "No location found. Refine your search!",
+//                   style: theme.textTheme.subtitle1,
+//                   textAlign: TextAlign.center,
+//                 ),
+//               );
+//             },
+//           ),
+//           _buildChips(context),
+//         ],
+//       ),
+//     );
+//   }
+// }

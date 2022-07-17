@@ -50,23 +50,30 @@ class CommunityPost {
   @JsonKey(name: "parent")
   String? parent;
 
-  CommunityPost({
-    this.id,
-    this.communityPostStrId,
-    this.comments,
-    this.content,
-    this.commentsCount,
-    this.imageUrl,
-    this.postedBy,
-    this.reactionCount,
-    this.timeOfCreation,
-    this.timeOfModification,
-    this.userReaction,
-    this.mostLikedComment,
-    this.community,
+  @JsonKey(ignore: true)
+  int? postedMinutes;
+
+  CommunityPost(
+      {this.id,
+      this.communityPostStrId,
+      this.comments,
+      this.content,
+      this.commentsCount,
+      this.imageUrl,
+      this.postedBy,
+      this.reactionCount,
+      this.timeOfCreation,
+      this.timeOfModification,
+      this.userReaction,
+      this.mostLikedComment,
+      this.community,
       this.threadRank,
-      this.parent
-  });
+      this.parent}) {
+    if (timeOfCreation != null) {
+      postedMinutes =
+          DateTime.now().difference(DateTime.parse(timeOfCreation!)).inMinutes;
+    }
+  }
 
   factory CommunityPost.fromJson(Map<String, dynamic> json) =>
       _$CommunityPostFromJson(json);
