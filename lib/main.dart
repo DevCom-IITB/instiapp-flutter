@@ -160,6 +160,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             onSurfaceVariant: widget.bloc.brightness == AppBrightness.light
                 ? Color(0xFF767881)
                 : Colors.white,
+            inverseSurface: widget.bloc.brightness == AppBrightness.light
+                ? Color(0xFFE8ECF2)
+                : Colors.white,
           ),
           primarySwatch: Colors.primaries.firstWhereOrNull(
               (c) => c.value == widget.bloc.accentColor.value),
@@ -301,7 +304,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, MessCalendarPage());
                 case "/messcalendar/qr":
                   return _buildRoute(settings, QRPage());
-                
               }
             }
             return _buildRoute(settings, MessPage());
