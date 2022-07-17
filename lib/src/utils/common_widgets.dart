@@ -10,6 +10,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:location/location.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:math' as math;
@@ -1236,8 +1237,8 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
     CommunityPostBloc communityPostBloc = bloc.communityPostBloc;
     String content = communityPost.content ?? "";
-    return (communityPost.threadRank == 1 &&
-            communityPost.community == communityId)
+    return (communityPost.threadRank == 1 // &&
+            //communityPost.community == communityId)
         ? GestureDetector(
             onTap: () => CommunityPostPage.navigateWith(
                 context, bloc.communityPostBloc, communityPost),
@@ -1386,7 +1387,7 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                 ],
               ),
             ))
-        : Container();
+        : Container());
   }
 
   Widget _buildFooter(ThemeData theme, CommunityPost communityPost) {
@@ -1615,6 +1616,155 @@ class _SelectInterestsState extends State<SelectInterests> {
                 padding: EdgeInsets.all(20),
                 child: Text(
                   "No interests found. Refine your search!",
+                  style: theme.textTheme.subtitle1,
+                  textAlign: TextAlign.center,
+                ),
+              );
+            },
+          ),
+          _buildChips(context),
+        ],
+      ),
+    );
+  }
+}
+
+class SelectLocations extends StatefulWidget {
+  final void Function(List<Location>?) updateLocations;
+  final Future<List<Location>>? loadableLocations;
+
+  const SelectLocations({
+    Key? key,
+    required this.updateLocations,
+    required this.loadableLocations,
+  }) : super(key: key);
+
+  @override
+  State<SelectLocations> createState() => _SelectLocationsState();
+}
+
+class _SelectLocationsState extends State<SelectLocations> {
+  List<Location>? location;
+
+  void onBodyChange(Interest? body) async {
+    if (body != null)
+      setState(() {
+        location?.add(body);
+        widget.updateLocations(location);
+      });
+  }
+
+  Widget _buildChips(BuildContext context) {
+    List<Widget> w = [];
+    int length = location?.length ?? 0;
+    for (int i = 0; i < length; i++) {
+      w.add(
+        Chip(
+          labelPadding: EdgeInsets.all(2.0),
+          label: Text(
+            location?[i].title ?? "",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: Colors.primaries[i],
+          elevation: 6.0,
+          shadowColor: Colors.grey[60],
+          padding: EdgeInsets.all(8.0),
+          onDeleted: () async {
+            location?.removeAt(i);
+            widget.updateLocations(location);
+            setState(() {});
+          },
+        ),
+      );
+    }
+    return Wrap(
+      spacing: 8.0, // gap between adjacent chips
+      runSpacing: 4.0,
+      children: w,
+    );
+  }
+
+  Widget buildDropdownMenuItemsLocation(BuildContext context, Interest? body) {
+    return Container(
+      child: Text(
+        "Search for a location",
+        style: Theme.of(context).textTheme.bodyText1,
+      ),
+    );
+  }
+
+  Widget _customPopupItemBuilderLocation(
+      BuildContext context, Interest body, bool isSelected) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(body.title!),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    if (widget.loadableLocations != null) {
+      widget.loadableLocations!.then((value) {
+        setState(() {
+          location = value;
+        });
+      });
+    } else {
+      location = [];
+    }
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
+    ThemeData theme = Theme.of(context);
+
+    return Container(
+      // width: double.infinity,
+      margin: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(
+            height: 20.0,
+          ),
+          DropdownSearch<Interest>(
+            mode: Mode.DIALOG,
+            maxHeight: 700,
+            isFilteredOnline: true,
+            showSearchBox: true,
+            dropdownSearchDecoration: InputDecoration(
+              labelText: "location",
+              hintText: "location",
+            ),
+            onChanged: onBodyChange,
+            onFind: bloc.achievementBloc.searchForInterest,
+            dropdownBuilder: buildDropdownMenuItemsLocation,
+            popupItemBuilder: _customPopupItemBuilderLocation,
+            scrollbarProps: ScrollbarProps(
+              isAlwaysShown: true,
+              thickness: 7,
+            ),
+            emptyBuilder: (BuildContext context, String? _) {
+              return Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(20),
+                child: Text(
+                  "No location found. Refine your search!",
                   style: theme.textTheme.subtitle1,
                   textAlign: TextAlign.center,
                 ),

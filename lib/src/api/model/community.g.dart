@@ -24,8 +24,7 @@ Community _$CommunityFromJson(Map<String, dynamic> json) => Community(
           ?.map((e) => Role.fromJson(e as Map<String, dynamic>))
           .toList(),
       strId: json['str_id'] as String?,
-    body: (json['body'] as String?)
-
+      body: json['body'] as String?,
     );
 
 Map<String, dynamic> _$CommunityToJson(Community instance) => <String, dynamic>{
