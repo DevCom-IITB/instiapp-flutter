@@ -144,46 +144,10 @@ class NotificationType {
 /// [context] is the [BuildContext] of the app
 /// [bloc] is the instance of [InstiAppBloc] used in the app
 /// [_navigatorKey] is the [GlobalKey] of the [Navigator] used in the app
-void setupNotifications(BuildContext context, InstiAppBloc bloc,
-    GlobalKey<NavigatorState> _navigatorKey) async {
+void setupNotifications(BuildContext context, InstiAppBloc bloc) async {
   // Check for permission (if not granted, request it)
-  AwesomeNotifications().isNotificationAllowed().then(
-    (isAllowed) {
-      if (!isAllowed) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Allow Notifications'),
-            content: Text('Our app would like to send you notifications'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'Don\'t Allow',
-                  style: TextStyle(color: Colors.grey, fontSize: 18),
-                ),
-              ),
-              TextButton(
-                onPressed: () => AwesomeNotifications()
-                    .requestPermissionToSendNotifications()
-                    .then((_) => Navigator.pop(context)),
-                child: Text(
-                  'Allow',
-                  style: TextStyle(
-                    color: Colors.teal,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      }
-    },
-  );
+  if (await bloc.hasNotificationPermission() == null)
+    requestNotificationPermission(context, bloc);
 
   /// Listen for incoming notifs and send a notification to the user
   FirebaseMessaging.onMessage.listen(sendMessage);
@@ -237,7 +201,7 @@ void setupNotifications(BuildContext context, InstiAppBloc bloc,
       String actionKey = notification.buttonKeyPressed;
 
       // Navigate to Route
-      _navigatorKey.currentState?.pushReplacementNamed(routeName,
+      Navigator.of(context).pushReplacementNamed(routeName,
           arguments: NotificationRouteArguments(actionKey, notif));
 
       // marking the notification as read
@@ -250,6 +214,53 @@ void setupNotifications(BuildContext context, InstiAppBloc bloc,
 
   // Listen to app opens from notifications
   AwesomeNotifications().actionStream.listen(_handleNotification);
+}
+
+void requestNotificationPermission(
+    BuildContext context, InstiAppBloc bloc) async {
+  AwesomeNotifications().isNotificationAllowed().then(
+    (isAllowed) {
+      if (!isAllowed) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Allow Notifications'),
+            content: Text('Our app would like to send you notifications'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  bloc.updateNotificationPermission(false);
+                },
+                child: Text(
+                  'Don\'t Allow',
+                  style: TextStyle(color: Colors.grey, fontSize: 18),
+                ),
+              ),
+              TextButton(
+                onPressed: () => AwesomeNotifications()
+                    .requestPermissionToSendNotifications()
+                    .then(
+                  (bool permitted) {
+                    Navigator.pop(context);
+                    bloc.updateNotificationPermission(permitted);
+                  },
+                ),
+                child: Text(
+                  'Allow',
+                  style: TextStyle(
+                    color: Colors.teal,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+    },
+  );
 }
 
 /// Send a notification to the user
