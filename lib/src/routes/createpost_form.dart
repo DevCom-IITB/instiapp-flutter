@@ -1,9 +1,14 @@
 // import 'dart:html';
 
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:InstiApp/src/api/model/communityPost.dart';
+import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/routes/userpage.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 
 import 'package:InstiApp/src/utils/common_widgets.dart';
@@ -12,6 +17,7 @@ import '../bloc_provider.dart';
 import '../drawer.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:textfield_tags/textfield_tags.dart';
+import 'package:flutter/src/widgets/framework.dart';
 
 class CreatePostPage extends StatefulWidget {
   // initiate widgetstate Form
@@ -257,7 +263,6 @@ class _CreatePostPage extends State<CreatePostPage> {
                                     autocorrect: true,
                                     onChanged: (value) {
                                       setState(() {
-                              
                                         currRequest1.content = value;
                                         currRequest1.postedBy = profile;
                                       });
@@ -426,52 +431,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                   //   leading: Icon(Icons.interests),
                   //   onTap: () {},
                   // ),
-                  ExpansionTile(
-                    leading: Icon(Icons.interests),
-                    title: Text('Interests'),
-                    children: [
-                      TextFieldTags(
-                        textSeparators: [
-                          " ", //seperate with space
-                          ',' //sepearate with comma as well
-                        ],
-                        initialTags: interests,
-                        onTag: (tag) {
-                          interests.add(tag);
-                        },
-                        onDelete: (tag) {
-                          interests.remove(tag);
-                        },
-                        validator: (tag) {
-                          //add validation for tags
-                          if (interests.length < 2) {
-                            return "Enter interests up to 2 characters.";
-                          }
-                          return null;
-                        },
-                        tagsStyler: TagsStyler(
-                            //styling tag style
-                            tagTextStyle:
-                                TextStyle(fontWeight: FontWeight.normal),
-                            tagDecoration: BoxDecoration(
-                              color: Color.fromARGB(255, 210, 216, 221),
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            tagCancelIcon: Icon(Icons.cancel_outlined,
-                                size: 18.0,
-                                color: Color.fromARGB(255, 6, 10, 15)),
-                            tagPadding: EdgeInsets.all(6.0)),
-                        textFieldStyler: TextFieldStyler(
-                            //styling tag text field
-                            textFieldBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 140, 160, 175),
-                              width: 2),
-                          borderRadius: BorderRadius.circular(10.0),
-                        )),
-                      ),
-                    ],
-                  ),
+                  SelectInterests(updateInterests: (_){}, loadableInterests: null),
                 ],
               ),
             ),
@@ -481,3 +441,4 @@ class _CreatePostPage extends State<CreatePostPage> {
     );
   }
 }
+

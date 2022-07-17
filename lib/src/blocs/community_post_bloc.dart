@@ -30,7 +30,7 @@ class CommunityPostBloc {
     // _communitySubject.add(defCommunities);
     // print("refresh");
     _communityPosts =
-        (await bloc.client.getCommunityPosts(bloc.getSessionIdHeader())).data ??
+        (await bloc.client.getCommunityPosts(bloc.getSessionIdHeader(),query)).data ??
             [];
     // print("community" + _communityPosts.toString());
     _communitySubject.add(_communityPosts);

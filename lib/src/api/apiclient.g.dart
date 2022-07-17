@@ -1071,9 +1071,9 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<CommunityPostListResponse> getCommunityPosts(sessionId) async {
+  Future<CommunityPostListResponse> getCommunityPosts(sessionId, query) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'query': query};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
@@ -1112,7 +1112,6 @@ class _InstiAppApi implements InstiAppApi {
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(post.toJson());
-    print(_data);
     await _dio.fetch<void>(_setStreamType<void>(
         Options(method: 'POST', headers: _headers, extra: _extra)
             .compose(_dio.options, '/communityposts',
@@ -1127,10 +1126,10 @@ class _InstiAppApi implements InstiAppApi {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
+    final _data = id;
     await _dio.fetch<void>(_setStreamType<void>(
-        Options(method: 'DELETE', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/communityposts/${id}',
+        Options(method: 'POST', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/communityposts',
                 queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     return null;

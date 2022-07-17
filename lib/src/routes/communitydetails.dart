@@ -76,6 +76,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
       key: _scaffoldKey,
       extendBodyBehindAppBar: true,
       appBar: CustomAppBar(
+        
         transparentBackground: true,
         searchIcon: true,
         appBarSearchStyle:
@@ -326,9 +327,7 @@ class CommunityAboutSectionState extends State<CommunityAboutSection> {
   }
 
   Widget _buildMembers(ThemeData theme) {
-    //String member = widget.community?.description ?? "";
     return Container(
-      //child: Padding(
        padding: const EdgeInsets.all(5.0),
       
         child: ConstrainedBox(
@@ -592,7 +591,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
               stream: communityPostBloc.communityposts,
               builder: (BuildContext context,
                   AsyncSnapshot<List<CommunityPost>> snapshot) {
-                // print("object");
+                 print(snapshot.data?.length);
                 return Column(
                   children: _buildPostList(
                       snapshot, theme, communityPostBloc, community?.id),
@@ -639,6 +638,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
 
       var communityPosts = snapshot.data!;
 
+      print(communityPosts);
       if (communityPosts.isEmpty == true) {
         return [
           Padding(
@@ -654,6 +654,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
           )
         ];
       }
+      //print("a");
       return (communityPosts
           .map(
             (c) =>

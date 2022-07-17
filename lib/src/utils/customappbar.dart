@@ -23,6 +23,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final AppBarSearchStyle appBarSearchStyle;
   final bool transparentBackground;
   final LeadingStyle? leadingStyle;
+  final TextEditingController searchController;
 
   CustomAppBar(
       {Key? key,
@@ -30,9 +31,11 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
       this.searchIcon = false,
       AppBarSearchStyle? appBarSearchStyle,
       this.transparentBackground = false,
-      this.leadingStyle})
+      this.leadingStyle,
+      TextEditingController? searchController})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         this.appBarSearchStyle = appBarSearchStyle ?? AppBarSearchStyle(),
+        this.searchController = searchController ?? TextEditingController(),
         super(key: key);
 
   @override
@@ -43,7 +46,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-  TextEditingController _searchFieldController = TextEditingController();
+  late TextEditingController _searchFieldController ;
 
   List<Widget> actionButtons = [];
 
@@ -55,6 +58,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   void initState() {
     super.initState();
+    _searchFieldController = widget.searchController;
+    _searchFieldController.addListener(() { 
+      print(_searchFieldController.text);
+    });
   }
 
   @override
