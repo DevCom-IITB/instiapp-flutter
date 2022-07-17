@@ -15,7 +15,6 @@ import '../bloc_provider.dart';
 class CommunityPostPage extends StatefulWidget {
   final CommunityPost? initialCommunityPost;
   final Future<CommunityPost?> communityPostFuture;
-
   CommunityPostPage(
       {required this.communityPostFuture, this.initialCommunityPost});
 
@@ -43,7 +42,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   CommunityPost? communityPost;
-
+  int? threadRank;
   int aboutIndex = 0;
 
   @override
@@ -54,6 +53,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
       if (this.mounted) {
         setState(() {
           this.communityPost = communityPost;
+          this.threadRank = communityPost?.threadRank;
         });
       }
     });
@@ -281,15 +281,22 @@ class Comment extends StatefulWidget {
 
   Comment({required this.bloc, required this.initialComment});
   @override
-  State<Comment> createState() =>
-      _CommentState(initialComment: initialComment, bloc: bloc);
+  State<Comment> createState() => _CommentState(
+        initialComment: initialComment,
+        bloc: bloc,
+      );
 }
 
 class _CommentState extends State<Comment> {
   final CommunityPost initialComment;
   final InstiAppBloc bloc;
+
   CommunityPost? comment;
-  _CommentState({required this.initialComment, required this.bloc});
+
+  _CommentState({
+    required this.initialComment,
+    required this.bloc,
+  });
   @override
   void initState() {
     super.initState();
@@ -300,6 +307,7 @@ class _CommentState extends State<Comment> {
       if (this.mounted) {
         setState(() {
           this.comment = value;
+    
         });
       }
     });
@@ -308,65 +316,88 @@ class _CommentState extends State<Comment> {
 
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    print(comment?.comments);
-    return Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-      Container(
-          child: NullableCircleAvatar(
-        comment?.postedBy?.userProfilePictureUrl ??
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
-        Icons.person,
-        radius: 18,
-      )),
-      Container(
-        margin: EdgeInsets.fromLTRB(10, 10, 0, 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: theme.colorScheme.surface,
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(0, 3),
-              blurRadius: 30,
-              spreadRadius: -18,
-              color: theme.colorScheme.onSurface,
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Container(
-              width: 300,
-              child: ListTile(
-                title: Text(
-                  comment?.postedBy?.userName ?? "user",
-                  style: theme.textTheme.bodyMedium,
+    
+    
+    return ((comment?.threadRank)! % 4 != 1)
+        ? Container(
+            margin: EdgeInsets.fromLTRB(10, 10, 0, 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: theme.colorScheme.surface,
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset(0, 3),
+                  blurRadius: 30,
+                  spreadRadius: -18,
+                  color: theme.colorScheme.onSurface,
                 ),
-                subtitle: Text(
-                  "30 March",
-                  style: theme.textTheme.bodySmall,
-                ),
-                trailing:
-                    Icon(Icons.more_vert, color: theme.colorScheme.onSurface),
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                minVerticalPadding: 0,
-                dense: true,
-                horizontalTitleGap: 4,
-              ),
+              ],
             ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: 300,
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(
+                                  width: 1,
+                                  color: theme.colorScheme.surfaceVariant))),
+                      child: ListTile(
+                        leading: NullableCircleAvatar(
+                          comment?.postedBy?.userProfilePictureUrl ??
+                              "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/1200px-Elon_Musk_Royal_Society_%28crop2%29.jpg",
+                          Icons.person,
+                          radius: 18,
+                        ),
+                        title: Text(
+                          comment?.postedBy?.userName ?? "user",
+                          style: theme.textTheme.bodyMedium,
+                          textAlign: TextAlign.left,
+                        ),
+                        subtitle: Text(
+                          "30 March",
+                          style: theme.textTheme.bodySmall,
+                        ),
+                        trailing: Icon(Icons.more_vert,
+                            color: theme.colorScheme.onSurface),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                        minVerticalPadding: 0,
+                        dense: true,
+                        horizontalTitleGap: 4,
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  // padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Text(
+                    comment?.content ?? '''post''',
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                _buildFooter(theme, comment),
+                Container(
+                    // padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Column(children: _buildCommentList(theme, comment)))
+              ],
+            ),
+          )
+        : Container(
+            child: TextButton(
+              onPressed: () => {
+                CommunityPostPage.navigateWith(
+                    context, bloc.communityPostBloc, comment!)
+              },
               child: Text(
-                comment?.content ?? '''post''',
+                "Read More Comments...",
+                textAlign: TextAlign.left,
               ),
             ),
-            _buildFooter(theme, comment),
-            Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Column(children: _buildCommentList(theme, comment)))
-          ],
-        ),
-      )
-    ]);
+          );
   }
 
   List<Widget> _buildCommentList(
@@ -374,8 +405,10 @@ class _CommentState extends State<Comment> {
     if (communityPost?.comments?.isEmpty == true) {
       return [];
     }
-    return (communityPost?.comments
-                ?.map((c) => Comment(bloc: bloc, initialComment: c)) ??
+    return (communityPost?.comments?.map((c) => Comment(
+                  bloc: bloc,
+                  initialComment: c,
+                )) ??
             [])
         .toList();
   }
@@ -443,9 +476,9 @@ class _CommentState extends State<Comment> {
                 size: 20,
               ),
               onPressed: () async {
-                      await Share.share(
-                          "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost!)}");
-                    },
+                await Share.share(
+                    "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost!)}");
+              },
             )
           ],
         ),
