@@ -1,6 +1,8 @@
 import 'dart:async';
 
 // import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
@@ -1642,151 +1644,150 @@ class _SelectInterestsState extends State<SelectInterests> {
   }
 }
 
-// class SelectLocations extends StatefulWidget {
-//   final void Function(List<Location>?) updateLocations;
-//   final Future<List<Location>>? loadableLocations;
+class SelectTags extends StatefulWidget {
+  final void Function(List<Body>?) updateTags;
+  final Future<List<Body>>? loadableTags;
 
-//   const SelectLocations({
-//     Key? key,
-//     required this.updateLocations,
-//     required this.loadableLocations,
-//   }) : super(key: key);
+  const SelectTags({
+    Key? key,
+    required this.updateTags,
+    required this.loadableTags,
+  }) : super(key: key);
 
-//   @override
-//   State<SelectLocations> createState() => _SelectLocationsState();
-// }
+  @override
+  State<SelectTags> createState() => _SelectTagsState();
+}
 
-// class _SelectLocationsState extends State<SelectLocations> {
-//   List<Location>? location;
+class _SelectTagsState extends State<SelectTags> {
+  List<Body>? tags;
+  void onBodyChange(Body? body) async {
+    if (body != null)
+      setState(() {
+        tags?.add(body);
+        widget.updateTags(tags);
+      });
+  }
 
-//   void onBodyChange(Interest? body) async {
-//     if (body != null)
-//       setState(() {
-//         location?.add(body);
-//         widget.updateLocations(location);
-//       });
-//   }
+  Widget _buildChips(BuildContext context) {
+    List<Widget> w = [];
+    int length = tags?.length ?? 0;
+    for (int i = 0; i < length; i++) {
+      w.add(
+        Chip(
+          labelPadding: EdgeInsets.all(2.0),
+          label: Text(
+            tags?[i].bodyName ?? "",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: Colors.primaries[i],
+          elevation: 6.0,
+          shadowColor: Colors.grey[60],
+          padding: EdgeInsets.all(8.0),
+          onDeleted: () async {
+            tags?.removeAt(i);
+            widget.updateTags(tags);
+            setState(() {});
+          },
+        ),
+      );
+    }
+    return Wrap(
+      spacing: 8.0, // gap between adjacent chips
+      runSpacing: 4.0,
+      children: w,
+    );
+  }
 
-//   Widget _buildChips(BuildContext context) {
-//     List<Widget> w = [];
-//     int length = location?.length ?? 0;
-//     for (int i = 0; i < length; i++) {
-//       w.add(
-//         Chip(
-//           labelPadding: EdgeInsets.all(2.0),
-//           label: Text(
-//             location?[i].title ?? "",
-//             style: TextStyle(
-//               color: Colors.white,
-//             ),
-//           ),
-//           backgroundColor: Colors.primaries[i],
-//           elevation: 6.0,
-//           shadowColor: Colors.grey[60],
-//           padding: EdgeInsets.all(8.0),
-//           onDeleted: () async {
-//             location?.removeAt(i);
-//             widget.updateLocations(location);
-//             setState(() {});
-//           },
-//         ),
-//       );
-//     }
-//     return Wrap(
-//       spacing: 8.0, // gap between adjacent chips
-//       runSpacing: 4.0,
-//       children: w,
-//     );
-//   }
+  Widget buildDropdownMenuItemsTag(BuildContext context, Body? body) {
+    return Container(
+      child: Text(
+        "Search for a tag",
+        style: Theme.of(context).textTheme.bodyText1,
+      ),
+    );
+  }
 
-//   Widget buildDropdownMenuItemsLocation(BuildContext context, Interest? body) {
-//     return Container(
-//       child: Text(
-//         "Search for a location",
-//         style: Theme.of(context).textTheme.bodyText1,
-//       ),
-//     );
-//   }
+  Widget _customPopupItemBuilderTag(
+      BuildContext context, Body body, bool isSelected) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(body.bodyName!),
+      ),
+    );
+  }
 
-//   Widget _customPopupItemBuilderLocation(
-//       BuildContext context, Interest body, bool isSelected) {
-//     return Container(
-//       margin: EdgeInsets.symmetric(horizontal: 8),
-//       decoration: !isSelected
-//           ? null
-//           : BoxDecoration(
-//               border: Border.all(color: Theme.of(context).primaryColor),
-//               borderRadius: BorderRadius.circular(5),
-//               color: Colors.white,
-//             ),
-//       child: ListTile(
-//         selected: isSelected,
-//         title: Text(body.title!),
-//       ),
-//     );
-//   }
+  @override
+  void initState() {
+    if (widget.loadableTags != null) {
+      widget.loadableTags!.then((value) {
+        setState(() {
+          tags = value;
+        });
+      });
+    } else {
+      tags = [];
+    }
+    super.initState();
+  }
 
-//   @override
-//   void initState() {
-//     if (widget.loadableLocations != null) {
-//       widget.loadableLocations!.then((value) {
-//         setState(() {
-//           location = value;
-//         });
-//       });
-//     } else {
-//       location = [];
-//     }
-//     super.initState();
-//   }
+  @override
+  Widget build(BuildContext context) {
+    InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
+    ThemeData theme = Theme.of(context);
 
-//   @override
-//   Widget build(BuildContext context) {
-//     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
-//     ThemeData theme = Theme.of(context);
-
-//     return Container(
-//       // width: double.infinity,
-//       margin: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.center,
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: <Widget>[
-//           SizedBox(
-//             height: 20.0,
-//           ),
-//           DropdownSearch<Interest>(
-//             mode: Mode.DIALOG,
-//             maxHeight: 700,
-//             isFilteredOnline: true,
-//             showSearchBox: true,
-//             dropdownSearchDecoration: InputDecoration(
-//               labelText: "location",
-//               hintText: "location",
-//             ),
-//             onChanged: onBodyChange,
-//             onFind: bloc.achievementBloc.searchForInterest,
-//             dropdownBuilder: buildDropdownMenuItemsLocation,
-//             popupItemBuilder: _customPopupItemBuilderLocation,
-//             scrollbarProps: ScrollbarProps(
-//               isAlwaysShown: true,
-//               thickness: 7,
-//             ),
-//             emptyBuilder: (BuildContext context, String? _) {
-//               return Container(
-//                 alignment: Alignment.center,
-//                 padding: EdgeInsets.all(20),
-//                 child: Text(
-//                   "No location found. Refine your search!",
-//                   style: theme.textTheme.subtitle1,
-//                   textAlign: TextAlign.center,
-//                 ),
-//               );
-//             },
-//           ),
-//           _buildChips(context),
-//         ],
-//       ),
-//     );
-//   }
-// }
+    return Container(
+      // width: double.infinity,
+      margin: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(
+            height: 20.0,
+          ),
+          DropdownSearch<Body>(
+            mode: Mode.DIALOG,
+            maxHeight: 700,
+            isFilteredOnline: true,
+            showSearchBox: true,
+            dropdownSearchDecoration: InputDecoration(
+              labelText: "Tags",
+              hintText: "Tags",
+            ),
+            onChanged: onBodyChange,
+            onFind: bloc.achievementBloc.searchForBody,
+            dropdownBuilder: buildDropdownMenuItemsTag,
+            popupItemBuilder: _customPopupItemBuilderTag,
+            scrollbarProps: ScrollbarProps(
+              isAlwaysShown: true,
+              thickness: 7,
+            ),
+            emptyBuilder: (BuildContext context, String? _) {
+              return Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(20),
+                child: Text(
+                  "No tag found. Refine your search!",
+                  style: theme.textTheme.subtitle1,
+                  textAlign: TextAlign.center,
+                ),
+              );
+            },
+          ),
+          _buildChips(context),
+        ],
+      ),
+    );
+  }
+}

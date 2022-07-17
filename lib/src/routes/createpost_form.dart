@@ -315,70 +315,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                         }
                       } // => getImage(source: ImageSource.camera),
                       ),
-                  // ListTile(
-                  //   dense: true,
-                  //   title: Text('Insert Links'),
-                  //   leading: Icon(Icons.link),
-                  //   onTap: () {},
-                  // ),
-                  // ListTile(
-                  //   dense: true,
-                  //   title: Text('Tags'),
-                  //   leading: Icon(Icons.bookmark_add_outlined),
-                  //   onTap: () {},
-                  // ),
-                  ExpansionTile(
-                    leading: Icon(Icons.bookmark_add_outlined),
-                    title: Text('Tags'),
-                    children: [
-                      TextFieldTags(
-                        textSeparators: [
-                          " ", //seperate with space
-                          ',' //sepearate with comma as well
-                        ],
-                        initialTags: tags,
-                        onTag: (tag) {
-                          tags.add(tag);
-                        },
-                        onDelete: (tag) {
-                          tags.remove(tag);
-                        },
-                        validator: (tag) {
-                          //add validation for tags
-                          if (tag.length < 2) {
-                            return "Enter tag up to 2 characters.";
-                          }
-                          return null;
-                        },
-                        tagsStyler: TagsStyler(
-                            //styling tag style
-                            tagTextStyle:
-                                TextStyle(fontWeight: FontWeight.normal),
-                            tagDecoration: BoxDecoration(
-                              color: Color.fromARGB(255, 210, 216, 221),
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            tagCancelIcon: Icon(Icons.cancel_outlined,
-                                size: 18.0,
-                                color: Color.fromARGB(255, 6, 10, 15)),
-                            tagPadding: EdgeInsets.all(6.0)),
-                        textFieldStyler: TextFieldStyler(
-                            //styling tag text field
-                            textFieldBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 140, 160, 175),
-                              width: 2),
-                          borderRadius: BorderRadius.circular(10.0),
-                        )),
-                      ),
-                    ],
-                  ),
-                  // ListTile(
-                  //   dense: true,
-                  //   title: Text('Location'),
-                  //   leading: Icon(Icons.location_on_outlined),
-                  //   onTap: () {},
-                  // ),
+                  
                   ExpansionTile(
                     leading: Icon(Icons.location_on_outlined),
                     title: Text('Location'),
@@ -431,6 +368,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                   //   leading: Icon(Icons.interests),
                   //   onTap: () {},
                   // ),
+                  SelectTags(updateTags: (_){}, loadableTags: null),
                   SelectInterests(updateInterests: (_){}, loadableInterests: null),
                 ],
               ),
