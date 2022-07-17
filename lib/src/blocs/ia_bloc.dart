@@ -28,6 +28,7 @@ import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
 import 'package:InstiApp/src/blocs/mess_calendar_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -332,6 +333,16 @@ class InstiAppBloc {
   }
 
   // Notifications bloc
+  void updateNotificationPermission(bool permitted) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool("notifP", permitted);
+  }
+
+  Future<bool?> hasNotificationPermission() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool("notifP");
+  }
+
   Future<void> updateNotifications() async {
     var notifs = await client.getNotifications(getSessionIdHeader());
     _notifications = notifs;
@@ -457,14 +468,17 @@ class InstiAppBloc {
             (b) => event.eventBodies!.any((b1) => b.bodyID == b1.bodyID))) ??
         false;
   }
-  List<Body> getBodiesWithPermission(String permission){
-    if(currSession?.profile==null){return [];}
+
+  List<Body> getBodiesWithPermission(String permission) {
+    if (currSession?.profile == null) {
+      return [];
+    }
     List<Body> bodies = [];
-    List<Role>? roles= this.currSession?.profile?.userRoles!;
-    if(roles!=null){
-      for(Role role in roles){
-        if(role.rolePermissions!.contains(permission)){
-          for(Body body in role.roleBodies!){
+    List<Role>? roles = this.currSession?.profile?.userRoles!;
+    if (roles != null) {
+      for (Role role in roles) {
+        if (role.rolePermissions!.contains(permission)) {
+          for (Body body in role.roleBodies!) {
             bodies.add(body);
           }
         }
@@ -473,15 +487,20 @@ class InstiAppBloc {
     return bodies;
   }
 
-  bool deleteEventAccess(Event event){
-    for(Body body in event.eventBodies!){
-      if(this.getBodiesWithPermission('DelE').map((e) => e.bodyID!).toList().indexOf(body.bodyID!)!=-1){
+  bool deleteEventAccess(Event event) {
+    for (Body body in event.eventBodies!) {
+      if (this
+              .getBodiesWithPermission('DelE')
+              .map((e) => e.bodyID!)
+              .toList()
+              .indexOf(body.bodyID!) !=
+          -1) {
         return true;
       }
     }
-    return currSession?.profile?.userRoles?.any((r)=>r.roleBodies!.any(
-        (b)=>event.eventBodies!.any((b1)=>b.bodyID == b1.bodyID)))??
-    false;
+    return currSession?.profile?.userRoles?.any((r) => r.roleBodies!.any(
+            (b) => event.eventBodies!.any((b1) => b.bodyID == b1.bodyID))) ??
+        false;
   }
 
   bool editBodyAccess(Body body) {
@@ -657,7 +676,7 @@ class InstiAppBloc {
     if (!kIsWeb && Platform.isIOS) {
       notifications.listen((notifs) async {
         try {
-          await FlutterDynamicIcon.setApplicationIconBadgeNumber(notifs.length);
+          await AwesomeNotifications().setGlobalBadgeCounter(notifs.length);
         } on PlatformException {}
       });
     }

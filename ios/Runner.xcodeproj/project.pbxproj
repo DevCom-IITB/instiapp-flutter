@@ -20,7 +20,6 @@
 		15B703EC27F8C71E0040D0AD /* hostel_number.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 15B703EB27F8C71E0040D0AD /* hostel_number.intentdefinition */; };
 		15B703ED27F8C71E0040D0AD /* hostel_number.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 15B703EB27F8C71E0040D0AD /* hostel_number.intentdefinition */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
-		49F3653E224304E200682AB0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49F3653D224304E100682AB0 /* GoogleService-Info.plist */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -51,22 +50,17 @@
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9705A1C41CF9048500538489 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1114E73EA8E0A36542EECFD9 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
+		151E6B7E2881F5EA00EDF6D4 /* FirebaseMessaging.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseMessaging.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		151E6B822881F67800EDF6D4 /* firebase_messaging.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = firebase_messaging.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		151E6B852881F69500EDF6D4 /* awesome_notifications.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = awesome_notifications.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		151E6B882881F6DB00EDF6D4 /* FirebaseMessaging.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseMessaging.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		151E6B8B2881F73800EDF6D4 /* FirebaseCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		15800C9D2880B9A000C6E794 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		15B703D227F86A110040D0AD /* MessMenuExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MessMenuExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		15B703D327F86A110040D0AD /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -132,6 +126,11 @@
 		1A7F164AB156C93E0D101431 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				151E6B8B2881F73800EDF6D4 /* FirebaseCore.framework */,
+				151E6B882881F6DB00EDF6D4 /* FirebaseMessaging.framework */,
+				151E6B852881F69500EDF6D4 /* awesome_notifications.framework */,
+				151E6B822881F67800EDF6D4 /* firebase_messaging.framework */,
+				151E6B7E2881F5EA00EDF6D4 /* FirebaseMessaging.framework */,
 				15B703D327F86A110040D0AD /* WidgetKit.framework */,
 				15B703D527F86A110040D0AD /* SwiftUI.framework */,
 				1613304FEB16BF453B8A7EF4 /* Pods_Runner.framework */,
@@ -238,7 +237,6 @@
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
-				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				15B703E327F86A130040D0AD /* Embed App Extensions */,
 				744BFA914FCE4568FA012E0D /* [CP] Embed Pods Frameworks */,
@@ -260,7 +258,7 @@
 		97C146E61CF9000F007C117D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1330;
+				LastSwiftUpdateCheck = 1340;
 				LastUpgradeCheck = 1340;
 				ORGANIZATIONNAME = "The Chromium Authors";
 				TargetAttributes = {
@@ -387,7 +385,6 @@
 				"${BUILT_PRODUCTS_DIR}/flutter_image_compress/flutter_image_compress.framework",
 				"${BUILT_PRODUCTS_DIR}/flutter_inappwebview/flutter_inappwebview.framework",
 				"${BUILT_PRODUCTS_DIR}/flutter_keyboard_visibility/flutter_keyboard_visibility.framework",
-				"${BUILT_PRODUCTS_DIR}/flutter_local_notifications/flutter_local_notifications.framework",
 				"${BUILT_PRODUCTS_DIR}/flutter_native_timezone/flutter_native_timezone.framework",
 				"${BUILT_PRODUCTS_DIR}/home_widget/home_widget.framework",
 				"${BUILT_PRODUCTS_DIR}/image_picker_ios/image_picker_ios.framework",
@@ -426,7 +423,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_image_compress.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_inappwebview.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_keyboard_visibility.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_local_notifications.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_native_timezone.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/home_widget.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/image_picker_ios.framework",

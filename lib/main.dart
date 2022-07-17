@@ -101,8 +101,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
 
     WidgetsBinding.instance?.addObserver(this);
-    WidgetsBinding.instance?.addPostFrameCallback(
-        (_) => setupNotifications(context, widget.bloc, _navigatorKey));
   }
 
   @override
