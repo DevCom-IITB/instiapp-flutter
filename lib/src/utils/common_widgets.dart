@@ -1,6 +1,8 @@
 import 'dart:async';
 
 // import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
@@ -1629,40 +1631,39 @@ class _SelectInterestsState extends State<SelectInterests> {
   }
 }
 
-class SelectLocations extends StatefulWidget {
-  final void Function(List<Location>?) updateLocations;
-  final Future<List<Location>>? loadableLocations;
+class SelectTags extends StatefulWidget {
+  final void Function(List<Body>?) updateTags;
+  final Future<List<Body>>? loadableTags;
 
-  const SelectLocations({
+  const SelectTags({
     Key? key,
-    required this.updateLocations,
-    required this.loadableLocations,
+    required this.updateTags,
+    required this.loadableTags,
   }) : super(key: key);
 
   @override
-  State<SelectLocations> createState() => _SelectLocationsState();
+  State<SelectTags> createState() => _SelectTagsState();
 }
 
-class _SelectLocationsState extends State<SelectLocations> {
-  List<Location>? location;
-
-  void onBodyChange(Interest? body) async {
+class _SelectTagsState extends State<SelectTags> {
+  List<Body>? tags;
+  void onBodyChange(Body? body) async {
     if (body != null)
       setState(() {
-        location?.add(body);
-        widget.updateLocations(location);
+        tags?.add(body);
+        widget.updateTags(tags);
       });
   }
 
   Widget _buildChips(BuildContext context) {
     List<Widget> w = [];
-    int length = location?.length ?? 0;
+    int length = tags?.length ?? 0;
     for (int i = 0; i < length; i++) {
       w.add(
         Chip(
           labelPadding: EdgeInsets.all(2.0),
-          label: Text(
-            location?[i].title ?? "",
+          label: Text( 
+            tags?[i].bodyName ?? "",
             style: TextStyle(
               color: Colors.white,
             ),
@@ -1672,8 +1673,8 @@ class _SelectLocationsState extends State<SelectLocations> {
           shadowColor: Colors.grey[60],
           padding: EdgeInsets.all(8.0),
           onDeleted: () async {
-            location?.removeAt(i);
-            widget.updateLocations(location);
+            tags?.removeAt(i);
+            widget.updateTags(tags);
             setState(() {});
           },
         ),
@@ -1686,17 +1687,17 @@ class _SelectLocationsState extends State<SelectLocations> {
     );
   }
 
-  Widget buildDropdownMenuItemsLocation(BuildContext context, Interest? body) {
+  Widget buildDropdownMenuItemsTag(BuildContext context, Body? body) {
     return Container(
       child: Text(
-        "Search for a location",
+        "Search for a tag",
         style: Theme.of(context).textTheme.bodyText1,
       ),
     );
   }
 
-  Widget _customPopupItemBuilderLocation(
-      BuildContext context, Interest body, bool isSelected) {
+  Widget _customPopupItemBuilderTag(
+      BuildContext context, Body body, bool isSelected) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8),
       decoration: !isSelected
@@ -1708,21 +1709,21 @@ class _SelectLocationsState extends State<SelectLocations> {
             ),
       child: ListTile(
         selected: isSelected,
-        title: Text(body.title!),
+        title: Text(body.bodyName!),
       ),
     );
   }
 
   @override
   void initState() {
-    if (widget.loadableLocations != null) {
-      widget.loadableLocations!.then((value) {
+    if (widget.loadableTags != null) {
+      widget.loadableTags!.then((value) {
         setState(() {
-          location = value;
+          tags = value;
         });
       });
     } else {
-      location = [];
+      tags = [];
     }
     super.initState();
   }
@@ -1742,19 +1743,19 @@ class _SelectLocationsState extends State<SelectLocations> {
           SizedBox(
             height: 20.0,
           ),
-          DropdownSearch<Interest>(
+          DropdownSearch<Body>(
             mode: Mode.DIALOG,
             maxHeight: 700,
             isFilteredOnline: true,
             showSearchBox: true,
             dropdownSearchDecoration: InputDecoration(
-              labelText: "location",
-              hintText: "location",
+              labelText: "Tags",
+              hintText: "Tags",
             ),
             onChanged: onBodyChange,
-            onFind: bloc.achievementBloc.searchForInterest,
-            dropdownBuilder: buildDropdownMenuItemsLocation,
-            popupItemBuilder: _customPopupItemBuilderLocation,
+            onFind: bloc.achievementBloc.searchForBody,
+            dropdownBuilder: buildDropdownMenuItemsTag,
+            popupItemBuilder: _customPopupItemBuilderTag,
             scrollbarProps: ScrollbarProps(
               isAlwaysShown: true,
               thickness: 7,
@@ -1764,7 +1765,7 @@ class _SelectLocationsState extends State<SelectLocations> {
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(20),
                 child: Text(
-                  "No location found. Refine your search!",
+                  "No tag found. Refine your search!",
                   style: theme.textTheme.subtitle1,
                   textAlign: TextAlign.center,
                 ),
