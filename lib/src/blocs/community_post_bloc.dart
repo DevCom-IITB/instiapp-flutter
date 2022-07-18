@@ -25,12 +25,19 @@ class CommunityPostBloc {
     // }
   }
 
+  Future<void> updateUserCommunityPostReaction(
+      CommunityPost post, int reaction) async {
+    await bloc.client.updateUserCommunityPostReaction(
+        bloc.getSessionIdHeader(), post.id!, reaction);
+  }
+
   Future refresh() async {
     // _communityPosts = defCommunities;
     // _communitySubject.add(defCommunities);
     // print("refresh");
     _communityPosts =
-        (await bloc.client.getCommunityPosts(bloc.getSessionIdHeader(),query)).data ??
+        (await bloc.client.getCommunityPosts(bloc.getSessionIdHeader(), query))
+                .data ??
             [];
     // print("community" + _communityPosts.toString());
     _communitySubject.add(_communityPosts);

@@ -8,6 +8,8 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
+import 'package:InstiApp/src/routes/userpage.dart';
+import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +17,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:location/location.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
@@ -1243,164 +1246,182 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
       {required this.communityPost, required this.communityId});
   @override
   Widget build(BuildContext context) {
+    print("build called");
+    print(communityPost.reactionCount);
+
     ThemeData theme = Theme.of(context);
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
     CommunityPostBloc communityPostBloc = bloc.communityPostBloc;
     String content = communityPost.content ?? "";
-    return GestureDetector(
-        onTap: widget.shouldTap
-            ? () => CommunityPostPage.navigateWith(
-                context, bloc.communityPostBloc, communityPost)
-            : null,
-        child: Container(
-          margin: widget.shouldTap
-              ? EdgeInsets.all(10)
-              : EdgeInsets.symmetric(horizontal: 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: theme.colorScheme.surface,
-          ),
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    border: Border(
-                        bottom: BorderSide(
-                            width: 1,
-                            color: theme.colorScheme.surfaceVariant))),
-                child: ListTile(
-                  leading: NullableCircleAvatar(
-                    communityPost.postedBy?.userProfilePictureUrl ?? "",
-                    Icons.person,
-                    radius: 18,
-                  ),
-                  title: Text(
-                    communityPost.postedBy?.userName ?? "Anonymous user",
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                  subtitle: Text(
-                    "30 March",
-                    style: theme.textTheme.bodySmall,
-                  ),
-                  trailing: PopupMenuButton<int>(
-                    itemBuilder: (context) => [
-                      // popupmenu item 1
-                      PopupMenuItem(
-                        value: 1,
-                        // row has two child icon and text.
-                        child: Row(
-                          children: [
-                            Icon(Icons.edit),
-                            SizedBox(
-                              // sized box with width 10
-                              width: 10,
-                            ),
-                            Text("Edit")
-                          ],
+    return Container(
+      margin: widget.shouldTap
+          ? EdgeInsets.all(10)
+          : EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: theme.colorScheme.surface,
+      ),
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                border: Border(
+                    bottom: BorderSide(
+                        width: 1, color: theme.colorScheme.surfaceVariant))),
+            child: ListTile(
+              leading: NullableCircleAvatar(
+                communityPost.postedBy?.userProfilePictureUrl ?? "",
+                Icons.person,
+                radius: 18,
+              ),
+              title: Text(
+                communityPost.postedBy?.userName ?? "Anonymous user",
+                style: theme.textTheme.bodyMedium,
+              ),
+              subtitle: Text(
+                "30 March",
+                style: theme.textTheme.bodySmall,
+              ),
+              trailing: PopupMenuButton<int>(
+                itemBuilder: (context) => [
+                  // popupmenu item 1
+                  PopupMenuItem(
+                    value: 1,
+                    // row has two child icon and text.
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit),
+                        SizedBox(
+                          // sized box with width 10
+                          width: 10,
                         ),
-                      ),
-                      // popupmenu item 2
-                      PopupMenuItem(
-                        value: 2,
-                        // row has two child icon and text
-                        child: Row(
-                          children: [
-                            Icon(Icons.delete),
-                            SizedBox(
-                              // sized box with width 10
-                              width: 10,
-                            ),
-                            Text("Delete")
-                          ],
-                        ),
-                        onTap: () => {
-                          communityPostBloc
-                              .deleteCommunityPost(communityPost.id ?? "")
-                        },
-                      ),
-                      PopupMenuItem(
-                        value: 3,
-                        // row has two child icon and text
-                        child: Row(
-                          children: [
-                            Icon(Icons.push_pin_outlined),
-                            SizedBox(
-                              // sized box with width 10
-                              width: 10,
-                            ),
-                            Text("Pin")
-                          ],
-                        ),
-                        onTap: () => {},
-                      ),
-
-                      PopupMenuItem(
-                        value: 4,
-                        // row has two child icon and text
-                        child: Row(
-                          children: [
-                            Icon(Icons.share),
-                            SizedBox(
-                              // sized box with width 10
-                              width: 10,
-                            ),
-                            Text("Share")
-                          ],
-                        ),
-                      ),
-                    ],
-                    // offset: Offset(0, 100),
-                    elevation: 2,
-                    tooltip: "More",
-                    icon: Icon(
-                      Icons.more_vert,
+                        Text("Edit")
+                      ],
                     ),
                   ),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                  minVerticalPadding: 0,
-                  dense: true,
-                  horizontalTitleGap: 4,
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: Text.rich(
-                  new TextSpan(
-                    text: content.length > 310 && !contentExpanded
-                        ? content.substring(0, 300) +
-                            (contentExpanded ? "" : "...")
-                        : content,
-                    children: !contentExpanded && content.length > 310
-                        ? [
-                            new TextSpan(
-                              text: 'Read More.',
-                              style: theme.textTheme.subtitle2
-                                  ?.copyWith(color: theme.colorScheme.primary),
-                              recognizer: new TapGestureRecognizer()
-                                ..onTap = () => setState(() {
-                                      contentExpanded = true;
-                                    }),
-                            )
-                          ]
-                        : [],
+                  // popupmenu item 2
+                  PopupMenuItem(
+                    value: 2,
+                    // row has two child icon and text
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete),
+                        SizedBox(
+                          // sized box with width 10
+                          width: 10,
+                        ),
+                        Text("Delete")
+                      ],
+                    ),
+                    onTap: () => {
+                      communityPostBloc
+                          .deleteCommunityPost(communityPost.id ?? "")
+                    },
                   ),
+                  PopupMenuItem(
+                    value: 3,
+                    // row has two child icon and text
+                    child: Row(
+                      children: [
+                        Icon(Icons.push_pin_outlined),
+                        SizedBox(
+                          // sized box with width 10
+                          width: 10,
+                        ),
+                        Text("Pin")
+                      ],
+                    ),
+                    onTap: () => {},
+                  ),
+
+                  PopupMenuItem(
+                    value: 4,
+                    // row has two child icon and text
+                    child: Row(
+                      children: [
+                        Icon(Icons.share),
+                        SizedBox(
+                          // sized box with width 10
+                          width: 10,
+                        ),
+                        Text("Share")
+                      ],
+                    ),
+                    onTap: () async {
+                      await Share.share(
+                          "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}");
+                    },
+                  ),
+                ],
+                // offset: Offset(0, 100),
+                elevation: 2,
+                tooltip: "More",
+                icon: Icon(
+                  Icons.more_vert,
                 ),
-                // child: Text(
-                //   communityPost.content ?? '''post''',
-                // ),
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: ImageGallery(images: communityPost.imageUrl ?? []),
-              ),
-              _buildFooter(theme, communityPost),
-            ],
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+              minVerticalPadding: 0,
+              dense: true,
+              horizontalTitleGap: 4,
+              onTap: communityPost.postedBy != null
+                  ? () => UserPage.navigateWith(
+                      context, bloc, communityPost.postedBy)
+                  : null,
+            ),
           ),
-        ));
+          GestureDetector(
+            onTap: contentExpanded
+                ? widget.shouldTap
+                    ? () => CommunityPostPage.navigateWith(
+                        context, bloc.communityPostBloc, communityPost)
+                    : null
+                : () => setState(() {
+                      contentExpanded = true;
+                    }),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: Text.rich(
+                new TextSpan(
+                  text: content.length > 310 && !contentExpanded
+                      ? content.substring(0, 300) +
+                          (contentExpanded ? "" : "...")
+                      : content,
+                  children: !contentExpanded && content.length > 310
+                      ? [
+                          new TextSpan(
+                            text: 'Read More.',
+                            style: theme.textTheme.subtitle2
+                                ?.copyWith(color: theme.colorScheme.primary),
+                            // recognizer: new TapGestureRecognizer()
+                            //   ..onTap = () => setState(() {
+                            //         contentExpanded = true;
+                            //       }),
+                          )
+                        ]
+                      : [],
+                ),
+              ),
+              // child: Text(
+              //   communityPost.content ?? '''post''',
+              // ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: ImageGallery(images: communityPost.imageUrl ?? []),
+          ),
+          _buildFooter(theme, bloc, communityPost),
+        ],
+      ),
+    );
   }
 
-  Widget _buildFooter(ThemeData theme, CommunityPost communityPost) {
+  Widget _buildFooter(
+      ThemeData theme, InstiAppBloc bloc, CommunityPost communityPost) {
+    int numReactions = communityPost.reactionCount?.values
+            .reduce((sum, element) => sum + element) ??
+        0;
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -1427,40 +1448,95 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.thumb_up_alt_outlined,
-                  size: 20,
+                PopupMenuButton<int>(
+                  onSelected: (val) async {
+                    await bloc.communityPostBloc
+                        .updateUserCommunityPostReaction(communityPost, val);
+
+                    setState(() {
+                      if ((communityPost.userReaction ?? -1) != -1) {
+                        communityPost.reactionCount![communityPost.userReaction!
+                            .toString()] = (communityPost.reactionCount![
+                                    communityPost.userReaction!.toString()] ??
+                                1) -
+                            1;
+                      }
+                      communityPost.reactionCount![val.toString()] =
+                          (communityPost.reactionCount![val.toString()] ?? 0) +
+                                      (communityPost.userReaction ?? -1) ==
+                                  val
+                              ? 0
+                              : 1;
+                      communityPost.userReaction =
+                          communityPost.userReaction == val ? -1 : val;
+                    });
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      new PopupMenuWidget(
+                        height: 20,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 5),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: emojis
+                                .asMap()
+                                .entries
+                                .map(
+                                  (e) => Container(
+                                    color: e.key == communityPost.userReaction
+                                        ? Colors.blue
+                                        : Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () =>
+                                          Navigator.of(context).pop(e.key),
+                                      child: Image.asset(e.value, width: 30),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                      ),
+                    ];
+                  },
+                  child: Row(children: [
+                    Icon(
+                      Icons.thumb_up_alt_outlined,
+                      size: 20,
+                    ),
+                    numReactions > 0
+                        ? Container(
+                            margin: EdgeInsets.symmetric(horizontal: 5),
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              color: theme.colorScheme.surfaceVariant,
+                            ),
+                            child: Row(
+                              children: emojis
+                                  .asMap()
+                                  .entries
+                                  .map(
+                                    (e) => (communityPost.reactionCount?[
+                                                    e.key.toString()] ??
+                                                0) >
+                                            0
+                                        ? Image.asset(e.value, width: 20)
+                                        : Container(),
+                                  )
+                                  .toList(),
+                            ),
+                          )
+                        : Container(),
+                    numReactions > 0
+                        ? Text(
+                            numReactions.toString(),
+                            style: theme.textTheme.bodySmall,
+                          )
+                        : Container(),
+                  ]),
                 ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 5),
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: theme.colorScheme.surfaceVariant,
-                  ),
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        "assets/communities/emojis/laugh.png",
-                        width: 20,
-                      ),
-                      Image.asset(
-                        "assets/communities/emojis/cry.png",
-                        width: 20,
-                      ),
-                      Image.asset(
-                        "assets/communities/emojis/angry.png",
-                        width: 20,
-                      ),
-                      Image.asset(
-                        "assets/communities/emojis/surprise.png",
-                        width: 20,
-                      ),
-                    ],
-                  ),
-                ),
-                Text(communityPost.userReaction.toString(),
-                    style: theme.textTheme.bodySmall),
                 Container(
                   margin: EdgeInsets.only(left: 15),
                   child: Row(
@@ -1473,7 +1549,11 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                           color: theme.colorScheme.onSurfaceVariant,
                           size: 20,
                         ),
-                        onPressed: widget.onPressedComment ?? () {},
+                        onPressed: widget.onPressedComment ??
+                            (widget.shouldTap
+                                ? () => CommunityPostPage.navigateWith(context,
+                                    bloc.communityPostBloc, communityPost)
+                                : null),
                       ),
                       SizedBox(width: 3),
                       Text((communityPost.commentsCount ?? 0).toString(),
@@ -1493,6 +1573,39 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
       ),
     );
   }
+}
+
+List<String> emojis = [
+  "assets/communities/emojis/like.png",
+  "assets/communities/emojis/love.png",
+  "assets/communities/emojis/laugh.png",
+  "assets/communities/emojis/surprise.png",
+  "assets/communities/emojis/cry.png",
+  "assets/communities/emojis/angry.png",
+];
+
+/// An arbitrary widget that lives in a popup menu
+class PopupMenuWidget<T> extends PopupMenuEntry<T> {
+  const PopupMenuWidget({
+    Key? key,
+    required this.height,
+    required this.child,
+  }) : super(key: key);
+  final Widget child;
+
+  @override
+  final double height;
+
+  @override
+  _PopupMenuWidgetState createState() => _PopupMenuWidgetState();
+
+  @override
+  bool represents(T? value) => false;
+}
+
+class _PopupMenuWidgetState extends State<PopupMenuWidget> {
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 class SelectInterests extends StatefulWidget {
