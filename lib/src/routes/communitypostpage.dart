@@ -2,14 +2,11 @@ import 'dart:async';
 
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
-import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
-import 'package:flutter_html/shims/dart_ui_real.dart';
-import 'package:share/share.dart';
 
 import '../bloc_provider.dart';
 
@@ -77,138 +74,146 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
 
     return communityPost != null
         ? SafeArea(
-            child: Scaffold(
-              key: _scaffoldKey,
-              // extendBodyBehindAppBar: true,
-              drawer: NavDrawer(),
-              appBar: CustomAppBar(
-                leadingStyle: LeadingStyle(
-                  icon: Icons.arrow_back,
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-              bottomNavigationBar: MyBottomAppBar(
-                shape: RoundedNotchedRectangle(),
-                child: new Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    IconButton(
-                      tooltip: "Show bottom sheet",
-                      icon: Icon(
-                        Icons.menu_outlined,
-                        semanticLabel: "Show bottom sheet",
-                      ),
-                      onPressed: () {
-                        _scaffoldKey.currentState?.openDrawer();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              body: Stack(
-                children: [
-                  SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        // _buildPost(theme, communityPost),
-                        CommunityPostWidget(
-                          communityPost: communityPost!,
-                          communityId: communityPost!.community,
-                          shouldTap: false,
-                          onPressedComment: () {
-                            changeCommentingPost(communityPost!);
-                          },
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Column(
-                            children:
-                                _buildCommentList(theme, communityPost!, bloc),
-                          ),
-                        )
-                      ],
-                    ),
+            child: RefreshIndicator(
+              onRefresh: () async {
+                communityPost = await bloc.communityPostBloc
+                    .getCommunityPost(communityPost!.id!);
+                setState(() {});
+              },
+              child: Scaffold(
+                key: _scaffoldKey,
+                // extendBodyBehindAppBar: true,
+                drawer: NavDrawer(),
+                appBar: CustomAppBar(
+                  leadingStyle: LeadingStyle(
+                    icon: Icons.arrow_back,
+                    onPressed: () => Navigator.pop(context),
                   ),
-                  Column(
-                    children: [
-                      Expanded(child: SizedBox()),
-                      Container(
-                        color: theme.colorScheme.surfaceVariant,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: _commentController,
-                                cursorColor: theme.textTheme.bodyText2?.color,
-                                style: theme.textTheme.bodyLarge,
-                                focusNode: _commentFocusNode,
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 10),
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.circular(5)),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.circular(5)),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.circular(5)),
-                                  filled: true,
-                                  fillColor: theme.colorScheme.surface,
-                                  hintText: communityPost!.id ==
-                                          currentlyCommentingPost!.id
-                                      ? "Add a comment"
-                                      : "Reply to ${currentlyCommentingPost!.content!.length > 23 ? currentlyCommentingPost!.content!.substring(0, 20) + "..." : currentlyCommentingPost!.content!}",
-                                  hintStyle: theme.textTheme.bodyLarge,
-                                ),
-                                // onChanged: widget.appBarSearchStyle.onChanged,
-                                // onSubmitted: widget.appBarSearchStyle.onSubmitted,
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(left: 10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: theme.colorScheme.surface,
-                              ),
-                              child: IconButton(
-                                padding: EdgeInsets.zero,
-                                constraints: BoxConstraints(),
-                                color: theme.colorScheme.onSurfaceVariant,
-                                splashColor: Colors.transparent,
-                                tooltip: "Post",
-                                icon: Icon(
-                                  Icons.keyboard_double_arrow_up,
-                                  semanticLabel: "Post",
-                                ),
-                                onPressed: () async {
-                                  if (_commentController.text.length > 0) {
-                                    CommunityPost comment = CommunityPost(
-                                      content: _commentController.text,
-                                      parent: currentlyCommentingPost!.id,
-                                      community: communityPost!.community,
-                                    );
-                                    await bloc.communityPostBloc
-                                        .createCommunityPost(comment);
-                                    _commentController.clear();
-                                    _commentFocusNode.unfocus();
-                                    bloc.communityPostBloc.getCommunityPost(
-                                        currentlyCommentingPost!.id!);
-                                  }
-                                },
-                              ),
-                            ),
-                          ],
+                ),
+                bottomNavigationBar: MyBottomAppBar(
+                  shape: RoundedNotchedRectangle(),
+                  child: new Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      IconButton(
+                        tooltip: "Show bottom sheet",
+                        icon: Icon(
+                          Icons.menu_outlined,
+                          semanticLabel: "Show bottom sheet",
                         ),
+                        onPressed: () {
+                          _scaffoldKey.currentState?.openDrawer();
+                        },
                       ),
                     ],
-                  )
-                ],
+                  ),
+                ),
+                body: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          // _buildPost(theme, communityPost),
+                          CommunityPostWidget(
+                            communityPost: communityPost!,
+                            communityId: communityPost!.community,
+                            shouldTap: false,
+                            onPressedComment: () {
+                              changeCommentingPost(communityPost!);
+                            },
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            child: Column(
+                              children: _buildCommentList(
+                                  theme, communityPost!, bloc),
+                            ),
+                          ),
+                          SizedBox(height: 150)
+                        ],
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        Expanded(child: SizedBox()),
+                        Container(
+                          color: theme.colorScheme.surfaceVariant,
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _commentController,
+                                  cursorColor: theme.textTheme.bodyText2?.color,
+                                  style: theme.textTheme.bodyLarge,
+                                  focusNode: _commentFocusNode,
+                                  decoration: InputDecoration(
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 10),
+                                    border: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.circular(5)),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.circular(5)),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.circular(5)),
+                                    filled: true,
+                                    fillColor: theme.colorScheme.surface,
+                                    hintText: communityPost!.id ==
+                                            currentlyCommentingPost!.id
+                                        ? "Add a comment"
+                                        : "Reply to ${currentlyCommentingPost!.content!.length > 23 ? currentlyCommentingPost!.content!.substring(0, 20) + "..." : currentlyCommentingPost!.content!}",
+                                    hintStyle: theme.textTheme.bodyLarge,
+                                  ),
+                                  // onChanged: widget.appBarSearchStyle.onChanged,
+                                  // onSubmitted: widget.appBarSearchStyle.onSubmitted,
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(left: 10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: theme.colorScheme.surface,
+                                ),
+                                child: IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: BoxConstraints(),
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                  splashColor: Colors.transparent,
+                                  tooltip: "Post",
+                                  icon: Icon(
+                                    Icons.keyboard_double_arrow_up,
+                                    semanticLabel: "Post",
+                                  ),
+                                  onPressed: () async {
+                                    if (_commentController.text.length > 0) {
+                                      CommunityPost comment = CommunityPost(
+                                        content: _commentController.text,
+                                        parent: currentlyCommentingPost!.id,
+                                        community: communityPost!.community,
+                                      );
+                                      await bloc.communityPostBloc
+                                          .createCommunityPost(comment);
+                                      _commentController.clear();
+                                      _commentFocusNode.unfocus();
+                                      bloc.communityPostBloc.getCommunityPost(
+                                          currentlyCommentingPost!.id!);
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           )
@@ -217,6 +222,16 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
 
   List<Widget> _buildCommentList(
       ThemeData theme, CommunityPost communityPost, InstiAppBloc bloc) {
+    if (communityPost.comments == null &&
+        (communityPost.commentsCount ?? 0) > 0) {
+      return [
+        Container(
+          child: CircularProgressIndicator(),
+          padding: EdgeInsets.all(20),
+        )
+      ];
+    }
+
     return (communityPost.comments?.map(
               (c) => Comment(
                 comment: c,
@@ -332,7 +347,7 @@ class _CommentState extends State<Comment> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(comment!.content ?? ""),
-                      _buildFooter(theme, comment!),
+                      _buildFooter(theme, bloc, comment!),
                       ..._buildCommentList(theme, comment!)
                     ],
                   ),
@@ -348,8 +363,15 @@ class _CommentState extends State<Comment> {
       if (loading) {
         return [
           Container(
-            child: CircularProgressIndicator(),
             alignment: Alignment.center,
+            child: Container(
+              padding: EdgeInsets.all(5),
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+              ),
+            ),
           )
         ];
       }
@@ -403,7 +425,11 @@ class _CommentState extends State<Comment> {
     }
   }
 
-  Widget _buildFooter(ThemeData theme, CommunityPost communityPost) {
+  Widget _buildFooter(
+      ThemeData theme, InstiAppBloc bloc, CommunityPost communityPost) {
+    int numReactions = communityPost.reactionCount?.values
+            .reduce((sum, element) => sum + element) ??
+        0;
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
@@ -424,40 +450,94 @@ class _CommentState extends State<Comment> {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.thumb_up_alt_outlined,
-                  size: 20,
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 5),
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: theme.colorScheme.surfaceVariant,
-                  ),
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        "assets/communities/emojis/laugh.png",
-                        width: 20,
+                PopupMenuButton<int>(
+                  onSelected: (val) async {
+                    await bloc.communityPostBloc
+                        .updateUserCommunityPostReaction(communityPost, val);
+                    setState(() {
+                      if ((communityPost.userReaction ?? -1) != -1) {
+                        communityPost.reactionCount![communityPost.userReaction!
+                            .toString()] = (communityPost.reactionCount![
+                                    communityPost.userReaction!.toString()] ??
+                                1) -
+                            1;
+                      }
+                      communityPost.reactionCount![val.toString()] =
+                          (communityPost.reactionCount![val.toString()] ?? 0) +
+                                      (communityPost.userReaction ?? -1) ==
+                                  val
+                              ? 0
+                              : 1;
+                      communityPost.userReaction =
+                          communityPost.userReaction == val ? -1 : val;
+                    });
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      new PopupMenuWidget(
+                        height: 20,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 5),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: emojis
+                                .asMap()
+                                .entries
+                                .map(
+                                  (e) => Container(
+                                    color: e.key == communityPost.userReaction
+                                        ? Colors.blue
+                                        : Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () =>
+                                          Navigator.of(context).pop(e.key),
+                                      child: Image.asset(e.value, width: 30),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
                       ),
-                      Image.asset(
-                        "assets/communities/emojis/cry.png",
-                        width: 20,
-                      ),
-                      // Image.asset(
-                      //   "assets/communities/emojis/angry.png",
-                      //   width: 20,
-                      // ),
-                      // Image.asset(
-                      //   "assets/communities/emojis/surprise.png",
-                      //   width: 20,
-                      // ),
-                    ],
-                  ),
+                    ];
+                  },
+                  child: Row(children: [
+                    Icon(
+                      Icons.thumb_up_alt_outlined,
+                      size: 20,
+                    ),
+                    numReactions > 0
+                        ? Container(
+                            margin: EdgeInsets.symmetric(horizontal: 5),
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              color: theme.colorScheme.surfaceVariant,
+                            ),
+                            child: Row(
+                              children: emojis
+                                  .asMap()
+                                  .entries
+                                  .map(
+                                    (e) => (communityPost.reactionCount?[
+                                                    e.key.toString()] ??
+                                                0) >
+                                            0
+                                        ? Image.asset(e.value, width: 20)
+                                        : Container(),
+                                  )
+                                  .toList(),
+                            ),
+                          )
+                        : Container(),
+                    numReactions > 0
+                        ? Text(
+                            numReactions.toString(),
+                            style: theme.textTheme.bodySmall,
+                          )
+                        : Container(),
+                  ]),
                 ),
-                Text(communityPost.userReaction.toString(),
-                    style: theme.textTheme.bodySmall),
                 Container(
                   margin: EdgeInsets.only(left: 15),
                   child: Row(

@@ -199,9 +199,8 @@ class _CommunityPageState extends State<CommunityPage> {
     ThemeData theme,
     CommunityBloc bloc,
   ) {
-    
     var borderRadius = const BorderRadius.all(Radius.circular(10));
-    var InstiBloc = BlocProvider.of(context)!.bloc;
+    var instiBloc = BlocProvider.of(context)!.bloc;
     // print(community.isUserFollowing);
     return Container(
       margin: EdgeInsets.all(5),
@@ -287,14 +286,14 @@ class _CommunityPageState extends State<CommunityPage> {
                       ],
                     ),
                     onTap: () async {
-                      if (InstiBloc.currSession == null) {
+                      if (instiBloc.currSession == null) {
                         return;
                       }
                       setState(() {
                         loadingFollow = true;
                       });
 
-                      await InstiBloc.updateFollowCommunity(community);
+                      await instiBloc.updateFollowCommunity(community);
                       setState(() {
                         loadingFollow = false;
                         // event has changes
@@ -305,8 +304,8 @@ class _CommunityPageState extends State<CommunityPage> {
                   PopupMenuItem(
                     value: 2,
                     // row has two child icon and text
-                    onTap: ()  {
-                       Share.share(
+                    onTap: () {
+                      Share.share(
                           "Check this community: ${ShareURLMaker.getCommunityURL(community)}");
                     },
                     child: Row(
