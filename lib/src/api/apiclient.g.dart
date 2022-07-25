@@ -8,7 +8,7 @@ part of 'apiclient.dart';
 
 class _InstiAppApi implements InstiAppApi {
   _InstiAppApi(this._dio, {this.baseUrl}) {
-    baseUrl ??= 'http://192.168.0.118:8000/api';
+    baseUrl ??= 'http://192.168.0.132:8000/api';
   }
 
   final Dio _dio;
@@ -1071,9 +1071,13 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<CommunityPostListResponse> getCommunityPosts(sessionId, query) async {
+  Future<CommunityPostListResponse> getCommunityPosts(
+      sessionId, status, query) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'query': query};
+    final queryParameters = <String, dynamic>{
+      r'status': status,
+      r'query': query
+    };
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
