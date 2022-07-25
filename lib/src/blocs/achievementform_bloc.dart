@@ -115,7 +115,7 @@ class Bloc extends Object {
   }
 
   Future<List<Body>> searchForBody(String? query) async {
-    // print("Search called");
+    // print("Search body called");
     if (query == null) return <Body>[];
     if (query.length < 3) {
       return [];
@@ -134,7 +134,7 @@ class Bloc extends Object {
   }
 
   Future<List<User>> searchForUser(String? query) async {
-    // print("Search called");
+    // print("Search user called");
     if (query == null) return <User>[];
     if (query.length < 3) {
       return [];
@@ -143,7 +143,7 @@ class Bloc extends Object {
         await bloc.client.search(bloc.getSessionIdHeader(), query);
     // print("Search responed");
 
-    if (searchResponse.bodies == null) {
+    if (searchResponse.users == null) {
       return [];
     }
 

@@ -1,8 +1,11 @@
 // import 'dart:html';
 
 import 'dart:convert';
+import 'dart:developer' as d;
+import 'dart:io';
 import 'dart:math';
 
+import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
@@ -12,6 +15,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:path_provider/path_provider.dart';
 import '../api/request/image_upload_request.dart';
 import '../bloc_provider.dart';
 import '../drawer.dart';
@@ -37,12 +41,6 @@ class _CreatePostPage extends State<CreatePostPage> {
   final _formKey1 = GlobalKey<FormState>();
 
   CommunityPost currRequest1 = CommunityPost();
-
-  // Community? get community => null;
-
-  List<String> tags = ["InstiApp", "IIT Bombay"];
-  List<String> location = ["Gymkhana", "IIT Bombay"];
-  List<String> interests = ["tennis", "anime"];
 
   @override
   void initState() {
@@ -149,7 +147,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                   child: TextButton(
                                     onPressed: () {
                                       // CommunityPost post = )
-
+                                      print(currRequest1.interests);
                                       bloc.communityPostBloc
                                           .createCommunityPost(currRequest1);
 
@@ -291,98 +289,57 @@ class _CreatePostPage extends State<CreatePostPage> {
               child: Column(
                 children: [
                   ListTile(
-                      dense: true,
-                      title: Text('Attach Photos/Videos'),
-                      leading: Icon(Icons.attach_file),
-                      onTap: () async {
-                        final ImagePicker _picker = ImagePicker();
-                        final XFile? pi = await _picker.pickImage(
-                            source: ImageSource.gallery);
-                        if (pi != null) {
-                          String img64 = base64Encode(
-                              (await pi.readAsBytes()).cast<int>());
-                          // print(img64);
-                          ImageUploadRequest IUReq =
-                              ImageUploadRequest(base64Image: img64);
-                          ImageUploadResponse resp = await bloc.client
-                              .uploadImage(bloc.getSessionIdHeader(), IUReq);
-                          // print(resp.pictureURL);
-                          setState(() {
-                            List<String>? listOfUrls = [];
-                            listOfUrls.add(resp.pictureURL ?? "");
-                            currRequest1.imageUrl = listOfUrls;
-                          });
-                        }
-                      } // => getImage(source: ImageSource.camera),
-                      ),
+                    dense: true,
+                    title: Text('Attach Photos/Videos'),
+                    leading: Icon(Icons.attach_file),
+                    onTap: () async {
+                      final ImagePicker _picker = ImagePicker();
+                      final XFile? pi =
+                          await _picker.pickImage(source: ImageSource.gallery);
 
-                  ExpansionTile(
-                    leading: Icon(Icons.location_on_outlined),
-                    title: Text('Location'),
-                    children: [
-                      TextFieldTags(
-                        textSeparators: [
-                          " ", //seperate with space
-                          ',' //sepearate with comma as well
-                        ],
-                        initialTags: location,
-                        onTag: (tag) {
-                          location.add(tag);
-                        },
-                        onDelete: (tag) {
-                          location.remove(tag);
-                        },
-                        validator: (tag) {
-                          //add validation for tags
-                          if (location.length < 2) {
-                            return "Enter location up to 2 characters.";
-                          }
-                          return null;
-                        },
-                        tagsStyler: TagsStyler(
-                            //styling tag style
-                            tagTextStyle:
-                                TextStyle(fontWeight: FontWeight.normal),
-                            tagDecoration: BoxDecoration(
-                              color: Color.fromARGB(255, 210, 216, 221),
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            tagCancelIcon: Icon(Icons.cancel_outlined,
-                                size: 18.0,
-                                color: Color.fromARGB(255, 6, 10, 15)),
-                            tagPadding: EdgeInsets.all(6.0)),
-                        textFieldStyler: TextFieldStyler(
-                            //styling tag text field
-                            textFieldBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 140, 160, 175),
-                              width: 2),
-                          borderRadius: BorderRadius.circular(10.0),
-                        )),
-                      ),
-                    ],
+                      if (pi != null) {
+                        String img64 =
+                            base64Encode((await pi.readAsBytes()).cast<int>());
+                        ImageUploadRequest IUReq =
+                            ImageUploadRequest(base64Image: img64);
+                        ImageUploadResponse resp = await bloc.client
+                            .uploadImage(bloc.getSessionIdHeader(), IUReq);
+                        // print(resp.pictureURL);
+                        setState(() {
+                          List<String>? listOfUrls = [];
+                          listOfUrls.add(resp.pictureURL ?? "");
+                          currRequest1.imageUrl = listOfUrls;
+                        });
+                      }
+                    },
                   ),
-                  // ListTile(
-                  //   dense: true,
-                  //   title: Text('Interests'),
-                  //   leading: Icon(Icons.interests),
-                  //   onTap: () {},
-                  // ),
-                  DropdownMultiSelect<Object>(
+                  DropdownMultiSelect<dynamic>(
                     load: null,
-                    update: (_) {},
+                    update: (tags) {
+                      currRequest1.bodies = tags
+                          ?.where((element) => element.runtimeType == Body)
+                          .map((e) => e as Body)
+                          .toList();
+                      currRequest1.users = tags
+                          ?.where((element) => element.runtimeType == User)
+                          .map((e) => e as User)
+                          .toList();
+                    },
                     onFind: (String? query) async {
-                      List<Object> list =
+                      List<Body> list1 =
                           await bloc.achievementBloc.searchForBody(query);
-                      list.addAll(
-                          await bloc.achievementBloc.searchForUser(query));
+                      List<User> list2 =
+                          await bloc.achievementBloc.searchForUser(query);
+                      List<dynamic> list = [...list1, ...list2];
                       return list;
                     },
                     singularObjectName: "Tag",
                     pluralObjectName: "Tags",
                   ),
                   DropdownMultiSelect<Interest>(
-                    update: (_) {},
+                    update: (interests) {
+                      currRequest1.interests = interests;
+                    },
                     load: null,
                     onFind: bloc.achievementBloc.searchForInterest,
                     singularObjectName: "interest",

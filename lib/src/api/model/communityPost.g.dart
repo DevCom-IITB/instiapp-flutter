@@ -34,7 +34,17 @@ CommunityPost _$CommunityPostFromJson(Map<String, dynamic> json) =>
       community: json['community'] as String?,
       threadRank: json['thread_rank'] as int?,
       parent: json['parent'] as String?,
-    )..status = json['status'] as int?;
+    )
+      ..status = json['status'] as int?
+      ..interests = (json['interests'] as List<dynamic>?)
+          ?.map((e) => Interest.fromJson(e as Map<String, dynamic>))
+          .toList()
+      ..users = (json['tag_user'] as List<dynamic>?)
+          ?.map((e) => User.fromJson(e as Map<String, dynamic>))
+          .toList()
+      ..bodies = (json['tag_body'] as List<dynamic>?)
+          ?.map((e) => Body.fromJson(e as Map<String, dynamic>))
+          .toList();
 
 Map<String, dynamic> _$CommunityPostToJson(CommunityPost instance) =>
     <String, dynamic>{
@@ -54,4 +64,7 @@ Map<String, dynamic> _$CommunityPostToJson(CommunityPost instance) =>
       'thread_rank': instance.threadRank,
       'parent': instance.parent,
       'status': instance.status,
+      'interests': instance.interests,
+      'tag_user': instance.users,
+      'tag_body': instance.bodies,
     };
