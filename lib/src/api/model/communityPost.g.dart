@@ -34,7 +34,7 @@ CommunityPost _$CommunityPostFromJson(Map<String, dynamic> json) =>
       community: json['community'] as String?,
       threadRank: json['thread_rank'] as int?,
       parent: json['parent'] as String?,
-    );
+    )..status = json['status'] as int?;
 
 Map<String, dynamic> _$CommunityPostToJson(CommunityPost instance) =>
     <String, dynamic>{
@@ -53,4 +53,5 @@ Map<String, dynamic> _$CommunityPostToJson(CommunityPost instance) =>
       'community': instance.community,
       'thread_rank': instance.threadRank,
       'parent': instance.parent,
+      'status': instance.status,
     };
