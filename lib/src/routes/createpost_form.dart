@@ -36,6 +36,8 @@ class _CreatePostPage extends State<CreatePostPage> {
   bool click = true;
   // File? imageFile;
 
+  List<File> imageFiles = [];
+
   // List<CreatePost>? posts;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   final _formKey1 = GlobalKey<FormState>();
@@ -67,6 +69,7 @@ class _CreatePostPage extends State<CreatePostPage> {
       initialIndex: 0,
       length: 2,
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         key: _scaffoldKey,
         drawer: NavDrawer(),
         bottomNavigationBar: MyBottomAppBar(
@@ -145,9 +148,19 @@ class _CreatePostPage extends State<CreatePostPage> {
                                 Container(
                                   width: 65,
                                   child: TextButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       // CommunityPost post = )
-                                      print(currRequest1.interests);
+                                      currRequest1.imageUrl = [];
+                                      for (int i = 0;
+                                          i < imageFiles.length;
+                                          i++) {
+                                        ImageUploadResponse resp =
+                                            await bloc.client.uploadImage(
+                                                bloc.getSessionIdHeader(),
+                                                imageFiles[i]);
+                                        currRequest1.imageUrl!
+                                            .add(resp.pictureURL!);
+                                      }
                                       bloc.communityPostBloc
                                           .createCommunityPost(currRequest1);
 
@@ -246,15 +259,13 @@ class _CreatePostPage extends State<CreatePostPage> {
                             ConstrainedBox(
                               constraints: new BoxConstraints(
                                 maxHeight:
-                                    MediaQuery.of(context).size.height / 2.6,
+                                    MediaQuery.of(context).size.height / 3,
                               ),
                               child: SingleChildScrollView(
                                 child: Container(
-                                  // margin:
-                                  //     EdgeInsets.fromLTRB(5.0, 5.0, 15.0, 0),
                                   child: TextFormField(
                                     keyboardType: TextInputType.multiline,
-                                    maxLines: 100,
+                                    maxLines: null,
                                     decoration: InputDecoration(
                                       hintText: "Write your Post..",
                                     ),
@@ -275,6 +286,18 @@ class _CreatePostPage extends State<CreatePostPage> {
                                 ),
                               ),
                             ),
+                            SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: imageFiles
+                                      .asMap()
+                                      .entries
+                                      .map((e) => _buildImage(
+                                            e.value,
+                                            e.key,
+                                          ))
+                                      .toList(),
+                                ))
                           ]),
                     ),
                   ),
@@ -298,14 +321,12 @@ class _CreatePostPage extends State<CreatePostPage> {
                           await _picker.pickImage(source: ImageSource.gallery);
 
                       if (pi != null) {
-                        ImageUploadResponse resp = await bloc.client
-                            .uploadImage(
-                                bloc.getSessionIdHeader(), File(pi.path));
+                        // ImageUploadResponse resp = await bloc.client
+                        //     .uploadImage(
+                        //         bloc.getSessionIdHeader(), File(pi.path));
                         // print(resp.pictureURL);
                         setState(() {
-                          List<String>? listOfUrls = [];
-                          listOfUrls.add(resp.pictureURL ?? "");
-                          currRequest1.imageUrl = listOfUrls;
+                          imageFiles.add(File(pi.path));
                         });
                       }
                     },
@@ -348,6 +369,33 @@ class _CreatePostPage extends State<CreatePostPage> {
           )
         ],
       ),
+    );
+  }
+
+  Widget _buildImage(File file, int index) {
+    return Stack(
+      children: [
+        Image.file(
+          file,
+          height: MediaQuery.of(context).size.height / 7.5,
+          width: MediaQuery.of(context).size.height / 7.5,
+          fit: BoxFit.scaleDown,
+        ),
+        Positioned(
+          right: 0,
+          top: 0,
+          child: Container(
+            child: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                setState(() {
+                  imageFiles.removeAt(index);
+                });
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

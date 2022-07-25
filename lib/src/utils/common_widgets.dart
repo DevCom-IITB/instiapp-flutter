@@ -1443,7 +1443,12 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
           ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10),
-            child: ImageGallery(images: communityPost.imageUrl ?? []),
+            // TODO: remove the localhost check
+            child: ImageGallery(
+                images: communityPost.imageUrl
+                        ?.map((e) => e.replaceAll("localhost", "192.168.0.132"))
+                        .toList() ??
+                    []),
           ),
           _buildFooter(theme, bloc, communityPost),
         ],
