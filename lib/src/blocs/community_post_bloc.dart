@@ -2,6 +2,13 @@ import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
+enum CPType {
+  All,
+  YourPosts,
+  PendingPosts,
+  ReportedContent,
+}
+
 class CommunityPostBloc {
   final String storageID = "communityPost";
 
@@ -31,14 +38,33 @@ class CommunityPostBloc {
         bloc.getSessionIdHeader(), post.id!, reaction);
   }
 
-  Future refresh() async {
+  Future refresh({CPType type = CPType.All}) async {
     // _communityPosts = defCommunities;
     // _communitySubject.add(defCommunities);
     // print("refresh");
-    _communityPosts =
-        (await bloc.client.getCommunityPosts(bloc.getSessionIdHeader(), query))
-                .data ??
-            [];
+    if (type == CPType.YourPosts) {
+      _communityPosts = [];
+    } else {
+      int status = 0;
+      switch (type) {
+        case CPType.All:
+          status = 1;
+          break;
+        case CPType.PendingPosts:
+          status = 0;
+          break;
+        case CPType.ReportedContent:
+          status = 0;
+          break;
+        default:
+          status = 1;
+          break;
+      }
+      _communityPosts = (await bloc.client
+                  .getCommunityPosts(bloc.getSessionIdHeader(), status, query))
+              .data ??
+          [];
+    }
     // print("community" + _communityPosts.toString());
     _communitySubject.add(_communityPosts);
   }

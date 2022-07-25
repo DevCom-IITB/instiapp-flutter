@@ -10,6 +10,7 @@ import 'package:InstiApp/src/routes/communitypage.dart';
 import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:analyzer/source/error_processor.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
@@ -380,7 +381,7 @@ class CommunityAboutSectionState extends State<CommunityAboutSection> {
       leading: NullableCircleAvatar(
         u.userProfilePictureUrl ?? "",
         Icons.person_outline_outlined,
-        heroTag: u.userID ?? "",
+        // heroTag: u.userID ?? "",
       ),
       title: Text(
         u.userName ?? "",
@@ -413,7 +414,12 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
   bool firstBuild = true;
   final Community? community;
 
+  CPType cpType = CPType.All;
+
   _CommunityPostSectionState({required this.community});
+
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -425,7 +431,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
       communityPostBloc.refresh();
       firstBuild = false;
     }
-    var communityPost;
+
     return Container(
       child: Column(
         children: [
@@ -563,48 +569,118 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
 
               ),
           Container(
+            width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
                 color: theme.colorScheme.surfaceVariant.withOpacity(0.4)),
-            child: Row(
-              children: [
-                SizedBox(width: 20),
-                TextButton(
-                  child: Text(
-                    "Newest",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.zero,
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  SizedBox(width: 20),
+                  TextButton(
+                    child: Text(
+                      "All",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () async {
+                      setState(() {
+                        loading = true;
+                        cpType = CPType.All;
+                      });
+                      await communityPostBloc.refresh(type: CPType.All);
+                      setState(() {
+                        loading = false;
+                      });
+                    },
+                    style: _getButtonStyle(cpType == CPType.All, theme),
                   ),
-                  onPressed: () {},
-                  style: _getButtonStyle(true, theme),
-                ),
-                SizedBox(width: 10),
-                TextButton(
-                  child: Text(
-                    "Unanswered",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  SizedBox(width: 10),
+                  TextButton(
+                    child: Text(
+                      "Your Posts",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () async {
+                      setState(() {
+                        loading = true;
+                        cpType = CPType.YourPosts;
+                      });
+                      await communityPostBloc.refresh(type: CPType.YourPosts);
+                      setState(() {
+                        loading = false;
+                      });
+                    },
+                    style: _getButtonStyle(cpType == CPType.YourPosts, theme),
                   ),
-                  onPressed: () {},
-                  style: _getButtonStyle(false, theme),
-                )
-              ],
+                  SizedBox(width: 10),
+                  bloc.hasPermission(community!.body!, "AppP")
+                      ? TextButton(
+                          child: Text(
+                            "Pending posts",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () async {
+                            setState(() {
+                              loading = true;
+                              cpType = CPType.PendingPosts;
+                            });
+                            await communityPostBloc.refresh(
+                                type: CPType.PendingPosts);
+                            setState(() {
+                              loading = false;
+                            });
+                          },
+                          style: _getButtonStyle(
+                              cpType == CPType.PendingPosts, theme),
+                        )
+                      : Container(),
+                  // bloc.hasPermission(community!.body!, "AppP")
+                  //     ? TextButton(
+                  //         child: Text(
+                  //           "Reported content",
+                  //           style: TextStyle(fontWeight: FontWeight.bold),
+                  //         ),
+                  //         onPressed: () async {
+                  //           setState(() {
+                  //             loading = true;
+                  //             cpType = CPType.ReportedContent;
+                  //           });
+                  //           await communityPostBloc.refresh(
+                  //             type: CPType.ReportedContent,
+                  //           );
+                  //           setState(() {
+                  //             loading = false;
+                  //           });
+                  //         },
+                  //         style: _getButtonStyle(
+                  //             cpType == CPType.ReportedContent, theme),
+                  //       )
+                  //     : Container(),
+                ],
+              ),
             ),
           ),
           Divider(
             color: theme.colorScheme.onSurfaceVariant,
             height: 0,
           ),
-          Container(
-            decoration: BoxDecoration(color: theme.colorScheme.surfaceVariant),
-            child: StreamBuilder<List<CommunityPost>>(
-              stream: communityPostBloc.communityposts,
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<CommunityPost>> snapshot) {
-                return Column(
-                  children: _buildPostList(
-                      snapshot, theme, communityPostBloc, community?.id),
-                );
-              },
-            ),
-          )
+          loading
+              ? CircularProgressIndicator()
+              : Container(
+                  decoration:
+                      BoxDecoration(color: theme.colorScheme.surfaceVariant),
+                  child: StreamBuilder<List<CommunityPost>>(
+                    stream: communityPostBloc.communityposts,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<CommunityPost>> snapshot) {
+                      return Column(
+                        children: _buildPostList(
+                            snapshot, theme, communityPostBloc, community?.id),
+                      );
+                    },
+                  ),
+                )
         ],
       ),
     );

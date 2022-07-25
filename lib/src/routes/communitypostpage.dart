@@ -243,7 +243,6 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
   }
 
   void changeCommentingPost(CommunityPost communityPost) {
-    print("Entered");
     setState(() {
       currentlyCommentingPost = communityPost;
       _commentController.text = "";

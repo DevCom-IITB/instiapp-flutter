@@ -512,6 +512,17 @@ class InstiAppBloc {
         false;
   }
 
+  bool hasPermission(String bodyId, String permission) {
+    if (currSession == null) {
+      return false;
+    }
+
+    return currSession?.profile?.userRoles?.any((element) =>
+            ((element.rolePermissions?.contains(permission) ?? false) &&
+                element.roleBody == bodyId)) ??
+        false;
+  }
+
   // Section
   // Bloc state management
   Future<void> restorePrefs() async {
