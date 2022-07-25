@@ -193,7 +193,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                               child: ListTile(
                                 leading: NullableCircleAvatar(
                                   (click == true)
-                                      ? profile?.userProfilePictureUrl ?? " "
+                                      ? profile?.userProfilePictureUrl ?? ""
                                       : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSM9q9XJKxlskry5gXTz1OXUyem5Ap59lcEGg&usqp=CAU",
                                   Icons.person,
                                   radius: 22,

@@ -735,10 +735,14 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
         ];
       }
       //print("a");
+      print(communityPosts);
       return (communityPosts
           .map(
-            (c) =>
-                CommunityPostWidget(communityPost: c, communityId: communityId),
+            (c) => CommunityPostWidget(
+              communityPost: c,
+              communityId: communityId,
+              postType: cpType,
+            ),
           )
           .toList());
     } else {
