@@ -1,5 +1,6 @@
 // import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:InstiApp/src/api/model/venter.dart';
@@ -58,11 +59,9 @@ class ComplaintsBloc {
         .listen(_handleIndexes);
   }
 
-  Future<ImageUploadResponse?> uploadBase64Image(String base64Image) async {
+  Future<ImageUploadResponse?> uploadBase64Image(String filename) async {
     if (bloc.currSession != null) {
-      var tmp = ImageUploadRequest();
-      tmp.base64Image = base64Image;
-      return bloc.client.uploadImage(bloc.getSessionIdHeader(), tmp);
+      return bloc.client.uploadImage(bloc.getSessionIdHeader(), File(filename));
     }
     return null;
   }
