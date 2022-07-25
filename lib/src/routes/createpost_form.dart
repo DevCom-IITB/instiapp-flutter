@@ -315,7 +315,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                         }
                       } // => getImage(source: ImageSource.camera),
                       ),
-                  
+
                   ExpansionTile(
                     leading: Icon(Icons.location_on_outlined),
                     title: Text('Location'),
@@ -368,8 +368,26 @@ class _CreatePostPage extends State<CreatePostPage> {
                   //   leading: Icon(Icons.interests),
                   //   onTap: () {},
                   // ),
-                  SelectTags(updateTags: (_){}, loadableTags: null),
-                  SelectInterests(updateInterests: (_){}, loadableInterests: null),
+                  DropdownMultiSelect<Object>(
+                    load: null,
+                    update: (_) {},
+                    onFind: (String? query) async {
+                      List<Object> list =
+                          await bloc.achievementBloc.searchForBody(query);
+                      list.addAll(
+                          await bloc.achievementBloc.searchForUser(query));
+                      return list;
+                    },
+                    singularObjectName: "Tag",
+                    pluralObjectName: "Tags",
+                  ),
+                  DropdownMultiSelect<Interest>(
+                    update: (_) {},
+                    load: null,
+                    onFind: bloc.achievementBloc.searchForInterest,
+                    singularObjectName: "interest",
+                    pluralObjectName: "interests",
+                  ),
                 ],
               ),
             ),
@@ -379,4 +397,3 @@ class _CreatePostPage extends State<CreatePostPage> {
     );
   }
 }
-
