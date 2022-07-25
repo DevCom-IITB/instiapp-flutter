@@ -5,6 +5,8 @@ part 'event_create_response.g.dart';
 @JsonSerializable()
 class EventCreateResponse {
   String? result;
+
+  @JsonKey(name: "id")
   String? eventId;
 
   EventCreateResponse({

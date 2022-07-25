@@ -68,6 +68,9 @@ class AboutPage extends StatefulWidget {
         "img":
             "https://raw.githubusercontent.com/wncc/devcomiitb.github.io/master/images/avatars/Palash%20Mittal.jpg",
       },
+      "Harsh Jha": {
+        "img": "https://devcom-iitb.org/images/avatars/Harsh%20Jha.png",
+      },
     },
     "Design": {
       "Soham Khadtare": {

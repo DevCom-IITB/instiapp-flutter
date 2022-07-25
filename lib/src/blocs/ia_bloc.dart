@@ -7,6 +7,7 @@ import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
 import 'package:InstiApp/src/api/request/postFAQ_request.dart';
@@ -469,7 +470,6 @@ class InstiAppBloc {
   }
 
   Future<void> postFAQ(PostFAQRequest postFAQRequest) async {
-    log("message");
     try {
       await client.postFAQ(getSessionIdHeader(), postFAQRequest);
     } catch (e) {
@@ -504,6 +504,32 @@ class InstiAppBloc {
     return currSession?.profile?.userRoles?.any((r) => r.roleBodies!.any(
             (b) => event.eventBodies!.any((b1) => b.bodyID == b1.bodyID))) ??
         false;
+  }
+  List<Body> getBodiesWithPermission(String permission){
+    if(currSession?.profile==null){return [];}
+    List<Body> bodies = [];
+    List<Role>? roles= this.currSession?.profile?.userRoles!;
+    if(roles!=null){
+      for(Role role in roles){
+        if(role.rolePermissions!.contains(permission)){
+          for(Body body in role.roleBodies!){
+            bodies.add(body);
+          }
+        }
+      }
+    }
+    return bodies;
+  }
+
+  bool deleteEventAccess(Event event){
+    for(Body body in event.eventBodies!){
+      if(this.getBodiesWithPermission('DelE').map((e) => e.bodyID!).toList().indexOf(body.bodyID!)!=-1){
+        return true;
+      }
+    }
+    return currSession?.profile?.userRoles?.any((r)=>r.roleBodies!.any(
+        (b)=>event.eventBodies!.any((b1)=>b.bodyID == b1.bodyID)))??
+    false;
   }
 
   bool editBodyAccess(Body body) {

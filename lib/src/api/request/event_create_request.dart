@@ -1,3 +1,5 @@
+// import 'package:InstiApp/src/api/model/UserTag.dart';
+import 'package:InstiApp/src/api/model/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'event_create_request.g.dart';
@@ -8,6 +10,8 @@ class EventCreateRequest {
   String? eventName;
   @JsonKey(name: "description")
   String? eventDescription;
+  @JsonKey(name: "website_url")
+  String? eventWebsiteURL;
   @JsonKey(name: "image_url")
   String? eventImageURL;
   @JsonKey(name: "start_time")
@@ -20,16 +24,30 @@ class EventCreateRequest {
   List<String>? eventVenueNames;
   @JsonKey(name: "bodies_id")
   List<String>? eventBodiesID;
+  @JsonKey(name: "notify")
+  bool? notify;
+  @JsonKey(name: "user_tags")
+  List<int>? eventUserTags;
+  @JsonKey(name: "event_interest")
+  List<Interest>? eventInterest;
+  @JsonKey(name: "interests_id")
+  List<String>? eventInterestsID;
 
-  EventCreateRequest(
-      {this.eventName,
-      this.eventDescription,
-      this.eventImageURL,
-      this.eventStartTime,
-      this.eventEndTime,
-      this.allDayEvent,
-      this.eventVenueNames,
-      this.eventBodiesID});
+  EventCreateRequest({
+    this.eventName,
+    this.eventDescription,
+    this.eventImageURL,
+    this.eventWebsiteURL,
+    this.eventStartTime,
+    this.eventEndTime,
+    this.allDayEvent,
+    this.eventVenueNames,
+    this.eventBodiesID,
+    this.notify,
+    this.eventUserTags,
+    this.eventInterest,
+    this.eventInterestsID,
+  });
   factory EventCreateRequest.fromJson(Map<String, dynamic> json) =>
       _$EventCreateRequestFromJson(json);
   Map<String, dynamic> toJson() => _$EventCreateRequestToJson(this);

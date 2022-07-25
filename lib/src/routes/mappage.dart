@@ -1,6 +1,7 @@
 import 'dart:async';
 
 // import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 // import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,6 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-
   late jag.Jaguar server;
 
   final String hostUrl = "insti.app";
@@ -33,6 +33,8 @@ class _MapPageState extends State<MapPage> {
 
   // Storing for dispose
   ThemeData? theme;
+
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   void initState() {
@@ -59,12 +61,24 @@ class _MapPageState extends State<MapPage> {
     // var bloc = BlocProvider.of(context)!.bloc;
 
     // print("This is the URL: $mapUrl");
-    return Scaffold(bottomNavigationBar: MyBottomAppBar(
+    return Scaffold(
+      key: _scaffoldKey,
+      drawer: NavDrawer(),
+      bottomNavigationBar: MyBottomAppBar(
         child: new Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            BackButton(),
+            IconButton(
+              tooltip: "Show bottom sheet",
+              icon: Icon(
+                Icons.menu_outlined,
+                semanticLabel: "Show bottom sheet",
+              ),
+              onPressed: () {
+                _scaffoldKey.currentState!.openDrawer();
+              },
+            ),
             IconButton(
               tooltip: "Refresh",
               icon: Icon(
@@ -72,14 +86,16 @@ class _MapPageState extends State<MapPage> {
                 semanticLabel: "Refresh",
               ),
               onPressed: () {
-                webViewController?.reload();
+                webViewController?.loadUrl(
+                  urlRequest: URLRequest(url: Uri.parse(mapUrl)),
+                );
               },
             ),
           ],
         ),
       ),
       body: InAppWebView(
-        onWebViewCreated: (controller){
+        onWebViewCreated: (controller) {
           webViewController = controller;
         },
         initialUrlRequest: URLRequest(url: Uri.parse(mapUrl)),

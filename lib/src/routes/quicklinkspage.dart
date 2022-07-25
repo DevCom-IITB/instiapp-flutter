@@ -45,8 +45,6 @@ class QuickLinksPage extends StatefulWidget {
     "Miscellaneous": {
       "Intercom Extensions": "https://portal.iitb.ac.in/TelephoneDirectory/",
       "Hospital": "http://www.iitb.ac.in/hospital/",
-      "VPN Guide":
-          "https://www.cc.iitb.ac.in/engservices/engaccessingiitffromoutside/19-vpn",
     },
   };
 

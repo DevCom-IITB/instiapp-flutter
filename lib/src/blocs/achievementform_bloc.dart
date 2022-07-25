@@ -5,7 +5,9 @@ import 'dart:collection';
 // import 'dart:developer';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
+import 'package:InstiApp/src/api/request/event_create_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
+import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
@@ -42,6 +44,12 @@ class Bloc extends Object {
     // }
   }
 
+  // Future<EventCreateResponse?> postEvent(
+  //     EventCreateRequest req)async{
+  //     var comment = await bloc.client.postForm(bloc.getSessionIdHeader(), req);
+  //     comment.result = "success";
+  //     return comment;
+  // }
   Future<SecretResponse?> postAchievementOffer(String id, String secret) async {
     try {
       Offersecret secretclass = Offersecret();

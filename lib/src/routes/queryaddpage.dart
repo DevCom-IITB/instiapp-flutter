@@ -236,26 +236,28 @@ class _QueryAddPageState extends State<QueryAddPage> {
                                 onPressed: () async {
                                   if (_formKey.currentState?.validate() ??
                                       false) {
-                                    try{
+                                    try {
                                       await bloc.postFAQ(currRequest);
-                                      Navigator.of(context).pushNamed("/query");
-                                    // } else {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      content: new Text(
-                                          (currRequest.question ?? "") +
-                                              ":" +
-                                              (currRequest.category ?? "")),
-                                      duration: new Duration(seconds: 10),
-                                    ));
-                                      }
-                                      catch (e){
-                                        ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      content: new Text("Error: " + e.toString()),
-                                      duration: new Duration(seconds: 10),
-                                    ));
-                                      }
+                                      Navigator.of(context)
+                                          .pushNamedAndRemoveUntil<void>(
+                                              "/query", (_) => false);
+                                      // } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content: new Text(
+                                            (currRequest.question ?? "") +
+                                                ":" +
+                                                (currRequest.category ?? "")),
+                                        duration: new Duration(seconds: 10),
+                                      ));
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content:
+                                            new Text("Error: " + e.toString()),
+                                        duration: new Duration(seconds: 10),
+                                      ));
+                                    }
                                   }
 
                                   //log(currRequest.description);
@@ -425,7 +427,6 @@ class _QRViewExampleState extends State<QRViewExample> {
           var achievements = bloc.achievementBloc;
           SecretResponse? offer =
               await achievements.postAchievementOffer(offerid, secret);
-          log(offer?.message ?? "");
           if (offer != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(offer.message ?? "")),
@@ -436,7 +437,6 @@ class _QRViewExampleState extends State<QRViewExample> {
           }
         }
       } else {
-        log('1');
         bool? addToCal = await showDialog(
             context: context,
             builder: (context) => AlertDialog(
@@ -479,7 +479,6 @@ class _QRViewExampleState extends State<QRViewExample> {
         controller.scannedDataStream.listen((scanData) {
           setState(() {
             result = scanData;
-            log(result!.code ?? "");
             if (!processing) {
               getOfferedAchievements(result!.code ?? "");
               processing = true;
@@ -499,7 +498,6 @@ class _QRViewExampleState extends State<QRViewExample> {
   }
 
   void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
-    log('${DateTime.now().toIso8601String()}_onPermissionSet $p');
     if (!p) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('no Permission')),

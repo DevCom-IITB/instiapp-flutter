@@ -21,8 +21,13 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       eventBodies: (json['bodies'] as List<dynamic>?)
           ?.map((e) => Body.fromJson(e as Map<String, dynamic>))
           .toList(),
+      eventOfferedAchievements: (json['offered_achievements'] as List<dynamic>?)
+          ?.map((e) => OfferedAchievements.fromJson(e as Map<String, dynamic>))
+          .toList(),
       eventInterestedCount: json['interested_count'] as int? ?? 0,
       eventGoingCount: json['going_count'] as int? ?? 0,
+      eventUserTags:
+          (json['user_tags'] as List<dynamic>?)?.map((e) => e as int).toList(),
       eventInterested: (json['interested'] as List<dynamic>?)
           ?.map((e) => User.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -31,6 +36,9 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
           .toList(),
       eventWebsiteURL: json['website_url'] as String?,
       eventUserUesInt: json['user_ues'] as int?,
+      eventInterest: (json['event_interest'] as List<dynamic>?)
+          ?.map((e) => Interest.fromJson(e as Map<String, dynamic>))
+          .toList(),
     )..eventStartDate = json['eventStartDate'] == null
         ? null
         : DateTime.parse(json['eventStartDate'] as String);
@@ -46,11 +54,14 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'all_day': instance.allDayEvent,
       'venues': instance.eventVenues,
       'bodies': instance.eventBodies,
+      'offered_achievements': instance.eventOfferedAchievements,
       'interested_count': instance.eventInterestedCount,
       'going_count': instance.eventGoingCount,
       'interested': instance.eventInterested,
       'going': instance.eventGoing,
       'website_url': instance.eventWebsiteURL,
       'user_ues': instance.eventUserUesInt,
+      'user_tags': instance.eventUserTags,
+      'event_interest': instance.eventInterest,
       'eventStartDate': instance.eventStartDate?.toIso8601String(),
     };
