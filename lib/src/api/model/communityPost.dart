@@ -50,6 +50,9 @@ class CommunityPost {
   @JsonKey(name: "parent")
   String? parent;
 
+  @JsonKey(name: "status")
+  int? status;
+
   @JsonKey(ignore: true)
   int? postedMinutes;
 
