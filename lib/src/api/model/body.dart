@@ -49,26 +49,28 @@ class Body {
   @JsonKey(name: "roles")
   List<Role>? bodyRoles;
 
-  Body({
-    this.bodyBlogURL,
-    this.bodyChildren,
-    this.bodyDescription,
-    this.bodyEvents,
-    this.bodyID,
-    this.bodyFollowersCount,
-    this.bodyImageURL,
-    this.bodyName,
-    this.bodyParents,
-    this.bodyRoles,
-    this.bodyShortDescription,
-    this.bodyStrID,
-    this.bodyUserFollows,
-    this.bodyWebsiteURL
-  });
+  @override
+  String toString() {
+    return bodyName ?? "";
+  }
 
-  factory Body.fromJson(Map<String, dynamic> json) =>
-      _$BodyFromJson(json);
-      
+  Body(
+      {this.bodyBlogURL,
+      this.bodyChildren,
+      this.bodyDescription,
+      this.bodyEvents,
+      this.bodyID,
+      this.bodyFollowersCount,
+      this.bodyImageURL,
+      this.bodyName,
+      this.bodyParents,
+      this.bodyRoles,
+      this.bodyShortDescription,
+      this.bodyStrID,
+      this.bodyUserFollows,
+      this.bodyWebsiteURL});
+
+  factory Body.fromJson(Map<String, dynamic> json) => _$BodyFromJson(json);
+
   Map<String, dynamic> toJson() => _$BodyToJson(this);
-
 }

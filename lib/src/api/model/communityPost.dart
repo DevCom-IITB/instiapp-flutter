@@ -1,3 +1,4 @@
+import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -52,6 +53,15 @@ class CommunityPost {
 
   @JsonKey(name: "status")
   int? status;
+
+  @JsonKey(name: "interests")
+  List<Interest>? interests;
+
+  @JsonKey(name: "tag_user")
+  List<User>? users;
+
+  @JsonKey(name: "tag_body")
+  List<Body>? bodies;
 
   @JsonKey(ignore: true)
   int? postedMinutes;

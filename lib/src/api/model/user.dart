@@ -116,6 +116,11 @@ class User {
     return currentRole ?? userLDAPId;
   }
 
+  @override
+  String toString() {
+    return userName ?? "";
+  }
+
   User(
       {this.userID,
       this.userName,

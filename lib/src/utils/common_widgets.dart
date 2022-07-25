@@ -1545,10 +1545,13 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                         ];
                       },
                       child: Row(children: [
-                        Icon(
-                          Icons.add_reaction_outlined,
-                          size: 20,
-                        ),
+                        communityPost.userReaction == -1
+                            ? Icon(
+                                Icons.add_reaction_outlined,
+                                size: 20,
+                              )
+                            : Image.asset(emojis[communityPost.userReaction!],
+                                width: 20),
                         numReactions > 0
                             ? Container(
                                 margin: EdgeInsets.symmetric(horizontal: 5),
@@ -1720,11 +1723,23 @@ class _DropdownMultiSelectState<T> extends State<DropdownMultiSelect<T>> {
   List<T>? objects;
 
   void onObjectChange(T? body) async {
-    if (body != null)
+    if (body != null) {
+      print(objects);
+      if (objects!.any((e) => e.toString() == body.toString())) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text("You already selected this ${widget.singularObjectName}"),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
       setState(() {
         objects?.add(body);
         widget.update(objects);
       });
+    }
   }
 
   Widget _buildChips(BuildContext context) {
@@ -1759,7 +1774,7 @@ class _DropdownMultiSelectState<T> extends State<DropdownMultiSelect<T>> {
     );
   }
 
-  Widget buildDropdownMenuItemsInterest(BuildContext context, T? body) {
+  Widget buildDropdownMenuItems(BuildContext context, T? body) {
     return Container(
       child: Text(
         "Search for an ${widget.singularObjectName}",
@@ -1768,7 +1783,7 @@ class _DropdownMultiSelectState<T> extends State<DropdownMultiSelect<T>> {
     );
   }
 
-  Widget _customPopupItemBuilderInterest(
+  Widget _customPopupItemBuilder(
       BuildContext context, T body, bool isSelected) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8),
@@ -1825,8 +1840,8 @@ class _DropdownMultiSelectState<T> extends State<DropdownMultiSelect<T>> {
             ),
             onChanged: onObjectChange,
             onFind: widget.onFind,
-            dropdownBuilder: buildDropdownMenuItemsInterest,
-            popupItemBuilder: _customPopupItemBuilderInterest,
+            dropdownBuilder: buildDropdownMenuItems,
+            popupItemBuilder: _customPopupItemBuilder,
             scrollbarProps: ScrollbarProps(
               isAlwaysShown: true,
               thickness: 7,
