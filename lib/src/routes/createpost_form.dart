@@ -298,12 +298,9 @@ class _CreatePostPage extends State<CreatePostPage> {
                           await _picker.pickImage(source: ImageSource.gallery);
 
                       if (pi != null) {
-                        String img64 =
-                            base64Encode((await pi.readAsBytes()).cast<int>());
-                        ImageUploadRequest IUReq =
-                            ImageUploadRequest(base64Image: img64);
                         ImageUploadResponse resp = await bloc.client
-                            .uploadImage(bloc.getSessionIdHeader(), IUReq);
+                            .uploadImage(
+                                bloc.getSessionIdHeader(), File(pi.path));
                         // print(resp.pictureURL);
                         setState(() {
                           List<String>? listOfUrls = [];

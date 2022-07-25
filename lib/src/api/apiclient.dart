@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:InstiApp/src/api/model/UserTag.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
@@ -160,8 +161,9 @@ abstract class InstiAppApi {
 
   // Image upload
   @rt.POST("/upload")
-  Future<ImageUploadResponse> uploadImage(@rt.Header("Cookie") String sessionID,
-      @rt.Body() ImageUploadRequest imageUploadRequest);
+  @rt.MultiPart()
+  Future<ImageUploadResponse> uploadImage(
+      @rt.Header("Cookie") String sessionID, @rt.Part() File picture);
 
   // My data
   @rt.GET("/user-me")
