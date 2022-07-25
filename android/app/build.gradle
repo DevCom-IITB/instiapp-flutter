@@ -35,14 +35,17 @@ android {
 
     lintOptions {
         disable 'InvalidPackage'
+        disable "Instantiatable"
+        checkReleaseBuilds false
+        abortOnError false
     }
 
     defaultConfig {
         applicationId "app.insti.flutter"
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 9
-        versionName "2.0.1"
+        versionCode 12
+        versionName "2.0.4"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
