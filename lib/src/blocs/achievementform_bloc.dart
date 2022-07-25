@@ -15,13 +15,12 @@ import 'package:InstiApp/src/api/model/role.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:InstiApp/src/api/model/offersecret.dart';
 
-
-
 class Bloc extends Object {
   InstiAppBloc bloc;
 
   List<Event> _events = [];
   List<Body> _bodies = [];
+  List<User> _users = [];
   var _verifiableBodies = <Body>[];
   var _Interests = <Interest>[];
   var _Skills = <Skill>[];
@@ -34,10 +33,10 @@ class Bloc extends Object {
   Future<AchievementCreateResponse?> postForm(
       AchievementCreateRequest req) async {
     //try {
-      var comment = await bloc.client.postForm(bloc.getSessionIdHeader(), req);
-      comment.result = "success";
-      // print(comment.result);
-      return comment;
+    var comment = await bloc.client.postForm(bloc.getSessionIdHeader(), req);
+    comment.result = "success";
+    // print(comment.result);
+    return comment;
     // } catch (ex) {
     //   return null;
     // }
@@ -56,10 +55,10 @@ class Bloc extends Object {
     }
   }
 
-  Future<SecretResponse?> postInterest(String id,Interest interest) async {
+  Future<SecretResponse?> postInterest(String id, Interest interest) async {
     try {
-      SecretResponse response = await bloc.client
-          .postInterests(bloc.getSessionIdHeader(), interest);
+      SecretResponse response =
+          await bloc.client.postInterests(bloc.getSessionIdHeader(), interest);
       return response;
     } catch (ex) {
       // print(ex);
@@ -69,8 +68,8 @@ class Bloc extends Object {
 
   Future<SecretResponse?> postDelInterest(String title) async {
     try {
-      SecretResponse response = await bloc.client
-          .postDelInterests(bloc.getSessionIdHeader(), title);
+      SecretResponse response =
+          await bloc.client.postDelInterests(bloc.getSessionIdHeader(), title);
       // log(response.message);
       return response;
     } catch (ex) {
@@ -134,14 +133,33 @@ class Bloc extends Object {
     return _bodies;
   }
 
+  Future<List<User>> searchForUser(String? query) async {
+    // print("Search called");
+    if (query == null) return <User>[];
+    if (query.length < 3) {
+      return [];
+    }
+    var searchResponse =
+        await bloc.client.search(bloc.getSessionIdHeader(), query);
+    // print("Search responed");
+
+    if (searchResponse.bodies == null) {
+      return [];
+    }
+
+    _users = searchResponse.users!;
+    // print(_bodies.map((e) => e.bodyName));
+    return _users;
+  }
+
   Future<List<Interest>> searchForInterest(String? query) async {
     // print("Search called");
     // if (query == null) return <Interest>[];
     // if (query.length < 3) {
     //   return [];
     // }
-    ExploreResponse searchResponse =
-    await bloc.client.searchType(bloc.getSessionIdHeader(), query??"","interests");
+    ExploreResponse searchResponse = await bloc.client
+        .searchType(bloc.getSessionIdHeader(), query ?? "", "interests");
     // print("Search responed");
     // print(searchResponse.interest);
     if (searchResponse.interest == null) {
@@ -160,8 +178,8 @@ class Bloc extends Object {
     // if (query.length < 3) {
     //   return [];
     // }
-    ExploreResponse searchResponse =
-    await bloc.client.searchType(bloc.getSessionIdHeader(), query??"","skills");
+    ExploreResponse searchResponse = await bloc.client
+        .searchType(bloc.getSessionIdHeader(), query ?? "", "skills");
     // print("Search responed");
     // print(searchResponse.skills);
     if (searchResponse.skills == null) {

@@ -1246,9 +1246,6 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
       {required this.communityPost, required this.communityId});
   @override
   Widget build(BuildContext context) {
-    print("build called");
-    print(communityPost.reactionCount);
-
     ThemeData theme = Theme.of(context);
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
     CommunityPostBloc communityPostBloc = bloc.communityPostBloc;
@@ -1608,40 +1605,46 @@ class _PopupMenuWidgetState extends State<PopupMenuWidget> {
   Widget build(BuildContext context) => widget.child;
 }
 
-class SelectInterests extends StatefulWidget {
-  final void Function(List<Interest>?) updateInterests;
-  final Future<List<Interest>>? loadableInterests;
+class DropdownMultiSelect<T> extends StatefulWidget {
+  final void Function(List<T>?) update;
+  final Future<List<T>>? load;
+  final Future<List<T>> Function(String?)? onFind;
+  final String singularObjectName;
+  final String pluralObjectName;
 
-  const SelectInterests({
+  const DropdownMultiSelect({
     Key? key,
-    required this.updateInterests,
-    required this.loadableInterests,
+    required this.update,
+    required this.load,
+    required this.onFind,
+    required this.singularObjectName,
+    required this.pluralObjectName,
   }) : super(key: key);
 
   @override
-  State<SelectInterests> createState() => _SelectInterestsState();
+  State<DropdownMultiSelect<T>> createState() => _DropdownMultiSelectState();
 }
 
-class _SelectInterestsState extends State<SelectInterests> {
-  List<Interest>? interests;
+class _DropdownMultiSelectState<T> extends State<DropdownMultiSelect<T>> {
+  List<T>? objects;
 
-  void onBodyChange(Interest? body) async {
+  void onObjectChange(T? body) async {
     if (body != null)
       setState(() {
-        interests?.add(body);
-        widget.updateInterests(interests);
+        objects?.add(body);
+        widget.update(objects);
       });
   }
 
   Widget _buildChips(BuildContext context) {
     List<Widget> w = [];
-    int length = interests?.length ?? 0;
+    int length = objects?.length ?? 0;
     for (int i = 0; i < length; i++) {
       w.add(
         Chip(
           labelPadding: EdgeInsets.all(2.0),
           label: Text(
-            interests?[i].title ?? "",
+            objects?[i].toString() ?? "",
             style: TextStyle(
               color: Colors.white,
             ),
@@ -1651,8 +1654,8 @@ class _SelectInterestsState extends State<SelectInterests> {
           shadowColor: Colors.grey[60],
           padding: EdgeInsets.all(8.0),
           onDeleted: () async {
-            interests?.removeAt(i);
-            widget.updateInterests(interests);
+            objects?.removeAt(i);
+            widget.update(objects);
             setState(() {});
           },
         ),
@@ -1665,17 +1668,17 @@ class _SelectInterestsState extends State<SelectInterests> {
     );
   }
 
-  Widget buildDropdownMenuItemsInterest(BuildContext context, Interest? body) {
+  Widget buildDropdownMenuItemsInterest(BuildContext context, T? body) {
     return Container(
       child: Text(
-        "Search for an interest",
+        "Search for an ${widget.singularObjectName}",
         style: Theme.of(context).textTheme.bodyText1,
       ),
     );
   }
 
   Widget _customPopupItemBuilderInterest(
-      BuildContext context, Interest body, bool isSelected) {
+      BuildContext context, T body, bool isSelected) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8),
       decoration: !isSelected
@@ -1687,28 +1690,27 @@ class _SelectInterestsState extends State<SelectInterests> {
             ),
       child: ListTile(
         selected: isSelected,
-        title: Text(body.title!),
+        title: Text(body.toString()),
       ),
     );
   }
 
   @override
   void initState() {
-    if (widget.loadableInterests != null) {
-      widget.loadableInterests!.then((value) {
+    if (widget.load != null) {
+      widget.load!.then((value) {
         setState(() {
-          interests = value;
+          objects = value;
         });
       });
     } else {
-      interests = [];
+      objects = [];
     }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
     ThemeData theme = Theme.of(context);
 
     return Container(
@@ -1721,17 +1723,17 @@ class _SelectInterestsState extends State<SelectInterests> {
           SizedBox(
             height: 20.0,
           ),
-          DropdownSearch<Interest>(
+          DropdownSearch<T>(
             mode: Mode.DIALOG,
             maxHeight: 700,
             isFilteredOnline: true,
             showSearchBox: true,
             dropdownSearchDecoration: InputDecoration(
-              labelText: "Interests",
-              hintText: "Interests",
+              labelText: widget.pluralObjectName,
+              hintText: widget.pluralObjectName,
             ),
-            onChanged: onBodyChange,
-            onFind: bloc.achievementBloc.searchForInterest,
+            onChanged: onObjectChange,
+            onFind: widget.onFind,
             dropdownBuilder: buildDropdownMenuItemsInterest,
             popupItemBuilder: _customPopupItemBuilderInterest,
             scrollbarProps: ScrollbarProps(
@@ -1743,155 +1745,7 @@ class _SelectInterestsState extends State<SelectInterests> {
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(20),
                 child: Text(
-                  "No interests found. Refine your search!",
-                  style: theme.textTheme.subtitle1,
-                  textAlign: TextAlign.center,
-                ),
-              );
-            },
-          ),
-          _buildChips(context),
-        ],
-      ),
-    );
-  }
-}
-
-class SelectTags extends StatefulWidget {
-  final void Function(List<Body>?) updateTags;
-  final Future<List<Body>>? loadableTags;
-
-  const SelectTags({
-    Key? key,
-    required this.updateTags,
-    required this.loadableTags,
-  }) : super(key: key);
-
-  @override
-  State<SelectTags> createState() => _SelectTagsState();
-}
-
-class _SelectTagsState extends State<SelectTags> {
-  List<Body>? tags;
-  void onBodyChange(Body? body) async {
-    if (body != null)
-      setState(() {
-        tags?.add(body);
-        widget.updateTags(tags);
-      });
-  }
-
-  Widget _buildChips(BuildContext context) {
-    List<Widget> w = [];
-    int length = tags?.length ?? 0;
-    for (int i = 0; i < length; i++) {
-      w.add(
-        Chip(
-          labelPadding: EdgeInsets.all(2.0),
-          label: Text(
-            tags?[i].bodyName ?? "",
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-          backgroundColor: Colors.primaries[i],
-          elevation: 6.0,
-          shadowColor: Colors.grey[60],
-          padding: EdgeInsets.all(8.0),
-          onDeleted: () async {
-            tags?.removeAt(i);
-            widget.updateTags(tags);
-            setState(() {});
-          },
-        ),
-      );
-    }
-    return Wrap(
-      spacing: 8.0, // gap between adjacent chips
-      runSpacing: 4.0,
-      children: w,
-    );
-  }
-
-  Widget buildDropdownMenuItemsTag(BuildContext context, Body? body) {
-    return Container(
-      child: Text(
-        "Search for a tag",
-        style: Theme.of(context).textTheme.bodyText1,
-      ),
-    );
-  }
-
-  Widget _customPopupItemBuilderTag(
-      BuildContext context, Body body, bool isSelected) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 8),
-      decoration: !isSelected
-          ? null
-          : BoxDecoration(
-              border: Border.all(color: Theme.of(context).primaryColor),
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.white,
-            ),
-      child: ListTile(
-        selected: isSelected,
-        title: Text(body.bodyName!),
-      ),
-    );
-  }
-
-  @override
-  void initState() {
-    if (widget.loadableTags != null) {
-      widget.loadableTags!.then((value) {
-        setState(() {
-          tags = value;
-        });
-      });
-    } else {
-      tags = [];
-    }
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
-    ThemeData theme = Theme.of(context);
-
-    return Container(
-      // width: double.infinity,
-      margin: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          SizedBox(
-            height: 20.0,
-          ),
-          DropdownSearch<Body>(
-            mode: Mode.DIALOG,
-            maxHeight: 700,
-            isFilteredOnline: true,
-            showSearchBox: true,
-            dropdownSearchDecoration: InputDecoration(
-              labelText: "Tags",
-              hintText: "Tags",
-            ),
-            onChanged: onBodyChange,
-            onFind: bloc.achievementBloc.searchForBody,
-            dropdownBuilder: buildDropdownMenuItemsTag,
-            popupItemBuilder: _customPopupItemBuilderTag,
-            scrollbarProps: ScrollbarProps(
-              isAlwaysShown: true,
-              thickness: 7,
-            ),
-            emptyBuilder: (BuildContext context, String? _) {
-              return Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(20),
-                child: Text(
-                  "No tag found. Refine your search!",
+                  "No ${widget.pluralObjectName} found. Refine your search!",
                   style: theme.textTheme.subtitle1,
                   textAlign: TextAlign.center,
                 ),
