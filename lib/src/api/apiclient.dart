@@ -17,6 +17,7 @@ import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
 import 'package:InstiApp/src/api/request/image_upload_request.dart';
 import 'package:InstiApp/src/api/request/postFAQ_request.dart';
+import 'package:InstiApp/src/api/request/update_community_post_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
@@ -311,7 +312,7 @@ abstract class InstiAppApi {
   @rt.GET("/communityposts")
   Future<CommunityPostListResponse> getCommunityPosts(
       @rt.Header("Cookie") String sessionId,
-      @rt.Query("status") int status,
+      @rt.Query("status") int? status,
       @rt.Query("query") String query);
 
   @rt.GET("/communityposts/{id}")
@@ -324,7 +325,11 @@ abstract class InstiAppApi {
 
   @rt.POST("/communityposts")
   Future<void> deleteCommunityPost(
-      @rt.Header("Cookie") String sessionId, @rt.Body() String id);
+      @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+
+  @rt.PUT("/communityposts/moderator/{id}")
+  Future<void> updateCommunityPostStatus(@rt.Header("Cookie") String sessionId,
+      @rt.Path() String id, @rt.Body() UpdateCommunityPostRequest data);
 
   @rt.GET("/user-me/ucpr/{postID}")
   Future<void> updateUserCommunityPostReaction(

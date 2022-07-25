@@ -1,4 +1,5 @@
 import 'package:InstiApp/src/api/model/communityPost.dart';
+import 'package:InstiApp/src/api/request/update_community_post_request.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -42,30 +43,36 @@ class CommunityPostBloc {
     // _communityPosts = defCommunities;
     // _communitySubject.add(defCommunities);
     // print("refresh");
-    if (type == CPType.YourPosts) {
-      _communityPosts = [];
-    } else {
-      int status = 0;
-      switch (type) {
-        case CPType.All:
-          status = 1;
-          break;
-        case CPType.PendingPosts:
-          status = 0;
-          break;
-        case CPType.ReportedContent:
-          status = 0;
-          break;
-        default:
-          status = 1;
-          break;
-      }
-      _communityPosts = (await bloc.client
-                  .getCommunityPosts(bloc.getSessionIdHeader(), status, query))
-              .data ??
-          [];
+    int? status;
+    switch (type) {
+      case CPType.All:
+        status = 1;
+        break;
+      case CPType.PendingPosts:
+        status = 0;
+        break;
+      case CPType.ReportedContent:
+        status = 0;
+        break;
+      default:
+        status = null;
+        break;
     }
+    _communityPosts = (await bloc.client
+                .getCommunityPosts(bloc.getSessionIdHeader(), status, query))
+            .data ??
+        [];
+
     // print("community" + _communityPosts.toString());
+    _communitySubject.add(_communityPosts);
+  }
+
+  Future<void> updateCommunityPostStatus(String id, int status) async {
+    _communitySubject.add([]);
+    await bloc.client.updateCommunityPostStatus(bloc.getSessionIdHeader(), id,
+        UpdateCommunityPostRequest(status: status));
+
+    _communityPosts.removeWhere((element) => element.id == id);
     _communitySubject.add(_communityPosts);
   }
 

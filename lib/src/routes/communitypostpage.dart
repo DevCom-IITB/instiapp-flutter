@@ -502,7 +502,7 @@ class _CommentState extends State<Comment> {
                   },
                   child: Row(children: [
                     Icon(
-                      Icons.thumb_up_alt_outlined,
+                      Icons.add_reaction_outlined,
                       size: 20,
                     ),
                     numReactions > 0

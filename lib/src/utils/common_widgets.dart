@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share/share.dart';
@@ -1226,12 +1227,14 @@ class CommunityPostWidget extends StatefulWidget {
   final String? communityId;
   final void Function()? onPressedComment;
   final bool shouldTap;
+  final CPType postType;
 
   CommunityPostWidget({
     required this.communityPost,
     required this.communityId,
     this.onPressedComment,
     this.shouldTap = true,
+    this.postType = CPType.All,
   });
   @override
   State<CommunityPostWidget> createState() => _CommunityPostWidgetState(
@@ -1276,85 +1279,119 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                 style: theme.textTheme.bodyMedium,
               ),
               subtitle: Text(
-                "30 March",
+                DateFormat("dd MMM, yyyy")
+                    .format(DateTime.parse(communityPost.timeOfCreation!)),
                 style: theme.textTheme.bodySmall,
               ),
-              trailing: PopupMenuButton<int>(
-                itemBuilder: (context) => [
-                  // popupmenu item 1
-                  PopupMenuItem(
-                    value: 1,
-                    // row has two child icon and text.
-                    child: Row(
-                      children: [
-                        Icon(Icons.edit),
-                        SizedBox(
-                          // sized box with width 10
-                          width: 10,
+              trailing: Container(
+                width: MediaQuery.of(context).size.width / 2,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    communityPost.status != 1
+                        ? Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
+                                color: communityPost.status == 0
+                                    ? Color(0xFFFFCD29)
+                                    : Color(0xFFF24822),
+                              ),
+                              borderRadius: BorderRadius.circular(100),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            child: Text(
+                              communityPost.status == 0
+                                  ? "Pending"
+                                  : "Rejected",
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: communityPost.status == 0
+                                    ? Color(0xFFFFCD29)
+                                    : Color(0xFFF24822),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    PopupMenuButton<int>(
+                      itemBuilder: (context) => [
+                        // popupmenu item 1
+                        PopupMenuItem(
+                          value: 1,
+                          // row has two child icon and text.
+                          child: Row(
+                            children: [
+                              Icon(Icons.edit),
+                              SizedBox(
+                                // sized box with width 10
+                                width: 10,
+                              ),
+                              Text("Edit")
+                            ],
+                          ),
                         ),
-                        Text("Edit")
-                      ],
-                    ),
-                  ),
-                  // popupmenu item 2
-                  PopupMenuItem(
-                    value: 2,
-                    // row has two child icon and text
-                    child: Row(
-                      children: [
-                        Icon(Icons.delete),
-                        SizedBox(
-                          // sized box with width 10
-                          width: 10,
+                        // popupmenu item 2
+                        PopupMenuItem(
+                          value: 2,
+                          // row has two child icon and text
+                          child: Row(
+                            children: [
+                              Icon(Icons.delete),
+                              SizedBox(
+                                // sized box with width 10
+                                width: 10,
+                              ),
+                              Text("Delete")
+                            ],
+                          ),
+                          onTap: () => {
+                            communityPostBloc
+                                .deleteCommunityPost(communityPost.id ?? "")
+                          },
                         ),
-                        Text("Delete")
-                      ],
-                    ),
-                    onTap: () => {
-                      communityPostBloc
-                          .deleteCommunityPost(communityPost.id ?? "")
-                    },
-                  ),
-                  PopupMenuItem(
-                    value: 3,
-                    // row has two child icon and text
-                    child: Row(
-                      children: [
-                        Icon(Icons.push_pin_outlined),
-                        SizedBox(
-                          // sized box with width 10
-                          width: 10,
+                        PopupMenuItem(
+                          value: 3,
+                          // row has two child icon and text
+                          child: Row(
+                            children: [
+                              Icon(Icons.push_pin_outlined),
+                              SizedBox(
+                                // sized box with width 10
+                                width: 10,
+                              ),
+                              Text("Pin")
+                            ],
+                          ),
+                          onTap: () => {},
                         ),
-                        Text("Pin")
-                      ],
-                    ),
-                    onTap: () => {},
-                  ),
 
-                  PopupMenuItem(
-                    value: 4,
-                    // row has two child icon and text
-                    child: Row(
-                      children: [
-                        Icon(Icons.share),
-                        SizedBox(
-                          // sized box with width 10
-                          width: 10,
+                        PopupMenuItem(
+                          value: 4,
+                          // row has two child icon and text
+                          child: Row(
+                            children: [
+                              Icon(Icons.share),
+                              SizedBox(
+                                // sized box with width 10
+                                width: 10,
+                              ),
+                              Text("Share")
+                            ],
+                          ),
+                          onTap: () async {
+                            await Share.share(
+                                "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}");
+                          },
                         ),
-                        Text("Share")
                       ],
+                      // offset: Offset(0, 100),
+                      elevation: 2,
+                      tooltip: "More",
+                      icon: Icon(
+                        Icons.more_vert,
+                      ),
                     ),
-                    onTap: () async {
-                      await Share.share(
-                          "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}");
-                    },
-                  ),
-                ],
-                // offset: Offset(0, 100),
-                elevation: 2,
-                tooltip: "More",
-                icon: Icon(
-                  Icons.more_vert,
+                  ],
                 ),
               ),
               contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
@@ -1369,7 +1406,7 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
           ),
           GestureDetector(
             onTap: contentExpanded
-                ? widget.shouldTap
+                ? widget.shouldTap && (communityPost.status == 1)
                     ? () => CommunityPostPage.navigateWith(
                         context, bloc.communityPostBloc, communityPost)
                     : null
@@ -1416,159 +1453,213 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
 
   Widget _buildFooter(
       ThemeData theme, InstiAppBloc bloc, CommunityPost communityPost) {
-    int numReactions = communityPost.reactionCount?.values
-            .reduce((sum, element) => sum + element) ??
-        0;
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: theme.colorScheme.surface,
-      ),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-        decoration: BoxDecoration(
-          // border:
-          //     Border(top: BorderSide(color: theme.colorScheme.surfaceVariant)),
-          color: theme.colorScheme.surface,
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(0, 3),
-              blurRadius: 30,
-              spreadRadius: -18,
-              color: theme.colorScheme.onSurface,
-            ),
-          ],
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                PopupMenuButton<int>(
-                  onSelected: (val) async {
-                    await bloc.communityPostBloc
-                        .updateUserCommunityPostReaction(communityPost, val);
-
-                    setState(() {
-                      if ((communityPost.userReaction ?? -1) != -1) {
-                        communityPost.reactionCount![communityPost.userReaction!
-                            .toString()] = (communityPost.reactionCount![
-                                    communityPost.userReaction!.toString()] ??
-                                1) -
-                            1;
-                      }
-                      communityPost.reactionCount![val.toString()] =
-                          (communityPost.reactionCount![val.toString()] ?? 0) +
-                                      (communityPost.userReaction ?? -1) ==
-                                  val
-                              ? 0
-                              : 1;
-                      communityPost.userReaction =
-                          communityPost.userReaction == val ? -1 : val;
-                    });
-                  },
-                  itemBuilder: (BuildContext context) {
-                    return [
-                      new PopupMenuWidget(
-                        height: 20,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 5),
-                          child: new Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: emojis
-                                .asMap()
-                                .entries
-                                .map(
-                                  (e) => Container(
-                                    color: e.key == communityPost.userReaction
-                                        ? Colors.blue
-                                        : Colors.transparent,
-                                    child: InkWell(
-                                      onTap: () =>
-                                          Navigator.of(context).pop(e.key),
-                                      child: Image.asset(e.value, width: 30),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                        ),
-                      ),
-                    ];
-                  },
-                  child: Row(children: [
-                    Icon(
-                      Icons.thumb_up_alt_outlined,
-                      size: 20,
-                    ),
-                    numReactions > 0
-                        ? Container(
-                            margin: EdgeInsets.symmetric(horizontal: 5),
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              color: theme.colorScheme.surfaceVariant,
-                            ),
-                            child: Row(
-                              children: emojis
-                                  .asMap()
-                                  .entries
-                                  .map(
-                                    (e) => (communityPost.reactionCount?[
-                                                    e.key.toString()] ??
-                                                0) >
-                                            0
-                                        ? Image.asset(e.value, width: 20)
-                                        : Container(),
-                                  )
-                                  .toList(),
-                            ),
-                          )
-                        : Container(),
-                    numReactions > 0
-                        ? Text(
-                            numReactions.toString(),
-                            style: theme.textTheme.bodySmall,
-                          )
-                        : Container(),
-                  ]),
+    switch (widget.postType) {
+      case CPType.All:
+      case CPType.YourPosts:
+        int numReactions = communityPost.reactionCount?.values
+                .reduce((sum, element) => sum + element) ??
+            0;
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: theme.colorScheme.surface,
+          ),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            decoration: BoxDecoration(
+              // border:
+              //     Border(top: BorderSide(color: theme.colorScheme.surfaceVariant)),
+              color: theme.colorScheme.surface,
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset(0, 3),
+                  blurRadius: 30,
+                  spreadRadius: -18,
+                  color: theme.colorScheme.onSurface,
                 ),
-                Container(
-                  margin: EdgeInsets.only(left: 15),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        constraints: BoxConstraints(),
-                        icon: Icon(
-                          Icons.mode_comment_outlined,
-                          color: theme.colorScheme.onSurfaceVariant,
+              ],
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    PopupMenuButton<int>(
+                      onSelected: (val) async {
+                        await bloc.communityPostBloc
+                            .updateUserCommunityPostReaction(
+                                communityPost, val);
+
+                        setState(() {
+                          if ((communityPost.userReaction ?? -1) != -1) {
+                            communityPost.reactionCount![
+                                    communityPost.userReaction!.toString()] =
+                                (communityPost.reactionCount![communityPost
+                                            .userReaction!
+                                            .toString()] ??
+                                        1) -
+                                    1;
+                          }
+                          communityPost.reactionCount![val.toString()] =
+                              (communityPost.reactionCount![val.toString()] ??
+                                              0) +
+                                          (communityPost.userReaction ?? -1) ==
+                                      val
+                                  ? 0
+                                  : 1;
+                          communityPost.userReaction =
+                              communityPost.userReaction == val ? -1 : val;
+                        });
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return [
+                          new PopupMenuWidget(
+                            height: 20,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              child: new Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: emojis
+                                    .asMap()
+                                    .entries
+                                    .map(
+                                      (e) => Container(
+                                        color:
+                                            e.key == communityPost.userReaction
+                                                ? Colors.blue
+                                                : Colors.transparent,
+                                        child: InkWell(
+                                          onTap: () =>
+                                              Navigator.of(context).pop(e.key),
+                                          child:
+                                              Image.asset(e.value, width: 30),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                            ),
+                          ),
+                        ];
+                      },
+                      child: Row(children: [
+                        Icon(
+                          Icons.add_reaction_outlined,
                           size: 20,
                         ),
-                        onPressed: widget.onPressedComment ??
-                            (widget.shouldTap
-                                ? () => CommunityPostPage.navigateWith(context,
-                                    bloc.communityPostBloc, communityPost)
-                                : null),
+                        numReactions > 0
+                            ? Container(
+                                margin: EdgeInsets.symmetric(horizontal: 5),
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  color: theme.colorScheme.surfaceVariant,
+                                ),
+                                child: Row(
+                                  children: emojis
+                                      .asMap()
+                                      .entries
+                                      .map(
+                                        (e) => (communityPost.reactionCount?[
+                                                        e.key.toString()] ??
+                                                    0) >
+                                                0
+                                            ? Image.asset(e.value, width: 20)
+                                            : Container(),
+                                      )
+                                      .toList(),
+                                ),
+                              )
+                            : Container(),
+                        numReactions > 0
+                            ? Text(
+                                numReactions.toString(),
+                                style: theme.textTheme.bodySmall,
+                              )
+                            : Container(),
+                      ]),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 15),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: BoxConstraints(),
+                            icon: Icon(
+                              Icons.mode_comment_outlined,
+                              color: theme.colorScheme.onSurfaceVariant,
+                              size: 20,
+                            ),
+                            onPressed: widget.onPressedComment ??
+                                (widget.shouldTap && (communityPost.status == 1)
+                                    ? () => CommunityPostPage.navigateWith(
+                                        context,
+                                        bloc.communityPostBloc,
+                                        communityPost)
+                                    : null),
+                          ),
+                          SizedBox(width: 3),
+                          Text((communityPost.commentsCount ?? 0).toString(),
+                              style: theme.textTheme.bodySmall),
+                        ],
                       ),
-                      SizedBox(width: 3),
-                      Text((communityPost.commentsCount ?? 0).toString(),
-                          style: theme.textTheme.bodySmall),
-                    ],
-                  ),
+                    )
+                  ],
+                ),
+                Icon(
+                  Icons.share_outlined,
+                  color: theme.colorScheme.onSurfaceVariant,
+                  size: 20,
                 )
               ],
             ),
-            Icon(
-              Icons.share_outlined,
-              color: theme.colorScheme.onSurfaceVariant,
-              size: 20,
-            )
-          ],
-        ),
-      ),
-    );
+          ),
+        );
+      case CPType.PendingPosts:
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                flex: 1,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: theme.colorScheme.surfaceVariant,
+                    primary: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  child: Text("Disapprove"),
+                  onPressed: () {
+                    bloc.communityPostBloc
+                        .updateCommunityPostStatus(communityPost.id!, 2);
+                  },
+                ),
+              ),
+              SizedBox(width: 5),
+              Expanded(
+                flex: 1,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primaryContainer,
+                    primary: theme.colorScheme.primary,
+                  ),
+                  child: Text("Approve"),
+                  onPressed: () {
+                    bloc.communityPostBloc
+                        .updateCommunityPostStatus(communityPost.id!, 1);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+
+      default:
+        return Container();
+    }
   }
 }
 

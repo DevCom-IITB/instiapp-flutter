@@ -56,6 +56,11 @@ class CommunityPost {
   @JsonKey(ignore: true)
   int? postedMinutes;
 
+  @override
+  String toString() {
+    return 'CommunityPost{id:$id, content:$content}';
+  }
+
   CommunityPost(
       {this.id,
       this.communityPostStrId,
