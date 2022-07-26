@@ -469,19 +469,25 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<ImageUploadResponse> uploadImage(sessionID, imageUploadRequest) async {
+  Future<ImageUploadResponse> uploadImage(sessionID, picture) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionID};
     _headers.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
-    _data.addAll(imageUploadRequest.toJson());
+    final _data = FormData();
+    _data.files.add(MapEntry(
+        'picture',
+        MultipartFile.fromFileSync(picture.path,
+            filename: picture.path.split(Platform.pathSeparator).last)));
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<ImageUploadResponse>(
-            Options(method: 'POST', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/upload',
-                    queryParameters: queryParameters, data: _data)
-                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+        _setStreamType<ImageUploadResponse>(Options(
+                method: 'POST',
+                headers: _headers,
+                extra: _extra,
+                contentType: 'multipart/form-data')
+            .compose(_dio.options, '/upload',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = ImageUploadResponse.fromJson(_result.data!);
     return value;
   }
