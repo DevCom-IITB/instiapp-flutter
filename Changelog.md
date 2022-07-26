@@ -4,6 +4,11 @@
 
 - Nothing here yet (https://github.com/tastelessjolt/instiapp-flutter/projects/1)
 
+## v2.0.5
+
+- Fix image upload glitch in event form
+- Add file size check in event form image upload
+
 ## v2.0.4
 
 - Add interest in event form
