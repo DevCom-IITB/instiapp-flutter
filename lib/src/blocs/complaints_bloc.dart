@@ -62,7 +62,7 @@ class ComplaintsBloc {
     if (bloc.currSession != null) {
       var tmp = ImageUploadRequest();
       tmp.base64Image = base64Image;
-      return bloc.client.uploadImage(bloc.getSessionIdHeader(), tmp);
+      // return bloc.client.uploadImage(bloc.getSessionIdHeader(), tmp);
     }
     return null;
   }
