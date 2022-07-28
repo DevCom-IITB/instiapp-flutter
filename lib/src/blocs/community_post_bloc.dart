@@ -1,4 +1,5 @@
 import 'package:InstiApp/src/api/model/communityPost.dart';
+import 'package:InstiApp/src/api/request/action_community_post_request.dart';
 import 'package:InstiApp/src/api/request/update_community_post_request.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:rxdart/rxdart.dart';
@@ -70,11 +71,23 @@ class CommunityPostBloc {
 
   Future<void> updateCommunityPostStatus(String id, int status) async {
     _communitySubject.add([]);
-    await bloc.client.updateCommunityPostStatus(bloc.getSessionIdHeader(), id,
-        UpdateCommunityPostRequest(status: status));
+    try {
+      await bloc.client.updateCommunityPostStatus(bloc.getSessionIdHeader(), id,
+          UpdateCommunityPostRequest(status: status));
 
-    _communityPosts.removeWhere((element) => element.id == id);
-    _communitySubject.add(_communityPosts);
+      _communityPosts.removeWhere((element) => element.id == id);
+      _communitySubject.add(_communityPosts);
+    } catch (e) {
+      _communitySubject.add(_communityPosts);
+    }
+  }
+
+  Future<void> featureCommunityPost(
+    String id,
+    bool isFeatured,
+  ) async {
+    await bloc.client.updateCommunityPostAction(bloc.getSessionIdHeader(), id,
+        "feature", ActionCommunityPostRequest(isFeatured: isFeatured));
   }
 
   Future<void> createCommunityPost(CommunityPost post) async {

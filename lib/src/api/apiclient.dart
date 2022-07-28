@@ -15,6 +15,7 @@ import 'package:InstiApp/src/api/model/venue.dart';
 import 'package:InstiApp/src/api/request/ach_verify_request.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
+import 'package:InstiApp/src/api/request/action_community_post_request.dart';
 import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
@@ -344,6 +345,13 @@ abstract class InstiAppApi {
   @rt.POST("/communityposts")
   Future<void> deleteCommunityPost(
       @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+
+  @rt.PUT("/communityposts/moderator/{action}/{id}")
+  Future<void> updateCommunityPostAction(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Path() String id,
+      @rt.Path() String action,
+      @rt.Body() ActionCommunityPostRequest data);
 
   @rt.PUT("/communityposts/moderator/{id}")
   Future<void> updateCommunityPostStatus(@rt.Header("Cookie") String sessionId,

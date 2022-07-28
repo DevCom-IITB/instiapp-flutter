@@ -117,7 +117,6 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                           // _buildPost(theme, communityPost),
                           CommunityPostWidget(
                             communityPost: communityPost!,
-                            communityId: communityPost!.community,
                             shouldTap: false,
                             onPressedComment: () {
                               changeCommentingPost(communityPost!);

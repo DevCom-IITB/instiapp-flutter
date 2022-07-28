@@ -2,6 +2,7 @@ import 'dart:async';
 
 // import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
@@ -1224,35 +1225,25 @@ class _ImageGalleryState extends State<ImageGallery>
 class CommunityPostWidget extends StatefulWidget {
   // const CommunityPostWidget({Key? key}) : super(key: key);
   final CommunityPost communityPost;
-  final String? communityId;
   final void Function()? onPressedComment;
   final bool shouldTap;
   final CPType postType;
 
   CommunityPostWidget({
     required this.communityPost,
-    required this.communityId,
     this.onPressedComment,
     this.shouldTap = true,
     this.postType = CPType.All,
   });
   @override
-  State<CommunityPostWidget> createState() => _CommunityPostWidgetState(
-      communityPost: communityPost, communityId: communityId);
+  State<CommunityPostWidget> createState() =>
+      _CommunityPostWidgetState(communityPost: communityPost);
 }
 
 class _CommunityPostWidgetState extends State<CommunityPostWidget> {
-  final CommunityPost communityPost;
-  final String? communityId;
+  CommunityPost communityPost;
   bool contentExpanded = false;
-  _CommunityPostWidgetState(
-      {required this.communityPost, required this.communityId});
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
+  _CommunityPostWidgetState({required this.communityPost});
 
   @override
   Widget build(BuildContext context) {
@@ -1324,76 +1315,113 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                           )
                         : Container(),
                     PopupMenuButton<int>(
-                      itemBuilder: (context) => [
-                        // popupmenu item 1
-                        PopupMenuItem(
-                          value: 1,
-                          // row has two child icon and text.
-                          child: Row(
-                            children: [
-                              Icon(Icons.edit),
-                              SizedBox(
-                                // sized box with width 10
-                                width: 10,
-                              ),
-                              Text("Edit")
-                            ],
-                          ),
-                        ),
-                        // popupmenu item 2
-                        PopupMenuItem(
-                          value: 2,
-                          // row has two child icon and text
-                          child: Row(
-                            children: [
-                              Icon(Icons.delete),
-                              SizedBox(
-                                // sized box with width 10
-                                width: 10,
-                              ),
-                              Text("Delete")
-                            ],
-                          ),
-                          onTap: () => {
-                            communityPostBloc
-                                .deleteCommunityPost(communityPost.id ?? "")
-                          },
-                        ),
-                        PopupMenuItem(
-                          value: 3,
-                          // row has two child icon and text
-                          child: Row(
-                            children: [
-                              Icon(Icons.push_pin_outlined),
-                              SizedBox(
-                                // sized box with width 10
-                                width: 10,
-                              ),
-                              Text("Pin")
-                            ],
-                          ),
-                          onTap: () => {},
-                        ),
+                      itemBuilder: (context) {
+                        List<PopupMenuItem<int>> items = [];
 
-                        PopupMenuItem(
-                          value: 4,
-                          // row has two child icon and text
-                          child: Row(
-                            children: [
-                              Icon(Icons.share),
-                              SizedBox(
-                                // sized box with width 10
-                                width: 10,
+                        bool isAuthor = communityPost.postedBy?.userID ==
+                            bloc.currSession!.profile!.userID;
+
+                        bool isAdmin = bloc.hasPermission(
+                            communityPost.community?.body ?? "", "AppP");
+
+                        if (isAuthor) {
+                          items.add(
+                            PopupMenuItem(
+                              value: 1,
+                              // row has two child icon and text.
+                              child: Row(
+                                children: [
+                                  Icon(Icons.edit),
+                                  SizedBox(
+                                    // sized box with width 10
+                                    width: 10,
+                                  ),
+                                  Text("Edit")
+                                ],
                               ),
-                              Text("Share")
-                            ],
+                            ),
+                          );
+                        }
+
+                        if (isAuthor || isAdmin) {
+                          items.add(
+                            PopupMenuItem(
+                              value: 2,
+                              // row has two child icon and text
+                              child: Row(
+                                children: [
+                                  Icon(Icons.delete),
+                                  SizedBox(
+                                    // sized box with width 10
+                                    width: 10,
+                                  ),
+                                  Text("Delete")
+                                ],
+                              ),
+                              onTap: () => {
+                                communityPostBloc
+                                    .deleteCommunityPost(communityPost.id ?? "")
+                              },
+                            ),
+                          );
+                        }
+                        if (isAdmin) {
+                          items.add(
+                            PopupMenuItem(
+                              value: 3,
+                              // row has two child icon and text
+                              child: Row(
+                                children: [
+                                  Icon((communityPost.featured ?? false)
+                                      ? Icons.published_with_changes_sharp
+                                      : Icons.push_pin_outlined),
+                                  SizedBox(
+                                    // sized box with width 10
+                                    width: 10,
+                                  ),
+                                  Text((communityPost.featured ?? false)
+                                      ? "Unpin from featured"
+                                      : "Pin to featured")
+                                ],
+                              ),
+                              onTap: () async {
+                                bool isFeatured =
+                                    !(communityPost.featured ?? false);
+
+                                await bloc.communityPostBloc
+                                    .featureCommunityPost(
+                                        communityPost.id!, isFeatured);
+
+                                setState(() {
+                                  communityPost.featured = isFeatured;
+                                });
+                              },
+                            ),
+                          );
+                        }
+
+                        items.add(
+                          PopupMenuItem(
+                            value: 4,
+                            // row has two child icon and text
+                            child: Row(
+                              children: [
+                                Icon(Icons.share),
+                                SizedBox(
+                                  // sized box with width 10
+                                  width: 10,
+                                ),
+                                Text("Share")
+                              ],
+                            ),
+                            onTap: () async {
+                              await Share.share(
+                                  "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}");
+                            },
                           ),
-                          onTap: () async {
-                            await Share.share(
-                                "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}");
-                          },
-                        ),
-                      ],
+                        );
+                        return items;
+                      },
                       // offset: Offset(0, 100),
                       elevation: 2,
                       tooltip: "More",
