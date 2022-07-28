@@ -46,6 +46,9 @@ class Community {
   @JsonKey(name: "posts")
   List<CommunityPost>? posts;
 
+  @JsonKey(name: "featured_posts")
+  List<CommunityPost>? featuredPosts;
+
   @JsonKey(name: "body")
   String? body;
 

@@ -1247,13 +1247,23 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
   bool contentExpanded = false;
   _CommunityPostWidgetState(
       {required this.communityPost, required this.communityId});
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
     CommunityPostBloc communityPostBloc = bloc.communityPostBloc;
     String content = communityPost.content ?? "";
+    int contentChars = widget.postType == CPType.Featured ? 30 : 310;
+
     return Container(
+      width: CPType.Featured == widget.postType ? 300 : null,
       margin: widget.shouldTap
           ? EdgeInsets.all(10)
           : EdgeInsets.symmetric(horizontal: 10),
@@ -1284,7 +1294,7 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                 style: theme.textTheme.bodySmall,
               ),
               trailing: Container(
-                width: MediaQuery.of(context).size.width / 2,
+                width: MediaQuery.of(context).size.width / 3,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -1405,7 +1415,9 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
             ),
           ),
           GestureDetector(
-            onTap: contentExpanded
+            onTap: contentExpanded ||
+                    content.length <= contentChars ||
+                    widget.postType == CPType.Featured
                 ? widget.shouldTap && (communityPost.status == 1)
                     ? () => CommunityPostPage.navigateWith(
                         context, bloc.communityPostBloc, communityPost)
@@ -1417,11 +1429,11 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Text.rich(
                 new TextSpan(
-                  text: content.length > 310 && !contentExpanded
-                      ? content.substring(0, 300) +
+                  text: content.length > contentChars && !contentExpanded
+                      ? content.substring(0, contentChars - 10) +
                           (contentExpanded ? "" : "...")
                       : content,
-                  children: !contentExpanded && content.length > 310
+                  children: !contentExpanded && content.length > contentChars
                       ? [
                           new TextSpan(
                             text: 'Read More.',
@@ -1441,15 +1453,26 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
               // ),
             ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            // TODO: remove the localhost check
-            child: ImageGallery(
-                images: communityPost.imageUrl
-                        ?.map((e) => e.replaceAll("localhost", "192.168.0.132"))
-                        .toList() ??
-                    []),
-          ),
+          communityPost.imageUrl != null
+              ? GestureDetector(
+                  onTap: widget.postType == CPType.Featured
+                      ? () => CommunityPostPage.navigateWith(
+                          context, bloc.communityPostBloc, communityPost)
+                      : null,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    // TODO: remove the localhost check
+                    child: ImageGallery(
+                      images: (widget.postType == CPType.Featured
+                              ? [communityPost.imageUrl![0]]
+                              : communityPost.imageUrl)!
+                          .map(
+                              (e) => e.replaceAll("localhost", "192.168.0.132"))
+                          .toList(),
+                    ),
+                  ),
+                )
+              : Container(),
           _buildFooter(theme, bloc, communityPost),
         ],
       ),

@@ -8,6 +8,7 @@ enum CPType {
   YourPosts,
   PendingPosts,
   ReportedContent,
+  Featured,
 }
 
 class CommunityPostBloc {
