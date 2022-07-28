@@ -46,7 +46,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-  late TextEditingController _searchFieldController ;
+  late TextEditingController _searchFieldController;
 
   List<Widget> actionButtons = [];
 
@@ -59,8 +59,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
   void initState() {
     super.initState();
     _searchFieldController = widget.searchController;
-    _searchFieldController.addListener(() { 
-      print(_searchFieldController.text);
+    _searchFieldController.addListener(() {
+      // print(_searchFieldController.text);
     });
   }
 

@@ -276,11 +276,9 @@ class _LoginPageState extends State<LoginPage> {
     });
     var response;
     try {
-      print(authCode);
-      print(redirectUrl);
       response = await InstiAppApi(dio).login(authCode, redirectUrl);
     } catch (e) {
-      print(e);
+      // print(e);
     }
     if (response?.sessionid != null) {
       _bloc?.updateSession(response);

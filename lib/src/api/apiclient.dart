@@ -42,6 +42,7 @@ import 'model/offersecret.dart';
 import 'dart:convert';
 part 'apiclient.g.dart';
 
+// @rt.RestApi(baseUrl: "http://10.96.38.127:8000/api")
 @rt.RestApi(baseUrl: "http://192.168.0.132:8000/api")
 // @rt.RestApi(baseUrl: "https://api.insti.app/api")
 abstract class InstiAppApi {

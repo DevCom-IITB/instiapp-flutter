@@ -99,7 +99,6 @@ class PostBloc {
     }
     var tableParse = markdown.TableSyntax();
     posts.forEach((p) {
-      print(p.published);
       p.content = markdown.markdownToHtml(
           p.content.split('\n').map((s) => s.trimRight()).toList().join('\n'),
           blockSyntaxes: [tableParse]);
