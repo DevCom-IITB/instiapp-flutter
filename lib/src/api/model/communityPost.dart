@@ -1,4 +1,5 @@
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -43,7 +44,7 @@ class CommunityPost {
   List<CommunityPost>? comments;
 
   @JsonKey(name: "community")
-  String? community;
+  Community? community;
 
   @JsonKey(name: "thread_rank")
   int? threadRank;
@@ -62,6 +63,9 @@ class CommunityPost {
 
   @JsonKey(name: "tag_body")
   List<Body>? bodies;
+
+  @JsonKey(name: "featured")
+  bool? featured;
 
   @JsonKey(ignore: true)
   int? postedMinutes;

@@ -229,8 +229,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
           ),
           backgroundColor: Color.fromARGB(255, 33, 89, 243),
           onPressed: () {
-            Navigator.of(context)
-                .pushNamed("/posts/add", arguments: community?.id);
+            Navigator.of(context).pushNamed("/posts/add", arguments: community);
           }),
     );
   }
@@ -431,7 +430,6 @@ class CommunityAboutSectionState extends State<CommunityAboutSection> {
                   .map(
                     (e) => CommunityPostWidget(
                       communityPost: e,
-                      communityId: e.id,
                       postType: CPType.Featured,
                     ),
                   )
@@ -651,7 +649,6 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
           .map(
             (c) => CommunityPostWidget(
               communityPost: c,
-              communityId: communityId,
               postType: cpType,
             ),
           )

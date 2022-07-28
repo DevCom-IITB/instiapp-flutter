@@ -6,6 +6,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
@@ -58,7 +59,7 @@ class _CreatePostPage extends State<CreatePostPage> {
     var theme = Theme.of(context);
     var profile = bloc.currSession?.profile;
     if (firstBuild) {
-      final args = ModalRoute.of(context)!.settings.arguments as String?;
+      final args = ModalRoute.of(context)!.settings.arguments as Community?;
       if (args != null) {
         currRequest1.community = args;
       }
