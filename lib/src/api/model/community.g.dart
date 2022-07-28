@@ -25,7 +25,9 @@ Community _$CommunityFromJson(Map<String, dynamic> json) => Community(
           .toList(),
       strId: json['str_id'] as String?,
       body: json['body'] as String?,
-    );
+    )..featuredPosts = (json['featured_posts'] as List<dynamic>?)
+        ?.map((e) => CommunityPost.fromJson(e as Map<String, dynamic>))
+        .toList();
 
 Map<String, dynamic> _$CommunityToJson(Community instance) => <String, dynamic>{
       'id': instance.id,
@@ -41,5 +43,6 @@ Map<String, dynamic> _$CommunityToJson(Community instance) => <String, dynamic>{
       'is_user_following': instance.isUserFollowing,
       'roles': instance.roles,
       'posts': instance.posts,
+      'featured_posts': instance.featuredPosts,
       'body': instance.body,
     };
