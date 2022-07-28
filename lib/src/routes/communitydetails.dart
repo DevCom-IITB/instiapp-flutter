@@ -735,7 +735,6 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
         ];
       }
       //print("a");
-      print(communityPosts);
       return (communityPosts
           .map(
             (c) => CommunityPostWidget(

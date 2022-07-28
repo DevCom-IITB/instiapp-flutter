@@ -1729,7 +1729,6 @@ class _DropdownMultiSelectState<T> extends State<DropdownMultiSelect<T>> {
 
   void onObjectChange(T? body) async {
     if (body != null) {
-      print(objects);
       if (objects!.any((e) => e.toString() == body.toString())) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
