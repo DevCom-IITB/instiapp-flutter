@@ -40,11 +40,10 @@ import 'package:InstiApp/src/api/response/user_tags_reach_response.dart';
 import 'package:retrofit/retrofit.dart' as rt;
 import 'package:dio/dio.dart';
 import 'model/offersecret.dart';
-import 'dart:convert';
 part 'apiclient.g.dart';
 
-// @rt.RestApi(baseUrl: "http://10.96.38.127:8000/api")
-@rt.RestApi(baseUrl: "http://192.168.0.132:8000/api")
+@rt.RestApi(baseUrl: "http://10.59.0.86:8000/api")
+// @rt.RestApi(baseUrl: "http://192.168.0.132:8000/api")
 // @rt.RestApi(baseUrl: "https://api.insti.app/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
@@ -342,11 +341,14 @@ abstract class InstiAppApi {
   Future<void> createCommunityPost(
       @rt.Header("Cookie") String sessionId, @rt.Body() CommunityPost post);
 
-  @rt.POST("/communityposts")
-  Future<void> deleteCommunityPost(
-      @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+  @rt.PUT("/communityposts/{id}")
+  Future<void> updateCommunityPost(
+    @rt.Header("Cookie") String sessionId,
+    @rt.Path() String id,
+    @rt.Body() CommunityPost post,
+  );
 
-  @rt.PUT("/communityposts/moderator/{action}/{id}")
+  @rt.PUT("/communityposts/{action}/{id}")
   Future<void> updateCommunityPostAction(
       @rt.Header("Cookie") String sessionId,
       @rt.Path() String id,

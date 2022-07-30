@@ -9,6 +9,7 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
+import 'package:InstiApp/src/routes/createpost_form.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:dropdown_search/dropdown_search.dart';
@@ -1245,13 +1246,26 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
   bool contentExpanded = false;
   _CommunityPostWidgetState({required this.communityPost});
 
+  bool showSelf() {
+    if (widget.postType == CPType.YourPosts) return true;
+    return !(communityPost.deleted == true);
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (!showSelf()) {
+      return Container();
+    }
+
     ThemeData theme = Theme.of(context);
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
     CommunityPostBloc communityPostBloc = bloc.communityPostBloc;
     String content = communityPost.content ?? "";
     int contentChars = widget.postType == CPType.Featured ? 30 : 310;
+
+    if (content.startsWith("hi but this")) {
+      print(communityPost.deleted);
+    }
 
     return Container(
       width: CPType.Featured == widget.postType ? 300 : null,
@@ -1285,31 +1299,39 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                 style: theme.textTheme.bodySmall,
               ),
               trailing: Container(
-                width: MediaQuery.of(context).size.width / 3,
+                width: widget.postType == CPType.Featured
+                    ? 100
+                    : MediaQuery.of(context).size.width / 3,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    communityPost.status != 1
+                    communityPost.status != 1 || communityPost.deleted == true
                         ? Container(
                             decoration: BoxDecoration(
                               border: Border.all(
                                 width: 1,
-                                color: communityPost.status == 0
-                                    ? Color(0xFFFFCD29)
-                                    : Color(0xFFF24822),
+                                color: communityPost.deleted == true
+                                    ? Color(0xFFF24822)
+                                    : communityPost.status == 0
+                                        ? Color(0xFFFFCD29)
+                                        : Color(0xFFF24822),
                               ),
                               borderRadius: BorderRadius.circular(100),
                             ),
                             padding: EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 5),
                             child: Text(
-                              communityPost.status == 0
-                                  ? "Pending"
-                                  : "Rejected",
+                              communityPost.deleted == true
+                                  ? "Deleted"
+                                  : communityPost.status == 0
+                                      ? "Pending"
+                                      : "Rejected",
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: communityPost.status == 0
-                                    ? Color(0xFFFFCD29)
-                                    : Color(0xFFF24822),
+                                color: communityPost.deleted == true
+                                    ? Color(0xFFF24822)
+                                    : communityPost.status == 0
+                                        ? Color(0xFFFFCD29)
+                                        : Color(0xFFF24822),
                               ),
                             ),
                           )
@@ -1339,11 +1361,25 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                                   Text("Edit")
                                 ],
                               ),
+                              onTap: () => Future(() async {
+                                CommunityPost? post =
+                                    (await Navigator.of(context).pushNamed(
+                                  "/posts/add",
+                                  arguments:
+                                      NavigateArguments(post: communityPost),
+                                )) as CommunityPost?;
+                                if (post != null) {
+                                  setState(() {
+                                    communityPost = post;
+                                  });
+                                }
+                              }),
                             ),
                           );
                         }
 
-                        if (isAuthor || isAdmin) {
+                        if ((isAuthor || isAdmin) &&
+                            !(communityPost.deleted == true)) {
                           items.add(
                             PopupMenuItem(
                               value: 2,
@@ -1358,9 +1394,12 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                                   Text("Delete")
                                 ],
                               ),
-                              onTap: () => {
-                                communityPostBloc
-                                    .deleteCommunityPost(communityPost.id ?? "")
+                              onTap: () async {
+                                await communityPostBloc.deleteCommunityPost(
+                                    communityPost.id ?? "");
+                                setState(() {
+                                  communityPost.deleted = true;
+                                });
                               },
                             ),
                           );
@@ -1494,8 +1533,7 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                       images: (widget.postType == CPType.Featured
                               ? [communityPost.imageUrl![0]]
                               : communityPost.imageUrl)!
-                          .map(
-                              (e) => e.replaceAll("localhost", "192.168.0.132"))
+                          .map((e) => e.replaceAll("localhost", "10.59.0.86"))
                           .toList(),
                     ),
                   ),

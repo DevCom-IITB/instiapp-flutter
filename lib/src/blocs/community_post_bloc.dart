@@ -90,11 +90,17 @@ class CommunityPostBloc {
         "feature", ActionCommunityPostRequest(isFeatured: isFeatured));
   }
 
+  Future<void> updateCommunityPost(CommunityPost post) async {
+    await bloc.client
+        .updateCommunityPost(bloc.getSessionIdHeader(), post.id!, post);
+  }
+
   Future<void> createCommunityPost(CommunityPost post) async {
     await bloc.client.createCommunityPost(bloc.getSessionIdHeader(), post);
   }
 
   Future<void> deleteCommunityPost(String id) async {
-    await bloc.client.deleteCommunityPost(bloc.getSessionIdHeader(), id);
+    await bloc.client.updateCommunityPostAction(
+        bloc.getSessionIdHeader(), id, "delete", ActionCommunityPostRequest());
   }
 }

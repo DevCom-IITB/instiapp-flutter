@@ -36,18 +36,19 @@ CommunityPost _$CommunityPostFromJson(Map<String, dynamic> json) =>
           : Community.fromJson(json['community'] as Map<String, dynamic>),
       threadRank: json['thread_rank'] as int?,
       parent: json['parent'] as String?,
-    )
-      ..status = json['status'] as int?
-      ..interests = (json['interests'] as List<dynamic>?)
+      status: json['status'] as int?,
+      interests: (json['interests'] as List<dynamic>?)
           ?.map((e) => Interest.fromJson(e as Map<String, dynamic>))
-          .toList()
-      ..users = (json['tag_user'] as List<dynamic>?)
+          .toList(),
+      users: (json['tag_user'] as List<dynamic>?)
           ?.map((e) => User.fromJson(e as Map<String, dynamic>))
-          .toList()
-      ..bodies = (json['tag_body'] as List<dynamic>?)
+          .toList(),
+      bodies: (json['tag_body'] as List<dynamic>?)
           ?.map((e) => Body.fromJson(e as Map<String, dynamic>))
-          .toList()
-      ..featured = json['featured'] as bool?;
+          .toList(),
+      featured: json['featured'] as bool?,
+      deleted: json['deleted'] as bool?,
+    );
 
 Map<String, dynamic> _$CommunityPostToJson(CommunityPost instance) =>
     <String, dynamic>{
@@ -71,4 +72,5 @@ Map<String, dynamic> _$CommunityPostToJson(CommunityPost instance) =>
       'tag_user': instance.users,
       'tag_body': instance.bodies,
       'featured': instance.featured,
+      'deleted': instance.deleted,
     };
