@@ -7,6 +7,7 @@ import 'package:InstiApp/src/blocs/community_bloc.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/routes/communitypage.dart';
+import 'package:InstiApp/src/routes/createpost_form.dart';
 import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
@@ -115,7 +116,6 @@ class _CommunityDetailsState extends State<CommunityDetails> {
               this.community = community;
             });
           });
-          await bloc.communityPostBloc.refresh();
         },
         child: StreamBuilder<Object>(builder: (context, snapshot) {
           return SingleChildScrollView(
@@ -229,7 +229,8 @@ class _CommunityDetailsState extends State<CommunityDetails> {
           ),
           backgroundColor: Color.fromARGB(255, 33, 89, 243),
           onPressed: () {
-            Navigator.of(context).pushNamed("/posts/add", arguments: community);
+            Navigator.of(context).pushNamed("/posts/add",
+                arguments: NavigateArguments(community: community!));
           }),
     );
   }
@@ -462,6 +463,12 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
   _CommunityPostSectionState({required this.community});
 
   bool loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    firstBuild = true;
+  }
 
   @override
   Widget build(BuildContext context) {

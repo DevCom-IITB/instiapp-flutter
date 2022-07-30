@@ -1,28 +1,23 @@
-// import 'dart:html';
-
-import 'dart:convert';
-import 'dart:developer' as d;
 import 'dart:io';
-import 'dart:math';
 
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
-import 'package:InstiApp/src/blocs/ia_bloc.dart';
-import 'package:InstiApp/src/routes/userpage.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 
 import 'package:InstiApp/src/utils/common_widgets.dart';
-import 'package:path_provider/path_provider.dart';
-import '../api/request/image_upload_request.dart';
 import '../bloc_provider.dart';
 import '../drawer.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:textfield_tags/textfield_tags.dart';
-import 'package:flutter/src/widgets/framework.dart';
+
+class NavigateArguments {
+  final Community? community;
+  final CommunityPost? post;
+
+  NavigateArguments({this.community, this.post});
+}
 
 class CreatePostPage extends StatefulWidget {
   // initiate widgetstate Form
@@ -35,7 +30,6 @@ class _CreatePostPage extends State<CreatePostPage> {
   bool selectedB = false;
   bool selectedS = false;
   bool click = true;
-  // File? imageFile;
 
   List<File> imageFiles = [];
 
@@ -51,6 +45,7 @@ class _CreatePostPage extends State<CreatePostPage> {
   }
 
   bool firstBuild = true;
+  bool isEditing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +54,17 @@ class _CreatePostPage extends State<CreatePostPage> {
     var theme = Theme.of(context);
     var profile = bloc.currSession?.profile;
     if (firstBuild) {
-      final args = ModalRoute.of(context)!.settings.arguments as Community?;
+      currRequest1.featured = false;
+      final args =
+          ModalRoute.of(context)!.settings.arguments as NavigateArguments?;
       if (args != null) {
-        currRequest1.community = args;
+        if (args.post != null) {
+          isEditing = true;
+          currRequest1 = args.post!;
+        } else {
+          currRequest1.community = args.community;
+        }
       }
-
       firstBuild = false;
     }
     return DefaultTabController(
@@ -151,7 +152,8 @@ class _CreatePostPage extends State<CreatePostPage> {
                                   child: TextButton(
                                     onPressed: () async {
                                       // CommunityPost post = )
-                                      currRequest1.imageUrl = [];
+                                      if (currRequest1.imageUrl == null)
+                                        currRequest1.imageUrl = [];
                                       for (int i = 0;
                                           i < imageFiles.length;
                                           i++) {
@@ -162,13 +164,19 @@ class _CreatePostPage extends State<CreatePostPage> {
                                         currRequest1.imageUrl!
                                             .add(resp.pictureURL!);
                                       }
-                                      bloc.communityPostBloc
-                                          .createCommunityPost(currRequest1);
+                                      currRequest1.deleted = false;
+                                      if (isEditing) {
+                                        bloc.communityPostBloc
+                                            .updateCommunityPost(currRequest1);
+                                      } else {
+                                        bloc.communityPostBloc
+                                            .createCommunityPost(currRequest1);
+                                      }
 
-                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop(currRequest1);
                                     },
                                     child: Text(
-                                      'POST',
+                                      isEditing ? 'EDIT' : 'POST',
                                       style: TextStyle(
                                         fontSize: 14.0,
                                         fontWeight: FontWeight.bold,
@@ -265,6 +273,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                               child: SingleChildScrollView(
                                 child: Container(
                                   child: TextFormField(
+                                    initialValue: currRequest1.content,
                                     keyboardType: TextInputType.multiline,
                                     maxLines: null,
                                     decoration: InputDecoration(
@@ -290,14 +299,22 @@ class _CreatePostPage extends State<CreatePostPage> {
                             SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
-                                  children: imageFiles
-                                      .asMap()
-                                      .entries
-                                      .map((e) => _buildImage(
-                                            e.value,
-                                            e.key,
-                                          ))
-                                      .toList(),
+                                  children: [
+                                    ...(currRequest1.imageUrl ?? [])
+                                        .asMap()
+                                        .entries
+                                        .map((e) => _buildImageUrl(
+                                              e.value,
+                                              e.key,
+                                            )),
+                                    ...imageFiles
+                                        .asMap()
+                                        .entries
+                                        .map((e) => _buildImageFile(
+                                              e.value,
+                                              e.key,
+                                            )),
+                                  ],
                                 ))
                           ]),
                     ),
@@ -333,7 +350,10 @@ class _CreatePostPage extends State<CreatePostPage> {
                     },
                   ),
                   DropdownMultiSelect<dynamic>(
-                    load: null,
+                    load: Future.value([
+                      ...(currRequest1.bodies ?? []),
+                      ...(currRequest1.users ?? [])
+                    ]),
                     update: (tags) {
                       currRequest1.bodies = tags
                           ?.where((element) => element.runtimeType == Body)
@@ -359,7 +379,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                     update: (interests) {
                       currRequest1.interests = interests;
                     },
-                    load: null,
+                    load: Future.value(currRequest1.interests ?? []),
                     onFind: bloc.achievementBloc.searchForInterest,
                     singularObjectName: "interest",
                     pluralObjectName: "interests",
@@ -373,7 +393,35 @@ class _CreatePostPage extends State<CreatePostPage> {
     );
   }
 
-  Widget _buildImage(File file, int index) {
+  Widget _buildImageUrl(String url, int index) {
+    return Stack(
+      children: [
+        Image.network(
+          //TODO: remove IP conversion
+          url.replaceAll("localhost", "10.59.0.86"),
+          height: MediaQuery.of(context).size.height / 7.5,
+          width: MediaQuery.of(context).size.height / 7.5,
+          fit: BoxFit.scaleDown,
+        ),
+        Positioned(
+          right: 0,
+          top: 0,
+          child: Container(
+            child: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                setState(() {
+                  currRequest1.imageUrl!.removeAt(index);
+                });
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImageFile(File file, int index) {
     return Stack(
       children: [
         Image.file(

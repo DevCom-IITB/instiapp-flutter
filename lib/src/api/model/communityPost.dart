@@ -67,6 +67,9 @@ class CommunityPost {
   @JsonKey(name: "featured")
   bool? featured;
 
+  @JsonKey(name: "deleted")
+  bool? deleted;
+
   @JsonKey(ignore: true)
   int? postedMinutes;
 
@@ -75,22 +78,29 @@ class CommunityPost {
     return 'CommunityPost{id:$id, content:$content}';
   }
 
-  CommunityPost(
-      {this.id,
-      this.communityPostStrId,
-      this.comments,
-      this.content,
-      this.commentsCount,
-      this.imageUrl,
-      this.postedBy,
-      this.reactionCount,
-      this.timeOfCreation,
-      this.timeOfModification,
-      this.userReaction,
-      this.mostLikedComment,
-      this.community,
-      this.threadRank,
-      this.parent}) {
+  CommunityPost({
+    this.id,
+    this.communityPostStrId,
+    this.comments,
+    this.content,
+    this.commentsCount,
+    this.imageUrl,
+    this.postedBy,
+    this.reactionCount,
+    this.timeOfCreation,
+    this.timeOfModification,
+    this.userReaction,
+    this.mostLikedComment,
+    this.community,
+    this.threadRank,
+    this.parent,
+    this.status,
+    this.interests,
+    this.users,
+    this.bodies,
+    this.featured,
+    this.deleted,
+  }) {
     if (timeOfCreation != null) {
       postedMinutes =
           DateTime.now().difference(DateTime.parse(timeOfCreation!)).inMinutes;
