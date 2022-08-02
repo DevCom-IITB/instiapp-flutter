@@ -495,10 +495,11 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future initAppLinksState() async {
     _appLinksSub = uriLinkStream.listen((Uri? uri) {
       if (!mounted) return;
+      print(uri);
       handleAppLink(uri);
     }, onError: (err) {
       if (!mounted) return;
-      // print('Failed to get latest link: $err.');
+      print('Failed to get latest link: $err.');
     });
     try {
       Uri? initialUri = await getInitialUri();
