@@ -1533,7 +1533,8 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                       images: (widget.postType == CPType.Featured
                               ? [communityPost.imageUrl![0]]
                               : communityPost.imageUrl)!
-                          .map((e) => e.replaceAll("localhost", "10.59.0.86"))
+                          .map((e) =>
+                              e.replaceAll("localhost", "192.168.246.98"))
                           .toList(),
                     ),
                   ),

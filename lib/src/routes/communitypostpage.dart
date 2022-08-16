@@ -195,6 +195,12 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                                         content: _commentController.text,
                                         parent: currentlyCommentingPost!.id,
                                         community: communityPost!.community,
+                                        deleted: false,
+                                        featured: false,
+                                        bodies: [],
+                                        users: [],
+                                        interests: [],
+                                        imageUrl: [],
                                       );
                                       await bloc.communityPostBloc
                                           .createCommunityPost(comment);
