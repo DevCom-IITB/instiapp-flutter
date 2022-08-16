@@ -64,6 +64,7 @@ class _CommunityPageState extends State<CommunityPage> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
     var communityBloc = bloc.communityBloc;
+    bool isLoggedIn = bloc.currSession != null;
     if (firstBuild) {
       communityBloc.query = "";
       communityBloc.refresh();
@@ -88,7 +89,7 @@ class _CommunityPageState extends State<CommunityPage> {
             communityBloc.refresh();
           },
         ),
-        searchIcon: true,
+        searchIcon: isLoggedIn,
         title: "Community",
       ),
       drawer: NavDrawer(),
@@ -112,36 +113,56 @@ class _CommunityPageState extends State<CommunityPage> {
         ),
       ),
       body: SafeArea(
-        child: GestureDetector(
-          onTap: () {
-            _focusNode.unfocus();
-          },
-          child: RefreshIndicator(
-            onRefresh: () {
-              return communityBloc.refresh();
-            },
-            child: ListView(
-                controller: _hideButtonController,
-                physics: const BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics(),
-                ),
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: StreamBuilder<List<Community>>(
-                      stream: communityBloc.communities,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<List<Community>> snapshot) {
-                        return Column(
-                          children:
-                              _buildContent(snapshot, theme, communityBloc),
-                        );
-                      },
+        child: !isLoggedIn
+            ? Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(50),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.cloud,
+                      size: 200,
+                      color: Colors.grey[600],
                     ),
-                  ),
-                ]),
-          ),
-        ),
+                    Text(
+                      "Login To View Communities",
+                      style: theme.textTheme.headline5,
+                      textAlign: TextAlign.center,
+                    )
+                  ],
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                ),
+              )
+            : GestureDetector(
+                onTap: () {
+                  _focusNode.unfocus();
+                },
+                child: RefreshIndicator(
+                  onRefresh: () {
+                    return communityBloc.refresh();
+                  },
+                  child: ListView(
+                      controller: _hideButtonController,
+                      physics: const BouncingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics(),
+                      ),
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: StreamBuilder<List<Community>>(
+                            stream: communityBloc.communities,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<List<Community>> snapshot) {
+                              return Column(
+                                children: _buildContent(
+                                    snapshot, theme, communityBloc),
+                              );
+                            },
+                          ),
+                        ),
+                      ]),
+                ),
+              ),
       ),
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
