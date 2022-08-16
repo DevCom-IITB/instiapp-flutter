@@ -153,14 +153,14 @@ class InstiAppBloc {
   AppBrightness _brightness = AppBrightness.light;
   // Color _primaryColor = Color.fromARGB(255, 63, 81, 181);
   // Color _accentColor = Color.fromARGB(255, 139, 195, 74);
-  ColorSwatch _primaryColor = appColors[0];
-  ColorSwatch _accentColor = appColors[3];
+  ColorSwatch _primaryColor = appColors[1];
+  ColorSwatch _accentColor = appColors[6];
 
   List<List<ColorSwatch>> defaultThemes = [
     // default theme 1
     [
-      appColors[0],
-      appColors[3],
+      appColors[1],
+      appColors[6],
     ]
   ];
 
@@ -505,14 +505,17 @@ class InstiAppBloc {
             (b) => event.eventBodies!.any((b1) => b.bodyID == b1.bodyID))) ??
         false;
   }
-  List<Body> getBodiesWithPermission(String permission){
-    if(currSession?.profile==null){return [];}
+
+  List<Body> getBodiesWithPermission(String permission) {
+    if (currSession?.profile == null) {
+      return [];
+    }
     List<Body> bodies = [];
-    List<Role>? roles= this.currSession?.profile?.userRoles!;
-    if(roles!=null){
-      for(Role role in roles){
-        if(role.rolePermissions!.contains(permission)){
-          for(Body body in role.roleBodies!){
+    List<Role>? roles = this.currSession?.profile?.userRoles!;
+    if (roles != null) {
+      for (Role role in roles) {
+        if (role.rolePermissions!.contains(permission)) {
+          for (Body body in role.roleBodies!) {
             bodies.add(body);
           }
         }
@@ -521,15 +524,20 @@ class InstiAppBloc {
     return bodies;
   }
 
-  bool deleteEventAccess(Event event){
-    for(Body body in event.eventBodies!){
-      if(this.getBodiesWithPermission('DelE').map((e) => e.bodyID!).toList().indexOf(body.bodyID!)!=-1){
+  bool deleteEventAccess(Event event) {
+    for (Body body in event.eventBodies!) {
+      if (this
+              .getBodiesWithPermission('DelE')
+              .map((e) => e.bodyID!)
+              .toList()
+              .indexOf(body.bodyID!) !=
+          -1) {
         return true;
       }
     }
-    return currSession?.profile?.userRoles?.any((r)=>r.roleBodies!.any(
-        (b)=>event.eventBodies!.any((b1)=>b.bodyID == b1.bodyID)))??
-    false;
+    return currSession?.profile?.userRoles?.any((r) => r.roleBodies!.any(
+            (b) => event.eventBodies!.any((b1) => b.bodyID == b1.bodyID))) ??
+        false;
   }
 
   bool editBodyAccess(Body body) {
