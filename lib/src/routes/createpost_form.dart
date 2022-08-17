@@ -239,6 +239,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                   onPressed: () {
                                     setState(() {
                                       click = !click;
+                                      currRequest1.anonymous = !click;
                                     });
                                   },
                                   icon: Icon((click == true)
