@@ -550,10 +550,7 @@ class InstiAppBloc {
     if (currSession == null) {
       return false;
     }
-    print(currSession?.profile?.userRoles?[3].rolePermissions);
-    print(currSession?.profile?.userRoles?[3].roleBody);
-    print(bodyId);
-    print(permission);
+
     return currSession?.profile?.userRoles?.any((element) =>
             ((element.rolePermissions?.contains(permission) ?? false) &&
                 element.roleBody == bodyId)) ??
