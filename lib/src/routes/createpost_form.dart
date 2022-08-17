@@ -398,8 +398,7 @@ class _CreatePostPage extends State<CreatePostPage> {
     return Stack(
       children: [
         Image.network(
-          //TODO: remove IP conversion
-          url.replaceAll("localhost", "192.168.246.98"),
+          url,
           height: MediaQuery.of(context).size.height / 7.5,
           width: MediaQuery.of(context).size.height / 7.5,
           fit: BoxFit.scaleDown,

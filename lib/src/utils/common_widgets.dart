@@ -1263,10 +1263,6 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
     String content = communityPost.content ?? "";
     int contentChars = widget.postType == CPType.Featured ? 30 : 310;
 
-    if (content.startsWith("hi but this")) {
-      print(communityPost.deleted);
-    }
-
     return Container(
       width: CPType.Featured == widget.postType ? 300 : null,
       margin: widget.shouldTap
@@ -1528,14 +1524,10 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                       : null,
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
-                    // TODO: remove the localhost check
                     child: ImageGallery(
                       images: (widget.postType == CPType.Featured
-                              ? [communityPost.imageUrl![0]]
-                              : communityPost.imageUrl)!
-                          .map((e) =>
-                              e.replaceAll("localhost", "192.168.246.98"))
-                          .toList(),
+                          ? [communityPost.imageUrl![0]]
+                          : communityPost.imageUrl)!,
                     ),
                   ),
                 )
