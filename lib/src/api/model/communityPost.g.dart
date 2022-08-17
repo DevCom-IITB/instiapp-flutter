@@ -48,6 +48,7 @@ CommunityPost _$CommunityPostFromJson(Map<String, dynamic> json) =>
           .toList(),
       featured: json['featured'] as bool?,
       deleted: json['deleted'] as bool?,
+      anonymous: json['anonymous'] as bool?,
     );
 
 Map<String, dynamic> _$CommunityPostToJson(CommunityPost instance) =>
@@ -73,4 +74,5 @@ Map<String, dynamic> _$CommunityPostToJson(CommunityPost instance) =>
       'tag_body': instance.bodies,
       'featured': instance.featured,
       'deleted': instance.deleted,
+      'anonymous': instance.anonymous,
     };

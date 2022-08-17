@@ -201,6 +201,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                                         users: [],
                                         interests: [],
                                         imageUrl: [],
+                                        anonymous: false,
                                       );
                                       await bloc.communityPostBloc
                                           .createCommunityPost(comment);

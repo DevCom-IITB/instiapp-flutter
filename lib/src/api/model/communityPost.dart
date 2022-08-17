@@ -70,6 +70,9 @@ class CommunityPost {
   @JsonKey(name: "deleted")
   bool? deleted;
 
+  @JsonKey(name: "anonymous")
+  bool? anonymous;
+
   @JsonKey(ignore: true)
   int? postedMinutes;
 
@@ -100,6 +103,7 @@ class CommunityPost {
     this.bodies,
     this.featured,
     this.deleted,
+    this.anonymous,
   }) {
     if (timeOfCreation != null) {
       postedMinutes =
