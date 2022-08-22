@@ -230,7 +230,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                 ),
                                 subtitle: ElevatedButton.icon(
                                   label: Text(
-                                    (click == true) ? 'Public' : 'Anonymous',
+                                    (click == true) ? 'Public' : 'anonymous',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 0.3,

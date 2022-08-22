@@ -39,7 +39,7 @@ dependencies:
   flutter_typeahead: ^3.2.4
   image_picker: ^0.8.4+4
   firebase_messaging: ^11.2.3
-  flutter_local_notifications: ^9.1.5
+  flutter_local_notifications: 9.1.5
   path_provider: ^2.0.8
   cached_network_image: ^3.2.0
   flutter_image_compress: ^1.1.0
