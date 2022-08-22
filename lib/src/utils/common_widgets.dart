@@ -1244,6 +1244,7 @@ class CommunityPostWidget extends StatefulWidget {
 class _CommunityPostWidgetState extends State<CommunityPostWidget> {
   CommunityPost communityPost;
   bool contentExpanded = false;
+  bool isAnon = false;
   _CommunityPostWidgetState({required this.communityPost});
 
   bool showSelf() {
@@ -1262,6 +1263,15 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
     CommunityPostBloc communityPostBloc = bloc.communityPostBloc;
     String content = communityPost.content ?? "";
     int contentChars = widget.postType == CPType.Featured ? 30 : 310;
+    if (widget.postType == CPType.All) {
+      if (communityPost.anonymous == true) {
+        isAnon = true;
+      } else {
+        isAnon = false;
+      }
+    } else {
+      isAnon = false;
+    }
 
     return Container(
       width: CPType.Featured == widget.postType ? 300 : null,
@@ -1281,12 +1291,16 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                         width: 1, color: theme.colorScheme.surfaceVariant))),
             child: ListTile(
               leading: NullableCircleAvatar(
-                communityPost.postedBy?.userProfilePictureUrl ?? "",
+                isAnon
+                    ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSM9q9XJKxlskry5gXTz1OXUyem5Ap59lcEGg&usqp=CAU"
+                    : communityPost.postedBy?.userProfilePictureUrl ?? "",
                 Icons.person,
                 radius: 18,
               ),
               title: Text(
-                communityPost.postedBy?.userName ?? "Anonymous user",
+                isAnon
+                    ? "Anonymous User"
+                    : communityPost.postedBy?.userName ?? "Anonymous user",
                 style: theme.textTheme.bodyMedium,
               ),
               subtitle: Text(
