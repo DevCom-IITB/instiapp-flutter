@@ -348,7 +348,7 @@ class _CommentState extends State<Comment> {
                           bloc.currSession!.profile!.userID;
 
                       bool isAdmin = bloc.hasPermission(
-                          comment!.community?.body ?? "", "AppP");
+                          comment!.community?.body ?? "", "ModC");
 
                       if (isAuthor) {
                         items.add(
@@ -407,7 +407,7 @@ class _CommentState extends State<Comment> {
                           ),
                         );
                       }
-                      
+
                       return items;
                     },
                     // offset: Offset(0, 100),
