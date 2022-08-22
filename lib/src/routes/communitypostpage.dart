@@ -3,10 +3,13 @@ import 'dart:async';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/routes/createpost_form.dart';
+import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:share/share.dart';
 
 import '../bloc_provider.dart';
 
@@ -282,6 +285,9 @@ class _CommentState extends State<Comment> {
   }
 
   Widget build(BuildContext context) {
+    if (comment!.deleted == true) {
+      return Container();
+    }
     ThemeData theme = Theme.of(context);
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
 
@@ -333,6 +339,83 @@ class _CommentState extends State<Comment> {
                     comment!.postedBy?.userProfilePictureUrl ?? "",
                     Icons.person,
                     radius: 16,
+                  ),
+                  trailing: PopupMenuButton<int>(
+                    itemBuilder: (context) {
+                      List<PopupMenuItem<int>> items = [];
+
+                      bool isAuthor = comment!.postedBy?.userID ==
+                          bloc.currSession!.profile!.userID;
+
+                      bool isAdmin = bloc.hasPermission(
+                          comment!.community?.body ?? "", "AppP");
+
+                      if (isAuthor) {
+                        items.add(
+                          PopupMenuItem(
+                            value: 1,
+                            // row has two child icon and text.
+                            child: Row(
+                              children: [
+                                Icon(Icons.edit),
+                                SizedBox(
+                                  // sized box with width 10
+                                  width: 10,
+                                ),
+                                Text("Edit")
+                              ],
+                            ),
+                            onTap: () => Future(() async {
+                              CommunityPost? post =
+                                  (await Navigator.of(context).pushNamed(
+                                "/posts/add",
+                                arguments: NavigateArguments(post: comment!),
+                              )) as CommunityPost?;
+                              if (post != null) {
+                                setState(() {
+                                  comment = post;
+                                });
+                              }
+                            }),
+                          ),
+                        );
+                      }
+
+                      if ((isAuthor || isAdmin) &&
+                          !(comment!.deleted == true)) {
+                        items.add(
+                          PopupMenuItem(
+                            value: 2,
+                            // row has two child icon and text
+                            child: Row(
+                              children: [
+                                Icon(Icons.delete),
+                                SizedBox(
+                                  // sized box with width 10
+                                  width: 10,
+                                ),
+                                Text("Delete")
+                              ],
+                            ),
+                            onTap: () async {
+                              await bloc.communityPostBloc
+                                  .deleteCommunityPost(comment!.id ?? "");
+                              setState(() {
+                                comment!.deleted = true;
+                              });
+                            },
+                          ),
+                        );
+                      }
+                      
+                      return items;
+                    },
+                    // offset: Offset(0, 100),
+                    elevation: 2,
+                    tooltip: "More",
+                    icon: Icon(
+                      Icons.more_vert,
+                    ),
                   ),
                   dense: true,
                   horizontalTitleGap: 5,
