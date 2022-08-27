@@ -552,28 +552,28 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                               cpType == CPType.PendingPosts, theme),
                         )
                       : Container(),
-                  // bloc.hasPermission(community!.body!, "AppP")
-                  //     ? TextButton(
-                  //         child: Text(
-                  //           "Reported content",
-                  //           style: TextStyle(fontWeight: FontWeight.bold),
-                  //         ),
-                  //         onPressed: () async {
-                  //           setState(() {
-                  //             loading = true;
-                  //             cpType = CPType.ReportedContent;
-                  //           });
-                  //           await communityPostBloc.refresh(
-                  //             type: CPType.ReportedContent,
-                  //           );
-                  //           setState(() {
-                  //             loading = false;
-                  //           });
-                  //         },
-                  //         style: _getButtonStyle(
-                  //             cpType == CPType.ReportedContent, theme),
-                  //       )
-                  //     : Container(),
+                  bloc.hasPermission(community!.body!, "ModC")
+                      ? TextButton(
+                          child: Text(
+                            "Reported Content",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () async {
+                            setState(() {
+                              loading = true;
+                              cpType = CPType.ReportedContent;
+                            });
+                            await communityPostBloc.refresh(
+                              type: CPType.ReportedContent,
+                            );
+                            setState(() {
+                              loading = false;
+                            });
+                          },
+                          style: _getButtonStyle(
+                              cpType == CPType.ReportedContent, theme),
+                        )
+                      : Container(),
                 ],
               ),
             ),

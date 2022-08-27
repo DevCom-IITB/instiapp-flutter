@@ -276,6 +276,7 @@ class _CommentState extends State<Comment> {
   bool loading = true;
 
   bool firstBuild = true;
+  bool isReported = false;
 
   @override
   void initState() {
@@ -288,6 +289,7 @@ class _CommentState extends State<Comment> {
     if (comment!.deleted == true) {
       return Container();
     }
+    
     ThemeData theme = Theme.of(context);
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
 
@@ -407,6 +409,35 @@ class _CommentState extends State<Comment> {
                           ),
                         );
                       }
+
+                      items.add(
+                        PopupMenuItem(
+                          value: 3,
+                          // row has two child icon and text
+                          child: Row(
+                            children: [
+                              !(comment?.hasUserReported ?? false)
+                                  ? Icon(Icons.report)
+                                  : Icon(Icons.report_off),
+                              SizedBox(
+                                // sized box with width 10
+                                width: 10,
+                              ),
+                              !(comment?.hasUserReported ?? false)
+                                  ? Text("Report")
+                                  : Text("Unreport")
+                            ],
+                          ),
+                          onTap: () async {
+                            await bloc.communityPostBloc
+                                .reportCommunityPost(comment!.id ?? "");
+                            setState(() {
+                              comment!.hasUserReported =
+                                  !(comment?.hasUserReported ?? false);
+                            });
+                          },
+                        ),
+                      );
 
                       return items;
                     },

@@ -75,7 +75,10 @@ class CommunityPost {
 
   @JsonKey(ignore: true)
   int? postedMinutes;
-
+  @JsonKey(name: "reported_by")
+  List<User>? reportedBy;
+  @JsonKey(name: "has_user_reported")
+  bool? hasUserReported;
   @override
   String toString() {
     return 'CommunityPost{id:$id, content:$content}';
@@ -104,6 +107,8 @@ class CommunityPost {
     this.featured,
     this.deleted,
     this.anonymous,
+      this.hasUserReported,
+      this.reportedBy
   }) {
     if (timeOfCreation != null) {
       postedMinutes =
