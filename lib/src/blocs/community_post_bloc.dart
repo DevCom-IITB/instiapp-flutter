@@ -103,4 +103,9 @@ class CommunityPostBloc {
     await bloc.client.updateCommunityPostAction(
         bloc.getSessionIdHeader(), id, "delete", ActionCommunityPostRequest());
   }
+
+  Future<void> reportCommunityPost(String id) async {
+    await bloc.client.updateCommunityPostAction(
+        bloc.getSessionIdHeader(), id, "report", ActionCommunityPostRequest());
+  }
 }

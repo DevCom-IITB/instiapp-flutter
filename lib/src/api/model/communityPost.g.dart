@@ -49,6 +49,10 @@ CommunityPost _$CommunityPostFromJson(Map<String, dynamic> json) =>
       featured: json['featured'] as bool?,
       deleted: json['deleted'] as bool?,
       anonymous: json['anonymous'] as bool?,
+      hasUserReported: json['has_user_reported'] as bool?,
+      reportedBy: (json['reported_by'] as List<dynamic>?)
+          ?.map((e) => User.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$CommunityPostToJson(CommunityPost instance) =>
@@ -75,4 +79,6 @@ Map<String, dynamic> _$CommunityPostToJson(CommunityPost instance) =>
       'featured': instance.featured,
       'deleted': instance.deleted,
       'anonymous': instance.anonymous,
+      'reported_by': instance.reportedBy,
+      'has_user_reported': instance.hasUserReported,
     };
