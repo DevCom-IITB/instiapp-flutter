@@ -289,7 +289,7 @@ class _CommentState extends State<Comment> {
     if (comment!.deleted == true) {
       return Container();
     }
-    
+
     ThemeData theme = Theme.of(context);
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
 
@@ -353,34 +353,34 @@ class _CommentState extends State<Comment> {
                           comment!.community?.body ?? "", "ModC");
 
                       if (isAuthor) {
-                        items.add(
-                          PopupMenuItem(
-                            value: 1,
-                            // row has two child icon and text.
-                            child: Row(
-                              children: [
-                                Icon(Icons.edit),
-                                SizedBox(
-                                  // sized box with width 10
-                                  width: 10,
-                                ),
-                                Text("Edit")
-                              ],
-                            ),
-                            onTap: () => Future(() async {
-                              CommunityPost? post =
-                                  (await Navigator.of(context).pushNamed(
-                                "/posts/add",
-                                arguments: NavigateArguments(post: comment!),
-                              )) as CommunityPost?;
-                              if (post != null) {
-                                setState(() {
-                                  comment = post;
-                                });
-                              }
-                            }),
-                          ),
-                        );
+                        // items.add(
+                        //   PopupMenuItem(
+                        //     value: 1,
+                        //     // row has two child icon and text.
+                        //     child: Row(
+                        //       children: [
+                        //         Icon(Icons.edit),
+                        //         SizedBox(
+                        //           // sized box with width 10
+                        //           width: 10,
+                        //         ),
+                        //         Text("Edit")
+                        //       ],
+                        //     ),
+                        //     onTap: () => Future(() async {
+                        //       CommunityPost? post =
+                        //           (await Navigator.of(context).pushNamed(
+                        //         "/posts/add",
+                        //         arguments: NavigateArguments(post: comment!),
+                        //       )) as CommunityPost?;
+                        //       if (post != null) {
+                        //         setState(() {
+                        //           comment = post;
+                        //         });
+                        //       }
+                        //     }),
+                        //   ),
+                        // );
                       }
 
                       if ((isAuthor || isAdmin) &&
