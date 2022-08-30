@@ -1335,7 +1335,9 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                                   ? "Deleted"
                                   : communityPost.status == 0
                                       ? "Pending"
-                                      : "Rejected",
+                                      : communityPost.status == 2
+                                          ? "Rejected"
+                                          : "Reported",
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: communityPost.deleted == true
                                     ? Color(0xFFF24822)
@@ -1754,6 +1756,44 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                   onPressed: () {
                     bloc.communityPostBloc
                         .updateCommunityPostStatus(communityPost.id!, 1);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      case CPType.ReportedContent:
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                flex: 1,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: theme.colorScheme.surfaceVariant,
+                    primary: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  child: Text("Ignore"),
+                  onPressed: () {
+                    bloc.communityPostBloc
+                        .updateCommunityPostStatus(communityPost.id!, 1);
+                  },
+                ),
+              ),
+              SizedBox(width: 5),
+              Expanded(
+                flex: 1,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primaryContainer,
+                    primary: theme.colorScheme.primary,
+                  ),
+                  child: Text("Delete"),
+                  onPressed: () {
+                    bloc.communityPostBloc
+                        .updateCommunityPostStatus(communityPost.id!, 2);
                   },
                 ),
               ),

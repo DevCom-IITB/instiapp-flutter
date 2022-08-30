@@ -190,11 +190,11 @@ class _CommunityPageState extends State<CommunityPage> {
             padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
             child:
                 Text.rich(TextSpan(style: theme.textTheme.headline6, children: [
-              TextSpan(text: "Nothing found for the query "),
-              TextSpan(
-                  text: "\"${communityBloc.query}\"",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              TextSpan(text: "."),
+              TextSpan(text: "Nothing here yet!"),
+              // TextSpan(
+              //     text: "\"${communityBloc.query}\"",
+              //     style: TextStyle(fontWeight: FontWeight.bold)),
+              // TextSpan(text: "."),
             ])),
           )
         ];
