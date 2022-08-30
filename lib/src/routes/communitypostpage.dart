@@ -685,11 +685,11 @@ class _CommentState extends State<Comment> {
                 )
               ],
             ),
-            Icon(
-              Icons.share_outlined,
-              color: theme.colorScheme.onSurfaceVariant,
-              size: 20,
-            )
+            // Icon(
+            //   Icons.share_outlined,
+            //   color: theme.colorScheme.onSurfaceVariant,
+            //   size: 20,
+            // )
           ],
         ),
       ),
