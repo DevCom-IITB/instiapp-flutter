@@ -54,7 +54,7 @@ class CommunityPostBloc {
         status = 0;
         break;
       case CPType.ReportedContent:
-        status = 0;
+        status = 3;
         break;
       default:
         status = null;

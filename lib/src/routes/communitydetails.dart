@@ -552,6 +552,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                               cpType == CPType.PendingPosts, theme),
                         )
                       : Container(),
+                  SizedBox(width: 10),
                   bloc.hasPermission(community!.body!, "ModC")
                       ? TextButton(
                           child: Text(
@@ -642,11 +643,11 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
             padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
             child:
                 Text.rich(TextSpan(style: theme.textTheme.headline6, children: [
-              TextSpan(text: "Nothing found for the query "),
-              TextSpan(
-                  text: "\"${communityPostBloc.query}\"",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              TextSpan(text: "."),
+              TextSpan(text: "Nothing here yet!"),
+              // TextSpan(
+              //     text: "\"${communityPostBloc.query}\"",
+              //     style: TextStyle(fontWeight: FontWeight.bold)),
+              // TextSpan(text: "."),
             ])),
           )
         ];
