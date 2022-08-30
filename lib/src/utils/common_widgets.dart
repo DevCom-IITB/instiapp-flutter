@@ -1300,7 +1300,8 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
               title: Text(
                 isAnon
                     ? "Anonymous User"
-                    : communityPost.postedBy?.userName ?? "Anonymous user",
+                    : (communityPost.postedBy?.userName ?? "Anonymous user") +
+                        ((communityPost.anonymous ?? false) ? " (Anon)" : ""),
                 style: theme.textTheme.bodyMedium,
               ),
               subtitle: Text(
@@ -1487,7 +1488,8 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
               minVerticalPadding: 0,
               dense: true,
               horizontalTitleGap: 4,
-              onTap: communityPost.postedBy != null
+              onTap: communityPost.postedBy != null &&
+                      !(communityPost.anonymous ?? false)
                   ? () => UserPage.navigateWith(
                       context, bloc, communityPost.postedBy)
                   : null,
