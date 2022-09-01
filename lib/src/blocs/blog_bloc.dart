@@ -1,15 +1,19 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:html';
 // import 'dart:ui';
 
 // import 'package:flutter/foundation.dart';
 import 'package:InstiApp/src/api/model/post.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/utils/demo_data.dart';
-// import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'dart:math';
+import 'package:http/http.dart' as http;
+import 'package:flutter/src/widgets/navigator.dart';
 
 enum PostType { Placement, Training, NewsArticle, External, Query }
 
@@ -45,6 +49,8 @@ class PostBloc {
     // }
     _setIndexListener();
   }
+
+  get context => null;
 
   void _setIndexListener() {
     _indexController.stream
@@ -133,8 +139,31 @@ class PostBloc {
 
   void setCategories() async {
     List<String?> listCategories;
-    listCategories =
-        await bloc.client.getQueryCategories(bloc.getSessionIdHeader());
+    listCategories = await bloc.client
+        .getQueryCategories(bloc.getSessionIdHeader())
+        .catchError((Object obj) async {
+      // non-200 error goes here.
+      switch (obj.runtimeType) {
+        case DioError:
+          // Here's the sample to get the failed response error code and message
+          final res = (obj as DioError).response;
+          if (res != null) {
+            if (res.statusCode == 400) {
+              await bloc.logout();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: new Text('You have been logged out'),
+                duration: new Duration(seconds: 2),
+              ));
+              Navigator.pushReplacementNamed(context, '/');
+            }
+          }
+          // logger.e("Got error : ${res.statusCode} -> ${res.statusMessage}");
+          break;
+        default:
+          break;
+      }
+    });
+
     List<Map<String, String>> categories = [];
     listCategories.forEach((val) {
       if (val != null) {
@@ -291,4 +320,6 @@ class PostBloc {
     }
     return Future.delayed(Duration(milliseconds: 0));
   }
+
+  void setState(Null Function() param0) {}
 }
