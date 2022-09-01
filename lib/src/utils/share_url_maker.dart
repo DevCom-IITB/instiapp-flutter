@@ -25,6 +25,7 @@ class ShareURLMaker {
   }
 
   static String getCommunityPostURL(CommunityPost communityPost) {
-    return webHost + "view-post" + communityPost.communityPostStrId!;
+    return webHost + "view-post/" + communityPost.communityPostStrId!;
   }
+
 }
