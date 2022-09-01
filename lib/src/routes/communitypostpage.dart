@@ -685,11 +685,16 @@ class _CommentState extends State<Comment> {
                 )
               ],
             ),
-            // Icon(
-            //   Icons.share_outlined,
-            //   color: theme.colorScheme.onSurfaceVariant,
-            //   size: 20,
-            // )
+            IconButton(
+                onPressed: () async {
+                  await Share.share(
+                      "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}");
+                },
+                icon: Icon(
+                  Icons.share_outlined,
+                  color: theme.colorScheme.onSurfaceVariant,
+                  size: 20,
+                ))
           ],
         ),
       ),
