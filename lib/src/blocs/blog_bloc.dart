@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:html';
 // import 'dart:ui';
 
 // import 'package:flutter/foundation.dart';
@@ -12,8 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'dart:math';
-import 'package:http/http.dart' as http;
-import 'package:flutter/src/widgets/navigator.dart';
 
 enum PostType { Placement, Training, NewsArticle, External, Query }
 
@@ -139,30 +136,8 @@ class PostBloc {
 
   void setCategories() async {
     List<String?> listCategories;
-    listCategories = await bloc.client
-        .getQueryCategories(bloc.getSessionIdHeader())
-        .catchError((Object obj) async {
-      // non-200 error goes here.
-      switch (obj.runtimeType) {
-        case DioError:
-          // Here's the sample to get the failed response error code and message
-          final res = (obj as DioError).response;
-          if (res != null) {
-            if (res.statusCode == 400) {
-              await bloc.logout();
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: new Text('You have been logged out'),
-                duration: new Duration(seconds: 2),
-              ));
-              Navigator.pushReplacementNamed(context, '/');
-            }
-          }
-          // logger.e("Got error : ${res.statusCode} -> ${res.statusMessage}");
-          break;
-        default:
-          break;
-      }
-    });
+    listCategories =
+        await bloc.client.getQueryCategories(bloc.getSessionIdHeader());
 
     List<Map<String, String>> categories = [];
     listCategories.forEach((val) {
