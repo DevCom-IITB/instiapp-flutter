@@ -5,7 +5,7 @@ import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 
 class ShareURLMaker {
-  static final String webHost = "http://192.168.0.118:4200/";
+  static final String webHost = "http://10.105.177.150/";
   // static final String webHost = "https://insti.app/";
 
   static String getEventURL(Event event) {
@@ -27,5 +27,4 @@ class ShareURLMaker {
   static String getCommunityPostURL(CommunityPost communityPost) {
     return webHost + "view-post/" + communityPost.communityPostStrId!;
   }
-
 }
