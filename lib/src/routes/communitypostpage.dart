@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
-import 'package:InstiApp/src/utils/share_url_maker.dart';
+// import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
-import 'package:share/share.dart';
+// import 'package:share/share.dart';
 
 import '../bloc_provider.dart';
 
@@ -684,16 +684,16 @@ class _CommentState extends State<Comment> {
                 )
               ],
             ),
-            IconButton(
-                onPressed: () async {
-                  await Share.share(
-                      "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}");
-                },
-                icon: Icon(
-                  Icons.share_outlined,
-                  color: theme.colorScheme.onSurfaceVariant,
-                  size: 20,
-                ))
+            // IconButton(
+            //     onPressed: () async {
+            //       await Share.share(
+            //           "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}");
+            //     },
+            //     icon: Icon(
+            //       Icons.share_outlined,
+            //       color: theme.colorScheme.onSurfaceVariant,
+            //       size: 20,
+            //     ))
           ],
         ),
       ),

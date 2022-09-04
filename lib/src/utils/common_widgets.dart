@@ -19,7 +19,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
 
-
 // ignore: unnecessary_import
 import 'dart:ui' show Brightness;
 
@@ -1710,11 +1709,18 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                     )
                   ],
                 ),
-                Icon(
-                  Icons.share_outlined,
-                  color: theme.colorScheme.onSurfaceVariant,
-                  size: 20,
-                )
+                IconButton(
+                    onPressed: () async {
+                      await Share.share(
+                          "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}");
+                    },
+                    padding: EdgeInsets.zero,
+                    constraints: BoxConstraints(),
+                    icon: Icon(
+                      Icons.share_outlined,
+                      color: theme.colorScheme.onSurfaceVariant,
+                      size: 20,
+                    ))
               ],
             ),
           ),
