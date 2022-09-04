@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io' show Platform;
 import 'package:InstiApp/main.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:InstiApp/src/api/request/postFAQ_request.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:flutter/material.dart';
