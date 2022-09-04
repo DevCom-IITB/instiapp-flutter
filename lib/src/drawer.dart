@@ -152,6 +152,16 @@ class _NavDrawerState extends State<NavDrawer> {
                         ),
                       ],
                     ),
+                    15: NavListTile(
+                      icon: Icons.forum_outlined,
+                      title: "Insight Discussion Forum",
+                      onTap: () {
+                        changeSelection(15, drawerState!);
+                        navigateNamed('/groups');
+                      },
+                      highlight: indexSnapshot.data == 15,
+                      selected: indexSnapshot.data == 15,
+                    ),
                     9: NavListTile(
                       icon: Icons.verified_outlined,
                       title: "Achievements",
@@ -221,17 +231,6 @@ class _NavDrawerState extends State<NavDrawer> {
                       },
                       highlight: indexSnapshot.data == 13,
                       selected: indexSnapshot.data == 13,
-                    ),
-                    15: NavListTile(
-                      icon: Icons.rss_feed_outlined,
-                      title: "Groups",
-                      onTap: () {
-                        changeSelection(15, drawerState!);
-                        var navi = Navigator.of(context);
-                        navi.pushReplacementNamed('/groups');
-                      },
-                      highlight: indexSnapshot.data == 15,
-                      selected: indexSnapshot.data == 15,
                     ),
                   };
 
@@ -698,7 +697,11 @@ class MNavigatorObserver extends NavigatorObserver {
     } catch (e) {
       _secondTopRouteNameSubject.add("");
     }
-    int? pageIndex = routeToNavPos[route.settings.name];
+    String newName = route.settings.name ?? "n/a";
+    if (newName.startsWith("/group/")) {
+      newName = "/groups";
+    }
+    int? pageIndex = routeToNavPos[newName];
 
     NavDrawer.setPageIndex(bloc, pageIndex ?? -1);
   }
@@ -714,7 +717,11 @@ class MNavigatorObserver extends NavigatorObserver {
     } catch (e) {
       _secondTopRouteNameSubject.add("");
     }
-    int? pageIndex = routeToNavPos[previousRoute?.settings.name];
+    String newName = previousRoute?.settings.name ?? "n/a";
+    if (newName.startsWith("/groups")) {
+      newName = "/groups";
+    }
+    int? pageIndex = routeToNavPos[newName];
 
     NavDrawer.setPageIndex(bloc, pageIndex ?? -1);
   }
@@ -731,8 +738,11 @@ class MNavigatorObserver extends NavigatorObserver {
     } catch (e) {
       _secondTopRouteNameSubject.add("");
     }
-
-    int? pageIndex = routeToNavPos[newRoute?.settings.name];
+    String newName = newRoute?.settings.name ?? "n/a";
+    if (newName.startsWith("/groups")) {
+      newName = "/groups";
+    }
+    int? pageIndex = routeToNavPos[newName];
 
     NavDrawer.setPageIndex(bloc, pageIndex ?? -1);
   }

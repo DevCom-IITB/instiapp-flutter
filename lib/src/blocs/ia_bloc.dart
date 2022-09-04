@@ -140,7 +140,7 @@ class InstiAppBloc {
   late final InstiAppApi client;
 
   // default homepage
-  String homepageName = "/groups";
+  String homepageName = "/feed";
   bool isAlumni = false;
   String msg = "";
   String alumniLoginPage = "/alumniLoginPage";

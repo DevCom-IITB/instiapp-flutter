@@ -33,6 +33,8 @@ class _CommunityPageState extends State<CommunityPage> {
 
   bool firstBuild = true;
 
+  bool firstCallBack = true;
+
   @override
   void initState() {
     super.initState();
@@ -201,6 +203,15 @@ class _CommunityPageState extends State<CommunityPage> {
       }
       //move to next page
 
+      if (firstCallBack) {
+        //TODO: Remove this navigation if more than one community
+        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+          Navigator.of(context).pop();
+          CommunityDetails.navigateWith(context, communityBloc, communities[0]);
+        });
+        firstCallBack = false;
+      }
+
       return (communities
           .map((c) => _buildListTile(c, theme, communityBloc))
           .toList());
@@ -208,7 +219,7 @@ class _CommunityPageState extends State<CommunityPage> {
       return [
         Center(
             child: CircularProgressIndicatorExtended(
-          label: Text("Loading the some default bodies"),
+          label: Text("Loading..."),
         ))
       ];
     }
