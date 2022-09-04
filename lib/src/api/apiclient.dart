@@ -19,7 +19,6 @@ import 'package:InstiApp/src/api/request/action_community_post_request.dart';
 import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
-import 'package:InstiApp/src/api/request/image_upload_request.dart';
 import 'package:InstiApp/src/api/request/postFAQ_request.dart';
 import 'package:InstiApp/src/api/request/update_community_post_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
@@ -42,7 +41,8 @@ import 'package:dio/dio.dart';
 import 'model/offersecret.dart';
 part 'apiclient.g.dart';
 
-@rt.RestApi(baseUrl: "http://192.168.230.14:8000/api")
+@rt.RestApi(baseUrl: "http://192.168.0.102:8000/api")
+// @rt.RestApi(baseUrl: "http://10.105.177.150/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
