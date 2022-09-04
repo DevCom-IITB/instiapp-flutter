@@ -1,10 +1,6 @@
 import 'dart:async';
 
 // import 'package:InstiApp/src/blocs/ia_bloc.dart';
-import 'package:InstiApp/src/api/model/body.dart';
-import 'package:InstiApp/src/api/model/community.dart';
-import 'package:InstiApp/src/api/model/role.dart';
-import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
@@ -16,16 +12,13 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:home_widget/home_widget.dart';
 import 'package:intl/intl.dart';
-import 'package:location/location.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
 
-import 'package:flutter/gestures.dart';
 
 // ignore: unnecessary_import
 import 'dart:ui' show Brightness;

@@ -1,24 +1,18 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/community_bloc.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
-import 'package:InstiApp/src/routes/communitypage.dart';
 import 'package:InstiApp/src/routes/createpost_form.dart';
 import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
-import 'package:analyzer/source/error_processor.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter_html/shims/dart_ui_real.dart';
-import 'package:intl/intl.dart';
 
-import 'package:json_annotation/json_annotation.dart';
 import '../bloc_provider.dart';
 
 class CommunityDetails extends StatefulWidget {

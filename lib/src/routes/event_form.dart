@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/UserTag.dart';
 import 'package:InstiApp/src/api/model/body.dart';
@@ -10,7 +8,6 @@ import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
-import 'package:InstiApp/src/api/request/image_upload_request.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
@@ -25,8 +22,6 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
-//TODO:remove autofocus on Event Name?
-//TODO:mention dio errors.
 class CreateEventBtn extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final Function formPoster;
@@ -795,8 +790,6 @@ class _EventFormState extends State<EventForm> {
         (role.roleBodies != null)
             ? tempbodyOptions.addAll(role.roleBodies!)
             : () {}();
-        //TODO:Confirm if this will work
-        // (role.roleBodyDetails!=null)?tempbodyOptions.add(role.roleBodyDetails!):(){}();
       }
     }
     bodyOptions = tempbodyOptions;

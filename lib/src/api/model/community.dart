@@ -1,4 +1,3 @@
-import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/role.dart';
 import 'package:json_annotation/json_annotation.dart';
