@@ -6,7 +6,8 @@ import 'dart:collection';
 import 'package:InstiApp/src/api/model/post.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/utils/demo_data.dart';
-// import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'dart:math';
@@ -45,6 +46,8 @@ class PostBloc {
     // }
     _setIndexListener();
   }
+
+  get context => null;
 
   void _setIndexListener() {
     _indexController.stream
@@ -136,6 +139,7 @@ class PostBloc {
     List<String?> listCategories;
     listCategories =
         await bloc.client.getQueryCategories(bloc.getSessionIdHeader());
+
     List<Map<String, String>> categories = [];
     listCategories.forEach((val) {
       if (val != null) {
@@ -292,4 +296,6 @@ class PostBloc {
     }
     return Future.delayed(Duration(milliseconds: 0));
   }
+
+  void setState(Null Function() param0) {}
 }

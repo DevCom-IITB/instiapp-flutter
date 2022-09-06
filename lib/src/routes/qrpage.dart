@@ -7,6 +7,7 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 // import 'package:flutter_html/shims/dart_ui_real.dart';
 // import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -132,13 +133,17 @@ class _QRPageState extends State<QRPage> {
                               ),
                             )
                           : Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                              ),
+                              margin: EdgeInsets.all(50),
                               alignment: Alignment.center,
                               height: MediaQuery.of(context).size.height / 2,
                               child: QrImage(
                                 // data: '',
                                 data: '${qrString}',
                                 size: MediaQuery.of(context).size.width / 2,
-                                foregroundColor: theme.colorScheme.onBackground,
+                                foregroundColor: Colors.black,
                               ),
                             ),
                 ],

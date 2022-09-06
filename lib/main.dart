@@ -81,6 +81,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       new FlutterLocalNotificationsPlugin();
 
   GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
   late StreamSubscription _appLinksSub;
   final ThemeData theme = ThemeData();
 
@@ -131,6 +133,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return BlocProvider(
       widget.bloc,
       child: MaterialApp(
+        scaffoldMessengerKey: scaffoldMessengerKey,
         navigatorKey: _navigatorKey,
         title: 'InstiApp',
         theme: ThemeData(
@@ -232,7 +235,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             } else {
               switch (settings.name) {
                 case "/":
-                  return _buildRoute(settings, LoginPage(widget.bloc));
+                  return _buildRoute(
+                      settings,
+                      LoginPage(
+                        widget.bloc,
+                        scaffoldMessengerKey: scaffoldMessengerKey,
+                        navigatorKey: _navigatorKey,
+                      ));
                 case "/mess":
                   // print("Entereing here mess");
                   return _buildRoute(settings, MessPage());
