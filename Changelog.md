@@ -4,6 +4,12 @@
 
 - Nothing here yet (https://github.com/tastelessjolt/instiapp-flutter/projects/1)
 
+## v2.0.6
+
+- Add error checking API interceptor
+- Make a QR with white background in dark mode (mess menu/take a meal)
+- Remove unncessary package
+
 ## v2.0.5
 
 - Fix image upload glitch in event form
