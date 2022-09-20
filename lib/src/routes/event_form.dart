@@ -694,12 +694,13 @@ class _EventFormState extends State<EventForm> {
                       if (pi != null) {
                         double size = 1.0 * (await pi.length());
                         size = size / (1024 * 1024);
+                        print(size);
                         if (size >= 2) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content:
                                   Text("Image size can't be greater than 2MB"),
-                              duration: Duration(seconds: 1),
+                              duration: Duration(seconds: 3),
                             ),
                           );
                           return;
