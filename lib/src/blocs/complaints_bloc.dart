@@ -60,7 +60,9 @@ class ComplaintsBloc {
 
   Future<ImageUploadResponse?> uploadBase64Image(String filename) async {
     if (bloc.currSession != null) {
-      return bloc.client.uploadImage(bloc.getSessionIdHeader(), File(filename));
+      var tmp = ImageUploadRequest();
+      tmp.base64Image = base64Image;
+      // return bloc.client.uploadImage(bloc.getSessionIdHeader(), tmp);
     }
     return null;
   }
