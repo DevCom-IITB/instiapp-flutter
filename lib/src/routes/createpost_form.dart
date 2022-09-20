@@ -165,6 +165,8 @@ class _CreatePostPage extends State<CreatePostPage> {
                                             .add(resp.pictureURL!);
                                       }
                                       currRequest1.deleted = false;
+                                      currRequest1.anonymous ??= false;
+                                      currRequest1.hasUserReported = false;
                                       if (isEditing) {
                                         bloc.communityPostBloc
                                             .updateCommunityPost(currRequest1);
@@ -344,9 +346,16 @@ class _CreatePostPage extends State<CreatePostPage> {
                         //     .uploadImage(
                         //         bloc.getSessionIdHeader(), File(pi.path));
                         // print(resp.pictureURL);
-                        setState(() {
-                          imageFiles.add(File(pi.path));
-                        });
+                        if (await pi.length() / 1000000 <= 10) {
+                          setState(() {
+                            imageFiles.add(File(pi.path));
+                          });
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content:
+                                Text("Image size should be less than 10MB"),
+                          ));
+                        }
                       }
                     },
                   ),
