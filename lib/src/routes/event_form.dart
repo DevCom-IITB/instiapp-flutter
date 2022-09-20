@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/UserTag.dart';
 import 'package:InstiApp/src/api/model/body.dart';
@@ -688,7 +690,20 @@ class _EventFormState extends State<EventForm> {
                       final ImagePicker _picker = ImagePicker();
                       final XFile? pi =
                           await _picker.pickImage(source: ImageSource.gallery);
+                      // if()
                       if (pi != null) {
+                        double size = 1.0 * (await pi.length());
+                        size = size / (1024 * 1024);
+                        if (size >= 2) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content:
+                                  Text("Image size can't be greater than 2MB"),
+                              duration: Duration(seconds: 1),
+                            ),
+                          );
+                          return;
+                        }
                         ImageUploadResponse resp = await bloc.client
                             .uploadImage(widget.cookie, File(pi.path));
                         setState(() {
