@@ -1080,13 +1080,24 @@ class _EventFormState extends State<EventForm> {
                     style: TextStyle(),
                   ),
                 ),
-                SelectInterests(
-                  loadableInterests: loadableInterests,
-                  updateInterests: (i) {
+                // SelectInterests(
+                //   loadableInterests: loadableInterests,
+                //   updateInterests: (i) {
+                //     setState(() {
+                //       eventInterests = i ?? [];
+                //     });
+                //   },
+                // ),
+                DropdownMultiSelect<Interest>(
+                  update: (i) {
                     setState(() {
                       eventInterests = i ?? [];
                     });
                   },
+                  load: loadableInterests,
+                  onFind: bloc.achievementBloc.searchForInterest,
+                  singularObjectName: "interest",
+                  pluralObjectName: "interests",
                 ),
                 AchievementAdder(
                     postData: (List<OfferedAchievements> achevs) {
