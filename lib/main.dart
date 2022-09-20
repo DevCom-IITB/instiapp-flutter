@@ -16,8 +16,10 @@ import 'package:InstiApp/src/routes/mappage.dart';
 import 'package:InstiApp/src/routes/messcalendarpage.dart';
 // import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
+import 'package:InstiApp/src/routes/communitypage.dart';
 import 'package:InstiApp/src/routes/notificationspage.dart';
 import 'package:InstiApp/src/routes/putentitypage.dart';
+import 'package:InstiApp/src/routes/createpost_form.dart';
 import 'package:InstiApp/src/routes/qrpage.dart';
 import 'package:InstiApp/src/routes/queryaddpage.dart';
 import 'package:InstiApp/src/routes/querypage.dart';
@@ -142,10 +144,28 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
           primaryColor: widget.bloc.primaryColor,
           colorScheme: theme.colorScheme.copyWith(
+            primary: widget.bloc.primaryColor,
             secondary: widget.bloc.accentColor,
+            primaryContainer: widget.bloc.primaryColor[200],
+            secondaryContainer: widget.bloc.accentColor[200],
             brightness: widget.bloc.brightness.toBrightness(),
             onBackground: widget.bloc.brightness == AppBrightness.light
                 ? Colors.black
+                : Colors.white,
+            surface: widget.bloc.brightness == AppBrightness.light
+                ? Colors.white
+                : widget.bloc.brightness.toColor(),
+            surfaceVariant: widget.bloc.brightness == AppBrightness.light
+                ? Color(0xFFE8ECF2)
+                : Color(0xFF121212),
+            onSurface: widget.bloc.brightness == AppBrightness.light
+                ? Colors.black
+                : Colors.white,
+            onSurfaceVariant: widget.bloc.brightness == AppBrightness.light
+                ? Color(0xFF767881)
+                : Colors.white,
+            inverseSurface: widget.bloc.brightness == AppBrightness.light
+                ? Color(0xFFE8ECF2)
                 : Colors.white,
           ),
           primarySwatch: Colors.primaries.firstWhereOrNull(
@@ -259,6 +279,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, QuickLinksPage());
                 case "/news":
                   return _buildRoute(settings, NewsPage());
+                case "/groups":
+                  return _buildRoute(settings, CommunityPage());
                 case "/explore":
                   return _buildRoute(settings, ExplorePage());
                 case "/calendar":
@@ -283,6 +305,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, YourAchievementPage());
                 case "/achievements/add":
                   return _buildRoute(settings, Home());
+                case "/posts/add":
+                  return _buildRoute(settings, CreatePostPage());
                 case "/externalblog":
                   return _buildRoute(settings, ExternalBlogPage());
                 case "/query":
@@ -447,8 +471,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   Future navigateFromNotification(dynamic fromMap) async {
     // Navigating to correct page
-    print(fromMap.notificationType);
-    print(fromMap.notificationExtra?.contains("/trainingblog"));
     var routeName = {
       "blogentry": fromMap.notificationExtra?.contains("/internship") ?? false
           ? "/trainblog"
@@ -482,6 +504,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future initAppLinksState() async {
     _appLinksSub = uriLinkStream.listen((Uri? uri) {
       if (!mounted) return;
+      // print(uri);
       handleAppLink(uri);
     }, onError: (err) {
       if (!mounted) return;
