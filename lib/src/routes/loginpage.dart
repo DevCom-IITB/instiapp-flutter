@@ -62,10 +62,10 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
 
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      print("Printing");
+      // print("Printing");
       String? args = ModalRoute.of(context)?.settings.arguments as String?;
       if (args != null) {
-        print(args);
+        // print(args);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           // widget.scaffoldMessengerKey?.currentState?.showSnackBar(SnackBar(
           content: Text(args),

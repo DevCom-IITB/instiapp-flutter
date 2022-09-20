@@ -1,4 +1,3 @@
-import 'package:InstiApp/main.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:dio/dio.dart';
