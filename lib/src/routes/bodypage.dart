@@ -97,8 +97,8 @@ class _BodyPageState extends State<BodyPage> {
           icon: Icon(Icons.language_outlined),
           onPressed: () async {
             if (body?.bodyWebsiteURL != null) {
-              if (await canLaunch(body?.bodyWebsiteURL ?? "")) {
-                await launch(body?.bodyWebsiteURL ?? "");
+              if (await canLaunchUrl(Uri.parse(body?.bodyWebsiteURL ?? ""))) {
+                await launchUrl(Uri.parse(body?.bodyWebsiteURL ?? ""));
               }
             }
           },
@@ -181,10 +181,9 @@ class _BodyPageState extends State<BodyPage> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 28.0, vertical: 16.0),
                     child: CommonHtml(
-                      data: body?.bodyDescription ?? "",
-                      defaultTextStyle:
-                          theme.textTheme.subtitle1 ?? TextStyle()
-                    ),
+                        data: body?.bodyDescription ?? "",
+                        defaultTextStyle:
+                            theme.textTheme.subtitle1 ?? TextStyle()),
                   ),
                   body?.bodyDescription != null
                       ? SizedBox(

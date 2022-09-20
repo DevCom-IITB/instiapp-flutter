@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:developer';
 
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
@@ -27,7 +26,6 @@ class _NavDrawerState extends State<NavDrawer> {
 
   void changeSelection(int idx, DrawerBloc bloc) {
     bloc.setPageIndex(idx);
-    // setState(() {});
   }
 
   void navigateNamed(String routeName) {
@@ -153,6 +151,16 @@ class _NavDrawerState extends State<NavDrawer> {
                           selected: indexSnapshot.data == 6,
                         ),
                       ],
+                    ),
+                    15: NavListTile(
+                      icon: Icons.forum_outlined,
+                      title: "Insight Discussion Forum",
+                      onTap: () {
+                        changeSelection(15, drawerState!);
+                        navigateNamed('/groups');
+                      },
+                      highlight: indexSnapshot.data == 15,
+                      selected: indexSnapshot.data == 15,
                     ),
                     9: NavListTile(
                       icon: Icons.verified_outlined,
@@ -487,7 +495,10 @@ class NavListTile extends StatelessWidget {
         // key: Key(highlight.toString()),
         selected: selected,
         enabled: true,
-        leading: Icon(this.icon),
+        leading: Icon(
+          this.icon,
+          color: theme.colorScheme.onSurface,
+        ),
         dense: true,
         title: Text(
           this.title!,
@@ -503,7 +514,7 @@ class NavListTile extends StatelessWidget {
 
   Color? _iconAndTextColor(ThemeData theme, ListTileThemeData tileTheme) {
     if (selected && tileTheme.selectedColor != null)
-      return tileTheme.selectedColor!;
+      return theme.colorScheme.onSurface;
 
     if (!selected && tileTheme.iconColor != null) return tileTheme.iconColor!;
     // assert(theme.brightness != null);
@@ -515,7 +526,7 @@ class NavListTile extends StatelessWidget {
         return selected
             ? null
             : theme
-                .colorScheme.secondary; // null - use current icon theme color
+                .colorScheme.onSurface; // null - use current icon theme color
     }
     // return null;
   }
@@ -581,12 +592,12 @@ class _NavExpansionTileState extends State<NavExpansionTile> {
   Color? _iconAndTextColor(ThemeData theme, ListTileThemeData tileTheme) {
     if (isOpened && tileTheme.selectedColor != null) {
       // log("Hi");
-      return tileTheme.selectedColor!;
+      return theme.colorScheme.primary;
     }
 
     if (!isOpened && tileTheme.iconColor != null) {
       // log("Hi2");
-      return tileTheme.iconColor!;
+      return theme.colorScheme.primary;
     }
     // assert(theme.brightness != null);
     // print(theme.brightness);
@@ -597,7 +608,7 @@ class _NavExpansionTileState extends State<NavExpansionTile> {
         return isOpened
             ? null
             : theme
-                .colorScheme.secondary; // null - use current icon theme color
+                .colorScheme.onSurface; // null - use current icon theme color
     }
     // return null;
   }
@@ -627,6 +638,7 @@ class MNavigatorObserver extends NavigatorObserver {
     "/query": 13,
     "/messcalendar": 14,
     "/messcalendar/qr": 14,
+    "/groups": 15,
   };
 
   static Map<String, String> routeToName = {
@@ -650,6 +662,7 @@ class MNavigatorObserver extends NavigatorObserver {
     "/query": "Query",
     "/messcalendar": "Mess Calendar",
     "/messcalendar/qr": "Show Mess QR",
+    "/groups": "Groups",
     "n/a": "",
   };
 
@@ -684,7 +697,11 @@ class MNavigatorObserver extends NavigatorObserver {
     } catch (e) {
       _secondTopRouteNameSubject.add("");
     }
-    int? pageIndex = routeToNavPos[route.settings.name];
+    String newName = route.settings.name ?? "n/a";
+    if (newName.startsWith("/group/")) {
+      newName = "/groups";
+    }
+    int? pageIndex = routeToNavPos[newName];
 
     NavDrawer.setPageIndex(bloc, pageIndex ?? -1);
   }
@@ -700,7 +717,11 @@ class MNavigatorObserver extends NavigatorObserver {
     } catch (e) {
       _secondTopRouteNameSubject.add("");
     }
-    int? pageIndex = routeToNavPos[previousRoute?.settings.name];
+    String newName = previousRoute?.settings.name ?? "n/a";
+    if (newName.startsWith("/groups")) {
+      newName = "/groups";
+    }
+    int? pageIndex = routeToNavPos[newName];
 
     NavDrawer.setPageIndex(bloc, pageIndex ?? -1);
   }
@@ -717,8 +738,11 @@ class MNavigatorObserver extends NavigatorObserver {
     } catch (e) {
       _secondTopRouteNameSubject.add("");
     }
-
-    int? pageIndex = routeToNavPos[newRoute?.settings.name];
+    String newName = newRoute?.settings.name ?? "n/a";
+    if (newName.startsWith("/groups")) {
+      newName = "/groups";
+    }
+    int? pageIndex = routeToNavPos[newName];
 
     NavDrawer.setPageIndex(bloc, pageIndex ?? -1);
   }

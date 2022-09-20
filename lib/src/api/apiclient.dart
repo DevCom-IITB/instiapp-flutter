@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:InstiApp/src/api/model/UserTag.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/community.dart';
+import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/messCalEvent.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
@@ -13,15 +15,17 @@ import 'package:InstiApp/src/api/model/venue.dart';
 import 'package:InstiApp/src/api/request/ach_verify_request.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
+import 'package:InstiApp/src/api/request/action_community_post_request.dart';
 import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
-import 'package:InstiApp/src/api/request/image_upload_request.dart';
 import 'package:InstiApp/src/api/request/postFAQ_request.dart';
+import 'package:InstiApp/src/api/request/update_community_post_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
 import 'package:InstiApp/src/api/response/alumni_login_response.dart';
+import 'package:InstiApp/src/api/response/community_post_list_response.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/api/response/getencr_response.dart';
@@ -35,11 +39,10 @@ import 'package:InstiApp/src/api/response/user_tags_reach_response.dart';
 import 'package:retrofit/retrofit.dart' as rt;
 import 'package:dio/dio.dart';
 import 'model/offersecret.dart';
-import 'dart:convert';
 part 'apiclient.g.dart';
 
-@rt.RestApi(baseUrl: "https://api.insti.app/api")
-// @rt.RestApi(baseUrl: "http://192.168.1.76:8000/api")
+// @rt.RestApi(baseUrl: "http://192.168.0.102:8000/api")
+@rt.RestApi(baseUrl: "http://10.105.177.150/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
@@ -315,6 +318,50 @@ abstract class InstiAppApi {
   Future<List<String>> getQueryCategories(
       @rt.Header("Cookie") String sessionId);
 
+  @rt.GET("/communities")
+  Future<List<Community>> getCommunities(@rt.Header("Cookie") String sessionId);
+
+  @rt.GET("/communities/{id}")
+  Future<Community> getCommunity(
+      @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+
+  @rt.GET("/communityposts")
+  Future<CommunityPostListResponse> getCommunityPosts(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Query("status") int? status,
+      @rt.Query("query") String query);
+
+  @rt.GET("/communityposts/{id}")
+  Future<CommunityPost> getCommunityPost(
+      @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+
+  @rt.POST("/communityposts")
+  Future<void> createCommunityPost(
+      @rt.Header("Cookie") String sessionId, @rt.Body() CommunityPost post);
+
+  @rt.PUT("/communityposts/{id}")
+  Future<void> updateCommunityPost(
+    @rt.Header("Cookie") String sessionId,
+    @rt.Path() String id,
+    @rt.Body() CommunityPost post,
+  );
+
+  @rt.PUT("/communityposts/{action}/{id}")
+  Future<void> updateCommunityPostAction(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Path() String id,
+      @rt.Path() String action,
+      @rt.Body() ActionCommunityPostRequest data);
+
+  @rt.PUT("/communityposts/moderator/{id}")
+  Future<void> updateCommunityPostStatus(@rt.Header("Cookie") String sessionId,
+      @rt.Path() String id, @rt.Body() UpdateCommunityPostRequest data);
+
+  @rt.GET("/user-me/ucpr/{postID}")
+  Future<void> updateUserCommunityPostReaction(
+      @rt.Header("Cookie") String sessionID,
+      @rt.Path() String postID,
+      @rt.Query("reaction") int reaction);
   @rt.GET("/user-tags")
   Future<List<UserTagHolder>> getUserTags(
       @rt.Header("Cookie") String sessionId);

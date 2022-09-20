@@ -298,8 +298,8 @@ class _BlogPageState extends State<BlogPage> {
           children: <Widget>[
             InkWell(
               onTap: () async {
-                if (await canLaunch(post.link)) {
-                  await launch(post.link);
+                if (await canLaunchUrl(Uri.parse(post.link))) {
+                  await launchUrl(Uri.parse(post.link));
                 }
               },
               child: Tooltip(

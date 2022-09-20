@@ -94,18 +94,15 @@ class _EventPageState extends State<EventPage> {
       }
 
       if ((event!.eventWebsiteURL ?? "") != "") {
-        footerButtons.add(
-          IconButton(
-            tooltip: "Open website",
-            icon: Icon(Icons.language_outlined),
-            padding: EdgeInsets.all(0),
-            onPressed: () async {
-              if (await canLaunch(event!.eventWebsiteURL!)) {
-                await launch(event!.eventWebsiteURL!);
-              }
-            },
-          ),
-        );
+        footerButtons.add(IconButton(
+          tooltip: "Open website",
+          icon: Icon(Icons.language_outlined),
+          onPressed: () async {
+            if (await canLaunchUrl(Uri.parse(event!.eventWebsiteURL!))) {
+              await launchUrl(Uri.parse(event!.eventWebsiteURL!));
+            }
+          },
+        ));
       }
       if ((event!.eventVenues?.isNotEmpty ?? false) &&
           event!.eventVenues![0].venueLatitude != null) {
@@ -116,8 +113,8 @@ class _EventPageState extends State<EventPage> {
             String uri = defaultTargetPlatform == TargetPlatform.iOS
                 ? "http://maps.apple.com/?ll=${event!.eventVenues![0].venueLatitude},${event!.eventVenues![0].venueLongitude}&z=20"
                 : "google.navigation:q=${event!.eventVenues![0].venueLatitude},${event!.eventVenues![0].venueLongitude}";
-            if (await canLaunch(uri)) {
-              await launch(uri);
+            if (await canLaunchUrl(Uri.parse(uri))) {
+              await launchUrl(Uri.parse(uri));
             }
           },
         ));

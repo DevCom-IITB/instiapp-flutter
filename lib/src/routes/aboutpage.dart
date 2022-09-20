@@ -206,8 +206,10 @@ class _AboutPageState extends State<AboutPage> {
                       child: InkWell(
                         onTap: nameEntry.value.containsKey("url")
                             ? () async {
-                                if (await canLaunch(nameEntry.value["url"]!)) {
-                                  await launch(nameEntry.value["url"]!);
+                                if (await canLaunchUrl(
+                                    Uri.parse(nameEntry.value["url"]!))) {
+                                  await launchUrl(
+                                      Uri.parse(nameEntry.value["url"]!));
                                 }
                               }
                             : null,

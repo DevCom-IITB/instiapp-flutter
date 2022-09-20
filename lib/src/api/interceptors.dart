@@ -17,7 +17,7 @@ class ErrorInterceptor extends Interceptor {
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
     if (res != null) {
       // print("Res not null: " + res.statusCode.toString());
-      if (res.statusCode == 400 || res.statusCode == 401) {
+      if (res.statusCode == 401) {
         // print("Logging out");
         await bloc.logout();
         navigatorKey.currentState?.pushReplacementNamed('/',

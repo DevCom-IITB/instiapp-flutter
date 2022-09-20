@@ -18,15 +18,13 @@
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 
-    <application
-        android:icon="@mipmap/ic_launcher_round"
+    <application android:icon="@mipmap/ic_launcher_round"
         android:label="InstiApp"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:usesCleartextTraffic="true">
 
 
-        <activity
-            android:name=".MessMenuWidgetWithHostelConfigureActivity"
+        <activity android:name=".MessMenuWidgetWithHostelConfigureActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
@@ -38,20 +36,16 @@
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
 
-            <meta-data
-                android:name="android.appwidget.provider"
+            <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/mess_menu_widget_info" />
         </receiver>
 
-        <meta-data
-            android:name="flutterEmbedding"
+        <meta-data android:name="flutterEmbedding"
             android:value="2" />
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
+        <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAryoUjEhGTWvgrInX1rDAR3D3DEXD5Z7M" />
 
-        <activity
-            android:name=".MainActivity"
+        <activity android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density"
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"
@@ -72,8 +66,7 @@
 
 
             <!-- Theme to apply as soon as Flutter begins rendering frames -->
-            <meta-data
-                android:name="io.flutter.embedding.android.NormalTheme"
+            <meta-data android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/NormalTheme" />
 
             <intent-filter>
@@ -86,16 +79,32 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+
+            <!-- <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                TODO: Add correct url here
+                <data android:scheme="http" android:host="10.59.0.86:4200" />
+            </intent-filter> -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+                <!-- TODO: Add correct url here -->
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="www.techgatha.com" />
+            </intent-filter>
+            <!-- <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
 
-                <data
-                    android:host="insti.app"
-                    android:pathPattern="/org/.*"
-                    android:scheme="https" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:host="insti.app" android:pathPattern="/org/.*" android:scheme="https" />
             </intent-filter>
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
@@ -103,10 +112,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="insti.app"
-                    android:pathPattern="/user/.*"
-                    android:scheme="https" />
+                <data android:host="insti.app" android:pathPattern="/user/.*" android:scheme="https" />
             </intent-filter>
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
@@ -114,10 +120,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="insti.app"
-                    android:pathPattern="/event/.*"
-                    android:scheme="https" />
+                <data android:host="insti.app" android:pathPattern="/event/.*" android:scheme="https" />
             </intent-filter>
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
@@ -125,11 +128,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="insti.app"
-                    android:pathPattern="/map.*"
-                    android:scheme="https" />
-            </intent-filter>
+                <data android:host="insti.app" android:pathPattern="/map.*" android:scheme="https" />
+            </intent-filter> -->
         </activity>
     </application>
 
