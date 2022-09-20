@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/UserTag.dart';
 import 'package:InstiApp/src/api/model/body.dart';
@@ -13,11 +11,9 @@ import 'package:InstiApp/src/api/request/event_create_request.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
-import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/event_form_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/src/widgets/form.dart' as flut;
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -694,7 +690,6 @@ class _EventFormState extends State<EventForm> {
                       if (pi != null) {
                         double size = 1.0 * (await pi.length());
                         size = size / (1024 * 1024);
-                        print(size);
                         if (size >= 2) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
