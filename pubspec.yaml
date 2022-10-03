@@ -29,7 +29,7 @@ dependencies:
   date_format: ^2.0.4
   share: ^2.0.4
   photo_view: ^0.13.0
-  flutter_calendar_carousel: ^2.1.0
+  flutter_calendar_carousel: ^2.4.0
   google_maps_flutter: ^2.1.1
   flutter_google_places: ^0.3.0
   location: ^4.3.0
