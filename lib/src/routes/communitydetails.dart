@@ -77,11 +77,12 @@ class _CommunityDetailsState extends State<CommunityDetails> {
         searchIcon: true,
         appBarSearchStyle:
             AppBarSearchStyle(hintText: "Search " + (community?.name ?? "")),
-        leadingStyle: LeadingStyle(
-            icon: Icons.arrow_back,
-            onPressed: () async {
-              Navigator.of(context).pop();
-            }),
+        //TODO: Uncomment leading style
+        // leadingStyle: LeadingStyle(
+        //     icon: Icons.arrow_back,
+        //     onPressed: () async {
+        //       Navigator.of(context).pop();
+        //     }),
       ),
       drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
