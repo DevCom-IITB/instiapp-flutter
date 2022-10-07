@@ -493,8 +493,6 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
     var bloc = BlocProvider.of(context)!.bloc;
     var communityPostBloc = bloc.communityPostBloc;
 
-    print("Building post section");
-
     if (firstBuild) {
       communityPostBloc.query = "";
       communityPostBloc.refresh();
