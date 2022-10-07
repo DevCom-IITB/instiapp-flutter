@@ -46,7 +46,7 @@ jobs:
       - uses: nttld/setup-ndk@v1
         with:
           ndk-version: r21e
-      - runs: ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./Android.mk NDK_APPLICATION_MK=./Application.mk
+      - run: ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./Android.mk NDK_APPLICATION_MK=./Application.mk
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '2.10.5'
