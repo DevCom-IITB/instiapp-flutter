@@ -295,7 +295,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> startLoginPageServer() async {
-    server = jag.Jaguar(port: 9399);
+    server = jag.Jaguar(port: 9399, multiThread: true);
     server?.addRoute(serveFlutterAssets(prefix: "login/"));
     return server?.serve();
   }
