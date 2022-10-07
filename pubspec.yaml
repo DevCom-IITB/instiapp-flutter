@@ -7,10 +7,10 @@ description: Flutter App for Indian Institute of Technology, Bombay
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 2.0.6+14
+version: 2.1.1+16
 
 environment:
-  sdk: ">=2.15.0 <3.0.0"
+  sdk: '>=2.15.0 <3.0.0'
 
 dependencies:
   flutter:

@@ -4,6 +4,10 @@
 
 - Nothing here yet (https://github.com/tastelessjolt/instiapp-flutter/projects/1)
 
+## v2.1.1
+
+- Fix uni_links
+
 ## v2.1.0
 
 - Insight Discussion Forum
