@@ -20,6 +20,9 @@ For help getting started with Flutter, view online
 5. Run `flutter run` to run the app on any device/simulator/emulator.
 6. \[_Optional but recommended_\] Use either Visual Studio Code or Android Studio to code/debug.
 
+## pod install error on M1 mac
+`arch -x86_64 pod install`
+
 ## Useful links
 
 https://www.reddit.com/r/FlutterDev/comments/8ao6ty/how_to_make_bottom_appbar_that_sticks_to_the_top/
