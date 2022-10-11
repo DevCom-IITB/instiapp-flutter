@@ -209,8 +209,22 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                                           .createCommunityPost(comment);
                                       _commentController.clear();
                                       _commentFocusNode.unfocus();
-                                      bloc.communityPostBloc.getCommunityPost(
-                                          currentlyCommentingPost!.id!);
+                                      currentlyCommentingPost = await bloc
+                                          .communityPostBloc
+                                          .getCommunityPost(
+                                              currentlyCommentingPost!.id!);
+                                      if (communityPost!.id ==
+                                          currentlyCommentingPost!.id) {
+                                        communityPost = currentlyCommentingPost;
+                                      } else {
+                                        Navigator.of(context).pop();
+                                        return;
+                                      }
+                                      setState(() {
+                                        communityPost!.comments = communityPost!
+                                            .comments?.reversed
+                                            .toList();
+                                      });
                                     }
                                   },
                                 ),
