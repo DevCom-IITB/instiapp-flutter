@@ -12,6 +12,7 @@ import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart' as el;
+import 'package:intl/intl.dart';
 
 class MessCalendarPage extends StatefulWidget {
   const MessCalendarPage({Key? key}) : super(key: key);
@@ -95,7 +96,8 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
                             initialData: true,
                             builder: (BuildContext context,
                                 AsyncSnapshot<bool> snapshot) {
-                              return snapshot.data != null
+                              return snapshot.data != null &&
+                                      snapshot.data != false
                                   ? CircularProgressIndicator(
                                       valueColor:
                                           new AlwaysStoppedAnimation<Color>(
@@ -207,8 +209,8 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
                                       (snapshot.data
                                               ?.containsKey(_currentDate) ??
                                           false)
-                                  ? "${snapshot.data?[_currentDate]?.length} Events"
-                                  : "No events",
+                                  ? "${snapshot.data?[_currentDate]?.length} Meals"
+                                  : "No meals",
                               style: theme.textTheme.button?.copyWith(
                                 color: theme.colorScheme.onSecondary,
                               ),
@@ -261,7 +263,11 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
       //   Icons.event_outlined,
       //   heroTag: event.eventID ?? "",
       // ),
-      subtitle: Text(event.dateTime ?? ""),
+      subtitle: Text(
+        DateFormat.jm()
+            .add_yMMMd()
+            .format(DateTime.parse(event.dateTime ?? "").toLocal()),
+      ),
       // onTap: () {
       //   EventPage.navigateWith(context, bloc, event);
       // },
