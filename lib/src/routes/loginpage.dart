@@ -29,7 +29,8 @@ class _LoginPageState extends State<LoginPage> {
   jag.Jaguar? server;
   final Dio dio = Dio();
 
-  final String successUrl = "instiapp://insti.app/login";
+  final String successUrl = "https://redirecturi";
+  // final String successUrl = "instiapp://insti.app/login";
   final String guestUrl = "https://guesturi";
   final String alumniUrl = "https://alumniurl";
   final String gymkhanaUrl = "https://gymkhana.iitb.ac.in";
@@ -238,12 +239,12 @@ class _LoginPageState extends State<LoginPage> {
               if (url.startsWith(successUrl)) {
                 var uri = Uri.parse(url);
                 var code = uri.queryParameters['code'];
+                print(code);
 
                 setState(() {
                   loading = true;
                 });
-                await login(
-                    code ?? "", "https://www.insti.app/login-android.html");
+                await login(code ?? "", "https://redirecturi");
                 setState(() {
                   loading = false;
                 });
