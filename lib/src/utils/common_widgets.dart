@@ -32,8 +32,10 @@ String capitalize(String name) {
 }
 
 String thumbnailUrl(String url, {int dim = 100}) {
-  return url.replaceFirst(
-      "api.insti.app/static/", "img.insti.app/static/$dim/");
+  return url;
+  // TODO: Fix this
+  // .replaceFirst(
+  //     "api.insti.app/static/", "img.insti.app/static/$dim/");
 }
 
 class NullableCircleAvatar extends StatelessWidget {

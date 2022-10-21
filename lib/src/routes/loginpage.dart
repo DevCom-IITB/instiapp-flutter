@@ -239,7 +239,6 @@ class _LoginPageState extends State<LoginPage> {
               if (url.startsWith(successUrl)) {
                 var uri = Uri.parse(url);
                 var code = uri.queryParameters['code'];
-                print(code);
 
                 setState(() {
                   loading = true;
