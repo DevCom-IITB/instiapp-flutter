@@ -8,6 +8,9 @@
 
 - Open urls using external application in url launcher
 - Revert back to commonhtml
+- Fix mess calendar
+- Auto detect links in calendar page
+- Routing for community notifications
 
 ## v2.1.3
 
