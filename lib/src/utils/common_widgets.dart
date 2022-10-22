@@ -1,6 +1,7 @@
 import 'dart:async';
 
 // import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
@@ -1289,6 +1290,7 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
         color: theme.colorScheme.surface,
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             decoration: BoxDecoration(
@@ -1513,32 +1515,40 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                       contentExpanded = true;
                     }),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: Text.rich(
-                new TextSpan(
-                  text: content.length > contentChars && !contentExpanded
-                      ? content.substring(0, contentChars - 10) +
-                          (contentExpanded ? "" : "...")
-                      : content,
-                  children: !contentExpanded && content.length > contentChars
-                      ? [
-                          new TextSpan(
-                            text: 'Read More.',
-                            style: theme.textTheme.subtitle2
-                                ?.copyWith(color: theme.colorScheme.primary),
-                            // recognizer: new TapGestureRecognizer()
-                            //   ..onTap = () => setState(() {
-                            //         contentExpanded = true;
-                            //       }),
-                          )
-                        ]
-                      : [],
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SelectableLinkify(
+                      text: content.length > contentChars && !contentExpanded
+                          ? content.substring(0, contentChars - 10) +
+                              (contentExpanded ? "" : "...")
+                          : content,
+                    ),
+                    Text.rich(
+                      new TextSpan(
+                        children: !contentExpanded &&
+                                content.length > contentChars
+                            ? [
+                                new TextSpan(
+                                  text: 'Read More.',
+                                  style: theme.textTheme.subtitle2?.copyWith(
+                                      color: theme.colorScheme.primary),
+                                  // recognizer: new TapGestureRecognizer()
+                                  //   ..onTap = () => setState(() {
+                                  //         contentExpanded = true;
+                                  //       }),
+                                )
+                              ]
+                            : [],
+                      ),
+                    ),
+                  ],
+                )
+                // child: Text(
+                //   communityPost.content ?? '''post''',
+                // ),
                 ),
-              ),
-              // child: Text(
-              //   communityPost.content ?? '''post''',
-              // ),
-            ),
           ),
           communityPost.imageUrl != null
               ? GestureDetector(
