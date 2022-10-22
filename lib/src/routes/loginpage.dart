@@ -29,6 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   jag.Jaguar? server;
   final Dio dio = Dio();
 
+  // final String successUrl = "https://redirecturi";
   final String successUrl = "instiapp://insti.app/login";
   final String guestUrl = "https://guesturi";
   final String alumniUrl = "https://alumniurl";

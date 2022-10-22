@@ -41,9 +41,10 @@ import 'package:dio/dio.dart';
 import 'model/offersecret.dart';
 part 'apiclient.g.dart';
 
-// @rt.RestApi(baseUrl: "http://192.168.254.89:8000/api")
+// @rt.RestApi(baseUrl: "http://192.168.31.243:8000/api")
 // @rt.RestApi(baseUrl: "http://10.105.177.150/api")
-@rt.RestApi(baseUrl: "https://api.insti.app/api")
+// @rt.RestApi(baseUrl: "https://api.insti.app/api")
+@rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
