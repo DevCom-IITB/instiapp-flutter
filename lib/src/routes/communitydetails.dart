@@ -445,6 +445,7 @@ class CommunityAboutSectionState extends State<CommunityAboutSection> {
             //   ),
             // ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: posts
                   .map(
                     (e) => CommunityPostWidget(
