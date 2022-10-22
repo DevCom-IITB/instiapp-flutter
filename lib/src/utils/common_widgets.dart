@@ -273,7 +273,10 @@ class CommonHtml extends StatelessWidget {
             data: data,
             onLinkTap: (link, _, __, ___) async {
               if (await canLaunchUrl(Uri.parse(link!))) {
-                await launchUrl(Uri.parse(link));
+                await launchUrl(
+                  Uri.parse(link),
+                  mode: LaunchMode.externalApplication,
+                );
               } else {
                 throw "Couldn't launch $link";
               }
@@ -304,7 +307,10 @@ class CommonHtmlBlog extends StatelessWidget {
             onLinkTap: (link, _, __, ____) async {
               //print(link);
               if (await canLaunchUrl(Uri.parse(link!))) {
-                await launchUrl(Uri.parse(link));
+                await launchUrl(
+                  Uri.parse(link),
+                  mode: LaunchMode.externalApplication,
+                );
               } else {
                 throw "Couldn't launch $link";
               }
@@ -320,7 +326,10 @@ class CommonHtmlBlog extends StatelessWidget {
                 return InkWell(
                   onTap: () async {
                     if (await canLaunchUrl(Uri.parse(attributes['href']!))) {
-                      await launchUrl(Uri.parse(attributes['href']!));
+                      await launchUrl(
+                        Uri.parse(attributes['href']!),
+                        mode: LaunchMode.externalApplication,
+                      );
                     }
                   },
                   child: Text(
@@ -367,7 +376,10 @@ class CommonHtmlBlog extends StatelessWidget {
                         onTap: () async {
                           if (await canLaunchUrl(
                               Uri.parse(attributes['href']!))) {
-                            await launchUrl(Uri.parse(attributes['href']!));
+                            await launchUrl(
+                              Uri.parse(attributes['href']!),
+                              mode: LaunchMode.externalApplication,
+                            );
                           }
                         },
                         child: Text(

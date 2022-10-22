@@ -299,7 +299,10 @@ class _BlogPageState extends State<BlogPage> {
             InkWell(
               onTap: () async {
                 if (await canLaunchUrl(Uri.parse(post.link))) {
-                  await launchUrl(Uri.parse(post.link));
+                  await launchUrl(
+                    Uri.parse(post.link),
+                    mode: LaunchMode.externalApplication,
+                  );
                 }
               },
               child: Tooltip(
@@ -396,24 +399,16 @@ class _BlogPageState extends State<BlogPage> {
                 padding: const EdgeInsets.only(
                   left: 12.0,
                   right: 12.0,
+                  bottom: 12.0,
                 ),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Container(
-                    constraints: BoxConstraints(
-                        minWidth: 0.9 * width, maxWidth: width * 1.5),
-                    child: widget.postType == PostType.External
-                        ? CommonHtml(
-                            data: post.content,
-                            defaultTextStyle:
-                                theme.textTheme.subtitle1 ?? TextStyle())
-                        : CommonHtmlBlog(
-                            data: post.content,
-                            defaultTextStyle:
-                                theme.textTheme.subtitle1 ?? TextStyle(),
-                            query: bloc.query,
-                          ),
-                  ),
+                      constraints: BoxConstraints(maxWidth: width * 0.8),
+                      child: CommonHtml(
+                          data: post.content,
+                          defaultTextStyle:
+                              theme.textTheme.subtitle1 ?? TextStyle())),
                 )),
             widget.postType == PostType.External
                 ? Padding(
