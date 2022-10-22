@@ -7,7 +7,6 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:insti.app</string>
-		<string>applinks:techgatha.com</string>
 	</array>
 </dict>
 </plist>

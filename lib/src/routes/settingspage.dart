@@ -106,7 +106,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     subtitle: Text("Update personal details on SSO"),
                     onTap: () async {
                       if (await canLaunchUrl(Uri.parse(updateProfileUrl))) {
-                        await launchUrl(Uri.parse(updateProfileUrl));
+                        await launchUrl(
+                          Uri.parse(updateProfileUrl),
+                          mode: LaunchMode.externalApplication,
+                        );
                       }
                     },
                   ),
@@ -305,7 +308,10 @@ class _SettingsPageState extends State<SettingsPage> {
                       Text("Report technical issues or suggest new features"),
                   onTap: () async {
                     if (await canLaunchUrl(Uri.parse(feedbackUrl))) {
-                      await launchUrl(Uri.parse(feedbackUrl));
+                      await launchUrl(
+                        Uri.parse(feedbackUrl),
+                        mode: LaunchMode.externalApplication,
+                      );
                     }
                   },
                 ),

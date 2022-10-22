@@ -99,7 +99,10 @@ class _EventPageState extends State<EventPage> {
           icon: Icon(Icons.language_outlined),
           onPressed: () async {
             if (await canLaunchUrl(Uri.parse(event!.eventWebsiteURL!))) {
-              await launchUrl(Uri.parse(event!.eventWebsiteURL!));
+              await launchUrl(
+                Uri.parse(event!.eventWebsiteURL!),
+                mode: LaunchMode.externalApplication,
+              );
             }
           },
         ));
@@ -114,7 +117,10 @@ class _EventPageState extends State<EventPage> {
                 ? "http://maps.apple.com/?ll=${event!.eventVenues![0].venueLatitude},${event!.eventVenues![0].venueLongitude}&z=20"
                 : "google.navigation:q=${event!.eventVenues![0].venueLatitude},${event!.eventVenues![0].venueLongitude}";
             if (await canLaunchUrl(Uri.parse(uri))) {
-              await launchUrl(Uri.parse(uri));
+              await launchUrl(
+                Uri.parse(uri),
+                mode: LaunchMode.externalApplication,
+              );
             }
           },
         ));

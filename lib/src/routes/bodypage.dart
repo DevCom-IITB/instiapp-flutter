@@ -98,7 +98,10 @@ class _BodyPageState extends State<BodyPage> {
           onPressed: () async {
             if (body?.bodyWebsiteURL != null) {
               if (await canLaunchUrl(Uri.parse(body?.bodyWebsiteURL ?? ""))) {
-                await launchUrl(Uri.parse(body?.bodyWebsiteURL ?? ""));
+                await launchUrl(
+                  Uri.parse(body?.bodyWebsiteURL ?? ""),
+                  mode: LaunchMode.externalApplication,
+                );
               }
             }
           },

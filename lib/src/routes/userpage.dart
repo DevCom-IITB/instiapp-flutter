@@ -209,7 +209,10 @@ class _UserPageState extends State<UserPage> {
           onPressed: () async {
             if (user!.userWebsiteURL != null) {
               if (await canLaunchUrl(Uri.parse(user!.userWebsiteURL!))) {
-                await launchUrl(Uri.parse(user!.userWebsiteURL!));
+                await launchUrl(
+                  Uri.parse(user!.userWebsiteURL!),
+                  mode: LaunchMode.externalApplication,
+                );
               }
             }
           },
@@ -658,7 +661,10 @@ class _UserPageState extends State<UserPage> {
   _launchEmail(BuildContext context) async {
     var url = "mailto:${user?.userEmail}?subject=Let's Have Coffee";
     if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
+      await launchUrl(
+        Uri.parse(url),
+        mode: LaunchMode.externalApplication,
+      );
     } else {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -673,7 +679,10 @@ class _UserPageState extends State<UserPage> {
   _launchDialer(BuildContext context) async {
     var url = "tel:${user?.userContactNumber}";
     if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
+      await launchUrl(
+        Uri.parse(url),
+        mode: LaunchMode.externalApplication,
+      );
     } else {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
