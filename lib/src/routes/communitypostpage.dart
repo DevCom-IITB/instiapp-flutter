@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 // import 'package:share/share.dart';
 
 import '../bloc_provider.dart';
@@ -478,7 +479,7 @@ class _CommentState extends State<Comment> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(comment!.content ?? ""),
+                      SelectableLinkify(text: comment!.content ?? ""),
                       _buildFooter(theme, bloc, comment!),
                       ..._buildCommentList(theme, comment!)
                     ],
