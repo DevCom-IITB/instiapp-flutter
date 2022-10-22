@@ -1269,7 +1269,12 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
     CommunityPostBloc communityPostBloc = bloc.communityPostBloc;
     String content = communityPost.content ?? "";
-    int contentChars = widget.postType == CPType.Featured ? 30 : 310;
+    print(communityPost.imageUrl);
+    int contentChars = widget.postType == CPType.Featured
+        ? communityPost.imageUrl == null || communityPost.imageUrl!.length == 0
+            ? 310
+            : 30
+        : 310;
     if (widget.postType == CPType.All) {
       if (communityPost.anonymous == true) {
         isAnon = true;
@@ -1279,6 +1284,17 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
     } else {
       isAnon = false;
     }
+
+    void Function()? postOnTap = contentExpanded ||
+            content.length <= contentChars ||
+            widget.postType == CPType.Featured
+        ? widget.shouldTap && (communityPost.status == 1)
+            ? () => CommunityPostPage.navigateWith(
+                context, bloc.communityPostBloc, communityPost)
+            : null
+        : () => setState(() {
+              contentExpanded = true;
+            });
 
     return Container(
       width: CPType.Featured == widget.postType ? 300 : null,
@@ -1524,6 +1540,15 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                           ? content.substring(0, contentChars - 10) +
                               (contentExpanded ? "" : "...")
                           : content,
+                      onOpen: (link) async {
+                        if (await canLaunchUrl(Uri.parse(link.url))) {
+                          await launchUrl(
+                            Uri.parse(link.url),
+                            mode: LaunchMode.externalApplication,
+                          );
+                        }
+                      },
+                      onTap: postOnTap,
                     ),
                     Text.rich(
                       new TextSpan(
