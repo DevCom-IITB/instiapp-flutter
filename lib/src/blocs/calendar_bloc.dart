@@ -105,9 +105,7 @@ class CalendarBloc {
       prefs.setString(
           mteValuesStorageID,
           json.encode(monthToEvents.values
-              .map((e) => {
-                    e.map((k) => {k.toJson()}).toList()
-                  })
+              .map((e) => e.map((k) => k.toJson()).toList())
               .toList()));
     }
 
@@ -120,9 +118,7 @@ class CalendarBloc {
       prefs.setString(
           eventsMapValuesStorageID,
           json.encode(eventsMap.values
-              .map((e) => {
-                    e.map((k) => {k.toJson()}).toList()
-                  })
+              .map((e) => e.map((k) => k.toJson()).toList())
               .toList()));
     }
   }
@@ -139,7 +135,9 @@ class CalendarBloc {
         var values =
             (json.decode(prefs.getString(mteValuesStorageID) ?? '') as List)
                 .map((evs) =>
-                    evs.map((e) => Event.fromJson(e)).toList().cast<Event>()).toList().cast<List<Event>>();
+                    evs.map((e) => Event.fromJson(e)).toList().cast<Event>())
+                .toList()
+                .cast<List<Event>>();
         monthToEvents = Map.fromIterables(keys, values);
       }
     }
@@ -151,10 +149,10 @@ class CalendarBloc {
         var keys =
             (json.decode(prefs.getString(mteKeysStorageID) ?? '') as List)
                 .map((e) => DateTime.parse(e as String));
-        var values =
+        Iterable<List<Event>> values =
             (json.decode(prefs.getString(mteValuesStorageID) ?? '') as List)
                 .map((evs) =>
-                    evs.map((e) => Event.fromJson(e)).toList() as List<Event>);
+                    evs.map((e) => Event.fromJson(e)).toList().cast<Event>());
         eventsMap = Map.fromIterables(keys, values);
         _eventsSubject.add(eventsMap);
       }
