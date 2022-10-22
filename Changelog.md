@@ -4,6 +4,19 @@
 
 - Nothing here yet (https://github.com/tastelessjolt/instiapp-flutter/projects/1)
 
+## v2.1.4
+
+- Open urls using external application in url launcher
+- Revert back to commonhtml
+
+## v2.1.3
+
+- Migrate to gymkhana backend
+
+## v2.1.2
+
+- Corrections in urls
+
 ## v2.1.1
 
 - Fix uni_links

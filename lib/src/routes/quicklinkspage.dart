@@ -116,7 +116,10 @@ class _QuickLinksPageState extends State<QuickLinksPage> {
       title: Text(link.key, style: TextStyle(fontSize: 24)),
       onTap: () async {
         if (await canLaunchUrl(Uri.parse(link.value))) {
-          await launchUrl(Uri.parse(link.value));
+          await launchUrl(
+            Uri.parse(link.value),
+            mode: LaunchMode.externalApplication,
+          );
         }
       },
     );
