@@ -6,7 +6,8 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:dio/dio.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+// import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_webview_pro/webview_flutter.dart' as webview;
 import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
@@ -76,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
 
     _bloc = widget.bloc;
     if (Platform.isAndroid) {
-      WebView.platform = SurfaceAndroidWebView();
+      webview.WebView.platform = webview.SurfaceAndroidWebView();
     }
 
     // Creating login url
@@ -228,8 +229,8 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           )
-        : WebView(
-            javascriptMode: JavascriptMode.unrestricted,
+        : webview.WebView(
+            javascriptMode: webview.JavascriptMode.unrestricted,
             initialUrl: loginurl,
             // onWebViewCreated: (controller){
             //   this._controller = controller;
