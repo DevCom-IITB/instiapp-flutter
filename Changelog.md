@@ -9,8 +9,9 @@
 - Open urls using external application in url launcher
 - Revert back to commonhtml
 - Fix mess calendar
-- Auto detect links in calendar page
+- Auto detect links in community page
 - Routing for community notifications
+- Increase size of featured post if no image
 
 ## v2.1.3
 
