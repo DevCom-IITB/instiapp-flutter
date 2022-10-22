@@ -5,10 +5,10 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 // import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:jaguar/jaguar.dart' as jag;
 import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_webview_pro/webview_flutter.dart' as webview;
 // import 'package:webview_flutter/webview_flutter.dart';
 
 class MapPage extends StatefulWidget {
@@ -20,6 +20,7 @@ class _MapPageState extends State<MapPage> {
   late jag.Jaguar server;
 
   final String hostUrl = "insti.app";
+  // final String mapUrl = "https://www.gps-coordinates.net/my-location";
   final String mapUrl = "https://insti.app/map/?sandbox=true";
 
   // final String hostUrl = "127.0.0.1:9999";
@@ -29,7 +30,7 @@ class _MapPageState extends State<MapPage> {
   // final String mapUrl = "https://varunpatil.me/instimapweb-standalone/";
 
   StreamSubscription<String>? onUrlChangedSub;
-  InAppWebViewController? webViewController;
+  webview.WebViewController? webViewController;
 
   // Storing for dispose
   ThemeData? theme;
@@ -49,7 +50,7 @@ class _MapPageState extends State<MapPage> {
   @override
   void dispose() {
     onUrlChangedSub?.cancel();
-    server.close();
+    // server.close();
 
     super.dispose();
   }
@@ -86,25 +87,26 @@ class _MapPageState extends State<MapPage> {
                 semanticLabel: "Refresh",
               ),
               onPressed: () {
-                webViewController?.loadUrl(
-                  urlRequest: URLRequest(url: Uri.parse(mapUrl)),
-                );
+                webViewController?.loadUrl(mapUrl);
               },
             ),
           ],
         ),
       ),
-      body: InAppWebView(
-        onWebViewCreated: (controller) {
-          webViewController = controller;
+      body: webview.WebView(
+        initialUrl: mapUrl,
+        javascriptMode: webview.JavascriptMode.unrestricted,
+        onWebViewCreated: (webview.WebViewController webViewController) {
+          this.webViewController = webViewController;
         },
-        initialUrlRequest: URLRequest(url: Uri.parse(mapUrl)),
-        androidOnPermissionRequest: (controller, origin, resources) async {
-          await Permission.locationWhenInUse.request();
-          return PermissionRequestResponse(
-              resources: resources,
-              action: PermissionRequestResponseAction.GRANT);
+        navigationDelegate: (webview.NavigationRequest request) {
+          if (request.url.startsWith(mapUrl)) {
+            return webview.NavigationDecision.prevent;
+          }
+          return webview.NavigationDecision.navigate;
         },
+        gestureNavigationEnabled: true,
+        geolocationEnabled: true,
       ),
     );
   }
