@@ -6,6 +6,7 @@ import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
 import 'package:InstiApp/src/routes/communitydetails.dart';
+import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/routes/event_form.dart';
 // import 'package:InstiApp/src/routes/complaintpage.dart';
 // import 'package:InstiApp/src/routes/complaintspage.dart';
@@ -244,6 +245,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   CommunityDetails(
                       communityFuture: widget.bloc.communityBloc
                           .getCommunity(temp.split("/group/")[1])));
+            } else if (temp.startsWith("/communitypost/")) {
+              widget.bloc.drawerState.setPageIndex(15);
+              return _buildRoute(
+                  settings,
+                  CommunityPostPage(
+                      communityPostFuture: widget.bloc.communityPostBloc
+                          .getCommunityPost(temp.split("/communitypost/")[1])));
             } else if (temp.startsWith("/putentity/event/")) {
               return _buildRoute(
                 settings,
@@ -327,7 +335,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, QRPage());
               }
             }
-            return _buildRoute(settings, MessPage());
+            return _buildRoute(
+                settings,
+                LoginPage(
+                  widget.bloc,
+                  scaffoldMessengerKey: scaffoldMessengerKey,
+                  navigatorKey: _navigatorKey,
+                ));
           }
           return null;
         },
@@ -483,6 +497,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       "blogentry": fromMap.notificationExtra?.contains("/internship") ?? false
           ? "/trainblog"
           : "/placeblog",
+      "community": "/group/${fromMap.notificationObjectID ?? ""}",
+      "communitypost": "/groups",
+      "communitypostuserreaction": "/groups",
       "body": "/body/${fromMap.notificationObjectID ?? ""}",
       "event": "/event/${fromMap.notificationObjectID ?? ""}",
       "userprofile": "/user/${fromMap.notificationObjectID ?? ""}",
@@ -491,7 +508,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           "/complaint/${fromMap.notificationExtra ?? ""}?reload=true",
       "unresolvedquery": "/query",
     }[fromMap.notificationType];
-
+    print(fromMap.notificationType);
     _navigatorKey.currentState?.pushNamed(routeName ?? '/');
 
     // marking the notification as read
