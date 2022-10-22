@@ -94,7 +94,8 @@ class _CalendarPageState extends State<CalendarPage> {
                             initialData: true,
                             builder: (BuildContext context,
                                 AsyncSnapshot<bool> snapshot) {
-                              return snapshot.data != null
+                              return snapshot.data != null &&
+                                      snapshot.data != false
                                   ? CircularProgressIndicator(
                                       valueColor:
                                           new AlwaysStoppedAnimation<Color>(
