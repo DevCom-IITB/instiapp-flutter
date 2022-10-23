@@ -278,7 +278,6 @@ class CommonHtml extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
     return data != null
         ? HtmlWidget(
             data ?? "",
@@ -1281,7 +1280,6 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
     CommunityPostBloc communityPostBloc = bloc.communityPostBloc;
     String content = communityPost.content ?? "";
-    print(communityPost.imageUrl);
     int contentChars = widget.postType == CPType.Featured
         ? communityPost.imageUrl == null || communityPost.imageUrl!.length == 0
             ? 310
