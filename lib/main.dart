@@ -508,7 +508,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           "/complaint/${fromMap.notificationExtra ?? ""}?reload=true",
       "unresolvedquery": "/query",
     }[fromMap.notificationType];
-    print(fromMap.notificationType);
     _navigatorKey.currentState?.pushNamed(routeName ?? '/');
 
     // marking the notification as read

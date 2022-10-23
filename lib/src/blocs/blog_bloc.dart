@@ -106,8 +106,6 @@ class PostBloc {
       if (postType != PostType.Query)
         p.published = dateTimeFormatter(p.published);
     });
-    print("Entered");
-    print(posts.sublist(0, 2).map((p) => p.content));
     return posts;
   }
 
