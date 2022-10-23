@@ -3,7 +3,8 @@ import 'dart:io';
 
 import 'package:InstiApp/src/utils/common_widgets.dart';
 // import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+// import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_webview_pro/webview_flutter.dart' as webview;
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -32,7 +33,7 @@ class _PutEntityPageState extends State<PutEntityPage> {
   bool hasPermission = false;
 
   StreamSubscription<String>? onUrlChangedSub;
-  InAppWebViewController? webViewController;
+  webview.WebViewController? webViewController;
 
   // Storing for dispose
   ThemeData? theme;
@@ -99,13 +100,13 @@ class _PutEntityPageState extends State<PutEntityPage> {
                 style: theme.textTheme.headline1,
               ),
             )
-          : InAppWebView(
+          : webview.WebView(
               // javascriptMode: JavascriptMode.unrestricted,
               onWebViewCreated: (controller) {
                 webViewController = controller;
               },
-              initialUrlRequest: URLRequest(url: Uri.parse(url)),
-              onLoadStart: (_, url) async {
+              initialUrl: url,
+              onPageStarted: (url) async {
                 // print("Changed URL: $url");
                 if (url.toString().contains("/event/")) {
                   var uri = url
@@ -121,12 +122,12 @@ class _PutEntityPageState extends State<PutEntityPage> {
                   Navigator.of(context).pushReplacementNamed("/body/$uri");
                 }
               },
-              androidOnPermissionRequest:
-                  (controller, origin, resources) async {
-                return PermissionRequestResponse(
-                    resources: resources,
-                    action: PermissionRequestResponseAction.GRANT);
-              },
+              // :
+              //     (controller, origin, resources) async {
+              //   return PermissionRequestResponse(
+              //       resources: resources,
+              //       action: PermissionRequestResponseAction.GRANT);
+              // },
             ),
     );
   }
