@@ -24,6 +24,8 @@ dependencies:
   http: ^0.13.4
   rxdart: ^0.26.0
   flutter_html: ^2.2.1
+  flutter_widget_from_html_core: any
+  fwfh_selectable_text: ^0.8.3
   markdown: ^4.0.1
   shared_preferences: ^2.0.10
   date_format: ^2.0.4
