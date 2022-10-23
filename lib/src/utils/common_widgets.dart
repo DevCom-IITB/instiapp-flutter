@@ -181,8 +181,8 @@ class HeroPhotoViewWrapperState extends State<HeroPhotoViewWrapper> {
           ),
           child: PhotoView(
             imageProvider: widget.imageProvider,
-            loadingBuilder: (_, __) => widget.loadingChild!,
-            backgroundDecoration: widget.backgroundDecoration!,
+            loadingBuilder: (_, __) => widget.loadingChild ?? Container(),
+            backgroundDecoration: widget.backgroundDecoration,
             minScale: widget.minScale,
             maxScale: widget.maxScale,
             heroAttributes: PhotoViewHeroAttributes(tag: widget.heroTag),
