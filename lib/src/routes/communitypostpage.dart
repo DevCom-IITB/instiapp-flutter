@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:url_launcher/url_launcher.dart';
 // import 'package:share/share.dart';
 
 import '../bloc_provider.dart';
@@ -209,8 +211,22 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                                           .createCommunityPost(comment);
                                       _commentController.clear();
                                       _commentFocusNode.unfocus();
-                                      bloc.communityPostBloc.getCommunityPost(
-                                          currentlyCommentingPost!.id!);
+                                      currentlyCommentingPost = await bloc
+                                          .communityPostBloc
+                                          .getCommunityPost(
+                                              currentlyCommentingPost!.id!);
+                                      if (communityPost!.id ==
+                                          currentlyCommentingPost!.id) {
+                                        communityPost = currentlyCommentingPost;
+                                      } else {
+                                        Navigator.of(context).pop();
+                                        return;
+                                      }
+                                      setState(() {
+                                        communityPost!.comments = communityPost!
+                                            .comments?.reversed
+                                            .toList();
+                                      });
                                     }
                                   },
                                 ),
@@ -464,7 +480,17 @@ class _CommentState extends State<Comment> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(comment!.content ?? ""),
+                      SelectableLinkify(
+                        text: comment!.content ?? "",
+                        onOpen: (link) async {
+                          if (await canLaunchUrl(Uri.parse(link.url))) {
+                            await launchUrl(
+                              Uri.parse(link.url),
+                              mode: LaunchMode.externalApplication,
+                            );
+                          }
+                        },
+                      ),
                       _buildFooter(theme, bloc, comment!),
                       ..._buildCommentList(theme, comment!)
                     ],

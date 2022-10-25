@@ -68,6 +68,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
 
     var bloc = BlocProvider.of(context)!.bloc;
     double _avatarRadius = 50;
+    bool isLoggedIn = bloc.currSession != null;
     // print(community?.isUserFollowing);
     return Scaffold(
       key: _scaffoldKey,
@@ -77,11 +78,12 @@ class _CommunityDetailsState extends State<CommunityDetails> {
         searchIcon: true,
         appBarSearchStyle:
             AppBarSearchStyle(hintText: "Search " + (community?.name ?? "")),
-        leadingStyle: LeadingStyle(
-            icon: Icons.arrow_back,
-            onPressed: () async {
-              Navigator.of(context).pop();
-            }),
+        //TODO: Uncomment leading style
+        // leadingStyle: LeadingStyle(
+        //     icon: Icons.arrow_back,
+        //     onPressed: () async {
+        //       Navigator.of(context).pop();
+        //     }),
       ),
       drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
@@ -103,120 +105,142 @@ class _CommunityDetailsState extends State<CommunityDetails> {
           ],
         ),
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          bloc.communityBloc.getCommunity(community!.id!).then((community) {
-            setState(() {
-              this.community = community;
-            });
-          });
-        },
-        child: StreamBuilder<Object>(builder: (context, snapshot) {
-          return SingleChildScrollView(
-            child: Stack(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    community?.coverImg != null
-                        ? Material(
-                            type: MaterialType.transparency,
-                            child: Ink.image(
-                              child: Container(),
-                              image: CachedNetworkImageProvider(
-                                community?.coverImg ?? "",
-                              ),
-                              height: 200,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : SizedBox(height: 200),
-                    SizedBox(
-                      height: _avatarRadius + 5,
-                    ),
-                    _buildInfo(theme),
-                    CommunityAboutSection(community: community),
-                    CommunityPostSection(community: community),
-                  ],
-                ),
-                Positioned(
-                  top: 200 - _avatarRadius,
-                  left: 20,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+      body: !isLoggedIn
+          ? Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(50),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.cloud,
+                    size: 200,
+                    color: Colors.grey[600],
+                  ),
+                  Text(
+                    "Login To Continue",
+                    style: theme.textTheme.headline5,
+                    textAlign: TextAlign.center,
+                  )
+                ],
+                crossAxisAlignment: CrossAxisAlignment.center,
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: () async {
+                bloc.communityBloc
+                    .getCommunity(community!.id!)
+                    .then((community) {
+                  setState(() {
+                    this.community = community;
+                  });
+                });
+              },
+              child: StreamBuilder<Object>(builder: (context, snapshot) {
+                return SingleChildScrollView(
+                  child: Stack(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 3,
-                              color: Colors.black.withOpacity(0.25),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          community?.coverImg != null
+                              ? Material(
+                                  type: MaterialType.transparency,
+                                  child: Ink.image(
+                                    child: Container(),
+                                    image: CachedNetworkImageProvider(
+                                      community?.coverImg ?? "",
+                                    ),
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : SizedBox(height: 200),
+                          SizedBox(
+                            height: _avatarRadius + 5,
+                          ),
+                          _buildInfo(theme),
+                          CommunityAboutSection(community: community),
+                          CommunityPostSection(community: community),
+                        ],
+                      ),
+                      Positioned(
+                        top: 200 - _avatarRadius,
+                        left: 20,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    blurRadius: 3,
+                                    color: Colors.black.withOpacity(0.25),
+                                  ),
+                                  BoxShadow(
+                                    blurRadius: 10,
+                                    color: Colors.black.withOpacity(0.25),
+                                    spreadRadius: -2,
+                                    offset: Offset(0, 1),
+                                  ),
+                                ],
+                              ),
+                              child: NullableCircleAvatar(
+                                community?.logoImg ?? "",
+                                Icons.person,
+                                radius: _avatarRadius,
+                              ),
                             ),
-                            BoxShadow(
-                              blurRadius: 10,
-                              color: Colors.black.withOpacity(0.25),
-                              spreadRadius: -2,
-                              offset: Offset(0, 1),
-                            ),
+                            SizedBox(width: 20),
+                            TextButton(
+                              child: Text(
+                                (community?.isUserFollowing ?? false)
+                                    ? "Joined"
+                                    : "Join",
+                                style: theme.textTheme.subtitle1?.copyWith(
+                                  color: Colors.white,
+                                  letterSpacing: 1.25,
+                                ),
+                              ),
+                              onPressed: () async {
+                                if (bloc.currSession == null) {
+                                  return;
+                                }
+                                setState(() {
+                                  loadingFollow = true;
+                                });
+                                if (community != null)
+                                  await bloc.updateFollowCommunity(community!);
+                                setState(() {
+                                  loadingFollow = false;
+                                  // event has changes
+                                });
+                              },
+                              style: ButtonStyle(
+                                  padding: MaterialStateProperty.all<EdgeInsets>(
+                                      EdgeInsets.symmetric(
+                                          horizontal: 24, vertical: 1)),
+                                  foregroundColor: MaterialStateProperty.all<Color>(
+                                      Colors.white),
+                                  backgroundColor: MaterialStateProperty.all<Color>(
+                                      (community?.isUserFollowing ?? false)
+                                          ? theme.colorScheme.primary
+                                          : theme.colorScheme.secondary),
+                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(100.0),
+                                          side: BorderSide(color: Colors.transparent)))),
+                            )
                           ],
                         ),
-                        child: NullableCircleAvatar(
-                          community?.logoImg ?? "",
-                          Icons.person,
-                          radius: _avatarRadius,
-                        ),
                       ),
-                      SizedBox(width: 20),
-                      TextButton(
-                        child: Text(
-                          (community?.isUserFollowing ?? false)
-                              ? "Joined"
-                              : "Join",
-                          style: theme.textTheme.subtitle1?.copyWith(
-                            color: Colors.white,
-                            letterSpacing: 1.25,
-                          ),
-                        ),
-                        onPressed: () async {
-                          if (bloc.currSession == null) {
-                            return;
-                          }
-                          setState(() {
-                            loadingFollow = true;
-                          });
-                          if (community != null)
-                            await bloc.updateFollowCommunity(community!);
-                          setState(() {
-                            loadingFollow = false;
-                            // event has changes
-                          });
-                        },
-                        style: ButtonStyle(
-                            padding: MaterialStateProperty.all<EdgeInsets>(
-                                EdgeInsets.symmetric(
-                                    horizontal: 24, vertical: 1)),
-                            foregroundColor:
-                                MaterialStateProperty.all<Color>(Colors.white),
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                (community?.isUserFollowing ?? false)
-                                    ? theme.colorScheme.primary
-                                    : theme.colorScheme.secondary),
-                            shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(100.0),
-                                    side: BorderSide(color: Colors.transparent)))),
-                      )
                     ],
                   ),
-                ),
-              ],
+                );
+              }),
             ),
-          );
-        }),
-      ),
       floatingActionButton: FloatingActionButton(
           child: Icon(
             Icons.mode_edit,
@@ -421,6 +445,7 @@ class CommunityAboutSectionState extends State<CommunityAboutSection> {
             //   ),
             // ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: posts
                   .map(
                     (e) => CommunityPostWidget(
@@ -444,17 +469,16 @@ class CommunityPostSection extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<CommunityPostSection> createState() =>
-      _CommunityPostSectionState(community: community);
+  State<CommunityPostSection> createState() => _CommunityPostSectionState();
 }
 
 class _CommunityPostSectionState extends State<CommunityPostSection> {
   bool firstBuild = true;
-  final Community? community;
+  // final Community? community;
 
   CPType cpType = CPType.All;
 
-  _CommunityPostSectionState({required this.community});
+  _CommunityPostSectionState();
 
   bool loading = false;
 
@@ -476,126 +500,132 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
       firstBuild = false;
     }
 
-    return Container(
-      child: Column(
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceVariant.withOpacity(0.4)),
-            child: SingleChildScrollView(
-              padding: EdgeInsets.zero,
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  SizedBox(width: 20),
-                  TextButton(
-                    child: Text(
-                      "All",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () async {
-                      setState(() {
-                        loading = true;
-                        cpType = CPType.All;
-                      });
-                      await communityPostBloc.refresh(type: CPType.All);
-                      setState(() {
-                        loading = false;
-                      });
-                    },
-                    style: _getButtonStyle(cpType == CPType.All, theme),
-                  ),
-                  SizedBox(width: 10),
-                  TextButton(
-                    child: Text(
-                      "Your Posts",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () async {
-                      setState(() {
-                        loading = true;
-                        cpType = CPType.YourPosts;
-                      });
-                      await communityPostBloc.refresh(type: CPType.YourPosts);
-                      setState(() {
-                        loading = false;
-                      });
-                    },
-                    style: _getButtonStyle(cpType == CPType.YourPosts, theme),
-                  ),
-                  SizedBox(width: 10),
-                  bloc.hasPermission(community!.body!, "AppP")
-                      ? TextButton(
+    Community? community = widget.community;
+
+    return community == null
+        ? CircularProgressIndicatorExtended()
+        : Container(
+            child: Column(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceVariant.withOpacity(0.4)),
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.zero,
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        SizedBox(width: 20),
+                        TextButton(
                           child: Text(
-                            "Pending posts",
+                            "All",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           onPressed: () async {
                             setState(() {
                               loading = true;
-                              cpType = CPType.PendingPosts;
+                              cpType = CPType.All;
+                            });
+                            await communityPostBloc.refresh(type: CPType.All);
+                            setState(() {
+                              loading = false;
+                            });
+                          },
+                          style: _getButtonStyle(cpType == CPType.All, theme),
+                        ),
+                        SizedBox(width: 10),
+                        TextButton(
+                          child: Text(
+                            "Your Posts",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () async {
+                            setState(() {
+                              loading = true;
+                              cpType = CPType.YourPosts;
                             });
                             await communityPostBloc.refresh(
-                                type: CPType.PendingPosts);
+                                type: CPType.YourPosts);
                             setState(() {
                               loading = false;
                             });
                           },
                           style: _getButtonStyle(
-                              cpType == CPType.PendingPosts, theme),
-                        )
-                      : Container(),
-                  SizedBox(width: 10),
-                  bloc.hasPermission(community!.body!, "ModC")
-                      ? TextButton(
-                          child: Text(
-                            "Reported Content",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          onPressed: () async {
-                            setState(() {
-                              loading = true;
-                              cpType = CPType.ReportedContent;
-                            });
-                            await communityPostBloc.refresh(
-                              type: CPType.ReportedContent,
+                              cpType == CPType.YourPosts, theme),
+                        ),
+                        SizedBox(width: 10),
+                        bloc.hasPermission(community.body!, "AppP")
+                            ? TextButton(
+                                child: Text(
+                                  "Pending posts",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                onPressed: () async {
+                                  setState(() {
+                                    loading = true;
+                                    cpType = CPType.PendingPosts;
+                                  });
+                                  await communityPostBloc.refresh(
+                                      type: CPType.PendingPosts);
+                                  setState(() {
+                                    loading = false;
+                                  });
+                                },
+                                style: _getButtonStyle(
+                                    cpType == CPType.PendingPosts, theme),
+                              )
+                            : Container(),
+                        SizedBox(width: 10),
+                        bloc.hasPermission(community.body!, "ModC")
+                            ? TextButton(
+                                child: Text(
+                                  "Reported Content",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                onPressed: () async {
+                                  setState(() {
+                                    loading = true;
+                                    cpType = CPType.ReportedContent;
+                                  });
+                                  await communityPostBloc.refresh(
+                                    type: CPType.ReportedContent,
+                                  );
+                                  setState(() {
+                                    loading = false;
+                                  });
+                                },
+                                style: _getButtonStyle(
+                                    cpType == CPType.ReportedContent, theme),
+                              )
+                            : Container(),
+                      ],
+                    ),
+                  ),
+                ),
+                Divider(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  height: 0,
+                ),
+                loading
+                    ? CircularProgressIndicator()
+                    : Container(
+                        decoration: BoxDecoration(
+                            color: theme.colorScheme.surfaceVariant),
+                        child: StreamBuilder<List<CommunityPost>>(
+                          stream: communityPostBloc.communityposts,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<CommunityPost>> snapshot) {
+                            return Column(
+                              children: _buildPostList(snapshot, theme,
+                                  communityPostBloc, community.id),
                             );
-                            setState(() {
-                              loading = false;
-                            });
                           },
-                          style: _getButtonStyle(
-                              cpType == CPType.ReportedContent, theme),
-                        )
-                      : Container(),
-                ],
-              ),
+                        ),
+                      )
+              ],
             ),
-          ),
-          Divider(
-            color: theme.colorScheme.onSurfaceVariant,
-            height: 0,
-          ),
-          loading
-              ? CircularProgressIndicator()
-              : Container(
-                  decoration:
-                      BoxDecoration(color: theme.colorScheme.surfaceVariant),
-                  child: StreamBuilder<List<CommunityPost>>(
-                    stream: communityPostBloc.communityposts,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<CommunityPost>> snapshot) {
-                      return Column(
-                        children: _buildPostList(
-                            snapshot, theme, communityPostBloc, community?.id),
-                      );
-                    },
-                  ),
-                )
-        ],
-      ),
-    );
+          );
   }
 
   ButtonStyle _getButtonStyle(bool selected, ThemeData theme) {

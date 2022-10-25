@@ -5,6 +5,8 @@ import 'package:InstiApp/src/api/model/rich_notification.dart';
 import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
+import 'package:InstiApp/src/routes/communitydetails.dart';
+import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/routes/event_form.dart';
 // import 'package:InstiApp/src/routes/complaintpage.dart';
 // import 'package:InstiApp/src/routes/complaintspage.dart';
@@ -236,6 +238,20 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
               //               uri.pathSegments[1],
               //               reload: uri.queryParameters.containsKey("reload") &&
               //                   uri.queryParameters["reload"] == "true")));
+            } else if (temp.startsWith("/group/")) {
+              widget.bloc.drawerState.setPageIndex(15);
+              return _buildRoute(
+                  settings,
+                  CommunityDetails(
+                      communityFuture: widget.bloc.communityBloc
+                          .getCommunity(temp.split("/group/")[1])));
+            } else if (temp.startsWith("/communitypost/")) {
+              widget.bloc.drawerState.setPageIndex(15);
+              return _buildRoute(
+                  settings,
+                  CommunityPostPage(
+                      communityPostFuture: widget.bloc.communityPostBloc
+                          .getCommunityPost(temp.split("/communitypost/")[1])));
             } else if (temp.startsWith("/putentity/event/")) {
               return _buildRoute(
                 settings,
@@ -319,7 +335,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, QRPage());
               }
             }
-            return _buildRoute(settings, MessPage());
+            return _buildRoute(
+                settings,
+                LoginPage(
+                  widget.bloc,
+                  scaffoldMessengerKey: scaffoldMessengerKey,
+                  navigatorKey: _navigatorKey,
+                ));
           }
           return null;
         },
@@ -475,6 +497,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       "blogentry": fromMap.notificationExtra?.contains("/internship") ?? false
           ? "/trainblog"
           : "/placeblog",
+      "community": "/group/${fromMap.notificationObjectID ?? ""}",
+      "communitypost": "/groups",
+      "communitypostuserreaction": "/groups",
       "body": "/body/${fromMap.notificationObjectID ?? ""}",
       "event": "/event/${fromMap.notificationObjectID ?? ""}",
       "userprofile": "/user/${fromMap.notificationObjectID ?? ""}",
@@ -483,7 +508,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           "/complaint/${fromMap.notificationExtra ?? ""}?reload=true",
       "unresolvedquery": "/query",
     }[fromMap.notificationType];
-
     _navigatorKey.currentState?.pushNamed(routeName ?? '/');
 
     // marking the notification as read
@@ -492,13 +516,25 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   void handleAppLink(Uri? uri) {
     if (uri == null) return;
-    var routeName = {
-      "user": "/user/${uri.pathSegments[1]}",
-      "event": "/event/${uri.pathSegments[1]}",
-      "map": "/map",
-      "org": "/body/${uri.pathSegments[1]}",
-    }[uri.pathSegments[0]];
-    _navigatorKey.currentState?.pushNamed(routeName!);
+    // print(uri.pathSegments);
+    String routeName = "/";
+    if (uri.pathSegments.length == 1) {
+      routeName = {
+            "map": "/map",
+          }[uri.pathSegments[0]] ??
+          routeName;
+    } else if (uri.pathSegments.length > 1) {
+      routeName = {
+            "user": "/user/${uri.pathSegments[1]}",
+            "event": "/event/${uri.pathSegments[1]}",
+            "org": "/body/${uri.pathSegments[1]}",
+            "group-feed": "/group/${uri.pathSegments[1]}",
+            "discussions": "/groups",
+            "group": "/group/${uri.pathSegments[1]}",
+          }[uri.pathSegments[0]] ??
+          routeName;
+    }
+    _navigatorKey.currentState?.pushReplacementNamed(routeName);
   }
 
   Future initAppLinksState() async {

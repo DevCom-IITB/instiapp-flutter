@@ -43,16 +43,16 @@ class CommunityBloc {
   CommunityBloc(this.bloc);
 
   Future<Community?> getCommunity(String id) async {
-    // try {
-    //   return _communities.firstWhere((community) => community.id == id);
-    // } catch (ex) {
+    if (bloc.currSession == null) {
+      return null;
+    }
     return await bloc.client.getCommunity(bloc.getSessionIdHeader(), id);
-    // }
   }
 
   Future refresh() async {
-    // _communities = defCommunities;
-    // _communitySubject.add(defCommunities);
+    if (bloc.currSession == null) {
+      return;
+    }
 
     _communities = await bloc.client.getCommunities(bloc.getSessionIdHeader());
     _communitySubject.add(_communities);

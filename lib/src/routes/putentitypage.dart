@@ -20,8 +20,8 @@ class PutEntityPage extends StatefulWidget {
 }
 
 class _PutEntityPageState extends State<PutEntityPage> {
-  final String hostUrl = "http://10.105.177.150/";
-  // final String hostUrl = "https://insti.app/";
+  // final String hostUrl = "http://10.105.177.150/";
+  final String hostUrl = "https://insti.app/";
   final String addEventStr = "add-event";
   final String editEventStr = "edit-event";
   final String editBodyStr = "edit-body";
