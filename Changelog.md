@@ -4,6 +4,11 @@
 
 - Nothing here yet (https://github.com/tastelessjolt/instiapp-flutter/projects/1)
 
+## v2.1.5
+
+- Use new library for HTML conversion
+- Add www in map url
+
 ## v2.1.4
 
 - Open urls using external application in url launcher
