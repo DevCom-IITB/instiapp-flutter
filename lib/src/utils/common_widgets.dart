@@ -13,6 +13,8 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share/share.dart';
@@ -179,8 +181,8 @@ class HeroPhotoViewWrapperState extends State<HeroPhotoViewWrapper> {
           ),
           child: PhotoView(
             imageProvider: widget.imageProvider,
-            loadingBuilder: (_, __) => widget.loadingChild!,
-            backgroundDecoration: widget.backgroundDecoration!,
+            loadingBuilder: (_, __) => widget.loadingChild ?? Container(),
+            backgroundDecoration: widget.backgroundDecoration,
             minScale: widget.minScale,
             maxScale: widget.maxScale,
             heroAttributes: PhotoViewHeroAttributes(tag: widget.heroTag),
@@ -261,6 +263,13 @@ String refineText(String text) {
   return text;
 }
 
+class SelectableWidgetFactory extends WidgetFactory with SelectableTextFactory {
+  @override
+  SelectionChangedCallback? get selectableTextOnChanged => (selection, cause) {
+        // do something when the selection changes
+      };
+}
+
 class CommonHtml extends StatelessWidget {
   final String? data;
   final TextStyle defaultTextStyle;
@@ -270,14 +279,16 @@ class CommonHtml extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return data != null
-        ? SelectableHtml(
-            data: data,
-            onLinkTap: (link, _, __, ___) async {
-              if (await canLaunchUrl(Uri.parse(link!))) {
+        ? HtmlWidget(
+            data ?? "",
+            factoryBuilder: () => SelectableWidgetFactory(),
+            onTapUrl: (link) async {
+              if (await canLaunchUrl(Uri.parse(link))) {
                 await launchUrl(
                   Uri.parse(link),
                   mode: LaunchMode.externalApplication,
                 );
+                return true;
               } else {
                 throw "Couldn't launch $link";
               }
@@ -1269,7 +1280,6 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
     CommunityPostBloc communityPostBloc = bloc.communityPostBloc;
     String content = communityPost.content ?? "";
-    print(communityPost.imageUrl);
     int contentChars = widget.postType == CPType.Featured
         ? communityPost.imageUrl == null || communityPost.imageUrl!.length == 0
             ? 310
