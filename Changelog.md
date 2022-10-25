@@ -4,6 +4,31 @@
 
 - Nothing here yet (https://github.com/tastelessjolt/instiapp-flutter/projects/1)
 
+## v2.1.4
+
+- Open urls using external application in url launcher
+- Revert back to commonhtml
+- Fix mess calendar
+- Auto detect links in community page
+- Routing for community notifications
+- Increase size of featured post if no image
+
+## v2.1.3
+
+- Migrate to gymkhana backend
+
+## v2.1.2
+
+- Corrections in urls
+
+## v2.1.1
+
+- Fix uni_links
+
+## v2.1.0
+
+- Insight Discussion Forum
+
 ## v2.0.6
 
 - Add error checking API interceptor

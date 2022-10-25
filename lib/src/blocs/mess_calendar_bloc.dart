@@ -107,9 +107,7 @@ class MessCalendarBloc {
       prefs.setString(
           mteValuesStorageID,
           json.encode(monthToEvents.values
-              .map((e) => {
-                    e.map((k) => {k.toJson()}).toList()
-                  })
+              .map((e) => e.map((k) => k.toJson()).toList())
               .toList()));
     }
 
@@ -122,9 +120,7 @@ class MessCalendarBloc {
       prefs.setString(
           eventsMapValuesStorageID,
           json.encode(eventsMap.values
-              .map((e) => {
-                    e.map((k) => {k.toJson()}).toList()
-                  })
+              .map((e) => e.map((k) => k.toJson()).toList())
               .toList()));
     }
   }
@@ -157,10 +153,12 @@ class MessCalendarBloc {
         var keys =
             (json.decode(prefs.getString(mteKeysStorageID) ?? '') as List)
                 .map((e) => DateTime.parse(e as String));
-        var values =
+        Iterable<List<MessCalEvent>> values =
             (json.decode(prefs.getString(mteValuesStorageID) ?? '') as List)
-                .map((evs) => evs.map((e) => MessCalEvent.fromJson(e)).toList()
-                    as List<MessCalEvent>);
+                .map((evs) => evs
+                    .map((e) => MessCalEvent.fromJson(e))
+                    .toList()
+                    .cast<MessCalEvent>());
         eventsMap = Map.fromIterables(keys, values);
         _eventsSubject.add(eventsMap);
       }

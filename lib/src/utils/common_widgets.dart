@@ -1,6 +1,7 @@
 import 'dart:async';
 
 // import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
@@ -12,6 +13,8 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share/share.dart';
@@ -32,8 +35,10 @@ String capitalize(String name) {
 }
 
 String thumbnailUrl(String url, {int dim = 100}) {
-  return url.replaceFirst(
-      "api.insti.app/static/", "img.insti.app/static/$dim/");
+  return url;
+  // TODO: Fix this
+  // .replaceFirst(
+  //     "api.insti.app/static/", "img.insti.app/static/$dim/");
 }
 
 class NullableCircleAvatar extends StatelessWidget {
@@ -176,8 +181,8 @@ class HeroPhotoViewWrapperState extends State<HeroPhotoViewWrapper> {
           ),
           child: PhotoView(
             imageProvider: widget.imageProvider,
-            loadingBuilder: (_, __) => widget.loadingChild!,
-            backgroundDecoration: widget.backgroundDecoration!,
+            loadingBuilder: (_, __) => widget.loadingChild ?? Container(),
+            backgroundDecoration: widget.backgroundDecoration,
             minScale: widget.minScale,
             maxScale: widget.maxScale,
             heroAttributes: PhotoViewHeroAttributes(tag: widget.heroTag),
@@ -258,6 +263,13 @@ String refineText(String text) {
   return text;
 }
 
+class SelectableWidgetFactory extends WidgetFactory with SelectableTextFactory {
+  @override
+  SelectionChangedCallback? get selectableTextOnChanged => (selection, cause) {
+        // do something when the selection changes
+      };
+}
+
 class CommonHtml extends StatelessWidget {
   final String? data;
   final TextStyle defaultTextStyle;
@@ -267,11 +279,16 @@ class CommonHtml extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return data != null
-        ? SelectableHtml(
-            data: data,
-            onLinkTap: (link, _, __, ___) async {
-              if (await canLaunchUrl(Uri.parse(link!))) {
-                await launchUrl(Uri.parse(link));
+        ? HtmlWidget(
+            data ?? "",
+            factoryBuilder: () => SelectableWidgetFactory(),
+            onTapUrl: (link) async {
+              if (await canLaunchUrl(Uri.parse(link))) {
+                await launchUrl(
+                  Uri.parse(link),
+                  mode: LaunchMode.externalApplication,
+                );
+                return true;
               } else {
                 throw "Couldn't launch $link";
               }
@@ -302,7 +319,10 @@ class CommonHtmlBlog extends StatelessWidget {
             onLinkTap: (link, _, __, ____) async {
               //print(link);
               if (await canLaunchUrl(Uri.parse(link!))) {
-                await launchUrl(Uri.parse(link));
+                await launchUrl(
+                  Uri.parse(link),
+                  mode: LaunchMode.externalApplication,
+                );
               } else {
                 throw "Couldn't launch $link";
               }
@@ -318,7 +338,10 @@ class CommonHtmlBlog extends StatelessWidget {
                 return InkWell(
                   onTap: () async {
                     if (await canLaunchUrl(Uri.parse(attributes['href']!))) {
-                      await launchUrl(Uri.parse(attributes['href']!));
+                      await launchUrl(
+                        Uri.parse(attributes['href']!),
+                        mode: LaunchMode.externalApplication,
+                      );
                     }
                   },
                   child: Text(
@@ -365,7 +388,10 @@ class CommonHtmlBlog extends StatelessWidget {
                         onTap: () async {
                           if (await canLaunchUrl(
                               Uri.parse(attributes['href']!))) {
-                            await launchUrl(Uri.parse(attributes['href']!));
+                            await launchUrl(
+                              Uri.parse(attributes['href']!),
+                              mode: LaunchMode.externalApplication,
+                            );
                           }
                         },
                         child: Text(
@@ -1254,7 +1280,11 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
     CommunityPostBloc communityPostBloc = bloc.communityPostBloc;
     String content = communityPost.content ?? "";
-    int contentChars = widget.postType == CPType.Featured ? 30 : 310;
+    int contentChars = widget.postType == CPType.Featured
+        ? communityPost.imageUrl == null || communityPost.imageUrl!.length == 0
+            ? 310
+            : 30
+        : 310;
     if (widget.postType == CPType.All) {
       if (communityPost.anonymous == true) {
         isAnon = true;
@@ -1264,6 +1294,17 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
     } else {
       isAnon = false;
     }
+
+    void Function()? postOnTap = contentExpanded ||
+            content.length <= contentChars ||
+            widget.postType == CPType.Featured
+        ? widget.shouldTap && (communityPost.status == 1)
+            ? () => CommunityPostPage.navigateWith(
+                context, bloc.communityPostBloc, communityPost)
+            : null
+        : () => setState(() {
+              contentExpanded = true;
+            });
 
     return Container(
       width: CPType.Featured == widget.postType ? 300 : null,
@@ -1275,6 +1316,7 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
         color: theme.colorScheme.surface,
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             decoration: BoxDecoration(
@@ -1499,32 +1541,49 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                       contentExpanded = true;
                     }),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: Text.rich(
-                new TextSpan(
-                  text: content.length > contentChars && !contentExpanded
-                      ? content.substring(0, contentChars - 10) +
-                          (contentExpanded ? "" : "...")
-                      : content,
-                  children: !contentExpanded && content.length > contentChars
-                      ? [
-                          new TextSpan(
-                            text: 'Read More.',
-                            style: theme.textTheme.subtitle2
-                                ?.copyWith(color: theme.colorScheme.primary),
-                            // recognizer: new TapGestureRecognizer()
-                            //   ..onTap = () => setState(() {
-                            //         contentExpanded = true;
-                            //       }),
-                          )
-                        ]
-                      : [],
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SelectableLinkify(
+                      text: content.length > contentChars && !contentExpanded
+                          ? content.substring(0, contentChars - 10) +
+                              (contentExpanded ? "" : "...")
+                          : content,
+                      onOpen: (link) async {
+                        if (await canLaunchUrl(Uri.parse(link.url))) {
+                          await launchUrl(
+                            Uri.parse(link.url),
+                            mode: LaunchMode.externalApplication,
+                          );
+                        }
+                      },
+                      onTap: postOnTap,
+                    ),
+                    Text.rich(
+                      new TextSpan(
+                        children: !contentExpanded &&
+                                content.length > contentChars
+                            ? [
+                                new TextSpan(
+                                  text: 'Read More.',
+                                  style: theme.textTheme.subtitle2?.copyWith(
+                                      color: theme.colorScheme.primary),
+                                  // recognizer: new TapGestureRecognizer()
+                                  //   ..onTap = () => setState(() {
+                                  //         contentExpanded = true;
+                                  //       }),
+                                )
+                              ]
+                            : [],
+                      ),
+                    ),
+                  ],
+                )
+                // child: Text(
+                //   communityPost.content ?? '''post''',
+                // ),
                 ),
-              ),
-              // child: Text(
-              //   communityPost.content ?? '''post''',
-              // ),
-            ),
           ),
           communityPost.imageUrl != null
               ? GestureDetector(

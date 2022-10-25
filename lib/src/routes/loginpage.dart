@@ -30,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
   jag.Jaguar? server;
   final Dio dio = Dio();
 
+  // final String successUrl = "https://redirecturi";
   final String successUrl = "instiapp://insti.app/login";
   final String guestUrl = "https://guesturi";
   final String alumniUrl = "https://alumniurl";
@@ -296,7 +297,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> startLoginPageServer() async {
-    server = jag.Jaguar(port: 9399);
+    server = jag.Jaguar(port: 9399, multiThread: true);
     server?.addRoute(serveFlutterAssets(prefix: "login/"));
     return server?.serve();
   }

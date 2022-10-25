@@ -581,11 +581,21 @@ class InstiAppBloc {
     }
     if (prefs.getKeys().contains("accentColor")) {
       int? x = prefs.getInt("accentColor");
-      if (x != null) _accentColor = appColors[x];
+      if (x != null) {
+        if (x < 0 || x >= appColors.length)
+          prefs.remove("accentColor");
+        else
+          _accentColor = appColors[x];
+      }
     }
     if (prefs.getKeys().contains("primaryColor")) {
       int? x = prefs.getInt("primaryColor");
-      if (x != null) _primaryColor = appColors[x];
+      if (x != null) {
+        if (x < 0 || x >= appColors.length)
+          prefs.remove("primaryColor");
+        else
+          _primaryColor = appColors[x];
+      }
     }
     if (prefs.getKeys().contains("addToCalendarSetting")) {
       int? x = prefs.getInt("addToCalendarSetting");

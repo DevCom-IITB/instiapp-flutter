@@ -209,7 +209,9 @@ class _AboutPageState extends State<AboutPage> {
                                 if (await canLaunchUrl(
                                     Uri.parse(nameEntry.value["url"]!))) {
                                   await launchUrl(
-                                      Uri.parse(nameEntry.value["url"]!));
+                                    Uri.parse(nameEntry.value["url"]!),
+                                    mode: LaunchMode.externalApplication,
+                                  );
                                 }
                               }
                             : null,
