@@ -19,8 +19,8 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   late jag.Jaguar server;
 
-  final String hostUrl = "insti.app";
-  final String mapUrl = "https://insti.app/map/?sandbox=true";
+  final String hostUrl = "www.insti.app";
+  final String mapUrl = "https://www.insti.app/map/?sandbox=true";
 
   // final String hostUrl = "127.0.0.1:9999";
   // final String mapUrl = "http://127.0.0.1:9999/";
