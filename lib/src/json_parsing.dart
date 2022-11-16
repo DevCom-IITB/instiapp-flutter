@@ -2,9 +2,6 @@ import 'dart:convert';
 
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/response/news_feed_response.dart';
-// import 'package:InstiApp/src/api/response/chatbot_answers_response.dart';
-
-// import 'api/model/mess.dart';
 
 List parseMess(String jsonStr) {
   final parsed = json.decode(jsonStr);

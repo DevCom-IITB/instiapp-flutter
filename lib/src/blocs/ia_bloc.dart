@@ -327,18 +327,6 @@ class InstiAppBloc {
     _eventsSubject.add(UnmodifiableListView(_events));
   }
 
-  // // Event bloc
-  // Future<void> updateAnswers() async {
-  //   var newsFeedResponse = await client.getNewsFeed(getSessionIdHeader());
-  //   _events = newsFeedResponse.events ?? [];
-  //   if (_events.length >= 1) {
-  //     _events[0].eventBigImage = true;
-  //   }
-  //   _eventsSubject.add(UnmodifiableListView(_events));
-  // }
-
-  // alumniLoginAndOTP bloc
-
   String get alumniID => ldap;
   setAlumniID(updtAlumniID) {
     ldap = updtAlumniID;
