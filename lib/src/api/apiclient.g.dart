@@ -8,9 +8,6 @@ part of 'apiclient.dart';
 
 class _InstiAppApi implements InstiAppApi {
   _InstiAppApi(this._dio, {this.baseUrl}) {
-    // baseUrl ??= 'http://192.168.29.50:8000/api';
-    // baseUrl ??= 'http://10.105.177.150/api';
-    // baseUrl ??= 'https://api.insti.app/api';
     baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
   }
 
@@ -536,6 +533,26 @@ class _InstiAppApi implements InstiAppApi {
     await _dio.fetch<void>(_setStreamType<void>(
         Options(method: 'GET', headers: _headers, extra: _extra)
             .compose(_dio.options, '/user-me/unr/${postID}',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    return null;
+  }
+
+  @override
+  Future<void> updateUserChatBotReaction(
+      sessionID, body, content, reaction) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'question': body,
+      r'answer': content,
+      r'reaction': reaction
+    };
+    final _headers = <String, dynamic>{r'Cookie': sessionID};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    await _dio.fetch<void>(_setStreamType<void>(
+        Options(method: 'GET', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/user-me/ucr/',
                 queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     return null;

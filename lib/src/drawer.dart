@@ -232,6 +232,16 @@ class _NavDrawerState extends State<NavDrawer> {
                       highlight: indexSnapshot.data == 13,
                       selected: indexSnapshot.data == 13,
                     ),
+                    16: NavListTile(
+                      icon: Icons.person_search_outlined,
+                      title: "InSeek",
+                      onTap: () {
+                        changeSelection(16, drawerState!);
+                        navigateNamed('/InSeek');
+                      },
+                      highlight: indexSnapshot.data == 16,
+                      selected: indexSnapshot.data == 16,
+                    ),
                   };
 
                   List<Widget> navList, navDownList = <Widget>[];
@@ -639,6 +649,7 @@ class MNavigatorObserver extends NavigatorObserver {
     "/messcalendar": 14,
     "/messcalendar/qr": 14,
     "/groups": 15,
+    "/InSeek": 16,
   };
 
   static Map<String, String> routeToName = {
@@ -648,6 +659,7 @@ class MNavigatorObserver extends NavigatorObserver {
     "/feed": "Feed",
     "/quicklinks": "Quick Links",
     "/news": "News",
+    "/InSeek": "InSeek",
     "/explore": "Explore",
     "/calendar": "Calendar",
     "/complaints": "Complaints",

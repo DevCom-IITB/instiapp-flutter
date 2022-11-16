@@ -115,6 +115,26 @@ Map<String, dynamic> _$NewsArticleToJson(NewsArticle instance) =>
       'user_reaction': instance.userReaction,
     };
 
+ChatBot _$ChatBotFromJson(Map<String, dynamic> json) => ChatBot(
+      json['id'] as String?,
+      json['guid'] as String?,
+      json['link'] as String?,
+      json['title'] as String?,
+      json['content'] as String?,
+      json['published'] as String?,
+      body: json['data'] as String?,
+    );
+
+Map<String, dynamic> _$ChatBotToJson(ChatBot instance) => <String, dynamic>{
+      'id': instance.id,
+      'guid': instance.guid,
+      'link': instance.link,
+      'title': instance.title,
+      'content': instance.content,
+      'published': instance.published,
+      'data': instance.body,
+    };
+
 Query _$QueryFromJson(Map<String, dynamic> json) => Query(
       content: json['answer'] as String?,
       published: json['category'] as String?,

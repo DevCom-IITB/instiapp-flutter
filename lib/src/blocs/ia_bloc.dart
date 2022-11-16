@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
 import 'package:InstiApp/main.dart';
+import 'package:InstiApp/src/api/chatbotapiclient.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/community.dart';
@@ -118,6 +119,7 @@ class InstiAppBloc {
   late PostBloc trainingBloc;
   late PostBloc newsBloc;
   late PostBloc queryBloc;
+  late PostBloc chatBotBloc;
   late ExploreBloc exploreBloc;
   late CalendarBloc calendarBloc;
   late MessCalendarBloc messCalendarBloc;
@@ -137,6 +139,7 @@ class InstiAppBloc {
 
   // api functions
   late final InstiAppApi client;
+  late final ChatBotApi clientChatBot;
 
   // default homepage
   String homepageName = "/feed";
@@ -253,11 +256,13 @@ class InstiAppBloc {
     // } else {
     // }
     client = InstiAppApi(dio);
+    clientChatBot = ChatBotApi(dio);
     placementBloc = PostBloc(this, postType: PostType.Placement);
     externalBloc = PostBloc(this, postType: PostType.External);
     trainingBloc = PostBloc(this, postType: PostType.Training);
     newsBloc = PostBloc(this, postType: PostType.NewsArticle);
     queryBloc = PostBloc(this, postType: PostType.Query);
+    chatBotBloc = PostBloc(this, postType: PostType.ChatBot);
     exploreBloc = ExploreBloc(this);
     calendarBloc = CalendarBloc(this);
     // complaintsBloc = ComplaintsBloc(this);
@@ -295,6 +300,7 @@ class InstiAppBloc {
       PostType.Training: trainingBloc,
       PostType.NewsArticle: newsBloc,
       PostType.Query: queryBloc,
+      PostType.ChatBot: chatBotBloc,
     }[blogType];
   }
 
@@ -320,8 +326,6 @@ class InstiAppBloc {
     }
     _eventsSubject.add(UnmodifiableListView(_events));
   }
-
-  // alumniLoginAndOTP bloc
 
   String get alumniID => ldap;
   setAlumniID(updtAlumniID) {
