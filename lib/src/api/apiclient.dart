@@ -16,6 +16,7 @@ import 'package:InstiApp/src/api/request/ach_verify_request.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
 import 'package:InstiApp/src/api/request/action_community_post_request.dart';
+import 'package:InstiApp/src/api/request/chatbotlog_request.dart';
 import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
@@ -41,7 +42,7 @@ import 'package:dio/dio.dart';
 import 'model/offersecret.dart';
 part 'apiclient.g.dart';
 
-// @rt.RestApi(baseUrl: "http://192.168.29.50:8000/api")
+// @rt.RestApi(baseUrl: "http://192.168.230.89:8000/api")
 // @rt.RestApi(baseUrl: "http://10.105.177.150/api")
 @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
 // @rt.RestApi(baseUrl: "https://0ac7-103-21-125-80.in.ngrok.io/api")
@@ -178,9 +179,9 @@ abstract class InstiAppApi {
   Future<void> updateUserNewsReaction(@rt.Header("Cookie") String sessionID,
       @rt.Path() String postID, @rt.Query("reaction") int reaction);
 
-  @rt.GET("/user-me/ucr/")
+  @rt.POST("/user-me/ucr/")
   Future<void> updateUserChatBotReaction(@rt.Header("Cookie") String sessionID,
-       @rt.Query("question") String body, @rt.Query("answer") String content, @rt.Query("reaction") int reaction);
+      @rt.Body() ChatBotLogRequest chatBotLogRequest);
 
   @rt.PATCH("/user-me")
   Future<User> patchFCMUserMe(@rt.Header("Cookie") String sessionID,

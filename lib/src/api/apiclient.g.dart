@@ -8,6 +8,7 @@ part of 'apiclient.dart';
 
 class _InstiAppApi implements InstiAppApi {
   _InstiAppApi(this._dio, {this.baseUrl}) {
+    // baseUrl ??= 'http://192.168.230.89:8000/api';
     baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
   }
 
@@ -539,19 +540,15 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<void> updateUserChatBotReaction(
-      sessionID, body, content, reaction) async {
+  Future<void> updateUserChatBotReaction(sessionID, chatBotLogRequest) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'question': body,
-      r'answer': content,
-      r'reaction': reaction
-    };
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionID};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
+    _data.addAll(chatBotLogRequest.toJson());
     await _dio.fetch<void>(_setStreamType<void>(
-        Options(method: 'GET', headers: _headers, extra: _extra)
+        Options(method: 'POST', headers: _headers, extra: _extra)
             .compose(_dio.options, '/user-me/ucr/',
                 queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
