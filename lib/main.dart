@@ -532,6 +532,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             "event": "/event/${uri.pathSegments[1]}",
             "org": "/body/${uri.pathSegments[1]}",
             "group-feed": "/group/${uri.pathSegments[1]}",
+            "view-post": "/groups",
             "discussions": "/groups",
             "group": "/group/${uri.pathSegments[1]}",
           }[uri.pathSegments[0]] ??
