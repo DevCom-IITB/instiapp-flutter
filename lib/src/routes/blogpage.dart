@@ -253,7 +253,6 @@ class _BlogPageState extends State<BlogPage> {
   }
 
   Future<void> _handleRefresh() {
-    // print("here");
     var blogbloc = BlocProvider.of(context)!.bloc.getPostsBloc(widget.postType);
     return blogbloc!.refresh(force: blogbloc.query.isEmpty);
   }
@@ -319,8 +318,6 @@ class _BlogPageState extends State<BlogPage> {
         ),
       ));
     }
-
-    // if(bloc.query.isEmpty) return SizedBox();
     return _post(post, bloc);
   }
 
