@@ -102,6 +102,26 @@ class NewsArticle extends Post {
 }
 
 @JsonSerializable()
+class ChatBot extends Post {
+  @JsonKey(name: "data")
+  String? body;
+
+  ChatBot(String? id,
+  String? guid,
+  String? link,
+  String? title,
+  String? content,
+  String? published, {this.body}):super(id: id, guid: guid, link: link, title: title, content: content, published: published);
+
+
+  factory ChatBot.fromJson(Map<String, dynamic> json) =>
+      _$ChatBotFromJson(json);
+  
+  Map<String, dynamic> toJson() => _$ChatBotToJson(this);
+
+}
+
+@JsonSerializable()
 class Query extends Post {
   @JsonKey(name: "question")
   String? title;
