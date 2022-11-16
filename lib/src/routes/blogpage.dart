@@ -112,8 +112,9 @@ class _BlogPageState extends State<BlogPage> {
         });
       }
     });
-    if(widget.postType == PostType.ChatBot){
+    if (widget.postType == PostType.ChatBot) {
       searchMode = true;
+      actionIcon = Icons.close_outlined;
     }
   }
 
@@ -266,8 +267,10 @@ class _BlogPageState extends State<BlogPage> {
 
     final Post? post =
         (posts != null && posts.length > index) ? posts[index] : null;
-      
-    if (post == null && ( widget.postType != PostType.ChatBot || (widget.postType == PostType.ChatBot && bloc.query.isNotEmpty))) {
+
+    if (post == null &&
+        (widget.postType != PostType.ChatBot ||
+            (widget.postType == PostType.ChatBot && bloc.query.isNotEmpty))) {
       return Card(
           child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -276,7 +279,9 @@ class _BlogPageState extends State<BlogPage> {
           label: Column(
             children: [
               Text("Getting ${widget.title} Posts"),
-              widget.postType == PostType.ChatBot?Text("This might take a while"):SizedBox()
+              widget.postType == PostType.ChatBot
+                  ? Text("This might take a while")
+                  : SizedBox()
             ],
           ),
         )),
