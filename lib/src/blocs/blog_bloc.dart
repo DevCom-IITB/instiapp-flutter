@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'package:InstiApp/src/api/model/post.dart';
+import 'package:InstiApp/src/api/request/chatbotlog_request.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/utils/demo_data.dart';
 import 'package:rxdart/rxdart.dart';
@@ -90,11 +91,14 @@ class PostBloc {
     if (bloc.currSession?.user != 'demouser') {
       if (postType == PostType.Query)
         posts = await httpGetFunc!(bloc.getSessionIdHeader(), query, category);
-      else if (postType == PostType.ChatBot)
-        if (query.isEmpty)
-          posts = List<ChatBot>.generate(1, (index) => ChatBot("0", "0", null, "ChatBot", "Ask your queries here!", null, body:"Ask your queries here!"));
-        else
-          posts = await httpGetFunc!(query);
+      else if (postType == PostType.ChatBot) if (query.isEmpty)
+        posts = List<ChatBot>.generate(
+            1,
+            (index) => ChatBot(
+                "0", "0", null, "ChatBot", "Ask your queries here!", null,
+                body: "Ask your queries here!"));
+      else
+        posts = await httpGetFunc!(query);
       else
         posts = await httpGetFunc!(bloc.getSessionIdHeader(),
             page * _noOfPostsPerPage, _noOfPostsPerPage, query);
@@ -103,13 +107,17 @@ class PostBloc {
     }
     var tableParse = markdown.TableSyntax();
     if (postType == PostType.ChatBot && query.isNotEmpty)
-      posts = List<ChatBot>.generate(2, (index) => ChatBot(index.toString(), "", posts.data[2*index + 1], "Answer " + index.toString(), posts.data[2*index], null, body:query));
+      posts = List<ChatBot>.generate(
+          2,
+          (index) => ChatBot(index.toString(), "", posts.data[2 * index + 1],
+              "Answer " + index.toString(), posts.data[2 * index], null,
+              body: query));
 
     posts.forEach((p) {
       if (postType == PostType.ChatBot)
         p.content = markdown.markdownToHtml(
-          p.content.split('\n').map((s) => s.trimRight()).toList().join('\n'),
-          blockSyntaxes: [tableParse]);
+            p.content.split('\n').map((s) => s.trimRight()).toList().join('\n'),
+            blockSyntaxes: [tableParse]);
       else
         p.content = markdown.markdownToHtml(
             p.content.split('\n').map((s) => s.trimRight()).toList().join('\n'),
@@ -310,8 +318,8 @@ class PostBloc {
 
   Future updateUserReactionChatBot(ChatBot article, int reaction) async {
     // int sendReaction = article.userReaction == reaction ? -1 : reaction;
-    await bloc.client.updateUserChatBotReaction(
-        bloc.getSessionIdHeader(), article.body!, article.content!, reaction);
+    await bloc.client.updateUserChatBotReaction(bloc.getSessionIdHeader(),
+        ChatBotLogRequest(article.body!, article.content!, reaction));
     return Future.delayed(Duration(milliseconds: 0));
   }
 
