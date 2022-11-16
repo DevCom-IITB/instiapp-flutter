@@ -112,6 +112,9 @@ class _BlogPageState extends State<BlogPage> {
         });
       }
     });
+    if(widget.postType == PostType.ChatBot){
+      searchMode = true;
+    }
   }
 
   @override
@@ -263,13 +266,19 @@ class _BlogPageState extends State<BlogPage> {
 
     final Post? post =
         (posts != null && posts.length > index) ? posts[index] : null;
-    if (post == null && bloc.query.isNotEmpty) {
+      
+    if (post == null && ( widget.postType != PostType.ChatBot || (widget.postType == PostType.ChatBot && bloc.query.isNotEmpty))) {
       return Card(
           child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
             child: CircularProgressIndicatorExtended(
-          label: Text("Getting ${widget.title} Posts"),
+          label: Column(
+            children: [
+              Text("Getting ${widget.title} Posts"),
+              widget.postType == PostType.ChatBot?Text("This might take a while"):SizedBox()
+            ],
+          ),
         )),
       ));
     }
@@ -299,16 +308,28 @@ class _BlogPageState extends State<BlogPage> {
 
     if (post?.content == null) {
       if (bloc.postType == PostType.ChatBot) {
-        return GestureDetector(
-  onTap: () async { await bloc.updateUserReactionChatBot(
-                                         ChatBot("", "", "", "", "", "", body:bloc.query), 2);}, 
-  child: Card(
-          child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(
-          child: Text("No suitable results"),
-        ),
-      )));
+        if (bloc.bloc.currSession != null)
+          return GestureDetector(
+              onTap: () async {
+                await bloc.updateUserReactionChatBot(
+                    ChatBot("", "", "", "", "", "", body: bloc.query), 2);
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text("Reaction Noted ❤️"),
+                  duration: Duration(seconds: 1),
+                ));
+              },
+              child: Card(
+                  child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                    child: Text.rich(
+                  TextSpan(children: [
+                    TextSpan(text: "👎 ", style: theme.textTheme.headline5),
+                    TextSpan(text: " No Suitable Results"),
+                  ]),
+                )),
+              )));
+        return SizedBox();
       }
       return Card(
           child: Padding(
@@ -632,7 +653,9 @@ class _BlogPageState extends State<BlogPage> {
                       return SizedBox();
                     }
                   })
-                : widget.postType == PostType.ChatBot && bloc.query.isNotEmpty
+                : widget.postType == PostType.ChatBot &&
+                        bloc.query.isNotEmpty &&
+                        bloc.bloc.currSession != null
                     ? Builder(builder: (BuildContext context) {
                         const Map<String, String> reactionToEmoji = {
                           "0": "👍",
@@ -698,6 +721,11 @@ class _BlogPageState extends State<BlogPage> {
                                         final reaction = int.parse(sel);
                                         await bloc.updateUserReactionChatBot(
                                             article, reaction);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content: Text("Reaction Noted ❤️"),
+                                          duration: Duration(seconds: 1),
+                                        ));
                                       }
 
                                       setState(() {
@@ -834,6 +862,7 @@ class _BlogPageState extends State<BlogPage> {
                       blogBloc.query = query;
                       await blogBloc.refresh();
                     },
+                    autofocus: true,
                   ),
                 ),
               ),

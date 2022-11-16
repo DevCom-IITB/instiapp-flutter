@@ -222,16 +222,16 @@ class _NavDrawerState extends State<NavDrawer> {
                         ),
                       ],
                     ),
-                    13: NavListTile(
-                      icon: Icons.query_stats,
-                      title: "FAQs",
-                      onTap: () {
-                        changeSelection(13, drawerState!);
-                        navigateNamed('/query');
-                      },
-                      highlight: indexSnapshot.data == 13,
-                      selected: indexSnapshot.data == 13,
-                    ),
+                    // 13: NavListTile(
+                    //   icon: Icons.query_stats,
+                    //   title: "FAQs",
+                    //   onTap: () {
+                    //     changeSelection(13, drawerState!);
+                    //     navigateNamed('/query');
+                    //   },
+                    //   highlight: indexSnapshot.data == 13,
+                    //   selected: indexSnapshot.data == 13,
+                    // ),
                     16: NavListTile(
                       icon: Icons.person_search_outlined,
                       title: "InSeek",
