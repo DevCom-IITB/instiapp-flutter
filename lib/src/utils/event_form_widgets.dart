@@ -102,7 +102,7 @@ class _DatePickerFieldState extends State<DatePickerField> {
                 DateTime? newDate = await showDatePicker(
                   firstDate: initDate,
                   lastDate: lastDate,
-                  initialDate: setDate
+                  initialDate: setDate,
                   context: context,
 
                 );

@@ -132,13 +132,17 @@ class _QRPageState extends State<QRPage> {
                               ),
                             )
                           : Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                              ),
+                              margin: EdgeInsets.all(50),
                               alignment: Alignment.center,
                               height: MediaQuery.of(context).size.height / 2,
                               child: QrImage(
                                 // data: '',
                                 data: '${qrString}',
                                 size: MediaQuery.of(context).size.width / 2,
-                                foregroundColor: theme.colorScheme.onBackground,
+                                foregroundColor: Colors.black,
                               ),
                             ),
                 ],

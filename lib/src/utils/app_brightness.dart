@@ -28,7 +28,7 @@ class AppBrightness {
 
   static const brightnessToCanvasColor = {
     light: Colors.white,
-    dark: Color(0xff303030),
+    dark: Color(0xff202020),
     black: Colors.black,
   };
 

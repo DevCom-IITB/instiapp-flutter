@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:InstiApp/src/api/interceptors.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/notif_settings.dart';
 import 'package:dio/dio.dart';
@@ -16,7 +17,9 @@ import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
 
 class LoginPage extends StatefulWidget {
   final InstiAppBloc bloc;
-  LoginPage(this.bloc);
+  final GlobalKey<ScaffoldMessengerState>? scaffoldMessengerKey;
+  final GlobalKey<NavigatorState>? navigatorKey;
+  LoginPage(this.bloc, {this.scaffoldMessengerKey, this.navigatorKey});
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -27,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
   jag.Jaguar? server;
   final Dio dio = Dio();
 
+  // final String successUrl = "https://redirecturi";
   final String successUrl = "instiapp://insti.app/login";
   final String guestUrl = "https://guesturi";
   final String alumniUrl = "https://alumniurl";
@@ -37,6 +41,7 @@ class _LoginPageState extends State<LoginPage> {
   InstiAppBloc? _bloc;
   StreamSubscription<String>? onUrlChangedSub;
   var loading = true;
+  bool firstBuild = true;
   // StreamSubscription<WebViewStateChanged>? onStateChangedSub;
 
   String statusMessage = "Initializing";
@@ -62,6 +67,18 @@ class _LoginPageState extends State<LoginPage> {
 
     WidgetsBinding.instance
         ?.addPostFrameCallback((_) => setupNotifications(context, widget.bloc));
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      // print("Printing");
+      String? args = ModalRoute.of(context)?.settings.arguments as String?;
+      if (args != null) {
+        // print(args);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          // widget.scaffoldMessengerKey?.currentState?.showSnackBar(SnackBar(
+          content: Text(args),
+          duration: Duration(seconds: 2),
+        ));
+      }
+    });
 
     _bloc = widget.bloc;
     if (Platform.isAndroid) {
@@ -178,6 +195,18 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     _bloc = BlocProvider.of(context)!.bloc;
+
+    if (firstBuild) {
+      if (widget.scaffoldMessengerKey?.currentContext != null &&
+          widget.navigatorKey != null) {
+        if (widget.bloc.dio.interceptors.length == 0)
+          widget.bloc.dio
+            ..interceptors.add(ErrorInterceptor(
+                context: widget.scaffoldMessengerKey!.currentContext!,
+                navigatorKey: widget.navigatorKey!));
+      }
+      firstBuild = false;
+    }
     // var mqdata = MediaQuery.of(context);
 
     return loading
@@ -272,7 +301,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> startLoginPageServer() async {
-    server = jag.Jaguar(port: 9399);
+    server = jag.Jaguar(port: 9399, multiThread: true);
     server?.addRoute(serveFlutterAssets(prefix: "login/"));
     return server?.serve();
   }
@@ -284,7 +313,9 @@ class _LoginPageState extends State<LoginPage> {
     var response;
     try {
       response = await InstiAppApi(dio).login(authCode, redirectUrl);
-    } catch (e) {}
+    } catch (e) {
+      // print(e);
+    }
     if (response?.sessionid != null) {
       _bloc?.updateSession(response);
       setState(() {

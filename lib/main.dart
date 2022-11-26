@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
+import 'package:InstiApp/src/routes/communitydetails.dart';
+import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/routes/event_form.dart';
 // import 'package:InstiApp/src/routes/complaintpage.dart';
 // import 'package:InstiApp/src/routes/complaintspage.dart';
@@ -14,8 +16,11 @@ import 'package:InstiApp/src/routes/mappage.dart';
 import 'package:InstiApp/src/routes/messcalendarpage.dart';
 // import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
+import 'package:InstiApp/src/routes/chatbot.dart';
+import 'package:InstiApp/src/routes/communitypage.dart';
 import 'package:InstiApp/src/routes/notificationspage.dart';
 import 'package:InstiApp/src/routes/putentitypage.dart';
+import 'package:InstiApp/src/routes/createpost_form.dart';
 import 'package:InstiApp/src/routes/qrpage.dart';
 import 'package:InstiApp/src/routes/queryaddpage.dart';
 import 'package:InstiApp/src/routes/querypage.dart';
@@ -86,6 +91,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       new FlutterLocalNotificationsPlugin();
 
   GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
   late StreamSubscription _appLinksSub;
   final ThemeData theme = ThemeData();
 
@@ -136,6 +143,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return BlocProvider(
       widget.bloc,
       child: MaterialApp(
+        scaffoldMessengerKey: scaffoldMessengerKey,
         navigatorKey: _navigatorKey,
         title: 'InstiApp',
         theme: ThemeData(
@@ -144,10 +152,28 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
           primaryColor: widget.bloc.primaryColor,
           colorScheme: theme.colorScheme.copyWith(
+            primary: widget.bloc.primaryColor,
             secondary: widget.bloc.accentColor,
+            primaryContainer: widget.bloc.primaryColor[200],
+            secondaryContainer: widget.bloc.accentColor[200],
             brightness: widget.bloc.brightness.toBrightness(),
             onBackground: widget.bloc.brightness == AppBrightness.light
                 ? Colors.black
+                : Colors.white,
+            surface: widget.bloc.brightness == AppBrightness.light
+                ? Colors.white
+                : widget.bloc.brightness.toColor(),
+            surfaceVariant: widget.bloc.brightness == AppBrightness.light
+                ? Color(0xFFE8ECF2)
+                : Color(0xFF121212),
+            onSurface: widget.bloc.brightness == AppBrightness.light
+                ? Colors.black
+                : Colors.white,
+            onSurfaceVariant: widget.bloc.brightness == AppBrightness.light
+                ? Color(0xFF767881)
+                : Colors.white,
+            inverseSurface: widget.bloc.brightness == AppBrightness.light
+                ? Color(0xFFE8ECF2)
                 : Colors.white,
           ),
           primarySwatch: Colors.primaries.firstWhereOrNull(
@@ -218,6 +244,20 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
               //               uri.pathSegments[1],
               //               reload: uri.queryParameters.containsKey("reload") &&
               //                   uri.queryParameters["reload"] == "true")));
+            } else if (temp.startsWith("/group/")) {
+              widget.bloc.drawerState.setPageIndex(15);
+              return _buildRoute(
+                  settings,
+                  CommunityDetails(
+                      communityFuture: widget.bloc.communityBloc
+                          .getCommunity(temp.split("/group/")[1])));
+            } else if (temp.startsWith("/communitypost/")) {
+              widget.bloc.drawerState.setPageIndex(15);
+              return _buildRoute(
+                  settings,
+                  CommunityPostPage(
+                      communityPostFuture: widget.bloc.communityPostBloc
+                          .getCommunityPost(temp.split("/communitypost/")[1])));
             } else if (temp.startsWith("/putentity/event/")) {
               return _buildRoute(
                 settings,
@@ -237,7 +277,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             } else {
               switch (settings.name) {
                 case "/":
-                  return _buildRoute(settings, LoginPage(widget.bloc));
+                  return _buildRoute(
+                      settings,
+                      LoginPage(
+                        widget.bloc,
+                        scaffoldMessengerKey: scaffoldMessengerKey,
+                        navigatorKey: _navigatorKey,
+                      ));
                 case "/mess":
                   // print("Entereing here mess");
                   return _buildRoute(settings, MessPage());
@@ -255,6 +301,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, QuickLinksPage());
                 case "/news":
                   return _buildRoute(settings, NewsPage());
+                case "/InSeek":
+                  return _buildRoute(settings, ChatPage());
+                case "/groups":
+                  return _buildRoute(settings, CommunityPage());
                 case "/explore":
                   return _buildRoute(settings, ExplorePage());
                 case "/calendar":
@@ -279,6 +329,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, YourAchievementPage());
                 case "/achievements/add":
                   return _buildRoute(settings, Home());
+                case "/posts/add":
+                  return _buildRoute(settings, CreatePostPage());
                 case "/externalblog":
                   return _buildRoute(settings, ExternalBlogPage());
                 case "/query":
@@ -291,7 +343,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, QRPage());
               }
             }
-            return _buildRoute(settings, MessPage());
+            return _buildRoute(
+                settings,
+                LoginPage(
+                  widget.bloc,
+                  scaffoldMessengerKey: scaffoldMessengerKey,
+                  navigatorKey: _navigatorKey,
+                ));
           }
           return null;
         },
@@ -309,18 +367,32 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   void handleAppLink(Uri? uri) {
     if (uri == null) return;
-    var routeName = {
-      "user": "/user/${uri.pathSegments[1]}",
-      "event": "/event/${uri.pathSegments[1]}",
-      "map": "/map",
-      "org": "/body/${uri.pathSegments[1]}",
-    }[uri.pathSegments[0]];
-    _navigatorKey.currentState?.pushNamed(routeName!);
+    // print(uri.pathSegments);
+    String routeName = "/";
+    if (uri.pathSegments.length == 1) {
+      routeName = {
+            "map": "/map",
+          }[uri.pathSegments[0]] ??
+          routeName;
+    } else if (uri.pathSegments.length > 1) {
+      routeName = {
+            "user": "/user/${uri.pathSegments[1]}",
+            "event": "/event/${uri.pathSegments[1]}",
+            "org": "/body/${uri.pathSegments[1]}",
+            "group-feed": "/group/${uri.pathSegments[1]}",
+            "view-post": "/groups",
+            "discussions": "/groups",
+            "group": "/group/${uri.pathSegments[1]}",
+          }[uri.pathSegments[0]] ??
+          routeName;
+    }
+    _navigatorKey.currentState?.pushReplacementNamed(routeName);
   }
 
   Future initAppLinksState() async {
     _appLinksSub = uriLinkStream.listen((Uri? uri) {
       if (!mounted) return;
+      // print(uri);
       handleAppLink(uri);
     }, onError: (err) {
       if (!mounted) return;
