@@ -77,6 +77,33 @@ List<NotificationChannel> notifChannels = [
     ledColor: Colors.blue,
     importance: NotificationImportance.Max,
   ),
+  NotificationChannel(
+    channelGroupKey: NotificationGroups.COMMUNITY,
+    channelKey: NotificationChannels.COMMUNITY,
+    channelName: 'Community',
+    channelDescription: 'Community notifications from InstiApp',
+    defaultColor: Color(0xFF9D50DD),
+    ledColor: Colors.blue,
+    importance: NotificationImportance.Max,
+  ),
+  NotificationChannel(
+    channelGroupKey: NotificationGroups.COMMUNITY,
+    channelKey: NotificationChannels.COMMUNITYPOST,
+    channelName: 'Community Post',
+    channelDescription: 'Communitypost notifications from InstiApp',
+    defaultColor: Color(0xFF9D50DD),
+    ledColor: Colors.blue,
+    importance: NotificationImportance.Max,
+  ),
+  NotificationChannel(
+    channelGroupKey: NotificationGroups.COMMUNITY,
+    channelKey: NotificationChannels.COMMUNITYPOSTUSERREACTION,
+    channelName: 'Community Post Reaction',
+    channelDescription: 'Communitypostuserreaction notifications from InstiApp',
+    defaultColor: Color(0xFF9D50DD),
+    ledColor: Colors.blue,
+    importance: NotificationImportance.Max,
+  ),
 ];
 
 /// List of channel groups used in the app
@@ -92,6 +119,10 @@ List<NotificationChannelGroup> notifGroups = [
   NotificationChannelGroup(
     channelGroupkey: NotificationGroups.NEWS,
     channelGroupName: 'News',
+  ),
+  NotificationChannelGroup(
+    channelGroupkey: NotificationGroups.COMMUNITY,
+    channelGroupName: 'Community',
   ),
   NotificationChannelGroup(
     channelGroupkey: NotificationGroups.EVENT,
@@ -112,6 +143,10 @@ class NotificationChannels {
   static const String MISCELLANEOUS_CHANNEL = "misc_channel";
   static const String PLACEMENT = "placement_channel";
   static const String INTERNSHIP = "internship_channel";
+  static const String COMMUNITY = "community_channel";
+  static const String COMMUNITYPOST = "communitypost_channel";
+  static const String COMMUNITYPOSTUSERREACTION =
+      "communitypostuserreaction_channel";
   static const String EXTERNAL = "external_channel";
   static const String NEWS = "news_channel";
   static const String EVENT = "events_channel";
@@ -123,6 +158,7 @@ class NotificationGroups {
   static const String BLOG = "blog_group";
   static const String NEWS = "news_group";
   static const String EVENT = "events_group";
+  static const String COMMUNITY = "community_group";
 }
 
 /// Type of notification to handle
@@ -130,6 +166,9 @@ class NotificationType {
   static const String BLOG = "blogentry";
   static const String PLACEMENT = "placement";
   static const String INTERNSHIP = "internship";
+  static const String COMMUNITY = "community";
+  static const String COMMUNITYPOST = "communitypost";
+  static const String COMMUNITYPOSTUSERREACTION = "communitypostuserreaction";
   static const String BODY = "body";
   static const String EVENT = "event";
   static const String USER = "userprofile";
@@ -161,6 +200,11 @@ void setupNotifications(BuildContext context, InstiAppBloc bloc) async {
                   ? "/trainblog"
                   : "/placeblog",
           NotificationType.PLACEMENT: "/placeblog",
+          NotificationType.COMMUNITY:
+              "/group/${fromMap.notificationObjectID ?? ""}",
+          NotificationType.COMMUNITYPOST:
+              "/communitypost/${fromMap.notificationObjectID ?? ""}",
+          NotificationType.COMMUNITYPOSTUSERREACTION: "/groups",
           NotificationType.INTERNSHIP: "/trainblog",
           NotificationType.BODY: "/body/${fromMap.notificationObjectID ?? ""}",
           NotificationType.EVENT:
@@ -304,6 +348,12 @@ NotificationContent getNotificationContent(RichNotification notif) {
         return NotificationChannels.PLACEMENT;
       case NotificationType.INTERNSHIP:
         return NotificationChannels.INTERNSHIP;
+      case NotificationType.COMMUNITY:
+        return NotificationChannels.COMMUNITY;
+      case NotificationType.COMMUNITYPOST:
+        return NotificationChannels.COMMUNITYPOST;
+      case NotificationType.COMMUNITYPOSTUSERREACTION:
+        return NotificationChannels.COMMUNITYPOSTUSERREACTION;
       case NotificationType.NEWS:
         return NotificationChannels.NEWS;
       case NotificationType.EVENT:
