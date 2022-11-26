@@ -97,8 +97,11 @@ class _BodyPageState extends State<BodyPage> {
           icon: Icon(Icons.language_outlined),
           onPressed: () async {
             if (body?.bodyWebsiteURL != null) {
-              if (await canLaunch(body?.bodyWebsiteURL ?? "")) {
-                await launch(body?.bodyWebsiteURL ?? "");
+              if (await canLaunchUrl(Uri.parse(body?.bodyWebsiteURL ?? ""))) {
+                await launchUrl(
+                  Uri.parse(body?.bodyWebsiteURL ?? ""),
+                  mode: LaunchMode.externalApplication,
+                );
               }
             }
           },

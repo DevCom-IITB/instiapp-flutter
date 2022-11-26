@@ -1,13 +1,27 @@
 import 'dart:async';
 
 // import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/routes/communitypostpage.dart';
+import 'package:InstiApp/src/blocs/community_post_bloc.dart';
+import 'package:InstiApp/src/api/model/communityPost.dart';
+import 'package:InstiApp/src/routes/createpost_form.dart';
+import 'package:InstiApp/src/routes/userpage.dart';
+import 'package:InstiApp/src/utils/share_url_maker.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
+import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
+
 // ignore: unnecessary_import
 import 'dart:ui' show Brightness;
 
@@ -23,8 +37,10 @@ String capitalize(String name) {
 }
 
 String thumbnailUrl(String url, {int dim = 100}) {
-  return url.replaceFirst(
-      "api.insti.app/static/", "img.insti.app/static/$dim/");
+  return url;
+  // TODO: Fix this
+  // .replaceFirst(
+  //     "api.insti.app/static/", "img.insti.app/static/$dim/");
 }
 
 class NullableCircleAvatar extends StatelessWidget {
@@ -167,8 +183,8 @@ class HeroPhotoViewWrapperState extends State<HeroPhotoViewWrapper> {
           ),
           child: PhotoView(
             imageProvider: widget.imageProvider,
-            loadingBuilder: (_, __) => widget.loadingChild!,
-            backgroundDecoration: widget.backgroundDecoration!,
+            loadingBuilder: (_, __) => widget.loadingChild ?? Container(),
+            backgroundDecoration: widget.backgroundDecoration,
             minScale: widget.minScale,
             maxScale: widget.maxScale,
             heroAttributes: PhotoViewHeroAttributes(tag: widget.heroTag),
@@ -249,6 +265,13 @@ String refineText(String text) {
   return text;
 }
 
+class SelectableWidgetFactory extends WidgetFactory with SelectableTextFactory {
+  @override
+  SelectionChangedCallback? get selectableTextOnChanged => (selection, cause) {
+        // do something when the selection changes
+      };
+}
+
 class CommonHtml extends StatelessWidget {
   final String? data;
   final TextStyle defaultTextStyle;
@@ -258,11 +281,16 @@ class CommonHtml extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return data != null
-        ? SelectableHtml(
-            data: data,
-            onLinkTap: (link, _, __, ___) async {
-              if (await canLaunch(link!)) {
-                await launch(link);
+        ? HtmlWidget(
+            data ?? "",
+            factoryBuilder: () => SelectableWidgetFactory(),
+            onTapUrl: (link) async {
+              if (await canLaunchUrl(Uri.parse(link))) {
+                await launchUrl(
+                  Uri.parse(link),
+                  mode: LaunchMode.externalApplication,
+                );
+                return true;
               } else {
                 throw "Couldn't launch $link";
               }
@@ -292,8 +320,11 @@ class CommonHtmlBlog extends StatelessWidget {
             data: data,
             onLinkTap: (link, _, __, ____) async {
               //print(link);
-              if (await canLaunch(link!)) {
-                await launch(link);
+              if (await canLaunchUrl(Uri.parse(link!))) {
+                await launchUrl(
+                  Uri.parse(link),
+                  mode: LaunchMode.externalApplication,
+                );
               } else {
                 throw "Couldn't launch $link";
               }
@@ -308,8 +339,11 @@ class CommonHtmlBlog extends StatelessWidget {
                 var innerHtml = context.tree.element?.innerHtml;
                 return InkWell(
                   onTap: () async {
-                    if (await canLaunch(attributes['href']!)) {
-                      await launch(attributes['href']!);
+                    if (await canLaunchUrl(Uri.parse(attributes['href']!))) {
+                      await launchUrl(
+                        Uri.parse(attributes['href']!),
+                        mode: LaunchMode.externalApplication,
+                      );
                     }
                   },
                   child: Text(
@@ -354,8 +388,12 @@ class CommonHtmlBlog extends StatelessWidget {
                       var innerHtml = nodes[j].innerHtml;
                       w.add(InkWell(
                         onTap: () async {
-                          if (await canLaunch(attributes['href']!)) {
-                            await launch(attributes['href']!);
+                          if (await canLaunchUrl(
+                              Uri.parse(attributes['href']!))) {
+                            await launchUrl(
+                              Uri.parse(attributes['href']!),
+                              mode: LaunchMode.externalApplication,
+                            );
                           }
                         },
                         child: Text(
@@ -975,3 +1013,1056 @@ class DefListItem extends StatelessWidget {
   }
 }
 
+// class MapEntry {
+//   int key;
+//   String val;
+
+//   MapEntry(this.key, this.val);
+// }
+
+class ImageGallery extends StatefulWidget {
+  final List<String> images;
+  final int galleryLength;
+  final void Function()? onRightIndTap;
+
+  const ImageGallery(
+      {Key? key,
+      required this.images,
+      this.onRightIndTap,
+      this.galleryLength = 4})
+      : super(key: key);
+
+  @override
+  State<ImageGallery> createState() => _ImageGalleryState();
+}
+
+class _ImageGalleryState extends State<ImageGallery>
+    with SingleTickerProviderStateMixin {
+  late Animation<double> animation;
+  late AnimationController controller;
+
+  late List<String> galleryImages;
+  // late Map<int, String> imgMap;
+
+  int _currIndex = 0;
+
+  double scale = 4 / 5;
+
+  double screenWidth = 0;
+  bool firstBuild = true;
+
+  bool _isRight = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.images.length == 0 || widget.images.length == 1) {
+      return;
+    }
+    galleryImages = widget.images
+        .sublist(0, math.min(widget.galleryLength, widget.images.length));
+
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+      value: 1,
+    );
+
+    animation = Tween<double>(begin: 0, end: 1).animate(controller)
+      ..addStatusListener((status) {
+        if ((status == AnimationStatus.completed && !_isRight) ||
+            (status == AnimationStatus.dismissed && _isRight)) {
+          _swapUptoInd(_isRight);
+        }
+      })
+      ..addListener(() {
+        setState(() {
+          // The state that has changed here is the animation object’s value.
+        });
+      });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (firstBuild) {
+      screenWidth = MediaQuery.of(context).size.width;
+      firstBuild = false;
+    }
+
+    if (widget.images.length == 0) {
+      return Container();
+    }
+
+    if (widget.images.length == 1) {
+      String img = widget.images[0];
+      return Material(
+        type: MaterialType.transparency,
+        child: Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+          padding: EdgeInsets.all(10),
+          child: Ink(
+            // width: 100,
+            width: screenWidth * scale,
+            // height: 100,
+            height: screenWidth * scale,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: CachedNetworkImageProvider(
+                  img,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      width: screenWidth,
+      height: (screenWidth + 40) * scale,
+      child: GestureDetector(
+        onHorizontalDragEnd: (details) {
+          // Swiping in right direction.
+          if (details.primaryVelocity! > 0) {
+            _startAnimation(true);
+          }
+
+          // Swiping in left direction.
+          if (details.primaryVelocity! < 0) {
+            _startAnimation(false);
+          }
+        },
+        // onTap: () {
+        //   _swapUptoInd(true);
+        // },
+        child: Stack(
+          alignment: AlignmentDirectional.centerStart,
+          children: galleryImages
+              .asMap()
+              .entries
+              .map<Widget>((e) {
+                bool useAnim =
+                    !((controller.status == AnimationStatus.completed &&
+                            !_isRight) ||
+                        (controller.status == AnimationStatus.dismissed &&
+                            _isRight));
+
+                double firstVisibility = (!_isRight
+                        ? e.key == 0 && useAnim
+                            ? animation.value
+                            : useAnim
+                                ? e.key - animation.value
+                                : e.key
+                        : useAnim
+                            ? e.key + (1 - animation.value)
+                            : e.key)
+                    .toDouble();
+
+                double normalAnim = (!_isRight
+                        ? useAnim
+                            ? e.key - animation.value
+                            : e.key
+                        : useAnim
+                            ? e.key + (1 - animation.value)
+                            : e.key)
+                    .toDouble();
+
+                double imgWidth = screenWidth * scale - firstVisibility * 20;
+                double left = normalAnim * 30;
+                double opacity = 1 - firstVisibility * 0.2;
+                if (opacity > 1) opacity = 1;
+                if (opacity < 0) opacity = 0;
+
+                return Positioned(
+                  // top: 0,
+                  left: left,
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: InkWell(
+                      onTap: () => _startAnimation(false),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Ink(
+                          width: imgWidth,
+                          height: imgWidth,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: CachedNetworkImageProvider(
+                                e.value,
+                              ),
+                              colorFilter: ColorFilter.mode(
+                                Colors.white.withOpacity(opacity),
+                                BlendMode.dstATop,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              })
+              .toList()
+              .reversed
+              .toList(),
+        ),
+      ),
+    );
+  }
+
+  void _startAnimation(bool right) {
+    if (controller.value != 1 && controller.value != 0) {
+      _swapUptoInd(right);
+    }
+    if (!right) {
+      controller.forward(from: 0);
+    } else {
+      controller.reverse(from: 1);
+    }
+    _isRight = right;
+  }
+
+  void _swapUptoInd(bool right) {
+    int index = right ? _currIndex - 1 : _currIndex + 1;
+    if (index == -1) index = widget.images.length - 1;
+    if (index == widget.images.length) index = 0;
+    List<String> newGalleryImages = [
+      ...widget.images.sublist(index),
+      ...widget.images.sublist(0, index)
+    ].sublist(0, math.min(widget.galleryLength, widget.images.length));
+    setState(() {
+      galleryImages = newGalleryImages;
+      _currIndex = index;
+    });
+  }
+}
+
+class CommunityPostWidget extends StatefulWidget {
+  // const CommunityPostWidget({Key? key}) : super(key: key);
+  final CommunityPost communityPost;
+  final void Function()? onPressedComment;
+  final bool shouldTap;
+  final CPType postType;
+
+  CommunityPostWidget({
+    required this.communityPost,
+    this.onPressedComment,
+    this.shouldTap = true,
+    this.postType = CPType.All,
+  });
+  @override
+  State<CommunityPostWidget> createState() =>
+      _CommunityPostWidgetState(communityPost: communityPost);
+}
+
+class _CommunityPostWidgetState extends State<CommunityPostWidget> {
+  CommunityPost communityPost;
+  bool contentExpanded = false;
+  bool isAnon = false;
+  _CommunityPostWidgetState({required this.communityPost});
+
+  bool showSelf() {
+    if (widget.postType == CPType.YourPosts) return true;
+    return !(communityPost.deleted == true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!showSelf()) {
+      return Container();
+    }
+
+    ThemeData theme = Theme.of(context);
+    InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
+    CommunityPostBloc communityPostBloc = bloc.communityPostBloc;
+    String content = communityPost.content ?? "";
+    int contentChars = widget.postType == CPType.Featured
+        ? communityPost.imageUrl == null || communityPost.imageUrl!.length == 0
+            ? 310
+            : 30
+        : 310;
+    if (widget.postType == CPType.All) {
+      if (communityPost.anonymous == true) {
+        isAnon = true;
+      } else {
+        isAnon = false;
+      }
+    } else {
+      isAnon = false;
+    }
+
+    void Function()? postOnTap = contentExpanded ||
+            content.length <= contentChars ||
+            widget.postType == CPType.Featured
+        ? widget.shouldTap && (communityPost.status == 1)
+            ? () => CommunityPostPage.navigateWith(
+                context, bloc.communityPostBloc, communityPost)
+            : null
+        : () => setState(() {
+              contentExpanded = true;
+            });
+
+    return Container(
+      width: CPType.Featured == widget.postType ? 300 : null,
+      margin: widget.shouldTap
+          ? EdgeInsets.all(10)
+          : EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: theme.colorScheme.surface,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                border: Border(
+                    bottom: BorderSide(
+                        width: 1, color: theme.colorScheme.surfaceVariant))),
+            child: ListTile(
+              leading: NullableCircleAvatar(
+                isAnon
+                    ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSM9q9XJKxlskry5gXTz1OXUyem5Ap59lcEGg&usqp=CAU"
+                    : communityPost.postedBy?.userProfilePictureUrl ?? "",
+                Icons.person,
+                radius: 18,
+              ),
+              title: Text(
+                isAnon
+                    ? "Anonymous User"
+                    : (communityPost.postedBy?.userName ?? "Anonymous user") +
+                        ((communityPost.anonymous ?? false) ? " (Anon)" : ""),
+                style: theme.textTheme.bodyMedium,
+              ),
+              subtitle: Text(
+                DateFormat("dd MMM, yyyy")
+                    .format(DateTime.parse(communityPost.timeOfCreation!)),
+                style: theme.textTheme.bodySmall,
+              ),
+              trailing: Container(
+                width: widget.postType == CPType.Featured
+                    ? 100
+                    : MediaQuery.of(context).size.width / 3,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    communityPost.status != 1 || communityPost.deleted == true
+                        ? Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
+                                color: communityPost.deleted == true
+                                    ? Color(0xFFF24822)
+                                    : communityPost.status == 0
+                                        ? Color(0xFFFFCD29)
+                                        : Color(0xFFF24822),
+                              ),
+                              borderRadius: BorderRadius.circular(100),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            child: Text(
+                              communityPost.deleted == true
+                                  ? "Deleted"
+                                  : communityPost.status == 0
+                                      ? "Pending"
+                                      : communityPost.status == 2
+                                          ? "Rejected"
+                                          : "Reported",
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: communityPost.deleted == true
+                                    ? Color(0xFFF24822)
+                                    : communityPost.status == 0
+                                        ? Color(0xFFFFCD29)
+                                        : Color(0xFFF24822),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    PopupMenuButton<int>(
+                      itemBuilder: (context) {
+                        List<PopupMenuItem<int>> items = [];
+
+                        bool isAuthor = communityPost.postedBy?.userID ==
+                            bloc.currSession!.profile!.userID;
+
+                        bool isAdmin = bloc.hasPermission(
+                            communityPost.community?.body ?? "", "AppP");
+
+                        if (isAuthor) {
+                          items.add(
+                            PopupMenuItem(
+                              value: 1,
+                              // row has two child icon and text.
+                              child: Row(
+                                children: [
+                                  Icon(Icons.edit),
+                                  SizedBox(
+                                    // sized box with width 10
+                                    width: 10,
+                                  ),
+                                  Text("Edit")
+                                ],
+                              ),
+                              onTap: () => Future(() async {
+                                CommunityPost? post =
+                                    (await Navigator.of(context).pushNamed(
+                                  "/posts/add",
+                                  arguments:
+                                      NavigateArguments(post: communityPost),
+                                )) as CommunityPost?;
+                                if (post != null) {
+                                  setState(() {
+                                    communityPost = post;
+                                  });
+                                }
+                              }),
+                            ),
+                          );
+                        }
+
+                        if ((isAuthor || isAdmin) &&
+                            !(communityPost.deleted == true)) {
+                          items.add(
+                            PopupMenuItem(
+                              value: 2,
+                              // row has two child icon and text
+                              child: Row(
+                                children: [
+                                  Icon(Icons.delete),
+                                  SizedBox(
+                                    // sized box with width 10
+                                    width: 10,
+                                  ),
+                                  Text("Delete")
+                                ],
+                              ),
+                              onTap: () async {
+                                await communityPostBloc.deleteCommunityPost(
+                                    communityPost.id ?? "");
+                                setState(() {
+                                  communityPost.deleted = true;
+                                });
+                              },
+                            ),
+                          );
+                        }
+                        if (isAdmin) {
+                          items.add(
+                            PopupMenuItem(
+                              value: 3,
+                              // row has two child icon and text
+                              child: Row(
+                                children: [
+                                  Icon((communityPost.featured ?? false)
+                                      ? Icons.published_with_changes_sharp
+                                      : Icons.push_pin_outlined),
+                                  SizedBox(
+                                    // sized box with width 10
+                                    width: 10,
+                                  ),
+                                  Text((communityPost.featured ?? false)
+                                      ? "Unpin from featured"
+                                      : "Pin to featured")
+                                ],
+                              ),
+                              onTap: () async {
+                                bool isFeatured =
+                                    !(communityPost.featured ?? false);
+
+                                await bloc.communityPostBloc
+                                    .featureCommunityPost(
+                                        communityPost.id!, isFeatured);
+
+                                setState(() {
+                                  communityPost.featured = isFeatured;
+                                });
+                              },
+                            ),
+                          );
+                        }
+
+                        items.add(
+                          PopupMenuItem(
+                            value: 4,
+                            // row has two child icon and text
+                            child: Row(
+                              children: [
+                                Icon(Icons.share),
+                                SizedBox(
+                                  // sized box with width 10
+                                  width: 10,
+                                ),
+                                Text("Share")
+                              ],
+                            ),
+                            onTap: () async {
+                              await Share.share(
+                                  "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}");
+                            },
+                          ),
+                        );
+                        return items;
+                      },
+                      // offset: Offset(0, 100),
+                      elevation: 2,
+                      tooltip: "More",
+                      icon: Icon(
+                        Icons.more_vert,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+              minVerticalPadding: 0,
+              dense: true,
+              horizontalTitleGap: 4,
+              onTap: communityPost.postedBy != null &&
+                      !(communityPost.anonymous ?? false)
+                  ? () => UserPage.navigateWith(
+                      context, bloc, communityPost.postedBy)
+                  : null,
+            ),
+          ),
+          GestureDetector(
+            onTap: contentExpanded ||
+                    content.length <= contentChars ||
+                    widget.postType == CPType.Featured
+                ? widget.shouldTap && (communityPost.status == 1)
+                    ? () => CommunityPostPage.navigateWith(
+                        context, bloc.communityPostBloc, communityPost)
+                    : null
+                : () => setState(() {
+                      contentExpanded = true;
+                    }),
+            child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SelectableLinkify(
+                      text: content.length > contentChars && !contentExpanded
+                          ? content.substring(0, contentChars - 10) +
+                              (contentExpanded ? "" : "...")
+                          : content,
+                      onOpen: (link) async {
+                        if (await canLaunchUrl(Uri.parse(link.url))) {
+                          await launchUrl(
+                            Uri.parse(link.url),
+                            mode: LaunchMode.externalApplication,
+                          );
+                        }
+                      },
+                      onTap: postOnTap,
+                    ),
+                    Text.rich(
+                      new TextSpan(
+                        children: !contentExpanded &&
+                                content.length > contentChars
+                            ? [
+                                new TextSpan(
+                                  text: 'Read More.',
+                                  style: theme.textTheme.subtitle2?.copyWith(
+                                      color: theme.colorScheme.primary),
+                                  // recognizer: new TapGestureRecognizer()
+                                  //   ..onTap = () => setState(() {
+                                  //         contentExpanded = true;
+                                  //       }),
+                                )
+                              ]
+                            : [],
+                      ),
+                    ),
+                  ],
+                )
+                // child: Text(
+                //   communityPost.content ?? '''post''',
+                // ),
+                ),
+          ),
+          communityPost.imageUrl != null
+              ? GestureDetector(
+                  onTap: widget.postType == CPType.Featured
+                      ? () => CommunityPostPage.navigateWith(
+                          context, bloc.communityPostBloc, communityPost)
+                      : null,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: ImageGallery(
+                      images: (widget.postType == CPType.Featured
+                          ? [communityPost.imageUrl![0]]
+                          : communityPost.imageUrl)!,
+                    ),
+                  ),
+                )
+              : Container(),
+          _buildFooter(theme, bloc, communityPost),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFooter(
+      ThemeData theme, InstiAppBloc bloc, CommunityPost communityPost) {
+    switch (widget.postType) {
+      case CPType.All:
+      case CPType.YourPosts:
+        int numReactions = communityPost.reactionCount?.values
+                .reduce((sum, element) => sum + element) ??
+            0;
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: theme.colorScheme.surface,
+          ),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            decoration: BoxDecoration(
+              // border:
+              //     Border(top: BorderSide(color: theme.colorScheme.surfaceVariant)),
+              color: theme.colorScheme.surface,
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset(0, 3),
+                  blurRadius: 30,
+                  spreadRadius: -18,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ],
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    PopupMenuButton<int>(
+                      onSelected: (val) async {
+                        await bloc.communityPostBloc
+                            .updateUserCommunityPostReaction(
+                                communityPost, val);
+
+                        setState(() {
+                          if ((communityPost.userReaction ?? -1) != -1) {
+                            communityPost.reactionCount![
+                                    communityPost.userReaction!.toString()] =
+                                (communityPost.reactionCount![communityPost
+                                            .userReaction!
+                                            .toString()] ??
+                                        1) -
+                                    1;
+                          }
+                          communityPost.reactionCount![val.toString()] =
+                              (communityPost.reactionCount![val.toString()] ??
+                                              0) +
+                                          (communityPost.userReaction ?? -1) ==
+                                      val
+                                  ? 0
+                                  : 1;
+                          communityPost.userReaction =
+                              communityPost.userReaction == val ? -1 : val;
+                        });
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return [
+                          new PopupMenuWidget(
+                            height: 20,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              child: new Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: emojis
+                                    .asMap()
+                                    .entries
+                                    .map(
+                                      (e) => Container(
+                                        color:
+                                            e.key == communityPost.userReaction
+                                                ? Colors.blue
+                                                : Colors.transparent,
+                                        child: InkWell(
+                                          onTap: () =>
+                                              Navigator.of(context).pop(e.key),
+                                          child:
+                                              Image.asset(e.value, width: 30),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                            ),
+                          ),
+                        ];
+                      },
+                      child: Row(children: [
+                        communityPost.userReaction == -1
+                            ? Icon(
+                                Icons.add_reaction_outlined,
+                                size: 20,
+                              )
+                            : Image.asset(emojis[communityPost.userReaction!],
+                                width: 20),
+                        numReactions > 0
+                            ? Container(
+                                margin: EdgeInsets.symmetric(horizontal: 5),
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  color: theme.colorScheme.surfaceVariant,
+                                ),
+                                child: Row(
+                                  children: emojis
+                                      .asMap()
+                                      .entries
+                                      .map(
+                                        (e) => (communityPost.reactionCount?[
+                                                        e.key.toString()] ??
+                                                    0) >
+                                                0
+                                            ? Image.asset(e.value, width: 20)
+                                            : Container(),
+                                      )
+                                      .toList(),
+                                ),
+                              )
+                            : Container(),
+                        numReactions > 0
+                            ? Text(
+                                numReactions.toString(),
+                                style: theme.textTheme.bodySmall,
+                              )
+                            : Container(),
+                      ]),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 15),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: BoxConstraints(),
+                            icon: Icon(
+                              Icons.mode_comment_outlined,
+                              color: theme.colorScheme.onSurfaceVariant,
+                              size: 20,
+                            ),
+                            onPressed: widget.onPressedComment ??
+                                (widget.shouldTap && (communityPost.status == 1)
+                                    ? () => CommunityPostPage.navigateWith(
+                                        context,
+                                        bloc.communityPostBloc,
+                                        communityPost)
+                                    : null),
+                          ),
+                          SizedBox(width: 3),
+                          Text((communityPost.commentsCount ?? 0).toString(),
+                              style: theme.textTheme.bodySmall),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                IconButton(
+                    onPressed: () async {
+                      await Share.share(
+                          "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}");
+                    },
+                    padding: EdgeInsets.zero,
+                    constraints: BoxConstraints(),
+                    icon: Icon(
+                      Icons.share_outlined,
+                      color: theme.colorScheme.onSurfaceVariant,
+                      size: 20,
+                    ))
+              ],
+            ),
+          ),
+        );
+      case CPType.PendingPosts:
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                flex: 1,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: theme.colorScheme.surfaceVariant,
+                    primary: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  child: Text("Disapprove"),
+                  onPressed: () {
+                    bloc.communityPostBloc
+                        .updateCommunityPostStatus(communityPost.id!, 2);
+                  },
+                ),
+              ),
+              SizedBox(width: 5),
+              Expanded(
+                flex: 1,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primaryContainer,
+                    primary: theme.colorScheme.primary,
+                  ),
+                  child: Text("Approve"),
+                  onPressed: () {
+                    bloc.communityPostBloc
+                        .updateCommunityPostStatus(communityPost.id!, 1);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      case CPType.ReportedContent:
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                flex: 1,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: theme.colorScheme.surfaceVariant,
+                    primary: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  child: Text("Ignore"),
+                  onPressed: () {
+                    bloc.communityPostBloc
+                        .updateCommunityPostStatus(communityPost.id!, 1);
+                  },
+                ),
+              ),
+              SizedBox(width: 5),
+              Expanded(
+                flex: 1,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primaryContainer,
+                    primary: theme.colorScheme.primary,
+                  ),
+                  child: Text("Delete"),
+                  onPressed: () {
+                    bloc.communityPostBloc
+                        .updateCommunityPostStatus(communityPost.id!, 2);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+
+      default:
+        return Container();
+    }
+  }
+}
+
+List<String> emojis = [
+  "assets/communities/emojis/like.png",
+  "assets/communities/emojis/love.png",
+  "assets/communities/emojis/laugh.png",
+  "assets/communities/emojis/surprise.png",
+  "assets/communities/emojis/cry.png",
+  "assets/communities/emojis/angry.png",
+];
+
+/// An arbitrary widget that lives in a popup menu
+class PopupMenuWidget<T> extends PopupMenuEntry<T> {
+  const PopupMenuWidget({
+    Key? key,
+    required this.height,
+    required this.child,
+  }) : super(key: key);
+  final Widget child;
+
+  @override
+  final double height;
+
+  @override
+  _PopupMenuWidgetState createState() => _PopupMenuWidgetState();
+
+  @override
+  bool represents(T? value) => false;
+}
+
+class _PopupMenuWidgetState extends State<PopupMenuWidget> {
+  @override
+  Widget build(BuildContext context) => widget.child;
+}
+
+class DropdownMultiSelect<T> extends StatefulWidget {
+  final void Function(List<T>?) update;
+  final Future<List<T>>? load;
+  final Future<List<T>> Function(String?)? onFind;
+  final String singularObjectName;
+  final String pluralObjectName;
+
+  const DropdownMultiSelect({
+    Key? key,
+    required this.update,
+    required this.load,
+    required this.onFind,
+    required this.singularObjectName,
+    required this.pluralObjectName,
+  }) : super(key: key);
+
+  @override
+  State<DropdownMultiSelect<T>> createState() => _DropdownMultiSelectState();
+}
+
+class _DropdownMultiSelectState<T> extends State<DropdownMultiSelect<T>> {
+  List<T>? objects;
+
+  void onObjectChange(T? body) async {
+    if (body != null) {
+      if (objects!.any((e) => e.toString() == body.toString())) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text("You already selected this ${widget.singularObjectName}"),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
+      setState(() {
+        objects?.add(body);
+        widget.update(objects);
+      });
+    }
+  }
+
+  Widget _buildChips(BuildContext context) {
+    List<Widget> w = [];
+    int length = objects?.length ?? 0;
+    for (int i = 0; i < length; i++) {
+      w.add(
+        Chip(
+          labelPadding: EdgeInsets.all(2.0),
+          label: Text(
+            objects?[i].toString() ?? "",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: Colors.primaries[i],
+          elevation: 6.0,
+          shadowColor: Colors.grey[60],
+          padding: EdgeInsets.all(8.0),
+          onDeleted: () async {
+            objects?.removeAt(i);
+            widget.update(objects);
+            setState(() {});
+          },
+        ),
+      );
+    }
+    return Wrap(
+      spacing: 8.0, // gap between adjacent chips
+      runSpacing: 4.0,
+      children: w,
+    );
+  }
+
+  Widget buildDropdownMenuItems(BuildContext context, T? body) {
+    return Container(
+      child: Text(
+        "Search for an ${widget.singularObjectName}",
+        style: Theme.of(context).textTheme.bodyText1,
+      ),
+    );
+  }
+
+  Widget _customPopupItemBuilder(
+      BuildContext context, T body, bool isSelected) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(body.toString()),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    if (widget.load != null) {
+      widget.load!.then((value) {
+        setState(() {
+          objects = value;
+        });
+      });
+    } else {
+      objects = [];
+    }
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+
+    return Container(
+      // width: double.infinity,
+      margin: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(
+            height: 20.0,
+          ),
+          DropdownSearch<T>(
+            mode: Mode.DIALOG,
+            maxHeight: 700,
+            isFilteredOnline: true,
+            showSearchBox: true,
+            dropdownSearchDecoration: InputDecoration(
+              labelText: widget.pluralObjectName,
+              hintText: widget.pluralObjectName,
+            ),
+            onChanged: onObjectChange,
+            onFind: widget.onFind,
+            dropdownBuilder: buildDropdownMenuItems,
+            popupItemBuilder: _customPopupItemBuilder,
+            scrollbarProps: ScrollbarProps(
+              isAlwaysShown: true,
+              thickness: 7,
+            ),
+            emptyBuilder: (BuildContext context, String? _) {
+              return Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(20),
+                child: Text(
+                  "No ${widget.pluralObjectName} found. Refine your search!",
+                  style: theme.textTheme.subtitle1,
+                  textAlign: TextAlign.center,
+                ),
+              );
+            },
+          ),
+          _buildChips(context),
+        ],
+      ),
+    );
+  }
+}

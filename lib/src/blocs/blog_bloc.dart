@@ -1,17 +1,14 @@
 import 'dart:async';
 import 'dart:collection';
-// import 'dart:ui';
-
-// import 'package:flutter/foundation.dart';
 import 'package:InstiApp/src/api/model/post.dart';
+import 'package:InstiApp/src/api/request/chatbotlog_request.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/utils/demo_data.dart';
-// import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'dart:math';
 
-enum PostType { Placement, Training, NewsArticle, External, Query }
+enum PostType { Placement, Training, NewsArticle, External, Query, ChatBot }
 
 class PostBloc {
   // Streams
@@ -45,6 +42,8 @@ class PostBloc {
     // }
     _setIndexListener();
   }
+
+  get context => null;
 
   void _setIndexListener() {
     _indexController.stream
@@ -85,12 +84,21 @@ class PostBloc {
       PostType.External: bloc.client.getExternalBlogFeed,
       PostType.Training: bloc.client.getTrainingBlogFeed,
       PostType.NewsArticle: bloc.client.getNews,
-      PostType.Query: bloc.client.getQueries
+      PostType.Query: bloc.client.getQueries,
+      PostType.ChatBot: bloc.clientChatBot.getAnswers,
     }[postType];
     var posts;
     if (bloc.currSession?.user != 'demouser') {
       if (postType == PostType.Query)
         posts = await httpGetFunc!(bloc.getSessionIdHeader(), query, category);
+      else if (postType == PostType.ChatBot) if (query.isEmpty)
+        posts = List<ChatBot>.generate(
+            1,
+            (index) => ChatBot(
+                "0", "0", null, "ChatBot", "Ask your queries here!", null,
+                body: "Ask your queries here!"));
+      else
+        posts = await httpGetFunc!(query);
       else
         posts = await httpGetFunc!(bloc.getSessionIdHeader(),
             page * _noOfPostsPerPage, _noOfPostsPerPage, query);
@@ -98,12 +106,23 @@ class PostBloc {
       posts = await _getDemoPosts(page, httpGetFunc);
     }
     var tableParse = markdown.TableSyntax();
+    if (postType == PostType.ChatBot && query.isNotEmpty)
+      posts = List<ChatBot>.generate(
+          2,
+          (index) => ChatBot(index.toString(), "", posts.data[2 * index + 1],
+              "Answer " + index.toString(), posts.data[2 * index], null,
+              body: query));
+
     posts.forEach((p) {
-      print(p.published);
-      p.content = markdown.markdownToHtml(
-          p.content.split('\n').map((s) => s.trimRight()).toList().join('\n'),
-          blockSyntaxes: [tableParse]);
-      if (postType != PostType.Query)
+      if (postType == PostType.ChatBot)
+        p.content = markdown.markdownToHtml(
+            p.content.split('\n').map((s) => s.trimRight()).toList().join('\n'),
+            blockSyntaxes: [tableParse]);
+      else
+        p.content = markdown.markdownToHtml(
+            p.content.split('\n').map((s) => s.trimRight()).toList().join('\n'),
+            blockSyntaxes: [tableParse]);
+      if (postType != PostType.Query && postType != PostType.ChatBot)
         p.published = dateTimeFormatter(p.published);
     });
     return posts;
@@ -128,6 +147,9 @@ class PostBloc {
       case PostType.Query:
         posts = queryPosts();
         break;
+      case PostType.ChatBot:
+        posts = queryPosts();
+        break;
     }
     return posts;
   }
@@ -136,6 +158,7 @@ class PostBloc {
     List<String?> listCategories;
     listCategories =
         await bloc.client.getQueryCategories(bloc.getSessionIdHeader());
+
     List<Map<String, String>> categories = [];
     listCategories.forEach((val) {
       if (val != null) {
@@ -292,4 +315,13 @@ class PostBloc {
     }
     return Future.delayed(Duration(milliseconds: 0));
   }
+
+  Future updateUserReactionChatBot(ChatBot article, int reaction) async {
+    // int sendReaction = article.userReaction == reaction ? -1 : reaction;
+    await bloc.client.updateUserChatBotReaction(bloc.getSessionIdHeader(),
+        ChatBotLogRequest(article.body!, article.content!, reaction));
+    return Future.delayed(Duration(milliseconds: 0));
+  }
+
+  void setState(Null Function() param0) {}
 }

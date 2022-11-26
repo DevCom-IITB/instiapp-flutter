@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/response/news_feed_response.dart';
 
-// import 'api/model/mess.dart';
-
 List parseMess(String jsonStr) {
   final parsed = json.decode(jsonStr);
   final listOfHostels = List<dynamic>.from(parsed);

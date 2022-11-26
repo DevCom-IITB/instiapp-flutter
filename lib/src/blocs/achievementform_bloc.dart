@@ -5,9 +5,7 @@ import 'dart:collection';
 // import 'dart:developer';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
-import 'package:InstiApp/src/api/request/event_create_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
-import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
@@ -22,6 +20,7 @@ class Bloc extends Object {
 
   List<Event> _events = [];
   List<Body> _bodies = [];
+  List<User> _users = [];
   var _verifiableBodies = <Body>[];
   var _Interests = <Interest>[];
   var _Skills = <Skill>[];
@@ -122,7 +121,7 @@ class Bloc extends Object {
   }
 
   Future<List<Body>> searchForBody(String? query) async {
-    // print("Search called");
+    // print("Search body called");
     if (query == null) return <Body>[];
     if (query.length < 3) {
       return [];
@@ -138,6 +137,25 @@ class Bloc extends Object {
     _bodies = searchResponse.bodies!;
     // print(_bodies.map((e) => e.bodyName));
     return _bodies;
+  }
+
+  Future<List<User>> searchForUser(String? query) async {
+    // print("Search user called");
+    if (query == null) return <User>[];
+    if (query.length < 3) {
+      return [];
+    }
+    var searchResponse =
+        await bloc.client.search(bloc.getSessionIdHeader(), query);
+    // print("Search responed");
+
+    if (searchResponse.users == null) {
+      return [];
+    }
+
+    _users = searchResponse.users!;
+    // print(_bodies.map((e) => e.bodyName));
+    return _users;
   }
 
   Future<List<Interest>> searchForInterest(String? query) async {

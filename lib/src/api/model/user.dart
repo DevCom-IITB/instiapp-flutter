@@ -21,7 +21,7 @@ class Session {
 }
 
 @JsonSerializable()
-class Interest{
+class Interest {
   @JsonKey(name: "id")
   String? id;
 
@@ -31,10 +31,15 @@ class Interest{
   factory Interest.fromJson(Map<String, dynamic> json) =>
       _$InterestFromJson(json);
   Map<String, dynamic> toJson() => _$InterestToJson(this);
+
+  @override
+  String toString() {
+    return this.title ?? "";
+  }
 }
 
 @JsonSerializable()
-class Skill{
+class Skill {
   @JsonKey(name: "title")
   String? title;
 
@@ -42,8 +47,7 @@ class Skill{
   Body? body;
 
   Skill({this.title, this.body});
-  factory Skill.fromJson(Map<String, dynamic> json) =>
-      _$SkillFromJson(json);
+  factory Skill.fromJson(Map<String, dynamic> json) => _$SkillFromJson(json);
   Map<String, dynamic> toJson() => _$SkillToJson(this);
 }
 
@@ -111,6 +115,12 @@ class User {
   String? getSubTitle() {
     return currentRole ?? userLDAPId;
   }
+
+  @override
+  String toString() {
+    return userName ?? "";
+  }
+
   User(
       {this.userID,
       this.userName,
@@ -131,8 +141,7 @@ class User {
       this.userRoles,
       this.userShowContactNumber,
       this.userWebsiteURL,
-      this.interests
-      });
+      this.interests});
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
   Map<String, dynamic> toJson() => _$UserToJson(this);
 }

@@ -8,8 +8,8 @@ part of 'apiclient.dart';
 
 class _InstiAppApi implements InstiAppApi {
   _InstiAppApi(this._dio, {this.baseUrl}) {
-    baseUrl ??= 'http://192.168.0.132:8000/api';
-    // baseUrl ??= 'https://api.insti.app/api';
+    // baseUrl ??= 'http://192.168.230.89:8000/api';
+    baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
   }
 
   final Dio _dio;
@@ -470,19 +470,25 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<ImageUploadResponse> uploadImage(sessionID, imageUploadRequest) async {
+  Future<ImageUploadResponse> uploadImage(sessionID, picture) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionID};
     _headers.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
-    _data.addAll(imageUploadRequest.toJson());
+    final _data = FormData();
+    _data.files.add(MapEntry(
+        'picture',
+        MultipartFile.fromFileSync(picture.path,
+            filename: picture.path.split(Platform.pathSeparator).last)));
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<ImageUploadResponse>(
-            Options(method: 'POST', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/upload',
-                    queryParameters: queryParameters, data: _data)
-                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+        _setStreamType<ImageUploadResponse>(Options(
+                method: 'POST',
+                headers: _headers,
+                extra: _extra,
+                contentType: 'multipart/form-data')
+            .compose(_dio.options, '/upload',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = ImageUploadResponse.fromJson(_result.data!);
     return value;
   }
@@ -528,6 +534,22 @@ class _InstiAppApi implements InstiAppApi {
     await _dio.fetch<void>(_setStreamType<void>(
         Options(method: 'GET', headers: _headers, extra: _extra)
             .compose(_dio.options, '/user-me/unr/${postID}',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    return null;
+  }
+
+  @override
+  Future<void> updateUserChatBotReaction(sessionID, chatBotLogRequest) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionID};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(chatBotLogRequest.toJson());
+    await _dio.fetch<void>(_setStreamType<void>(
+        Options(method: 'POST', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/user-me/ucr/',
                 queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     return null;
@@ -1102,6 +1124,161 @@ class _InstiAppApi implements InstiAppApi {
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = _result.data!.cast<String>();
     return value;
+  }
+
+  @override
+  Future<List<Community>> getCommunities(sessionId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<List<Community>>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/communities',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    var value = _result.data!
+        .map((dynamic i) => Community.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
+  Future<Community> getCommunity(sessionId, id) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<Community>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/communities/${id}',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = Community.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<CommunityPostListResponse> getCommunityPosts(
+      sessionId, status, query) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'status': status,
+      r'query': query
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<CommunityPostListResponse>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/communityposts',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = CommunityPostListResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<CommunityPost> getCommunityPost(sessionId, id) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<CommunityPost>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/communityposts/${id}',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = CommunityPost.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<void> createCommunityPost(sessionId, post) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(post.toJson());
+    await _dio.fetch<void>(_setStreamType<void>(
+        Options(method: 'POST', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/communityposts',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    return null;
+  }
+
+  @override
+  Future<void> updateCommunityPost(sessionId, id, post) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(post.toJson());
+    await _dio.fetch<void>(_setStreamType<void>(
+        Options(method: 'PUT', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/communityposts/${id}',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    return null;
+  }
+
+  @override
+  Future<void> updateCommunityPostAction(sessionId, id, action, data) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(data.toJson());
+    await _dio.fetch<void>(_setStreamType<void>(
+        Options(method: 'PUT', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/communityposts/${action}/${id}',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    return null;
+  }
+
+  @override
+  Future<void> updateCommunityPostStatus(sessionId, id, data) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(data.toJson());
+    await _dio.fetch<void>(_setStreamType<void>(
+        Options(method: 'PUT', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/communityposts/moderator/${id}',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    return null;
+  }
+
+  @override
+  Future<void> updateUserCommunityPostReaction(
+      sessionID, postID, reaction) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'reaction': reaction};
+    final _headers = <String, dynamic>{r'Cookie': sessionID};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    await _dio.fetch<void>(_setStreamType<void>(
+        Options(method: 'GET', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/user-me/ucpr/${postID}',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    return null;
   }
 
   @override

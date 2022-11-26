@@ -272,6 +272,7 @@ class _ExplorePageState extends State<ExplorePage> {
           )
         ];
       }
+      //move to next page
       return (bodies
                   ?.map((b) => _buildListTile(
                       b.bodyID ?? "",
@@ -316,7 +317,7 @@ class _ExplorePageState extends State<ExplorePage> {
       ];
     }
   }
-
+//RELATED TO TILES
   Widget _buildListTile(String id, String title, String subtitle, String url,
       IconData fallbackIcon, VoidCallback onClick, ThemeData theme) {
     return ListTile(
