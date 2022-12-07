@@ -136,4 +136,3 @@ dependency_overrides:
   firebase_performance_platform_interface: 0.1.0+5
   firebase_app_installations_platform_interface: 0.1.0+6
   firebase_core_platform_interface: 4.2.2
-  
