@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:InstiApp/src/utils/common_widgets.dart';
-// import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
-// import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_webview_pro/webview_flutter.dart' as webview;
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -20,8 +18,7 @@ class PutEntityPage extends StatefulWidget {
 }
 
 class _PutEntityPageState extends State<PutEntityPage> {
-  // final String hostUrl = "http://10.105.177.150/";
-  final String hostUrl = "https://insti.app/";
+  final String hostUrl = "https://www.insti.app/";
   final String addEventStr = "add-event";
   final String editEventStr = "edit-event";
   final String editBodyStr = "edit-body";
@@ -122,12 +119,6 @@ class _PutEntityPageState extends State<PutEntityPage> {
                   Navigator.of(context).pushReplacementNamed("/body/$uri");
                 }
               },
-              // :
-              //     (controller, origin, resources) async {
-              //   return PermissionRequestResponse(
-              //       resources: resources,
-              //       action: PermissionRequestResponseAction.GRANT);
-              // },
             ),
     );
   }

@@ -1,14 +1,11 @@
 import 'dart:async';
 
-// import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
-// import 'package:InstiApp/src/utils/safe_webview_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:jaguar/jaguar.dart' as jag;
 import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
 import 'package:flutter_webview_pro/webview_flutter.dart' as webview;
-// import 'package:webview_flutter/webview_flutter.dart';
 
 class MapPage extends StatefulWidget {
   @override
@@ -19,14 +16,7 @@ class _MapPageState extends State<MapPage> {
   late jag.Jaguar server;
 
   final String hostUrl = "www.insti.app";
-  // final String mapUrl = "https://www.gps-coordinates.net/my-location";
   final String mapUrl = "https://www.insti.app/map/?sandbox=true";
-
-  // final String hostUrl = "127.0.0.1:9999";
-  // final String mapUrl = "http://127.0.0.1:9999/";
-
-  // final String hostUrl = "varunpatil.me";
-  // final String mapUrl = "https://varunpatil.me/instimapweb-standalone/";
 
   StreamSubscription<String>? onUrlChangedSub;
   webview.WebViewController? webViewController;
@@ -39,17 +29,11 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
-
-    // startMapServerIfNotStarted().then((_) {
-    //   flutterWebviewPlugin.reloadUrl(mapUrl);
-    //   flutterWebviewPlugin.hide();
-    // });
   }
 
   @override
   void dispose() {
     onUrlChangedSub?.cancel();
-    // server.close();
 
     super.dispose();
   }
@@ -57,10 +41,6 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     theme = Theme.of(context);
-    // print(theme?.canvasColor);
-    // var bloc = BlocProvider.of(context)!.bloc;
-
-    // print("This is the URL: $mapUrl");
     return Scaffold(
       key: _scaffoldKey,
       drawer: NavDrawer(),
@@ -104,20 +84,8 @@ class _MapPageState extends State<MapPage> {
           }
           return webview.NavigationDecision.navigate;
         },
-        // gestureNavigationEnabled: true,
         geolocationEnabled: true,
       ),
     );
-  }
-
-  Future startMapServerIfNotStarted() {
-    try {
-      server = jag.Jaguar(port: 9999);
-      server.addRoute(serveFlutterAssets(prefix: "map/"));
-      return server.serve();
-    } catch (e) {
-      // Already server running
-      return Future.delayed(Duration.zero);
-    }
   }
 }

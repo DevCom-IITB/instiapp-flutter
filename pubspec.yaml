@@ -23,7 +23,6 @@ dependencies:
   qr_code_scanner: ^0.6.1
   http: ^0.13.4
   rxdart: ^0.26.0
-  # flutter_html: ^2.2.1
   flutter_widget_from_html_core: any
   fwfh_selectable_text: ^0.8.3
   markdown: ^4.0.1
@@ -74,7 +73,6 @@ dev_dependencies:
   json_model: any
   json_serializable: ^6.1.1
   firebase_core: 1.10.5
-  # test: 1.6.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
