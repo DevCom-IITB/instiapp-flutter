@@ -12,7 +12,6 @@ import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
 import 'package:intl/intl.dart';
@@ -302,232 +301,232 @@ class CommonHtml extends StatelessWidget {
   }
 }
 
-class CommonHtmlBlog extends StatelessWidget {
-  final String? data;
-  final String? query;
-  final TextStyle defaultTextStyle;
+// class CommonHtmlBlog extends StatelessWidget {
+//   final String? data;
+//   final String? query;
+//   final TextStyle defaultTextStyle;
 
-  CommonHtmlBlog({this.data, required this.defaultTextStyle, this.query});
+//   CommonHtmlBlog({this.data, required this.defaultTextStyle, this.query});
 
-  @override
-  Widget build(BuildContext context1) {
-    // var theme = Theme.of(context1);
-    // var bloc = BlocProvider.of(context1)!.bloc;
-    // print(data);
-    return data != null
-        ? Html(
-            shrinkWrap: true,
-            data: data,
-            onLinkTap: (link, _, __, ____) async {
-              //print(link);
-              if (await canLaunchUrl(Uri.parse(link!))) {
-                await launchUrl(
-                  Uri.parse(link),
-                  mode: LaunchMode.externalApplication,
-                );
-              } else {
-                throw "Couldn't launch $link";
-              }
-            },
-            customRender: {
-              "img": (context, child) {
-                var attributes = context.tree.element!.attributes;
-                return Text(attributes['src'] ?? attributes['href'] ?? "<img>");
-              },
-              "a": (context, child) {
-                var attributes = context.tree.element!.attributes;
-                var innerHtml = context.tree.element?.innerHtml;
-                return InkWell(
-                  onTap: () async {
-                    if (await canLaunchUrl(Uri.parse(attributes['href']!))) {
-                      await launchUrl(
-                        Uri.parse(attributes['href']!),
-                        mode: LaunchMode.externalApplication,
-                      );
-                    }
-                  },
-                  child: Text(
-                    innerHtml ?? "",
-                    style: TextStyle(
-                        color: Colors.lightBlue,
-                        decoration: TextDecoration.underline),
-                  ),
-                  // child: RichText(
-                  //   textScaleFactor:2,
-                  //   text: highlight(node.innerHtml,"electro"),
-                  // )
-                );
-              },
-              "p": (context, child) {
-                // String text =context.tree.element?.innerHtml??"";
-                var nodes = context.tree.element?.children;
-                var nodes1 = context.tree.element?.nodes;
-                // print(nodes1);
-                // print(nodes);
-                List<Widget> w = [];
-                int j = 0;
+//   @override
+//   Widget build(BuildContext context1) {
+//     // var theme = Theme.of(context1);
+//     // var bloc = BlocProvider.of(context1)!.bloc;
+//     // print(data);
+//     return data != null
+//         ? Html(
+//             shrinkWrap: true,
+//             data: data,
+//             onLinkTap: (link, _, __, ____) async {
+//               //print(link);
+//               if (await canLaunchUrl(Uri.parse(link!))) {
+//                 await launchUrl(
+//                   Uri.parse(link),
+//                   mode: LaunchMode.externalApplication,
+//                 );
+//               } else {
+//                 throw "Couldn't launch $link";
+//               }
+//             },
+//             customRender: {
+//               "img": (context, child) {
+//                 var attributes = context.tree.element!.attributes;
+//                 return Text(attributes['src'] ?? attributes['href'] ?? "<img>");
+//               },
+//               "a": (context, child) {
+//                 var attributes = context.tree.element!.attributes;
+//                 var innerHtml = context.tree.element?.innerHtml;
+//                 return InkWell(
+//                   onTap: () async {
+//                     if (await canLaunchUrl(Uri.parse(attributes['href']!))) {
+//                       await launchUrl(
+//                         Uri.parse(attributes['href']!),
+//                         mode: LaunchMode.externalApplication,
+//                       );
+//                     }
+//                   },
+//                   child: Text(
+//                     innerHtml ?? "",
+//                     style: TextStyle(
+//                         color: Colors.lightBlue,
+//                         decoration: TextDecoration.underline),
+//                   ),
+//                   // child: RichText(
+//                   //   textScaleFactor:2,
+//                   //   text: highlight(node.innerHtml,"electro"),
+//                   // )
+//                 );
+//               },
+//               "p": (context, child) {
+//                 // String text =context.tree.element?.innerHtml??"";
+//                 var nodes = context.tree.element?.children;
+//                 var nodes1 = context.tree.element?.nodes;
+//                 // print(nodes1);
+//                 // print(nodes);
+//                 List<Widget> w = [];
+//                 int j = 0;
 
-                // for(int i=0;i<(nodes1?.length??0);i++ ){
-                //
-                // }
+//                 // for(int i=0;i<(nodes1?.length??0);i++ ){
+//                 //
+//                 // }
 
-                for (int i = 0; i < (nodes1?.length ?? 0); i++) {
-                  if (j >= (nodes?.length ?? 0)) j = (nodes?.length ?? 0) - 1;
-                  // nodes?.length==0?print(""):print(nodes![j].localName);
-                  // print(nodes1![i].runtimeType);
-                  String type = nodes1![i].runtimeType.toString();
-                  if (type == "Text") {
-                    w.add(SelectableText.rich(
-                      highlight(
-                          refineText(nodes1[i].text!), query ?? '', context1),
-                      //strutStyle: StrutStyle.fromTextStyle(theme.textTheme.subtitle1!.copyWith(color: Colors.lightBlue)),
-                    ));
-                  } else if (type == "Element") {
-                    if (nodes![j].localName == "a") {
-                      var attributes = nodes[j].attributes;
-                      var innerHtml = nodes[j].innerHtml;
-                      w.add(InkWell(
-                        onTap: () async {
-                          if (await canLaunchUrl(
-                              Uri.parse(attributes['href']!))) {
-                            await launchUrl(
-                              Uri.parse(attributes['href']!),
-                              mode: LaunchMode.externalApplication,
-                            );
-                          }
-                        },
-                        child: Text(
-                          innerHtml,
-                          style: TextStyle(
-                              color: Colors.lightBlue,
-                              decoration: TextDecoration.underline),
-                        ),
-                        // child: RichText(
-                        //   textScaleFactor:2,
-                        //   text: highlight(node.innerHtml,"electro"),
-                        // )
-                      ));
-                    } else if (nodes[j].localName == "strong") {
-                      w.add(SelectableText.rich(
-                        highlight(
-                            refineText(nodes[j].text), query ?? '', context1,
-                            isStrong: true),
-                        // strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
-                        //     .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
-                      ));
-                    } else if (nodes[j].localName == "br") {
-                      w.add(SelectableText.rich(
-                        highlight(" \n", query ?? '', context1),
-                        // strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
-                        //     .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
-                      ));
-                    }
-                    j++;
-                  }
-                }
-                return Container(
-                  padding: const EdgeInsets.fromLTRB(0, 2, 6, 2),
-                  alignment: Alignment.centerLeft,
-                  child: Wrap(
-                    children: w,
-                  ),
-                );
-                // return RichText(
-                //       textScaleFactor:1,
-                //       text: highlight(refineText(text),query?? ''),
-                //     );
-              },
-              "td": (context, child) {
-                String text = context.tree.element?.innerHtml ?? "";
-                // text="    "+text+"   ";
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 2, 6, 2),
-                  child: SelectableText.rich(
-                    highlight(refineText(text), query ?? '', context1),
-                  ),
-                );
-              },
-              "th": (context, child) {
-                String text = context.tree.element?.innerHtml ?? "";
-                // text="    "+text+"   ";
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 2, 6, 2),
-                  child: SelectableText.rich(
-                    highlight(refineText(text), query ?? '', context1),
-                  ),
-                );
-              },
-              "table": (context, child) {},
-              "thread": (context, child) {}
-              // "td":(context,child){
-              //   context.tree.style.padding=const EdgeInsets.only(
-              //     left: 12.0,
-              //     top: 12.0,
-              //     right: 12.0,
-              //   );
-              //   context.tree.style.width=500;
-              //   print(context.tree.style.width);
-              // }
-            },
-          )
-        : CircularProgressIndicatorExtended(
-            label: Text("Loading content"),
-          );
-  }
+//                 for (int i = 0; i < (nodes1?.length ?? 0); i++) {
+//                   if (j >= (nodes?.length ?? 0)) j = (nodes?.length ?? 0) - 1;
+//                   // nodes?.length==0?print(""):print(nodes![j].localName);
+//                   // print(nodes1![i].runtimeType);
+//                   String type = nodes1![i].runtimeType.toString();
+//                   if (type == "Text") {
+//                     w.add(SelectableText.rich(
+//                       highlight(
+//                           refineText(nodes1[i].text!), query ?? '', context1),
+//                       //strutStyle: StrutStyle.fromTextStyle(theme.textTheme.subtitle1!.copyWith(color: Colors.lightBlue)),
+//                     ));
+//                   } else if (type == "Element") {
+//                     if (nodes![j].localName == "a") {
+//                       var attributes = nodes[j].attributes;
+//                       var innerHtml = nodes[j].innerHtml;
+//                       w.add(InkWell(
+//                         onTap: () async {
+//                           if (await canLaunchUrl(
+//                               Uri.parse(attributes['href']!))) {
+//                             await launchUrl(
+//                               Uri.parse(attributes['href']!),
+//                               mode: LaunchMode.externalApplication,
+//                             );
+//                           }
+//                         },
+//                         child: Text(
+//                           innerHtml,
+//                           style: TextStyle(
+//                               color: Colors.lightBlue,
+//                               decoration: TextDecoration.underline),
+//                         ),
+//                         // child: RichText(
+//                         //   textScaleFactor:2,
+//                         //   text: highlight(node.innerHtml,"electro"),
+//                         // )
+//                       ));
+//                     } else if (nodes[j].localName == "strong") {
+//                       w.add(SelectableText.rich(
+//                         highlight(
+//                             refineText(nodes[j].text), query ?? '', context1,
+//                             isStrong: true),
+//                         // strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
+//                         //     .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
+//                       ));
+//                     } else if (nodes[j].localName == "br") {
+//                       w.add(SelectableText.rich(
+//                         highlight(" \n", query ?? '', context1),
+//                         // strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
+//                         //     .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
+//                       ));
+//                     }
+//                     j++;
+//                   }
+//                 }
+//                 return Container(
+//                   padding: const EdgeInsets.fromLTRB(0, 2, 6, 2),
+//                   alignment: Alignment.centerLeft,
+//                   child: Wrap(
+//                     children: w,
+//                   ),
+//                 );
+//                 // return RichText(
+//                 //       textScaleFactor:1,
+//                 //       text: highlight(refineText(text),query?? ''),
+//                 //     );
+//               },
+//               "td": (context, child) {
+//                 String text = context.tree.element?.innerHtml ?? "";
+//                 // text="    "+text+"   ";
+//                 return Padding(
+//                   padding: const EdgeInsets.fromLTRB(0, 2, 6, 2),
+//                   child: SelectableText.rich(
+//                     highlight(refineText(text), query ?? '', context1),
+//                   ),
+//                 );
+//               },
+//               "th": (context, child) {
+//                 String text = context.tree.element?.innerHtml ?? "";
+//                 // text="    "+text+"   ";
+//                 return Padding(
+//                   padding: const EdgeInsets.fromLTRB(0, 2, 6, 2),
+//                   child: SelectableText.rich(
+//                     highlight(refineText(text), query ?? '', context1),
+//                   ),
+//                 );
+//               },
+//               "table": (context, child) {},
+//               "thread": (context, child) {}
+//               // "td":(context,child){
+//               //   context.tree.style.padding=const EdgeInsets.only(
+//               //     left: 12.0,
+//               //     top: 12.0,
+//               //     right: 12.0,
+//               //   );
+//               //   context.tree.style.width=500;
+//               //   print(context.tree.style.width);
+//               // }
+//             },
+//           )
+//         : CircularProgressIndicatorExtended(
+//             label: Text("Loading content"),
+//           );
+//   }
 
-  TextSpan highlight(String result, String query, BuildContext context,
-      {bool isStrong = false}) {
-    var bloc = BlocProvider.of(context)!.bloc;
-    var theme = Theme.of(context);
-    // print(result);
-    TextStyle posRes =
-        TextStyle(color: Colors.white, backgroundColor: bloc.accentColor);
-    TextStyle? negRes = isStrong
-        ? theme.textTheme.subtitle2
-            ?.copyWith(fontWeight: FontWeight.w700, fontSize: 13)
-        : theme.textTheme.subtitle2?.copyWith(
-            fontSize:
-                13); // TextStyle(backgroundColor: bloc.bloc.brightness.toColor().withOpacity(1.0),);
-    if (result == "" || query == "")
-      return TextSpan(text: result, style: negRes);
-    result.replaceAll('\n', " ").replaceAll(" ", "");
+//   TextSpan highlight(String result, String query, BuildContext context,
+//       {bool isStrong = false}) {
+//     var bloc = BlocProvider.of(context)!.bloc;
+//     var theme = Theme.of(context);
+//     // print(result);
+//     TextStyle posRes =
+//         TextStyle(color: Colors.white, backgroundColor: bloc.accentColor);
+//     TextStyle? negRes = isStrong
+//         ? theme.textTheme.subtitle2
+//             ?.copyWith(fontWeight: FontWeight.w700, fontSize: 13)
+//         : theme.textTheme.subtitle2?.copyWith(
+//             fontSize:
+//                 13); // TextStyle(backgroundColor: bloc.bloc.brightness.toColor().withOpacity(1.0),);
+//     if (result == "" || query == "")
+//       return TextSpan(text: result, style: negRes);
+//     result.replaceAll('\n', " ").replaceAll(" ", "");
 
-    var refinedMatch = result.toLowerCase();
-    var refinedsearch = query.toLowerCase();
+//     var refinedMatch = result.toLowerCase();
+//     var refinedsearch = query.toLowerCase();
 
-    if (refinedMatch.contains(refinedsearch)) {
-      if (refinedMatch.substring(0, refinedsearch.length) == refinedsearch) {
-        return TextSpan(
-            style: posRes,
-            text: result.substring(0, refinedsearch.length),
-            children: [
-              highlight(result.substring(refinedsearch.length), query, context),
-            ]);
-      } else if (refinedsearch.length == refinedMatch.length) {
-        return TextSpan(text: result, style: posRes);
-      } else {
-        return TextSpan(
-            style: negRes,
-            text: result.substring(0, refinedMatch.indexOf(refinedsearch)),
-            children: [
-              highlight(result.substring(refinedMatch.indexOf(refinedsearch)),
-                  query, context)
-            ]);
-      }
-    } else if (!refinedMatch.contains(refinedsearch)) {
-      return TextSpan(text: result, style: negRes);
-    }
+//     if (refinedMatch.contains(refinedsearch)) {
+//       if (refinedMatch.substring(0, refinedsearch.length) == refinedsearch) {
+//         return TextSpan(
+//             style: posRes,
+//             text: result.substring(0, refinedsearch.length),
+//             children: [
+//               highlight(result.substring(refinedsearch.length), query, context),
+//             ]);
+//       } else if (refinedsearch.length == refinedMatch.length) {
+//         return TextSpan(text: result, style: posRes);
+//       } else {
+//         return TextSpan(
+//             style: negRes,
+//             text: result.substring(0, refinedMatch.indexOf(refinedsearch)),
+//             children: [
+//               highlight(result.substring(refinedMatch.indexOf(refinedsearch)),
+//                   query, context)
+//             ]);
+//       }
+//     } else if (!refinedMatch.contains(refinedsearch)) {
+//       return TextSpan(text: result, style: negRes);
+//     }
 
-    return TextSpan(
-      text: result.substring(0, refinedMatch.indexOf(refinedsearch)),
-      style: negRes,
-      children: [
-        highlight(result.substring(refinedMatch.indexOf(refinedsearch)), query,
-            context)
-      ],
-    );
-  }
-}
+//     return TextSpan(
+//       text: result.substring(0, refinedMatch.indexOf(refinedsearch)),
+//       style: negRes,
+//       children: [
+//         highlight(result.substring(refinedMatch.indexOf(refinedsearch)), query,
+//             context)
+//       ],
+//     );
+//   }
+// }
 
 /// A rectangle with a smooth circular notch.
 class RoundedNotchedRectangle implements NotchedShape {
