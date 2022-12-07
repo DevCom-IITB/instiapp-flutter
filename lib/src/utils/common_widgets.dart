@@ -27,6 +27,8 @@ import 'dart:ui' show Brightness;
 
 import '../bloc_provider.dart';
 
+String defUrl = "https://devcom-iitb.org/images/logos/DC_footer.png";
+
 String capitalize(String name) {
   if (name.isNotEmpty) {
     return name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -218,8 +220,8 @@ class PhotoViewableImage extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => HeroPhotoViewWrapper(
-                  imageProvider:
-                      imageProvider ?? CachedNetworkImageProvider(url ?? ""),
+                  imageProvider: imageProvider ??
+                      CachedNetworkImageProvider(url ?? defUrl),
                   heroTag: heroTag,
                   minScale: PhotoViewComputedScale.contained * 0.9,
                   maxScale: PhotoViewComputedScale.contained * 2.0,

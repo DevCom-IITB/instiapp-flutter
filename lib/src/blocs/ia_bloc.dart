@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
 import 'package:InstiApp/main.dart';
+import 'package:InstiApp/src/api/chatbotapiclient.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/community.dart';
@@ -30,11 +31,11 @@ import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
 import 'package:InstiApp/src/blocs/mess_calendar_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dynamic_icon/flutter_dynamic_icon.dart';
 import 'dart:collection';
 import 'package:rxdart/rxdart.dart';
 // import 'package:http/io_client.dart';
@@ -118,6 +119,7 @@ class InstiAppBloc {
   late PostBloc trainingBloc;
   late PostBloc newsBloc;
   late PostBloc queryBloc;
+  late PostBloc chatBotBloc;
   late ExploreBloc exploreBloc;
   late CalendarBloc calendarBloc;
   late MessCalendarBloc messCalendarBloc;
@@ -137,6 +139,7 @@ class InstiAppBloc {
 
   // api functions
   late final InstiAppApi client;
+  late final ChatBotApi clientChatBot;
 
   // default homepage
   String homepageName = "/feed";
@@ -253,11 +256,13 @@ class InstiAppBloc {
     // } else {
     // }
     client = InstiAppApi(dio);
+    clientChatBot = ChatBotApi(dio);
     placementBloc = PostBloc(this, postType: PostType.Placement);
     externalBloc = PostBloc(this, postType: PostType.External);
     trainingBloc = PostBloc(this, postType: PostType.Training);
     newsBloc = PostBloc(this, postType: PostType.NewsArticle);
     queryBloc = PostBloc(this, postType: PostType.Query);
+    chatBotBloc = PostBloc(this, postType: PostType.ChatBot);
     exploreBloc = ExploreBloc(this);
     calendarBloc = CalendarBloc(this);
     // complaintsBloc = ComplaintsBloc(this);
@@ -295,6 +300,7 @@ class InstiAppBloc {
       PostType.Training: trainingBloc,
       PostType.NewsArticle: newsBloc,
       PostType.Query: queryBloc,
+      PostType.ChatBot: chatBotBloc,
     }[blogType];
   }
 
@@ -320,8 +326,6 @@ class InstiAppBloc {
     }
     _eventsSubject.add(UnmodifiableListView(_events));
   }
-
-  // alumniLoginAndOTP bloc
 
   String get alumniID => ldap;
   setAlumniID(updtAlumniID) {
@@ -368,6 +372,16 @@ class InstiAppBloc {
   }
 
   // Notifications bloc
+  void updateNotificationPermission(bool permitted) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool("notifP", permitted);
+  }
+
+  Future<bool?> hasNotificationPermission() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool("notifP");
+  }
+
   Future<void> updateNotifications() async {
     var notifs = await client.getNotifications(getSessionIdHeader());
     _notifications = notifs;
@@ -733,7 +747,7 @@ class InstiAppBloc {
     if (!kIsWeb && Platform.isIOS) {
       notifications.listen((notifs) async {
         try {
-          await FlutterDynamicIcon.setApplicationIconBadgeNumber(notifs.length);
+          await AwesomeNotifications().setGlobalBadgeCounter(notifs.length);
         } on PlatformException {}
       });
     }
