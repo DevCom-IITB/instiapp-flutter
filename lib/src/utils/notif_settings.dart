@@ -240,7 +240,7 @@ void setupNotifications(BuildContext context, InstiAppBloc bloc) async {
 
       // Getting route depending on payload
       String routeName = routeFromNotification(notif);
-      print(routeName);
+
       // Get action button key if any
       String actionKey = notification.buttonKeyPressed;
 
@@ -311,7 +311,6 @@ void requestNotificationPermission(
 ///
 /// [message] is the message recieved from firebase
 Future<void> sendMessage(RemoteMessage message) async {
-  print("Message received: ${message.data}");
   // Get notif from message data
   RichNotification notif = RichNotification.fromJson(message.data);
 

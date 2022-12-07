@@ -63,8 +63,6 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
 
-    print("In login page");
-
     WidgetsBinding.instance?.addPostFrameCallback((_) => setupNotifications(
         widget.navigatorKey?.currentContext ?? context, widget.bloc));
     WidgetsBinding.instance?.addPostFrameCallback((_) {
