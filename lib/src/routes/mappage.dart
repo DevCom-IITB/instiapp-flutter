@@ -7,7 +7,6 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:jaguar/jaguar.dart' as jag;
 import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_webview_pro/webview_flutter.dart' as webview;
 // import 'package:webview_flutter/webview_flutter.dart';
 
@@ -19,9 +18,9 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   late jag.Jaguar server;
 
-  final String hostUrl = "insti.app";
+  final String hostUrl = "www.insti.app";
   // final String mapUrl = "https://www.gps-coordinates.net/my-location";
-  final String mapUrl = "https://insti.app/map/?sandbox=true";
+  final String mapUrl = "https://www.insti.app/map/?sandbox=true";
 
   // final String hostUrl = "127.0.0.1:9999";
   // final String mapUrl = "http://127.0.0.1:9999/";
@@ -105,7 +104,7 @@ class _MapPageState extends State<MapPage> {
           }
           return webview.NavigationDecision.navigate;
         },
-        gestureNavigationEnabled: true,
+        // gestureNavigationEnabled: true,
         geolocationEnabled: true,
       ),
     );
