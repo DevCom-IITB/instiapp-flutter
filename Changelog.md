@@ -2,7 +2,11 @@
 
 ## Unreleased
 
-- Nothing here yet (https://github.com/tastelessjolt/instiapp-flutter/projects/1)
+- Implement Awesome Notifications
+
+## v2.1.6
+
+- InSeek (ChatBot)
 
 ## v2.1.5
 
