@@ -9,6 +9,7 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/footer_buttons.dart';
+import 'package:InstiApp/src/utils/notif_settings.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/foundation.dart';
@@ -53,6 +54,8 @@ class _EventPageState extends State<EventPage> {
 
   bool _bottomSheetActive = false;
 
+  bool firstBuild = true;
+
   @override
   void initState() {
     super.initState();
@@ -81,7 +84,10 @@ class _EventPageState extends State<EventPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
-    var footerButtons = <Widget>[];
+    final NotificationRouteArguments? args = ModalRoute.of(context)!
+        .settings
+        .arguments as NotificationRouteArguments?;
+    List<Widget> footerButtons = [];
     var editAccess = false;
     if (event != null) {
       footerButtons = <Widget>[];
@@ -91,6 +97,11 @@ class _EventPageState extends State<EventPage> {
           buildUserStatusButton("Going", UES.Going, theme, bloc),
           buildUserStatusButton("Interested", UES.Interested, theme, bloc),
         ]);
+
+        if (args?.key == ActionKeys.ADD_TO_CALENDAR && firstBuild) {
+          UESButtonOnClicked(UES.Going, theme, bloc, forceInterested: true);
+          firstBuild = false;
+        }
       }
 
       if ((event!.eventWebsiteURL ?? "") != "") {
@@ -186,7 +197,7 @@ class _EventPageState extends State<EventPage> {
                       child: PhotoViewableImage(
                         url: event!.eventImageURL ??
                             event!.eventBodies?[0].bodyImageURL ??
-                            "",
+                            defUrl,
                         heroTag: event!.eventID ?? "",
                         fit: BoxFit.fitWidth,
                       ),
@@ -252,7 +263,7 @@ class _EventPageState extends State<EventPage> {
       title: Text(body.bodyName ?? "", style: theme.headline6),
       subtitle: Text(body.bodyShortDescription ?? "", style: theme.subtitle2),
       leading: NullableCircleAvatar(
-        body.bodyImageURL ?? "",
+        body.bodyImageURL ?? defUrl,
         Icons.work_outline_outlined,
         heroTag: body.bodyID ?? "",
       ),
@@ -306,26 +317,38 @@ class _EventPageState extends State<EventPage> {
         }
         return rowChildren;
       }()),
-      onPressed: () async {
-        if (bloc.currSession == null) {
-          return;
-        }
-        setState(() {
-          loadingUes = uesButton;
-        });
-        await bloc.updateUesEvent(event!,
-            event!.eventUserUes == uesButton ? UES.NotGoing : uesButton);
-        setState(() {
-          loadingUes = UES.NotGoing;
-          // event has changes
-        });
-
-        if (event?.eventUserUes != UES.NotGoing) {
-          // Add to calendar (or not)
-          _addEventToCalendar(theme, bloc);
-        }
+      onPressed: () {
+        UESButtonOnClicked(uesButton, theme, bloc);
       },
     );
+  }
+
+  void UESButtonOnClicked(UES uesButton, ThemeData theme, InstiAppBloc bloc,
+      {bool forceInterested = false}) async {
+    if (bloc.currSession == null) {
+      return;
+    }
+    setState(() {
+      loadingUes = uesButton;
+    });
+    await bloc.updateUesEvent(
+        event!,
+        forceInterested
+            ? UES.Going
+            : (event!.eventUserUes == uesButton ? UES.NotGoing : uesButton));
+    setState(() {
+      loadingUes = UES.NotGoing;
+      // event has changes
+    });
+
+    if (event?.eventUserUes != UES.NotGoing) {
+      if (forceInterested) {
+        _actualAddEventToDeviceCalendar(bloc);
+      } else {
+        // Add to calendar (or not)
+        _addEventToCalendar(theme, bloc);
+      }
+    }
   }
 
   bool lastCheck = false;

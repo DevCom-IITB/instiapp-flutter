@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:InstiApp/src/api/interceptors.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/notif_settings.dart';
 import 'package:dio/dio.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -62,6 +63,8 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
 
+    WidgetsBinding.instance?.addPostFrameCallback((_) => setupNotifications(
+        widget.navigatorKey?.currentContext ?? context, widget.bloc));
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       // print("Printing");
       String? args = ModalRoute.of(context)?.settings.arguments as String?;

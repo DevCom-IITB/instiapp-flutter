@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:InstiApp/src/api/model/rich_notification.dart';
 import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
@@ -33,6 +31,7 @@ import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/routes/achievement_form.dart';
 import 'package:InstiApp/src/routes/your_achievements.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
+import 'package:InstiApp/src/utils/notif_settings.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -46,11 +45,10 @@ import 'package:InstiApp/src/routes/alumni_OTP_Page.dart';
 import 'package:InstiApp/src/routes/placementblogpage.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:uni_links/uni_links.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 void main() async {
   // print("Runnning main");
@@ -58,6 +56,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
+  FirebaseMessaging.onBackgroundMessage(sendMessage);
+
+  AwesomeNotifications().initialize(
+    'resource://drawable/ic_launcher_foreground',
+    notifChannels,
+    channelGroups: notifGroups,
+  );
 
   await bloc.restorePrefs();
 
@@ -99,7 +104,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     if (!kIsWeb) {
-      setupNotifications();
       initAppLinksState();
     }
 
@@ -110,6 +114,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void dispose() async {
     _appLinksSub.cancel();
     WidgetsBinding.instance?.removeObserver(this);
+    disposeNotification();
     super.dispose();
   }
 
@@ -358,163 +363,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       settings: settings,
       builder: (BuildContext context) => builder,
     );
-  }
-
-  // Section
-  // Handling Notifications
-  void setupNotifications() async {
-    // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
-    var initializationSettingsAndroid =
-        new AndroidInitializationSettings('@mipmap/ic_launcher_foreground');
-
-    var initializationSettingsIOS = new IOSInitializationSettings();
-    var initializationSettings = new InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: onSelectNotification);
-
-    FirebaseMessaging.onMessage.listen(
-      (RemoteMessage message) async {
-        // print("onMessage: $message");
-        var appDocDir = await getApplicationDocumentsDirectory();
-
-        String payload = jsonEncode(message.data);
-
-        RichNotification notif = RichNotification.fromJson(message.data);
-
-        StyleInformation style;
-        // AndroidNotificationStyle styleType;
-
-        if (notif.notificationImage != null) {
-          var bigPictureResponse =
-              await http.get(Uri.parse(notif.notificationImage ?? ""));
-          var bigPicturePath =
-              '${appDocDir.path}/bigPicture-${notif.notificationID}';
-          var file = new File(bigPicturePath);
-          await file.writeAsBytes(bigPictureResponse.bodyBytes);
-
-          style = BigPictureStyleInformation(
-            FilePathAndroidBitmap(bigPicturePath),
-            summaryText: notif.notificationLargeContent,
-          );
-          // styleType = AndroidNotificationStyle.bigPicture;
-        } else if (notif.notificationLargeContent != null) {
-          style = BigTextStyleInformation(
-            notif.notificationLargeContent ?? "",
-          );
-          // styleType = AndroidNotificationStyle.bigText;
-        } else {
-          style = DefaultStyleInformation(false, false);
-          // styleType = AndroidNotificationStyle.defaultStyle;
-        }
-
-        String largeIconPath = "";
-        if (notif.notificationLargeIcon != null) {
-          var largeIconResponse =
-              await http.get(Uri.parse(notif.notificationLargeIcon ?? ""));
-          largeIconPath = '${appDocDir.path}/largeIcon-${notif.notificationID}';
-          var file = new File(largeIconPath);
-          await file.writeAsBytes(largeIconResponse.bodyBytes);
-        }
-
-        var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-          'Very Important',
-          'Placement Blog Notifications',
-          channelDescription:
-              'All Placement Blog Notifications go here with high importance',
-          importance: Importance.max,
-          priority: Priority.high,
-          largeIcon: FilePathAndroidBitmap(largeIconPath),
-          // style: styleType,
-          styleInformation: style,
-        );
-        var iOSPlatformChannelSpecifics =
-            new IOSNotificationDetails(presentAlert: true);
-        var platformChannelSpecifics = new NotificationDetails(
-            android: androidPlatformChannelSpecifics,
-            iOS: iOSPlatformChannelSpecifics);
-
-        await flutterLocalNotificationsPlugin.show(
-          0,
-          notif.notificationTitle,
-          notif.notificationVerb,
-          platformChannelSpecifics,
-          payload: payload,
-        );
-      },
-    );
-
-    // Get any messages which caused the application to open from
-    // a terminated state.
-    RemoteMessage? initialMessage =
-        await widget.bloc.firebaseMessaging.getInitialMessage();
-
-    // If the message also contains a data property with a "type" of "chat",
-    // navigate to a chat screen
-    if (initialMessage != null) {
-      _handleMessage(initialMessage);
-    }
-
-    // Called when app is open in background and message is opened
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
-
-    if (Platform.isIOS) {
-      widget.bloc.firebaseMessaging.requestPermission(
-        alert: true,
-        announcement: false,
-        badge: true,
-        carPlay: false,
-        criticalAlert: false,
-        provisional: false,
-        sound: true,
-      );
-    }
-
-    // widget.bloc.firebaseMessaging.onIosSettingsRegistered
-    //     .listen((IosNotificationSettings settings) {
-    //   print("Settings registered: $settings");
-    // });
-
-    widget.bloc.firebaseMessaging.getToken().then((String? token) {
-      assert(token != null);
-      // print("Push Messaging token: $token");
-    });
-  }
-
-  void _handleMessage(RemoteMessage message) {
-    // print('A new onMessageOpenedApp event was published!');
-    navigateFromNotification(RichNotification.fromJson(message.data));
-  }
-
-  Future onSelectNotification(String? payload) async {
-    if (payload != null) {
-      debugPrint('notification payload: ' + payload);
-    }
-    navigateFromNotification(
-        RichNotification.fromJson(jsonDecode(payload ?? "")));
-  }
-
-  Future navigateFromNotification(dynamic fromMap) async {
-    // Navigating to correct page
-    var routeName = {
-      "blogentry": fromMap.notificationExtra?.contains("/internship") ?? false
-          ? "/trainblog"
-          : "/placeblog",
-      "community": "/group/${fromMap.notificationObjectID ?? ""}",
-      "communitypost": "/groups",
-      "communitypostuserreaction": "/groups",
-      "body": "/body/${fromMap.notificationObjectID ?? ""}",
-      "event": "/event/${fromMap.notificationObjectID ?? ""}",
-      "userprofile": "/user/${fromMap.notificationObjectID ?? ""}",
-      "newsentry": "/news",
-      "complaintcomment":
-          "/complaint/${fromMap.notificationExtra ?? ""}?reload=true",
-      "unresolvedquery": "/query",
-    }[fromMap.notificationType];
-    _navigatorKey.currentState?.pushNamed(routeName ?? '/');
-
-    // marking the notification as read
-    widget.bloc.clearNotificationUsingID(fromMap.notificationID!);
   }
 
   void handleAppLink(Uri? uri) {
