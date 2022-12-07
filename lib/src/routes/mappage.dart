@@ -4,7 +4,6 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:jaguar/jaguar.dart' as jag;
-import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
 import 'package:flutter_webview_pro/webview_flutter.dart' as webview;
 
 class MapPage extends StatefulWidget {
