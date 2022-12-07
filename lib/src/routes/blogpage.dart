@@ -5,6 +5,7 @@ import 'dart:collection';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/notif_settings.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter/rendering.dart';
@@ -92,9 +93,12 @@ class _BlogPageState extends State<BlogPage> {
   IconData actionIcon = Icons.search_outlined;
 
   bool firstBuild = true;
+  bool firstNotifAct = true;
   String? loadingReaction;
 
   List<String>? currCat;
+
+  late NotificationRouteArguments? args;
 
   @override
   void initState() {
@@ -130,6 +134,8 @@ class _BlogPageState extends State<BlogPage> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
     var blogBloc = bloc.getPostsBloc(widget.postType);
+    args = ModalRoute.of(context)!.settings.arguments
+        as NotificationRouteArguments?;
 
     if (firstBuild) {
       blogBloc?.query = "";
@@ -186,8 +192,8 @@ class _BlogPageState extends State<BlogPage> {
                               if (index == 0) {
                                 return _blogHeader(context, blogBloc, bloc);
                               }
-                              return _buildPost(
-                                  blogBloc, index - 1, snapshot.data, theme);
+                              return _buildPost(blogBloc, index - 1,
+                                  snapshot.data, theme, context);
                             },
                             itemCount: (snapshot.data == null
                                     ? 0
@@ -261,8 +267,8 @@ class _BlogPageState extends State<BlogPage> {
     return blogbloc!.refresh(force: blogbloc.query.isEmpty);
   }
 
-  Widget _buildPost(
-      PostBloc bloc, int index, List<Post>? posts, ThemeData theme) {
+  Widget _buildPost(PostBloc bloc, int index, List<Post>? posts,
+      ThemeData theme, BuildContext context) {
     bloc.inPostIndex.add(index);
 
     final Post? post =
@@ -344,12 +350,21 @@ class _BlogPageState extends State<BlogPage> {
         ),
       ));
     }
-    return _post(post, bloc);
+    return _post(post, bloc, context);
   }
 
-  Widget _post(dynamic post, PostBloc bloc) {
+  Widget _post(dynamic post, PostBloc bloc, BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     var theme = Theme.of(context);
+
+    if (post.id == args?.notif.notificationObjectID &&
+        args?.key == ActionKeys.LIKE_REACT &&
+        firstNotifAct) {
+      firstNotifAct = false;
+      WidgetsBinding.instance?.addPostFrameCallback(
+          (_) => _pressedReact(post, theme, bloc, context));
+    }
+
     //print(post.title);
     return Card(
         key: ValueKey(post.id),
@@ -551,66 +566,8 @@ class _BlogPageState extends State<BlogPage> {
                             onTap: (loadingReaction != null &&
                                     loadingReaction == article.id)
                                 ? null
-                                : () async {
-                                    setState(() {
-                                      loadingReaction = article.id;
-                                    });
-
-                                    var sel = await showDialog<String>(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return Dialog(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(100.0),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children:
-                                                reactionToEmoji.keys.map((s) {
-                                              return RawMaterialButton(
-                                                shape: CircleBorder(),
-                                                constraints:
-                                                    const BoxConstraints(
-                                                        minWidth: 36.0,
-                                                        minHeight: 12.0),
-                                                fillColor:
-                                                    "${article.userReaction}" ==
-                                                            s
-                                                        ? theme.colorScheme
-                                                            .secondary
-                                                        : theme.cardColor,
-                                                child: Text(
-                                                  reactionToEmoji[s] ?? "",
-                                                  style:
-                                                      theme.textTheme.headline5,
-                                                ),
-                                                onPressed: () {
-                                                  Navigator.of(context,
-                                                          rootNavigator: true)
-                                                      .pop(s);
-                                                },
-                                              );
-                                            }).toList(),
-                                          ),
-                                        );
-                                      },
-                                    );
-
-                                    if (sel != null) {
-                                      final reaction = int.parse(sel);
-                                      await bloc.updateUserReaction(
-                                          article, reaction);
-                                    }
-
-                                    setState(() {
-                                      loadingReaction = null;
-                                    });
-                                  },
+                                : () => _pressedReact(
+                                    article, theme, bloc, context),
                             child: Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: Row(
@@ -769,6 +726,63 @@ class _BlogPageState extends State<BlogPage> {
                     : SizedBox(),
           ],
         ));
+  }
+
+  final Map<String, String> reactionToEmoji = {
+    "0": "👍",
+    "1": "❤️",
+    "2": "😂",
+    "3": "😯",
+    "4": "😢",
+    "5": "😡",
+  };
+  void _pressedReact(NewsArticle article, ThemeData theme, PostBloc bloc,
+      BuildContext context) async {
+    setState(() {
+      loadingReaction = article.id;
+    });
+
+    var sel = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(100.0),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: reactionToEmoji.keys.map((s) {
+              return RawMaterialButton(
+                shape: CircleBorder(),
+                constraints:
+                    const BoxConstraints(minWidth: 36.0, minHeight: 12.0),
+                fillColor: "${article.userReaction}" == s
+                    ? theme.colorScheme.secondary
+                    : theme.cardColor,
+                child: Text(
+                  reactionToEmoji[s] ?? "",
+                  style: theme.textTheme.headline5,
+                ),
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pop(s);
+                },
+              );
+            }).toList(),
+          ),
+        );
+      },
+    );
+
+    if (sel != null) {
+      final reaction = int.parse(sel);
+      await bloc.updateUserReaction(article, reaction);
+    }
+
+    setState(() {
+      loadingReaction = null;
+    });
   }
 
   Widget _blogHeader(BuildContext context, PostBloc blogBloc, var bloc) {

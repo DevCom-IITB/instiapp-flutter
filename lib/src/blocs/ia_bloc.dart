@@ -31,11 +31,11 @@ import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
 import 'package:InstiApp/src/blocs/mess_calendar_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dynamic_icon/flutter_dynamic_icon.dart';
 import 'dart:collection';
 import 'package:rxdart/rxdart.dart';
 // import 'package:http/io_client.dart';
@@ -372,6 +372,16 @@ class InstiAppBloc {
   }
 
   // Notifications bloc
+  void updateNotificationPermission(bool permitted) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool("notifP", permitted);
+  }
+
+  Future<bool?> hasNotificationPermission() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool("notifP");
+  }
+
   Future<void> updateNotifications() async {
     var notifs = await client.getNotifications(getSessionIdHeader());
     _notifications = notifs;
@@ -737,7 +747,7 @@ class InstiAppBloc {
     if (!kIsWeb && Platform.isIOS) {
       notifications.listen((notifs) async {
         try {
-          await FlutterDynamicIcon.setApplicationIconBadgeNumber(notifs.length);
+          await AwesomeNotifications().setGlobalBadgeCounter(notifs.length);
         } on PlatformException {}
       });
     }
