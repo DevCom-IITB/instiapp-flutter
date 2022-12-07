@@ -166,6 +166,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       "/feed": "Feed",
                       "/quicklinks": "Quick Links",
                       "/news": "News",
+                      "/InSeek": "InSeek",
                       "/explore": "Explore",
                       "/calendar": "Calendar",
                       // "/complaints": "Complaints/Suggestions",
