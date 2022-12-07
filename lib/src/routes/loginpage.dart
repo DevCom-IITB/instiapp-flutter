@@ -65,8 +65,8 @@ class _LoginPageState extends State<LoginPage> {
 
     print("In login page");
 
-    WidgetsBinding.instance
-        ?.addPostFrameCallback((_) => setupNotifications(context, widget.bloc));
+    WidgetsBinding.instance?.addPostFrameCallback((_) => setupNotifications(
+        widget.navigatorKey?.currentContext ?? context, widget.bloc));
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       // print("Printing");
       String? args = ModalRoute.of(context)?.settings.arguments as String?;
