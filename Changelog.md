@@ -2,7 +2,11 @@
 
 ## Unreleased
 
+## v2.2.0
+
 - Implement Awesome Notifications
+- Implement flutter_webview_pro
+- Change successurl
 
 ## v2.1.6
 
