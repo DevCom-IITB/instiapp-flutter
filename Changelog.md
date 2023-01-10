@@ -7,6 +7,7 @@
 - Implement Awesome Notifications
 - Implement flutter_webview_pro
 - Change successurl
+- Update mess menu to support Android S+
 
 ## v2.1.6
 

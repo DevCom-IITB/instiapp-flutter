@@ -79,8 +79,9 @@ public class MessMenuWidget extends AppWidgetProvider {
 
     private static void displayMessMenu(HostelMessMenu hostelMessMenu) {
         MessMenu todaysMenu = hostelMessMenu.getSortedMessMenus().get(0);
+        MessMenu tomsMenu = hostelMessMenu.getSortedMessMenus().get(1);
 
-        views.setTextViewText(R.id.day_text_view, generateDayString(todaysMenu.getDay()));
+        int day = todaysMenu.getDay();
 
         Calendar calendar    = Calendar.getInstance();
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
@@ -94,10 +95,16 @@ public class MessMenuWidget extends AppWidgetProvider {
         String mealType;
         String mealTime;
         String menu;
-        if (hourOfDay > 0 && hourOfDay < 10) {
+        if (hourOfDay >= 22 || hourOfDay < 10) {
             // breakfast
             mealType = "Breakfast";
-            menu = todaysMenu.getBreakfast();
+            if (hourOfDay >= 22) {
+                menu = tomsMenu.getBreakfast();
+                day = tomsMenu.getDay();
+            }
+            else {
+                menu = todaysMenu.getBreakfast();
+            }
             if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
                 mealTime = "8am to 10am";
             } else {
@@ -120,6 +127,7 @@ public class MessMenuWidget extends AppWidgetProvider {
             mealTime = "8pm to 10pm";
         }
 
+        views.setTextViewText(R.id.day_text_view, generateDayString(day));
 
         views.setTextViewText(R.id.meal_name_text_view, mealType);
         views.setTextViewText(R.id.meal_time_text_view, mealTime);
@@ -168,7 +176,7 @@ public class MessMenuWidget extends AppWidgetProvider {
         Intent intent = new Intent(context, MainActivity.class);
         intent.setAction(Intent.ACTION_VIEW);
         intent.setData(Uri.parse("https://www.insti.app/mess/"));
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_MUTABLE);
 
         views.setOnClickPendingIntent(R.id.mess_menu_widget, pendingIntent);
     }
