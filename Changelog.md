@@ -8,6 +8,7 @@
 - Implement flutter_webview_pro
 - Change successurl
 - Update mess menu to support Android S+
+- Add update prompts
 
 ## v2.1.6
 
