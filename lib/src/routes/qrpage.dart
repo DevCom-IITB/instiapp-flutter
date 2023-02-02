@@ -148,6 +148,17 @@ class _QRPageState extends State<QRPage> {
                 ],
               ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+      floatingActionButton: (bloc.currSession?.profile != null)
+          ? FloatingActionButton.extended(
+              icon: Icon(Icons.calendar_month),
+              label: Text("Mess Calendar"),
+              onPressed: () {
+                Navigator.of(context).pushNamed("/messcalendar");
+              },
+            )
+          : null,
     );
   }
 }
