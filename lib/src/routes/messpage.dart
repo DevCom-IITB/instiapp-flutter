@@ -67,9 +67,18 @@ class _MessPageState extends State<MessPage> {
           child: ListView(
             children: <Widget>[
               TitleWithBackButton(
-                child: Text(
-                  "Mess Menu",
-                  style: theme.textTheme.headline3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Mess Menu",
+                      style: theme.textTheme.headline3,
+                    ),
+                    Text(
+                      "If the menu is not accurate please contact your hostel council",
+                      style: theme.textTheme.subtitle1,
+                    ),
+                  ],
                 ),
               ),
               Padding(
@@ -140,8 +149,8 @@ class _MessPageState extends State<MessPage> {
                       value: entry.key,
                     ))
                 .toList(),
-            style:
-                theme.textTheme.subtitle1?.copyWith(color: theme.colorScheme.secondary),
+            style: theme.textTheme.subtitle1
+                ?.copyWith(color: theme.colorScheme.secondary),
             onChanged: (h) {
               setState(() {
                 currHostel = snapshot.data![h ?? 0].shortName ?? "0";
@@ -153,7 +162,8 @@ class _MessPageState extends State<MessPage> {
             width: 18,
             height: 18,
             child: CircularProgressIndicator(
-              valueColor: new AlwaysStoppedAnimation<Color>(theme.colorScheme.secondary),
+              valueColor: new AlwaysStoppedAnimation<Color>(
+                  theme.colorScheme.secondary),
               strokeWidth: 2,
             ),
           );
@@ -178,7 +188,8 @@ class _MessPageState extends State<MessPage> {
           ),
           Text(
             "Breakfast",
-            style: localTheme.headline6?.copyWith(color: theme.colorScheme.secondary),
+            style: localTheme.headline6
+                ?.copyWith(color: theme.colorScheme.secondary),
           ),
           ContentText(mess.breakfast ?? "", context),
           SizedBox(
@@ -186,7 +197,8 @@ class _MessPageState extends State<MessPage> {
           ),
           Text(
             "Lunch",
-            style: localTheme.headline6?.copyWith(color: theme.colorScheme.secondary),
+            style: localTheme.headline6
+                ?.copyWith(color: theme.colorScheme.secondary),
           ),
           ContentText(mess.lunch ?? "", context),
           SizedBox(
@@ -194,7 +206,8 @@ class _MessPageState extends State<MessPage> {
           ),
           Text(
             "Snacks",
-            style: localTheme.headline6?.copyWith(color: theme.colorScheme.secondary),
+            style: localTheme.headline6
+                ?.copyWith(color: theme.colorScheme.secondary),
           ),
           ContentText(mess.snacks ?? "", context),
           SizedBox(
@@ -202,7 +215,8 @@ class _MessPageState extends State<MessPage> {
           ),
           Text(
             "Dinner",
-            style: localTheme.headline6?.copyWith(color: theme.colorScheme.secondary),
+            style: localTheme.headline6
+                ?.copyWith(color: theme.colorScheme.secondary),
           ),
           ContentText(mess.dinner ?? "", context),
           SizedBox(
