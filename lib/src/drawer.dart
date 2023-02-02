@@ -116,7 +116,7 @@ class _NavDrawerState extends State<NavDrawer> {
                             title: "Take your meal",
                             onTap: () {
                               changeSelection(3, drawerState!);
-                              navigateNamed('/messcalendar');
+                              navigateNamed('/messcalendar/qr');
                             },
                             highlight: indexSnapshot.data == 14,
                             selected: indexSnapshot.data == 14,
