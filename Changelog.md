@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## v2.2.1
+
+- Add a comment in Mess Menu page for hostel councils
+- Reverse the order of QRpage and calendar page
+- Remove inseek from drawer menu for now
+
 ## v2.2.0
 
 - Implement Awesome Notifications
