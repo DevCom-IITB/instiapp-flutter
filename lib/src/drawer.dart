@@ -242,16 +242,16 @@ class _NavDrawerState extends State<NavDrawer> {
                       //   highlight: indexSnapshot.data == 13,
                       //   selected: indexSnapshot.data == 13,
                       // ),
-                      16: NavListTile(
-                        icon: Icons.person_search_outlined,
-                        title: "InSeek",
-                        onTap: () {
-                          changeSelection(16, drawerState!);
-                          navigateNamed('/InSeek');
-                        },
-                        highlight: indexSnapshot.data == 16,
-                        selected: indexSnapshot.data == 16,
-                      ),
+                      // 16: NavListTile(
+                      //   icon: Icons.person_search_outlined,
+                      //   title: "InSeek",
+                      //   onTap: () {
+                      //     changeSelection(16, drawerState!);
+                      //     navigateNamed('/InSeek');
+                      //   },
+                      //   highlight: indexSnapshot.data == 16,
+                      //   selected: indexSnapshot.data == 16,
+                      // ),
                     };
 
                     List<Widget> navList, navDownList = <Widget>[];
