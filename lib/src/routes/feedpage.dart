@@ -39,6 +39,11 @@ class _FeedPageState extends State<FeedPage> {
         ConfettiController(duration: const Duration(milliseconds: 100));
   }
 
+  void bdayAnimSequence() {
+    _controllerBottomLeft.play();
+    _controllerBottomRight.play();
+  }
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -46,8 +51,7 @@ class _FeedPageState extends State<FeedPage> {
     if (firstBuild) {
       bloc.updateEvents();
       firstBuild = false;
-      _controllerBottomLeft.play();
-      _controllerBottomRight.play();
+      bdayAnimSequence();
     }
 
     var fab;
@@ -267,5 +271,12 @@ class _FeedPageState extends State<FeedPage> {
 
   _openEventPage(InstiAppBloc bloc, Event event) {
     EventPage.navigateWith(context, bloc, event);
+  }
+
+  @override
+  void dispose() {
+    _controllerBottomLeft.dispose();
+    _controllerBottomRight.dispose();
+    super.dispose();
   }
 }
