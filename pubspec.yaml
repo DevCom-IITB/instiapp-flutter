@@ -64,6 +64,7 @@ dependencies:
   awesome_notifications: ^0.6.21
   flutter_linkify: ^5.0.2
   upgrader: ^4.11.1
+  confetti: ^0.6.0
 
 dev_dependencies:
   flutter_test:
