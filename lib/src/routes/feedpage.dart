@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:InstiApp/src/api/model/event.dart';
@@ -12,6 +13,9 @@ import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:share/share.dart';
 
 class FeedPage extends StatefulWidget {
   @override
@@ -137,6 +141,18 @@ class _FeedPageState extends State<FeedPage> {
                           )
                         ],
                       ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          minimumSize: Size.fromHeight(52)),
+                      child: Text('Share', style: TextStyle(fontSize: 28)),
+                      onPressed: () async {
+                        final temp = await getTemporaryDirectory();
+                        final path = '${temp.path}/image.jpg';
+                        await Share.shareFiles([path]);
+                      },
                     ),
                   ),
                   StreamBuilder(

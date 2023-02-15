@@ -12,7 +12,9 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:jaguar/jaguar.dart' as jag;
+import 'package:http/http.dart' as http;
 import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
+import 'package:path_provider/path_provider.dart';
 
 class LoginPage extends StatefulWidget {
   final InstiAppBloc bloc;
@@ -82,7 +84,20 @@ class _LoginPageState extends State<LoginPage> {
             ? "login_dark.html"
             : "login.html");
 
-    checkLogin().then((Session? sess) {
+    checkLogin().then((Session? sess) async {
+      final urlImage = 'https://pixy.org/src/21/219269.jpg';
+      final temp = await getTemporaryDirectory();
+      final path = '${temp.path}/image.jpg';
+      final file = File(path);
+
+      if (!file.existsSync()) {
+        final url = Uri.parse(urlImage);
+        final response = await http.get(url);
+        final bytes = response.bodyBytes;
+
+        file.writeAsBytesSync(bytes);
+      }
+
       // If session already exists, continue to homepage with current session
       if (sess != null) {
         _bloc!.patchFcmKey().then((_) {
