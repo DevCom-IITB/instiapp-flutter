@@ -6,6 +6,7 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/notif_settings.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gif/flutter_gif.dart';
 import 'package:flutter_webview_pro/webview_flutter.dart' as webview;
 import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/user.dart';
@@ -83,6 +84,7 @@ class _LoginPageState extends State<LoginPage> {
             : "login.html");
 
     checkLogin().then((Session? sess) {
+      fetchGif(AssetImage("assets/Anim.gif"));
       // If session already exists, continue to homepage with current session
       if (sess != null) {
         _bloc!.patchFcmKey().then((_) {

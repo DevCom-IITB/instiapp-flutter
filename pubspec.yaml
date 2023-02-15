@@ -65,6 +65,7 @@ dependencies:
   flutter_linkify: ^5.0.2
   upgrader: ^4.11.1
   confetti: ^0.6.0
+  flutter_gif: ^0.0.4
 
 dev_dependencies:
   flutter_test:

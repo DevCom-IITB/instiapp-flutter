@@ -12,13 +12,14 @@ import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gif/flutter_gif.dart';
 
 class FeedPage extends StatefulWidget {
   @override
   _FeedPageState createState() => _FeedPageState();
 }
 
-class _FeedPageState extends State<FeedPage> {
+class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   bool firstBuild = true;
@@ -29,14 +30,30 @@ class _FeedPageState extends State<FeedPage> {
 
   late ConfettiController _controllerBottomLeft;
   late ConfettiController _controllerBottomRight;
+  late FlutterGifController controller1;
+  late AnimationController animControl;
 
   @override
   void initState() {
-    super.initState();
     _controllerBottomLeft =
         ConfettiController(duration: const Duration(milliseconds: 100));
     _controllerBottomRight =
         ConfettiController(duration: const Duration(milliseconds: 100));
+    controller1 =
+        FlutterGifController(vsync: this, duration: Duration(seconds: 5));
+    animControl = AnimationController(
+        vsync: this, value: 0, duration: Duration(seconds: 1));
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      animControl.value = 1;
+      setState(() {});
+      controller1.value = 0;
+      controller1.animateTo(71)
+        ..then((value) {
+          animControl.value = 0;
+          setState(() {});
+        });
+    });
+    super.initState();
   }
 
   void bdayAnimSequence() {
@@ -48,6 +65,7 @@ class _FeedPageState extends State<FeedPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
+    double screenWidth = MediaQuery.of(context).size.width;
     if (firstBuild) {
       bloc.updateEvents();
       firstBuild = false;
@@ -97,46 +115,62 @@ class _FeedPageState extends State<FeedPage> {
               CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(
-                    child: TitleWithBackButton(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(
-                              "Feed",
-                              style: theme.textTheme.headline3,
+                    child: Stack(
+                      children: [
+                        TitleWithBackButton(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(
+                                  "Feed",
+                                  style: theme.textTheme.headline3,
+                                ),
+                              ),
+                              AnimatedContainer(
+                                duration: const Duration(milliseconds: 500),
+                                width: searchMode ? 0.0 : null,
+                                height: searchMode ? 0.0 : null,
+                                decoration: ShapeDecoration(
+                                    shape: CircleBorder(
+                                        side: BorderSide(
+                                            color: theme.primaryColor))),
+                                child: searchMode
+                                    ? SizedBox()
+                                    : IconButton(
+                                        tooltip: "Search ${""}",
+                                        padding: EdgeInsets.all(16.0),
+                                        icon: Icon(
+                                          actionIcon,
+                                          color: theme.primaryColor,
+                                        ),
+                                        color: theme.cardColor,
+                                        onPressed: () {
+                                          setState(() {
+                                            actionIcon = Icons.close_outlined;
+                                            ExplorePage.navigateWith(
+                                                context, true);
+                                          });
+                                        },
+                                      ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Positioned(
+                          top: -10,
+                          right: 8,
+                          child: Container(
+                            margin: EdgeInsets.all(0),
+                            child: Image.asset(
+                              "assets/bdaycap.png",
+                              width: 64,
                             ),
                           ),
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 500),
-                            width: searchMode ? 0.0 : null,
-                            height: searchMode ? 0.0 : null,
-                            decoration: ShapeDecoration(
-                                shape: CircleBorder(
-                                    side:
-                                        BorderSide(color: theme.primaryColor))),
-                            child: searchMode
-                                ? SizedBox()
-                                : IconButton(
-                                    tooltip: "Search ${""}",
-                                    padding: EdgeInsets.all(16.0),
-                                    icon: Icon(
-                                      actionIcon,
-                                      color: theme.primaryColor,
-                                    ),
-                                    color: theme.cardColor,
-                                    onPressed: () {
-                                      setState(() {
-                                        actionIcon = Icons.close_outlined;
-                                        ExplorePage.navigateWith(context, true);
-                                      });
-                                    },
-                                  ),
-                          )
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                   StreamBuilder(
@@ -175,6 +209,16 @@ class _FeedPageState extends State<FeedPage> {
                     ),
                   )
                 ],
+              ),
+              AnimatedPositioned(
+                bottom: screenWidth * (animControl.value - 1),
+                duration: Duration(seconds: 1),
+                left: 0,
+                child: GifImage(
+                  controller: controller1,
+                  image: AssetImage("assets/Anim.gif"),
+                  width: screenWidth / 2,
+                ),
               ),
               Align(
                 alignment: Alignment.topLeft,
