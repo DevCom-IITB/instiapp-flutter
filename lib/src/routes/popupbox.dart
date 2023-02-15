@@ -33,36 +33,56 @@ class _PopUpBoxState extends State<PopUpBox> {
             color: Colors.transparent,
             child: Container(
               height: MediaQuery.of(context).size.width,
+              width: MediaQuery.of(context).size.width,
               margin: EdgeInsets.symmetric(horizontal: 10),
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(22),
                 gradient: LinearGradient(
                   colors: [
-                    Colors.orange,
-                    Colors.blueGrey,
+                    Color(0xff8bb7fe),
+                    Color(0xff8bb7fe),
+                    Color(0xffeaf0ff),
+                    Color(0xffffffff),
+                    Color(0xffffffff),
+                    Color(0xffffffff),
+                    Color(0xffeaf0ff),
+                    Color(0xffded7ff),
+                    Color(0xffded7ff),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
               ),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Join the celebration as",
-                        style: TextStyle(fontFamily: "Quicksand")),
-                    Text("INSTIAPP TURNS 5",
-                        style: TextStyle(fontFamily: "Quickens")),
-                    CachedNetworkImage(
-                        width: 0.33 * MediaQuery.of(context).size.width,
-                        imageUrl:
-                            "https://thumbs.dreamstime.com/b/christmas-star-background-6396494.jpg"),
-                    Text(
-                        "Lets wish happy birthday to an app that never stopped being so incredibly awesome",
-                        style: TextStyle(fontFamily: "Quicksand")),
-                    IconButton(onPressed: () {}, icon: const Icon(Icons.share))
-                  ]),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 40, 0, 20),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text("Join the celebration as",
+                          style: TextStyle(fontFamily: "Quicksand")),
+                      Text(
+                        "INSTIAPP TURNS 5",
+                        style: TextStyle(
+                          fontFamily: "Quickens",
+                          fontSize: 25,
+                        ),
+                      ),
+                      CachedNetworkImage(
+                          width: 0.33 * MediaQuery.of(context).size.width,
+                          imageUrl:
+                              "https://thumbs.dreamstime.com/b/christmas-star-background-6396494.jpg"),
+                      Text("Lets wish happy birthday to an",
+                          style: TextStyle(fontFamily: "Quicksand")),
+                      Text("app that never stopped being so",
+                          style: TextStyle(fontFamily: "Quicksand")),
+                      Text("incredibly awesome",
+                          style: TextStyle(fontFamily: "Quicksand")),
+                      IconButton(
+                          onPressed: () {}, icon: const Icon(Icons.share))
+                    ]),
+              ),
             ),
           ),
         ),
