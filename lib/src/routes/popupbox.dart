@@ -50,15 +50,17 @@ class _PopUpBoxState extends State<PopUpBox> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Join the celebration as"),
-                    Text("INSTIAPP TURNS 5"),
-                    Text("insert image"),
+                    Text("Join the celebration as",
+                        style: TextStyle(fontFamily: "Quicksand")),
+                    Text("INSTIAPP TURNS 5",
+                        style: TextStyle(fontFamily: "Quickens")),
                     CachedNetworkImage(
                         width: 0.33 * MediaQuery.of(context).size.width,
                         imageUrl:
                             "https://thumbs.dreamstime.com/b/christmas-star-background-6396494.jpg"),
                     Text(
-                        "Lets wish happy birthday to an app that never stopped being so incredibly awesome"),
+                        "Lets wish happy birthday to an app that never stopped being so incredibly awesome",
+                        style: TextStyle(fontFamily: "Quicksand")),
                     IconButton(onPressed: () {}, icon: const Icon(Icons.share))
                   ]),
             ),
