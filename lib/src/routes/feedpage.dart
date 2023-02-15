@@ -1,5 +1,6 @@
 import 'dart:collection';
-import 'dart:math';
+import 'popupbox.dart';
+import 'popupboxroute.dart';
 
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
@@ -10,7 +11,6 @@ import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 
 class FeedPage extends StatefulWidget {
@@ -27,21 +27,37 @@ class _FeedPageState extends State<FeedPage> {
 
   bool searchMode = false;
 
-  late ConfettiController _controllerBottomLeft;
-  late ConfettiController _controllerBottomRight;
-
   @override
   void initState() {
     super.initState();
-    _controllerBottomLeft =
-        ConfettiController(duration: const Duration(milliseconds: 100));
-    _controllerBottomRight =
-        ConfettiController(duration: const Duration(milliseconds: 100));
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      bdayAnimSequence();
+    });
   }
 
   void bdayAnimSequence() {
-    _controllerBottomLeft.play();
-    _controllerBottomRight.play();
+    Navigator.of(context).push(PopUpDialogRoute(builder: (context) {
+      return PopUpBox();
+    }));
+    // showDialog(
+    //   context: context,
+    //   builder: (ctx) => AlertDialog(
+    //     title: const Text(" Dialog Box"),
+    //     content: const Text("You have raised a Alert Dialog Box"),
+    //     actions: <Widget>[
+    //       TextButton(
+    //         onPressed: () {
+    //           Navigator.of(ctx).pop();
+    //         },
+    //         child: Container(
+    //           color: Colors.green,
+    //           padding: const EdgeInsets.all(14),
+    //           child: const Text("okay"),
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 
   @override
@@ -51,7 +67,7 @@ class _FeedPageState extends State<FeedPage> {
     if (firstBuild) {
       bloc.updateEvents();
       firstBuild = false;
-      bdayAnimSequence();
+      // bdayAnimSequence();
     }
 
     var fab;
@@ -92,116 +108,86 @@ class _FeedPageState extends State<FeedPage> {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () => bloc.updateEvents(),
-          child: Stack(
-            children: [
-              CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: TitleWithBackButton(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(
-                              "Feed",
-                              style: theme.textTheme.headline3,
-                            ),
-                          ),
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 500),
-                            width: searchMode ? 0.0 : null,
-                            height: searchMode ? 0.0 : null,
-                            decoration: ShapeDecoration(
-                                shape: CircleBorder(
-                                    side:
-                                        BorderSide(color: theme.primaryColor))),
-                            child: searchMode
-                                ? SizedBox()
-                                : IconButton(
-                                    tooltip: "Search ${""}",
-                                    padding: EdgeInsets.all(16.0),
-                                    icon: Icon(
-                                      actionIcon,
-                                      color: theme.primaryColor,
-                                    ),
-                                    color: theme.cardColor,
-                                    onPressed: () {
-                                      setState(() {
-                                        actionIcon = Icons.close_outlined;
-                                        ExplorePage.navigateWith(context, true);
-                                      });
-                                    },
-                                  ),
-                          )
-                        ],
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: TitleWithBackButton(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          "Feed",
+                          style: theme.textTheme.headline3,
+                        ),
                       ),
-                    ),
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 500),
+                        width: searchMode ? 0.0 : null,
+                        height: searchMode ? 0.0 : null,
+                        decoration: ShapeDecoration(
+                            shape: CircleBorder(
+                                side:
+                                    BorderSide(color: theme.primaryColor))),
+                        child: searchMode
+                            ? SizedBox()
+                            : IconButton(
+                                tooltip: "Search ${""}",
+                                padding: EdgeInsets.all(16.0),
+                                icon: Icon(
+                                  actionIcon,
+                                  color: theme.primaryColor,
+                                ),
+                                color: theme.cardColor,
+                                onPressed: () {
+                                  setState(() {
+                                    actionIcon = Icons.close_outlined;
+                                    ExplorePage.navigateWith(context, true);
+                                  });
+                                },
+                              ),
+                      )
+                    ],
                   ),
-                  StreamBuilder(
-                    stream: bloc.events,
-                    builder: (context,
-                        AsyncSnapshot<UnmodifiableListView<Event>> snapshot) {
-                      if (snapshot.hasData) {
-                        if (snapshot.data!.length > 0) {
-                          return SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                                (context, index) => _buildEvent(
-                                    theme, bloc, snapshot.data![index]),
-                                childCount: snapshot.data!.length),
-                          );
-                        } else {
-                          return SliverToBoxAdapter(
-                            child: Center(
-                              child: Text("No upcoming events"),
-                            ),
-                          );
-                        }
-                      } else {
-                        return SliverToBoxAdapter(
-                          child: Center(
-                            child: CircularProgressIndicatorExtended(
-                              label: Text("Getting the latest events"),
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                  SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: 32,
-                    ),
-                  )
-                ],
-              ),
-              Align(
-                alignment: Alignment.topLeft,
-                child: ConfettiWidget(
-                  confettiController: _controllerBottomLeft,
-                  blastDirection: pi / 6,
-                  emissionFrequency: 0.01,
-                  numberOfParticles: 100,
-                  maxBlastForce: 30,
-                  minBlastForce: 20,
-                  gravity: 0.3,
-                  maximumSize: const Size(50, 10),
                 ),
               ),
-              Align(
-                alignment: Alignment.topRight,
-                child: ConfettiWidget(
-                  confettiController: _controllerBottomRight,
-                  blastDirection: (pi - pi / 6),
-                  emissionFrequency: 0.01,
-                  numberOfParticles: 50,
-                  maxBlastForce: 30,
-                  minBlastForce: 20,
-                  gravity: 0.3,
-                  maximumSize: const Size(50, 10),
-                ),
+              StreamBuilder(
+                stream: bloc.events,
+                builder: (context,
+                    AsyncSnapshot<UnmodifiableListView<Event>> snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data!.length > 0) {
+                      return SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                            (context, index) => _buildEvent(
+                                theme, bloc, snapshot.data![index]),
+                            childCount: snapshot.data!.length),
+                      );
+                    } else {
+                      return SliverToBoxAdapter(
+                        child: Center(
+                          child: Text("No upcoming events"),
+                        ),
+                      );
+                    }
+                  } else {
+                    return SliverToBoxAdapter(
+                      child: Center(
+                        child: CircularProgressIndicatorExtended(
+                          label: Text("Getting the latest events"),
+                        ),
+                      ),
+                    );
+                  }
+                },
               ),
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 32,
+                ),
+              )
             ],
           ),
         ),
@@ -273,10 +259,5 @@ class _FeedPageState extends State<FeedPage> {
     EventPage.navigateWith(context, bloc, event);
   }
 
-  @override
-  void dispose() {
-    _controllerBottomLeft.dispose();
-    _controllerBottomRight.dispose();
-    super.dispose();
-  }
+
 }
