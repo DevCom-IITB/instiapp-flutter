@@ -47,7 +47,7 @@ dependencies:
   flutter_dynamic_icon: ^2.0.0
   device_calendar: ^4.2.0
   dropdown_search: ^2.0.1
-  multi_select_flutter: ^4.0.0
+  multi_select_flutter: 4.0.0
   retrofit: ^3.0.0
   logger: any
   dio: ^4.0.4
@@ -64,6 +64,8 @@ dependencies:
   awesome_notifications: ^0.6.21
   flutter_linkify: ^5.0.2
   upgrader: ^4.11.1
+  confetti: ^0.6.0
+  flutter_gif: ^0.0.4
 
 dev_dependencies:
   flutter_test:
@@ -99,6 +101,12 @@ flutter:
         - asset: fonts/IBMPlexSans/IBMPlexSans-BoldItalic.ttf
           style: italic
           weight: 700
+    - family: Quickens
+      fonts:
+        - asset: fonts/QUICKENS.ttf
+    - family: Quicksand
+      fonts:
+        - asset: fonts/Quicksand-Medium.ttf
   uses-material-design: true
 # targets:
 #   $default:

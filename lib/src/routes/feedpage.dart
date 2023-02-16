@@ -1,4 +1,8 @@
 import 'dart:collection';
+import 'package:InstiApp/src/utils/footer_buttons.dart';
+
+import 'popupbox.dart';
+import 'popupboxroute.dart';
 
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
@@ -24,28 +28,50 @@ class _FeedPageState extends State<FeedPage> {
   IconData actionIcon = Icons.search_outlined;
 
   bool searchMode = false;
+  bool bday = false;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      bdayAnimSequence();
+    });
+
+    super.initState();
+  }
+
+  void bdayAnimSequence({bool override = false}) {
+    if (override || !bday)
+      Navigator.of(context).push(PopUpDialogRoute(builder: (context) {
+        return PopUpBox();
+      }));
+    if (!bday) {
+      BlocProvider.of(context)!.bloc.setBday();
+      bday = true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
+    bday = bloc.bday;
     if (firstBuild) {
       bloc.updateEvents();
       firstBuild = false;
     }
 
-    var fab;
+    // var fab;
 
-    if (bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false) {
-      // fab = FloatingActionButton(child: Icon(Icons.add_outlined), onPressed: () {},);
-      fab = FloatingActionButton.extended(
-        icon: Icon(Icons.add_outlined),
-        label: Text("Add Event"),
-        onPressed: () {
-          Navigator.of(context).pushNamed("/putentity/event");
-        },
-      );
-    }
+    // if (bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false) {
+    //   // fab = FloatingActionButton(child: Icon(Icons.add_outlined), onPressed: () {},);
+    //   fab = FloatingActionButton.extended(
+    //     icon: Icon(Icons.add_outlined),
+    //     label: Text("Add Event"),
+    //     onPressed: () {
+    //       Navigator.of(context).pushNamed("/putentity/event");
+    //     },
+    //   );
+    // }
 
     return Scaffold(
       key: _scaffoldKey,
@@ -72,91 +98,134 @@ class _FeedPageState extends State<FeedPage> {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () => bloc.updateEvents(),
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: TitleWithBackButton(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          "Feed",
-                          style: theme.textTheme.headline3,
-                        ),
+          child: Stack(
+            children: [
+              CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: TitleWithBackButton(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(
+                              "Feed",
+                              style: theme.textTheme.headline3,
+                            ),
+                          ),
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 500),
+                            width: searchMode ? 0.0 : null,
+                            height: searchMode ? 0.0 : null,
+                            decoration: ShapeDecoration(
+                                shape: CircleBorder(
+                                    side:
+                                        BorderSide(color: theme.primaryColor))),
+                            child: searchMode
+                                ? SizedBox()
+                                : IconButton(
+                                    tooltip: "Search ${""}",
+                                    padding: EdgeInsets.all(16.0),
+                                    icon: Icon(
+                                      actionIcon,
+                                      color: theme.primaryColor,
+                                    ),
+                                    color: theme.cardColor,
+                                    onPressed: () {
+                                      setState(() {
+                                        actionIcon = Icons.close_outlined;
+                                        ExplorePage.navigateWith(context, true);
+                                      });
+                                    },
+                                  ),
+                          ),
+                        ],
                       ),
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 500),
-                        width: searchMode ? 0.0 : null,
-                        height: searchMode ? 0.0 : null,
-                        decoration: ShapeDecoration(
-                            shape: CircleBorder(
-                                side: BorderSide(color: theme.primaryColor))),
-                        child: searchMode
-                            ? SizedBox()
-                            : IconButton(
-                                tooltip: "Search ${""}",
-                                padding: EdgeInsets.all(16.0),
-                                icon: Icon(
-                                  actionIcon,
-                                  color: theme.primaryColor,
-                                ),
-                                color: theme.cardColor,
-                                onPressed: () {
-                                  setState(() {
-                                    actionIcon = Icons.close_outlined;
-                                    ExplorePage.navigateWith(context, true);
-                                  });
-                                },
-                              ),
-                      )
-                    ],
+                    ),
                   ),
-                ),
+                  StreamBuilder(
+                    stream: bloc.events,
+                    builder: (context,
+                        AsyncSnapshot<UnmodifiableListView<Event>> snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data!.length > 0) {
+                          return SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                                (context, index) => _buildEvent(
+                                    theme, bloc, snapshot.data![index]),
+                                childCount: snapshot.data!.length),
+                          );
+                        } else {
+                          return SliverToBoxAdapter(
+                            child: Center(
+                              child: Text("No upcoming events"),
+                            ),
+                          );
+                        }
+                      } else {
+                        return SliverToBoxAdapter(
+                          child: Center(
+                            child: CircularProgressIndicatorExtended(
+                              label: Text("Getting the latest events"),
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 32,
+                    ),
+                  )
+                ],
               ),
-              StreamBuilder(
-                stream: bloc.events,
-                builder: (context,
-                    AsyncSnapshot<UnmodifiableListView<Event>> snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data!.length > 0) {
-                      return SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                            (context, index) =>
-                                _buildEvent(theme, bloc, snapshot.data![index]),
-                            childCount: snapshot.data!.length),
-                      );
-                    } else {
-                      return SliverToBoxAdapter(
-                        child: Center(
-                          child: Text("No upcoming events"),
-                        ),
-                      );
-                    }
-                  } else {
-                    return SliverToBoxAdapter(
-                      child: Center(
-                        child: CircularProgressIndicatorExtended(
-                          label: Text("Getting the latest events"),
-                        ),
-                      ),
-                    );
-                  }
-                },
-              ),
-              SliverToBoxAdapter(
-                child: SizedBox(
-                  height: 32,
-                ),
-              )
             ],
           ),
         ),
       ),
-      floatingActionButton: fab,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      // floatingActionButton: fab,
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      persistentFooterButtons: [
+        FooterButtons(
+          footerButtons: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: theme.scaffoldBackgroundColor,
+                onPrimary: theme.textTheme.bodyText1?.color,
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      color: theme.colorScheme.secondary,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(4))),
+              ),
+              child: Text("Wish Birthday!"),
+              onPressed: () {
+                bdayAnimSequence(override: true);
+              },
+            ),
+            bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false
+                ? ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: theme.scaffoldBackgroundColor,
+                      onPrimary: theme.textTheme.bodyText1?.color,
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: theme.colorScheme.secondary,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(4))),
+                    ),
+                    child: Text("Add Event"),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed("/putentity/event");
+                    },
+                  )
+                : SizedBox()
+          ],
+        )
+      ],
     );
   }
 

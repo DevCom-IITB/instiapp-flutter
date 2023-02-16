@@ -150,6 +150,7 @@ class InstiAppBloc {
   //to implement method for toggling isAlumnReg
   String alumni_OTP_Page = "/alumni-OTP-Page";
   String _alumniOTP = "";
+  bool bday = false;
   // to create method to update this from apiclient.dart
   // default theme
   AppBrightness _brightness = AppBrightness.light;
@@ -377,6 +378,11 @@ class InstiAppBloc {
     prefs.setBool("notifP", permitted);
   }
 
+  void setBday() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("bday", "set");
+  }
+
   Future<bool?> hasNotificationPermission() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool("notifP");
@@ -575,6 +581,7 @@ class InstiAppBloc {
   Future<void> restorePrefs() async {
     // print("Restoring prefs");
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    bday = prefs.getKeys().contains("bday");
     if (prefs.getKeys().contains("session")) {
       var x = prefs.getString("session");
       if (x != null && x != "") {

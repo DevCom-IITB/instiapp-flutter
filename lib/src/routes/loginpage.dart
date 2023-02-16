@@ -6,13 +6,16 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/notif_settings.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gif/flutter_gif.dart';
 import 'package:flutter_webview_pro/webview_flutter.dart' as webview;
 import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:jaguar/jaguar.dart' as jag;
+import 'package:http/http.dart' as http;
 import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
+import 'package:path_provider/path_provider.dart';
 
 class LoginPage extends StatefulWidget {
   final InstiAppBloc bloc;
@@ -82,7 +85,28 @@ class _LoginPageState extends State<LoginPage> {
             ? "login_dark.html"
             : "login.html");
 
-    checkLogin().then((Session? sess) {
+    checkLogin().then((Session? sess) async {
+      fetchGif(AssetImage("assets/Anim.gif"));
+
+      Directory _path = await getApplicationDocumentsDirectory();
+      String _localPath = _path.path + Platform.pathSeparator + 'Download';
+      final savedDir = Directory(_localPath);
+      bool hasExisted = await savedDir.exists();
+      if (!hasExisted) {
+        savedDir.create();
+      }
+      final urlImage = 'https://gymkhana.iitb.ac.in/dcprint/instastory.png';
+      final path = '${_localPath + Platform.pathSeparator}instastory.jpg';
+      final file = File(path);
+
+      if (!file.existsSync()) {
+        final url = Uri.parse(urlImage);
+        final response = await http.get(url);
+        final bytes = response.bodyBytes;
+
+        file.writeAsBytesSync(bytes);
+      }
+
       // If session already exists, continue to homepage with current session
       if (sess != null) {
         _bloc!.patchFcmKey().then((_) {
