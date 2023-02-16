@@ -95,8 +95,8 @@ class _LoginPageState extends State<LoginPage> {
       if (!hasExisted) {
         savedDir.create();
       }
-      final urlImage = 'https://pixy.org/src/21/219269.jpg';
-      final path = '${_localPath + Platform.pathSeparator}image.jpg';
+      final urlImage = 'https://gymkhana.iitb.ac.in/dcprint/instastory.png';
+      final path = '${_localPath + Platform.pathSeparator}instastory.jpg';
       final file = File(path);
 
       if (!file.existsSync()) {

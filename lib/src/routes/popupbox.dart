@@ -164,8 +164,9 @@ class _PopUpBoxState extends State<PopUpBox> {
                                 Platform.pathSeparator +
                                 'Download';
                             final path =
-                                '${_localPath + Platform.pathSeparator}image.jpg';
-                            await Share.shareFiles([path]);
+                                '${_localPath + Platform.pathSeparator}instastory.jpg';
+                            await Share.shareFiles([path],
+                                mimeTypes: ["image/png"]);
                           },
                           icon: const Icon(Icons.share))
                     ]),
