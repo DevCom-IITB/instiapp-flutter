@@ -128,76 +128,48 @@ class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
               CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(
-                    child: Stack(
-                      children: [
-                        TitleWithBackButton(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Expanded(
-                                child: Text(
-                                  "Feed",
-                                  style: theme.textTheme.headline3,
-                                ),
-                              ),
-                              AnimatedContainer(
-                                duration: const Duration(milliseconds: 500),
-                                width: searchMode ? 0.0 : null,
-                                height: searchMode ? 0.0 : null,
-                                decoration: ShapeDecoration(
-                                    shape: CircleBorder(
-                                        side: BorderSide(
-                                            color: theme.primaryColor))),
-                                child: searchMode
-                                    ? SizedBox()
-                                    : IconButton(
-                                        tooltip: "Search ${""}",
-                                        padding: EdgeInsets.all(16.0),
-                                        icon: Icon(
-                                          actionIcon,
-                                          color: theme.primaryColor,
-                                        ),
-                                        color: theme.cardColor,
-                                        onPressed: () {
-                                          setState(() {
-                                            actionIcon = Icons.close_outlined;
-                                            ExplorePage.navigateWith(
-                                                context, true);
-                                          });
-                                        },
-                                      ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Positioned(
-                          top: -10,
-                          right: 8,
-                          child: Container(
-                            margin: EdgeInsets.all(0),
-                            child: Image.asset(
-                              "assets/bdaycap.png",
-                              width: 64,
+                    child: TitleWithBackButton(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(
+                              "Feed",
+                              style: theme.textTheme.headline3,
                             ),
                           ),
-                        ),
-                      ],
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 500),
+                            width: searchMode ? 0.0 : null,
+                            height: searchMode ? 0.0 : null,
+                            decoration: ShapeDecoration(
+                                shape: CircleBorder(
+                                    side:
+                                        BorderSide(color: theme.primaryColor))),
+                            child: searchMode
+                                ? SizedBox()
+                                : IconButton(
+                                    tooltip: "Search ${""}",
+                                    padding: EdgeInsets.all(16.0),
+                                    icon: Icon(
+                                      actionIcon,
+                                      color: theme.primaryColor,
+                                    ),
+                                    color: theme.cardColor,
+                                    onPressed: () {
+                                      setState(() {
+                                        actionIcon = Icons.close_outlined;
+                                        ExplorePage.navigateWith(context, true);
+                                      });
+                                    },
+                                  ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  // SliverToBoxAdapter(
-                  //   child: ElevatedButton(
-                  //     style: ElevatedButton.styleFrom(
-                  //         minimumSize: Size.fromHeight(52)),
-                  //     child: Text('Share', style: TextStyle(fontSize: 28)),
-                  //     onPressed: () async {
-                  //       final temp = await getTemporaryDirectory();
-                  //       final path = '${temp.path}/image.jpg';
-                  //       await Share.shareFiles([path]);
-                  //     },
-                  //   ),
-                  // ),
                   StreamBuilder(
                     stream: bloc.events,
                     builder: (context,
@@ -245,32 +217,6 @@ class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
                   width: screenWidth / 2,
                 ),
               ),
-              // Align(
-              //   alignment: Alignment.topLeft,
-              //   child: ConfettiWidget(
-              //     confettiController: _controllerBottomLeft,
-              //     blastDirection: pi / 6,
-              //     emissionFrequency: 0.01,
-              //     numberOfParticles: 100,
-              //     maxBlastForce: 30,
-              //     minBlastForce: 20,
-              //     gravity: 0.3,
-              //     maximumSize: const Size(50, 10),
-              //   ),
-              // ),
-              // Align(
-              //   alignment: Alignment.topRight,
-              //   child: ConfettiWidget(
-              //     confettiController: _controllerBottomRight,
-              //     blastDirection: (pi - pi / 6),
-              //     emissionFrequency: 0.01,
-              //     numberOfParticles: 50,
-              //     maxBlastForce: 30,
-              //     minBlastForce: 20,
-              //     gravity: 0.3,
-              //     maximumSize: const Size(50, 10),
-              //   ),
-              // ),
             ],
           ),
         ),
