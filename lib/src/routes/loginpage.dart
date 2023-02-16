@@ -87,9 +87,16 @@ class _LoginPageState extends State<LoginPage> {
 
     checkLogin().then((Session? sess) async {
       fetchGif(AssetImage("assets/Anim.gif"));
+
+      Directory _path = await getApplicationDocumentsDirectory();
+      String _localPath = _path.path + Platform.pathSeparator + 'Download';
+      final savedDir = Directory(_localPath);
+      bool hasExisted = await savedDir.exists();
+      if (!hasExisted) {
+        savedDir.create();
+      }
       final urlImage = 'https://pixy.org/src/21/219269.jpg';
-      final temp = await getTemporaryDirectory();
-      final path = '${temp.path}/image.jpg';
+      final path = '${_localPath + Platform.pathSeparator}image.jpg';
       final file = File(path);
 
       if (!file.existsSync()) {

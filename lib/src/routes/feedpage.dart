@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:io';
 import 'popupbox.dart';
 import 'popupboxroute.dart';
 
@@ -15,9 +14,6 @@ import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gif/flutter_gif.dart';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
-import 'package:share/share.dart';
 
 class FeedPage extends StatefulWidget {
   @override
@@ -34,6 +30,7 @@ class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
   bool searchMode = false;
   late FlutterGifController controller1;
   late AnimationController animControl;
+  bool bday = false;
 
   Timer? timer;
 
@@ -64,40 +61,26 @@ class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
       });
   }
 
-  void bdayAnimSequence() {
-    Navigator.of(context).push(PopUpDialogRoute(builder: (context) {
-      return PopUpBox();
-    }));
-    // showDialog(
-    //   context: context,
-    //   builder: (ctx) => AlertDialog(
-    //     title: const Text(" Dialog Box"),
-    //     content: const Text("You have raised a Alert Dialog Box"),
-    //     actions: <Widget>[
-    //       TextButton(
-    //         onPressed: () {
-    //           Navigator.of(ctx).pop();
-    //         },
-    //         child: Container(
-    //           color: Colors.green,
-    //           padding: const EdgeInsets.all(14),
-    //           child: const Text("okay"),
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
+  void bdayAnimSequence({bool override = false}) {
+    if (override || !bday)
+      Navigator.of(context).push(PopUpDialogRoute(builder: (context) {
+        return PopUpBox();
+      }));
+    if (!bday) {
+      BlocProvider.of(context)!.bloc.setBday();
+      bday = true;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
+    bday = bloc.bday;
     double screenWidth = MediaQuery.of(context).size.width;
     if (firstBuild) {
       bloc.updateEvents();
       firstBuild = false;
-      // bdayAnimSequence();
     }
 
     var fab;

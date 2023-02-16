@@ -1,4 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
 import 'package:path_provider/path_provider.dart';
@@ -157,8 +158,13 @@ class _PopUpBoxState extends State<PopUpBox> {
                       ),
                       IconButton(
                           onPressed: () async {
-                            final temp = await getTemporaryDirectory();
-                            final path = '${temp.path}/image.jpg';
+                            Directory _path =
+                                await getApplicationDocumentsDirectory();
+                            String _localPath = _path.path +
+                                Platform.pathSeparator +
+                                'Download';
+                            final path =
+                                '${_localPath + Platform.pathSeparator}image.jpg';
                             await Share.shareFiles([path]);
                           },
                           icon: const Icon(Icons.share))
