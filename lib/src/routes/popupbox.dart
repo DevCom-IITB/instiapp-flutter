@@ -41,11 +41,11 @@ class _PopUpBoxState extends State<PopUpBox> {
                 gradient: LinearGradient(
                   colors: [
                     Color(0xff8bb7fe),
-                    Color(0xff8bb7fe),
+                    Color.fromARGB(255, 158, 195, 255),
+                    Color(0xffe1eaff),
                     Color(0xffeaf0ff),
                     Color(0xffffffff),
-                    Color(0xffffffff),
-                    Color(0xffffffff),
+                    Color(0xfff4f2fe),
                     Color(0xffeaf0ff),
                     Color(0xffded7ff),
                     Color(0xffded7ff),
@@ -55,30 +55,103 @@ class _PopUpBoxState extends State<PopUpBox> {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 40, 0, 20),
+                padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text("Join the celebration as",
-                          style: TextStyle(fontFamily: "Quicksand")),
+                      Stack(
+                        children: <Widget>[
+                          Text("Join the celebration as",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  foreground: Paint()
+                                    ..style = PaintingStyle.stroke
+                                    ..strokeWidth = 1
+                                    ..color = Color(0xff1960d2),
+                                  fontFamily: "Quicksand")),
+                          Text("Join the celebration as",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Color(0xff348ded),
+                                  fontFamily: "Quicksand")),
+                        ],
+                      ),
                       Text(
                         "INSTIAPP TURNS 5",
                         style: TextStyle(
+                          color: Color(0xff3a77ee),
                           fontFamily: "Quickens",
-                          fontSize: 25,
+                          fontSize: 34,
                         ),
                       ),
-                      CachedNetworkImage(
-                          width: 0.33 * MediaQuery.of(context).size.width,
-                          imageUrl:
-                              "https://thumbs.dreamstime.com/b/christmas-star-background-6396494.jpg"),
-                      Text("Lets wish happy birthday to an",
-                          style: TextStyle(fontFamily: "Quicksand")),
-                      Text("app that never stopped being so",
-                          style: TextStyle(fontFamily: "Quicksand")),
-                      Text("incredibly awesome",
-                          style: TextStyle(fontFamily: "Quicksand")),
+                      Image.asset(
+                        "assets/login/lotus.png",
+                        width: 0.33 * MediaQuery.of(context).size.width,
+                      ),
+                      Stack(
+                        children: [
+                          Text("Lets wish happy birthday to an",
+                              style: TextStyle(
+                                  foreground: Paint()
+                                    ..style = PaintingStyle.stroke
+                                    ..strokeWidth = 1
+                                    ..color = Color(0xff1960d2),
+                                  fontSize: 17,
+                                  fontFamily: "Quicksand")),
+                          Text("Lets wish happy birthday to an",
+                              style: TextStyle(
+                                  color: Color(0xff348ded),
+                                  fontSize: 17,
+                                  fontFamily: "Quicksand")),
+                        ],
+                      ),
+                      Stack(
+                        children: [
+                          Text("app that never stopped being so",
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  foreground: Paint()
+                                    ..style = PaintingStyle.stroke
+                                    ..strokeWidth = 1
+                                    ..color = Color(0xff1960d2),
+                                  fontFamily: "Quicksand")),
+                          Stack(
+                            children: [
+                              Text("app that never stopped being so",
+                                  style: TextStyle(
+                                      fontSize: 17,
+                                      foreground: Paint()
+                                        ..style = PaintingStyle.stroke
+                                        ..strokeWidth = 1
+                                        ..color = Color(0xff1960d2),
+                                      fontFamily: "Quicksand")),
+                              Text("app that never stopped being so",
+                                  style: TextStyle(
+                                      fontSize: 17,
+                                      color: Color(0xff348ded),
+                                      fontFamily: "Quicksand")),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Stack(
+                        children: [
+                          Text("incredibly awesome",
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  foreground: Paint()
+                                    ..style = PaintingStyle.stroke
+                                    ..strokeWidth = 1
+                                    ..color = Color(0xff1960d2),
+                                  fontFamily: "Quicksand")),
+                          Text("incredibly awesome",
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Color(0xff348ded),
+                                  fontFamily: "Quicksand")),
+                        ],
+                      ),
                       IconButton(
                           onPressed: () {}, icon: const Icon(Icons.share))
                     ]),
