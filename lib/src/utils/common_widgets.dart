@@ -1,6 +1,7 @@
 import 'dart:async';
 
 // import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:flutter_gif/flutter_gif.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
@@ -659,7 +660,7 @@ class RoundedNotchedRectangle implements NotchedShape {
 ///    make a notch for the [FloatingActionButton]
 ///  * [FloatingActionButton] which the [BottomAppBar] makes a notch for.
 ///  * [AppBar] for a toolbar that is shown at the top of the screen.
-class MyBottomAppBar extends StatelessWidget {
+class MyBottomAppBar extends StatefulWidget {
   /// Creates a bottom application bar.
   ///
   /// The [color], [elevation], and [clipBehavior] arguments must not be null.
@@ -714,23 +715,81 @@ class MyBottomAppBar extends StatelessWidget {
   final double? iconSize;
 
   @override
+  State<MyBottomAppBar> createState() => _MyBottomAppBarState();
+}
+
+class _MyBottomAppBarState extends State<MyBottomAppBar>
+    with TickerProviderStateMixin {
+  late FlutterGifController controller1;
+  late AnimationController animControl;
+  Timer? timer;
+
+  @override
+  void initState() {
+    controller1 =
+        FlutterGifController(vsync: this, duration: Duration(seconds: 5));
+    animControl = AnimationController(
+        vsync: this, value: 0, duration: Duration(seconds: 1));
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      mascot();
+      timer = Timer.periodic(Duration(seconds: 10), (timer) => mascot());
+    });
+    super.initState();
+  }
+
+  void mascot() {
+    animControl.value = 1;
+    setState(() {});
+    controller1.value = 0;
+    controller1.animateTo(71)
+      ..then((value) {
+        animControl.value = 0;
+        setState(() {});
+      });
+  }
+
+  @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
+    double screenWidth = MediaQuery.of(context).size.width;
 
-    return BottomAppBar(
-      clipBehavior: clipBehavior,
-      color: color,
-      elevation: elevation,
-      notchMargin: notchMargin,
-      shape: shape,
-      child: IconTheme.merge(
-        data: IconThemeData(
-          color: theme.primaryIconTheme.color,
-          size: iconSize ?? 30.0,
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        AnimatedPositioned(
+          bottom: screenWidth / 2 * (animControl.value - 1) + 50,
+          duration: Duration(seconds: 1),
+          left: 0,
+          child: GifImage(
+            controller: controller1,
+            image: AssetImage("assets/Anim.gif"),
+            width: screenWidth / 2,
+          ),
         ),
-        child: child!,
-      ),
+        BottomAppBar(
+          clipBehavior: widget.clipBehavior,
+          color: widget.color,
+          elevation: widget.elevation,
+          notchMargin: widget.notchMargin,
+          shape: widget.shape,
+          child: IconTheme.merge(
+            data: IconThemeData(
+              color: theme.primaryIconTheme.color,
+              size: widget.iconSize ?? 30.0,
+            ),
+            child: widget.child!,
+          ),
+        ),
+      ],
     );
+  }
+
+  void dispose() {
+    print("Dispose");
+    controller1.dispose();
+    animControl.dispose();
+    timer?.cancel();
+    super.dispose();
   }
 }
 

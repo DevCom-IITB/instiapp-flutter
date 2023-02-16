@@ -30,37 +30,15 @@ class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
   IconData actionIcon = Icons.search_outlined;
 
   bool searchMode = false;
-  late FlutterGifController controller1;
-  late AnimationController animControl;
   bool bday = false;
-
-  Timer? timer;
 
   @override
   void initState() {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       bdayAnimSequence();
     });
-    controller1 =
-        FlutterGifController(vsync: this, duration: Duration(seconds: 5));
-    animControl = AnimationController(
-        vsync: this, value: 0, duration: Duration(seconds: 1));
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      mascot();
-      timer = Timer.periodic(Duration(seconds: 10), (timer) => mascot());
-    });
-    super.initState();
-  }
 
-  void mascot() {
-    animControl.value = 1;
-    setState(() {});
-    controller1.value = 0;
-    controller1.animateTo(71)
-      ..then((value) {
-        animControl.value = 0;
-        setState(() {});
-      });
+    super.initState();
   }
 
   void bdayAnimSequence({bool override = false}) {
@@ -207,16 +185,6 @@ class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
                   )
                 ],
               ),
-              AnimatedPositioned(
-                bottom: screenWidth * (animControl.value - 1),
-                duration: Duration(seconds: 1),
-                left: 0,
-                child: GifImage(
-                  controller: controller1,
-                  image: AssetImage("assets/Anim.gif"),
-                  width: screenWidth / 2,
-                ),
-              ),
             ],
           ),
         ),
@@ -328,9 +296,6 @@ class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    controller1.dispose();
-    animControl.dispose();
-    timer?.cancel();
     super.dispose();
   }
 }
