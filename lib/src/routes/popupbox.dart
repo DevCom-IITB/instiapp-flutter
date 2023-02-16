@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:math';
+
+import 'package:share/share.dart';
 
 class PopUpBox extends StatefulWidget {
   @override
@@ -153,7 +156,12 @@ class _PopUpBoxState extends State<PopUpBox> {
                         ],
                       ),
                       IconButton(
-                          onPressed: () {}, icon: const Icon(Icons.share))
+                          onPressed: () async {
+                            final temp = await getTemporaryDirectory();
+                            final path = '${temp.path}/image.jpg';
+                            await Share.shareFiles([path]);
+                          },
+                          icon: const Icon(Icons.share))
                     ]),
               ),
             ),
