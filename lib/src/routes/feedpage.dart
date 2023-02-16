@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
+import 'package:InstiApp/src/utils/footer_buttons.dart';
+
 import 'popupbox.dart';
 import 'popupboxroute.dart';
 
@@ -275,6 +277,25 @@ class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
       ),
       floatingActionButton: fab,
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      persistentFooterButtons: [
+        FooterButtons(footerButtons: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: theme.scaffoldBackgroundColor,
+              onPrimary: theme.textTheme.bodyText1?.color,
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    color: theme.colorScheme.secondary,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(4))),
+            ),
+            child: Text("Wish Birthday!"),
+            onPressed: () {
+              bdayAnimSequence(override: true);
+            },
+          )
+        ])
+      ],
     );
   }
 
