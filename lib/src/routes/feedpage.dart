@@ -241,21 +241,23 @@ class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
                 bdayAnimSequence(override: true);
               },
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: theme.scaffoldBackgroundColor,
-                onPrimary: theme.textTheme.bodyText1?.color,
-                shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: theme.colorScheme.secondary,
+            bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false
+                ? ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: theme.scaffoldBackgroundColor,
+                      onPrimary: theme.textTheme.bodyText1?.color,
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: theme.colorScheme.secondary,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(4))),
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(4))),
-              ),
-              child: Text("Add Event"),
-              onPressed: () {
-                Navigator.of(context).pushNamed("/putentity/event");
-              },
-            )
+                    child: Text("Add Event"),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed("/putentity/event");
+                    },
+                  )
+                : SizedBox()
           ],
         )
       ],
