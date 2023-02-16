@@ -144,7 +144,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       child: MaterialApp(
         scaffoldMessengerKey: scaffoldMessengerKey,
         navigatorKey: _navigatorKey,
-        debugShowCheckedModeBanner: false,
         title: 'InstiApp',
         theme: ThemeData(
           // fontFamily: "SourceSansPro",

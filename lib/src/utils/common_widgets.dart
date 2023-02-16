@@ -785,7 +785,6 @@ class _MyBottomAppBarState extends State<MyBottomAppBar>
   }
 
   void dispose() {
-    print("Dispose");
     controller1.dispose();
     animControl.dispose();
     timer?.cancel();

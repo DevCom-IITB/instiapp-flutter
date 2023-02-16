@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:collection';
 import 'package:InstiApp/src/utils/footer_buttons.dart';
 
@@ -15,14 +14,13 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gif/flutter_gif.dart';
 
 class FeedPage extends StatefulWidget {
   @override
   _FeedPageState createState() => _FeedPageState();
 }
 
-class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
+class _FeedPageState extends State<FeedPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   bool firstBuild = true;
@@ -57,24 +55,23 @@ class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
     bday = bloc.bday;
-    double screenWidth = MediaQuery.of(context).size.width;
     if (firstBuild) {
       bloc.updateEvents();
       firstBuild = false;
     }
 
-    var fab;
+    // var fab;
 
-    if (bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false) {
-      // fab = FloatingActionButton(child: Icon(Icons.add_outlined), onPressed: () {},);
-      fab = FloatingActionButton.extended(
-        icon: Icon(Icons.add_outlined),
-        label: Text("Add Event"),
-        onPressed: () {
-          Navigator.of(context).pushNamed("/putentity/event");
-        },
-      );
-    }
+    // if (bloc.currSession?.profile?.userRoles?.isNotEmpty ?? false) {
+    //   // fab = FloatingActionButton(child: Icon(Icons.add_outlined), onPressed: () {},);
+    //   fab = FloatingActionButton.extended(
+    //     icon: Icon(Icons.add_outlined),
+    //     label: Text("Add Event"),
+    //     onPressed: () {
+    //       Navigator.of(context).pushNamed("/putentity/event");
+    //     },
+    //   );
+    // }
 
     return Scaffold(
       key: _scaffoldKey,
@@ -292,10 +289,5 @@ class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
 
   _openEventPage(InstiAppBloc bloc, Event event) {
     EventPage.navigateWith(context, bloc, event);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }
