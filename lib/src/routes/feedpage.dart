@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:collection';
-import 'dart:math';
+import 'popupbox.dart';
+import 'popupboxroute.dart';
 
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
@@ -10,7 +12,6 @@ import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gif/flutter_gif.dart';
 
@@ -27,38 +28,61 @@ class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
   IconData actionIcon = Icons.search_outlined;
 
   bool searchMode = false;
-
-  late ConfettiController _controllerBottomLeft;
-  late ConfettiController _controllerBottomRight;
   late FlutterGifController controller1;
   late AnimationController animControl;
 
+  Timer? timer;
+
   @override
   void initState() {
-    _controllerBottomLeft =
-        ConfettiController(duration: const Duration(milliseconds: 100));
-    _controllerBottomRight =
-        ConfettiController(duration: const Duration(milliseconds: 100));
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      bdayAnimSequence();
+    });
     controller1 =
         FlutterGifController(vsync: this, duration: Duration(seconds: 5));
     animControl = AnimationController(
         vsync: this, value: 0, duration: Duration(seconds: 1));
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      animControl.value = 1;
-      setState(() {});
-      controller1.value = 0;
-      controller1.animateTo(71)
-        ..then((value) {
-          animControl.value = 0;
-          setState(() {});
-        });
+      mascot();
+      timer = Timer.periodic(Duration(seconds: 10), (timer) => mascot());
     });
     super.initState();
   }
 
+  void mascot() {
+    animControl.value = 1;
+    setState(() {});
+    controller1.value = 0;
+    controller1.animateTo(71)
+      ..then((value) {
+        animControl.value = 0;
+        setState(() {});
+      });
+  }
+
   void bdayAnimSequence() {
-    _controllerBottomLeft.play();
-    _controllerBottomRight.play();
+    Navigator.of(context).push(PopUpDialogRoute(builder: (context) {
+      return PopUpBox();
+    }));
+    // showDialog(
+    //   context: context,
+    //   builder: (ctx) => AlertDialog(
+    //     title: const Text(" Dialog Box"),
+    //     content: const Text("You have raised a Alert Dialog Box"),
+    //     actions: <Widget>[
+    //       TextButton(
+    //         onPressed: () {
+    //           Navigator.of(ctx).pop();
+    //         },
+    //         child: Container(
+    //           color: Colors.green,
+    //           padding: const EdgeInsets.all(14),
+    //           child: const Text("okay"),
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 
   @override
@@ -69,7 +93,7 @@ class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
     if (firstBuild) {
       bloc.updateEvents();
       firstBuild = false;
-      bdayAnimSequence();
+      // bdayAnimSequence();
     }
 
     var fab;
@@ -220,32 +244,32 @@ class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
                   width: screenWidth / 2,
                 ),
               ),
-              Align(
-                alignment: Alignment.topLeft,
-                child: ConfettiWidget(
-                  confettiController: _controllerBottomLeft,
-                  blastDirection: pi / 6,
-                  emissionFrequency: 0.01,
-                  numberOfParticles: 100,
-                  maxBlastForce: 30,
-                  minBlastForce: 20,
-                  gravity: 0.3,
-                  maximumSize: const Size(50, 10),
-                ),
-              ),
-              Align(
-                alignment: Alignment.topRight,
-                child: ConfettiWidget(
-                  confettiController: _controllerBottomRight,
-                  blastDirection: (pi - pi / 6),
-                  emissionFrequency: 0.01,
-                  numberOfParticles: 50,
-                  maxBlastForce: 30,
-                  minBlastForce: 20,
-                  gravity: 0.3,
-                  maximumSize: const Size(50, 10),
-                ),
-              ),
+              // Align(
+              //   alignment: Alignment.topLeft,
+              //   child: ConfettiWidget(
+              //     confettiController: _controllerBottomLeft,
+              //     blastDirection: pi / 6,
+              //     emissionFrequency: 0.01,
+              //     numberOfParticles: 100,
+              //     maxBlastForce: 30,
+              //     minBlastForce: 20,
+              //     gravity: 0.3,
+              //     maximumSize: const Size(50, 10),
+              //   ),
+              // ),
+              // Align(
+              //   alignment: Alignment.topRight,
+              //   child: ConfettiWidget(
+              //     confettiController: _controllerBottomRight,
+              //     blastDirection: (pi - pi / 6),
+              //     emissionFrequency: 0.01,
+              //     numberOfParticles: 50,
+              //     maxBlastForce: 30,
+              //     minBlastForce: 20,
+              //     gravity: 0.3,
+              //     maximumSize: const Size(50, 10),
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -319,8 +343,9 @@ class _FeedPageState extends State<FeedPage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    _controllerBottomLeft.dispose();
-    _controllerBottomRight.dispose();
+    controller1.dispose();
+    animControl.dispose();
+    timer?.cancel();
     super.dispose();
   }
 }
