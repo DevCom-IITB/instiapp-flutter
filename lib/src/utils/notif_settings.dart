@@ -1,4 +1,6 @@
+import 'package:InstiApp/main.dart';
 import 'package:InstiApp/src/api/model/rich_notification.dart';
+import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -109,23 +111,23 @@ List<NotificationChannel> notifChannels = [
 /// List of channel groups used in the app
 List<NotificationChannelGroup> notifGroups = [
   NotificationChannelGroup(
-    channelGroupkey: NotificationGroups.MISCELLANEOUS_GROUP,
+    channelGroupKey: NotificationGroups.MISCELLANEOUS_GROUP,
     channelGroupName: 'Miscellaneous',
   ),
   NotificationChannelGroup(
-    channelGroupkey: NotificationGroups.BLOG,
+    channelGroupKey: NotificationGroups.BLOG,
     channelGroupName: 'Blogs',
   ),
   NotificationChannelGroup(
-    channelGroupkey: NotificationGroups.NEWS,
+    channelGroupKey: NotificationGroups.NEWS,
     channelGroupName: 'News',
   ),
   NotificationChannelGroup(
-    channelGroupkey: NotificationGroups.COMMUNITY,
+    channelGroupKey: NotificationGroups.COMMUNITY,
     channelGroupName: 'Community',
   ),
   NotificationChannelGroup(
-    channelGroupkey: NotificationGroups.EVENT,
+    channelGroupKey: NotificationGroups.EVENT,
     channelGroupName: 'Events',
   ),
 ];
@@ -178,21 +180,56 @@ class NotificationType {
   static const String EXTERNAL = "externalblogentry";
 }
 
-/// Setup notifications with awesome notifications
-///
-/// [context] is the [BuildContext] of the app
-/// [bloc] is the instance of [InstiAppBloc] used in the app
-/// [_navigatorKey] is the [GlobalKey] of the [Navigator] used in the app
-void setupNotifications(BuildContext context, InstiAppBloc bloc) async {
-  // Check for permission (if not granted, request it)
-  if (await bloc.hasNotificationPermission() == null)
-    requestNotificationPermission(context, bloc);
+class NotificationController {
+  /// Handle notification on press
+  @pragma("vm:entry-point")
+  static Future<void> handleNotification(ReceivedAction notification) async {
+    if (notification.payload != null) {
+      BuildContext? context = MyApp.navigatorKey.currentContext;
+      if (context == null) {
+        return;
+      }
+      InstiAppBloc? bloc = BlocProvider.of(context)?.bloc;
+      if (bloc == null) {
+        return;
+      }
 
-  /// Listen for incoming notifs and send a notification to the user
-  FirebaseMessaging.onMessage.listen(sendMessage);
+      // Getting notification payload
+      RichNotification notif = RichNotification.fromJson(notification.payload!);
+
+      // Getting route depending on payload
+      String routeName = routeFromNotification(notif);
+
+      // Get action button key if any
+      String actionKey = notification.buttonKeyPressed;
+
+      // Navigate to Route
+      MyApp.navigatorKey.currentState?.pushReplacementNamed(routeName,
+          arguments: NotificationRouteArguments(actionKey, notif));
+
+      // marking the notification as read
+      bloc.clearNotificationUsingID(notif.notificationID!);
+
+      // Handling action key
+      _handleActionKey(actionKey, notif);
+    }
+  }
+
+  /// Handle what action to take depending on key
+  static void _handleActionKey(String actionKey, RichNotification notif) async {
+    // Open browser
+    if (actionKey == ActionKeys.OPEN_BROWSER) {
+      if (notif.notificationExtra != null) {
+        Uri uri = Uri.parse(notif.notificationExtra!);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri);
+        }
+      }
+    }
+  }
 
   /// Gives the route to navigate to from a notification
-  String routeFromNotification(RichNotification fromMap) {
+  static String routeFromNotification(RichNotification fromMap) {
     // Navigating to correct page
     return {
           NotificationType.BLOG:
@@ -218,46 +255,24 @@ void setupNotifications(BuildContext context, InstiAppBloc bloc) async {
         }[fromMap.notificationType] ??
         "/";
   }
+}
 
-  /// Handle what action to take depending on key
-  void _handleActionKey(String actionKey, RichNotification notif) async {
-    // Open browser
-    if (actionKey == ActionKeys.OPEN_BROWSER) {
-      if (notif.notificationExtra != null) {
-        Uri uri = Uri.parse(notif.notificationExtra!);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri);
-        }
-      }
-    }
-  }
+/// Setup notifications with awesome notifications
+///
+/// [context] is the [BuildContext] of the app
+/// [bloc] is the instance of [InstiAppBloc] used in the app
+/// [_navigatorKey] is the [GlobalKey] of the [Navigator] used in the app
+void setupNotifications(BuildContext context, InstiAppBloc bloc) async {
+  // Check for permission (if not granted, request it)
+  if (await bloc.hasNotificationPermission() == null)
+    requestNotificationPermission(context, bloc);
 
-  /// Handle notification on press
-  void _handleNotification(ReceivedAction notification) {
-    if (notification.payload != null) {
-      // Getting notification payload
-      RichNotification notif = RichNotification.fromJson(notification.payload!);
-
-      // Getting route depending on payload
-      String routeName = routeFromNotification(notif);
-
-      // Get action button key if any
-      String actionKey = notification.buttonKeyPressed;
-
-      // Navigate to Route
-      Navigator.of(context).pushReplacementNamed(routeName,
-          arguments: NotificationRouteArguments(actionKey, notif));
-
-      // marking the notification as read
-      bloc.clearNotificationUsingID(notif.notificationID!);
-
-      // Handling action key
-      _handleActionKey(actionKey, notif);
-    }
-  }
+  /// Listen for incoming notifs and send a notification to the user
+  FirebaseMessaging.onMessage.listen(sendMessage);
 
   // Listen to app opens from notifications
-  AwesomeNotifications().actionStream.listen(_handleNotification);
+  AwesomeNotifications().setListeners(
+      onActionReceivedMethod: NotificationController.handleNotification);
 }
 
 void requestNotificationPermission(
@@ -414,9 +429,4 @@ List<NotificationActionButton>? getActionButtons(RichNotification notif) {
     default:
       return null;
   }
-}
-
-/// Remember to dispose the notification sink when app is closed
-void disposeNotification() {
-  AwesomeNotifications().actionSink.close();
 }

@@ -361,7 +361,7 @@ class _BlogPageState extends State<BlogPage> {
         args?.key == ActionKeys.LIKE_REACT &&
         firstNotifAct) {
       firstNotifAct = false;
-      WidgetsBinding.instance?.addPostFrameCallback(
+      WidgetsBinding.instance.addPostFrameCallback(
           (_) => _pressedReact(post, theme, bloc, context));
     }
 

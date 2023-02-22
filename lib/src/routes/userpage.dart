@@ -177,7 +177,7 @@ class _UserPageState extends State<UserPage> {
         user = u;
       }
     });
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       var bloc = BlocProvider.of(context)?.bloc;
       bloc?.getUser("me").then((result) {
         if (result.userLDAPId == widget.initialUser?.userLDAPId) {
@@ -354,14 +354,46 @@ class _UserPageState extends State<UserPage> {
                                               ),
                                               cansee
                                                   ? DropdownSearch<Interest>(
-                                                      mode: Mode.DIALOG,
-                                                      maxHeight: 700,
-                                                      isFilteredOnline: true,
-                                                      showSearchBox: true,
-                                                      dropdownSearchDecoration:
-                                                          InputDecoration(
-                                                        labelText: "Interests",
-                                                        hintText: "Interests",
+                                                      popupProps:
+                                                          PopupProps.dialog(
+                                                        isFilterOnline: true,
+                                                        showSearchBox: true,
+                                                        itemBuilder:
+                                                            _customPopupItemBuilderInterest,
+                                                        scrollbarProps:
+                                                            ScrollbarProps(
+                                                          thickness: 7,
+                                                        ),
+                                                        emptyBuilder:
+                                                            (BuildContext
+                                                                    context,
+                                                                String? _) {
+                                                          return Container(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    20),
+                                                            child: Text(
+                                                              "No interests found. Refine your search!",
+                                                              style: theme
+                                                                  .textTheme
+                                                                  .subtitle1,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                      dropdownDecoratorProps:
+                                                          DropDownDecoratorProps(
+                                                        dropdownSearchDecoration:
+                                                            InputDecoration(
+                                                          labelText:
+                                                              "Interests",
+                                                          hintText: "Interests",
+                                                        ),
                                                       ),
                                                       validator: (value) {
                                                         if (value == null) {
@@ -370,43 +402,13 @@ class _UserPageState extends State<UserPage> {
                                                         return null;
                                                       },
                                                       onChanged: onBodyChange,
-                                                      onFind: bloc
+                                                      asyncItems: bloc
                                                           .achievementBloc
                                                           .searchForInterest,
                                                       dropdownBuilder:
                                                           buildDropdownMenuItemsInterest,
-                                                      popupItemBuilder:
-                                                          _customPopupItemBuilderInterest,
-                                                      // popupSafeArea:
-                                                      // PopupSafeArea(
-                                                      //     top: true,
-                                                      //     bottom: true),
-                                                      scrollbarProps:
-                                                          ScrollbarProps(
-                                                        isAlwaysShown: true,
-                                                        thickness: 7,
-                                                      ),
                                                       selectedItem:
                                                           _selectedInterest,
-                                                      emptyBuilder:
-                                                          (BuildContext context,
-                                                              String? _) {
-                                                        return Container(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  20),
-                                                          child: Text(
-                                                            "No interests found. Refine your search!",
-                                                            style: theme
-                                                                .textTheme
-                                                                .subtitle1,
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          ),
-                                                        );
-                                                      },
                                                     )
                                                   : SizedBox(),
                                               _buildChips(context),

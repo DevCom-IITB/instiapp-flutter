@@ -59,9 +59,9 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) => setupNotifications(
+    WidgetsBinding.instance.addPostFrameCallback((_) => setupNotifications(
         widget.navigatorKey?.currentContext ?? context, widget.bloc));
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       String? args = ModalRoute.of(context)?.settings.arguments as String?;
       if (args != null) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

@@ -1848,8 +1848,8 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                 flex: 1,
                 child: TextButton(
                   style: TextButton.styleFrom(
+                    foregroundColor: theme.colorScheme.primary,
                     backgroundColor: theme.colorScheme.primaryContainer,
-                    primary: theme.colorScheme.primary,
                   ),
                   child: Text("Delete"),
                   onPressed: () {
@@ -2031,33 +2031,34 @@ class _DropdownMultiSelectState<T> extends State<DropdownMultiSelect<T>> {
             height: 20.0,
           ),
           DropdownSearch<T>(
-            mode: Mode.DIALOG,
-            maxHeight: 700,
-            isFilteredOnline: true,
-            showSearchBox: true,
-            dropdownSearchDecoration: InputDecoration(
-              labelText: widget.pluralObjectName,
-              hintText: widget.pluralObjectName,
+            popupProps: PopupProps.dialog(
+              isFilterOnline: true,
+              showSearchBox: true,
+              itemBuilder: _customPopupItemBuilder,
+              scrollbarProps: ScrollbarProps(
+                thickness: 7,
+              ),
+              emptyBuilder: (BuildContext context, String? _) {
+                return Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(20),
+                  child: Text(
+                    "No ${widget.pluralObjectName} found. Refine your search!",
+                    style: theme.textTheme.subtitle1,
+                    textAlign: TextAlign.center,
+                  ),
+                );
+              },
+            ),
+            dropdownDecoratorProps: DropDownDecoratorProps(
+              dropdownSearchDecoration: InputDecoration(
+                labelText: widget.pluralObjectName,
+                hintText: widget.pluralObjectName,
+              ),
             ),
             onChanged: onObjectChange,
-            onFind: widget.onFind,
+            asyncItems: widget.onFind,
             dropdownBuilder: buildDropdownMenuItems,
-            popupItemBuilder: _customPopupItemBuilder,
-            scrollbarProps: ScrollbarProps(
-              isAlwaysShown: true,
-              thickness: 7,
-            ),
-            emptyBuilder: (BuildContext context, String? _) {
-              return Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(20),
-                child: Text(
-                  "No ${widget.pluralObjectName} found. Refine your search!",
-                  style: theme.textTheme.subtitle1,
-                  textAlign: TextAlign.center,
-                ),
-              );
-            },
           ),
           _buildChips(context),
         ],

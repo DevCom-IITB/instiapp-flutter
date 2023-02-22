@@ -74,6 +74,8 @@ void main() async {
 class MyApp extends StatefulWidget {
   final Key key;
   final InstiAppBloc bloc;
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 
   MyApp({required this.key, required this.bloc}) : super(key: key);
 
@@ -89,7 +91,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       new FlutterLocalNotificationsPlugin();
 
-  GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
   late StreamSubscription _appLinksSub;
@@ -106,14 +107,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       initAppLinksState();
     }
 
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() async {
     _appLinksSub.cancel();
-    WidgetsBinding.instance?.removeObserver(this);
-    disposeNotification();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -143,7 +143,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       widget.bloc,
       child: MaterialApp(
         scaffoldMessengerKey: scaffoldMessengerKey,
-        navigatorKey: _navigatorKey,
+        navigatorKey: MyApp.navigatorKey,
         title: 'InstiApp',
         theme: ThemeData(
           // fontFamily: "SourceSansPro",
@@ -281,7 +281,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                       LoginPage(
                         widget.bloc,
                         scaffoldMessengerKey: scaffoldMessengerKey,
-                        navigatorKey: _navigatorKey,
+                        navigatorKey: MyApp.navigatorKey,
                       ));
                 case "/mess":
                   // print("Entereing here mess");
@@ -347,7 +347,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 LoginPage(
                   widget.bloc,
                   scaffoldMessengerKey: scaffoldMessengerKey,
-                  navigatorKey: _navigatorKey,
+                  navigatorKey: MyApp.navigatorKey,
                 ));
           }
           return null;
@@ -385,7 +385,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           }[uri.pathSegments[0]] ??
           routeName;
     }
-    _navigatorKey.currentState?.pushReplacementNamed(routeName);
+    MyApp.navigatorKey.currentState?.pushReplacementNamed(routeName);
   }
 
   Future initAppLinksState() async {

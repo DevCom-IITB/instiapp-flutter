@@ -193,38 +193,39 @@ class _QueryAddPageState extends State<QueryAddPage> {
                                         height: 20.0,
                                       ),
                                       DropdownSearch<String>(
-                                        mode: Mode.DIALOG,
-                                        maxHeight: 700,
-                                        isFilteredOnline: false,
-                                        showSearchBox: true,
-                                        dropdownSearchDecoration:
-                                            InputDecoration(
-                                          labelText: "Category",
-                                          hintText: "Category",
+                                        popupProps: PopupProps.dialog(
+                                          isFilterOnline: false,
+                                          showSearchBox: true,
+                                          itemBuilder:
+                                              _customPopupItemBuilderCategory,
+                                          scrollbarProps: ScrollbarProps(
+                                            thickness: 7,
+                                          ),
+                                          emptyBuilder: (BuildContext context,
+                                              String? _) {
+                                            return Container(
+                                              alignment: Alignment.center,
+                                              padding: EdgeInsets.all(20),
+                                              child: Text(
+                                                "No events found. Refine your search!",
+                                                style:
+                                                    theme.textTheme.subtitle1,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        dropdownDecoratorProps:
+                                            DropDownDecoratorProps(
+                                          dropdownSearchDecoration:
+                                              InputDecoration(
+                                            labelText: "Category",
+                                            hintText: "Category",
+                                          ),
                                         ),
                                         items: categories,
                                         onChanged: onCategoryChange,
                                         dropdownBuilder:
                                             buildDropdownMenuItemsCategory,
-                                        popupItemBuilder:
-                                            _customPopupItemBuilderCategory,
-                                        popupSafeArea: PopupSafeAreaProps(
-                                            top: true, bottom: true),
-                                        scrollbarProps: ScrollbarProps(
-                                          isAlwaysShown: true,
-                                          thickness: 7,
-                                        ),
-                                        emptyBuilder:
-                                            (BuildContext context, String? _) {
-                                          return Container(
-                                            alignment: Alignment.center,
-                                            padding: EdgeInsets.all(20),
-                                            child: Text(
-                                              "No events found. Refine your search!",
-                                              style: theme.textTheme.subtitle1,
-                                            ),
-                                          );
-                                        },
                                       ),
                                     ])),
                             Container(
