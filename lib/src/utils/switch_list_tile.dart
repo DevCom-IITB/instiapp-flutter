@@ -159,7 +159,7 @@ class MySwitchListTile extends StatelessWidget {
 
   /// The color to use on the track when this switch is on.
   ///
-  /// Defaults to [ThemeData.toggleableActiveColor] with the opacity set at 50%.
+  /// Defaults to [ColorScheme.secondary] with the opacity set at 50%.
   ///
   /// Ignored if created with [MySwitchListTile.adaptive].
   final Color? activeTrackColor;

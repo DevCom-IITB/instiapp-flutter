@@ -292,7 +292,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                 title: Text(
                                   snapshot.data?.profile?.userName ??
                                       'Not Logged in',
-                                  style: theme.textTheme.bodyText2
+                                  style: theme.textTheme.bodyMedium
                                       ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 subtitle: snapshot.data != null
@@ -300,7 +300,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                         snapshot.data?.profile
                                                 ?.userRollNumber ??
                                             "",
-                                        style: theme.textTheme.bodyText2)
+                                        style: theme.textTheme.bodyMedium)
                                     : ElevatedButton(
                                         child: Text(
                                           "Log in",
@@ -392,7 +392,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                                               "${snapshot.data?.length}",
                                                               style: theme
                                                                   .textTheme
-                                                                  .overline
+                                                                  .labelSmall
                                                                   ?.copyWith(
                                                                 color: theme
                                                                     .colorScheme

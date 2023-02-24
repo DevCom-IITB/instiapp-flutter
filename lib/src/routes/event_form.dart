@@ -39,9 +39,9 @@ class CreateEventBtn extends StatelessWidget {
         },
         child: Text(isEditing ? 'Update' : 'Create'),
         style: TextButton.styleFrom(
-            primary: Colors.black,
+            foregroundColor: Colors.black,
             backgroundColor: Colors.amber,
-            onSurface: Colors.grey,
+            disabledForegroundColor: Colors.grey,
             elevation: 5.0),
       ),
     );
@@ -65,9 +65,9 @@ class DeleteEventBtn extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
         style: TextButton.styleFrom(
-            primary: Colors.black,
+            foregroundColor: Colors.black,
             backgroundColor: Colors.red,
-            onSurface: Colors.grey,
+            disabledForegroundColor: Colors.grey,
             elevation: 5.0),
       ),
     );
@@ -159,9 +159,9 @@ class _AchievementAdderState extends State<AchievementAdder> {
                   });
                 },
                 style: TextButton.styleFrom(
-                  primary: Colors.black,
+                  foregroundColor: Colors.black,
                   backgroundColor: Colors.amber,
-                  onSurface: Colors.grey,
+                  disabledForegroundColor: Colors.grey,
                   elevation: 5.0,
                 ),
               ),

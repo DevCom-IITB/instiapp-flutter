@@ -175,7 +175,7 @@
 //                     TitleWithBackButton(
 //                       child: Text(
 //                         widget.title,
-//                         style: theme.textTheme.headline3,
+//                         style: theme.textTheme.displaySmall,
 //                       ),
 //                     ),
 //                     (complaint!.images?.isNotEmpty ?? false)
@@ -211,7 +211,7 @@
 //                                 TextSpan(text: "No "),
 //                                 TextSpan(
 //                                     text: "images ",
-//                                     style: theme.textTheme.bodyText2?.copyWith(
+//                                     style: theme.textTheme.bodyMedium?.copyWith(
 //                                         fontWeight: FontWeight.bold)),
 //                                 TextSpan(text: "uploaded."),
 //                               ]),
@@ -241,7 +241,7 @@
 //                                             complaint!.complaintCreatedBy
 //                                                     ?.userName ??
 //                                                 "",
-//                                             style: theme.textTheme.headline6
+//                                             style: theme.textTheme.titleLarge
 //                                                 ?.copyWith(
 //                                                     fontWeight:
 //                                                         FontWeight.bold)),
@@ -311,7 +311,7 @@
 //                                                   ? capitalize(
 //                                                       complaint!.status!)
 //                                                   : "",
-//                                               style: theme.textTheme.subtitle1,
+//                                               style: theme.textTheme.titleMedium,
 //                                             ),
 //                                           ]..insertAll(
 //                                               0,
@@ -361,7 +361,7 @@
 //                                     horizontal: 28.0),
 //                                 child: Text(
 //                                   "Description: ",
-//                                   style: theme.textTheme.subtitle1,
+//                                   style: theme.textTheme.titleMedium,
 //                                 ),
 //                               )
 //                             : SizedBox(),
@@ -370,7 +370,7 @@
 //                               left: 28.0, right: 28.0, bottom: 16.0),
 //                           child: Text(
 //                             complaint!.description ?? "",
-//                             style: theme.textTheme.subtitle1,
+//                             style: theme.textTheme.titleMedium,
 //                           ),
 //                         ),
 //                       ]
@@ -381,7 +381,7 @@
 //                                       horizontal: 28.0),
 //                                   child: Text(
 //                                     "Suggestions: ",
-//                                     style: theme.textTheme.subtitle1,
+//                                     style: theme.textTheme.titleMedium,
 //                                   ),
 //                                 ),
 //                                 Padding(
@@ -389,7 +389,7 @@
 //                                       left: 28.0, right: 28.0, bottom: 16.0),
 //                                   child: Text(
 //                                     complaint!.suggestions ?? "",
-//                                     style: theme.textTheme.subtitle1,
+//                                     style: theme.textTheme.titleMedium,
 //                                   ),
 //                                 ),
 //                               ]
@@ -402,7 +402,7 @@
 //                                           horizontal: 28.0),
 //                                       child: Text(
 //                                         "Location Details: ",
-//                                         style: theme.textTheme.subtitle1,
+//                                         style: theme.textTheme.titleMedium,
 //                                       ),
 //                                     ),
 //                                     Padding(
@@ -412,7 +412,7 @@
 //                                           bottom: 16.0),
 //                                       child: Text(
 //                                         complaint!.locationDetails ?? "",
-//                                         style: theme.textTheme.subtitle1,
+//                                         style: theme.textTheme.titleMedium,
 //                                       ),
 //                                     ),
 //                                   ]
@@ -458,7 +458,7 @@
 //                                 horizontal: 28.0, vertical: 8.0),
 //                             child: Text(
 //                               "Tags",
-//                               style: theme.textTheme.headline5,
+//                               style: theme.textTheme.headlineSmall,
 //                             ),
 //                           )
 //                         : SizedBox(
@@ -489,7 +489,7 @@
 //                           ),
 //                           Text(
 //                               "${(complaint!.comments?.isEmpty ?? false) ? "No" : complaint!.comments?.length} comment${complaint!.comments?.length == 1 ? "" : "s"}",
-//                               style: theme.textTheme.headline6),
+//                               style: theme.textTheme.titleLarge),
 //                         ],
 //                       ),
 //                     ))
@@ -514,7 +514,7 @@
 //                             ),
 //                             Text(
 //                                 "${complaint!.usersUpVoted?.isEmpty != null ? "No" : complaint!.usersUpVoted?.length} upvote${complaint!.usersUpVoted?.length == 1 ? "" : "s"}",
-//                                 style: theme.textTheme.headline6),
+//                                 style: theme.textTheme.titleLarge),
 //                           ],
 //                         ),
 //                       ),
@@ -611,7 +611,7 @@
 //               child: Padding(
 //                 padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
 //                 child: (editingComment == null || editingComment?.id != v.id)
-//                     ? Text(v.text ?? "", style: theme.textTheme.subtitle1)
+//                     ? Text(v.text ?? "", style: theme.textTheme.titleMedium)
 //                     : TextField(
 //                         focusNode: _editingCommentFocusNode,
 //                         controller: _editingCommentController,

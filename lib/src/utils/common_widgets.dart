@@ -379,7 +379,7 @@ class CommonHtml extends StatelessWidget {
 //                     w.add(SelectableText.rich(
 //                       highlight(
 //                           refineText(nodes1[i].text!), query ?? '', context1),
-//                       //strutStyle: StrutStyle.fromTextStyle(theme.textTheme.subtitle1!.copyWith(color: Colors.lightBlue)),
+//                       //strutStyle: StrutStyle.fromTextStyle(theme.textTheme.titleMedium!.copyWith(color: Colors.lightBlue)),
 //                     ));
 //                   } else if (type == "Element") {
 //                     if (nodes![j].localName == "a") {
@@ -411,13 +411,13 @@ class CommonHtml extends StatelessWidget {
 //                         highlight(
 //                             refineText(nodes[j].text), query ?? '', context1,
 //                             isStrong: true),
-//                         // strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
+//                         // strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headlineSmall!
 //                         //     .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
 //                       ));
 //                     } else if (nodes[j].localName == "br") {
 //                       w.add(SelectableText.rich(
 //                         highlight(" \n", query ?? '', context1),
-//                         // strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headline5!
+//                         // strutStyle: StrutStyle.fromTextStyle(theme.textTheme.headlineSmall!
 //                         //     .copyWith(fontWeight: FontWeight.w900),height: 0.7, fontWeight: FontWeight.w900 )
 //                       ));
 //                     }
@@ -482,9 +482,9 @@ class CommonHtml extends StatelessWidget {
 //     TextStyle posRes =
 //         TextStyle(color: Colors.white, backgroundColor: bloc.accentColor);
 //     TextStyle? negRes = isStrong
-//         ? theme.textTheme.subtitle2
+//         ? theme.textTheme.titleSmall
 //             ?.copyWith(fontWeight: FontWeight.w700, fontSize: 13)
-//         : theme.textTheme.subtitle2?.copyWith(
+//         : theme.textTheme.titleSmall?.copyWith(
 //             fontSize:
 //                 13); // TextStyle(backgroundColor: bloc.bloc.brightness.toColor().withOpacity(1.0),);
 //     if (result == "" || query == "")
@@ -685,7 +685,7 @@ class MyBottomAppBar extends StatelessWidget {
 
   /// The bottom app bar's background color.
   ///
-  /// When null defaults to [ThemeData.bottomAppBarColor].
+  /// When null defaults to [BottomAppBarTheme.color].
   final Color? color;
 
   /// The z-coordinate at which to place this bottom app bar. This controls the
@@ -1568,7 +1568,7 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                             ? [
                                 new TextSpan(
                                   text: 'Read More.',
-                                  style: theme.textTheme.subtitle2?.copyWith(
+                                  style: theme.textTheme.titleSmall?.copyWith(
                                       color: theme.colorScheme.primary),
                                   // recognizer: new TapGestureRecognizer()
                                   //   ..onTap = () => setState(() {
@@ -1796,7 +1796,7 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                 child: TextButton(
                   style: TextButton.styleFrom(
                     backgroundColor: theme.colorScheme.surfaceVariant,
-                    primary: theme.colorScheme.onSurfaceVariant,
+                    foregroundColor: theme.colorScheme.onSurfaceVariant,
                   ),
                   child: Text("Disapprove"),
                   onPressed: () {
@@ -1811,7 +1811,7 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                 child: TextButton(
                   style: TextButton.styleFrom(
                     backgroundColor: theme.colorScheme.primaryContainer,
-                    primary: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.primary,
                   ),
                   child: Text("Approve"),
                   onPressed: () {
@@ -1834,7 +1834,7 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                 child: TextButton(
                   style: TextButton.styleFrom(
                     backgroundColor: theme.colorScheme.surfaceVariant,
-                    primary: theme.colorScheme.onSurfaceVariant,
+                    foregroundColor: theme.colorScheme.onSurfaceVariant,
                   ),
                   child: Text("Ignore"),
                   onPressed: () {
@@ -1979,7 +1979,7 @@ class _DropdownMultiSelectState<T> extends State<DropdownMultiSelect<T>> {
     return Container(
       child: Text(
         "Search for an ${widget.singularObjectName}",
-        style: Theme.of(context).textTheme.bodyText1,
+        style: Theme.of(context).textTheme.bodyLarge,
       ),
     );
   }
@@ -2044,7 +2044,7 @@ class _DropdownMultiSelectState<T> extends State<DropdownMultiSelect<T>> {
                   padding: EdgeInsets.all(20),
                   child: Text(
                     "No ${widget.pluralObjectName} found. Refine your search!",
-                    style: theme.textTheme.subtitle1,
+                    style: theme.textTheme.titleMedium,
                     textAlign: TextAlign.center,
                   ),
                 );

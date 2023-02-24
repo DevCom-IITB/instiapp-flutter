@@ -75,7 +75,7 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
                     ),
                     Text(
                       "Login To View Achievements",
-                      style: theme.textTheme.headline5,
+                      style: theme.textTheme.headlineSmall,
                       textAlign: TextAlign.center,
                     )
                   ],
@@ -102,7 +102,7 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
                                 child: TitleWithBackButton(
                                   child: Text(
                                     "Verify",
-                                    style: theme.textTheme.headline4,
+                                    style: theme.textTheme.headlineMedium,
                                   ),
                                 ),
                               );
@@ -148,7 +148,7 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
                         child: TitleWithBackButton(
                           child: Text(
                             "Your Acheivements",
-                            style: theme.textTheme.headline4,
+                            style: theme.textTheme.headlineMedium,
                           ),
                         ),
                       ),
@@ -329,7 +329,7 @@ class BodyCardState extends State<BodyCard> {
     return ListTile(
       title: Text(
         widget.thing?.bodyName ?? "",
-        style: theme.textTheme.headline6,
+        style: theme.textTheme.titleLarge,
       ),
       enabled: true,
       leading: NullableCircleAvatar(

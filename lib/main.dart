@@ -178,37 +178,41 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           primarySwatch: Colors.primaries.firstWhereOrNull(
               (c) => c.value == widget.bloc.accentColor.value),
 
-          toggleableActiveColor: widget.bloc.accentColor,
           textSelectionTheme:
               TextSelectionThemeData(selectionColor: widget.bloc.accentColor),
 
           canvasColor: widget.bloc.brightness.toColor(),
 
-          bottomAppBarColor: widget.bloc.primaryColor,
+          bottomAppBarTheme: BottomAppBarTheme(color: widget.bloc.primaryColor),
           brightness: widget.bloc.brightness.toBrightness(),
 
-          textTheme: TextTheme(
-              headline4: TextStyle(
-                color: widget.bloc.brightness == AppBrightness.light
-                    ? Colors.black
-                    : Colors.white,
-              ),
-              headline3: TextStyle(
-                color: widget.bloc.brightness == AppBrightness.light
-                    ? Colors.black
-                    : Colors.white,
-              ),
-              headline2: TextStyle(
-                color: widget.bloc.brightness == AppBrightness.light
-                    ? Colors.black
-                    : Colors.white,
-              ),
-              headline1: TextStyle(
-                color: widget.bloc.brightness == AppBrightness.light
-                    ? Colors.black
-                    : Colors.white,
-              ),
-              headline5: TextStyle()),
+          textTheme: Typography.englishLike2021.copyWith(
+            headlineMedium: TextStyle(
+              color: widget.bloc.brightness == AppBrightness.light
+                  ? Colors.black
+                  : Colors.white,
+            ),
+            displaySmall: TextStyle(
+              color: widget.bloc.brightness == AppBrightness.light
+                  ? Colors.black
+                  : Colors.white,
+            ),
+            displayMedium: TextStyle(
+              color: widget.bloc.brightness == AppBrightness.light
+                  ? Colors.black
+                  : Colors.white,
+            ),
+            displayLarge: TextStyle(
+              color: widget.bloc.brightness == AppBrightness.light
+                  ? Colors.black
+                  : Colors.white,
+            ),
+            headlineSmall: TextStyle(
+              color: widget.bloc.brightness == AppBrightness.light
+                  ? Colors.black
+                  : Colors.white,
+            ),
+          ),
         ),
         onGenerateRoute: (RouteSettings settings) {
           // print(settings.name);

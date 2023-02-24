@@ -118,7 +118,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                   ),
                   Text(
                     "Login To Continue",
-                    style: theme.textTheme.headline5,
+                    style: theme.textTheme.headlineSmall,
                     textAlign: TextAlign.center,
                   )
                 ],
@@ -198,7 +198,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                 (community?.isUserFollowing ?? false)
                                     ? "Joined"
                                     : "Join",
-                                style: theme.textTheme.subtitle1?.copyWith(
+                                style: theme.textTheme.titleMedium?.copyWith(
                                   color: Colors.white,
                                   letterSpacing: 1.25,
                                 ),
@@ -261,7 +261,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
         children: [
           Text(
             community?.name ?? "",
-            style: theme.textTheme.headline5,
+            style: theme.textTheme.headlineSmall,
           ),
           Text((community?.followersCount ?? 0).toString() + " followers"),
           SizedBox(height: 10)
@@ -301,13 +301,13 @@ class CommunityAboutSectionState extends State<CommunityAboutSection> {
                 Tab(
                   child: Text(
                     "About",
-                    style: theme.textTheme.bodyText1,
+                    style: theme.textTheme.bodyLarge,
                   ),
                 ),
                 Tab(
                   child: Text(
                     "Members",
-                    style: theme.textTheme.bodyText1,
+                    style: theme.textTheme.bodyLarge,
                   ),
                 )
               ],
@@ -345,7 +345,7 @@ class CommunityAboutSectionState extends State<CommunityAboutSection> {
               ? [
                   new TextSpan(
                     text: 'Read More.',
-                    style: theme.textTheme.subtitle2
+                    style: theme.textTheme.titleSmall
                         ?.copyWith(color: theme.colorScheme.primary),
                     recognizer: new TapGestureRecognizer()
                       ..onTap = () => setState(() {
@@ -409,7 +409,7 @@ class CommunityAboutSectionState extends State<CommunityAboutSection> {
       ),
       title: Text(
         u.userName ?? "",
-        style: theme.textTheme.headline6,
+        style: theme.textTheme.titleLarge,
       ),
       subtitle: Text(
         u.getSubTitle() ?? "",
@@ -431,7 +431,7 @@ class CommunityAboutSectionState extends State<CommunityAboutSection> {
         Container(
           child: Text(
             'Featured',
-            style: theme.textTheme.headline5,
+            style: theme.textTheme.headlineSmall,
           ),
         ),
         Container(
@@ -665,8 +665,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
         return [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-            child:
-                Text.rich(TextSpan(style: theme.textTheme.headline6, children: [
+            child: Text.rich(
+                TextSpan(style: theme.textTheme.titleLarge, children: [
               TextSpan(text: "Nothing here yet!"),
               // TextSpan(
               //     text: "\"${communityPostBloc.query}\"",

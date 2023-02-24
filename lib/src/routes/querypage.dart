@@ -114,7 +114,7 @@ class QueryPage extends StatelessWidget {
 //                     Expanded(
 //                       child: Text(
 //                         widget.title,
-//                         style: theme.textTheme.headline3,
+//                         style: theme.textTheme.displaySmall,
 //                       ),
 //                     ),
 //                     AnimatedContainer(
@@ -162,14 +162,14 @@ class QueryPage extends StatelessWidget {
 //                         children: [
 //                           TextField(
 //                             controller: _searchFieldController,
-//                             cursorColor: theme.textTheme.bodyText2.color,
-//                             style: theme.textTheme.bodyText2,
+//                             cursorColor: theme.textTheme.bodyMedium.color,
+//                             style: theme.textTheme.bodyMedium,
 //                             focusNode: _focusNode,
 //                             decoration: InputDecoration(
 //                               border: OutlineInputBorder(
 //                                   borderRadius: BorderRadius.circular(30)),
-//                               labelStyle: theme.textTheme.bodyText2,
-//                               hintStyle: theme.textTheme.bodyText2,
+//                               labelStyle: theme.textTheme.bodyMedium,
+//                               hintStyle: theme.textTheme.bodyMedium,
 //                               prefixIcon: Icon(
 //                                 Icons.search_outlined,
 //                               ),
@@ -252,7 +252,7 @@ class QueryPage extends StatelessWidget {
   //               value: cat['value'],
   //             ))
   //         .toList(),
-  //     style: theme.textTheme.subtitle1,
+  //     style: theme.textTheme.titleMedium,
   //     onChanged: (c) {
   //       setState(() {
   //         currCat = c;

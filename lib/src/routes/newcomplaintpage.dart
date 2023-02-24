@@ -232,7 +232,7 @@
 //             TitleWithBackButton(
 //               child: Text(
 //                 widget.title,
-//                 style: theme.textTheme.headline3,
+//                 style: theme.textTheme.displaySmall,
 //               ),
 //             ),
 //             Column(
@@ -325,7 +325,7 @@
 //                             TextSpan(text: "No "),
 //                             TextSpan(
 //                                 text: "images ",
-//                                 style: theme.textTheme.bodyText2
+//                                 style: theme.textTheme.bodyMedium
 //                                     ?.copyWith(fontWeight: FontWeight.bold)),
 //                             TextSpan(text: "selected."),
 //                           ]),

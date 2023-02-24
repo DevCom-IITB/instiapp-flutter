@@ -149,7 +149,8 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                               Expanded(
                                 child: TextField(
                                   controller: _commentController,
-                                  cursorColor: theme.textTheme.bodyText2?.color,
+                                  cursorColor:
+                                      theme.textTheme.bodyMedium?.color,
                                   style: theme.textTheme.bodyLarge,
                                   focusNode: _commentFocusNode,
                                   decoration: InputDecoration(
@@ -553,7 +554,7 @@ class _CommentState extends State<Comment> {
                   flex: 3,
                   child: Text(
                     "View ${communityPost.commentsCount} Replies",
-                    style: theme.textTheme.subtitle2?.copyWith(
+                    style: theme.textTheme.titleSmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.bold,
                     ),

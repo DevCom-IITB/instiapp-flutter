@@ -184,11 +184,11 @@ class _EventPageState extends State<EventPage> {
                         children: <Widget>[
                           Text(
                             event!.eventName ?? "",
-                            style: theme.textTheme.headline3,
+                            style: theme.textTheme.displaySmall,
                           ),
                           SizedBox(height: 8.0),
                           Text(event!.getSubTitle(),
-                              style: theme.textTheme.headline6),
+                              style: theme.textTheme.titleLarge),
                         ],
                       ),
                     ),
@@ -211,7 +211,7 @@ class _EventPageState extends State<EventPage> {
                       child: CommonHtml(
                         data: event!.eventDescription ?? "",
                         defaultTextStyle:
-                            theme.textTheme.subtitle1 ?? TextStyle(),
+                            theme.textTheme.titleMedium ?? TextStyle(),
                       ),
                     ),
                     SizedBox(
@@ -260,8 +260,8 @@ class _EventPageState extends State<EventPage> {
 
   Widget _buildBodyTile(InstiAppBloc bloc, TextTheme theme, Body body) {
     return ListTile(
-      title: Text(body.bodyName ?? "", style: theme.headline6),
-      subtitle: Text(body.bodyShortDescription ?? "", style: theme.subtitle2),
+      title: Text(body.bodyName ?? "", style: theme.titleLarge),
+      subtitle: Text(body.bodyShortDescription ?? "", style: theme.titleSmall),
       leading: NullableCircleAvatar(
         body.bodyImageURL ?? defUrl,
         Icons.work_outline_outlined,
@@ -277,12 +277,12 @@ class _EventPageState extends State<EventPage> {
       String name, UES uesButton, ThemeData theme, InstiAppBloc bloc) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        primary: event?.eventUserUes == uesButton
+        backgroundColor: event?.eventUserUes == uesButton
             ? theme.colorScheme.secondary
             : theme.scaffoldBackgroundColor,
-        onPrimary: event?.eventUserUes == uesButton
+        foregroundColor: event?.eventUserUes == uesButton
             ? theme.floatingActionButtonTheme.foregroundColor
-            : theme.textTheme.bodyText1?.color,
+            : theme.textTheme.bodyLarge?.color,
         shape: RoundedRectangleBorder(
             side: BorderSide(
               color: theme.colorScheme.secondary,

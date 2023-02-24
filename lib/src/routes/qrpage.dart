@@ -92,7 +92,7 @@ class _QRPageState extends State<QRPage> {
                     ),
                     Text(
                       "Login To View QR",
-                      style: theme.textTheme.headline5,
+                      style: theme.textTheme.headlineSmall,
                       textAlign: TextAlign.center,
                     )
                   ],
@@ -104,7 +104,7 @@ class _QRPageState extends State<QRPage> {
                   TitleWithBackButton(
                     child: Text(
                       "QR Code",
-                      style: theme.textTheme.headline3,
+                      style: theme.textTheme.displaySmall,
                     ),
                   ),
                   loading
@@ -124,7 +124,7 @@ class _QRPageState extends State<QRPage> {
                                   ),
                                   Text(
                                     "Some error in generating QR",
-                                    style: theme.textTheme.headline5,
+                                    style: theme.textTheme.headlineSmall,
                                     textAlign: TextAlign.center,
                                   )
                                 ],

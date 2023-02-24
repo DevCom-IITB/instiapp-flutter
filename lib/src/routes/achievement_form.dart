@@ -38,7 +38,7 @@ class _CreateAchievementPage extends State<Home> {
       return Container(
         child: Text(
           "Search for an InstiApp Event",
-          style: Theme.of(context).textTheme.bodyText1,
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
       );
     }
@@ -73,7 +73,7 @@ class _CreateAchievementPage extends State<Home> {
       return Container(
         child: Text(
           "Search for an organisation",
-          style: Theme.of(context).textTheme.bodyText1,
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
       );
     }
@@ -109,7 +109,7 @@ class _CreateAchievementPage extends State<Home> {
       return Container(
         child: Text(
           "Search for a skill",
-          style: Theme.of(context).textTheme.bodyText1,
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
       );
     }
@@ -232,7 +232,7 @@ class _CreateAchievementPage extends State<Home> {
                         ),
                         Text(
                           "Login To View Achievements",
-                          style: theme.textTheme.headline5,
+                          style: theme.textTheme.headlineSmall,
                           textAlign: TextAlign.center,
                         )
                       ],
@@ -300,8 +300,8 @@ class _CreateAchievementPage extends State<Home> {
                                                       15.0, 15.0, 10.0, 5.0),
                                                   child: Text(
                                                     'Verification Request',
-                                                    style: theme
-                                                        .textTheme.headline4,
+                                                    style: theme.textTheme
+                                                        .headlineMedium,
                                                   )),
                                               SizedBox(
                                                 height: 40,
@@ -439,7 +439,7 @@ class _CreateAchievementPage extends State<Home> {
                                                                   "No events found. Refine your search!",
                                                                   style: theme
                                                                       .textTheme
-                                                                      .subtitle1,
+                                                                      .titleMedium,
                                                                 ),
                                                               );
                                                             },
@@ -502,7 +502,7 @@ class _CreateAchievementPage extends State<Home> {
                                                                   "No verifying authorities found. Refine your search!",
                                                                   style: theme
                                                                       .textTheme
-                                                                      .subtitle1,
+                                                                      .titleMedium,
                                                                   textAlign:
                                                                       TextAlign
                                                                           .center,
@@ -596,11 +596,14 @@ class _CreateAchievementPage extends State<Home> {
                                                   child: Text(
                                                       'Request Verification'),
                                                   style: TextButton.styleFrom(
-                                                      primary: Colors.black,
-                                                      backgroundColor:
-                                                          Color(0xffffd740),
-                                                      onSurface: Colors.grey,
-                                                      elevation: 5.0),
+                                                    foregroundColor:
+                                                        Colors.black,
+                                                    backgroundColor:
+                                                        Color(0xffffd740),
+                                                    disabledForegroundColor:
+                                                        Colors.grey,
+                                                    elevation: 5.0,
+                                                  ),
                                                 ),
                                               ),
                                             ]),
@@ -665,7 +668,7 @@ class _CreateAchievementPage extends State<Home> {
                                                                   "No skills found. Refine your search!",
                                                                   style: theme
                                                                       .textTheme
-                                                                      .subtitle1,
+                                                                      .titleMedium,
                                                                   textAlign:
                                                                       TextAlign
                                                                           .center,
@@ -759,10 +762,12 @@ class _CreateAchievementPage extends State<Home> {
                                                   child: Text(
                                                       'Request Verification'),
                                                   style: TextButton.styleFrom(
-                                                      primary: Colors.black,
+                                                      foregroundColor:
+                                                          Colors.black,
                                                       backgroundColor:
                                                           Color(0xffffd740),
-                                                      onSurface: Colors.grey,
+                                                      disabledForegroundColor:
+                                                          Colors.grey,
                                                       elevation: 5.0),
                                                 ),
                                               ),
@@ -833,7 +838,7 @@ class _CreateAchievementPage extends State<Home> {
           //                 ),
           //                 Text(
           //                   "Login To View Achievements",
-          //                   style: theme.textTheme.headline5,
+          //                   style: theme.textTheme.headlineSmall,
           //                   textAlign: TextAlign.center,
           //                 )
           //               ],
@@ -856,7 +861,7 @@ class _CreateAchievementPage extends State<Home> {
           //                                 15.0, 15.0, 10.0, 5.0),
           //                             child: Text(
           //                               'Verification Request',
-          //                               style: theme.textTheme.headline4,
+          //                               style: theme.textTheme.headlineMedium,
           //                             )),
           //                         SizedBox(
           //                           height: 40,
@@ -965,7 +970,7 @@ class _CreateAchievementPage extends State<Home> {
           //                                         child: Text(
           //                                           "No events found. Refine your search!",
           //                                           style:
-          //                                               theme.textTheme.subtitle1,
+          //                                               theme.textTheme.titleMedium,
           //                                         ),
           //                                       );
           //                                     },
@@ -1026,7 +1031,7 @@ class _CreateAchievementPage extends State<Home> {
           //                                         child: Text(
           //                                           "No verifying authorities found. Refine your search!",
           //                                           style:
-          //                                               theme.textTheme.subtitle1,
+          //                                               theme.textTheme.titleMedium,
           //                                           textAlign: TextAlign.center,
           //                                         ),
           //                                       );
@@ -1098,7 +1103,7 @@ class Card extends State<VerifyCard> {
       return ListTile(
         title: Text(
           widget.thing.eventName!,
-          style: theme.textTheme.headline6,
+          style: theme.textTheme.titleLarge,
         ),
         enabled: true,
         leading: NullableCircleAvatar(
@@ -1131,7 +1136,7 @@ class BodyCardState extends State<BodyCard> {
       return ListTile(
         title: Text(
           widget.thing?.bodyName ?? "",
-          style: theme.textTheme.headline6,
+          style: theme.textTheme.titleLarge,
         ),
         enabled: true,
         leading: NullableCircleAvatar(

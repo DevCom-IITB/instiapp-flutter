@@ -171,7 +171,7 @@ class _AboutPageState extends State<AboutPage> {
             TitleWithBackButton(
               child: Text(
                 widget.title,
-                style: theme.textTheme.headline3,
+                style: theme.textTheme.displaySmall,
               ),
             ),
           ]..addAll(_buildContent(theme, widget.sectionToNameToImageUrl)),
@@ -187,7 +187,7 @@ class _AboutPageState extends State<AboutPage> {
         Center(
           child: Text(
             entry.key,
-            style: theme.textTheme.headline4,
+            style: theme.textTheme.headlineMedium,
           ),
         ),
         Padding(

@@ -46,7 +46,7 @@ class _QueryAddPageState extends State<QueryAddPage> {
       return Container(
         child: Text(
           "Select a Category",
-          style: Theme.of(context).textTheme.bodyText1,
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
       );
     }
@@ -133,7 +133,7 @@ class _QueryAddPageState extends State<QueryAddPage> {
                       ),
                       Text(
                         "Login To Ask a Question",
-                        style: theme.textTheme.headline5,
+                        style: theme.textTheme.headlineSmall,
                         textAlign: TextAlign.center,
                       )
                     ],
@@ -154,7 +154,7 @@ class _QueryAddPageState extends State<QueryAddPage> {
                                     EdgeInsets.fromLTRB(15.0, 15.0, 10.0, 5.0),
                                 child: Text(
                                   "Couldn't find what you're looking for?",
-                                  style: theme.textTheme.headline4,
+                                  style: theme.textTheme.headlineMedium,
                                 )),
                             SizedBox(
                               height: 40,
@@ -209,7 +209,7 @@ class _QueryAddPageState extends State<QueryAddPage> {
                                               child: Text(
                                                 "No events found. Refine your search!",
                                                 style:
-                                                    theme.textTheme.subtitle1,
+                                                    theme.textTheme.titleMedium,
                                               ),
                                             );
                                           },
@@ -264,9 +264,9 @@ class _QueryAddPageState extends State<QueryAddPage> {
                                 },
                                 child: Text('Submit Question'),
                                 style: TextButton.styleFrom(
-                                    primary: Colors.black,
+                                    foregroundColor: Colors.black,
                                     backgroundColor: Colors.amber,
-                                    onSurface: Colors.grey,
+                                    disabledForegroundColor: Colors.grey,
                                     elevation: 5.0),
                               ),
                             ),
@@ -294,7 +294,7 @@ class Card extends State<VerifyCard> {
       return ListTile(
         title: Text(
           widget.thing?.eventName ?? "",
-          style: theme.textTheme.headline6,
+          style: theme.textTheme.titleLarge,
         ),
         enabled: true,
         leading: NullableCircleAvatar(
@@ -328,7 +328,7 @@ class BodyCardState extends State<BodyCard> {
       return ListTile(
         title: Text(
           widget.thing?.bodyName ?? "",
-          style: theme.textTheme.headline6,
+          style: theme.textTheme.titleLarge,
         ),
         enabled: true,
         leading: NullableCircleAvatar(

@@ -70,7 +70,7 @@
 //                   child: TitleWithBackButton(
 //                     child: Text(
 //                       widget.title,
-//                       style: theme.textTheme.headline3,
+//                       style: theme.textTheme.displaySmall,
 //                     ),
 //                   ),
 //                 ),
@@ -184,7 +184,7 @@
 //                                                             16.0),
 //                                                     child: Text("No complaints",
 //                                                         style: theme
-//                                                             .textTheme.headline6
+//                                                             .textTheme.titleLarge
 //                                                             ?.copyWith(
 //                                                                 fontWeight:
 //                                                                     FontWeight
@@ -242,7 +242,7 @@
 //                           padding: const EdgeInsets.all(28.0),
 //                           child: Text(
 //                             "You need to be logged in to view and complaint",
-//                             style: theme.textTheme.headline5,
+//                             style: theme.textTheme.headlineSmall,
 //                           ),
 //                         ),
 //                       );
@@ -333,7 +333,7 @@
 //                             crossAxisAlignment: CrossAxisAlignment.start,
 //                             children: <Widget>[
 //                               Text(complaint.complaintCreatedBy?.userName ?? "",
-//                                   style: theme.textTheme.headline6
+//                                   style: theme.textTheme.titleLarge
 //                                       ?.copyWith(fontWeight: FontWeight.bold)),
 //                               Text(
 //                                 DateTimeUtil.getDate(
@@ -390,7 +390,7 @@
 //                                 children: <Widget>[
 //                                   Text(
 //                                     capitalize(complaint.status ?? ""),
-//                                     style: theme.textTheme.subtitle1,
+//                                     style: theme.textTheme.titleMedium,
 //                                   ),
 //                                 ]..insertAll(
 //                                     0,
@@ -430,14 +430,14 @@
 //                     (complaint.suggestions?.isNotEmpty ?? false)
 //                         ? Text(
 //                             "Description: ",
-//                             style: theme.textTheme.subtitle1,
+//                             style: theme.textTheme.titleMedium,
 //                           )
 //                         : SizedBox(),
 //                     Padding(
 //                       padding: const EdgeInsets.only(bottom: 16.0),
 //                       child: Text(
 //                         complaint.description ?? "",
-//                         style: theme.textTheme.subtitle1,
+//                         style: theme.textTheme.titleMedium,
 //                       ),
 //                     ),
 //                   ]
@@ -445,13 +445,13 @@
 //                         ? [
 //                             Text(
 //                               "Suggestions: ",
-//                               style: theme.textTheme.subtitle1,
+//                               style: theme.textTheme.titleMedium,
 //                             ),
 //                             Padding(
 //                               padding: const EdgeInsets.only(bottom: 16.0),
 //                               child: Text(
 //                                 complaint.suggestions ?? "",
-//                                 style: theme.textTheme.subtitle1,
+//                                 style: theme.textTheme.titleMedium,
 //                               ),
 //                             ),
 //                           ]
@@ -460,13 +460,13 @@
 //                         ? [
 //                             Text(
 //                               "Location Details: ",
-//                               style: theme.textTheme.subtitle1,
+//                               style: theme.textTheme.titleMedium,
 //                             ),
 //                             Padding(
 //                               padding: const EdgeInsets.only(bottom: 16.0),
 //                               child: Text(
 //                                 complaint.locationDetails ?? "",
-//                                 style: theme.textTheme.subtitle1,
+//                                 style: theme.textTheme.titleMedium,
 //                               ),
 //                             ),
 //                           ]

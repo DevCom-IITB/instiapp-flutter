@@ -84,7 +84,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     children: <Widget>[
                       Text(
                         widget.title,
-                        style: theme.textTheme.headline3,
+                        style: theme.textTheme.displaySmall,
                       ),
                       SizedBox(
                           height: 18,
@@ -127,21 +127,21 @@ class _CalendarPageState extends State<CalendarPage> {
                                 _eventIcon!);
                           },
 
-                          headerTextStyle: theme.textTheme.headline6,
+                          headerTextStyle: theme.textTheme.titleLarge,
 
-                          weekendTextStyle: theme.textTheme.headline6
+                          weekendTextStyle: theme.textTheme.titleLarge
                               ?.copyWith(fontSize: 18)
                               .copyWith(color: Colors.red[800]),
-                          daysTextStyle:
-                              theme.textTheme.headline6?.copyWith(fontSize: 18),
-                          inactiveDaysTextStyle:
-                              theme.textTheme.headline6?.copyWith(fontSize: 18),
-                          nextDaysTextStyle: theme.textTheme.headline6
+                          daysTextStyle: theme.textTheme.titleLarge
+                              ?.copyWith(fontSize: 18),
+                          inactiveDaysTextStyle: theme.textTheme.titleLarge
+                              ?.copyWith(fontSize: 18),
+                          nextDaysTextStyle: theme.textTheme.titleLarge
                               ?.copyWith(fontSize: 18)
                               .copyWith(
                                   color: theme.colorScheme.onSurface
                                       .withAlpha(150)),
-                          prevDaysTextStyle: theme.textTheme.headline6
+                          prevDaysTextStyle: theme.textTheme.titleLarge
                               ?.copyWith(fontSize: 18)
                               .copyWith(
                                   color: theme.colorScheme.onSurface
@@ -172,7 +172,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
                           todayButtonColor: theme.primaryColor.withOpacity(0.3),
                           selectedDayButtonColor: theme.colorScheme.secondary,
-                          selectedDayTextStyle: theme.textTheme.headline6
+                          selectedDayTextStyle: theme.textTheme.titleLarge
                               ?.copyWith(color: theme.colorScheme.onSecondary),
 
                           // height: min(MediaQuery.of(context).size.shortestSide, 600) * 1.6,
@@ -208,7 +208,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                           false)
                                   ? "${snapshot.data?[_currentDate]?.length} Events"
                                   : "No events",
-                              style: theme.textTheme.button?.copyWith(
+                              style: theme.textTheme.labelLarge?.copyWith(
                                 color: theme.colorScheme.onSecondary,
                               ),
                             ),
@@ -251,7 +251,7 @@ class _CalendarPageState extends State<CalendarPage> {
     return ListTile(
       title: Text(
         event.eventName ?? "",
-        style: theme.textTheme.headline6,
+        style: theme.textTheme.titleLarge,
       ),
       enabled: true,
       leading: NullableCircleAvatar(

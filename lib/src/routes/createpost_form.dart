@@ -107,7 +107,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                       ),
                       Text(
                         "Login To Make Post",
-                        style: theme.textTheme.headline5,
+                        style: theme.textTheme.headlineSmall,
                         textAlign: TextAlign.center,
                       )
                     ],
@@ -135,9 +135,9 @@ class _CreatePostPage extends State<CreatePostPage> {
                                     },
                                     child: Icon(Icons.close),
                                     style: TextButton.styleFrom(
-                                        primary: Colors.black,
+                                        foregroundColor: Colors.black,
                                         backgroundColor: theme.canvasColor,
-                                        onSurface: Colors.grey,
+                                        disabledForegroundColor: Colors.grey,
                                         elevation: 0.0),
                                   ),
                                 ),

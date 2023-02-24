@@ -128,7 +128,7 @@ class _CommunityPageState extends State<CommunityPage> {
                     ),
                     Text(
                       "Login To View Communities",
-                      style: theme.textTheme.headline5,
+                      style: theme.textTheme.headlineSmall,
                       textAlign: TextAlign.center,
                     )
                   ],
@@ -190,8 +190,8 @@ class _CommunityPageState extends State<CommunityPage> {
         return [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-            child:
-                Text.rich(TextSpan(style: theme.textTheme.headline6, children: [
+            child: Text.rich(
+                TextSpan(style: theme.textTheme.titleLarge, children: [
               TextSpan(text: "Nothing here yet!"),
               // TextSpan(
               //     text: "\"${communityBloc.query}\"",
@@ -292,7 +292,7 @@ class _CommunityPageState extends State<CommunityPage> {
                   : null,
               title: Text(
                 community.name ?? "Some community",
-                style: theme.textTheme.subtitle1?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith(
                   color: Color.fromARGB(255, 255, 255, 255),
                   fontSize: 15,
                   fontWeight: FontWeight.bold,

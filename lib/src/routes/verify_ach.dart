@@ -41,8 +41,6 @@ class _VerifyAchPageState extends State<VerifyAchPage> {
       label: Text("Add Acheivement"),
       onPressed: () {
         Navigator.of(context).pushNamed("/achievements/add");
-
-        
       },
     );
 
@@ -80,7 +78,7 @@ class _VerifyAchPageState extends State<VerifyAchPage> {
                 SliverToBoxAdapter(
                   child: Text(
                     "Verify",
-                    style: theme.textTheme.headline3,
+                    style: theme.textTheme.displaySmall,
                   ),
                 ),
                 SliverToBoxAdapter(
@@ -187,8 +185,8 @@ class _VerifyListItemState extends State<VerifyListItem> {
     Widget continueButton = ElevatedButton(
       child: Text("Yes"),
       onPressed: () {
-        verifyBloc.deleteAchievement(widget.achievement.id ?? "",
-            widget.achievement.body?.bodyID ?? "");
+        verifyBloc.deleteAchievement(
+            widget.achievement.id ?? "", widget.achievement.body?.bodyID ?? "");
         Navigator.of(context).pop();
       },
     );

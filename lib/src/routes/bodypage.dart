@@ -153,11 +153,11 @@ class _BodyPageState extends State<BodyPage> {
                       children: <Widget>[
                         Text(
                           body?.bodyName ?? "",
-                          style: theme.textTheme.headline3,
+                          style: theme.textTheme.displaySmall,
                         ),
                         SizedBox(height: 8.0),
                         Text(body?.bodyShortDescription ?? "",
-                            style: theme.textTheme.headline6),
+                            style: theme.textTheme.titleLarge),
                       ],
                     ),
                   ),
@@ -186,7 +186,7 @@ class _BodyPageState extends State<BodyPage> {
                     child: CommonHtml(
                         data: body?.bodyDescription ?? "",
                         defaultTextStyle:
-                            theme.textTheme.subtitle1 ?? TextStyle()),
+                            theme.textTheme.titleMedium ?? TextStyle()),
                   ),
                   body?.bodyDescription != null
                       ? SizedBox(
@@ -206,7 +206,7 @@ class _BodyPageState extends State<BodyPage> {
                             horizontal: 28.0, vertical: 16.0),
                         child: Text(
                           "Events",
-                          style: theme.textTheme.headline5,
+                          style: theme.textTheme.headlineSmall,
                         ),
                       )))
                   // Children
@@ -219,7 +219,7 @@ class _BodyPageState extends State<BodyPage> {
                             horizontal: 28.0, vertical: 16.0),
                         child: Text(
                           "Organizations",
-                          style: theme.textTheme.headline5,
+                          style: theme.textTheme.headlineSmall,
                         ),
                       )))
                   // People
@@ -240,7 +240,7 @@ class _BodyPageState extends State<BodyPage> {
                             horizontal: 28.0, vertical: 16.0),
                         child: Text(
                           "People",
-                          style: theme.textTheme.headline5,
+                          style: theme.textTheme.headlineSmall,
                         ),
                       )))
                   // Parents
@@ -253,7 +253,7 @@ class _BodyPageState extends State<BodyPage> {
                             horizontal: 28.0, vertical: 16.0),
                         child: Text(
                           "Part of",
-                          style: theme.textTheme.headline5,
+                          style: theme.textTheme.headlineSmall,
                         ),
                       )))
                   ..addAll([
@@ -307,12 +307,12 @@ class _BodyPageState extends State<BodyPage> {
   ElevatedButton _buildFollowBody(ThemeData theme, InstiAppBloc bloc) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        primary: body?.bodyUserFollows ?? false
+        backgroundColor: body?.bodyUserFollows ?? false
             ? theme.colorScheme.secondary
             : theme.scaffoldBackgroundColor,
-        onPrimary: body?.bodyUserFollows ?? false
+        foregroundColor: body?.bodyUserFollows ?? false
             ? theme.floatingActionButtonTheme.foregroundColor
-            : theme.textTheme.bodyText1?.color,
+            : theme.textTheme.bodyLarge?.color,
         shape: RoundedRectangleBorder(
           side: BorderSide(
             color: theme.colorScheme.secondary,
@@ -390,8 +390,8 @@ class _BodyPageState extends State<BodyPage> {
 
   Widget _buildBodyTile(InstiAppBloc bloc, TextTheme theme, Body body) {
     return ListTile(
-      title: Text(body.bodyName ?? "", style: theme.headline6),
-      subtitle: Text(body.bodyShortDescription ?? "", style: theme.subtitle2),
+      title: Text(body.bodyName ?? "", style: theme.titleLarge),
+      subtitle: Text(body.bodyShortDescription ?? "", style: theme.titleSmall),
       leading: NullableCircleAvatar(
         body.bodyImageURL ?? "",
         Icons.people_outline_outlined,
@@ -407,7 +407,7 @@ class _BodyPageState extends State<BodyPage> {
     return ListTile(
       title: Text(
         event.eventName ?? "",
-        style: theme.textTheme.headline6,
+        style: theme.textTheme.titleLarge,
       ),
       enabled: true,
       leading: NullableCircleAvatar(
@@ -431,7 +431,7 @@ class _BodyPageState extends State<BodyPage> {
       ),
       title: Text(
         u.userName ?? "",
-        style: theme.textTheme.headline6,
+        style: theme.textTheme.titleLarge,
       ),
       subtitle: Text(u.getSubTitle() ?? ""),
       onTap: () {
