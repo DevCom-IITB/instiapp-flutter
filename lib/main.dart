@@ -148,7 +148,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         theme: ThemeData(
           // fontFamily: "SourceSansPro",
           fontFamily: "IBMPlexSans",
-
           primaryColor: widget.bloc.primaryColor,
           colorScheme: theme.colorScheme.copyWith(
             primary: widget.bloc.primaryColor,
@@ -177,12 +176,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           ),
           primarySwatch: Colors.primaries.firstWhereOrNull(
               (c) => c.value == widget.bloc.accentColor.value),
-
           textSelectionTheme:
               TextSelectionThemeData(selectionColor: widget.bloc.accentColor),
-
           canvasColor: widget.bloc.brightness.toColor(),
-
           bottomAppBarTheme: BottomAppBarTheme(color: widget.bloc.primaryColor),
           // brightness: widget.bloc.brightness.toBrightness(),
           typography: Typography.material2021(

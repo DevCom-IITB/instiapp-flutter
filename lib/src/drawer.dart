@@ -604,9 +604,7 @@ class _NavExpansionTileState extends State<NavExpansionTile> {
         leading: Icon(widget.leading),
         initiallyExpanded: widget.initiallyExpanded,
         children: widget.children,
-        // textColor: _iconAndTextColor(theme, listTileTheme),
-        iconColor: listTileTheme.iconColor,
-        collapsedIconColor: listTileTheme.iconColor,
+        collapsedIconColor: theme.colorScheme.onBackground,
         onExpansionChanged: (val) {
           setState(() {
             isOpened = val;
