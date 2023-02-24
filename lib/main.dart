@@ -184,34 +184,11 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           canvasColor: widget.bloc.brightness.toColor(),
 
           bottomAppBarTheme: BottomAppBarTheme(color: widget.bloc.primaryColor),
-          brightness: widget.bloc.brightness.toBrightness(),
-
-          textTheme: Typography.englishLike2021.copyWith(
-            headlineMedium: TextStyle(
-              color: widget.bloc.brightness == AppBrightness.light
-                  ? Colors.black
-                  : Colors.white,
-            ),
-            displaySmall: TextStyle(
-              color: widget.bloc.brightness == AppBrightness.light
-                  ? Colors.black
-                  : Colors.white,
-            ),
-            displayMedium: TextStyle(
-              color: widget.bloc.brightness == AppBrightness.light
-                  ? Colors.black
-                  : Colors.white,
-            ),
-            displayLarge: TextStyle(
-              color: widget.bloc.brightness == AppBrightness.light
-                  ? Colors.black
-                  : Colors.white,
-            ),
-            headlineSmall: TextStyle(
-              color: widget.bloc.brightness == AppBrightness.light
-                  ? Colors.black
-                  : Colors.white,
-            ),
+          // brightness: widget.bloc.brightness.toBrightness(),
+          typography: Typography.material2021(
+            colorScheme: widget.bloc.brightness == AppBrightness.light
+                ? ColorScheme.light()
+                : ColorScheme.dark(),
           ),
         ),
         onGenerateRoute: (RouteSettings settings) {
