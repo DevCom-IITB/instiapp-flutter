@@ -73,7 +73,7 @@ class CommunityPost {
   @JsonKey(name: "anonymous")
   bool? anonymous;
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   int? postedMinutes;
 
   // @JsonKey(name: "reported_by")

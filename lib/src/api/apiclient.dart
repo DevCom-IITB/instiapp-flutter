@@ -374,6 +374,7 @@ abstract class InstiAppApi {
       @rt.Header("Cookie") String sessionId);
 
   @rt.POST("/user-tags/reach")
+  @rt.Headers({'Content-Type': 'application/json'})
   Future<UserTagsReachResponse> getUserTagsReach(
       @rt.Header("Cookie") String sessionId,
       @rt.Body() List<int> selectedTagIds);

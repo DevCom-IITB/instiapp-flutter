@@ -51,7 +51,7 @@ dependencies:
   retrofit: ^4.0.1
   logger: any
   dio: ^5.0.0
-  json_annotation: ^4.4.0
+  json_annotation: ^4.8.0
   jaguar: ^3.0.12
   jaguar_flutter_asset: ^3.0.0
   flutter_webview_pro: ^3.0.1+4
@@ -72,7 +72,7 @@ dev_dependencies:
   retrofit_generator: any
   build_runner: any
   json_model: any
-  json_serializable: ^6.1.1
+  json_serializable: ^6.6.1
   firebase_core: ^2.7.0
 
 # For information on the generic Dart part of this file, see the

@@ -806,6 +806,7 @@ class _BlogPageState extends State<BlogPage> {
                 duration: Duration(milliseconds: 500),
                 // width: searchMode ? 0.0 : null,
                 // height: searchMode ? 0.0 : null,
+                margin: EdgeInsets.only(left: 8.0),
                 decoration: ShapeDecoration(
                     shape: CircleBorder(
                         side: BorderSide(color: theme.primaryColor))),

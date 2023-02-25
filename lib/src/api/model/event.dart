@@ -76,14 +76,14 @@ class Event extends elt.Event {
   @JsonKey(name: "event_interest")
   List<Interest>? eventInterest;
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   UES get eventUserUes => UES.values[eventUserUesInt ?? 0];
 
   set eventUserUes(UES ues) {
     eventUserUesInt = ues.index;
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   bool eventBigImage = false;
 
   DateTime? eventStartDate;
