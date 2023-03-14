@@ -11,7 +11,7 @@ class BlocProvider extends InheritedWidget {
     return false;
   }
 
-  static BlocProvider of(BuildContext context) {
+  static BlocProvider? of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<BlocProvider>();
   }
 }

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:InstiApp/src/api/model/event.dart';
-import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
@@ -43,8 +42,8 @@ class CalendarBloc {
 
   List<Event> _getEventsOfMonth(List<Event> evs, DateTime month) {
     return evs.where((e) {
-      return e.eventStartDate.year == month.year &&
-          e.eventStartDate.month == month.month;
+      return e.eventStartDate!.year == month.year &&
+          e.eventStartDate!.month == month.month;
     }).toList();
   }
 
@@ -63,12 +62,6 @@ class CalendarBloc {
     var nextNextMonthStart =
         DateTime(currMonthStart.year, currMonthStart.month + 2);
 
-    var havePrev = monthToEvents.containsKey(prevMonthStart) ||
-        receivingMonths.contains(prevMonthStart);
-    var haveCurr = monthToEvents.containsKey(currMonthStart) ||
-        receivingMonths.contains(currMonthStart);
-    var haveNext = monthToEvents.containsKey(nextMonthStart) ||
-        receivingMonths.contains(nextMonthStart);
     receivingMonths.add(prevMonthStart);
     receivingMonths.add(currMonthStart);
     receivingMonths.add(nextMonthStart);
@@ -78,8 +71,8 @@ class CalendarBloc {
         formatDate(prevMonthStart, isoFormat),
         formatDate(nextNextMonthStart, isoFormat));
     var evs = newsFeedResp.events;
-    evs.forEach((e) {
-      var time = DateTime.parse(e.eventStartTime);
+    evs!.forEach((e) {
+      var time = DateTime.parse(e.eventStartTime!);
       e.eventStartDate = DateTime(time.year, time.month, time.day);
     });
 
@@ -90,7 +83,7 @@ class CalendarBloc {
     monthToEvents[nextMonthStart] = _getEventsOfMonth(evs, nextMonthStart);
     receivingMonths.remove(nextMonthStart);
     for (Event e in evs) {
-      var dateList = eventsMap.putIfAbsent(e.eventStartDate, () => []);
+      var dateList = eventsMap.putIfAbsent(e.eventStartDate!, () => []);
       dateList.removeWhere((e1) => e1.eventID == e.eventID);
       dateList.add(e);
     }
@@ -101,44 +94,68 @@ class CalendarBloc {
     }
   }
 
-  Future saveToCache({SharedPreferences sharedPrefs}) async {
+  Future saveToCache({SharedPreferences? sharedPrefs}) async {
     var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
-    if (monthToEvents?.isNotEmpty ?? false) {
+    if (monthToEvents.isNotEmpty) {
+      List<String> keys = [];
+      for (DateTime i in monthToEvents.keys) {
+        keys.add(i.toIso8601String());
+      }
+      prefs.setString(mteKeysStorageID, json.encode(keys));
       prefs.setString(
-          mteKeysStorageID, standardSerializers.encode(monthToEvents.keys));
-      prefs.setString(
-          mteValuesStorageID, standardSerializers.encode(monthToEvents.values));
+          mteValuesStorageID,
+          json.encode(monthToEvents.values
+              .map((e) => e.map((k) => k.toJson()).toList())
+              .toList()));
     }
 
-    if (eventsMap?.isNotEmpty ?? false) {
+    if (eventsMap.isNotEmpty) {
+      List<String> keys = [];
+      for (DateTime i in eventsMap.keys) {
+        keys.add(i.toIso8601String());
+      }
+      prefs.setString(eventsMapKeysStorageID, json.encode(keys));
       prefs.setString(
-          eventsMapKeysStorageID, standardSerializers.encode(eventsMap.keys));
-      prefs.setString(eventsMapValuesStorageID,
-          standardSerializers.encode(eventsMap.values));
+          eventsMapValuesStorageID,
+          json.encode(eventsMap.values
+              .map((e) => e.map((k) => k.toJson()).toList())
+              .toList()));
     }
   }
 
-  Future restoreFromCache({SharedPreferences sharedPrefs}) async {
+  Future restoreFromCache({SharedPreferences? sharedPrefs}) async {
     var prefs = sharedPrefs ?? await SharedPreferences.getInstance();
     if (prefs.getKeys().contains(mteKeysStorageID) &&
         prefs.getKeys().contains(mteValuesStorageID)) {
-      var keys = standardSerializers
-          .decodeList<DateTime>(prefs.getString(mteKeysStorageID));
-
-      var values = (json.decode(prefs.getString(mteValuesStorageID)) as List)
-          .map((evs) => standardSerializers.listFrom<Event>(evs));
-      monthToEvents = Map.fromIterables(keys, values);
+      if (prefs.getString(mteKeysStorageID) != null &&
+          prefs.getString(mteValuesStorageID) != null) {
+        var keys =
+            (json.decode(prefs.getString(mteKeysStorageID) ?? '') as List)
+                .map((e) => DateTime.parse(e as String));
+        var values =
+            (json.decode(prefs.getString(mteValuesStorageID) ?? '') as List)
+                .map((evs) =>
+                    evs.map((e) => Event.fromJson(e)).toList().cast<Event>())
+                .toList()
+                .cast<List<Event>>();
+        monthToEvents = Map.fromIterables(keys, values);
+      }
     }
 
     if (prefs.getKeys().contains(eventsMapKeysStorageID) &&
         prefs.getKeys().contains(eventsMapValuesStorageID)) {
-      var keys = standardSerializers
-          .decodeList<DateTime>(prefs.getString(eventsMapKeysStorageID));
-      var values =
-          (json.decode(prefs.getString(eventsMapValuesStorageID)) as List)
-              .map((evs) => standardSerializers.listFrom<Event>(evs));
-      eventsMap = Map.fromIterables(keys, values);
-      _eventsSubject.add(eventsMap);
+      if (prefs.getString(mteKeysStorageID) != null &&
+          prefs.getString(mteValuesStorageID) != null) {
+        var keys =
+            (json.decode(prefs.getString(mteKeysStorageID) ?? '') as List)
+                .map((e) => DateTime.parse(e as String));
+        Iterable<List<Event>> values =
+            (json.decode(prefs.getString(mteValuesStorageID) ?? '') as List)
+                .map((evs) =>
+                    evs.map((e) => Event.fromJson(e)).toList().cast<Event>());
+        eventsMap = Map.fromIterables(keys, values);
+        _eventsSubject.add(eventsMap);
+      }
     }
   }
 }

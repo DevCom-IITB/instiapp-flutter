@@ -27,7 +27,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
 
     bloc.updateNotifications();
 
@@ -47,7 +47,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -69,7 +69,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       TitleWithBackButton(
                         child: Text(
                           widget.title,
-                          style: theme.textTheme.display2,
+                          style: theme.textTheme.headline3,
                         ),
                       )
                     ] +
@@ -111,15 +111,16 @@ class _NotificationsPageState extends State<NotificationsPage> {
       AsyncSnapshot<UnmodifiableListView<ntf.Notification>> snapshot,
       ThemeData theme,
       InstiAppBloc bloc) {
-    if (snapshot.hasData && snapshot.data.isNotEmpty) {
-      return snapshot.data
+    if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+      return snapshot.data!
           .map((n) => _buildNotificationTile(theme, bloc, n))
           .toList();
     } else {
       return [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-          child: Text.rich(TextSpan(style: theme.textTheme.title, children: [
+          child:
+              Text.rich(TextSpan(style: theme.textTheme.headline6, children: [
             TextSpan(text: "No new "),
             TextSpan(
                 text: "notifications",
@@ -163,7 +164,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
         ),
       ),
       onDismissed: (direction) async {
-        await _scaffoldKey.currentState
+        await ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(
               content: Text("Marked \"${notification.getTitle()}\" as read "),
               action: SnackBarAction(
@@ -181,17 +182,18 @@ class _NotificationsPageState extends State<NotificationsPage> {
         setState(() {});
       },
       child: ListTile(
-        title: Text(notification.getTitle()),
-        subtitle: Text(notification.getSubtitle()),
+        title: Text(notification.getTitle() ?? ""),
+        subtitle: Text(notification.getSubtitle() ?? ""),
         leading: NullableCircleAvatar(
-          notification.getAvatarUrl(),
+          notification.getAvatarUrl() ?? "",
           Icons.notifications_outlined,
-          heroTag: notification.getID(),
+          heroTag: notification.getID() ?? "",
         ),
         onTap: () {
           if (notification.isBlogPost) {
             Navigator.of(context).pushNamed(
-                notification.getBlogPost().link.contains("training")
+                (notification.getBlogPost().link?.contains("internship") ??
+                        false)
                     ? "/trainblog"
                     : "/placeblog");
           } else if (notification.isEvent) {

@@ -5,6 +5,7 @@ import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
+import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -20,10 +21,14 @@ class _FeedPageState extends State<FeedPage> {
 
   bool firstBuild = true;
 
+  IconData actionIcon = Icons.search_outlined;
+
+  bool searchMode = false;
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
     if (firstBuild) {
       bloc.updateEvents();
       firstBuild = false;
@@ -58,7 +63,7 @@ class _FeedPageState extends State<FeedPage> {
                 semanticLabel: "Show bottom sheet",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -71,9 +76,43 @@ class _FeedPageState extends State<FeedPage> {
             slivers: [
               SliverToBoxAdapter(
                 child: TitleWithBackButton(
-                  child: Text(
-                    "Feed",
-                    style: theme.textTheme.display2,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          "Feed",
+                          style: theme.textTheme.headline3,
+                        ),
+                      ),
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 500),
+                        width: searchMode ? 0.0 : null,
+                        height: searchMode ? 0.0 : null,
+                        decoration: ShapeDecoration(
+                            shape: CircleBorder(
+                                side: BorderSide(color: theme.primaryColor))),
+                        child: searchMode
+                            ? SizedBox()
+                            : IconButton(
+                                tooltip: "Search ${""}",
+                                padding: EdgeInsets.all(16.0),
+                                icon: Icon(
+                                  actionIcon,
+                                  color: theme.primaryColor,
+                                ),
+                                color: theme.cardColor,
+                                onPressed: () {
+                                  setState(() {
+                                    actionIcon = Icons.close_outlined;
+                                    ExplorePage.navigateWith(context, true);
+                                  });
+                                },
+                              ),
+                      )
+                    ],
                   ),
                 ),
               ),
@@ -82,12 +121,12 @@ class _FeedPageState extends State<FeedPage> {
                 builder: (context,
                     AsyncSnapshot<UnmodifiableListView<Event>> snapshot) {
                   if (snapshot.hasData) {
-                    if (snapshot.data.length > 0) {
+                    if (snapshot.data!.length > 0) {
                       return SliverList(
                         delegate: SliverChildBuilderDelegate(
                             (context, index) =>
-                                _buildEvent(theme, bloc, snapshot.data[index]),
-                            childCount: snapshot.data.length),
+                                _buildEvent(theme, bloc, snapshot.data![index]),
+                            childCount: snapshot.data!.length),
                       );
                     } else {
                       return SliverToBoxAdapter(
@@ -122,7 +161,7 @@ class _FeedPageState extends State<FeedPage> {
   }
 
   Widget _buildEvent(ThemeData theme, InstiAppBloc bloc, Event event) {
-    if (event.eventBigImage ?? false) {
+    if (event.eventBigImage) {
       return InkWell(
         onTap: () {
           _openEventPage(bloc, event);
@@ -131,15 +170,17 @@ class _FeedPageState extends State<FeedPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Hero(
-              tag: event.eventID,
+              tag: event.eventID ?? "",
               child: Material(
                 type: MaterialType.transparency,
                 child: Ink.image(
                   child: Container(),
                   image: CachedNetworkImageProvider(
-                    event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+                    event.eventImageURL ??
+                        event.eventBodies?[0].bodyImageURL ??
+                        "",
                   ),
-                  height: 200,
+                  height: MediaQuery.of(context).size.width * 0.6,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -148,8 +189,8 @@ class _FeedPageState extends State<FeedPage> {
               contentPadding:
                   EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               title: Text(
-                event.eventName,
-                style: theme.textTheme.title,
+                event.eventName ?? "",
+                style: theme.textTheme.headline6,
               ),
               enabled: true,
               subtitle: Text(event.getSubTitle()),
@@ -160,14 +201,14 @@ class _FeedPageState extends State<FeedPage> {
     } else {
       return ListTile(
         title: Text(
-          event.eventName,
-          style: theme.textTheme.title,
+          event.eventName ?? "",
+          style: theme.textTheme.headline6,
         ),
         enabled: true,
         leading: NullableCircleAvatar(
-          event.eventImageURL ?? event.eventBodies[0].bodyImageURL,
+          event.eventImageURL ?? event.eventBodies?[0].bodyImageURL ?? "",
           Icons.event_outlined,
-          heroTag: event.eventID,
+          heroTag: event.eventID ?? "",
         ),
         subtitle: Text(event.getSubTitle()),
         onTap: () {
