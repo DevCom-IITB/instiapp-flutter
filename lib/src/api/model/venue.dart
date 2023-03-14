@@ -1,44 +1,58 @@
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-part 'venue.jser.dart';
+part 'venue.g.dart';
 
+@JsonSerializable()
 class Venue {
-  @Alias("id")
-  String venueID;
+  @JsonKey(name: "id")
+  String? venueID;
 
-  @Alias("name")
-  String venueName;
+  @JsonKey(name: "name")
+  String? venueName;
 
-  @Alias("short_name")
-  String venueShortName;
+  @JsonKey(name: "short_name")
+  String? venueShortName;
 
-  @Alias("description")
-  String venueDescripion;
+  @JsonKey(name: "description")
+  String? venueDescripion;
 
-  @Alias("parent")
-  String venueParentId;
+  @JsonKey(name: "parent")
+  String? venueParentId;
 
-  @Alias("parent_relation")
-  String venueParentRelation;
+  @JsonKey(name: "parent_relation")
+  String? venueParentRelation;
 
-  @Alias("group_id")
-  int venueGroupId;
+  @JsonKey(name: "group_id")
+  int? venueGroupId;
 
-  @Alias("pixel_x")
-  int venuePixelX;
+  @JsonKey(name: "pixel_x")
+  int? venuePixelX;
 
-  @Alias("pixel_y")
-  int venuePixelY;
+  @JsonKey(name: "pixel_y")
+  int? venuePixelY;
 
-  @Alias("reusable")
-  bool venueReusable;
+  @JsonKey(name: "reusable")
+  bool? venueReusable;
 
-  @Alias("lat")
-  String venueLatitude;
+  @JsonKey(name: "lat")
+  String? venueLatitude;
 
-  @Alias("lng")
-  String venueLongitude;
+  @JsonKey(name: "lng")
+  String? venueLongitude;
+
+  Venue(
+      {this.venueID,
+      this.venueName,
+      this.venueShortName,
+      this.venueDescripion,
+      this.venueParentId,
+      this.venueParentRelation,
+      this.venueGroupId,
+      this.venuePixelX,
+      this.venuePixelY,
+      this.venueReusable,
+      this.venueLatitude,
+      this.venueLongitude});
+  factory Venue.fromJson(Map<String, dynamic> json) => _$VenueFromJson(json);
+  Map<String, dynamic> toJson() => _$VenueToJson(this);
 }
-
-@GenSerializer()
-class VenueSerializer extends Serializer<Venue> with _$VenueSerializer {}

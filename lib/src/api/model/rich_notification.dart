@@ -1,28 +1,39 @@
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-part 'rich_notification.jser.dart';
+part 'rich_notification.g.dart';
 
+@JsonSerializable()
 class RichNotification {
-  @Alias("type")
-  String notificationType;
-  @Alias("id")
-  String notificationObjectID;
-  @Alias("extra")
-  String notificationExtra;
-  @Alias("notification_id")
-  String notificationID;
-  @Alias("title")
-  String notificationTitle;
-  @Alias("verb")
-  String notificationVerb;
-  @Alias("large_icon")
-  String notificationLargeIcon;
-  @Alias("large_content")
-  String notificationLargeContent;
-  @Alias("image_url")
-  String notificationImage;
-}
+  @JsonKey(name: "type")
+  String? notificationType;
+  @JsonKey(name: "id")
+  String? notificationObjectID;
+  @JsonKey(name: "extra")
+  String? notificationExtra;
+  @JsonKey(name: "notification_id")
+  String? notificationID;
+  @JsonKey(name: "title")
+  String? notificationTitle;
+  @JsonKey(name: "verb")
+  String? notificationVerb;
+  @JsonKey(name:"large_icon")
+  String? notificationLargeIcon;
+  @JsonKey(name: "large_content")
+  String? notificationLargeContent;
+  @JsonKey(name: "image_url")
+  String? notificationImage;
 
-@GenSerializer()
-class RichNotificationSerializer extends Serializer<RichNotification>
-    with _$RichNotificationSerializer {}
+  RichNotification(
+      {this.notificationType,
+      this.notificationObjectID,
+      this.notificationExtra,
+      this.notificationID,
+      this.notificationTitle,
+      this.notificationVerb,
+      this.notificationLargeIcon,
+      this.notificationLargeContent,
+      this.notificationImage});
+  factory RichNotification.fromJson(Map<String, dynamic> json) =>
+      _$RichNotificationFromJson(json);
+  Map<String, dynamic> toJson() => _$RichNotificationToJson(this);
+}

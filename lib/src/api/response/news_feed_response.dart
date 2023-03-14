@@ -1,15 +1,19 @@
 import 'package:InstiApp/src/api/model/event.dart';
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-part 'news_feed_response.jser.dart';
 
+part 'news_feed_response.g.dart';
+
+@JsonSerializable()
 class NewsFeedResponse {
-  @Alias("data")
-  List<Event> events;
-  @Alias("count")
-  int count;
-}
+  @JsonKey(name: "data")
+  List<Event>? events;
+  @JsonKey(name: "count")
+  int? count;
 
-@GenSerializer()
-class NewsFeedResponseSerializer extends Serializer<NewsFeedResponse>
-    with _$NewsFeedResponseSerializer {}
+  NewsFeedResponse(this.events, this.count);
+  
+  factory NewsFeedResponse.fromJson(Map<String, dynamic> json) =>
+      _$NewsFeedResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$NewsFeedResponseToJson(this);
+}
