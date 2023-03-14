@@ -1,68 +1,92 @@
 import 'package:InstiApp/src/api/model/user.dart';
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-part 'venter.jser.dart';
+part 'venter.g.dart';
 
+@JsonSerializable()
 class Complaint {
-  @Alias("id")
-  String complaintID;
-  @Alias("created_by")
-  User complaintCreatedBy;
-  @Alias("description")
-  String description;
-  @Alias("suggestions")
-  String suggestions;
-  @Alias("location_details")
-  String locationDetails;
-  @Alias("report_date")
-  String complaintReportDate;
-  @Alias("status")
-  String status;
-  @Alias("latitude")
-  double latitude;
-  @Alias("longitude")
-  double longitude;
-  @Alias("location_description")
-  String locationDescription;
-  @Alias("tags")
-  List<TagUri> tags;
-  @Alias("comments")
-  List<Comment> comments;
-  @Alias("users_up_voted")
-  List<User> usersUpVoted;
-  @Alias("images")
-  List<String> images;
-  @Alias("is_subscribed")
-  bool isSubscribed;
-  int voteCount;
+  @JsonKey(name: "id")
+  String? complaintID;
+  @JsonKey(name: "created_by")
+  User? complaintCreatedBy;
+  @JsonKey(name: "description")
+  String? description;
+  @JsonKey(name: "suggestions")
+  String? suggestions;
+  @JsonKey(name: "location_details")
+  String? locationDetails;
+  @JsonKey(name: "report_date")
+  String? complaintReportDate;
+  @JsonKey(name: "status")
+  String? status;
+  @JsonKey(name: "latitude")
+  double? latitude;
+  @JsonKey(name: "longitude")
+  double? longitude;
+  @JsonKey(name: "location_description")
+  String? locationDescription;
+  @JsonKey(name: "tags")
+  List<TagUri>? tags;
+  @JsonKey(name: "comments")
+  List<Comment>? comments;
+  @JsonKey(name: "users_up_voted")
+  List<User>? usersUpVoted;
+  @JsonKey(name: "images")
+  List<String>? images;
+  @JsonKey(name: "is_subscribed")
+  bool? isSubscribed;
+  int? voteCount;
+
+  Complaint(
+      {this.complaintID,
+      this.complaintCreatedBy,
+      this.description,
+      this.suggestions,
+      this.locationDetails,
+      this.complaintReportDate,
+      this.status,
+      this.latitude,
+      this.longitude,
+      this.locationDescription,
+      this.tags,
+      this.comments,
+      this.usersUpVoted,
+      this.images,
+      this.isSubscribed,
+      this.voteCount});
+  factory Complaint.fromJson(Map<String, dynamic> json) =>
+      _$ComplaintFromJson(json);
+  Map<String, dynamic> toJson() => _$ComplaintToJson(this);
 }
 
+@JsonSerializable()
 class TagUri {
-  @Alias("id")
-  String id;
-  @Alias("tag_uri")
-  String tagUri;
+  @JsonKey(name: "id")
+  String? id;
+  @JsonKey(name: "tag_uri")
+  String? tagUri;
+
+  TagUri({this.id, this.tagUri});
+  factory TagUri.fromJson(Map<String, dynamic> json) =>
+      _$TagUriFromJson(json);
+  Map<String, dynamic> toJson() => _$TagUriToJson(this);
 }
 
+@JsonSerializable()
 class Comment {
-  @Alias("id")
-  String id;
-  @Alias("time")
-  String time;
-  @Alias("text")
-  String text;
-  @Alias("commented_by")
-  User commentedBy;
-  @Alias("complaint")
-  String complaintID;
+  @JsonKey(name: "id")
+  String? id;
+  @JsonKey(name: "time")
+  String? time;
+  @JsonKey(name: "text")
+  String? text;
+  @JsonKey(name: "commented_by")
+  User? commentedBy;
+  @JsonKey(name: "complaint")
+  String? complaintID;
+
+  Comment(
+      {this.id, this.time, this.text, this.commentedBy, this.complaintID});
+  factory Comment.fromJson(Map<String, dynamic> json) => _$CommentFromJson(json);
+  Map<String, dynamic> toJson() => _$CommentToJson(this);
 }
-
-@GenSerializer()
-class ComplaintSerializer extends Serializer<Complaint>
-    with _$ComplaintSerializer {}
-
-@GenSerializer()
-class TagUriSerializer extends Serializer<TagUri> with _$TagUriSerializer {}
-
-@GenSerializer()
-class CommentSerializer extends Serializer<Comment> with _$CommentSerializer {}

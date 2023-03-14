@@ -1,5 +1,6 @@
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
@@ -26,7 +27,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context).bloc;
+    var bloc = BlocProvider.of(context)!.bloc;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -43,7 +44,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 semanticLabel: "Show Navigation Drawer",
               ),
               onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -52,12 +53,12 @@ class _SettingsPageState extends State<SettingsPage> {
       body: SafeArea(
         child: StreamBuilder(
             stream: bloc.session,
-            builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
               var children = <Widget>[
                 TitleWithBackButton(
                   child: Text(
                     "Settings",
-                    style: theme.textTheme.display2,
+                    style: theme.textTheme.headline3,
                   ),
                 )
               ];
@@ -68,7 +69,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         horizontal: 28.0, vertical: 12.0),
                     child: Text(
                       "Profile settings",
-                      style: theme.textTheme.title.copyWith(
+                      style: theme.textTheme.headline6?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: theme.primaryColor),
                     ),
@@ -81,9 +82,10 @@ class _SettingsPageState extends State<SettingsPage> {
                         : Icon(Icons.contact_phone_outlined),
                     title: Text("Show contact number"),
                     subtitle: Text("Toggle visibility on your profile"),
-                    value: snapshot.data.profile.userShowContactNumber,
+                    value:
+                        snapshot.data?.profile?.userShowContactNumber ?? false,
                     onChanged: updatingSCN
-                        ? null
+                        ? (_) {}
                         : (bool showContactNumber) async {
                             setState(() {
                               updatingSCN = true;
@@ -103,8 +105,11 @@ class _SettingsPageState extends State<SettingsPage> {
                     title: Text("Update Profile"),
                     subtitle: Text("Update personal details on SSO"),
                     onTap: () async {
-                      if (await canLaunch(updateProfileUrl)) {
-                        await launch(updateProfileUrl);
+                      if (await canLaunchUrl(Uri.parse(updateProfileUrl))) {
+                        await launchUrl(
+                          Uri.parse(updateProfileUrl),
+                          mode: LaunchMode.externalApplication,
+                        );
                       }
                     },
                   ),
@@ -137,7 +142,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       left: 28.0, right: 28.0, top: 8.0, bottom: 24.0),
                   child: Text(
                     "App settings",
-                    style: theme.textTheme.title.copyWith(
+                    style: theme.textTheme.headline6?.copyWith(
                         fontWeight: FontWeight.bold, color: theme.primaryColor),
                   ),
                 ),
@@ -145,8 +150,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 28.0),
                   child: Text(
                     "Default Homepage",
-                    style: theme.textTheme.body1.copyWith(
-                        fontWeight: FontWeight.bold, color: theme.accentColor),
+                    style: theme.textTheme.bodyText2?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.secondary),
                   ),
                 ),
                 Padding(
@@ -160,19 +166,22 @@ class _SettingsPageState extends State<SettingsPage> {
                       "/feed": "Feed",
                       "/quicklinks": "Quick Links",
                       "/news": "News",
+                      "/InSeek": "InSeek",
                       "/explore": "Explore",
                       "/calendar": "Calendar",
-                      "/complaints": "Complaints/Suggestions",
-                      // "/map": "Insti Map",
+                      // "/complaints": "Complaints/Suggestions",
+                      "/map": "Map",
                       // "/settings": "Settings",
+                      //TODO: Change to communities
+                      "/groups": "Insight Discussion Forum",
                     }.entries.map((entry) {
                       return DropdownMenuItem<String>(
                         value: entry.key,
                         child: Text(entry.value),
                       );
                     }).toList(),
-                    onChanged: (String s) {
-                      bloc.updateHomepage(s);
+                    onChanged: (String? s) {
+                      bloc.updateHomepage(s ?? "");
                       setState(() {});
                     },
                     value: bloc.homepageName,
@@ -183,8 +192,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       top: 16.0, bottom: 12.0, left: 28.0, right: 28.0),
                   child: Text(
                     "App Theme",
-                    style: theme.textTheme.body1.copyWith(
-                        fontWeight: FontWeight.bold, color: theme.accentColor),
+                    style: theme.textTheme.bodyText2?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.secondary),
                   ),
                 ),
                 RadioListTile<AppBrightness>(
@@ -192,7 +202,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: AppBrightness.light,
                   groupValue: bloc.brightness,
                   onChanged: (v) {
-                    bloc.brightness = v;
+                    if (v != null) bloc.brightness = v;
                   },
                 ),
                 RadioListTile<AppBrightness>(
@@ -200,7 +210,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: AppBrightness.dark,
                   groupValue: bloc.brightness,
                   onChanged: (v) {
-                    bloc.brightness = v;
+                    if (v != null) bloc.brightness = v;
                   },
                 ),
                 RadioListTile<AppBrightness>(
@@ -208,7 +218,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: AppBrightness.black,
                   groupValue: bloc.brightness,
                   onChanged: (v) {
-                    bloc.brightness = v;
+                    if (v != null) bloc.brightness = v;
                   },
                 ),
                 ListTile(
@@ -227,14 +237,14 @@ class _SettingsPageState extends State<SettingsPage> {
                           return AlertDialog(
                             title: Text("Select Primary Color"),
                             content: MaterialColorPicker(
-                              allowShades: true,
-                              onColorChange: (c) {
-                                bloc.primaryColor = c;
+                              onMainColorChange: (c) {
+                                bloc.primaryColor = c ?? appColors[0];
                               },
                               selectedColor: bloc.primaryColor,
+                              colors: appColors,
                             ),
                             actions: <Widget>[
-                              FlatButton(
+                              TextButton(
                                 child: Text("Okay"),
                                 onPressed: () {
                                   Navigator.of(context).pop();
@@ -261,13 +271,14 @@ class _SettingsPageState extends State<SettingsPage> {
                           return AlertDialog(
                             title: Text("Select Accent Color"),
                             content: MaterialColorPicker(
-                              onColorChange: (c) {
-                                bloc.accentColor = c;
+                              onMainColorChange: (c) {
+                                bloc.accentColor = c ?? appColors[0];
                               },
                               selectedColor: bloc.accentColor,
+                              colors: appColors,
                             ),
                             actions: <Widget>[
-                              FlatButton(
+                              TextButton(
                                 child: Text("Okay"),
                                 onPressed: () {
                                   Navigator.of(context).pop();
@@ -280,7 +291,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 28.0),
-                  child: OutlineButton.icon(
+                  child: OutlinedButton.icon(
                     icon: Icon(Icons.restore_outlined),
                     label: Text("Restore Default Theme"),
                     onPressed: () {
@@ -297,8 +308,11 @@ class _SettingsPageState extends State<SettingsPage> {
                   subtitle:
                       Text("Report technical issues or suggest new features"),
                   onTap: () async {
-                    if (await canLaunch(feedbackUrl)) {
-                      await launch(feedbackUrl);
+                    if (await canLaunchUrl(Uri.parse(feedbackUrl))) {
+                      await launchUrl(
+                        Uri.parse(feedbackUrl),
+                        mode: LaunchMode.externalApplication,
+                      );
                     }
                   },
                 ),

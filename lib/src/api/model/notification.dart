@@ -1,33 +1,33 @@
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/post.dart';
-import 'package:InstiApp/src/api/model/serializers.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
-import 'package:jaguar_serializer/jaguar_serializer.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-part 'notification.jser.dart';
+part 'notification.g.dart';
 
 const String TYPE_EVENT = "event";
 const String TYPE_NEWSENTRY = "newsentry";
 const String TYPE_BLOG = "blogentry";
 const String TYPE_COMPLAINT_COMMENT = "complaintcomment";
 
+@JsonSerializable()
 class Notification {
-  @Alias("id")
-  int notificationId;
+  @JsonKey(name: "id")
+  int? notificationId;
 
-  @Alias("verb")
-  String notificationVerb;
+  @JsonKey(name: "verb")
+  String? notificationVerb;
 
-  @Alias("unread")
-  bool notificationUnread;
+  @JsonKey(name: "unread")
+  bool? notificationUnread;
 
-  @Alias("actor_type")
-  String notificationActorType;
+  @JsonKey(name: "actor_type")
+  String? notificationActorType;
 
-  @Alias("actor")
-  Object notificationActor;
+  @JsonKey(name: "actor")
+  Map<String, dynamic>? notificationActor;
 
-  String getTitle() {
+  String? getTitle() {
     if (isEvent) {
       return getEvent().eventName;
     } else if (isNews) {
@@ -36,53 +36,53 @@ class Notification {
       return getBlogPost().title;
     } else if (isComplaintComment) {
       var comment = getComment();
-      return "\"${comment.text}\" by ${comment.commentedBy.userName}";
+      return "\"${comment.text}\" by ${comment.commentedBy!.userName}";
     }
     return "Notification";
   }
 
-  String getSubtitle() {
+  String? getSubtitle() {
     return notificationVerb;
   }
 
-  String getAvatarUrl() {
+  String? getAvatarUrl() {
     if (isEvent) {
       var ev = getEvent();
-      return ev.eventImageURL ?? ev.eventBodies[0].bodyImageURL;
+      return ev.eventImageURL ?? ev.eventBodies![0].bodyImageURL;
     } else if (isNews) {
-      return getNews().body.bodyImageURL;
+      return getNews().body!.bodyImageURL;
     } else if (isComplaintComment) {
-      return getComment().commentedBy.userProfilePictureUrl;
+      return getComment().commentedBy!.userProfilePictureUrl;
     }
     return null;
   }
 
-  bool get isEvent => notificationActorType.contains(TYPE_EVENT);
+  bool get isEvent => notificationActorType!.contains(TYPE_EVENT);
 
-  bool get isNews => notificationActorType.contains(TYPE_NEWSENTRY);
+  bool get isNews => notificationActorType!.contains(TYPE_NEWSENTRY);
 
-  bool get isBlogPost => notificationActorType.contains(TYPE_BLOG);
+  bool get isBlogPost => notificationActorType!.contains(TYPE_BLOG);
 
   bool get isComplaintComment =>
-      notificationActorType.contains(TYPE_COMPLAINT_COMMENT);
+      notificationActorType!.contains(TYPE_COMPLAINT_COMMENT);
 
   Event getEvent() {
-    return standardSerializers.oneFrom<Event>(notificationActor);
+    return Event.fromJson(notificationActor!);
   }
 
   NewsArticle getNews() {
-    return standardSerializers.oneFrom<NewsArticle>(notificationActor);
+    return NewsArticle.fromJson(notificationActor!);
   }
 
   Post getBlogPost() {
-    return standardSerializers.oneFrom<Post>(notificationActor);
+    return Post.fromJson(notificationActor!);
   }
 
   Comment getComment() {
-    return standardSerializers.oneFrom<Comment>(notificationActor);
+    return Comment.fromJson(notificationActor!);
   }
 
-  String getID() {
+  String? getID() {
     if (isEvent) {
       return getEvent().eventID;
     } else if (isNews) {
@@ -94,8 +94,17 @@ class Notification {
     }
     return "";
   }
-}
 
-@GenSerializer()
-class NotificationSerializer extends Serializer<Notification>
-    with _$NotificationSerializer {}
+  Notification({
+    this.notificationId,
+    this.notificationVerb,
+    this.notificationUnread,
+    this.notificationActorType,
+    this.notificationActor,
+  });
+
+  factory Notification.fromJson(Map<String, dynamic> json) =>
+      _$NotificationFromJson(json);
+  
+  Map<String, dynamic> toJson() => _$NotificationToJson(this);
+}
