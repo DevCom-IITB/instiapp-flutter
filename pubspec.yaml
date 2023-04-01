@@ -47,7 +47,7 @@ dependencies:
   flutter_dynamic_icon: ^2.0.0
   device_calendar: ^4.2.0
   dropdown_search: ^2.0.1
-  multi_select_flutter: ^4.0.0
+  multi_select_flutter: 4.0.0
   retrofit: ^3.0.0
   logger: any
   dio: ^4.0.4
