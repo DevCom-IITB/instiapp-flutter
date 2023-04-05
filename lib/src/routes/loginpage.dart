@@ -151,37 +151,38 @@ class _LoginPageState extends State<LoginPage> {
         : webview.WebView(
             javascriptMode: webview.JavascriptMode.unrestricted,
             initialUrl: loginurl,
-            onPageStarted: (url) async {
-              if (url.startsWith(successUrl)) {
-                var uri = Uri.parse(url);
-                var code = uri.queryParameters['code'];
-
-                setState(() {
-                  loading = true;
-                });
-                await login(
-                    code ?? "", "https://www.insti.app/login-android.html");
-                setState(() {
-                  loading = false;
-                });
-              } else if (url.startsWith(guestUrl)) {
-                setState(() {
-                  loading = true;
-                });
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil(_bloc!.homepageName, (r) => false);
-              } else if (url.startsWith(alumniUrl)) {
-                // print(alumniUrl);
-                setState(() {
-                  loading = true;
-                });
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    _bloc!.alumniLoginPage, (r) => false);
-              }
-            },
-            onPageFinished: (url) {},
+            onPageStarted: checkPageUrl,
+            onPageFinished: checkPageUrl,
             gestureNavigationEnabled: true,
           );
+  }
+
+  Future<void> checkPageUrl(String url) async {
+    if (url.startsWith(successUrl)) {
+      var uri = Uri.parse(url);
+      var code = uri.queryParameters['code'];
+
+      setState(() {
+        loading = true;
+      });
+      await login(code ?? "", "https://www.insti.app/login-android.html");
+      setState(() {
+        loading = false;
+      });
+    } else if (url.startsWith(guestUrl)) {
+      setState(() {
+        loading = true;
+      });
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(_bloc!.homepageName, (r) => false);
+    } else if (url.startsWith(alumniUrl)) {
+      // print(alumniUrl);
+      setState(() {
+        loading = true;
+      });
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(_bloc!.alumniLoginPage, (r) => false);
+    }
   }
 
   Future<void> startLoginPageServer() async {
