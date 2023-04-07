@@ -1,3 +1,4 @@
+import 'package:InstiApp/src/routes/categorypagebuyandsell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
@@ -92,7 +93,7 @@ class _SellpageState extends State<Sellpage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context).pushNamed("");
+            Navigator.of(context).pushNamed("/lib/src/routes/categorypagebuyandsell.dart");
           },
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
