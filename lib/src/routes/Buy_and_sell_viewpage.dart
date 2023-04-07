@@ -92,7 +92,7 @@ class _SellpageState extends State<Sellpage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context).pushNamed("");
+            Navigator.of(context).pushNamed("/buyandsell/category");
           },
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
