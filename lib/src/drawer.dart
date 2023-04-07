@@ -182,6 +182,16 @@ class _NavDrawerState extends State<NavDrawer> {
                         highlight: indexSnapshot.data == 9,
                         selected: indexSnapshot.data == 9,
                       ),
+                      16: NavListTile(
+                        icon: Icons.currency_rupee_outlined,
+                        title: "Buy and Sell",
+                        onTap: () {
+                          changeSelection(9, drawerState!);
+                          navigateNamed('/buyandsell');
+                        },
+                        highlight: indexSnapshot.data == 9,
+                        selected: indexSnapshot.data == 9,
+                      ),
                       8: NavExpansionTile(
                         title: "Utilities",
                         initiallyExpanded: indexSnapshot.data == 8 ||
@@ -230,8 +240,11 @@ class _NavDrawerState extends State<NavDrawer> {
                             highlight: indexSnapshot.data == 12,
                             selected: indexSnapshot.data == 12,
                           ),
+
                         ],
+
                       ),
+
                       // 13: NavListTile(
                       //   icon: Icons.query_stats,
                       //   title: "FAQs",
