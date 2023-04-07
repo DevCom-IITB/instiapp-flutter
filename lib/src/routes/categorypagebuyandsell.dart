@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MaterialApp(
-  home: Home(),
-));
 
-class Home extends StatelessWidget {
+
+class CategoryPage extends StatelessWidget {
   @override
-  const Home({Key? key}) : super(key: key);
+  const CategoryPage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
