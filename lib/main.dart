@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:InstiApp/src/routes/Buy_and_sell_viewpage.dart';
 import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
@@ -308,6 +309,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, ExplorePage());
                 case "/calendar":
                   return _buildRoute(settings, CalendarPage());
+                case "/buyandsell":
+                  return _buildRoute(settings, Sellpage());
+
                 // case "/complaints":
                 //   return _buildRoute(settings, ComplaintsPage());
                 // case "/newcomplaint":
