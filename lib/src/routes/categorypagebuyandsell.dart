@@ -1,38 +1,40 @@
-import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart';
+import 'package:InstiApp/src/drawer.dart';
 
 class category extends StatelessWidget {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   @override
-  const category({Key? key}) : super(key: key);
+  category({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       ////////////////////////////////////////////////////////////////////////
-      appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 33, 150, 243),
-        title: Row(
-          children: [
-            IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.menu_rounded),
-              iconSize: 30,
-            ),
-            Spacer(),
-            IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.filter_list),
-              iconSize: 30,
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.search),
-              iconSize: 30,
-            )
-          ],
-        ),
-      ),
+      key: _scaffoldKey,
+      drawer: NavDrawer(),
+        bottomNavigationBar: BottomAppBar(
+          // color: Colors.blue,
+          child: Row(
+            children: [
 
-      ///////////////////////////////////////////////////////////////////////
+              IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.menu_rounded, color: Colors.white,),
+                iconSize: 30,
+              ),
+              Spacer(),
+             // Text("Buy N Sell"),
+
+              IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.search,color: Colors.white,),
+                iconSize: 30,
+              )
+            ],
+          ),
+        ),
+      //
+      //       ///////////////////////////////////////////////////////////////////////
 
       body:
       SingleChildScrollView(
@@ -42,9 +44,22 @@ class category extends StatelessWidget {
             children : <Widget>[
 
               Padding(
-                padding: const EdgeInsets.fromLTRB(45.0, 50.0, 0.0, 30.0),
+                padding: const EdgeInsets.fromLTRB(10, 80, 0, 0),
+                child: Container(
+                    padding: EdgeInsets.fromLTRB(10.0, 4, 15.0, 2),
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamed("/buyandsell");
+                      },
+                      child: Icon(Icons.arrow_back_ios_outlined,color: Colors.black),
+                    )),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.fromLTRB(45.0, 0.0, 0.0, 30.0),
                 child: Row(
                   children: <Widget>[
+
                     Container(
                       child : Text("Choose post category ",
                         style: TextStyle(fontSize: 30),
