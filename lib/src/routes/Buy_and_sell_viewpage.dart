@@ -3,9 +3,14 @@ import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -44,7 +49,7 @@ class _SellpageState extends State<Sellpage> {
 
     try {
       final res =
-          await http.get(Uri.parse("$_baseUrl?_page=$_page&_limit=$_limit"));
+      await http.get(Uri.parse("$_baseUrl?_page=$_page&_limit=$_limit"));
       setState(() {
         _posts = json.decode(res.body);
       });
@@ -66,6 +71,15 @@ class _SellpageState extends State<Sellpage> {
   }
 
   Widget build(BuildContext context) {
+    double screen_wr = MediaQuery.of(context).size.width;
+    double screen_hr = MediaQuery.of(context).size.height;
+    double x, y;
+
+    screen_hr >= screen_wr ? x = 0.35 : x = 0.73;
+    screen_hr >= screen_wr ? y = 0.9 : y = 0.49;
+    double screen_w = screen_wr * y;
+    double screen_h = screen_hr * x;
+    double myfont = ((18 / 274.4) * screen_h);
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 33, 150, 243),
@@ -95,7 +109,7 @@ class _SellpageState extends State<Sellpage> {
             Navigator.of(context).pushNamed("/buyandsell/category");
           },
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: Icon(
             Icons.add,
             size: 30,
@@ -103,140 +117,161 @@ class _SellpageState extends State<Sellpage> {
         ),
         body: _isFirstLoadRunning
             ? const Center(
-                child: CircularProgressIndicator(),
-              )
+          child: CircularProgressIndicator(),
+        )
             : Center(
-                child: ListView.builder(
-                  itemCount: _posts.length,
-                  itemBuilder: (_, index) => (SizedBox(
-                    height: 290,
-                    width: 400,
-                    child: Card(
-                      color: Color.fromARGB(450, 242, 243, 244),
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                      child: SizedBox(
-                          child: Stack(
-                        children: [
-                          Column(
-                            children: [
-                              SizedBox(
-                                height: 170,
-                                width: 400,
-                                child: FittedBox(
-                                  child: Center(
+            child: ListView.builder(
+              itemCount: _posts.length,
+              itemBuilder: (_, index) => Center(
+                child: (SizedBox(
+                  height: screen_h,
+                  width: screen_w,
+                  child: Card(
+                    color: Color.fromARGB(450, 242, 243, 244),
+                    margin:
+                    EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                    child: SizedBox(
+                        child: Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(10),
+                                  topLeft: Radius.circular(10)),
+                              child: Column(
+                                children: [
+                                  Center(
+                                    child: Container(
+                                      color: Colors.red,
+                                      height: screen_h * 0.55,
+                                      width: screen_w,
+                                      child: Image.network(
+                                        "https://images.unsplash.com/photo-1559348349-86f1f65817fe?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8Y3ljbGV8ZW58MHx8MHx8&auto=format&fit=crop&w=900&q=60" // _posts[index]['imageUrl']
+                                        ,
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                print("Hello");
+                              },
+                            ),
+                            Container(
+                              margin: EdgeInsets.fromLTRB(
+                                  10, screen_h * 0.245 / 0.43, 0, 0),
+                              child: Text(
+                                _posts[index]['item_name'],
+                                style: TextStyle(
+                                    fontSize: (myfont.toInt()).toDouble(),
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                            Container(
+                                margin: EdgeInsets.fromLTRB(
+                                    0, screen_h * 0.28 / 0.43, 18, 0),
+                                child: Row(
+                                  children: [
+                                    Spacer(),
+                                    Text(
+                                      _posts[index]['negotiable']
+                                          ? "Negotiable"
+                                          : "Non-Negotiable",
+                                      style: TextStyle(
+                                          fontSize: ((myfont / 18) * 10.toInt())
+                                              .toDouble()),
+                                    )
+                                  ],
+                                )),
+
+                            Container(
+                                margin: EdgeInsets.fromLTRB(
+                                    0, screen_h * 0.245 / 0.43, 18, 0),
+                                child: Row(
+                                  children: [
+                                    Spacer(),
+                                    Text(
+                                      "₹" + _posts[index]['price'].toString(),
+                                      style: TextStyle(
+                                          fontSize: (myfont.toInt()).toDouble(),
+                                          fontWeight: FontWeight.w800),
+                                    )
+                                  ],
+                                )),
+                            Container(
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.access_time,
+                                    size:
+                                    ((myfont / 18 * 12).toInt()).toDouble(),
+                                  ),
+                                  Text(
+                                    _posts[index]['time'],
+                                    style: TextStyle(
+                                        fontSize: ((myfont / 18 * 12).toInt())
+                                            .toDouble()),
+                                  ),
+                                ],
+                              ),
+                              margin: EdgeInsets.fromLTRB(
+                                  10, screen_h * 0.283 / 0.417, 0, 0),
+                            ),
+                            Container(
+                                child: Text(
+                                  "Condition: " +
+                                      _posts[index]['condition'].toString() +
+                                      "/10",
+                                  style: TextStyle(
+                                      fontSize: ((myfont / 18 * 12).toInt())
+                                          .toDouble()),
+                                ),
+                                margin: EdgeInsets.fromLTRB(
+                                    10, screen_h * 0.31 / 0.41, 0, 0)),
+                            Row(
+                              children: [
+                                Spacer(),
+                                Container(
+                                  margin: EdgeInsets.fromLTRB(
+                                      0, screen_h * 0.3 / 0.42, 15.2, 0),
+                                  child: SizedBox(
+                                    height: 30 / 274.4 * screen_h,
+                                    width: 80 / 340.5 * screen_w,
                                     child: ClipRRect(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(70),
-                                            topRight: Radius.circular(70),
-                                            bottomLeft: Radius.circular(0),
-                                            bottomRight: Radius.circular(0)),
-                                        child: Image.network(
-                                          _posts[index]['imageUrl'],
-                                          fit: BoxFit.cover,
+                                        borderRadius: BorderRadius.circular(5),
+                                        child: ElevatedButton(
+                                          onPressed: () {},
+                                          child: Text("Contact",
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                  fontSize:
+                                                  12.5 / 338 * screen_w)),
                                         )),
                                   ),
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                            ],
-                          ),
-                          InkWell(
-                            onTap: () {
-                              print("Hello");
-                            },
-                          ),
-                          Container(
-                            margin: EdgeInsets.fromLTRB(10, 177, 0, 0),
-                            child: Text(
-                              _posts[index]['item_name'],
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                          Container(
-                              margin: EdgeInsets.fromLTRB(0, 196, 18, 0),
-                              child: Row(
-                                children: [
-                                  Spacer(),
-                                  Text(
-                                    _posts[index]['negotiable']
-                                        ? "Negotiable"
-                                        : "Non-Negotiable",
-                                    style: TextStyle(fontSize: 10),
-                                  )
-                                ],
-                              )),
-                          Container(
-                              height: 33,
-                              margin: EdgeInsets.fromLTRB(226, 209, 0, 0),
-                              child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: Container(
-                                      color: Colors.lightBlueAccent,
-                                      child: TextButton(
-                                        onPressed: () {
-                                          print("Hiiiii");
-                                        },
-                                        child: Text(
-                                          "Contact",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      )))),
-                          Container(
-                              margin: EdgeInsets.fromLTRB(0, 175, 18, 0),
-                              child: Row(
-                                children: [
-                                  Spacer(),
-                                  Text(
-                                    "₹" + _posts[index]['price'].toString(),
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w800),
-                                  )
-                                ],
-                              )),
-                          Container(
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.access_time,
-                                  size: 12,
-                                ),
-                                Text(
-                                  _posts[index]['time'],
-                                  style: TextStyle(fontSize: 12),
                                 ),
                               ],
-                            ),
-                            margin: EdgeInsets.fromLTRB(10, 206, 0, 0),
-                          ),
-                          Container(
-                              child: Text(
-                                "Condition: " +
-                                    _posts[index]['condition'].toString() +
-                                    "/10",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                              margin: EdgeInsets.fromLTRB(10, 225, 0, 0))
-                          // Container(
-                          //     child: SizedBox(
-                          //       child: Container(
-                          //         child: LikeButton(
-                          //           bubblesSize: 0,
-                          //         ),
-                          //       ),
-                          //       height: 40,
-                          //       width: 40,
-                          //     ))
-                        ],
-                      )),
-                      elevation: 10,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                  )),
-                ),
-              ));
-  }
+                            )
+                            // Container(co
+                            //     child: SizedBox(
+                            //       child: Container(
+                            //         child: LikeButton(
+                            //           bubblesSize: 0,
+                            //         ),
+                            //       ),
+                            //       height: 40,
+                            //       width: 40,
+                            //     ))
+                          ],
+                        )),
+                    elevation: 10,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                )),
+              ),
+            ),
+            ));
+    }
 }
