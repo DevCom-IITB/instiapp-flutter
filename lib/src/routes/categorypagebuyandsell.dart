@@ -49,7 +49,7 @@ class category extends StatelessWidget {
                     padding: EdgeInsets.fromLTRB(10.0, 4, 15.0, 2),
                     child: TextButton(
                       onPressed: () {
-                        Navigator.of(context).pushNamed("/buyandsell");
+                        Navigator.of(context).pop();
                       },
                       child: Icon(Icons.arrow_back_ios_outlined,color: Colors.black),
                     )),
