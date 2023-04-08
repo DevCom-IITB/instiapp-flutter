@@ -167,7 +167,7 @@ class _BlogPageState extends State<BlogPage> {
         ),
       ),
       body: SafeArea(
-        child: StreamBuilder(
+        child: StreamB,   v  uilder(
           stream: bloc.session,
           builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
             if ((snapshot.hasData && snapshot.data != null) ||
