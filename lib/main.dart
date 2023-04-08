@@ -14,6 +14,7 @@ import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/routes/externalblogpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
+import 'package:InstiApp/src/routes/infoBuyAndSell.dart';
 import 'package:InstiApp/src/routes/mappage.dart';
 import 'package:InstiApp/src/routes/messcalendarpage.dart';
 // import 'package:InstiApp/src/routes/newcomplaintpage.dart';
@@ -315,6 +316,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, Sellpage());
                 case "/buyandsell/category":
                   return _buildRoute(settings, category());
+                case "/buyandsell/info":
+                  return _buildRoute(settings, Info());
+
                 // case "/complaints":
                 //   return _buildRoute(settings, ComplaintsPage());
                 // case "/newcomplaint":

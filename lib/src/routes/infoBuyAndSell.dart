@@ -1,19 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:InstiApp/src/drawer.dart';
 
 
 
 class Info extends StatelessWidget {
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
     return Container(
         height: (MediaQuery.of(context).size.height),
         width: (MediaQuery.of(context).size.width),
         child: Scaffold(
-            appBar: AppBar(
-              leading: Icon(Icons.menu_outlined),
-              title: Text('Buy N Sell/Lost N Found'),
-            ), //AppBar
+
+            key: _scaffoldKey,
+            drawer: NavDrawer(),
+            bottomNavigationBar: BottomAppBar(
+              // color: Colors.blue,
+              child: Row(
+                children: [
+
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.menu_rounded, color: Colors.white,),
+                    iconSize: 30,
+                  ),
+                  Spacer(),
+                  // Text("Buy N Sell"),
+
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.search,color: Colors.white,),
+                    iconSize: 30,
+                  )
+                ],
+              ),
+            ),
             body: Column(children: <Widget>[
               Expanded(
                   flex: 1,
@@ -21,15 +42,17 @@ class Info extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         Container(
-                            padding: EdgeInsets.fromLTRB(10.0, 4, 15.0, 2),
+                            padding: EdgeInsets.fromLTRB(10.0, 20, 15.0, 2),
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.of(context).pushNamed("/buyandsell");
+                              },
                               child: Icon(Icons.arrow_back_ios_outlined,color: Colors.black),
                             )), //Container
                       ])),//Row
               Expanded(
                   flex: 6,
-                  child:Padding(  padding: EdgeInsets.fromLTRB(25,10,25,10),
+                  child:Padding(  padding: EdgeInsets.fromLTRB(25,30,25,10),
                       child: Image.network('https://www.google.com/imgres?imgurl=https%3A%2F%2Fwww.herocycles.com%2Fdw%2Fimage%2Fv2%2FBGQH_PRD%2Fon%2Fdemandware.static%2F-%2FSites-cycles-master%2Fdefault%2Fdw70c7b9c3%2FProducts%2FVoltage%2FBSVOL26BKGN001%2F01.png%3Fsh%3D523%26sfrm%3Dpng&tbnid=9Bb-9q8vAByk0M&vet=12ahUKEwi9gt_8zpn-AhUN9nMBHdf3DRAQMygBegUIARDoAQ..i&imgrefurl=https%3A%2F%2Fwww.herocycles.com%2FVoltage-BSVOL26BKGN001.html&docid=2QFXq3a1aAyREM&w=629&h=523&q=cycle&ved=2ahUKEwi9gt_8zpn-AhUN9nMBHdf3DRAQMygBegUIARDoAQ'
                       ) )
               ),
