@@ -82,25 +82,25 @@ class _SellpageState extends State<Sellpage> {
     double myfont = ((18 / 274.4) * screen_h);
     return Scaffold(
         bottomNavigationBar: BottomAppBar(
-          color: Colors.blue,
-          child: Row(
-            children: [
+           // color: Colors.blue,
+            child: Row(
+                children: [
 
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.menu_rounded, color: Colors.white,),
-                iconSize: 30,
-              ),
-              Spacer(),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.menu_rounded, color: Colors.white,),
+                    iconSize: 30,
+                  ),
+                  Spacer(),
 
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.search,color: Colors.white,),
-                iconSize: 30,
-              )
-            ],
-          ),
-        ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.search,color: Colors.white,),
+                    iconSize: 30,
+                  )
+                ],
+                ),
+            ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.of(context).pushNamed("/buyandsell/category");
@@ -151,11 +151,7 @@ class _SellpageState extends State<Sellpage> {
                                 ],
                               ),
                             ),
-                            InkWell(
-                              onTap: () {
-                                print("Hello");
-                              },
-                            ),
+
                             Container(
                               margin: EdgeInsets.fromLTRB(
                                   10, screen_h * 0.245 / 0.43, 0, 0),
@@ -239,7 +235,10 @@ class _SellpageState extends State<Sellpage> {
                                     child: ClipRRect(
                                         borderRadius: BorderRadius.circular(5),
                                         child: ElevatedButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            Navigator.of(context).pushNamed("/buyandsell/info");
+
+                                          },
                                           child: Text("Contact",
                                               maxLines: 1,
                                               style: TextStyle(
