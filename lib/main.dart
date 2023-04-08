@@ -306,15 +306,14 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, ChatPage());
                 case "/groups":
                   return _buildRoute(settings, CommunityPage());
-
+                case "/buyNsell":
+                  return _buildRoute(settings, InfiniteScroll_and_Cards());
                 case "/explore":
                   return _buildRoute(settings, ExplorePage());
                 case "/calendar":
                   return _buildRoute(settings, CalendarPage());
                 case "/buyandsell":
                   return _buildRoute(settings, Sellpage());
-                case "/buyandsell/category":
-                  return _buildRoute(settings, category());
 
                 // case "/complaints":
                 //   return _buildRoute(settings, ComplaintsPage());
@@ -338,7 +337,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, Home());
                 case "/posts/add":
                   return _buildRoute(settings, CreatePostPage());
-
                 case "/externalblog":
                   return _buildRoute(settings, ExternalBlogPage());
                 case "/query":
