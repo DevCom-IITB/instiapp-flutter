@@ -24,6 +24,38 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
   bool _itemStatus = true;
   late String _contactDetails;
 
+  final picker = ImagePicker();
+  File? _imageFile;
+
+  Future<void> _takePicture() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    setState(() {
+      if (pickedFile != null) {
+        _imageFile = File(pickedFile.path);
+      }
+    });
+  }
+
+  Future<void> _selectFile() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      if (pickedFile != null) {
+        _imageFile = File(pickedFile.path);
+      }
+    });
+  }
+
+  Widget _buildPreview() {
+    if (_imageFile == null) {
+      return Container();
+    }
+    return Image.file(
+      _imageFile!,
+      height: 200,
+      width: 140,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -460,7 +492,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                               TextFormField(
                                 decoration: const InputDecoration(
                                     hintText:
-                                    'Enter contact no. / address, etc',
+                                        'Enter contact no. / address, etc',
                                     contentPadding: EdgeInsets.symmetric(
                                         vertical: 20, horizontal: 10),
                                     border: OutlineInputBorder()),
@@ -535,7 +567,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                     child: Row(
                       children: [
                         const Expanded(
-                          flex: 2,
+                          flex: 3,
                           child: Text(
                             'Attach Image*',
                             style: TextStyle(
@@ -544,46 +576,36 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                             ),
                           ),
                         ),
+                        const Expanded(flex: 1, child: SizedBox()),
                         Expanded(
                           flex: 4,
                           child: Row(
                             children: [
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  OutlinedButton(
-                                    onPressed: () async {
-                                      final cameras = await availableCameras();
-                                      final camera = cameras.first;
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              TakePictureScreen(camera: camera),
-                                        ),
-                                      );
-                                    },
-                                    child: const Icon(Icons.camera_alt),
+                                children: <Widget>[
+                                  Row(
+                                    children: [
+                                      ElevatedButton(
+                                          onPressed: _takePicture,
+                                          child: const Icon(Icons.camera)),
+                                      const SizedBox(width: 16),
+                                      ElevatedButton(
+                                          onPressed: _selectFile,
+                                          child: const Icon(Icons.attach_file)),
+                                      const SizedBox(height: 16),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              const SizedBox(width: 10),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  OutlinedButton(
-                                    onPressed: () {},
-                                    child: const Icon(Icons.attach_file),
-                                  ),
+                                  _buildPreview(),
                                 ],
                               ),
                             ],
                           ),
                         ),
+                        const Expanded(flex: 1, child: SizedBox())
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -618,4 +640,3 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
     );
   }
 }
-
