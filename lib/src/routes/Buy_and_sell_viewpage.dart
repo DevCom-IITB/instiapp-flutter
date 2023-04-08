@@ -68,24 +68,21 @@ class _SellpageState extends State<Sellpage> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 33, 150, 243),
-          title: Row(
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.blue,
+          child: Row(
             children: [
+
               IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.menu_rounded),
+                icon: Icon(Icons.menu_rounded, color: Colors.white,),
                 iconSize: 30,
               ),
               Spacer(),
+
               IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.filter_list),
-                iconSize: 30,
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.search),
+                icon: Icon(Icons.search,color: Colors.white,),
                 iconSize: 30,
               )
             ],
