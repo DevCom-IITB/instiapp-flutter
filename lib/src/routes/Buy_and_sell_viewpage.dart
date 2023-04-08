@@ -144,7 +144,7 @@ class _SellpageState extends State<Sellpage> {
                           ),
                           InkWell(
                             onTap: () {
-                              print("Hello");
+                              Navigator.of(context).pushNamed("/lib/src/routes/infoBuyAndSell.dart");
                             },
                           ),
                           Container(
