@@ -4,6 +4,7 @@ import 'package:InstiApp/src/routes/Buy_and_sell_viewpage.dart';
 import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
+import 'package:InstiApp/src/routes/categorypagebuyandsell.dart';
 import 'package:InstiApp/src/routes/communitydetails.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/routes/event_form.dart';
@@ -13,6 +14,7 @@ import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/routes/externalblogpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
+import 'package:InstiApp/src/routes/infoBuyAndSell.dart';
 import 'package:InstiApp/src/routes/mappage.dart';
 import 'package:InstiApp/src/routes/messcalendarpage.dart';
 // import 'package:InstiApp/src/routes/newcomplaintpage.dart';
@@ -305,14 +307,22 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, ChatPage());
                 case "/groups":
                   return _buildRoute(settings, CommunityPage());
+<<<<<<< HEAD
                 case "/buyNsell":
                   return _buildRoute(settings, Sellpage());
+=======
+
+>>>>>>> 7cb2d84c78eaa2495395affa4893ac0f5434c2ea
                 case "/explore":
                   return _buildRoute(settings, ExplorePage());
                 case "/calendar":
                   return _buildRoute(settings, CalendarPage());
                 case "/buyandsell":
                   return _buildRoute(settings, Sellpage());
+                case "/buyandsell/category":
+                  return _buildRoute(settings, category());
+                case "/buyandsell/info":
+                  return _buildRoute(settings, Info());
 
                 // case "/complaints":
                 //   return _buildRoute(settings, ComplaintsPage());
