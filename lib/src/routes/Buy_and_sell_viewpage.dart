@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:InstiApp/src/drawer.dart';
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+   MyApp({Key? key}) : super(key: key);
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   State<MyApp> createState() => _MyAppState();
+
 }
 
 class _MyAppState extends State<MyApp> {
@@ -29,6 +32,7 @@ class Sellpage extends StatefulWidget {
 }
 
 class _SellpageState extends State<Sellpage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   final _baseUrl = "https://mocki.io/v1/e9ae0294-fac5-495e-abb4-a1f505f53698";
 
   int _page = 0;
@@ -81,32 +85,38 @@ class _SellpageState extends State<Sellpage> {
     double screen_h = screen_hr * x;
     double myfont = ((18 / 274.4) * screen_h);
     return Scaffold(
+        key: _scaffoldKey,
+        drawer: NavDrawer(),
         bottomNavigationBar: BottomAppBar(
            // color: Colors.blue,
             child: Row(
                 children: [
 
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _scaffoldKey.currentState?.openDrawer();
+                    },
                     icon: Icon(Icons.menu_rounded, color: Colors.white,),
                     iconSize: 30,
                   ),
                   Spacer(),
 
-                  IconButton(
+                 /* IconButton(
                     onPressed: () {},
                     icon: Icon(Icons.search,color: Colors.white,),
                     iconSize: 30,
                   )
+
+                  */
                 ],
                 ),
             ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.of(context).pushNamed("/buyandsell/category");
+
           },
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          backgroundColor: Colors.blue[600],
           child: Icon(
             Icons.add,
             size: 30,

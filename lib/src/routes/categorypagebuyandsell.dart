@@ -18,18 +18,16 @@ class category extends StatelessWidget {
             children: [
 
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                },
                 icon: Icon(Icons.menu_rounded, color: Colors.white,),
                 iconSize: 30,
               ),
               Spacer(),
              // Text("Buy N Sell"),
 
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.search,color: Colors.white,),
-                iconSize: 30,
-              )
+
             ],
           ),
         ),
@@ -46,13 +44,16 @@ class category extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 80, 0, 0),
                 child: Container(
-                    padding: EdgeInsets.fromLTRB(10.0, 4, 15.0, 2),
-                    child: TextButton(
+                    padding: EdgeInsets.fromLTRB(10.0, 4, 15.0, 20),
+                    child: FloatingActionButton(
+
                       onPressed: () {
                         Navigator.of(context).pushNamed("/buyandsell");
                       },
                       child: Icon(Icons.arrow_back_ios_outlined,color: Colors.black),
-                    )),
+                      backgroundColor: Colors.white,
+                    )
+                ),
               ),
 
               Padding(
@@ -87,7 +88,10 @@ class category extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 FlatButton(
-                                  onPressed: (){},
+                                  onPressed: (){
+                                    Navigator.of(context).pushNamed("/buyandsell/createPost");
+
+                                  },
                                   child: Expanded(
                                   child: Image.asset('assets/buy&sell/Group 10799.png'),
 
@@ -108,7 +112,9 @@ class category extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               FlatButton(
-                                onPressed: (){},
+                                onPressed: (){
+                                  Navigator.of(context).pushNamed("/buyandsell/createPost");
+                                },
                                 child: Expanded(
                                   child: Image.asset('assets/buy&sell/Group 10800.png'),
 
@@ -128,7 +134,9 @@ class category extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               FlatButton(
-                                onPressed: (){},
+                                onPressed: (){
+                                  Navigator.of(context).pushNamed("/buyandsell/createPost");
+                                },
                                 child: Expanded(
                                   child: Image.asset('assets/buy&sell/Group 10801.png'),
 
@@ -165,7 +173,9 @@ class category extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               FlatButton(
-                                onPressed: (){},
+                                onPressed: (){
+                                  Navigator.of(context).pushNamed("/buyandsell/createPost");
+                                },
                                 child: Expanded(
                                   child: Image.asset('assets/buy&sell/Group 10802.png'),
 
@@ -186,7 +196,9 @@ class category extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               FlatButton(
-                                onPressed: (){},
+                                onPressed: (){
+                                  Navigator.of(context).pushNamed("/buyandsell/createPost");
+                                },
                                 child: Expanded(
                                   child: Image.asset('assets/buy&sell/Group 10803.png'),
 
@@ -206,7 +218,9 @@ class category extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               FlatButton(
-                                onPressed: (){},
+                                onPressed: (){
+                                  Navigator.of(context).pushNamed("/buyandsell/createPost");
+                                },
                                 child: Expanded(
                                   child: Image.asset('assets/buy&sell/Group 10804.png'),
 
@@ -241,7 +255,9 @@ class category extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               FlatButton(
-                                onPressed: (){},
+                                onPressed: (){
+                                  Navigator.of(context).pushNamed("/buyandsell/createPost");
+                                },
                                 child: Expanded(
                                   child: Image.asset('assets/buy&sell/Group 10805.png'),
 
@@ -262,7 +278,9 @@ class category extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               FlatButton(
-                                onPressed: (){},
+                                onPressed: (){
+                                  Navigator.of(context).pushNamed("/buyandsell/createPost");
+                                },
                                 child: Expanded(
                                   child: Image.asset('assets/buy&sell/Group 10806.png'),
 
@@ -281,13 +299,7 @@ class category extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              FlatButton(
-                                onPressed: (){},
-                                child: Expanded(
-                                  child: Image.asset('assets/buy&sell/blank.png'),
 
-                                ),
-                              ),
                               Text(""),
 
                             ],
