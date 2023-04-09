@@ -88,7 +88,7 @@ flutter:
     - assets/communities/emojis/
     - assets/map/assets/
     - assets/map/assets/map/
-    - -assets/buy&sell
+    - assets/buy&sell/
   fonts:
     - family: IBMPlexSans
       fonts:
