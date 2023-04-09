@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:InstiApp/src/routes/Buy_and_sell_viewpage.dart';
 import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
+import 'package:InstiApp/src/routes/buy_n_sell_createPage.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
 import 'package:InstiApp/src/routes/categorypagebuyandsell.dart';
 import 'package:InstiApp/src/routes/communitydetails.dart';
@@ -318,6 +319,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, category());
                 case "/buyandsell/info":
                   return _buildRoute(settings, Info());
+
+                case "/buyandsell/createPost":
+                  return _buildRoute(settings, BuyAndSellForm());
 
                 // case "/complaints":
                 //   return _buildRoute(settings, ComplaintsPage());
