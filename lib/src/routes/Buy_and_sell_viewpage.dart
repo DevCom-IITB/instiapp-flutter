@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
@@ -33,7 +34,8 @@ class Sellpage extends StatefulWidget {
 
 class _SellpageState extends State<Sellpage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  final _baseUrl = "https://mocki.io/v1/e9ae0294-fac5-495e-abb4-a1f505f53698";
+  final _baseUrl = "https://8357-103-21-125-85.ngrok-free.app/api/buy/products";
+
 
   int _page = 0;
 
@@ -56,6 +58,8 @@ class _SellpageState extends State<Sellpage> {
       await http.get(Uri.parse("$_baseUrl?_page=$_page&_limit=$_limit"));
       setState(() {
         _posts = json.decode(res.body);
+        print("a");
+        print(_posts[0]['product_image']);
       });
     } catch (err) {
       if (kDebugMode) {
@@ -148,12 +152,14 @@ class _SellpageState extends State<Sellpage> {
                                 children: [
                                   Center(
                                     child: Container(
-                                      color: Colors.red,
+
                                       height: screen_h * 0.55,
                                       width: screen_w,
-                                      child: Image.network(
-                                        "https://images.unsplash.com/photo-1559348349-86f1f65817fe?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8Y3ljbGV8ZW58MHx8MHx8&auto=format&fit=crop&w=900&q=60" // _posts[index]['imageUrl']
-                                        ,
+                                      child: CachedNetworkImage(
+                                         imageUrl:_posts[index]['product_image']??'https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg',
+                                        placeholder: (context,url)=>new Image.network('https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg',fit: BoxFit.fill,),
+                                        errorWidget: (context,url,error)=>new Image.network('https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg',fit: BoxFit.fill,),
+
                                         fit: BoxFit.fill,
                                       ),
                                     ),
@@ -166,7 +172,7 @@ class _SellpageState extends State<Sellpage> {
                               margin: EdgeInsets.fromLTRB(
                                   10, screen_h * 0.245 / 0.43, 0, 0),
                               child: Text(
-                                _posts[index]['item_name'],
+                                _posts[index]['name'],
                                 style: TextStyle(
                                     fontSize: (myfont.toInt()).toDouble(),
                                     fontWeight: FontWeight.w600),
@@ -211,8 +217,7 @@ class _SellpageState extends State<Sellpage> {
                                     size:
                                     ((myfont / 18 * 12).toInt()).toDouble(),
                                   ),
-                                  Text(
-                                    _posts[index]['time'],
+                                  Text("Days Ago",
                                     style: TextStyle(
                                         fontSize: ((myfont / 18 * 12).toInt())
                                             .toDouble()),
