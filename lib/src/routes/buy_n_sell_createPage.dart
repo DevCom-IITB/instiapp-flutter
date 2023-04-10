@@ -1,16 +1,16 @@
 import 'dart:io';
+import 'package:InstiApp/src/routes/categorypagebuyandsell.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:InstiApp/src/drawer.dart';
 
 class BuyAndSellForm extends StatefulWidget {
-   BuyAndSellForm({Key? key}) : super(key: key);
+  BuyAndSellForm({Key? key}) : super(key: key);
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   _BuyAndSellFormState createState() => _BuyAndSellFormState();
-
 }
 
 class _BuyAndSellFormState extends State<BuyAndSellForm> {
@@ -62,6 +62,9 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as ScreenArguments;
+    print("create posts");
+    print(args.title);
     return Scaffold(
       key: _scaffoldKey,
       drawer: NavDrawer(),
@@ -69,18 +72,18 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
         // color: Colors.blue,
         child: Row(
           children: [
-
             IconButton(
               onPressed: () {
                 _scaffoldKey.currentState?.openDrawer();
               },
-              icon: Icon(Icons.menu_rounded, color: Colors.white,),
+              icon: Icon(
+                Icons.menu_rounded,
+                color: Colors.white,
+              ),
               iconSize: 30,
             ),
             Spacer(),
             // Text("Buy N Sell"),
-
-
           ],
         ),
       ),
@@ -97,20 +100,19 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
                       Padding(
                         padding: const EdgeInsets.fromLTRB(2, 10, 0, 30),
                         child: Container(
                             padding: EdgeInsets.fromLTRB(10.0, 4, 15.0, 2),
                             child: FloatingActionButton(
-
                               onPressed: () {
-                                Navigator.of(context).pushNamed("/buyandsell/category");
+                                Navigator.of(context)
+                                    .pushNamed("/buyandsell/category");
                               },
-                              child: Icon(Icons.arrow_back_ios_outlined,color: Colors.black),
+                              child: Icon(Icons.arrow_back_ios_outlined,
+                                  color: Colors.black),
                               backgroundColor: Colors.white,
-                            )
-                        ),
+                            )),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 16.0),
@@ -119,7 +121,8 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                             const Expanded(
                               flex: 3,
                               child: Padding(
-                                padding: EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 0.0),
+                                padding:
+                                    EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 0.0),
                                 child: Text(
                                   'Choose the action you want to take*',
                                   style: TextStyle(
@@ -142,10 +145,9 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                         _option = value!;
                                       });
                                     },
-                                    items: <String>[
-                                      'Sell',
-                                      'Giveaway'
-                                    ].map<DropdownMenuItem<String>>((String value) {
+                                    items: <String>['Sell', 'Giveaway']
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
                                       return DropdownMenuItem<String>(
                                         value: value,
                                         child: Text(value),
@@ -249,7 +251,8 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                   ),
                                   Row(
                                     children: [
-                                      const Expanded(flex: 1, child: SizedBox()),
+                                      const Expanded(
+                                          flex: 1, child: SizedBox()),
                                       const Text('Negotiable'),
                                       Radio<bool>(
                                         value: true,
@@ -260,12 +263,14 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                           });
                                         },
                                       ),
-                                      const Expanded(flex: 1, child: SizedBox()),
+                                      const Expanded(
+                                          flex: 1, child: SizedBox()),
                                     ],
                                   ),
                                   Row(
                                     children: [
-                                      const Expanded(flex: 1, child: SizedBox()),
+                                      const Expanded(
+                                          flex: 1, child: SizedBox()),
                                       const Text('Non-Negotiable'),
                                       Radio<bool>(
                                         value: false,
@@ -276,7 +281,8 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                           });
                                         },
                                       ),
-                                      const Expanded(flex: 1, child: SizedBox()),
+                                      const Expanded(
+                                          flex: 1, child: SizedBox()),
                                     ],
                                   )
                                 ],
@@ -624,7 +630,8 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                               child: Row(
                                 children: [
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Row(
                                         children: [
@@ -634,7 +641,8 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                           const SizedBox(width: 16),
                                           ElevatedButton(
                                               onPressed: _selectFile,
-                                              child: const Icon(Icons.attach_file)),
+                                              child: const Icon(
+                                                  Icons.attach_file)),
                                           const SizedBox(height: 16),
                                         ],
                                       ),

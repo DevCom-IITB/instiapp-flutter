@@ -6,12 +6,11 @@ import 'package:http/http.dart' as http;
 import 'package:InstiApp/src/drawer.dart';
 
 class MyApp extends StatefulWidget {
-   MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   State<MyApp> createState() => _MyAppState();
-
 }
 
 class _MyAppState extends State<MyApp> {
@@ -34,8 +33,7 @@ class Sellpage extends StatefulWidget {
 
 class _SellpageState extends State<Sellpage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  final _baseUrl = "https://8357-103-21-125-85.ngrok-free.app/api/buy/products";
-
+  final _baseUrl = "https://a23c-103-21-125-84.ngrok-free.app/api/buy/products";
 
   int _page = 0;
 
@@ -55,7 +53,7 @@ class _SellpageState extends State<Sellpage> {
 
     try {
       final res =
-      await http.get(Uri.parse("$_baseUrl?_page=$_page&_limit=$_limit"));
+          await http.get(Uri.parse("$_baseUrl?_page=$_page&_limit=$_limit"));
       setState(() {
         _posts = json.decode(res.body);
         print("a");
@@ -92,33 +90,34 @@ class _SellpageState extends State<Sellpage> {
         key: _scaffoldKey,
         drawer: NavDrawer(),
         bottomNavigationBar: BottomAppBar(
-           // color: Colors.blue,
-            child: Row(
-                children: [
+          // color: Colors.blue,
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                },
+                icon: Icon(
+                  Icons.menu_rounded,
+                  color: Colors.white,
+                ),
+                iconSize: 30,
+              ),
+              Spacer(),
 
-                  IconButton(
-                    onPressed: () {
-                      _scaffoldKey.currentState?.openDrawer();
-                    },
-                    icon: Icon(Icons.menu_rounded, color: Colors.white,),
-                    iconSize: 30,
-                  ),
-                  Spacer(),
-
-                 /* IconButton(
+              /* IconButton(
                     onPressed: () {},
                     icon: Icon(Icons.search,color: Colors.white,),
                     iconSize: 30,
                   )
 
                   */
-                ],
-                ),
-            ),
+            ],
+          ),
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.of(context).pushNamed("/buyandsell/category");
-
           },
           backgroundColor: Colors.blue[600],
           child: Icon(
@@ -128,21 +127,21 @@ class _SellpageState extends State<Sellpage> {
         ),
         body: _isFirstLoadRunning
             ? const Center(
-          child: CircularProgressIndicator(),
-        )
+                child: CircularProgressIndicator(),
+              )
             : Center(
-            child: ListView.builder(
-              itemCount: _posts.length,
-              itemBuilder: (_, index) => Center(
-                child: (SizedBox(
-                  height: screen_h,
-                  width: screen_w,
-                  child: Card(
-                    color: Color.fromARGB(450, 242, 243, 244),
-                    margin:
-                    EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                    child: SizedBox(
-                        child: Stack(
+                child: ListView.builder(
+                  itemCount: _posts.length,
+                  itemBuilder: (_, index) => Center(
+                    child: (SizedBox(
+                      height: screen_h,
+                      width: screen_w,
+                      child: Card(
+                        color: Color.fromARGB(450, 242, 243, 244),
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                        child: SizedBox(
+                            child: Stack(
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.only(
@@ -152,14 +151,22 @@ class _SellpageState extends State<Sellpage> {
                                 children: [
                                   Center(
                                     child: Container(
-
                                       height: screen_h * 0.55,
                                       width: screen_w,
                                       child: CachedNetworkImage(
-                                         imageUrl:_posts[index]['product_image']??'https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg',
-                                        placeholder: (context,url)=>new Image.network('https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg',fit: BoxFit.fill,),
-                                        errorWidget: (context,url,error)=>new Image.network('https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg',fit: BoxFit.fill,),
-
+                                        imageUrl: _posts[index]
+                                                ['product_image'] ??
+                                            'https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg',
+                                        placeholder: (context, url) =>
+                                            new Image.network(
+                                          'https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg',
+                                          fit: BoxFit.fill,
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            new Image.network(
+                                          'https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg',
+                                          fit: BoxFit.fill,
+                                        ),
                                         fit: BoxFit.fill,
                                       ),
                                     ),
@@ -215,9 +222,10 @@ class _SellpageState extends State<Sellpage> {
                                   Icon(
                                     Icons.access_time,
                                     size:
-                                    ((myfont / 18 * 12).toInt()).toDouble(),
+                                        ((myfont / 18 * 12).toInt()).toDouble(),
                                   ),
-                                  Text("Days Ago",
+                                  Text(
+                                    "Days Ago",
                                     style: TextStyle(
                                         fontSize: ((myfont / 18 * 12).toInt())
                                             .toDouble()),
@@ -251,14 +259,14 @@ class _SellpageState extends State<Sellpage> {
                                         borderRadius: BorderRadius.circular(5),
                                         child: ElevatedButton(
                                           onPressed: () {
-                                            Navigator.of(context).pushNamed("/buyandsell/info");
-
+                                            Navigator.of(context)
+                                                .pushNamed("/buyandsell/info");
                                           },
                                           child: Text("Contact",
                                               maxLines: 1,
                                               style: TextStyle(
                                                   fontSize:
-                                                  12.5 / 338 * screen_w)),
+                                                      12.5 / 338 * screen_w)),
                                         )),
                                   ),
                                 ),
@@ -276,13 +284,13 @@ class _SellpageState extends State<Sellpage> {
                             //     ))
                           ],
                         )),
-                    elevation: 10,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                        elevation: 10,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                      ),
+                    )),
                   ),
-                )),
-              ),
-            ),
-            ));
-    }
+                ),
+              ));
+  }
 }

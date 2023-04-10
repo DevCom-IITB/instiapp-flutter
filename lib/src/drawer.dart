@@ -186,11 +186,11 @@ class _NavDrawerState extends State<NavDrawer> {
                         icon: Icons.currency_rupee_outlined,
                         title: "Buy and Sell",
                         onTap: () {
-                          changeSelection(9, drawerState!);
+                          changeSelection(16, drawerState!);
                           navigateNamed('/buyandsell');
                         },
-                        highlight: indexSnapshot.data == 9,
-                        selected: indexSnapshot.data == 9,
+                        highlight: indexSnapshot.data == 16,
+                        selected: indexSnapshot.data == 16,
                       ),
                       8: NavExpansionTile(
                         title: "Utilities",
@@ -680,7 +680,8 @@ class MNavigatorObserver extends NavigatorObserver {
     "/messcalendar": 14,
     "/messcalendar/qr": 14,
     "/groups": 15,
-    "/InSeek": 16,
+    // "/InSeek": 16,
+    "/buyandsell": 16,
   };
 
   static Map<String, String> routeToName = {
@@ -706,6 +707,7 @@ class MNavigatorObserver extends NavigatorObserver {
     "/messcalendar": "Mess Calendar",
     "/messcalendar/qr": "Show Mess QR",
     "/groups": "Groups",
+    "/buyandsell":"Buy and Sell",
     "n/a": "",
   };
 
