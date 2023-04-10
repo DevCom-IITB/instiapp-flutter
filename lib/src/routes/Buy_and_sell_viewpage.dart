@@ -155,16 +155,15 @@ class _SellpageState extends State<Sellpage> {
                                       width: screen_w,
                                       child: CachedNetworkImage(
                                         imageUrl: _posts[index]
-                                                ['product_image'] ??
-                                            'https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg',
+                                            ['product_image'],
                                         placeholder: (context, url) =>
-                                            new Image.network(
-                                          'https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg',
+                                            new Image.asset(
+                                          'assets/buy&sell/No-image-found.jpg',
                                           fit: BoxFit.fill,
                                         ),
                                         errorWidget: (context, url, error) =>
-                                            new Image.network(
-                                          'https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg',
+                                            new Image.asset(
+                                          'assets/buy&sell/No-image-found.jpg',
                                           fit: BoxFit.fill,
                                         ),
                                         fit: BoxFit.fill,
