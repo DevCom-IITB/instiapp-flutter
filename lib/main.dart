@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:InstiApp/src/routes/Buy_and_sell_viewpage.dart';
+import 'package:InstiApp/src/routes/buysellpage.dart';
 import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/buy_n_sell_createPage.dart';

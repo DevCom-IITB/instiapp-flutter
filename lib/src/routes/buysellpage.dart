@@ -5,15 +5,15 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:InstiApp/src/drawer.dart';
 
-class MyApp extends StatefulWidget {
-  MyApp({Key? key}) : super(key: key);
+class BuySellPage extends StatefulWidget {
+  BuySellPage({Key? key}) : super(key: key);
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<BuySellPage> createState() => _BuySellPageState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _BuySellPageState extends State<BuySellPage> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class Sellpage extends StatefulWidget {
 
 class _SellpageState extends State<Sellpage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  final _baseUrl = "https://a23c-103-21-125-84.ngrok-free.app/api/buy/products";
+  final _baseUrl = "https://c3f2-103-21-126-76.ngrok-free.app/api/buy/products";
 
   int _page = 0;
 

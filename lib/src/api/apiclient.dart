@@ -382,3 +382,14 @@ abstract class InstiAppApi {
   Future<dynamic> createAchievement(
       sessionId, @rt.Body() OfferedAchievements offeredAchievements);
 }
+//Buy & Sell
+  @rt.GET('/buy/products')
+  Future<BuySellPostListResponse> getBuySellPosts(
+  @rt.Header("Cookie") String sessionId,
+  @rt.Query("status") int? status,
+  @rt.Query("query") String query);
+
+
+
+
+
