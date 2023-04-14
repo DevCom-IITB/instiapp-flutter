@@ -7,6 +7,39 @@ class ScreenArguments {
   ScreenArguments(this.title);
 }
 
+// widget for generic category button
+class CategoryButton extends StatelessWidget {
+  final String name;
+  CategoryButton(this.name);
+
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Center(
+        child: FlatButton(
+          onPressed: () {
+            Navigator.of(context).pushNamed(
+              "/buyandsell/createPost",
+              arguments: ScreenArguments(
+                name,
+              ),
+            );
+          },
+          child: Column(
+            children: [
+              Image.asset('assets/buy&sell/' + name + '.png'),
+              Text(
+                name,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+//widget for category page
 class BuyAndSellCategoryPage extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   @override
@@ -66,75 +99,9 @@ class BuyAndSellCategoryPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Expanded(
-                      child: Center(
-                        child: FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamed(
-                              "/buyandsell/createPost",
-                              arguments: ScreenArguments(
-                                'Electronics',
-                              ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Image.asset('assets/buy&sell/Electronics.png'),
-                              Text(
-                                "Electronics",
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamed(
-                              "/buyandsell/createPost",
-                              arguments: ScreenArguments(
-                                'Stationary',
-                              ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Image.asset('assets/buy&sell/Group 10800.png'),
-                              Text(
-                                "Stationary",
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamed(
-                              "/buyandsell/createPost",
-                              arguments: ScreenArguments(
-                                'Bicycle',
-                              ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Image.asset('assets/buy&sell/Group 10801.png'),
-                              Text(
-                                "Bicycle",
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    CategoryButton("Electronics"),
+                    CategoryButton("Stationary"),
+                    CategoryButton("Bicycle")
                   ],
                 ),
               ),
@@ -144,75 +111,9 @@ class BuyAndSellCategoryPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Expanded(
-                      child: Center(
-                        child: FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamed(
-                              "/buyandsell/createPost",
-                              arguments: ScreenArguments(
-                                'Books',
-                              ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Image.asset('assets/buy&sell/Group 10802.png'),
-                              Text(
-                                "Books",
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamed(
-                              "/buyandsell/createPost",
-                              arguments: ScreenArguments(
-                                'Daily Needs',
-                              ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Image.asset('assets/buy&sell/Group 10803.png'),
-                              Text(
-                                "Daily Needs",
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamed(
-                              "/buyandsell/createPost",
-                              arguments: ScreenArguments(
-                                'Acessories',
-                              ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Image.asset('assets/buy&sell/Group 10804.png'),
-                              Text(
-                                "Acessories",
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    CategoryButton("Books"),
+                    CategoryButton("Daily Needs"),
+                    CategoryButton("Acessories")
                   ],
                 ),
               ),
@@ -222,52 +123,8 @@ class BuyAndSellCategoryPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Expanded(
-                      child: Center(
-                        child: FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamed(
-                              "/buyandsell/createPost",
-                              arguments: ScreenArguments(
-                                'Sports',
-                              ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Image.asset('assets/buy&sell/Group 10805.png'),
-                              Text(
-                                " Sports",
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamed(
-                              "/buyandsell/createPost",
-                              arguments: ScreenArguments(
-                                'Miscellaneous',
-                              ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Image.asset('assets/buy&sell/Group 10806.png'),
-                              Text(
-                                "Miscellaneous",
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    CategoryButton("Sports"),
+                    CategoryButton("Miscellaneous"),
                     Expanded(child: Container()),
                   ],
                 ),
