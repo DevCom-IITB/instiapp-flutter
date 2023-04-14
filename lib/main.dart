@@ -1,11 +1,12 @@
 import 'dart:async';
 
-import 'package:InstiApp/src/routes/buysellpage.dart';
 import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
-import 'package:InstiApp/src/routes/buy_n_sell_createPage.dart';
+import 'package:InstiApp/src/routes/buynsell_categories.dart';
+import 'package:InstiApp/src/routes/buynsell_createpost.dart';
+import 'package:InstiApp/src/routes/buynsell_info.dart';
+import 'package:InstiApp/src/routes/buynsell_page.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
-import 'package:InstiApp/src/routes/categorypagebuyandsell.dart';
 import 'package:InstiApp/src/routes/communitydetails.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/routes/event_form.dart';
@@ -15,7 +16,6 @@ import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/routes/externalblogpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
-import 'package:InstiApp/src/routes/infoBuyAndSell.dart';
 import 'package:InstiApp/src/routes/mappage.dart';
 import 'package:InstiApp/src/routes/messcalendarpage.dart';
 // import 'package:InstiApp/src/routes/newcomplaintpage.dart';
@@ -317,9 +317,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 case "/buyandsell":
                   return _buildRoute(settings, Sellpage());
                 case "/buyandsell/category":
-                  return _buildRoute(settings, category());
+                  return _buildRoute(settings, BuyAndSellCategoryPage());
                 case "/buyandsell/info":
-                  return _buildRoute(settings, Info());
+                  return _buildRoute(settings, BuyAndSellInfoPage());
 
                 case "/buyandsell/createPost":
                   return _buildRoute(settings, BuyAndSellForm());
