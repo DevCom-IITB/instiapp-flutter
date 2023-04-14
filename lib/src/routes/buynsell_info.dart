@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
 
 class BuyAndSellInfoPage extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
@@ -11,45 +12,46 @@ class BuyAndSellInfoPage extends StatelessWidget {
         child: Scaffold(
             key: _scaffoldKey,
             drawer: NavDrawer(),
-            bottomNavigationBar: BottomAppBar(
-              // color: Colors.blue,
-              child: Row(
-                children: [
+            bottomNavigationBar: MyBottomAppBar(
+              child: new Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
                   IconButton(
+                    icon: Icon(
+                      Icons.menu_outlined,
+                      semanticLabel: "Show navigation drawer",
+                    ),
                     onPressed: () {
-
                       _scaffoldKey.currentState?.openDrawer();
                     },
-                    icon: Icon(
-                      Icons.menu_rounded,
-                      color: Colors.white,
-                    ),
-                    iconSize: 30,
                   ),
-                  Spacer(),
-                  // Text("Buy N Sell"),
-
                 ],
               ),
             ),
             body: SafeArea(
               child: Column(children: <Widget>[
-                SizedBox(height: 30,),
+                SizedBox(
+                  height: 30,
+                ),
                 Expanded(
-                    flex: 1,
-                    child: Row(
-                      children: [
-                        Padding(padding: EdgeInsets.fromLTRB(10, 80, 20, 20)),
-                        FloatingActionButton(
-
-                            onPressed: (){
-                              Navigator.of(context).pushNamed("/buyandsell");
-                            },
-                          child: Icon(Icons.arrow_back_ios_rounded, color: Colors.black,),
-                          backgroundColor: Colors.white,
-                        )
-                      ],
-                    ),), //Row
+                  flex: 1,
+                  child: Row(
+                    children: [
+                      Padding(padding: EdgeInsets.fromLTRB(10, 80, 20, 20)),
+                      FloatingActionButton(
+                        onPressed: () {
+                          Navigator.of(context).pushNamed("/buyandsell");
+                        },
+                        child: Icon(
+                          Icons.arrow_back_ios_rounded,
+                          color: Colors.black,
+                        ),
+                        backgroundColor: Colors.white,
+                      )
+                    ],
+                  ),
+                ), //Row
                 Expanded(
                     flex: 6,
                     child: Padding(

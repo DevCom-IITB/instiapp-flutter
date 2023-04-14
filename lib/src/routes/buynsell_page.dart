@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
 
 class BuySellPage extends StatefulWidget {
   BuySellPage({Key? key}) : super(key: key);
@@ -89,29 +90,20 @@ class _SellpageState extends State<Sellpage> {
     return Scaffold(
         key: _scaffoldKey,
         drawer: NavDrawer(),
-        bottomNavigationBar: BottomAppBar(
-          // color: Colors.blue,
-          child: Row(
-            children: [
+        bottomNavigationBar: MyBottomAppBar(
+          child: new Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
               IconButton(
+                icon: Icon(
+                  Icons.menu_outlined,
+                  semanticLabel: "Show navigation drawer",
+                ),
                 onPressed: () {
                   _scaffoldKey.currentState?.openDrawer();
                 },
-                icon: Icon(
-                  Icons.menu_rounded,
-                  color: Colors.white,
-                ),
-                iconSize: 30,
               ),
-              Spacer(),
-
-              /* IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.search,color: Colors.white,),
-                    iconSize: 30,
-                  )
-
-                  */
             ],
           ),
         ),
