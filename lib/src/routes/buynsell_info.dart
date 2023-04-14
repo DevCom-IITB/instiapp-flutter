@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/drawer.dart';
 
-class Info extends StatelessWidget {
+class BuyAndSellInfoPage extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   @override
   Widget build(BuildContext context) {

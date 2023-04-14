@@ -1,341 +1,280 @@
 import 'package:flutter/material.dart';
+import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
 
-void main() => runApp(MaterialApp(
-      home: Test(),
-    ));
+class ScreenArguments {
+  final String title;
+  ScreenArguments(this.title);
+}
 
-class Test extends StatefulWidget {
+class BuyAndSellCategoryPage extends StatelessWidget {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   @override
-  Navbar createState() => Navbar();
-  }
-
-class Navbar extends State <Test> {
-  int choice=0;
-
+  BuyAndSellCategoryPage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          leading: Icon(Icons.menu_outlined),
-          title: Text('Buy N Sell/Lost N Found'),
-        ), //AppBar
-        body: Column(children: <Widget>[
-          Expanded(
-              flex: 1,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
-                        padding: EdgeInsets.fromLTRB(10.0, 4, 15.0, 2),
-                        child: TextButton(
-                          onPressed: () {},
-                          child: Icon(Icons.arrow_back_ios_outlined),
-                        )), //Container
-                    Container(
-                      padding: EdgeInsets.fromLTRB(10.0, 4, 15.0, 2),
-                      child: Text('CLEAR ALL',
-                          style: TextStyle(
-                              color: Colors.pink, fontWeight: FontWeight.w900)),
-                    ) //Container
-                  ])), //Row
-          const Divider(
-            color: Colors.grey,
-          ), //Divider
-          Expanded(
-              flex: 12,
-              child: Row(children: <Widget>[
-                Expanded(
-                    flex: 3,
-                    child: Container(
-                        color: Color.fromRGBO(230, 230, 230, 1.0),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Container(
-                                  padding: EdgeInsets.fromLTRB(
-                                      10.0, 10.0, 10.0, 10.0),
-                                  child: TextButton(
-                                    onPressed: () {
-                                      int choice = 0;
+      key: _scaffoldKey,
+      drawer: NavDrawer(),
+      bottomNavigationBar: MyBottomAppBar(
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.menu_outlined,
+                semanticLabel: "Show navigation drawer",
+              ),
+              onPressed: () {
+                _scaffoldKey.currentState?.openDrawer();
+              },
+            ),
+          ],
+        ),
+      ),
 
-                                    },
-                                    child: Text('Type',
-                                        style: TextStyle(color: Colors.black)),
-                                  )), //Container
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.grey,
-                              ), //Divider
-                              Container(
-                                  padding: EdgeInsets.fromLTRB(
-                                      10.0, 10.0, 10.0, 10.0),
-                                  child: TextButton(
-                                    onPressed: () {
-                                      choice = 1;
-
-                                    },
-                                    child: Text('Category',
-                                        style: TextStyle(color: Colors.black)),
-                                  )), //Container
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.grey,
-                              ), //Divider
-                              Container(
-                                  padding: EdgeInsets.fromLTRB(
-                                      10.0, 10.0, 10.0, 10.0),
-                                  child: TextButton(
-                                    onPressed: () {
-                                      choice = 2;
-                                    },
-                                    child: Text('Status',
-                                        style: TextStyle(color: Colors.black)),
-                                  )), //Container
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.grey,
-                              ), //Divider
-                              Container(
-                                  padding: EdgeInsets.fromLTRB(
-                                      10.0, 10.0, 10.0, 10.0),
-                                  child: TextButton(
-                                    onPressed: () {
-                                      choice = 3;
-                                    },
-                                    child: Text('My items',
-                                        style: TextStyle(color: Colors.black)),
-                                  )), //Container
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.grey,
-                              ), //Divider
-                              Container(
-                                  padding: EdgeInsets.fromLTRB(
-                                      10.0, 10.0, 10.0, 10.0),
-                                  child: TextButton(
-                                    onPressed: () {
-                                      choice = 4;
-                                    },
-                                    child: Text('Marked favourite',
-                                        style: TextStyle(color: Colors.black)),
-                                  )), //Container
-                              const Divider(
-                                thickness: 0.5,
-                                color: Colors.grey,
-                              ), //Divider
-                            ]))), //Column
-                if (choice == 0) ...[
-                  Expanded(
-                      flex: 5,
-                      child: Column(children: <Widget>[
-                        Container(
-                            padding:
-                                EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                            child: TextButton(
-                              onPressed: () {},
-                              child: Text('Search',
-                                  style: TextStyle(color: Colors.grey)),
-                            )), //Container
-                        Container(
-                            margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                            child: const Divider(
-                              thickness: 1,
-                              color: Colors.grey,
-                            )), //Divider
-                        Row(children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.fromLTRB(25, 10, 2, 10),
-                              child: Icon(Icons.check)),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(6, 10, 2, 10),
-                            child: Text('    Buy Items',
-                                style: TextStyle(color: Colors.grey)),
-                          )
-                        ]), //Row
-                        Container(
-                            margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                            child: const Divider(
-                              thickness: 1,
-                              color: Colors.grey,
-                            )), //Divider
-                        Row(children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.fromLTRB(25, 10, 2, 10),
-                              child: Icon(Icons.check)),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(6, 10, 2, 10),
-                            child: Text('    Rent Items',
-                                style: TextStyle(color: Colors.grey)),
-                          )
-                        ]), //Row
-                        Container(
-                            margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                            child: const Divider(
-                              thickness: 1,
-                              color: Colors.grey,
-                            )), //Divider
-                        Row(children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.fromLTRB(25, 10, 2, 10),
-                              child: Icon(Icons.check)),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(6, 10, 2, 10),
-                            child: Text('    Giveaway(free)',
-                                style: TextStyle(color: Colors.grey)),
-                          )
-                        ]), //Row
-                        Container(
-                            margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                            child: const Divider(
-                              thickness: 1,
-                              color: Colors.grey,
-                            )), //Divider
-                        Row(children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.fromLTRB(25, 10, 2, 10),
-                              child: Icon(Icons.check)),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(6, 10, 2, 10),
-                            child: Text('    Lost Items',
-                                style: TextStyle(color: Colors.grey)),
-                          )
-                        ]), //Row
-                        Container(
-                            margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                            child: const Divider(
-                              thickness: 1,
-                              color: Colors.grey,
-                            )), //Divider
-                        Row(children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.fromLTRB(25, 10, 2, 10),
-                              child: Icon(Icons.check)),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(6, 10, 2, 10),
-                            child: Text('    Found Items',
-                                style: TextStyle(color: Colors.grey)),
-                          )
-                        ]), //Row
-                      ]))
-                ], //Column
-                if (choice == 1) ...[
-                  Expanded(
-                      flex: 5,
-                      child: Column(children: <Widget>[
-                        Container(
-                            padding:
-                                EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                            child: TextButton(
-                              onPressed: () {},
-                              child: Text('Search',
-                                  style: TextStyle(color: Colors.grey)),
-                            )), //Container
-                        Container(
-                            margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                            child: const Divider(
-                              thickness: 1,
-                              color: Colors.grey,
-                            )), //Divider
-                        Row(children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.fromLTRB(25, 10, 2, 10),
-                              child: Icon(Icons.check)),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(6, 10, 2, 10),
-                            child: Text('    Bsdkfksdfsdf',
-                                style: TextStyle(color: Colors.grey)),
-                          )
-                        ]), //Row
-                        Container(
-                            margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                            child: const Divider(
-                              thickness: 1,
-                              color: Colors.grey,
-                            )), //Divider
-                        Row(children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.fromLTRB(25, 10, 2, 10),
-                              child: Icon(Icons.check)),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(6, 10, 2, 10),
-                            child: Text('    Rent Isdffsfdsdfsdftms',
-                                style: TextStyle(color: Colors.grey)),
-                          )
-                        ]), //Row
-                        Container(
-                            margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                            child: const Divider(
-                              thickness: 1,
-                              color: Colors.grey,
-                            )), //Divider
-                        Row(children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.fromLTRB(25, 10, 2, 10),
-                              child: Icon(Icons.check)),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(6, 10, 2, 10),
-                            child: Text('    Giveasdfsdfsee)',
-                                style: TextStyle(color: Colors.grey)),
-                          )
-                        ]), //Row
-                        Container(
-                            margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                            child: const Divider(
-                              thickness: 1,
-                              color: Colors.grey,
-                            )), //Divider
-                        Row(children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.fromLTRB(25, 10, 2, 10),
-                              child: Icon(Icons.check)),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(6, 10, 2, 10),
-                            child: Text('    Lost Items',
-                                style: TextStyle(color: Colors.grey)),
-                          )
-                        ]), //Row
-                        Container(
-                            margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                            child: const Divider(
-                              thickness: 1,
-                              color: Colors.grey,
-                            )), //Divider
-                        Row(children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.fromLTRB(25, 10, 2, 10),
-                              child: Icon(Icons.check)),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(6, 10, 2, 10),
-                            child: Text('    Found Items',
-                                style: TextStyle(color: Colors.grey)),
-                          )
-                        ]), //Row
-                      ]))
-                ], //Column
-              ])) //Row
-          ,
-          Expanded(
-              flex: 1,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Text('CLOSE',
-                        style: TextStyle(
-                            color: Colors.grey, fontWeight: FontWeight.w900)),
-                    const VerticalDivider(
-                      width: 20,
-                      thickness: 1,
-                      indent: 20,
-                      endIndent: 0,
-                      color: Colors.grey,
+      body: SingleChildScrollView(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 45.0, 0, 10),
+                child: Row(
+                  children: [
+                    FloatingActionButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamed("/buyandsell");
+                      },
+                      child: Icon(Icons.arrow_back_ios_outlined,
+                          color: Colors.black),
+                      backgroundColor: Colors.white,
                     ),
-                    Text('APPLY',
-                        style: TextStyle(
-                            color: Colors.pink, fontWeight: FontWeight.w900))
-                  ])) //Row
-        ]) //Column
-        ); //Scaffold
+                    Center(
+                      child: Text(
+                        "Choose post category ",
+                        style: TextStyle(fontSize: 30),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(14.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      child: Center(
+                        child: FlatButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(
+                              "/buyandsell/createPost",
+                              arguments: ScreenArguments(
+                                'Electronics',
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset('assets/buy&sell/Electronics.png'),
+                              Text(
+                                "Electronics",
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: FlatButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(
+                              "/buyandsell/createPost",
+                              arguments: ScreenArguments(
+                                'Stationary',
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset('assets/buy&sell/Group 10800.png'),
+                              Text(
+                                "Stationary",
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: FlatButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(
+                              "/buyandsell/createPost",
+                              arguments: ScreenArguments(
+                                'Bicycle',
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset('assets/buy&sell/Group 10801.png'),
+                              Text(
+                                "Bicycle",
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(14.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      child: Center(
+                        child: FlatButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(
+                              "/buyandsell/createPost",
+                              arguments: ScreenArguments(
+                                'Books',
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset('assets/buy&sell/Group 10802.png'),
+                              Text(
+                                "Books",
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: FlatButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(
+                              "/buyandsell/createPost",
+                              arguments: ScreenArguments(
+                                'Daily Needs',
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset('assets/buy&sell/Group 10803.png'),
+                              Text(
+                                "Daily Needs",
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: FlatButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(
+                              "/buyandsell/createPost",
+                              arguments: ScreenArguments(
+                                'Acessories',
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset('assets/buy&sell/Group 10804.png'),
+                              Text(
+                                "Acessories",
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(14.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      child: Center(
+                        child: FlatButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(
+                              "/buyandsell/createPost",
+                              arguments: ScreenArguments(
+                                'Sports',
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset('assets/buy&sell/Group 10805.png'),
+                              Text(
+                                " Sports",
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: FlatButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(
+                              "/buyandsell/createPost",
+                              arguments: ScreenArguments(
+                                'Miscellaneous',
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset('assets/buy&sell/Group 10806.png'),
+                              Text(
+                                "Miscellaneous",
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(child: Container()),
+                  ],
+                ),
+              ),
+            ]),
+      ),
+//
+    );
   }
 }
-
-

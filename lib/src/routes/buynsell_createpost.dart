@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:InstiApp/src/routes/categorypagebuyandsell.dart';
+import 'package:InstiApp/src/routes/buynsell_categories.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
