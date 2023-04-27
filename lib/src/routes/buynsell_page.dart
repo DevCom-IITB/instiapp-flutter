@@ -34,12 +34,11 @@ class Sellpage extends StatefulWidget {
 
 class _SellpageState extends State<Sellpage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  final _baseUrl = "https://c3f2-103-21-126-76.ngrok-free.app/api/buy/products";
 
   int _page = 0;
 
   final int _limit = 3;
-
+  String _baseUrl = "";
   bool _isFirstLoadRunning = false;
   bool _hasNextPage = true;
 
