@@ -26,6 +26,7 @@ import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
 import 'package:InstiApp/src/api/response/alumni_login_response.dart';
+import 'package:InstiApp/src/api/response/buynsell_post_list_response.dart';
 import 'package:InstiApp/src/api/response/community_post_list_response.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
@@ -381,16 +382,11 @@ abstract class InstiAppApi {
   @rt.POST('/achievements-offer')
   Future<dynamic> createAchievement(
       sessionId, @rt.Body() OfferedAchievements offeredAchievements);
-}
+
 //Buy & Sell
-
-  // @rt.GET('/buy/products')
-  // Future<BuySellPostListResponse> getBuySellPosts(
-  // @rt.Header("Cookie") String sessionId,
-  // @rt.Query("status") int? status,
-  // @rt.Query("query") String query);
-
-
-
-
-
+  @rt.GET('/buy/products')
+  Future<BuynSellPostListResponse> getBuynSellPosts(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Query("status") int? status,
+      @rt.Query("query") String query);
+}
