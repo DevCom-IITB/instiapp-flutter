@@ -620,15 +620,15 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                     children: <Widget>[
                                       Row(
                                         children: [
-                                          ElevatedButton(
-                                              onPressed: _takePicture,
-                                              child: const Icon(Icons.camera)),
-                                          const SizedBox(width: 16),
-                                          ElevatedButton(
-                                              onPressed: _selectFile,
-                                              child: const Icon(
-                                                  Icons.attach_file)),
-                                          const SizedBox(height: 16),
+                                          // ElevatedButton(
+                                          //     onPressed: _takePicture,
+                                          //     child: const Icon(Icons.camera)),
+                                          // const SizedBox(width: 16),
+                                          // ElevatedButton(
+                                          //     onPressed: _selectFile,
+                                          //     child: const Icon(
+                                          //         Icons.attach_file)),
+                                          // const SizedBox(height: 16),
                                         ],
                                       ),
                                       _buildPreview(),

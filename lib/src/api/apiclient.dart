@@ -387,13 +387,17 @@ abstract class InstiAppApi {
 //Buy & Sell
   @rt.GET('/buy/products')
   Future<BuynSellPostListResponse> getBuynSellPosts(
-      @rt.Header("Cookie") String sessionId,
-      @rt.Query("status") int? status,
-      @rt.Query("query") String query);
+      @rt.Header("Cookie") String sessionId, @rt.Query("query") String query);
 
-  getBuynSellPost(String sessionIdHeader, String id) {}
+  @rt.GET('/buy/products/{id}')
+  Future<BuynSellPost> getBuynSellPost(
+      @rt.Header("Cookie") String sessionId, @rt.Query("query") String query);
 
-  updateBuynSellPost(String sessionIdHeader, String s, BuynSellPost post) {}
+  @rt.PUT('/buy/products/{id}')
+  Future<BuynSellPost> updateBuynSellPost(@rt.Header("Cookie") String sessionId,
+      @rt.Query("id") String id, @rt.Body() BuynSellPost post);
 
-  createBuynSellPost(String sessionIdHeader, BuynSellPost post) {}
+  @rt.POST("/buy/products/")
+  Future<BuynSellPost> createBuynSellPost(
+      @rt.Header("Cookie") String sessionId, @rt.Body() BuynSellPost post);
 }
