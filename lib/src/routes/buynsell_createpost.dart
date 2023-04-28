@@ -1,22 +1,26 @@
 import 'dart:io';
+
+import 'package:InstiApp/src/api/model/buynsellPost.dart';
+import 'package:InstiApp/src/api/model/user.dart';
+import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/routes/buynsell_categories.dart';
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 
-class BuyAndSellForm extends StatefulWidget {
-  BuyAndSellForm({Key? key}) : super(key: key);
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+class NavigateArguments {
+  final BuynSellPost? post;
 
-  @override
+  NavigateArguments({this.post});
+}
+
+class BuyAndSellForm extends StatefulWidget {
   _BuyAndSellFormState createState() => _BuyAndSellFormState();
 }
 
 class _BuyAndSellFormState extends State<BuyAndSellForm> {
-  final _formKey = GlobalKey<FormState>();
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   late String _itemName;
   late String _description;
   late String _price;
@@ -29,26 +33,10 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
   bool _itemStatus = true;
   late String _contactDetails;
 
-  final picker = ImagePicker();
+  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   File? _imageFile;
-
-  Future<void> _takePicture() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.camera);
-    setState(() {
-      if (pickedFile != null) {
-        _imageFile = File(pickedFile.path);
-      }
-    });
-  }
-
-  Future<void> _selectFile() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      if (pickedFile != null) {
-        _imageFile = File(pickedFile.path);
-      }
-    });
-  }
 
   Widget _buildPreview() {
     if (_imageFile == null) {
@@ -64,8 +52,6 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as ScreenArguments;
-    print("create posts");
-    print(args.title);
     return Scaffold(
       key: _scaffoldKey,
       drawer: NavDrawer(),
