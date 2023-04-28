@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:InstiApp/src/api/model/UserTag.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/buynsellPost.dart';
 import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/event.dart';
@@ -389,4 +390,10 @@ abstract class InstiAppApi {
       @rt.Header("Cookie") String sessionId,
       @rt.Query("status") int? status,
       @rt.Query("query") String query);
+
+  getBuynSellPost(String sessionIdHeader, String id) {}
+
+  updateBuynSellPost(String sessionIdHeader, String s, BuynSellPost post) {}
+
+  createBuynSellPost(String sessionIdHeader, BuynSellPost post) {}
 }
