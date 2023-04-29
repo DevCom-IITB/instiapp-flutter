@@ -11,9 +11,7 @@ BuynSellPost _$BuynSellPostFromJson(Map<String, dynamic> json) => BuynSellPost(
       buysellPostStrId: json['str_id'] as String?,
       name: json['name'] as String?,
       description: json['description'] as String?,
-      imageUrl: (json['product_image'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
+      imageUrl: json['product_image'] as String?,
       brand: json['brand'] as String?,
       warranty: json['warranty'] as bool?,
       packaging: json['packaging'] as bool?,

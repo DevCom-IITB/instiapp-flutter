@@ -76,18 +76,20 @@ class BuyAndSellCategoryPage extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(10.0, 45.0, 0, 10),
                 child: Row(
                   children: [
-                    FloatingActionButton(
+                    TextButton(
                       onPressed: () {
                         Navigator.of(context).pushNamed("/buyandsell");
                       },
-                      child: Icon(Icons.arrow_back_ios_outlined,
-                          color: Colors.black),
-                      backgroundColor: Colors.white,
+                      child: Icon(
+                        Icons.arrow_back_ios_outlined,
+                        color: Colors.black,
+                        size: 27.5,
+                      ),
                     ),
                     Center(
                       child: Text(
                         "Choose post category ",
-                        style: TextStyle(fontSize: 30),
+                        style: TextStyle(fontSize: 27.5),
                       ),
                     ),
                   ],
