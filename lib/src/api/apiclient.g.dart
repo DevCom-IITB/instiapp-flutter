@@ -1334,14 +1334,9 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<BuynSellPostListResponse> getBuynSellPosts(
-      sessionId, status, query) async {
+  Future<BuynSellPostListResponse> getBuynSellPosts(sessionId, query) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'status': status,
-      r'query': query
-    };
-    queryParameters.removeWhere((k, v) => v == null);
+    final queryParameters = <String, dynamic>{r'query': query};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
@@ -1352,6 +1347,59 @@ class _InstiAppApi implements InstiAppApi {
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = BuynSellPostListResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<BuynSellPost> getBuynSellPost(sessionId, query) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'query': query};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<BuynSellPost>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/buy/products/{id}',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = BuynSellPost.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<BuynSellPost> updateBuynSellPost(sessionId, id, post) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'id': id};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(post.toJson());
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<BuynSellPost>(
+            Options(method: 'PUT', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/buy/products/{id}',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = BuynSellPost.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<BuynSellPost> createBuynSellPost(sessionId, post) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(post.toJson());
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<BuynSellPost>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/buy/products/',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = BuynSellPost.fromJson(_result.data!);
     return value;
   }
 
