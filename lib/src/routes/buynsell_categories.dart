@@ -15,7 +15,7 @@ class CategoryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Center(
-        child: FlatButton(
+        child: TextButton(
           onPressed: () {
             Navigator.of(context).pushNamed(
               "/buyandsell/createPost",

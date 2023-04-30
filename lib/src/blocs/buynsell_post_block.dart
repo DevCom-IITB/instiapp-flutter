@@ -18,12 +18,10 @@ class BuynSellPostBloc {
 
   BuynSellPostBloc(this.bloc);
 
+  get buynsellpost => null;
+
   Future<BuynSellPost?> getBuynSellPost(String id) async {
-    // try {
-    //   return _communityPosts.firstWhere((community) => community.id == id);
-    // } catch (ex) {
     return await bloc.client.getBuynSellPost(bloc.getSessionIdHeader(), id);
-    // }
   }
 
   Future<void> updateBuynSellPost(BuynSellPost post) async {

@@ -1,14 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/blocs/buynsell_post_block.dart';
+
+import '../api/model/buynsellPost.dart';
+import '../bloc_provider.dart';
 
 class BuyAndSellInfoPage extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
+    BuynSellPostBloc buynSellPostBloc =
+        BlocProvider.of(context)!.bloc.buynSellPostBloc;
+
+    double screen_h = MediaQuery.of(context).size.height;
+    double screen_w = MediaQuery.of(context).size.width;
+    double myfont = ((18 / 274.4) * screen_h);
+
     return Container(
-        height: (MediaQuery.of(context).size.height),
-        width: (MediaQuery.of(context).size.width),
+      child: Center(
+        child: StreamBuilder<BuynSellPost>(
+            stream: buynSellPostBloc.buynsellpost,
+            builder:
+                (BuildContext context, AsyncSnapshot<BuynSellPost> snapshot) {
+              return ListView.builder(
+                itemBuilder: (_, index) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                        child: CircularProgressIndicatorExtended(
+                      label: Text("Loading..."),
+                    ));
+                  }
+                  return _buildContent(
+                      screen_h, screen_w, index, myfont, context, snapshot);
+                },
+              );
+            }),
+      ),
+    );
+  }
+
+  Center _buildContent(double screen_h, double screen_w, int index,
+      double myfont, BuildContext context, AsyncSnapshot snapshot) {
+    return Center(
         child: Scaffold(
             key: _scaffoldKey,
             drawer: NavDrawer(),
@@ -56,8 +91,7 @@ class BuyAndSellInfoPage extends StatelessWidget {
                     flex: 6,
                     child: Padding(
                         padding: EdgeInsets.fromLTRB(25, 30, 25, 10),
-                        child: Image.network(
-                            'https://www.google.com/imgres?imgurl=https%3A%2F%2Fwww.herocycles.com%2Fdw%2Fimage%2Fv2%2FBGQH_PRD%2Fon%2Fdemandware.static%2F-%2FSites-cycles-master%2Fdefault%2Fdw70c7b9c3%2FProducts%2FVoltage%2FBSVOL26BKGN001%2F01.png%3Fsh%3D523%26sfrm%3Dpng&tbnid=9Bb-9q8vAByk0M&vet=12ahUKEwi9gt_8zpn-AhUN9nMBHdf3DRAQMygBegUIARDoAQ..i&imgrefurl=https%3A%2F%2Fwww.herocycles.com%2FVoltage-BSVOL26BKGN001.html&docid=2QFXq3a1aAyREM&w=629&h=523&q=cycle&ved=2ahUKEwi9gt_8zpn-AhUN9nMBHdf3DRAQMygBegUIARDoAQ'))),
+                        child: Image.network(""))),
                 Expanded(
                     flex: 1,
                     child: Row(
