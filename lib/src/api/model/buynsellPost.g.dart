@@ -15,19 +15,19 @@ BuynSellPost _$BuynSellPostFromJson(Map<String, dynamic> json) => BuynSellPost(
       brand: json['brand'] as String?,
       warranty: json['warranty'] as bool?,
       packaging: json['packaging'] as bool?,
-      condition: json['condition'] as int?,
+      condition: json['condition'] as String?,
       action: json['action'] as String?,
       status: json['status'] as bool?,
       deleted: json['deleted'] as bool?,
       price: json['price'] as int?,
     )
       ..negotiable = json['negotiable'] as bool?
-      ..contactDetails = json['contactDetails'] as int?
+      ..contactDetails = json['contactDetails'] as String?
       ..timeOfCreation = json['time_of_creation'] as String?
       ..category = json['category'] as String?
-      ..user = (json['user'] as List<dynamic>?)
-          ?.map((e) => User.fromJson(e as Map<String, dynamic>))
-          .toList();
+      ..user = json['user'] == null
+          ? null
+          : User.fromJson(json['user'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$BuynSellPostToJson(BuynSellPost instance) =>
     <String, dynamic>{
