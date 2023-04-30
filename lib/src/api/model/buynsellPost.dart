@@ -47,7 +47,7 @@ class BuynSellPost {
   @JsonKey(name: "negotiable")
   bool? negotiable;
 
-  @JsonKey(name: "contactDetails")
+  @JsonKey(name: "contact_details")
   String? contactDetails;
 
   @JsonKey(name: "time_of_creation")
@@ -84,4 +84,6 @@ class BuynSellPost {
       _$BuynSellPostFromJson(json);
 
   Map<String, dynamic> toJson() => _$BuynSellPostToJson(this);
+
+  getBuynSellPost(String s) {}
 }

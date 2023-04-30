@@ -8,7 +8,7 @@ part of 'apiclient.dart';
 
 class _InstiAppApi implements InstiAppApi {
   _InstiAppApi(this._dio, {this.baseUrl}) {
-    baseUrl ??= 'http://10.198.49.150/api';
+    baseUrl ??= 'http://192.168.1.101:8000/api';
   }
 
   final Dio _dio;
@@ -1334,9 +1334,9 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<List<BuynSellPost>> getBuynSellPosts(sessionId, query) async {
+  Future<List<BuynSellPost>> getBuynSellPosts(sessionId) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'query': query};
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
@@ -1353,16 +1353,16 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<BuynSellPost> getBuynSellPost(sessionId, query) async {
+  Future<BuynSellPost> getBuynSellPost(sessionId, id) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'query': query};
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<BuynSellPost>(
             Options(method: 'GET', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/buy/products/{id}',
+                .compose(_dio.options, '/buy/products/${id}',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = BuynSellPost.fromJson(_result.data!);
@@ -1372,7 +1372,7 @@ class _InstiAppApi implements InstiAppApi {
   @override
   Future<BuynSellPost> updateBuynSellPost(sessionId, id, post) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'id': id};
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
@@ -1380,7 +1380,7 @@ class _InstiAppApi implements InstiAppApi {
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<BuynSellPost>(
             Options(method: 'PUT', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/buy/products/{id}',
+                .compose(_dio.options, '/buy/products/${id}',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = BuynSellPost.fromJson(_result.data!);
@@ -1398,7 +1398,7 @@ class _InstiAppApi implements InstiAppApi {
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<BuynSellPost>(
             Options(method: 'POST', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/buy/products/',
+                .compose(_dio.options, '/buy/products',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = BuynSellPost.fromJson(_result.data!);

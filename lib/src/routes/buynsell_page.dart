@@ -143,7 +143,8 @@ class _SellpageState extends State<Sellpage> {
                         height: screen_h * 0.55,
                         width: screen_w,
                         child: CachedNetworkImage(
-                          imageUrl: _posts[index].imageUrl ?? "",
+                          imageUrl: (_posts[index].imageUrl ?? "")
+                              .replaceFirst('localhost', '192.168.1.101'),
                           placeholder: (context, url) => new Image.asset(
                             'assets/buy&sell/No-image-found.jpg',
                             fit: BoxFit.fill,
@@ -236,8 +237,10 @@ class _SellpageState extends State<Sellpage> {
                           borderRadius: BorderRadius.circular(5),
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.of(context)
-                                  .pushNamed("/buyandsell/info");
+                              Navigator.pushNamed(
+                                context,
+                                "/buyandsell/info" + (_posts[index].id ?? ""),
+                              );
                             },
                             child: Text("Contact",
                                 maxLines: 1,

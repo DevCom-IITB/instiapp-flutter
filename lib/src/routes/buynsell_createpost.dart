@@ -10,6 +10,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 
+import '../bloc_provider.dart';
+import '../blocs/buynsell_post_block.dart';
+
 class NavigateArguments {
   final BuynSellPost? post;
 
@@ -21,22 +24,24 @@ class BuyAndSellForm extends StatefulWidget {
 }
 
 class _BuyAndSellFormState extends State<BuyAndSellForm> {
-  late String _itemName;
-  late String _description;
-  late String _price;
-  late String _rating;
-  bool _isNegotiable = false;
+  BuynSellPost bnsPost = BuynSellPost();
+
   bool _withinWarranty = false;
   bool _originalPackaging = false;
-  String? _option;
-  late String _brandName;
+  ActionChoices? _option;
+
   bool _itemStatus = true;
-  late String _contactDetails;
 
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  BuynSellPost currRequest = BuynSellPost();
 
   File? _imageFile;
+
+  List<ActionChoices> actionChoices = [
+    ActionChoices(value: "sell", text: "Sell"),
+    ActionChoices(value: "giveaway", text: "Give Away")
+  ];
 
   Widget _buildPreview() {
     if (_imageFile == null) {
@@ -50,7 +55,20 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _option = actionChoices[0];
+    bnsPost.action = _option!.value;
+    bnsPost.warranty = false;
+    bnsPost.negotiable = false;
+    bnsPost.packaging = false;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    var bloc = BlocProvider.of(context)!.bloc;
+    User? profile = bloc.currSession?.profile;
+
     final args = ModalRoute.of(context)!.settings.arguments as ScreenArguments;
     return Scaffold(
       key: _scaffoldKey,
@@ -88,15 +106,14 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(2, 10, 0, 30),
                         child: Container(
-                            padding: EdgeInsets.fromLTRB(10.0, 4, 15.0, 2),
-                            child: FloatingActionButton(
+                            padding: EdgeInsets.fromLTRB(0, 4, 15.0, 2),
+                            child: TextButton(
                               onPressed: () {
                                 Navigator.of(context)
                                     .pushNamed("/buyandsell/category");
                               },
                               child: Icon(Icons.arrow_back_ios_outlined,
                                   color: Colors.black),
-                              backgroundColor: Colors.white,
                             )),
                       ),
                       Padding(
@@ -123,19 +140,21 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  DropdownButtonFormField<String>(
+                                  DropdownButtonFormField<ActionChoices>(
                                     value: _option,
                                     onChanged: (value) {
                                       setState(() {
                                         _option = value!;
+                                        print(value.value);
+                                        bnsPost.action = value.value;
                                       });
                                     },
-                                    items: <String>['Sell', 'Giveaway']
-                                        .map<DropdownMenuItem<String>>(
-                                            (String value) {
-                                      return DropdownMenuItem<String>(
+                                    items: actionChoices
+                                        .map<DropdownMenuItem<ActionChoices>>(
+                                            (ActionChoices value) {
+                                      return DropdownMenuItem<ActionChoices>(
                                         value: value,
-                                        child: Text(value),
+                                        child: Text(value.text),
                                       );
                                     }).toList(),
                                     decoration: const InputDecoration(
@@ -189,8 +208,8 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                       }
                                       return null;
                                     },
-                                    onSaved: (value) {
-                                      _itemName = value!;
+                                    onChanged: (value) {
+                                      bnsPost.name = value;
                                     },
                                   ),
                                 ],
@@ -230,9 +249,10 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                       }
                                       return null;
                                     },
-                                    onSaved: (value) {
-                                      _price = value!;
+                                    onChanged: (value) {
+                                      bnsPost.price = int.tryParse(value);
                                     },
+                                    keyboardType: TextInputType.number,
                                   ),
                                   Row(
                                     children: [
@@ -241,10 +261,11 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                       const Text('Negotiable'),
                                       Radio<bool>(
                                         value: true,
-                                        groupValue: _isNegotiable,
+                                        groupValue: bnsPost.negotiable,
                                         onChanged: (value) {
                                           setState(() {
-                                            _isNegotiable = value!;
+                                            print(value);
+                                            bnsPost.negotiable = value;
                                           });
                                         },
                                       ),
@@ -259,10 +280,11 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                       const Text('Non-Negotiable'),
                                       Radio<bool>(
                                         value: false,
-                                        groupValue: _isNegotiable,
+                                        groupValue: bnsPost.negotiable,
                                         onChanged: (value) {
                                           setState(() {
-                                            _isNegotiable = value!;
+                                            print(value);
+                                            bnsPost.negotiable = value;
                                           });
                                         },
                                       ),
@@ -307,8 +329,8 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                       }
                                       return null;
                                     },
-                                    onSaved: (value) {
-                                      _description = value!;
+                                    onChanged: (value) {
+                                      bnsPost.description = value;
                                     },
                                   ),
                                 ],
@@ -338,7 +360,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                 children: [
                                   TextFormField(
                                     decoration: const InputDecoration(
-                                        hintText: 'Enter item name',
+                                        hintText: 'Enter brand name',
                                         contentPadding: EdgeInsets.symmetric(
                                             vertical: 1, horizontal: 10),
                                         border: OutlineInputBorder()),
@@ -348,8 +370,8 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                       }
                                       return null;
                                     },
-                                    onSaved: (value) {
-                                      _brandName = value!;
+                                    onChanged: (value) {
+                                      bnsPost.brand = value;
                                     },
                                   ),
                                 ],
@@ -382,20 +404,20 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                       const Text('Yes'),
                                       Radio<bool>(
                                         value: true,
-                                        groupValue: _withinWarranty,
+                                        groupValue: bnsPost.warranty,
                                         onChanged: (value) {
                                           setState(() {
-                                            _withinWarranty = value!;
+                                            bnsPost.warranty = value;
                                           });
                                         },
                                       ),
                                       const Text('No'),
                                       Radio<bool>(
                                         value: false,
-                                        groupValue: _withinWarranty,
+                                        groupValue: bnsPost.warranty,
                                         onChanged: (value) {
                                           setState(() {
-                                            _withinWarranty = value!;
+                                            bnsPost.warranty = value;
                                           });
                                         },
                                       ),
@@ -432,20 +454,20 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                       const Text('Yes'),
                                       Radio<bool>(
                                         value: true,
-                                        groupValue: _originalPackaging,
+                                        groupValue: bnsPost.packaging,
                                         onChanged: (value) {
                                           setState(() {
-                                            _originalPackaging = value!;
+                                            bnsPost.packaging = value;
                                           });
                                         },
                                       ),
                                       const Text('No'),
                                       Radio<bool>(
                                         value: false,
-                                        groupValue: _originalPackaging,
+                                        groupValue: bnsPost.packaging,
                                         onChanged: (value) {
                                           setState(() {
-                                            _originalPackaging = value!;
+                                            bnsPost.packaging = value;
                                           });
                                         },
                                       ),
@@ -473,7 +495,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                               ),
                             ),
                             Expanded(
-                              flex: 4,
+                              flex: 8,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -484,22 +506,25 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                             vertical: 1, horizontal: 10),
                                         border: OutlineInputBorder()),
                                     validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter Brand name';
+                                      if (value == null ||
+                                          value.isEmpty ||
+                                          (int.tryParse(value) ?? -1) > 10 ||
+                                          (int.tryParse(value) ?? -1) < 0) {
+                                        return 'Please enter rating from 0-10';
                                       }
                                       return null;
                                     },
-                                    onSaved: (value) {
-                                      _rating = value!;
+                                    onChanged: (value) {
+                                      bnsPost.condition = value;
                                     },
                                   ),
                                 ],
                               ),
                             ),
-                            const Expanded(
-                              flex: 4,
-                              child: SizedBox(),
-                            ),
+                            // const Expanded(
+                            //   flex: 4,
+                            //   child: SizedBox(),
+                            // ),
                           ],
                         ),
                       ),
@@ -535,8 +560,8 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                       }
                                       return null;
                                     },
-                                    onSaved: (value) {
-                                      _contactDetails = value!;
+                                    onChanged: (value) {
+                                      bnsPost.contactDetails = value;
                                     },
                                   ),
                                 ],
@@ -547,53 +572,53 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
-                        child: Row(
-                          children: [
-                            const Expanded(
-                              flex: 2,
-                              child: Text(
-                                'Status',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.0,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 4,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const Text('Open'),
-                                      Radio<bool>(
-                                        value: true,
-                                        groupValue: _itemStatus,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _itemStatus = value!;
-                                          });
-                                        },
-                                      ),
-                                      const Text('Closed'),
-                                      Radio<bool>(
-                                        value: false,
-                                        groupValue: _itemStatus,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _itemStatus = value!;
-                                          });
-                                        },
-                                      ),
-                                      // const Text('No'),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                        // child: Row(
+                        //   children: [
+                        //     const Expanded(
+                        //       flex: 2,
+                        //       child: Text(
+                        //         'Status',
+                        //         style: TextStyle(
+                        //           fontWeight: FontWeight.bold,
+                        //           fontSize: 16.0,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     Expanded(
+                        //       flex: 4,
+                        //       child: Column(
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: [
+                        //           Row(
+                        //             children: [
+                        //               const Text('Open'),
+                        //               Radio<bool>(
+                        //                 value: true,
+                        //                 groupValue: _itemStatus,
+                        //                 onChanged: (value) {
+                        //                   setState(() {
+                        //                     bnsPost.status = value;
+                        //                   });
+                        //                 },
+                        //               ),
+                        //               const Text('Closed'),
+                        //               Radio<bool>(
+                        //                 value: false,
+                        //                 groupValue: _itemStatus,
+                        //                 onChanged: (value) {
+                        //                   setState(() {
+                        //                     bnsPost.status = value;
+                        //                   });
+                        //                 },
+                        //               ),
+                        //               // const Text('No'),
+                        //             ],
+                        //           )
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
@@ -620,15 +645,17 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                     children: <Widget>[
                                       Row(
                                         children: [
-                                          // ElevatedButton(
-                                          //     onPressed: _takePicture,
-                                          //     child: const Icon(Icons.camera)),
-                                          // const SizedBox(width: 16),
-                                          // ElevatedButton(
-                                          //     onPressed: _selectFile,
-                                          //     child: const Icon(
-                                          //         Icons.attach_file)),
-                                          // const SizedBox(height: 16),
+                                          ElevatedButton(
+                                              onPressed: () => _pickImage(
+                                                  ImageSource.camera),
+                                              child: const Icon(Icons.camera)),
+                                          const SizedBox(width: 16),
+                                          ElevatedButton(
+                                              onPressed: () => _pickImage(
+                                                  ImageSource.gallery),
+                                              child: const Icon(
+                                                  Icons.attach_file)),
+                                          const SizedBox(height: 16),
                                         ],
                                       ),
                                       _buildPreview(),
@@ -656,9 +683,18 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                           ),
                           const SizedBox(width: 20),
                           ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              bnsPost.user = profile;
                               if (_formKey.currentState!.validate()) {
-                                _formKey.currentState!.save();
+                                if (_imageFile != null) {
+                                  ImageUploadResponse resp = await bloc.client
+                                      .uploadImage(bloc.getSessionIdHeader(),
+                                          _imageFile!);
+                                  bnsPost.imageUrl = resp.pictureURL;
+                                }
+
+                                bloc.buynSellPostBloc
+                                    .createBuynSellPost(bnsPost);
                               }
                             },
                             child: const Text('Submit'),
@@ -676,4 +712,86 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
       ),
     );
   }
+
+  void _pickImage(ImageSource source) async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? pi = await _picker.pickImage(source: source);
+
+    if (pi != null) {
+      // ImageUploadResponse resp = await bloc.client
+      //     .uploadImage(
+      //         bloc.getSessionIdHeader(), File(pi.path));
+      // print(resp.pictureURL);
+      if (await pi.length() / 1000000 <= 10) {
+        setState(() {
+          _imageFile = File(pi.path);
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Image size should be less than 10MB"),
+        ));
+      }
+    }
+  }
+
+  Widget _buildImageUrl(String url, int index) {
+    return Stack(
+      children: [
+        Image.network(
+          url,
+          height: MediaQuery.of(context).size.height / 7.5,
+          width: MediaQuery.of(context).size.height / 7.5,
+          fit: BoxFit.scaleDown,
+        ),
+        Positioned(
+          right: 0,
+          top: 0,
+          child: Container(
+            child: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                setState(() {
+                  currRequest.imageUrl!;
+                });
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImageFile(File file, int index) {
+    return Stack(
+      children: [
+        Image.file(
+          file,
+          height: MediaQuery.of(context).size.height / 7.5,
+          width: MediaQuery.of(context).size.height / 7.5,
+          fit: BoxFit.scaleDown,
+        ),
+        Positioned(
+          right: 0,
+          top: 0,
+          child: Container(
+            child: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                setState(() {
+                  //imageFile.remove;
+                });
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ActionChoices {
+  String value;
+  String text;
+
+  ActionChoices({required this.value, required this.text});
 }

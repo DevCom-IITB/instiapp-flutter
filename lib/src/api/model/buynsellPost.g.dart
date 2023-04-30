@@ -22,7 +22,7 @@ BuynSellPost _$BuynSellPostFromJson(Map<String, dynamic> json) => BuynSellPost(
       price: json['price'] as int?,
     )
       ..negotiable = json['negotiable'] as bool?
-      ..contactDetails = json['contactDetails'] as String?
+      ..contactDetails = json['contact_details'] as String?
       ..timeOfCreation = json['time_of_creation'] == null
           ? null
           : DateTime.parse(json['time_of_creation'] as String)
@@ -47,7 +47,7 @@ Map<String, dynamic> _$BuynSellPostToJson(BuynSellPost instance) =>
       'deleted': instance.deleted,
       'price': instance.price,
       'negotiable': instance.negotiable,
-      'contactDetails': instance.contactDetails,
+      'contact_details': instance.contactDetails,
       'time_of_creation': instance.timeOfCreation?.toIso8601String(),
       'category': instance.category,
       'user': instance.user,

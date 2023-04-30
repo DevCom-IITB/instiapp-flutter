@@ -31,7 +31,7 @@ class BuynSellPostBloc {
 
   Future<void> refresh({BnSType type = BnSType.All}) async {
     _buynsellPosts =
-        (await bloc.client.getBuynSellPosts(bloc.getSessionIdHeader(), query));
+        (await bloc.client.getBuynSellPosts(bloc.getSessionIdHeader()));
 
     // print("community" + _communityPosts.toString());
     _buynsellSubject.add(_buynsellPosts);
