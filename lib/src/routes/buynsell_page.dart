@@ -38,14 +38,6 @@ class Sellpage extends StatefulWidget {
 class _SellpageState extends State<Sellpage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  int _page = 0;
-
-  final int _limit = 3;
-  String _baseUrl = "";
-  bool _hasNextPage = true;
-
-  bool _isLoadMoreRunning = false;
-
   bool firstBuild = true;
 
   @override
@@ -214,7 +206,8 @@ class _SellpageState extends State<Sellpage> {
                       size: ((myfont / 18 * 12).toInt()).toDouble(),
                     ),
                     Text(
-                      "Days Ago",
+                      (_posts[index].timeOfCreation ?? "").toString() +
+                          "Days Ago",
                       style: TextStyle(
                           fontSize: ((myfont / 18 * 12).toInt()).toDouble()),
                     ),

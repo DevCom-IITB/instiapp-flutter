@@ -51,7 +51,7 @@ class BuynSellPost {
   String? contactDetails;
 
   @JsonKey(name: "time_of_creation")
-  String? timeOfCreation;
+  DateTime? timeOfCreation;
 
   @JsonKey(name: "category")
   String? category;
