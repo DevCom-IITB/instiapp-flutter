@@ -1,3 +1,6 @@
+import 'package:InstiApp/src/api/model/buynsellPost.dart';
+import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/blocs/buynsell_post_block.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -39,44 +42,25 @@ class _SellpageState extends State<Sellpage> {
 
   final int _limit = 3;
   String _baseUrl = "";
-  bool _isFirstLoadRunning = false;
   bool _hasNextPage = true;
 
   bool _isLoadMoreRunning = false;
 
-  List _posts = [];
-
-  void _firstLoad() async {
-    setState(() {
-      _isFirstLoadRunning = true;
-    });
-
-    try {
-      final res =
-          await http.get(Uri.parse("$_baseUrl?_page=$_page&_limit=$_limit"));
-      setState(() {
-        _posts = json.decode(res.body);
-        print("a");
-        print(_posts[0]['product_image']);
-      });
-    } catch (err) {
-      if (kDebugMode) {
-        print('Something went wrong');
-      }
-    }
-
-    setState(() {
-      _isFirstLoadRunning = false;
-    });
-  }
+  bool firstBuild = true;
 
   @override
   void initState() {
     super.initState();
-    _firstLoad();
+    // _firstLoad();
   }
 
   Widget build(BuildContext context) {
+    BuynSellPostBloc buynSellPostBloc =
+        BlocProvider.of(context)!.bloc.buynSellPostBloc;
+    if (firstBuild) {
+      buynSellPostBloc.refresh();
+    }
+
     double screen_wr = MediaQuery.of(context).size.width;
     double screen_hr = MediaQuery.of(context).size.height;
     double x, y;
@@ -116,171 +100,178 @@ class _SellpageState extends State<Sellpage> {
             size: 30,
           ),
         ),
-        body: _isFirstLoadRunning
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : Center(
-                child: ListView.builder(
-                  itemCount: _posts.length,
-                  itemBuilder: (_, index) => Center(
-                    child: (SizedBox(
-                      height: screen_h,
-                      width: screen_w,
-                      child: Card(
-                        color: Color.fromARGB(450, 242, 243, 244),
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                        child: SizedBox(
-                            child: Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(10),
-                                  topLeft: Radius.circular(10)),
-                              child: Column(
-                                children: [
-                                  Center(
-                                    child: Container(
-                                      height: screen_h * 0.55,
-                                      width: screen_w,
-                                      child: CachedNetworkImage(
-                                        imageUrl: _posts[index]
-                                            ['product_image'],
-                                        placeholder: (context, url) =>
-                                            new Image.asset(
-                                          'assets/buy&sell/No-image-found.jpg',
-                                          fit: BoxFit.fill,
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            new Image.asset(
-                                          'assets/buy&sell/No-image-found.jpg',
-                                          fit: BoxFit.fill,
-                                        ),
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+        body: RefreshIndicator(
+          onRefresh: () {
+            return buynSellPostBloc.refresh();
+          },
+          child: Center(
+            child: StreamBuilder<List<BuynSellPost>>(
+                stream: buynSellPostBloc.buynsellposts,
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<BuynSellPost>> snapshot) {
+                  return ListView.builder(
+                    itemCount: snapshot.hasData ? snapshot.data!.length : 0,
+                    itemBuilder: (_, index) {
+                      if (!snapshot.hasData) {
+                        return Center(
+                            child: CircularProgressIndicatorExtended(
+                          label: Text("Loading..."),
+                        ));
+                      }
+                      return _buildContent(
+                          screen_h, screen_w, index, myfont, context, snapshot);
+                    },
+                  );
+                }),
+          ),
+        ));
+  }
 
-                            Container(
-                              margin: EdgeInsets.fromLTRB(
-                                  10, screen_h * 0.245 / 0.43, 0, 0),
-                              child: Text(
-                                _posts[index]['name'],
-                                style: TextStyle(
-                                    fontSize: (myfont.toInt()).toDouble(),
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                            Container(
-                                margin: EdgeInsets.fromLTRB(
-                                    0, screen_h * 0.28 / 0.43, 18, 0),
-                                child: Row(
-                                  children: [
-                                    Spacer(),
-                                    Text(
-                                      _posts[index]['negotiable']
-                                          ? "Negotiable"
-                                          : "Non-Negotiable",
-                                      style: TextStyle(
-                                          fontSize: ((myfont / 18) * 10.toInt())
-                                              .toDouble()),
-                                    )
-                                  ],
-                                )),
-
-                            Container(
-                                margin: EdgeInsets.fromLTRB(
-                                    0, screen_h * 0.245 / 0.43, 18, 0),
-                                child: Row(
-                                  children: [
-                                    Spacer(),
-                                    Text(
-                                      "₹" + _posts[index]['price'].toString(),
-                                      style: TextStyle(
-                                          fontSize: (myfont.toInt()).toDouble(),
-                                          fontWeight: FontWeight.w800),
-                                    )
-                                  ],
-                                )),
-                            Container(
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.access_time,
-                                    size:
-                                        ((myfont / 18 * 12).toInt()).toDouble(),
-                                  ),
-                                  Text(
-                                    "Days Ago",
-                                    style: TextStyle(
-                                        fontSize: ((myfont / 18 * 12).toInt())
-                                            .toDouble()),
-                                  ),
-                                ],
-                              ),
-                              margin: EdgeInsets.fromLTRB(
-                                  10, screen_h * 0.283 / 0.417, 0, 0),
-                            ),
-                            Container(
-                                child: Text(
-                                  "Condition: " +
-                                      _posts[index]['condition'].toString() +
-                                      "/10",
-                                  style: TextStyle(
-                                      fontSize: ((myfont / 18 * 12).toInt())
-                                          .toDouble()),
-                                ),
-                                margin: EdgeInsets.fromLTRB(
-                                    10, screen_h * 0.31 / 0.41, 0, 0)),
-                            Row(
-                              children: [
-                                Spacer(),
-                                Container(
-                                  margin: EdgeInsets.fromLTRB(
-                                      0, screen_h * 0.3 / 0.42, 15.2, 0),
-                                  child: SizedBox(
-                                    height: 30 / 274.4 * screen_h,
-                                    width: 80 / 340.5 * screen_w,
-                                    child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(5),
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.of(context)
-                                                .pushNamed("/buyandsell/info");
-                                          },
-                                          child: Text("Contact",
-                                              maxLines: 1,
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      12.5 / 338 * screen_w)),
-                                        )),
-                                  ),
-                                ),
-                              ],
-                            )
-                            // Container(co
-                            //     child: SizedBox(
-                            //       child: Container(
-                            //         child: LikeButton(
-                            //           bubblesSize: 0,
-                            //         ),
-                            //       ),
-                            //       height: 40,
-                            //       width: 40,
-                            //     ))
-                          ],
-                        )),
-                        elevation: 10,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+  Center _buildContent(double screen_h, double screen_w, int index,
+      double myfont, BuildContext context, AsyncSnapshot snapshot) {
+    List<BuynSellPost> _posts = snapshot.data!;
+    return Center(
+      child: (SizedBox(
+        height: screen_h,
+        width: screen_w,
+        child: Card(
+          color: Color.fromARGB(450, 242, 243, 244),
+          margin: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+          child: SizedBox(
+              child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(10),
+                    topLeft: Radius.circular(10)),
+                child: Column(
+                  children: [
+                    Center(
+                      child: Container(
+                        height: screen_h * 0.55,
+                        width: screen_w,
+                        child: CachedNetworkImage(
+                          imageUrl: _posts[index].imageUrl ?? "",
+                          placeholder: (context, url) => new Image.asset(
+                            'assets/buy&sell/No-image-found.jpg',
+                            fit: BoxFit.fill,
+                          ),
+                          errorWidget: (context, url, error) => new Image.asset(
+                            'assets/buy&sell/No-image-found.jpg',
+                            fit: BoxFit.fill,
+                          ),
+                          fit: BoxFit.fill,
+                        ),
                       ),
-                    )),
-                  ),
+                    ),
+                  ],
                 ),
-              ));
+              ),
+
+              Container(
+                margin: EdgeInsets.fromLTRB(10, screen_h * 0.245 / 0.43, 0, 0),
+                child: Text(
+                  _posts[index].name ?? "",
+                  style: TextStyle(
+                      fontSize: (myfont.toInt()).toDouble(),
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
+              Container(
+                  margin: EdgeInsets.fromLTRB(0, screen_h * 0.28 / 0.43, 18, 0),
+                  child: Row(
+                    children: [
+                      Spacer(),
+                      Text(
+                        (_posts[index].negotiable ?? false)
+                            ? "Negotiable"
+                            : "Non-Negotiable",
+                        style: TextStyle(
+                            fontSize: ((myfont / 18) * 10.toInt()).toDouble()),
+                      )
+                    ],
+                  )),
+
+              Container(
+                  margin:
+                      EdgeInsets.fromLTRB(0, screen_h * 0.245 / 0.43, 18, 0),
+                  child: Row(
+                    children: [
+                      Spacer(),
+                      Text(
+                        "₹" + (_posts[index].price ?? 0).toString(),
+                        style: TextStyle(
+                            fontSize: (myfont.toInt()).toDouble(),
+                            fontWeight: FontWeight.w800),
+                      )
+                    ],
+                  )),
+              Container(
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.access_time,
+                      size: ((myfont / 18 * 12).toInt()).toDouble(),
+                    ),
+                    Text(
+                      "Days Ago",
+                      style: TextStyle(
+                          fontSize: ((myfont / 18 * 12).toInt()).toDouble()),
+                    ),
+                  ],
+                ),
+                margin: EdgeInsets.fromLTRB(10, screen_h * 0.283 / 0.417, 0, 0),
+              ),
+              Container(
+                  child: Text(
+                    "Condition: " + (_posts[index].condition ?? "") + "/10",
+                    style: TextStyle(
+                        fontSize: ((myfont / 18 * 12).toInt()).toDouble()),
+                  ),
+                  margin:
+                      EdgeInsets.fromLTRB(10, screen_h * 0.31 / 0.41, 0, 0)),
+              Row(
+                children: [
+                  Spacer(),
+                  Container(
+                    margin:
+                        EdgeInsets.fromLTRB(0, screen_h * 0.3 / 0.42, 15.2, 0),
+                    child: SizedBox(
+                      height: 30 / 274.4 * screen_h,
+                      width: 80 / 340.5 * screen_w,
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pushNamed("/buyandsell/info");
+                            },
+                            child: Text("Contact",
+                                maxLines: 1,
+                                style:
+                                    TextStyle(fontSize: 12.5 / 338 * screen_w)),
+                          )),
+                    ),
+                  ),
+                ],
+              )
+              // Container(co
+              //     child: SizedBox(
+              //       child: Container(
+              //         child: LikeButton(
+              //           bubblesSize: 0,
+              //         ),
+              //       ),
+              //       height: 40,
+              //       width: 40,
+              //     ))
+            ],
+          )),
+          elevation: 10,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      )),
+    );
   }
 }

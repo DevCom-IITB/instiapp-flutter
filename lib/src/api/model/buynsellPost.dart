@@ -30,7 +30,7 @@ class BuynSellPost {
   bool? packaging;
 
   @JsonKey(name: "condition")
-  int? condition;
+  String? condition;
 
   @JsonKey(name: "action")
   String? action;
@@ -48,7 +48,7 @@ class BuynSellPost {
   bool? negotiable;
 
   @JsonKey(name: "contactDetails")
-  int? contactDetails;
+  String? contactDetails;
 
   @JsonKey(name: "time_of_creation")
   String? timeOfCreation;
@@ -57,7 +57,7 @@ class BuynSellPost {
   String? category;
 
   @JsonKey(name: "user")
-  List<User>? user;
+  User? user;
 
   @override
   String toString() {

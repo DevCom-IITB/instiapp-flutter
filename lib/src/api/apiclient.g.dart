@@ -8,7 +8,8 @@ part of 'apiclient.dart';
 
 class _InstiAppApi implements InstiAppApi {
   _InstiAppApi(this._dio, {this.baseUrl}) {
-    baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
+    // baseUrl ??= 'http://192.168.1.101:8000/api';
+    baseUrl ??= 'http://10.198.49.150/api';
   }
 
   final Dio _dio;
@@ -1334,19 +1335,21 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<BuynSellPostListResponse> getBuynSellPosts(sessionId, query) async {
+  Future<List<BuynSellPost>> getBuynSellPosts(sessionId, query) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'query': query};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<BuynSellPostListResponse>(
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<List<BuynSellPost>>(
             Options(method: 'GET', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/buy/products',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BuynSellPostListResponse.fromJson(_result.data!);
+    var value = _result.data!
+        .map((dynamic i) => BuynSellPost.fromJson(i as Map<String, dynamic>))
+        .toList();
     return value;
   }
 
