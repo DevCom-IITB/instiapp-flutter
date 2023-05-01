@@ -40,6 +40,7 @@ class Sellpage extends StatefulWidget {
 class _SellpageState extends State<Sellpage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
+  BnSType bnstype = BnSType.All;
   bool firstBuild = true;
   bool MyPosts = false;
 
@@ -84,16 +85,6 @@ class _SellpageState extends State<Sellpage> {
                   _scaffoldKey.currentState?.openDrawer();
                 },
               ),
-              IconButton(
-                icon: Icon(
-                  Icons.sailing,
-                  semanticLabel: "Show navigation drawer",
-                ),
-                onPressed: () {
-                  MyPosts = !MyPosts;
-                  buynSellPostBloc.refresh();
-                },
-              ),
             ],
           ),
         ),
@@ -108,51 +99,64 @@ class _SellpageState extends State<Sellpage> {
           ),
         ),
         body: SafeArea(
-             child: SingleChildScrollView(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-               children: <Widget>[
-         
-                    Center(
-            child: StreamBuilder<List<BuynSellPost>>(
-                stream: buynSellPostBloc.buynsellposts,
-                builder: (BuildContext context,
-                    AsyncSnapshot<List<BuynSellPost>> snapshot) {
-                  var length;
-                  if (MyPosts) {
-                    length = snapshot.data!
-                        .where((post) => post.user?.userID == profile?.userID)
-                        .toList()
-                        .length;
-                  } else {
-                    length = snapshot.data!.length;
-                  }
-                  return ListView.builder(
-                    itemCount: snapshot.hasData ? length : 0,
-                    itemBuilder: (_, index) {
-                      if (!snapshot.hasData) {
-                        return Center(
-                            child: CircularProgressIndicatorExtended(
-                          label: Text("Loading..."),
-                        ));
+          child: SingleChildScrollView(
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              TitleWithBackButton(
+                child: Text(
+                  "Buy & Sell",
+                  style: theme.textTheme.headline3,
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: OutlinedButton(
+                  style: TextButton.styleFrom(
+                    textStyle: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () async {
+                    MyPosts = !MyPosts;
+                    buynSellPostBloc.refresh();
+                  },
+                  child: Text("Your Posts"),
+                ),
+              ),
+              Center(
+                child: StreamBuilder<List<BuynSellPost>>(
+                    stream: buynSellPostBloc.buynsellposts,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<BuynSellPost>> snapshot) {
+                      var length;
+                      if (MyPosts) {
+                        length = snapshot.data!
+                            .where(
+                                (post) => post.user?.userID == profile?.userID)
+                            .toList()
+                            .length;
+                      } else {
+                        length = snapshot.data!.length;
                       }
-
-                      if (snapshot.data!.isEmpty == true) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 28.0, vertical: 8.0),
-                          child: Text.rich(TextSpan(
-                              style: theme.textTheme.headline6,
-                              children: [
-                                TextSpan(text: "Nothing here yet!"),
-                              ])),
-                        );
-                      } else
-                        return _buildContent(screen_h, screen_w, index, myfont,
-                            context, snapshot);
-                    },
-                  );
-                }),
-          ),],)
+                      return ListView.builder(
+                        primary: false,
+                        shrinkWrap: true,
+                        itemCount: snapshot.hasData ? length : 0,
+                        itemBuilder: (_, index) {
+                          if (!snapshot.hasData) {
+                            return Center(
+                                child: CircularProgressIndicatorExtended(
+                              label: Text("Loading..."),
+                            ));
+                          }
+                          return _buildContent(screen_h, screen_w, index,
+                              myfont, context, snapshot);
+                        },
+                      );
+                    }),
+              ),
+            ],
+          )),
         ));
   }
 
@@ -160,6 +164,7 @@ class _SellpageState extends State<Sellpage> {
       double myfont, BuildContext context, AsyncSnapshot snapshot) {
     List<BuynSellPost> _posts;
     List<BuynSellPost> _postscopy = snapshot.data!;
+    var theme = Theme.of(context);
 
     var bloc = BlocProvider.of(context)!.bloc;
     User? profile = bloc.currSession?.profile;
@@ -170,14 +175,19 @@ class _SellpageState extends State<Sellpage> {
     } else {
       _posts = snapshot.data!;
     }
-    var theme = Theme.of(context);
 
-    TitleWithBackButton(
-      child: Text(
-        "Create Post",
-        style: theme.textTheme.headline3,
-      ),
-    );
+    if (_posts.isEmpty == true) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
+        child: Text.rich(TextSpan(style: theme.textTheme.headline6, children: [
+          TextSpan(text: "Nothing here yet!"),
+          // TextSpan(
+          //     text: "\"${communityBloc.query}\"",
+          //     style: TextStyle(fontWeight: FontWeight.bold)),
+          // TextSpan(text: "."),
+        ])),
+      );
+    }
 
     return Center(
       child: (SizedBox(
@@ -299,7 +309,6 @@ class _SellpageState extends State<Sellpage> {
                                   onPressed: () {
                                     bloc.buynSellPostBloc.deleteBuynSellPost(
                                         _posts[index].id ?? "");
-                                    MyPosts = false;
                                     bloc.buynSellPostBloc.refresh();
                                   },
                                   child: Text("Delete",
