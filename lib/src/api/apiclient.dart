@@ -44,7 +44,7 @@ import 'package:dio/dio.dart';
 import 'model/offersecret.dart';
 part 'apiclient.g.dart';
 
-@rt.RestApi(baseUrl: "http://192.168.1.101:8000/api")
+@rt.RestApi(baseUrl: "https://9a1d-103-21-125-85.ngrok-free.app/api")
 // @rt.RestApi(baseUrl: "http://10.198.49.150/api")
 // @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
 // @rt.RestApi(baseUrl: "https://0ac7-103-21-125-80.in.ngrok.io/api")
@@ -391,6 +391,10 @@ abstract class InstiAppApi {
 
   @rt.GET('/buy/products/{id}')
   Future<BuynSellPost> getBuynSellPost(
+      @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+
+  @rt.DELETE('/buy/products/{id}')
+  Future<BuynSellPost> deleteBuynSellPost(
       @rt.Header("Cookie") String sessionId, @rt.Path() String id);
 
   @rt.PUT('/buy/products/{id}')

@@ -24,6 +24,10 @@ class BuynSellPostBloc {
     return await bloc.client.getBuynSellPost(bloc.getSessionIdHeader(), id);
   }
 
+  Future<BuynSellPost?> deleteBuynSellPost(String id) async {
+    return await bloc.client.deleteBuynSellPost(bloc.getSessionIdHeader(), id);
+  }
+
   Future<void> updateBuynSellPost(BuynSellPost post) async {
     await bloc.client
         .updateBuynSellPost(bloc.getSessionIdHeader(), post.id!, post);
