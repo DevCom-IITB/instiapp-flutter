@@ -61,7 +61,9 @@ class _SellpageState extends State<Sellpage> {
     double screen_wr = MediaQuery.of(context).size.width;
     double screen_hr = MediaQuery.of(context).size.height;
     double x, y;
+    var bloc = BlocProvider.of(context)!.bloc;
     var theme = Theme.of(context);
+    bool isLoggedIn = bloc.currSession != null;
 
     screen_hr >= screen_wr ? x = 0.35 : x = 0.73;
     screen_hr >= screen_wr ? y = 0.9 : y = 0.49;
@@ -99,64 +101,84 @@ class _SellpageState extends State<Sellpage> {
           ),
         ),
         body: SafeArea(
-          child: SingleChildScrollView(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              TitleWithBackButton(
-                child: Text(
-                  "Buy & Sell",
-                  style: theme.textTheme.headline3,
-                ),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: OutlinedButton(
-                  style: TextButton.styleFrom(
-                    textStyle: const TextStyle(
-                        fontSize: 15, fontWeight: FontWeight.bold),
+          child: !isLoggedIn
+              ? Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(50),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.cloud,
+                        size: 200,
+                        color: Colors.grey[600],
+                      ),
+                      Text(
+                        "Login To View Buy and Sell Posts",
+                        style: theme.textTheme.headline5,
+                        textAlign: TextAlign.center,
+                      )
+                    ],
+                    crossAxisAlignment: CrossAxisAlignment.center,
                   ),
-                  onPressed: () async {
-                    MyPosts = !MyPosts;
-                    buynSellPostBloc.refresh();
-                  },
-                  child: Text("Your Posts"),
-                ),
-              ),
-              Center(
-                child: StreamBuilder<List<BuynSellPost>>(
-                    stream: buynSellPostBloc.buynsellposts,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<BuynSellPost>> snapshot) {
-                      var length;
-                      if (MyPosts) {
-                        length = snapshot.data!
-                            .where(
-                                (post) => post.user?.userID == profile?.userID)
-                            .toList()
-                            .length;
-                      } else {
-                        length = snapshot.data!.length;
-                      }
-                      return ListView.builder(
-                        primary: false,
-                        shrinkWrap: true,
-                        itemCount: snapshot.hasData ? length : 0,
-                        itemBuilder: (_, index) {
-                          if (!snapshot.hasData) {
-                            return Center(
-                                child: CircularProgressIndicatorExtended(
-                              label: Text("Loading..."),
-                            ));
-                          }
-                          return _buildContent(screen_h, screen_w, index,
-                              myfont, context, snapshot);
+                )
+              : SingleChildScrollView(
+                  child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    TitleWithBackButton(
+                      child: Text(
+                        "Buy & Sell",
+                        style: theme.textTheme.headline3,
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: OutlinedButton(
+                        style: TextButton.styleFrom(
+                          textStyle: const TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        onPressed: () async {
+                          MyPosts = !MyPosts;
+                          buynSellPostBloc.refresh();
                         },
-                      );
-                    }),
-              ),
-            ],
-          )),
+                        child: Text("Your Posts"),
+                      ),
+                    ),
+                    Center(
+                      child: StreamBuilder<List<BuynSellPost>>(
+                          stream: buynSellPostBloc.buynsellposts,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<BuynSellPost>> snapshot) {
+                            var length;
+                            if (MyPosts) {
+                              length = snapshot.data!
+                                  .where((post) =>
+                                      post.user?.userID == profile?.userID)
+                                  .toList()
+                                  .length;
+                            } else {
+                              length = snapshot.data!.length;
+                            }
+                            return ListView.builder(
+                              primary: false,
+                              shrinkWrap: true,
+                              itemCount: snapshot.hasData ? length : 0,
+                              itemBuilder: (_, index) {
+                                if (!snapshot.hasData) {
+                                  return Center(
+                                      child: CircularProgressIndicatorExtended(
+                                    label: Text("Loading..."),
+                                  ));
+                                }
+                                return _buildContent(screen_h, screen_w, index,
+                                    myfont, context, snapshot);
+                              },
+                            );
+                          }),
+                    ),
+                  ],
+                )),
         ));
   }
 
@@ -210,8 +232,9 @@ class _SellpageState extends State<Sellpage> {
                         height: screen_h * 0.55,
                         width: screen_w,
                         child: CachedNetworkImage(
-                          imageUrl: (_posts[index].imageUrl ?? "")
-                              .replaceFirst('localhost', '192.168.0.103'),
+                          imageUrl: (_posts[index].imageUrl ?? "").replaceFirst(
+                              'localhost:8000',
+                              '9a1d-103-21-125-85.ngrok-free.app'),
                           placeholder: (context, url) => new Image.asset(
                             'assets/buy&sell/No-image-found.jpg',
                             fit: BoxFit.fill,
@@ -220,7 +243,7 @@ class _SellpageState extends State<Sellpage> {
                             'assets/buy&sell/No-image-found.jpg',
                             fit: BoxFit.fill,
                           ),
-                          fit: BoxFit.fill,
+                          fit: BoxFit.fitHeight,
                         ),
                       ),
                     ),
@@ -259,7 +282,9 @@ class _SellpageState extends State<Sellpage> {
                     children: [
                       Spacer(),
                       Text(
-                        "₹" + (_posts[index].price ?? 0).toString(),
+                        (_posts[index].action == 'giveaway'
+                            ? "Give Away"
+                            : "₹" + (_posts[index].price ?? 0).toString()),
                         style: TextStyle(
                             fontSize: (myfont.toInt()).toDouble(),
                             fontWeight: FontWeight.w800),

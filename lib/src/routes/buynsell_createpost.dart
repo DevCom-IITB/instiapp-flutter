@@ -80,12 +80,6 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            TitleWithBackButton(
-              child: Text(
-                "Buy & Sell",
-                style: theme.textTheme.headline3,
-              ),
-            ),
             IconButton(
               icon: Icon(
                 Icons.menu_outlined,
