@@ -5,9 +5,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+
+import '../api/model/user.dart';
+import '../utils/title_with_backbutton.dart';
 
 class BuySellPage extends StatefulWidget {
   BuySellPage({Key? key}) : super(key: key);
@@ -39,6 +41,7 @@ class _SellpageState extends State<Sellpage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   bool firstBuild = true;
+  bool MyPosts = false;
 
   @override
   void initState() {
@@ -49,6 +52,7 @@ class _SellpageState extends State<Sellpage> {
   Widget build(BuildContext context) {
     BuynSellPostBloc buynSellPostBloc =
         BlocProvider.of(context)!.bloc.buynSellPostBloc;
+    User? profile = BlocProvider.of(context)!.bloc.currSession?.profile;
     if (firstBuild) {
       buynSellPostBloc.refresh();
     }
@@ -56,6 +60,7 @@ class _SellpageState extends State<Sellpage> {
     double screen_wr = MediaQuery.of(context).size.width;
     double screen_hr = MediaQuery.of(context).size.height;
     double x, y;
+    var theme = Theme.of(context);
 
     screen_hr >= screen_wr ? x = 0.35 : x = 0.73;
     screen_hr >= screen_wr ? y = 0.9 : y = 0.49;
@@ -79,6 +84,16 @@ class _SellpageState extends State<Sellpage> {
                   _scaffoldKey.currentState?.openDrawer();
                 },
               ),
+              IconButton(
+                icon: Icon(
+                  Icons.sailing,
+                  semanticLabel: "Show navigation drawer",
+                ),
+                onPressed: () {
+                  MyPosts = !MyPosts;
+                  buynSellPostBloc.refresh();
+                },
+              ),
             ],
           ),
         ),
@@ -92,17 +107,27 @@ class _SellpageState extends State<Sellpage> {
             size: 30,
           ),
         ),
-        body: RefreshIndicator(
-          onRefresh: () {
-            return buynSellPostBloc.refresh();
-          },
-          child: Center(
+        body: SafeArea(
+             child: SingleChildScrollView(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+               children: <Widget>[
+         
+                    Center(
             child: StreamBuilder<List<BuynSellPost>>(
                 stream: buynSellPostBloc.buynsellposts,
                 builder: (BuildContext context,
                     AsyncSnapshot<List<BuynSellPost>> snapshot) {
+                  var length;
+                  if (MyPosts) {
+                    length = snapshot.data!
+                        .where((post) => post.user?.userID == profile?.userID)
+                        .toList()
+                        .length;
+                  } else {
+                    length = snapshot.data!.length;
+                  }
                   return ListView.builder(
-                    itemCount: snapshot.hasData ? snapshot.data!.length : 0,
+                    itemCount: snapshot.hasData ? length : 0,
                     itemBuilder: (_, index) {
                       if (!snapshot.hasData) {
                         return Center(
@@ -110,18 +135,50 @@ class _SellpageState extends State<Sellpage> {
                           label: Text("Loading..."),
                         ));
                       }
-                      return _buildContent(
-                          screen_h, screen_w, index, myfont, context, snapshot);
+
+                      if (snapshot.data!.isEmpty == true) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 28.0, vertical: 8.0),
+                          child: Text.rich(TextSpan(
+                              style: theme.textTheme.headline6,
+                              children: [
+                                TextSpan(text: "Nothing here yet!"),
+                              ])),
+                        );
+                      } else
+                        return _buildContent(screen_h, screen_w, index, myfont,
+                            context, snapshot);
                     },
                   );
                 }),
-          ),
+          ),],)
         ));
   }
 
-  Center _buildContent(double screen_h, double screen_w, int index,
+  Widget _buildContent(double screen_h, double screen_w, int index,
       double myfont, BuildContext context, AsyncSnapshot snapshot) {
-    List<BuynSellPost> _posts = snapshot.data!;
+    List<BuynSellPost> _posts;
+    List<BuynSellPost> _postscopy = snapshot.data!;
+
+    var bloc = BlocProvider.of(context)!.bloc;
+    User? profile = bloc.currSession?.profile;
+    if (MyPosts) {
+      _posts = _postscopy
+          .where((post) => post.user?.userID == profile?.userID)
+          .toList();
+    } else {
+      _posts = snapshot.data!;
+    }
+    var theme = Theme.of(context);
+
+    TitleWithBackButton(
+      child: Text(
+        "Create Post",
+        style: theme.textTheme.headline3,
+      ),
+    );
+
     return Center(
       child: (SizedBox(
         height: screen_h,
@@ -144,7 +201,7 @@ class _SellpageState extends State<Sellpage> {
                         width: screen_w,
                         child: CachedNetworkImage(
                           imageUrl: (_posts[index].imageUrl ?? "")
-                              .replaceFirst('localhost', '192.168.1.101'),
+                              .replaceFirst('localhost', '192.168.0.103'),
                           placeholder: (context, url) => new Image.asset(
                             'assets/buy&sell/No-image-found.jpg',
                             fit: BoxFit.fill,
@@ -207,8 +264,7 @@ class _SellpageState extends State<Sellpage> {
                       size: ((myfont / 18 * 12).toInt()).toDouble(),
                     ),
                     Text(
-                      (_posts[index].timeOfCreation ?? "").toString() +
-                          "Days Ago",
+                      _posts[index].timeBefore ?? "",
                       style: TextStyle(
                           fontSize: ((myfont / 18 * 12).toInt()).toDouble()),
                     ),
@@ -231,23 +287,41 @@ class _SellpageState extends State<Sellpage> {
                     margin:
                         EdgeInsets.fromLTRB(0, screen_h * 0.3 / 0.42, 15.2, 0),
                     child: SizedBox(
-                      height: 30 / 274.4 * screen_h,
-                      width: 80 / 340.5 * screen_w,
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                "/buyandsell/info" + (_posts[index].id ?? ""),
-                              );
-                            },
-                            child: Text("Contact",
-                                maxLines: 1,
-                                style:
-                                    TextStyle(fontSize: 12.5 / 338 * screen_w)),
-                          )),
-                    ),
+                        height: 30 / 274.4 * screen_h,
+                        width: 80 / 340.5 * screen_w,
+                        child: MyPosts
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.red,
+                                  ),
+                                  onPressed: () {
+                                    bloc.buynSellPostBloc.deleteBuynSellPost(
+                                        _posts[index].id ?? "");
+                                    MyPosts = false;
+                                    bloc.buynSellPostBloc.refresh();
+                                  },
+                                  child: Text("Delete",
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                          fontSize: 12.5 / 338 * screen_w)),
+                                ))
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      "/buyandsell/info" +
+                                          (_posts[index].id ?? ""),
+                                    );
+                                  },
+                                  child: Text("Contact",
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                          fontSize: 12.5 / 338 * screen_w)),
+                                ))),
                   ),
                 ],
               )

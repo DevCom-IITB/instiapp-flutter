@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 
+import '../utils/title_with_backbutton.dart';
+
 class ScreenArguments {
   final String title;
   ScreenArguments(this.title);
@@ -42,10 +44,12 @@ class CategoryButton extends StatelessWidget {
 //widget for category page
 class BuyAndSellCategoryPage extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   @override
   BuyAndSellCategoryPage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return Scaffold(
       key: _scaffoldKey,
       drawer: NavDrawer(),
@@ -76,20 +80,12 @@ class BuyAndSellCategoryPage extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(10.0, 45.0, 0, 10),
                 child: Row(
                   children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pushNamed("/buyandsell");
-                      },
-                      child: Icon(
-                        Icons.arrow_back_ios_outlined,
-                        color: Colors.black,
-                        size: 27.5,
-                      ),
-                    ),
                     Center(
-                      child: Text(
-                        "Choose post category ",
-                        style: TextStyle(fontSize: 27.5),
+                      child: TitleWithBackButton(
+                        child: Text(
+                          "Choose Category",
+                          style: theme.textTheme.headline4,
+                        ),
                       ),
                     ),
                   ],

@@ -56,7 +56,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
     //str_id = data?['str_id'];
     // ignore: avoid_print
     print(bnsPost?.name);
-    var bloc = BlocProvider.of(context)!.bloc;
+    var bloc = BlocProvider.of(context)?.bloc;
     var theme = Theme.of(context);
 
     double screen_h = MediaQuery.of(context).size.height;
@@ -91,13 +91,13 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                     children: <Widget>[
                       TitleWithBackButton(
                         child: Text(
-                          bnsPost!.name ?? "",
+                          bnsPost?.name ?? "",
                           style: theme.textTheme.headline3,
                         ),
                       ), //Row
                       CachedNetworkImage(
                         imageUrl: (bnsPost?.imageUrl ?? "")
-                            .replaceFirst('localhost', '192.168.1.101'),
+                            .replaceFirst('localhost', '192.168.0.103'),
                         placeholder: (context, url) => new Image.asset(
                           'assets/buy&sell/No-image-found.jpg',
                           fit: BoxFit.fill,
@@ -112,6 +112,11 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                           padding: EdgeInsets.fromLTRB(25, 15, 25, 0),
                           child: Text((bnsPost?.description ?? ""),
                               style: TextStyle(color: Colors.grey))),
+                      Padding(
+                          padding: EdgeInsets.fromLTRB(25, 15, 25, 0),
+                          child: Text("Brand - " + (bnsPost?.brand ?? ""),
+                              style: TextStyle(color: Colors.grey))),
+
                       Padding(
                           padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
                           child: Divider(

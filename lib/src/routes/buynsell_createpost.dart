@@ -12,6 +12,7 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 
 import '../bloc_provider.dart';
 import '../blocs/buynsell_post_block.dart';
+import '../utils/title_with_backbutton.dart';
 
 class NavigateArguments {
   final BuynSellPost? post;
@@ -67,6 +68,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
   @override
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of(context)!.bloc;
+    var theme = Theme.of(context);
     User? profile = bloc.currSession?.profile;
 
     final args = ModalRoute.of(context)!.settings.arguments as ScreenArguments;
@@ -103,18 +105,11 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(2, 10, 0, 30),
-                        child: Container(
-                            padding: EdgeInsets.fromLTRB(0, 4, 15.0, 2),
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.of(context)
-                                    .pushNamed("/buyandsell/category");
-                              },
-                              child: Icon(Icons.arrow_back_ios_outlined,
-                                  color: Colors.black),
-                            )),
+                      TitleWithBackButton(
+                        child: Text(
+                          "Create Post",
+                          style: theme.textTheme.headline4,
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 16.0),
@@ -126,7 +121,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                 padding:
                                     EdgeInsets.fromLTRB(0.0, 0.0, 16.0, 0.0),
                                 child: Text(
-                                  'Choose the action you want to take*',
+                                  'Choose the action you want to take',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16.0,
@@ -184,7 +179,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                             const Expanded(
                               flex: 2,
                               child: Text(
-                                'Name of the item*',
+                                'Name of the item',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16.0,
@@ -225,7 +220,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                             const Expanded(
                               flex: 2,
                               child: Text(
-                                'Price of the item*',
+                                'Price of the item',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16.0,
@@ -254,42 +249,54 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                     },
                                     keyboardType: TextInputType.number,
                                   ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
+                        child: Row(
+                          children: [
+                            const Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Is Price Negotiable?',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 4,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                                   Row(
                                     children: [
-                                      const Expanded(
-                                          flex: 1, child: SizedBox()),
-                                      const Text('Negotiable'),
+                                      const Text('Yes'),
                                       Radio<bool>(
                                         value: true,
                                         groupValue: bnsPost.negotiable,
                                         onChanged: (value) {
                                           setState(() {
-                                            print(value);
                                             bnsPost.negotiable = value;
                                           });
                                         },
                                       ),
-                                      const Expanded(
-                                          flex: 1, child: SizedBox()),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Expanded(
-                                          flex: 1, child: SizedBox()),
-                                      const Text('Non-Negotiable'),
+                                      const Text('No'),
                                       Radio<bool>(
                                         value: false,
                                         groupValue: bnsPost.negotiable,
                                         onChanged: (value) {
                                           setState(() {
-                                            print(value);
                                             bnsPost.negotiable = value;
                                           });
                                         },
                                       ),
-                                      const Expanded(
-                                          flex: 1, child: SizedBox()),
+                                      // const Text('No'),
                                     ],
                                   )
                                 ],
@@ -305,7 +312,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                             const Expanded(
                               flex: 2,
                               child: Text(
-                                'Description*',
+                                'Description',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16.0,
@@ -318,14 +325,17 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   TextFormField(
-                                    decoration: const InputDecoration(
-                                        hintText: 'Enter item name',
-                                        contentPadding: EdgeInsets.symmetric(
-                                            vertical: 30, horizontal: 10),
-                                        border: OutlineInputBorder()),
+                                    keyboardType: TextInputType.multiline,
+                                    maxLines: null,
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 10),
+                                      border: OutlineInputBorder(),
+                                      hintText: "Enter Description",
+                                    ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter item name';
+                                        return 'Please enter item description';
                                       }
                                       return null;
                                     },
@@ -517,6 +527,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                     onChanged: (value) {
                                       bnsPost.condition = value;
                                     },
+                                    keyboardType: TextInputType.number,
                                   ),
                                 ],
                               ),
@@ -535,7 +546,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                             const Expanded(
                               flex: 2,
                               child: Text(
-                                'Contact Details*',
+                                'Contact Details',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16.0,
@@ -556,7 +567,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                         border: OutlineInputBorder()),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter item name';
+                                        return 'Please enter contact no. name';
                                       }
                                       return null;
                                     },
@@ -627,7 +638,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                             const Expanded(
                               flex: 3,
                               child: Text(
-                                'Attach Image*',
+                                'Attach Image',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16.0,
@@ -695,6 +706,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
 
                                 bloc.buynSellPostBloc
                                     .createBuynSellPost(bnsPost);
+                                Navigator.pushNamed(context, '/buyandsell');
                               }
                             },
                             child: const Text('Submit'),

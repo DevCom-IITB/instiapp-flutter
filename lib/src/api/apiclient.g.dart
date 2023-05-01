@@ -8,7 +8,7 @@ part of 'apiclient.dart';
 
 class _InstiAppApi implements InstiAppApi {
   _InstiAppApi(this._dio, {this.baseUrl}) {
-    baseUrl ??= 'http://192.168.1.101:8000/api';
+    baseUrl ??= 'https://9a1d-103-21-125-85.ngrok-free.app/api';
   }
 
   final Dio _dio;
@@ -1362,6 +1362,23 @@ class _InstiAppApi implements InstiAppApi {
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<BuynSellPost>(
             Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/buy/products/${id}',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = BuynSellPost.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<BuynSellPost> deleteBuynSellPost(sessionId, id) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<BuynSellPost>(
+            Options(method: 'DELETE', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/buy/products/${id}',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));

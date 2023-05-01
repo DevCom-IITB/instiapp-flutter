@@ -20,12 +20,10 @@ BuynSellPost _$BuynSellPostFromJson(Map<String, dynamic> json) => BuynSellPost(
       status: json['status'] as bool?,
       deleted: json['deleted'] as bool?,
       price: json['price'] as int?,
+      timeOfCreation: json['time_of_creation'] as String?,
     )
       ..negotiable = json['negotiable'] as bool?
       ..contactDetails = json['contact_details'] as String?
-      ..timeOfCreation = json['time_of_creation'] == null
-          ? null
-          : DateTime.parse(json['time_of_creation'] as String)
       ..category = json['category'] as String?
       ..user = json['user'] == null
           ? null
@@ -48,7 +46,7 @@ Map<String, dynamic> _$BuynSellPostToJson(BuynSellPost instance) =>
       'price': instance.price,
       'negotiable': instance.negotiable,
       'contact_details': instance.contactDetails,
-      'time_of_creation': instance.timeOfCreation?.toIso8601String(),
+      'time_of_creation': instance.timeOfCreation,
       'category': instance.category,
       'user': instance.user,
     };

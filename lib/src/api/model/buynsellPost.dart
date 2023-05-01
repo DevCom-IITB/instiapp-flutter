@@ -51,13 +51,19 @@ class BuynSellPost {
   String? contactDetails;
 
   @JsonKey(name: "time_of_creation")
-  DateTime? timeOfCreation;
+  String? timeOfCreation;
 
   @JsonKey(name: "category")
   String? category;
 
   @JsonKey(name: "user")
   User? user;
+
+  @JsonKey(ignore: true)
+  int? postedMinutes;
+
+  @JsonKey(ignore: true)
+  String? timeBefore;
 
   @override
   String toString() {
@@ -78,7 +84,21 @@ class BuynSellPost {
     this.status,
     this.deleted,
     this.price,
-  }) {}
+    this.timeOfCreation,
+    this.timeBefore,
+  }) {
+    if (timeOfCreation != null) {
+      postedMinutes =
+          DateTime.now().difference(DateTime.parse(timeOfCreation!)).inMinutes;
+      if (postedMinutes! > 1440) {
+        timeBefore = "${postedMinutes! ~/ 1440}Days Ago";
+      } else if (postedMinutes! > 60) {
+        timeBefore = "${postedMinutes! ~/ 60}Hours Ago";
+      } else {
+        timeBefore = "${postedMinutes!}Minutes Ago";
+      }
+    }
+  }
 
   factory BuynSellPost.fromJson(Map<String, dynamic> json) =>
       _$BuynSellPostFromJson(json);
