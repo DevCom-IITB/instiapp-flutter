@@ -685,21 +685,26 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                           ),
                           const SizedBox(width: 20),
                           ElevatedButton(
-                            onPressed: () async {
-                              bnsPost.user = profile;
-                              if (_formKey.currentState!.validate()) {
-                                if (_imageFile != null) {
-                                  ImageUploadResponse resp = await bloc.client
-                                      .uploadImage(bloc.getSessionIdHeader(),
-                                          _imageFile!);
-                                  bnsPost.imageUrl = resp.pictureURL;
-                                }
+                            onPressed: isButtonDisabled
+                                ? null
+                                : () async {
+                                    bnsPost.user = profile;
+                                    handleTap();
+                                    if (_formKey.currentState!.validate()) {
+                                      if (_imageFile != null) {
+                                        ImageUploadResponse resp =
+                                            await bloc.client.uploadImage(
+                                                bloc.getSessionIdHeader(),
+                                                _imageFile!);
+                                        bnsPost.imageUrl = resp.pictureURL;
+                                      }
 
-                                bloc.buynSellPostBloc
-                                    .createBuynSellPost(bnsPost);
-                                Navigator.pushNamed(context, '/buyandsell');
-                              }
-                            },
+                                      bloc.buynSellPostBloc
+                                          .createBuynSellPost(bnsPost);
+                                      Navigator.pushNamed(
+                                          context, '/buyandsell');
+                                    }
+                                  },
                             child: const Text('Submit'),
                           ),
                           const SizedBox(width: 20),
@@ -737,58 +742,75 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
     }
   }
 
-  Widget _buildImageUrl(String url, int index) {
-    return Stack(
-      children: [
-        Image.network(
-          url,
-          height: MediaQuery.of(context).size.height / 7.5,
-          width: MediaQuery.of(context).size.height / 7.5,
-          fit: BoxFit.scaleDown,
-        ),
-        Positioned(
-          right: 0,
-          top: 0,
-          child: Container(
-            child: IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () {
-                setState(() {
-                  currRequest.imageUrl!;
-                });
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _buildImageUrl(String url, int index) {
+  //   return Stack(
+  //     children: [
+  //       Image.network(
+  //         url,
+  //         height: MediaQuery.of(context).size.height / 7.5,
+  //         width: MediaQuery.of(context).size.height / 7.5,
+  //         fit: BoxFit.scaleDown,
+  //       ),
+  //       Positioned(
+  //         right: 0,
+  //         top: 0,
+  //         child: Container(
+  //           child: IconButton(
+  //             icon: Icon(Icons.close),
+  //             onPressed: () {
+  //               setState(() {
+  //                 currRequest.imageUrl!;
+  //               });
+  //             },
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildImageFile(File file, int index) {
-    return Stack(
-      children: [
-        Image.file(
-          file,
-          height: MediaQuery.of(context).size.height / 7.5,
-          width: MediaQuery.of(context).size.height / 7.5,
-          fit: BoxFit.scaleDown,
-        ),
-        Positioned(
-          right: 0,
-          top: 0,
-          child: Container(
-            child: IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () {
-                setState(() {
-                  //imageFile.remove;
-                });
-              },
-            ),
-          ),
-        ),
-      ],
-    );
+  // Widget _buildImageFile(File file, int index) {
+  //   return Stack(
+  //     children: [
+  //       Image.file(
+  //         file,
+  //         height: MediaQuery.of(context).size.height / 7.5,
+  //         width: MediaQuery.of(context).size.height / 7.5,
+  //         fit: BoxFit.scaleDown,
+  //       ),
+  //       Positioned(
+  //         right: 0,
+  //         top: 0,
+  //         child: Container(
+  //           child: IconButton(
+  //             icon: Icon(Icons.close),
+  //             onPressed: () {
+  //               setState(() {
+  //                 //imageFile.remove;
+  //               });
+  //             },
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
+
+  bool isButtonDisabled = false;
+
+  void handleTap() {
+    if (!isButtonDisabled) {
+      setState(() {
+        isButtonDisabled = true;
+      });
+      // Perform the action that the button triggers here
+
+      Future.delayed(Duration(seconds: 10), () {
+        setState(() {
+          isButtonDisabled = false;
+        });
+      });
+    }
   }
 }
 

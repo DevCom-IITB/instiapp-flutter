@@ -11,7 +11,7 @@ import '../utils/title_with_backbutton.dart';
 
 class BuySellPage extends StatefulWidget {
   BuySellPage({Key? key}) : super(key: key);
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  //final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   State<BuySellPage> createState() => _BuySellPageState();
