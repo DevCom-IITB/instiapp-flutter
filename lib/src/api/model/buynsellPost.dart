@@ -91,11 +91,11 @@ class BuynSellPost {
       postedMinutes =
           DateTime.now().difference(DateTime.parse(timeOfCreation!)).inMinutes;
       if (postedMinutes! > 1440) {
-        timeBefore = "${postedMinutes! ~/ 1440}Days Ago";
+        timeBefore = "${postedMinutes! ~/ 1440} Days Ago";
       } else if (postedMinutes! > 60) {
-        timeBefore = "${postedMinutes! ~/ 60}Hours Ago";
+        timeBefore = "${postedMinutes! ~/ 60} Hours Ago";
       } else {
-        timeBefore = "${postedMinutes!}Minutes Ago";
+        timeBefore = "${postedMinutes!} Minutes Ago";
       }
     }
   }

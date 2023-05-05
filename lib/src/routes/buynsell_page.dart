@@ -1,10 +1,8 @@
 import 'package:InstiApp/src/api/model/buynsellPost.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
-import 'package:InstiApp/src/blocs/buynsell_post_block.dart';
+import 'package:InstiApp/src/blocs/buynsell_post_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'dart:convert';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 
@@ -20,7 +18,6 @@ class BuySellPage extends StatefulWidget {
 }
 
 class _BuySellPageState extends State<BuySellPage> {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -47,12 +44,12 @@ class _SellpageState extends State<Sellpage> {
   @override
   void initState() {
     super.initState();
-    // _firstLoad();
   }
 
   Widget build(BuildContext context) {
     BuynSellPostBloc buynSellPostBloc =
         BlocProvider.of(context)!.bloc.buynSellPostBloc;
+
     User? profile = BlocProvider.of(context)!.bloc.currSession?.profile;
     if (firstBuild) {
       buynSellPostBloc.refresh();
@@ -127,22 +124,26 @@ class _SellpageState extends State<Sellpage> {
                   children: <Widget>[
                     TitleWithBackButton(
                       child: Text(
-                        "Buy & Sell",
-                        style: theme.textTheme.headline3,
+                        "Buy & Sell (Beta)",
+                        style: theme.textTheme.headline4,
                       ),
                     ),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: OutlinedButton(
-                        style: TextButton.styleFrom(
-                          textStyle: const TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
+                      child: Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 28.0, vertical: 0),
+                        child: OutlinedButton(
+                          style: TextButton.styleFrom(
+                            textStyle: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () {
+                            MyPosts = !MyPosts;
+                            buynSellPostBloc.refresh();
+                          },
+                          child: Text("Your Posts"),
                         ),
-                        onPressed: () async {
-                          MyPosts = !MyPosts;
-                          buynSellPostBloc.refresh();
-                        },
-                        child: Text("Your Posts"),
                       ),
                     ),
                     Center(
@@ -150,20 +151,23 @@ class _SellpageState extends State<Sellpage> {
                           stream: buynSellPostBloc.buynsellposts,
                           builder: (BuildContext context,
                               AsyncSnapshot<List<BuynSellPost>> snapshot) {
-                            var length;
-                            if (MyPosts) {
-                              length = snapshot.data!
-                                  .where((post) =>
-                                      post.user?.userID == profile?.userID)
-                                  .toList()
-                                  .length;
-                            } else {
-                              length = snapshot.data!.length;
-                            }
                             return ListView.builder(
                               primary: false,
                               shrinkWrap: true,
-                              itemCount: snapshot.hasData ? length : 0,
+                              itemCount: MyPosts
+                                  ? (snapshot.hasData
+                                      ? snapshot.data!
+                                          .where((post) =>
+                                              post.user?.userID ==
+                                                  profile?.userID &&
+                                              post.deleted != true)
+                                          .length
+                                      : 0)
+                                  : (snapshot.hasData
+                                      ? snapshot.data!
+                                          .where((post) => post.deleted != true)
+                                          .length
+                                      : 0),
                               itemBuilder: (_, index) {
                                 if (!snapshot.hasData) {
                                   return Center(
@@ -184,31 +188,18 @@ class _SellpageState extends State<Sellpage> {
 
   Widget _buildContent(double screen_h, double screen_w, int index,
       double myfont, BuildContext context, AsyncSnapshot snapshot) {
-    List<BuynSellPost> _posts;
-    List<BuynSellPost> _postscopy = snapshot.data!;
-    var theme = Theme.of(context);
+    List<BuynSellPost> posts = snapshot.data!;
 
     var bloc = BlocProvider.of(context)!.bloc;
     User? profile = bloc.currSession?.profile;
     if (MyPosts) {
-      _posts = _postscopy
-          .where((post) => post.user?.userID == profile?.userID)
+      posts = posts
+          .where((post) =>
+              post.user?.userID == profile?.userID && post.deleted != true)
           .toList();
     } else {
-      _posts = snapshot.data!;
-    }
-
-    if (_posts.isEmpty == true) {
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-        child: Text.rich(TextSpan(style: theme.textTheme.headline6, children: [
-          TextSpan(text: "Nothing here yet!"),
-          // TextSpan(
-          //     text: "\"${communityBloc.query}\"",
-          //     style: TextStyle(fontWeight: FontWeight.bold)),
-          // TextSpan(text: "."),
-        ])),
-      );
+      posts = snapshot.data;
+      posts = posts.where((post) => post.deleted != true).toList();
     }
 
     return Center(
@@ -232,15 +223,13 @@ class _SellpageState extends State<Sellpage> {
                         height: screen_h * 0.55,
                         width: screen_w,
                         child: CachedNetworkImage(
-                          imageUrl: (_posts[index].imageUrl ?? "").replaceFirst(
-                              'localhost:8000',
-                              '9a1d-103-21-125-85.ngrok-free.app'),
+                          imageUrl: (posts[index].imageUrl ?? ""),
                           placeholder: (context, url) => new Image.asset(
-                            'assets/buy&sell/No-image-found.jpg',
+                            'assets/buynsell/noimg.png',
                             fit: BoxFit.fill,
                           ),
                           errorWidget: (context, url, error) => new Image.asset(
-                            'assets/buy&sell/No-image-found.jpg',
+                            'assets/buynsell/noimg.png',
                             fit: BoxFit.fill,
                           ),
                           fit: BoxFit.fitHeight,
@@ -250,11 +239,10 @@ class _SellpageState extends State<Sellpage> {
                   ],
                 ),
               ),
-
               Container(
                 margin: EdgeInsets.fromLTRB(10, screen_h * 0.245 / 0.43, 0, 0),
                 child: Text(
-                  _posts[index].name ?? "",
+                  posts[index].name ?? "",
                   style: TextStyle(
                       fontSize: (myfont.toInt()).toDouble(),
                       fontWeight: FontWeight.w600),
@@ -266,7 +254,7 @@ class _SellpageState extends State<Sellpage> {
                     children: [
                       Spacer(),
                       Text(
-                        (_posts[index].negotiable ?? false)
+                        (posts[index].negotiable ?? false)
                             ? "Negotiable"
                             : "Non-Negotiable",
                         style: TextStyle(
@@ -274,7 +262,6 @@ class _SellpageState extends State<Sellpage> {
                       )
                     ],
                   )),
-
               Container(
                   margin:
                       EdgeInsets.fromLTRB(0, screen_h * 0.245 / 0.43, 18, 0),
@@ -282,9 +269,9 @@ class _SellpageState extends State<Sellpage> {
                     children: [
                       Spacer(),
                       Text(
-                        (_posts[index].action == 'giveaway'
+                        (posts[index].action == 'giveaway'
                             ? "Give Away"
-                            : "₹" + (_posts[index].price ?? 0).toString()),
+                            : "₹" + (posts[index].price ?? 0).toString()),
                         style: TextStyle(
                             fontSize: (myfont.toInt()).toDouble(),
                             fontWeight: FontWeight.w800),
@@ -299,7 +286,7 @@ class _SellpageState extends State<Sellpage> {
                       size: ((myfont / 18 * 12).toInt()).toDouble(),
                     ),
                     Text(
-                      _posts[index].timeBefore ?? "",
+                      ' ' + (posts[index].timeBefore ?? ""),
                       style: TextStyle(
                           fontSize: ((myfont / 18 * 12).toInt()).toDouble()),
                     ),
@@ -309,7 +296,7 @@ class _SellpageState extends State<Sellpage> {
               ),
               Container(
                   child: Text(
-                    "Condition: " + (_posts[index].condition ?? "") + "/10",
+                    "Condition: " + (posts[index].condition ?? "") + "/10",
                     style: TextStyle(
                         fontSize: ((myfont / 18 * 12).toInt()).toDouble()),
                   ),
@@ -332,9 +319,31 @@ class _SellpageState extends State<Sellpage> {
                                     primary: Colors.red,
                                   ),
                                   onPressed: () {
-                                    bloc.buynSellPostBloc.deleteBuynSellPost(
-                                        _posts[index].id ?? "");
-                                    bloc.buynSellPostBloc.refresh();
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        title: const Text("Delete Item"),
+                                        content: const Text(
+                                            "Are you sure you want to delete this item?"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              posts[index].deleted = true;
+                                              bloc.buynSellPostBloc
+                                                  .updateBuynSellPost(
+                                                      posts[index]);
+                                              Navigator.of(ctx).pop();
+                                              bloc.buynSellPostBloc.refresh();
+                                            },
+                                            child: Text("Delete",
+                                                maxLines: 1,
+                                                style: TextStyle(
+                                                    fontSize:
+                                                        12.5 / 338 * screen_w)),
+                                          ),
+                                        ],
+                                      ),
+                                    );
                                   },
                                   child: Text("Delete",
                                       maxLines: 1,
@@ -348,7 +357,7 @@ class _SellpageState extends State<Sellpage> {
                                     Navigator.pushNamed(
                                       context,
                                       "/buyandsell/info" +
-                                          (_posts[index].id ?? ""),
+                                          (posts[index].id ?? ""),
                                     );
                                   },
                                   child: Text("Contact",
@@ -359,16 +368,6 @@ class _SellpageState extends State<Sellpage> {
                   ),
                 ],
               )
-              // Container(co
-              //     child: SizedBox(
-              //       child: Container(
-              //         child: LikeButton(
-              //           bubblesSize: 0,
-              //         ),
-              //       ),
-              //       height: 40,
-              //       width: 40,
-              //     ))
             ],
           )),
           elevation: 10,

@@ -17,7 +17,7 @@ import 'package:InstiApp/src/api/response/alumni_login_response.dart';
 import 'package:InstiApp/src/api/response/getencr_response.dart';
 import 'package:InstiApp/src/blocs/ach_to_vefiry_bloc.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
-import 'package:InstiApp/src/blocs/buynsell_post_block.dart';
+import 'package:InstiApp/src/blocs/buynsell_post_bloc.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
 import 'package:InstiApp/src/blocs/community_bloc.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';

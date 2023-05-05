@@ -314,7 +314,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, ChatPage());
                 case "/groups":
                   return _buildRoute(settings, CommunityPage());
-                case "/buyNsell":
+                case "/buynsell":
                   return _buildRoute(settings, Sellpage());
                 case "/explore":
                   return _buildRoute(settings, ExplorePage());

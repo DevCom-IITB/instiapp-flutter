@@ -1,13 +1,9 @@
-import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
-import 'package:InstiApp/src/blocs/buynsell_post_block.dart';
-
 import '../api/model/buynsellPost.dart';
-import '../bloc_provider.dart';
 
 class BuyAndSellInfoPage extends StatefulWidget {
   final Future<BuynSellPost?> post;
@@ -52,16 +48,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    //Map data = ModalRoute.of(context).settings.arguments;
-    //str_id = data?['str_id'];
-    // ignore: avoid_print
-    print(bnsPost?.name);
-    var bloc = BlocProvider.of(context)?.bloc;
     var theme = Theme.of(context);
-
-    double screen_h = MediaQuery.of(context).size.height;
-    double screen_w = MediaQuery.of(context).size.width;
-    double myfont = ((18 / 274.4) * screen_h);
 
     return Center(
         child: Scaffold(
@@ -96,25 +83,39 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                         ),
                       ), //Row
                       CachedNetworkImage(
-                        imageUrl: (bnsPost?.imageUrl ?? "")
-                            .replaceFirst('localhost', '192.168.0.103'),
+                        imageUrl: (bnsPost?.imageUrl ?? ""),
                         placeholder: (context, url) => new Image.asset(
-                          'assets/buy&sell/No-image-found.jpg',
+                          'assets/buynsell/noimg.png',
                           fit: BoxFit.fill,
                         ),
                         errorWidget: (context, url, error) => new Image.asset(
-                          'assets/buy&sell/No-image-found.jpg',
+                          'assets/buynsell/noimg.png',
                           fit: BoxFit.fill,
                         ),
                         fit: BoxFit.fill,
                       ),
                       Padding(
-                          padding: EdgeInsets.fromLTRB(25, 15, 25, 0),
-                          child: Text((bnsPost?.description ?? ""),
+                          padding: EdgeInsets.fromLTRB(25, 10, 25, 0),
+                          child: Text(
+                              "Description - " + (bnsPost?.description ?? ""),
                               style: TextStyle(color: Colors.grey))),
                       Padding(
-                          padding: EdgeInsets.fromLTRB(25, 15, 25, 0),
+                          padding: EdgeInsets.fromLTRB(25, 10, 25, 0),
                           child: Text("Brand - " + (bnsPost?.brand ?? ""),
+                              style: TextStyle(color: Colors.grey))),
+                      Padding(
+                          padding: EdgeInsets.fromLTRB(25, 10, 25, 0),
+                          child: Text(
+                              "Warranty - " +
+                                  ((bnsPost?.warranty ?? false) ? "Yes" : "No"),
+                              style: TextStyle(color: Colors.grey))),
+                      Padding(
+                          padding: EdgeInsets.fromLTRB(25, 10, 25, 0),
+                          child: Text(
+                              "Packaging - " +
+                                  ((bnsPost?.packaging ?? false)
+                                      ? "Yes"
+                                      : "No"),
                               style: TextStyle(color: Colors.grey))),
 
                       Padding(
@@ -122,21 +123,29 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                           child: Divider(
                             color: Colors.grey,
                           )),
-                      Row(
+                      Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             Padding(
                                 padding: EdgeInsets.fromLTRB(25, 10, 25, 0),
                                 child: Text(
+                                    (bnsPost!.action == 'giveaway'
+                                        ? "Give Away"
+                                        : "Price - ₹" +
+                                            (bnsPost!.price ?? 0).toString()),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold))),
+                            Padding(
+                                padding: EdgeInsets.fromLTRB(25, 10, 25, 0),
+                                child: Text(
                                     'Contact Details - ' +
                                         (bnsPost?.contactDetails ?? ""),
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)))
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold))),
                           ]),
                     ]),
               ),
-            ) //Column
-            ));
+            )));
   }
 }
