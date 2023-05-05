@@ -28,7 +28,7 @@ class CategoryButton extends StatelessWidget {
           },
           child: Column(
             children: [
-              Image.asset('assets/buy&sell/' + name + '.png'),
+              Image.asset('assets/buynsell/' + name + '.png'),
               Text(
                 name,
                 overflow: TextOverflow.ellipsis,
@@ -70,7 +70,6 @@ class BuyAndSellCategoryPage extends StatelessWidget {
           ],
         ),
       ),
-
       body: SingleChildScrollView(
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -129,7 +128,6 @@ class BuyAndSellCategoryPage extends StatelessWidget {
               ),
             ]),
       ),
-//
     );
   }
 }

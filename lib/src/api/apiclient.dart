@@ -27,7 +27,6 @@ import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
 import 'package:InstiApp/src/api/response/alumni_login_response.dart';
-import 'package:InstiApp/src/api/response/buynsell_post_list_response.dart';
 import 'package:InstiApp/src/api/response/community_post_list_response.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
@@ -44,10 +43,10 @@ import 'package:dio/dio.dart';
 import 'model/offersecret.dart';
 part 'apiclient.g.dart';
 
-@rt.RestApi(baseUrl: "https://9a1d-103-21-125-85.ngrok-free.app/api")
+// @rt.RestApi(baseUrl: "https://9a1d-103-21-125-85.ngrok-free.app/api")
 // @rt.RestApi(baseUrl: "http://10.198.49.150/api")
-// @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
-// @rt.RestApi(baseUrl: "https://0ac7-103-21-125-80.in.ngrok.io/api")
+@rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
+// @rt.RestApi(baseUrl: "https://e13a-103-21-125-85.ngrok-free.app/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 

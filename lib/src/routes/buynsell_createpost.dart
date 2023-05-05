@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:InstiApp/src/api/model/buynsellPost.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
-import 'package:InstiApp/src/routes/buynsell_categories.dart';
 import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
@@ -11,7 +10,6 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 
 import '../bloc_provider.dart';
-import '../blocs/buynsell_post_block.dart';
 import '../utils/title_with_backbutton.dart';
 
 class NavigateArguments {
@@ -26,12 +24,7 @@ class BuyAndSellForm extends StatefulWidget {
 
 class _BuyAndSellFormState extends State<BuyAndSellForm> {
   BuynSellPost bnsPost = BuynSellPost();
-
-  bool _withinWarranty = false;
-  bool _originalPackaging = false;
   ActionChoices? _option;
-
-  bool _itemStatus = true;
 
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
@@ -71,7 +64,6 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
     var theme = Theme.of(context);
     User? profile = bloc.currSession?.profile;
 
-    final args = ModalRoute.of(context)!.settings.arguments as ScreenArguments;
     return Scaffold(
       key: _scaffoldKey,
       drawer: NavDrawer(),
@@ -140,7 +132,6 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                     onChanged: (value) {
                                       setState(() {
                                         _option = value!;
-                                        print(value.value);
                                         bnsPost.action = value.value;
                                       });
                                     },
