@@ -182,7 +182,7 @@ class _NavDrawerState extends State<NavDrawer> {
                         highlight: indexSnapshot.data == 9,
                         selected: indexSnapshot.data == 9,
                       ),
-                      16: NavListTile(
+                      17: NavListTile(
                         icon: Icons.currency_rupee_outlined,
                         title: "Buy and Sell",
                         onTap: () {
