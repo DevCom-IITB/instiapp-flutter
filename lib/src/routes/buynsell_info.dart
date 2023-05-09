@@ -35,7 +35,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
   BuynSellPost? bnsPost;
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
     widget.post.then((bnsPost) {
       if (this.mounted) {
