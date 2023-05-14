@@ -243,31 +243,7 @@ class _CreateAchievementPage extends State<Home> {
                     headerSliverBuilder:
                         (BuildContext context, bool innerBoxIsScrolled) {
                       return <Widget>[
-                        SliverPersistentHeader(
-                          floating: true,
-                          pinned: true,
-                          delegate: _SliverTabBarDelegate(
-                            child: PreferredSize(
-                              preferredSize: Size.fromHeight(72),
-                              child: Material(
-                                elevation: 4.0,
-                                child: TabBar(
-                                  labelColor: theme.colorScheme.secondary,
-                                  unselectedLabelColor: theme.disabledColor,
-                                  tabs: [
-                                    Tab(
-                                        text: "Associations",
-                                        icon:
-                                            Icon(Icons.work_outline_outlined)),
-                                    Tab(
-                                        text: "Events",
-                                        icon: Icon(Icons.event_outlined)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+
                       ];
                     },
                     body: TabBarView(

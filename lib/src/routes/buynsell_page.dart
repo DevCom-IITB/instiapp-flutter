@@ -66,124 +66,192 @@ class _SellpageState extends State<Sellpage> {
     screen_hr >= screen_wr ? y = 0.9 : y = 0.49;
     double screen_w = screen_wr * y;
     double screen_h = screen_hr * x;
-    double myfont = ((18 / 274.4) * screen_h);
-    return Scaffold(
-        key: _scaffoldKey,
-        drawer: NavDrawer(),
-        bottomNavigationBar: MyBottomAppBar(
-          child: new Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.menu_outlined,
-                  semanticLabel: "Show navigation drawer",
-                ),
-                onPressed: () {
-                  _scaffoldKey.currentState?.openDrawer();
-                },
-              ),
-            ],
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed("/buyandsell/category");
-          },
-          backgroundColor: Colors.blue[600],
-          child: Icon(
-            Icons.add,
-            size: 30,
-          ),
-        ),
-        body: SafeArea(
-          child: !isLoggedIn
-              ? Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.all(50),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.cloud,
-                        size: 200,
-                        color: Colors.grey[600],
-                      ),
-                      Text(
-                        "Login To View Buy and Sell Posts",
-                        style: theme.textTheme.headline5,
-                        textAlign: TextAlign.center,
-                      )
-                    ],
-                    crossAxisAlignment: CrossAxisAlignment.center,
+    double myfont = ((15 / 274.4) * screen_h);
+
+    return DefaultTabController(length: 2,
+      child: Scaffold(
+          key: _scaffoldKey,
+          drawer: NavDrawer(),
+          bottomNavigationBar: MyBottomAppBar(
+            shape: RoundedNotchedRectangle(),
+            child: new Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    Icons.menu_outlined,
+                    semanticLabel: "Show navigation drawer",
                   ),
-                )
-              : SingleChildScrollView(
-                  child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TitleWithBackButton(
-                      child: Text(
-                        "Buy & Sell (Beta)",
-                        style: theme.textTheme.headline4,
+                  onPressed: () {
+                    _scaffoldKey.currentState?.openDrawer();
+                  },
+                ),
+              ],
+            ),
+          ),floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+          floatingActionButton: FloatingActionButton.extended(icon: Icon(Icons.add_outlined),label:Text("Add Item"),onPressed: (){},
+
+          ),
+          body: SafeArea(
+            child: !isLoggedIn
+                ? SingleChildScrollView(
+                    child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      TitleWithBackButton(
+                        child: Text(
+                          "Buy & Sell (Beta)",
+                          style: theme.textTheme.headline4,
+                        ),
+                      ),Container(child:TabBar(labelColor: Colors.amber,unselectedLabelColor: Colors.black,tabs: [Tab(text: 'All Posts'),Tab(text: 'Your Posts')])),
+
+
+
+                      TabBarView(
+                        children: [Center(
+                          child: StreamBuilder<List<BuynSellPost>>(
+                              stream: buynSellPostBloc.buynsellposts,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<BuynSellPost>> snapshot) {
+                                return ListView.builder(
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  itemCount: MyPosts
+                                      ? (snapshot.hasData
+                                          ? snapshot.data!
+                                              .where((post) =>
+                                                  post.user?.userID ==
+                                                      profile?.userID &&
+                                                  post.deleted != true)
+                                              .length
+                                          : 0)
+                                      : (snapshot.hasData
+                                          ? snapshot.data!
+                                              .where((post) => post.deleted != true)
+                                              .length
+                                          : 0),
+                                  itemBuilder: (_, index) {
+                                    if (!snapshot.hasData) {
+                                      return Center(
+                                          child: CircularProgressIndicatorExtended(
+                                        label: Text("Loading..."),
+                                      ));
+                                    }
+                                    return _buildContent(screen_h, screen_w, index,
+                                        myfont, context, snapshot);
+
+                                  },
+                                );
+                              }),
+                        ),Center(
+                          child: StreamBuilder<List<BuynSellPost>>(
+                              stream: buynSellPostBloc.buynsellposts,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<BuynSellPost>> snapshot) {
+                                return ListView.builder(
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  itemCount: MyPosts
+                                      ? (snapshot.hasData
+                                      ? snapshot.data!
+                                      .where((post) =>
+                                  post.user?.userID ==
+                                      profile?.userID &&
+                                      post.deleted != true)
+                                      .length
+                                      : 0)
+                                      : (snapshot.hasData
+                                      ? snapshot.data!
+                                      .where((post) => post.deleted != true)
+                                      .length
+                                      : 0),
+                                  itemBuilder: (_, index) {
+                                    if (!snapshot.hasData) {
+                                      return Center(
+                                          child: CircularProgressIndicatorExtended(
+                                            label: Text("Loading..."),
+                                          ));
+                                    }
+                                    return _buildContent(screen_h, screen_w, index,
+                                        myfont, context, snapshot);
+
+                                  },
+                                );
+                              }),
+                        )]
                       ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 28.0, vertical: 0),
-                        child: OutlinedButton(
-                          style: TextButton.styleFrom(
-                            textStyle: TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.bold),
-                          ),
-                          onPressed: () {
-                            MyPosts = !MyPosts;
-                            buynSellPostBloc.refresh();
-                          },
-                          child: Text("Your Posts"),
+                    ],
+                  ))
+                //Container(
+                //     alignment: Alignment.center,
+                //     padding: EdgeInsets.all(50),
+                //     child: Column(
+                //       children: [
+                //         Icon(
+                //           Icons.cloud,
+                //           size: 200,
+                //           color: Colors.grey[600],
+                //         ),
+                //         Text(
+                //           "Login To View Buy and Sell Posts",
+                //           style: theme.textTheme.headline5,
+                //           textAlign: TextAlign.center,
+                //         )
+                //       ],
+                //       crossAxisAlignment: CrossAxisAlignment.center,
+                //     ),
+                //   )
+                : SingleChildScrollView(
+                    child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      TitleWithBackButton(
+                        child: Text(
+                          "Buy & Sell (Beta)",
+                          style: theme.textTheme.headline4,
                         ),
                       ),
-                    ),
-                    Center(
-                      child: StreamBuilder<List<BuynSellPost>>(
-                          stream: buynSellPostBloc.buynsellposts,
-                          builder: (BuildContext context,
-                              AsyncSnapshot<List<BuynSellPost>> snapshot) {
-                            return ListView.builder(
-                              primary: false,
-                              shrinkWrap: true,
-                              itemCount: MyPosts
-                                  ? (snapshot.hasData
-                                      ? snapshot.data!
-                                          .where((post) =>
-                                              post.user?.userID ==
-                                                  profile?.userID &&
-                                              post.deleted != true)
-                                          .length
-                                      : 0)
-                                  : (snapshot.hasData
-                                      ? snapshot.data!
-                                          .where((post) => post.deleted != true)
-                                          .length
-                                      : 0),
-                              itemBuilder: (_, index) {
-                                if (!snapshot.hasData) {
-                                  return Center(
-                                      child: CircularProgressIndicatorExtended(
-                                    label: Text("Loading..."),
-                                  ));
-                                }
-                                return _buildContent(screen_h, screen_w, index,
-                                    myfont, context, snapshot);
-                              },
-                            );
-                          }),
-                    ),
-                  ],
-                )),
-        ));
+
+                      Center(
+                        child: StreamBuilder<List<BuynSellPost>>(
+                            stream: buynSellPostBloc.buynsellposts,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<List<BuynSellPost>> snapshot) {
+                              return ListView.builder(
+                                primary: false,
+                                shrinkWrap: true,
+                                itemCount: MyPosts
+                                    ? (snapshot.hasData
+                                        ? snapshot.data!
+                                            .where((post) =>
+                                                post.user?.userID ==
+                                                    profile?.userID &&
+                                                post.deleted != true)
+                                            .length
+                                        : 0)
+                                    : (snapshot.hasData
+                                        ? snapshot.data!
+                                            .where((post) => post.deleted != true)
+                                            .length
+                                        : 0),
+                                itemBuilder: (_, index) {
+                                  if (!snapshot.hasData) {
+                                    return Center(
+                                        child: CircularProgressIndicatorExtended(
+                                      label: Text("Loading..."),
+                                    ));
+                                  }
+                                  return _buildContent(screen_h, screen_w, index,
+                                      myfont, context, snapshot);
+                                },
+                              );
+                            }),
+                      ),
+                    ],
+                  )),
+          )),
+    );
   }
 
   Widget _buildContent(double screen_h, double screen_w, int index,
@@ -201,14 +269,17 @@ class _SellpageState extends State<Sellpage> {
       posts = snapshot.data;
       posts = posts.where((post) => post.deleted != true).toList();
     }
+    double w = posts[index].action == 'giveaway'
+        ? (myfont.toInt()).toDouble()
+        : (myfont.toInt()).toDouble() * 1.2;
 
     return Center(
       child: (SizedBox(
-        height: screen_h,
-        width: screen_w,
+        height: screen_h * 0.65,
+        width: screen_w * 1.2,
         child: Card(
           color: Color.fromARGB(450, 242, 243, 244),
-          margin: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+          margin: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
           child: SizedBox(
               child: Stack(
             children: [
@@ -216,12 +287,13 @@ class _SellpageState extends State<Sellpage> {
                 borderRadius: BorderRadius.only(
                     topRight: Radius.circular(10),
                     topLeft: Radius.circular(10)),
-                child: Column(
+                child: Row(
                   children: [
                     Center(
                       child: Container(
-                        height: screen_h * 0.55,
-                        width: screen_w,
+                        padding: EdgeInsets.all(10),
+                        height: screen_h * 0.5,
+                        width: screen_w * 0.4,
                         child: CachedNetworkImage(
                           imageUrl: (posts[index].imageUrl ?? ""),
                           placeholder: (context, url) => new Image.asset(
@@ -239,13 +311,24 @@ class _SellpageState extends State<Sellpage> {
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.fromLTRB(10, screen_h * 0.245 / 0.43, 0, 0),
+              Container(padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                margin: EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 11, 0, 0),
                 child: Text(
                   posts[index].name ?? "",
                   style: TextStyle(
                       fontSize: (myfont.toInt()).toDouble(),
+                      fontWeight: FontWeight.w600),overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 85, 10, 0),
+                child: Text(
+                  posts[index].brand ?? "",
+                  style: TextStyle(
+                      fontSize: (myfont.toInt()).toDouble() * 0.7,
                       fontWeight: FontWeight.w600),
+                  maxLines: 1,
                 ),
               ),
               Container(
@@ -263,18 +346,16 @@ class _SellpageState extends State<Sellpage> {
                     ],
                   )),
               Container(
-                  margin:
-                      EdgeInsets.fromLTRB(0, screen_h * 0.245 / 0.43, 18, 0),
+                  margin: EdgeInsets.fromLTRB(0, 110, screen_h * 0.05 / 1.5, 0),
                   child: Row(
                     children: [
                       Spacer(),
                       Text(
                         (posts[index].action == 'giveaway'
-                            ? "Give Away"
+                            ? "GiveAway"
                             : "₹" + (posts[index].price ?? 0).toString()),
-                        style: TextStyle(
-                            fontSize: (myfont.toInt()).toDouble(),
-                            fontWeight: FontWeight.w800),
+                        style:
+                            TextStyle(fontSize: w, fontWeight: FontWeight.w800),
                       )
                     ],
                   )),
@@ -288,11 +369,12 @@ class _SellpageState extends State<Sellpage> {
                     Text(
                       ' ' + (posts[index].timeBefore ?? ""),
                       style: TextStyle(
-                          fontSize: ((myfont / 18 * 12).toInt()).toDouble()),
+                          fontWeight: FontWeight.w600,
+                          fontSize: ((myfont / 19 * 12).toInt()).toDouble()),
                     ),
                   ],
                 ),
-                margin: EdgeInsets.fromLTRB(10, screen_h * 0.283 / 0.417, 0, 0),
+                margin: EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 115, 0, 0),
               ),
               Container(
                   child: Text(
@@ -301,7 +383,18 @@ class _SellpageState extends State<Sellpage> {
                         fontSize: ((myfont / 18 * 12).toInt()).toDouble()),
                   ),
                   margin:
-                      EdgeInsets.fromLTRB(10, screen_h * 0.31 / 0.41, 0, 0)),
+                      EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 30, 0, 0)),
+              Container(
+                  padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                  child: Text(
+                    (posts[index].description ?? ""),
+                    maxLines: 3,overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: ((myfont / 16 * 12).toInt()).toDouble()),
+                  ),
+                  margin:
+                      EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 43, 0, 0)),
               Row(
                 children: [
                   Spacer(),
@@ -370,9 +463,11 @@ class _SellpageState extends State<Sellpage> {
               )
             ],
           )),
-          elevation: 10,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: Colors.blue),
+          ),
         ),
       )),
     );
