@@ -135,19 +135,30 @@ class BuyAndSellCategoryPage extends StatelessWidget {
   }
 }
 
-class Buyandsell_information extends StatelessWidget {
+class Buyandsell_information extends StatefulWidget {
   const Buyandsell_information({Key? key}) : super(key: key);
 
   @override
+  State<Buyandsell_information> createState() => _Buyandsell_informationState();
+}
+
+class _Buyandsell_informationState extends State<Buyandsell_information> {
+  @override
   Widget build(BuildContext context) {
+
+    List<String> productImages = [
+      'https://images.unsplash.com/photo-1682685797742-42c9987a2c34?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80',
+      'https://images.unsplash.com/photo-1684346819553-11174cbc8f05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80',
+      'https://images.unsplash.com/photo-1683380381470-8bb7e42aa5b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    ];
     double screen_wr = MediaQuery.of(context).size.width;
     double screen_hr = MediaQuery.of(context).size.height;
     double x, y;
 
     var theme = Theme.of(context);
 
-    screen_hr >= screen_wr ? x = 0.35 : x = 1.1;
-    screen_hr >= screen_wr ? y = 0.9 : y = 0.9;
+    screen_hr >= screen_wr ? x = 0.35 : x = 1;
+    screen_hr >= screen_wr ? y = 0.9 : y = 0.89;
     double screen_w = screen_wr * y;
     double screen_h = screen_hr * x;
     double myfont = ((15 / 274.4) * screen_h);
@@ -204,20 +215,21 @@ class Buyandsell_information extends StatelessWidget {
               Container(
                 margin: EdgeInsets.fromLTRB(screen_w * 0.1, 15, 0, 0),
                 child: SizedBox(
-                  height: screen_h / 1.5,
+                  height: screen_h / 1.2,
                   width: screen_w / 1.5,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(25),
-                        topLeft: Radius.circular(25),
-                        bottomRight: Radius.circular(25),
-                        bottomLeft: Radius.circular(25)),
-                    child: Card(
-                      child: Image.network(
-                        'https://images.unsplash.com/photo-1684489453425-c6234e0b7850?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80',
-                        fit: BoxFit.fill,
-                      ),
-                    ),
+                  child: PageView.builder(
+
+
+                    itemCount: productImages.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: Image.network(
+                          productImages[index],
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
@@ -262,7 +274,7 @@ class Buyandsell_information extends StatelessWidget {
               width: screen_w * 0.9,
               margin: EdgeInsets.fromLTRB(screen_w * 0.1, 8, 0, 0),
               child: Text(
-                "shfsbfj,sbfkbsdklvhjasbglfadlfahlfhahfsajhdsjhfakshdsjfhakfjhkasjfhksjhfakfhaskfhajkskfbjsbvksfvjbsdfkbsaefadjbfkfsejfhaefhjaekhfkajfkjanfkbakjfkhajwdwakhdajwdhkawhdjabfkafdhjabkefbaefbakwdkwahbdjabdkbajdkbdfjsko",
+                "shfsbfj,sbfkbsdklvhjasbglfadlfahlfhahfsajhdsjhfakshdsjfhakfjhkasjfhksjhfakfhaskfhajkskfbjsbvksfvjbsdfkbsaefadjbfkfsejfhaefhjaekhfkajfkjanfkbakjfkhajwdwakhdajwdhkawhdjabfkafdhjabkefbaefbakwdkwahbdjabdkbajdkbdfjskoshfsbfj,sbfkbsdklvhjasbglfadlfahlfhahfsajhdsjhfakshdsjfhakfjhkasjfhksjhfakfhaskfhajkskfbjsbvksfvjbsdfkbsaefadjbfkfsejfhaefhjaekhfkajfkjanfkbakjfkhajwdwakhdajwdhkawhdjabfkafdhjabkefbaefbakwdkwahbdjabdkbajdkbdfjskoshfsbfj,sbfkbsdklvhjasbglfadlfahlfhahfsajhdsjhfakshdsjfhakfjhkasjfhksjhfakfhaskfhajkskfbjsbvksfvjbsdfkbsaefadjbfkfsejfhaefhjaekhfkajfkjanfkbakjfkhajwdwakhdajwdhkawhdjabfkafdhjabkefbaefbakwdkwahbdjabdkbajdkbdfjskoshfsbfj,sbfkbsdklvhjasbglfadlfahlfhahfsajhdsjhfakshdsjfhakfjhkasjfhksjhfakfhaskfhajkskfbjsbvksfvjbsdfkbsaefadjbfkfsejfhaefhjaekhfkajfkjanfkbakjfkhajwdwakhdajwdhkawhdjabfkafdhjabkefbaefbakwdkwahbdjabdkbajdkbdfjskoshfsbfj,sbfkbsdklvhjasbglfadlfahlfhahfsajhdsjhfakshdsjfhakfjhkasjfhksjhfakfhaskfhajkskfbjsbvksfvjbsdfkbsaefadjbfkfsejfhaefhjaekhfkajfkjanfkbakjfkhajwdwakhdajwdhkawhdjabfkafdhjabkefbaefbakwdkwahbdjabdkbajdkbdfjsko",
                 maxLines: 10,
                 overflow: TextOverflow.ellipsis,
                 softWrap: false,
@@ -271,6 +283,7 @@ class Buyandsell_information extends StatelessWidget {
               ),
             ),
           ]),
+          SizedBox(height: screen_h * 0.28),
           Row(
             children: [
               Container(
@@ -288,10 +301,12 @@ class Buyandsell_information extends StatelessWidget {
                         "Negotiable",
                         style: TextStyle(
                             fontSize: myfont, fontWeight: FontWeight.w500),
-                      ),Text(
+                      ),
+                      Text(
                         "Price",
                         style: TextStyle(
-                            fontSize: myfont*1.5, fontWeight: FontWeight.w800),
+                            fontSize: myfont * 1.5,
+                            fontWeight: FontWeight.w800),
                       )
                     ],
                   ))
