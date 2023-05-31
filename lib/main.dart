@@ -328,6 +328,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 //   return _buildRoute(settings, BuyAndSellInfoPage());
                 case "/buyandsell/createPost":
                   return _buildRoute(settings, BuyAndSellForm());
+                case "/buyandsell/giveinfo":
+                  return _buildRoute(settings, Buyandsell_information());
+
 
                 // case "/complaints":
                 //   return _buildRoute(settings, ComplaintsPage());
@@ -336,6 +339,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 case "/putentity/event":
                   return _buildRoute(settings,
                       EventForm(cookie: widget.bloc.getSessionIdHeader()));
+
                 case "/map":
                   // return _buildRoute(settings, NativeMapPage());
                   return _buildRoute(settings, MapPage());
