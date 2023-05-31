@@ -269,7 +269,7 @@ class _SellpageState extends State<Sellpage> {
   Widget _buildContent(double screen_h, double screen_w, int index,
       double myfont, BuildContext context, AsyncSnapshot snapshot) {
     List<BuynSellPost> posts = snapshot.data!;
-
+    var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
     User? profile = bloc.currSession?.profile;
     if (MyPosts) {
@@ -291,7 +291,7 @@ class _SellpageState extends State<Sellpage> {
         width: screen_w * 1.2,
         child: Card(
           
-          color: Color.fromARGB(450, 242, 243, 244),
+          color: theme.cardColor,
           margin: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
           child: InkWell(onTap: (){Navigator.of(context).pushNamed("/buyandsell/giveinfo");},
             child: SizedBox(
@@ -327,23 +327,25 @@ class _SellpageState extends State<Sellpage> {
                 ),
                 Container(
                   padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                  margin: EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 11, 0, 0),
+                  margin: EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 11, 0, 50),
                   child: Text(
                     posts[index].name ?? "",
-                    style: TextStyle(
-                        fontSize: (myfont.toInt()).toDouble(),
-                        fontWeight: FontWeight.w600),
+                    style: theme.textTheme.headline6,
+                    //style: TextStyle(
+                    //     fontSize: (myfont.toInt()).toDouble(),
+                    //     fontWeight: FontWeight.w600),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 85, 10, 0),
+                  margin: EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 105, 10, 0),
                   child: Text(
                     posts[index].brand ?? "",
-                    style: TextStyle(
-                        fontSize: (myfont.toInt()).toDouble() * 0.7,
-                        fontWeight: FontWeight.w600),
+                    style: theme.textTheme.bodyText2,
+                    // style: TextStyle(
+                    //     fontSize: (myfont.toInt()).toDouble() * 0.7,
+                    //     fontWeight: FontWeight.w600),
                     maxLines: 1,
                   ),
                 ),
@@ -356,13 +358,14 @@ class _SellpageState extends State<Sellpage> {
                           (posts[index].negotiable ?? false)
                               ? "Negotiable"
                               : "Non-Negotiable",
-                          style: TextStyle(
-                              fontSize: ((myfont / 18) * 10.toInt()).toDouble()),
+                          style: theme.textTheme.bodyText2,
+                          // style: TextStyle(
+                          //     fontSize: ((myfont / 18) * 10.toInt()).toDouble()),
                         )
                       ],
                     )),
                 Container(
-                    margin: EdgeInsets.fromLTRB(0, 110, screen_h * 0.05 / 1.5, 0),
+                    margin: EdgeInsets.fromLTRB(0, 127, screen_h * 0.05 / 1.5, 0),
                     child: Row(
                       children: [
                         Spacer(),
@@ -370,8 +373,9 @@ class _SellpageState extends State<Sellpage> {
                           (posts[index].action == 'giveaway'
                               ? "GiveAway"
                               : "₹" + (posts[index].price ?? 0).toString()),
-                          style:
-                              TextStyle(fontSize: w, fontWeight: FontWeight.w800),
+                          style: theme.textTheme.headline6,
+                          // style:
+                          //     TextStyle(fontSize: w, fontWeight: FontWeight.w800),
                         )
                       ],
                     )),
@@ -384,31 +388,36 @@ class _SellpageState extends State<Sellpage> {
                       ),
                       Text(
                         ' ' + (posts[index].timeBefore ?? ""),
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: ((myfont / 19 * 12).toInt()).toDouble()),
+                        style: theme.textTheme.bodyText1!.copyWith(
+                          fontWeight: FontWeight.bold,)
+                        //theme.textTheme.labelSmall
+                        // style: TextStyle(
+                        //     fontWeight: FontWeight.w600,
+                        //     fontSize: ((myfont / 19 * 12).toInt()).toDouble()),
                       ),
                     ],
                   ),
-                  margin: EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 115, 0, 0),
+                  margin: EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 135, 0, 0),
                 ),
                 Container(
                     child: Text(
                       "Condition: " + (posts[index].condition ?? "") + "/10",
-                      style: TextStyle(
-                          fontSize: ((myfont / 18 * 12).toInt()).toDouble()),
+                      style: //TextStyle(
+                          theme.textTheme.bodyText2,
+                          // fontSize: ((myfont / 18 * 12).toInt()).toDouble()),
                     ),
                     margin:
-                        EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 30, 0, 0)),
+                        EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 35, 0, 0)),
                 Container(
-                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                    padding: EdgeInsets.fromLTRB(0, 8, 10, 0),
                     child: Text(
                       (posts[index].description ?? ""),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: ((myfont / 16 * 12).toInt()).toDouble()),
+                      style: theme.textTheme.bodyText2,
+                      // style: TextStyle(
+                      //     fontWeight: FontWeight.w500,
+                      //     fontSize: ((myfont / 16 * 12).toInt()).toDouble()),
                     ),
                     margin:
                         EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 43, 0, 0)),

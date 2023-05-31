@@ -240,11 +240,13 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                  margin: EdgeInsets.fromLTRB(screen_w * 0.1, 6, 0, 0),
+                  margin: EdgeInsets.fromLTRB(screen_w * 0.1, 11, 0, 0),
                   child: Text(
                     "Brand Name",
-                    style: TextStyle(
-                        fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
+                    style:theme.textTheme.bodySmall!.copyWith(
+                      color: Colors.black)
+                    // style: TextStyle(
+                    //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
                   )),
             ],
           ),
@@ -252,11 +254,12 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                  margin: EdgeInsets.fromLTRB(screen_w * 0.1, 5, 0, 0),
+                  margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
                   child: Text(
                     "Name of product",
-                    style: TextStyle(
-                        fontSize: myfont * 1.5, fontWeight: FontWeight.w700),
+                      style:theme.textTheme.headline5!.copyWith(fontWeight: FontWeight.bold)
+                    // style: TextStyle(
+                    //     fontSize: myfont * 1.5, fontWeight: FontWeight.w700),
                   )),
             ],
           ),
@@ -265,7 +268,8 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
               margin: EdgeInsets.fromLTRB(screen_w * 0.1, 5, 0, 0),
               child: Text(
                 "Condition here",
-                style: TextStyle(fontSize: myfont, fontWeight: FontWeight.w100),
+                style:theme.textTheme.headline6!.copyWith(color: Colors.black)
+                // style: TextStyle(fontSize: myfont, fontWeight: FontWeight.w100),
               ),
             )
           ]),
@@ -278,8 +282,9 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
                 maxLines: 10,
                 overflow: TextOverflow.ellipsis,
                 softWrap: false,
-                style: TextStyle(
-                    fontSize: myfont * 0.75, fontWeight: FontWeight.w100),
+                style:theme.textTheme.bodySmall!.copyWith(color: Colors.black54)
+                // style: TextStyle(
+                //     fontSize: myfont * 0.75, fontWeight: FontWeight.w100),
               ),
             ),
           ]),
@@ -290,23 +295,26 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 8, 0, 0),
                   child: Text(
                     "Contact Details:\n",
-                    style: TextStyle(
-                        fontSize: myfont, fontWeight: FontWeight.w600),
+                    style:theme.textTheme.headline6!.copyWith(fontWeight: FontWeight.bold,fontSize:17 )
+                    // style: TextStyle(
+                    //     fontSize: myfont, fontWeight: FontWeight.w600),
                   )),
               Container(
-                  margin: EdgeInsets.fromLTRB(screen_w * 0.3, 8, 0, 0),
+                  margin: EdgeInsets.fromLTRB(screen_w * 0.3, 11, 0, 0),
                   child: Column(
                     children: [
                       Text(
                         "Negotiable",
-                        style: TextStyle(
-                            fontSize: myfont, fontWeight: FontWeight.w500),
+                    style:theme.textTheme.headline6!.copyWith(fontSize:17)
+                      // style: TextStyle(
+                        //     fontSize: myfont, fontWeight: FontWeight.w500),
                       ),
                       Text(
                         "Price",
-                        style: TextStyle(
-                            fontSize: myfont * 1.5,
-                            fontWeight: FontWeight.w800),
+                        style:theme.textTheme.headline4!.copyWith(fontWeight: FontWeight.bold)
+                          // style: TextStyle(
+                        //     fontSize: myfont * 1.5,
+                        //     fontWeight: FontWeight.w800),
                       )
                     ],
                   ))
