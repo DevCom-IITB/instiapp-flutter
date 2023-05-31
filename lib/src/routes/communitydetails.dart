@@ -296,27 +296,27 @@ class CommunityAboutSectionState extends State<CommunityAboutSection> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            child: TabBar(
-              tabs: [
-                Tab(
-                  child: Text(
-                    "About",
-                    style: theme.textTheme.bodyText1,
+              child: TabBar(
+                tabs: [
+                  Tab(
+                    child: Text(
+                      "About",
+                      style: theme.textTheme.bodyText1,
+                    ),
                   ),
-                ),
-                Tab(
-                  child: Text(
-                    "Members",
-                    style: theme.textTheme.bodyText1,
-                  ),
-                )
-              ],
-              onTap: (index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
-            ),
+                  Tab(
+                    child: Text(
+                      "Members",
+                      style: theme.textTheme.bodyText1,
+                    ),
+                  )
+                ],
+                onTap: (index) {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                },
+              ),
           ),
           IndexedStack(
             children: [
