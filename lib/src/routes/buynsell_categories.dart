@@ -4,6 +4,7 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 
 import '../utils/title_with_backbutton.dart';
+double screen_h=0,screen_w=0;
 
 class ScreenArguments {
   final String title;
@@ -146,7 +147,7 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
   @override
   Widget build(BuildContext context) {
 
-    List<String> productImages = [
+    List<String> imageList = [
       'https://images.unsplash.com/photo-1682685797742-42c9987a2c34?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80',
       'https://images.unsplash.com/photo-1684346819553-11174cbc8f05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80',
       'https://images.unsplash.com/photo-1683380381470-8bb7e42aa5b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
@@ -158,9 +159,9 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
     var theme = Theme.of(context);
 
     screen_hr >= screen_wr ? x = 0.35 : x = 1;
-    screen_hr >= screen_wr ? y = 0.9 : y = 0.89;
-    double screen_w = screen_wr * y;
-    double screen_h = screen_hr * x;
+    screen_hr >= screen_wr ? y = 0.9 : y = 0.8;
+    screen_w = screen_wr * y;
+    screen_h = screen_hr * x;
     double myfont = ((15 / 274.4) * screen_h);
 
     return Scaffold(
@@ -216,21 +217,8 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
                 margin: EdgeInsets.fromLTRB(screen_w * 0.1, 15, 0, 0),
                 child: SizedBox(
                   height: screen_h / 1.2,
-                  width: screen_w / 1.5,
-                  child: PageView.builder(
-
-
-                    itemCount: productImages.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return ClipRRect(
-                        borderRadius: BorderRadius.circular(24),
-                        child: Image.network(
-                          productImages[index],
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                    },
-                  ),
+                  width: screen_w / 1,
+                  child: ImageCarousel(imageList),
                 ),
               ),
               Spacer(),
@@ -317,5 +305,123 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
         ]),
       ),
     );
+  }
+}
+class ImageCarousel extends StatefulWidget {
+  final List<String> imageList;
+
+  ImageCarousel(this.imageList);
+
+  @override
+  _ImageCarouselState createState() => _ImageCarouselState();
+}
+
+class _ImageCarouselState extends State<ImageCarousel> {
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 3,
+          child: Row(
+            children: [
+              Container(
+                child: SizedBox(height:screen_h*0.7,width: screen_w*0.6,
+                  child: PageView.builder(
+                    itemCount: widget.imageList.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _currentIndex = index;
+                          });
+                        },
+                        child: ClipRRect(borderRadius: BorderRadius.circular(15.0),
+                          child: Image.network(
+                            widget.imageList[index],
+                            fit: BoxFit.fitHeight,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+
+              SizedBox(height: 10),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: widget.imageList.length,
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+                child: Container(margin: EdgeInsets.fromLTRB(0, 10, 10, screen_h*0.005),
+                  child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 5),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: _currentIndex == index
+                            ? Colors.blue
+                            : Colors.transparent,
+                        width: 1.75,style: BorderStyle.solid,
+
+                      ),borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: SizedBox(height:screen_h*0.25 ,width: screen_w*0.1,
+                      child: ClipRRect(borderRadius: BorderRadius.circular(10),
+                        child: Image.network(
+                          widget.imageList[index],
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: _buildDotIndicator(),
+        ),
+      ],
+    );
+  }
+
+  List<Widget> _buildDotIndicator() {
+    List<Widget> dots = [];
+    for (int i = 0; i < widget.imageList.length; i++) {
+      dots.add(
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _currentIndex == i ? Colors.blueGrey : Colors.grey,
+            ),
+          ),
+        ),
+      );
+    }
+    return dots;
   }
 }
