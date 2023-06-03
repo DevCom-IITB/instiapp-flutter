@@ -1,7 +1,4 @@
-import 'package:InstiApp/src/utils/title_with_backbutton.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import '../api/model/buynsellPost.dart';
 
@@ -48,11 +45,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> imageList = [
-      'https://images.unsplash.com/photo-1682685797742-42c9987a2c34?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80',
-      'https://images.unsplash.com/photo-1684346819553-11174cbc8f05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80',
-      'https://images.unsplash.com/photo-1683380381470-8bb7e42aa5b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-    ];
+    List<String>? imageList = bnsPost?.imageUrl;
     double screen_wr = MediaQuery.of(context).size.width;
     double screen_hr = MediaQuery.of(context).size.height;
     double x, y;
@@ -118,7 +111,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                 child: SizedBox(
                   height: screen_h / 1.2,
                   width: screen_w / 1,
-                  child: ImageCarousel(imageList),
+                  child: ImageCarousel(imageList!),
                 ),
               ),
               Spacer(),
