@@ -1,16 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
 import '../api/model/buynsellPost.dart';
 
-import '../utils/title_with_backbutton.dart';
-
-double screen_h = 0, screen_w = 0;
-
-class Buyandsell_information extends StatefulWidget {
+class BuyAndSellInfoPage extends StatefulWidget {
   final Future<BuynSellPost?> post;
 
-  Buyandsell_information({required this.post});
+  BuyAndSellInfoPage({required this.post});
 
   static void navigateWith(
       BuildContext context, BuynSellPost bloc, BuynSellPost post) {
@@ -20,7 +18,7 @@ class Buyandsell_information extends StatefulWidget {
         settings: RouteSettings(
           name: "/${post.id ?? ""}",
         ),
-        builder: (context) => Buyandsell_information(
+        builder: (context) => BuyAndSellInfoPage(
           post: bloc.getBuynSellPost(post.id ?? ""),
         ),
       ),
@@ -28,14 +26,16 @@ class Buyandsell_information extends StatefulWidget {
   }
 
   @override
-  State<Buyandsell_information> createState() => _Buyandsell_informationState();
+  State<BuyAndSellInfoPage> createState() => _BuyAndSellInfoPageState();
 }
 
-class _Buyandsell_informationState extends State<Buyandsell_information> {
+class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   BuynSellPost? bnsPost;
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
     widget.post.then((bnsPost) {
       if (this.mounted) {
@@ -61,9 +61,8 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
 
     screen_hr >= screen_wr ? x = 0.35 : x = 1;
     screen_hr >= screen_wr ? y = 0.9 : y = 0.8;
-    screen_w = screen_wr * y;
-    screen_h = screen_hr * x;
-    double myfont = ((15 / 274.4) * screen_h);
+    var screen_w = screen_wr * y;
+    var screen_h = screen_hr * x;
 
     return Scaffold(
       bottomNavigationBar: MyBottomAppBar(
@@ -114,14 +113,14 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              // Container(
-              //   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 15, 0, 0),
-              //   child: SizedBox(
-              //     height: screen_h / 1.2,
-              //     width: screen_w / 1,
-              //     child: ImageCarousel(imageList),
-              //   ),
-              // ),
+              Container(
+                margin: EdgeInsets.fromLTRB(screen_w * 0.1, 15, 0, 0),
+                child: SizedBox(
+                  height: screen_h / 1.2,
+                  width: screen_w / 1,
+                  child: ImageCarousel(imageList),
+                ),
+              ),
               Spacer(),
             ],
           ),
@@ -143,7 +142,7 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
             children: [
               Container(
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
-                  child: Text("Name of product",
+                  child: Text(bnsPost?.name ?? "",
                       style: theme.textTheme.headline5!
                           .copyWith(fontWeight: FontWeight.bold)
                       // style: TextStyle(
@@ -154,7 +153,7 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
           Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             Container(
               margin: EdgeInsets.fromLTRB(screen_w * 0.1, 5, 0, 0),
-              child: Text("Condition here",
+              child: Text("Condition -" + (bnsPost?.condition ?? '0') + '/10',
                   style:
                       theme.textTheme.headline6!.copyWith(color: Colors.black)
                   // style: TextStyle(fontSize: myfont, fontWeight: FontWeight.w100),
@@ -165,8 +164,7 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
             Container(
               width: screen_w * 0.9,
               margin: EdgeInsets.fromLTRB(screen_w * 0.1, 8, 0, 0),
-              child: Text(
-                  "shfsbfj,sbfkbsdklvhjasbglfadlfahlfhahfsajhdsjhfakshdsjfhakfjhkasjfhksjhfakfhaskfhajkskfbjsbvksfvjbsdfkbsaefadjbfkfsejfhaefhjaekhfkajfkjanfkbakjfkhajwdwakhdajwdhkawhdjabfkafdhjabkefbaefbakwdkwahbdjabdkbajdkbdfjskoshfsbfj,sbfkbsdklvhjasbglfadlfahlfhahfsajhdsjhfakshdsjfhakfjhkasjfhksjhfakfhaskfhajkskfbjsbvksfvjbsdfkbsaefadjbfkfsejfhaefhjaekhfkajfkjanfkbakjfkhajwdwakhdajwdhkawhdjabfkafdhjabkefbaefbakwdkwahbdjabdkbajdkbdfjskoshfsbfj,sbfkbsdklvhjasbglfadlfahlfhahfsajhdsjhfakshdsjfhakfjhkasjfhksjhfakfhaskfhajkskfbjsbvksfvjbsdfkbsaefadjbfkfsejfhaefhjaekhfkajfkjanfkbakjfkhajwdwakhdajwdhkawhdjabfkafdhjabkefbaefbakwdkwahbdjabdkbajdkbdfjskoshfsbfj,sbfkbsdklvhjasbglfadlfahlfhahfsajhdsjhfakshdsjfhakfjhkasjfhksjhfakfhaskfhajkskfbjsbvksfvjbsdfkbsaefadjbfkfsejfhaefhjaekhfkajfkjanfkbakjfkhajwdwakhdajwdhkawhdjabfkafdhjabkefbaefbakwdkwahbdjabdkbajdkbdfjskoshfsbfj,sbfkbsdklvhjasbglfadlfahlfhahfsajhdsjhfakshdsjfhakfjhkasjfhksjhfakfhaskfhajkskfbjsbvksfvjbsdfkbsaefadjbfkfsejfhaefhjaekhfkajfkjanfkbakjfkhajwdwakhdajwdhkawhdjabfkafdhjabkefbaefbakwdkwahbdjabdkbajdkbdfjsko",
+              child: Text(bnsPost?.description ?? "",
                   maxLines: 10,
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
@@ -182,7 +180,8 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
             children: [
               Container(
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 8, 0, 0),
-                  child: Text("Contact Details:\n",
+                  child: Text(
+                      'Contact Details - ' + (bnsPost?.contactDetails ?? ""),
                       style: theme.textTheme.headline6!
                           .copyWith(fontWeight: FontWeight.bold, fontSize: 17)
                       // style: TextStyle(
@@ -192,13 +191,18 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
                   margin: EdgeInsets.fromLTRB(screen_w * 0.3, 11, 0, 0),
                   child: Column(
                     children: [
-                      Text("Negotiable",
+                      Text(
+                          "Negotiable -" +
+                              ((bnsPost?.negotiable ?? false) ? "Yes" : "No"),
                           style:
                               theme.textTheme.headline6!.copyWith(fontSize: 17)
                           // style: TextStyle(
                           //     fontSize: myfont, fontWeight: FontWeight.w500),
                           ),
-                      Text("Price",
+                      Text(
+                          (bnsPost!.action == 'giveaway'
+                              ? "Give Away"
+                              : "Price - ₹" + (bnsPost!.price ?? 0).toString()),
                           style: theme.textTheme.headline4!
                               .copyWith(fontWeight: FontWeight.bold)
                           // style: TextStyle(
@@ -217,12 +221,6 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
   }
 }
 
-// class Buyandsell_information extends StatefulWidget {
-//   const Buyandsell_information({Key? key}) : super(key: key);
-//
-//   @override
-//   State<Buyandsell_information> createState() => _Buyandsell_informationState();
-// }
 class ImageCarousel extends StatefulWidget {
   final List<String> imageList;
 
@@ -237,6 +235,14 @@ class _ImageCarouselState extends State<ImageCarousel> {
 
   @override
   Widget build(BuildContext context) {
+    double screen_wr = MediaQuery.of(context).size.width;
+    double screen_hr = MediaQuery.of(context).size.height;
+    double x, y;
+
+    screen_hr >= screen_wr ? x = 0.35 : x = 1;
+    screen_hr >= screen_wr ? y = 0.9 : y = 0.8;
+    var screen_w = screen_wr * y;
+    var screen_h = screen_hr * x;
     return Row(
       children: [
         Expanded(
@@ -349,168 +355,3 @@ class _ImageCarouselState extends State<ImageCarousel> {
     return dots;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import 'package:InstiApp/src/utils/title_with_backbutton.dart';
-// import 'package:cached_network_image/cached_network_image.dart';
-// import 'package:flutter/material.dart';
-// import 'package:InstiApp/src/drawer.dart';
-// import 'package:InstiApp/src/utils/common_widgets.dart';
-// import '../api/model/buynsellPost.dart';
-//
-// class BuyAndSellInfoPage extends StatefulWidget {
-//   final Future<BuynSellPost?> post;
-//
-//   BuyAndSellInfoPage({required this.post});
-//
-//   static void navigateWith(
-//       BuildContext context, BuynSellPost bloc, BuynSellPost post) {
-//     Navigator.push(
-//       context,
-//       MaterialPageRoute(
-//         settings: RouteSettings(
-//           name: "/${post.id ?? ""}",
-//         ),
-//         builder: (context) => BuyAndSellInfoPage(
-//           post: bloc.getBuynSellPost(post.id ?? ""),
-//         ),
-//       ),
-//     );
-//   }
-//
-//   @override
-//   State<BuyAndSellInfoPage> createState() => _BuyAndSellInfoPageState();
-// }
-//
-// class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
-//   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-//
-//   BuynSellPost? bnsPost;
-//
-//   @override
-//   void initState() async {
-//     super.initState();
-//     widget.post.then((bnsPost) {
-//       if (this.mounted) {
-//         setState(() {
-//           this.bnsPost = bnsPost;
-//         });
-//       }
-//     });
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     var theme = Theme.of(context);
-//
-//     return Center(
-//         child: Scaffold(
-//             key: _scaffoldKey,
-//             drawer: NavDrawer(),
-//             bottomNavigationBar: MyBottomAppBar(
-//               child: new Row(
-//                 mainAxisSize: MainAxisSize.max,
-//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                 children: <Widget>[
-//                   IconButton(
-//                     icon: Icon(
-//                       Icons.menu_outlined,
-//                       semanticLabel: "Show navigation drawer",
-//                     ),
-//                     onPressed: () {
-//                       _scaffoldKey.currentState?.openDrawer();
-//                     },
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             body: SafeArea(
-//               child: SingleChildScrollView(
-//                 child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: <Widget>[
-//                       TitleWithBackButton(
-//                         child: Text(
-//                           bnsPost?.name ?? "",
-//                           style: theme.textTheme.headline3,
-//                         ),
-//                       ), //Row
-//                       CachedNetworkImage(
-//                         imageUrl: (bnsPost?.imageUrl ?? ""),
-//                         placeholder: (context, url) => new Image.asset(
-//                           'assets/buynsell/noimg.png',
-//                           fit: BoxFit.fill,
-//                         ),
-//                         errorWidget: (context, url, error) => new Image.asset(
-//                           'assets/buynsell/noimg.png',
-//                           fit: BoxFit.fill,
-//                         ),
-//                         fit: BoxFit.fill,
-//                       ),
-//                       Padding(
-//                           padding: EdgeInsets.fromLTRB(25, 10, 25, 0),
-//                           child: Text(
-//                               "Description - " + (bnsPost?.description ?? ""),
-//                               style: TextStyle(color: Colors.grey))),
-//                       Padding(
-//                           padding: EdgeInsets.fromLTRB(25, 10, 25, 0),
-//                           child: Text("Brand - " + (bnsPost?.brand ?? ""),
-//                               style: TextStyle(color: Colors.grey))),
-//                       Padding(
-//                           padding: EdgeInsets.fromLTRB(25, 10, 25, 0),
-//                           child: Text(
-//                               "Warranty - " +
-//                                   ((bnsPost?.warranty ?? false) ? "Yes" : "No"),
-//                               style: TextStyle(color: Colors.grey))),
-//                       Padding(
-//                           padding: EdgeInsets.fromLTRB(25, 10, 25, 0),
-//                           child: Text(
-//                               "Packaging - " +
-//                                   ((bnsPost?.packaging ?? false)
-//                                       ? "Yes"
-//                                       : "No"),
-//                               style: TextStyle(color: Colors.grey))),
-//
-//                       Padding(
-//                           padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
-//                           child: Divider(
-//                             color: Colors.grey,
-//                           )),
-//                       Column(
-//                           crossAxisAlignment: CrossAxisAlignment.start,
-//                           mainAxisAlignment: MainAxisAlignment.start,
-//                           children: <Widget>[
-//                             Padding(
-//                                 padding: EdgeInsets.fromLTRB(25, 10, 25, 0),
-//                                 child: Text(
-//                                     (bnsPost!.action == 'giveaway'
-//                                         ? "Give Away"
-//                                         : "Price - ₹" +
-//                                             (bnsPost!.price ?? 0).toString()),
-//                                     style: TextStyle(
-//                                         fontWeight: FontWeight.bold))),
-//                             Padding(
-//                                 padding: EdgeInsets.fromLTRB(25, 10, 25, 0),
-//                                 child: Text(
-//                                     'Contact Details - ' +
-//                                         (bnsPost?.contactDetails ?? ""),
-//                                     style: TextStyle(
-//                                         fontWeight: FontWeight.bold))),
-//                           ]),
-//                     ]),
-//               ),
-//             )));
-//   }
-// }
