@@ -330,7 +330,7 @@ class _SellpageState extends State<Sellpage> {
                           height: screen_h * 0.5,
                           width: screen_w * 0.4,
                           child: CachedNetworkImage(
-                            imageUrl: (posts[index].imageUrl ?? ""),
+                            imageUrl: (posts[index].imageUrl?[0] ?? ''),
                             placeholder: (context, url) => new Image.asset(
                               'assets/buynsell/noimg.png',
                               fit: BoxFit.fill,

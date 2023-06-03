@@ -18,7 +18,7 @@ class BuynSellPost {
   String? description;
 
   @JsonKey(name: "product_image")
-  String? imageUrl;
+  List<String>? imageUrl;
 
   @JsonKey(name: "brand")
   String? brand;
