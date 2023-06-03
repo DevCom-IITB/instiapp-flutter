@@ -114,6 +114,16 @@ class _SellpageState extends State<Sellpage> {
                             "Buy & Sell (Beta)",
                             style: theme.textTheme.headline4,
                           ),
+                          Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                 Expanded(child: ElevatedButton( child: Text("All Posts"), onPressed: (){},)),
+                                 Expanded(child: ElevatedButton(child: Text("My Posts"), onPressed: (){},)),
+
+                              ],
+                            ),
+                          )
 
 
                         ],
@@ -286,7 +296,8 @@ class _SellpageState extends State<Sellpage> {
         : (myfont.toInt()).toDouble() * 1.2;
 
     return Center(
-      child: (SizedBox(
+      child: (
+          SizedBox(
         height: screen_h * 0.65,
         width: screen_w * 1.2,
         child: Card(
