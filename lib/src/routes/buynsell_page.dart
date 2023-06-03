@@ -93,20 +93,25 @@ class _SellpageState extends State<Sellpage> {
             ],
           ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-        floatingActionButton: FloatingActionButton.extended(
+        floatingActionButtonLocation:
+        FloatingActionButtonLocation.endDocked,
+         floatingActionButton: isLoggedIn
+        ?FloatingActionButton.extended(
           icon: Icon(Icons.add_outlined),
           label: Text("Add Item"),
           onPressed: () {
             Navigator.of(context).pushNamed("/buyandsell/category");
           },
-        ),
+        )
+        :Text(""),
         body: SafeArea(
-          child: !isLoggedIn
+          child: isLoggedIn
               ? SingleChildScrollView(
                   child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+
+
                     TitleWithBackButton(
                       child: Column(
                         children: [
@@ -195,74 +200,74 @@ class _SellpageState extends State<Sellpage> {
                     ),
                   ],
                 ))
-              //Container(
-              //     alignment: Alignment.center,
-              //     padding: EdgeInsets.all(50),
-              //     child: Column(
-              //       children: [
-              //         Icon(
-              //           Icons.cloud,
-              //           size: 200,
-              //           color: Colors.grey[600],
-              //         ),
-              //         Text(
-              //           "Login To View Buy and Sell Posts",
-              //           style: theme.textTheme.headline5,
-              //           textAlign: TextAlign.center,
-              //         )
-              //       ],
-              //       crossAxisAlignment: CrossAxisAlignment.center,
-              //     ),
-              //   )
-              : SingleChildScrollView(
+              :Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(50),
                   child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TitleWithBackButton(
-                      child: Text(
-                        "Buy & Sell (Beta)",
-                        style: theme.textTheme.headline4,
+                    children: [
+                      Icon(
+                        Icons.cloud,
+                        size: 200,
+                        color: Colors.grey[600],
                       ),
-                    ),
-                    Center(
-                      child: StreamBuilder<List<BuynSellPost>>(
-                          stream: buynSellPostBloc.buynsellposts,
-                          builder: (BuildContext context,
-                              AsyncSnapshot<List<BuynSellPost>> snapshot) {
-                            return ListView.builder(
-                              primary: false,
-                              shrinkWrap: true,
-                              itemCount: MyPosts
-                                  ? (snapshot.hasData
-                                      ? snapshot.data!
-                                          .where((post) =>
-                                              post.user?.userID ==
-                                                  profile?.userID &&
-                                              post.deleted != true)
-                                          .length
-                                      : 0)
-                                  : (snapshot.hasData
-                                      ? snapshot.data!
-                                          .where(
-                                              (post) => post.deleted != true)
-                                          .length
-                                      : 0),
-                              itemBuilder: (_, index) {
-                                if (!snapshot.hasData) {
-                                  return Center(
-                                      child:
-                                          CircularProgressIndicatorExtended(
-                                    label: Text("Loading..."),
-                                  ));
-                                }
-                                return _buildContent(screen_h, screen_w,
-                                    index, myfont, context, snapshot);
-                              },
-                            );
-                          }),
-                    ),
-                  ],
-                )),
+                      Text(
+                        "Login To View Buy and Sell Posts",
+                        style: theme.textTheme.headline5,
+                        textAlign: TextAlign.center,
+                      )
+                    ],
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                  ),
+                )
+              // : SingleChildScrollView(
+              //     child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: <Widget>[
+              //       TitleWithBackButton(
+              //         child: Text(
+              //           "Buy & Sell (Beta)",
+              //           style: theme.textTheme.headline4,
+              //         ),
+              //       ),
+              //       Center(
+              //         child: StreamBuilder<List<BuynSellPost>>(
+              //             stream: buynSellPostBloc.buynsellposts,
+              //             builder: (BuildContext context,
+              //                 AsyncSnapshot<List<BuynSellPost>> snapshot) {
+              //               return ListView.builder(
+              //                 primary: false,
+              //                 shrinkWrap: true,
+              //                 itemCount: MyPosts
+              //                     ? (snapshot.hasData
+              //                         ? snapshot.data!
+              //                             .where((post) =>
+              //                                 post.user?.userID ==
+              //                                     profile?.userID &&
+              //                                 post.deleted != true)
+              //                             .length
+              //                         : 0)
+              //                     : (snapshot.hasData
+              //                         ? snapshot.data!
+              //                             .where(
+              //                                 (post) => post.deleted != true)
+              //                             .length
+              //                         : 0),
+              //                 itemBuilder: (_, index) {
+              //                   if (!snapshot.hasData) {
+              //                     return Center(
+              //                         child:
+              //                             CircularProgressIndicatorExtended(
+              //                       label: Text("Loading..."),
+              //                     ));
+              //                   }
+              //                   return _buildContent(screen_h, screen_w,
+              //                       index, myfont, context, snapshot);
+              //                 },
+              //               );
+              //             }),
+              //       ),
+              //     ],
+              //   )),
         ));
   }
 

@@ -2,11 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
+import '../api/model/buynsellPost.dart';
 
 import '../utils/title_with_backbutton.dart';
 
 double screen_h=0,screen_w=0;
+class Buyandsell_information extends StatefulWidget {
+  final Future<BuynSellPost?> post;
+
+  Buyandsell_information({required this.post});
+
+  static void navigateWith(
+      BuildContext context, BuynSellPost bloc, BuynSellPost post) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        settings: RouteSettings(
+          name: "/${post.id ?? ""}",
+        ),
+        builder: (context) =>  Buyandsell_information(
+          post: bloc.getBuynSellPost(post.id ?? ""),
+        ),
+      ),
+    );
+  }
+
+  @override
+  State<Buyandsell_information> createState() => _Buyandsell_informationState();
+}
 class _Buyandsell_informationState extends State<Buyandsell_information> {
+  BuynSellPost? bnsPost;
+
+  @override
+  void initState() async {
+    super.initState();
+    widget.post.then((bnsPost) {
+      if (this.mounted) {
+        setState(() {
+          this.bnsPost = bnsPost;
+        });
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
 
@@ -76,14 +113,14 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Container(
-                margin: EdgeInsets.fromLTRB(screen_w * 0.1, 15, 0, 0),
-                child: SizedBox(
-                  height: screen_h / 1.2,
-                  width: screen_w / 1,
-                  child: ImageCarousel(imageList),
-                ),
-              ),
+              // Container(
+              //   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 15, 0, 0),
+              //   child: SizedBox(
+              //     height: screen_h / 1.2,
+              //     width: screen_w / 1,
+              //     child: ImageCarousel(imageList),
+              //   ),
+              // ),
               Spacer(),
             ],
           ),
@@ -179,12 +216,12 @@ class _Buyandsell_informationState extends State<Buyandsell_information> {
   }
 }
 
-class Buyandsell_information extends StatefulWidget {
-  const Buyandsell_information({Key? key}) : super(key: key);
-
-  @override
-  State<Buyandsell_information> createState() => _Buyandsell_informationState();
-}
+// class Buyandsell_information extends StatefulWidget {
+//   const Buyandsell_information({Key? key}) : super(key: key);
+//
+//   @override
+//   State<Buyandsell_information> createState() => _Buyandsell_informationState();
+// }
 class ImageCarousel extends StatefulWidget {
   final List<String> imageList;
 
