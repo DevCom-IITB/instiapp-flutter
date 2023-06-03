@@ -277,15 +277,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                       isBody: true,
                       entityID: temp.split("/putentity/body/")[1],
                       cookie: widget.bloc.getSessionIdHeader()));
-            }
-            else if (temp.startsWith("/buyandsell/info")) {
+            } else if (temp.startsWith("/buyandsell/info")) {
               return _buildRoute(
                   settings,
-                  Buyandsell_information(
+                  BuyAndSellInfoPage(
                       post: widget.bloc.buynSellPostBloc
                           .getBuynSellPost(temp.split("/buyandsell/info")[1])));
-           }
-          else {
+            } else {
               switch (settings.name) {
                 case "/":
                   return _buildRoute(
@@ -332,7 +330,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, BuyAndSellForm());
                 // case "/buyandsell/giveinfo":
                 //   return _buildRoute(settings, Buyandsell_information());
-
 
                 // case "/complaints":
                 //   return _buildRoute(settings, ComplaintsPage());
