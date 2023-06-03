@@ -38,6 +38,7 @@ class _SellpageState extends State<Sellpage> {
   BnSType bnstype = BnSType.All;
   bool firstBuild = true;
   bool MyPosts = false;
+  bool _hasBeenPressed = false;
   int _currentTab = 0;
 
   @override
@@ -114,63 +115,77 @@ class _SellpageState extends State<Sellpage> {
                               "Buy & Sell (Beta)",
                               style: theme.textTheme.headline4,
                             ),
-                            Container(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Expanded(
-                                      child: ElevatedButton(
-                                    child: Text("All Posts"),
-                                    onPressed: () {},
-                                  )),
-                                  Expanded(
-                                      child: ElevatedButton(
-                                    child: Text("My Posts"),
-                                    onPressed: () {},
-                                  )),
-                                ],
-                              ),
-                            )
+                            
                           ],
                         ),
                       ),
                       Center(
-                        child: StreamBuilder<List<BuynSellPost>>(
-                            stream: buynSellPostBloc.buynsellposts,
-                            builder: (BuildContext context,
-                                AsyncSnapshot<List<BuynSellPost>> snapshot) {
-                              return ListView.builder(
-                                primary: false,
-                                shrinkWrap: true,
-                                itemCount: MyPosts
-                                    ? (snapshot.hasData
-                                        ? snapshot.data!
-                                            .where((post) =>
-                                                post.user?.userID ==
-                                                    profile?.userID &&
-                                                post.deleted != true)
-                                            .length
-                                        : 0)
-                                    : (snapshot.hasData
-                                        ? snapshot.data!
-                                            .where(
-                                                (post) => post.deleted != true)
-                                            .length
-                                        : 0),
-                                itemBuilder: (_, index) {
-                                  if (!snapshot.hasData) {
-                                    return Center(
-                                        child:
-                                            CircularProgressIndicatorExtended(
-                                      label: Text("Loading..."),
-                                    ));
-                                  }
-                                  return _buildContent(screen_h, screen_w,
-                                      index, myfont, context, snapshot);
-                                },
-                              );
-                            }),
+                        child: Column(
+                          children: [Row(children: [
+      Expanded(
+          child: Container(padding: EdgeInsets.fromLTRB(10, 10, 5
+              , 10),
+            child: RaisedButton(
+color: !_hasBeenPressed ? theme.bottomAppBarColor : theme.cardColor,
+  onPressed: () => {
+    setState(() {
+      _hasBeenPressed = !_hasBeenPressed;
+    })
+  },
+                child:  Text(
+                  "All Posts",
+                  style: theme.textTheme.headline6,
+                )),
+          )),
+      Expanded(
+          child: Container(padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
+            child: RaisedButton(color: _hasBeenPressed ? theme.bottomAppBarColor : theme.cardColor,
+                onPressed: () => {
+                  setState(() {
+                    _hasBeenPressed = !_hasBeenPressed;
+                  })
+                },
+                child: Text("Your Posts",
+                    style: theme.textTheme.headline6)),
+          )),
+    ]),
+                            StreamBuilder<List<BuynSellPost>>(
+                                stream: buynSellPostBloc.buynsellposts,
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<List<BuynSellPost>> snapshot) {
+                                  return ListView.builder(
+                                    primary: false,
+                                    shrinkWrap: true,
+                                    itemCount: MyPosts
+                                        ? (snapshot.hasData
+                                            ? snapshot.data!
+                                                .where((post) =>
+                                                    post.user?.userID ==
+                                                        profile?.userID &&
+                                                    post.deleted != true)
+                                                .length
+                                            : 0)
+                                        : (snapshot.hasData
+                                            ? snapshot.data!
+                                                .where(
+                                                    (post) => post.deleted != true)
+                                                .length
+                                            : 0),
+                                    itemBuilder: (_, index) {
+                                      if (!snapshot.hasData) {
+                                        return Center(
+                                            child:
+                                                CircularProgressIndicatorExtended(
+                                          label: Text("Loading..."),
+                                        ));
+                                      }
+                                      return _buildContent(screen_h, screen_w,
+                                          index, myfont, context, snapshot);
+                                    },
+                                  );
+                                }),
+                          ],
+                        ),
                       ),
                       Center(
                         child: StreamBuilder<List<BuynSellPost>>(
