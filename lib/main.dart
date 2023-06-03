@@ -277,13 +277,14 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                       isBody: true,
                       entityID: temp.split("/putentity/body/")[1],
                       cookie: widget.bloc.getSessionIdHeader()));
-            } //else if (temp.startsWith("/buyandsell/info")) {
-              // return _buildRoute(
-              //     settings,
-              //     BuyAndSellInfoPage(
-              //         post: widget.bloc.buynSellPostBloc
-              //             .getBuynSellPost(temp.split("/buyandsell/info")[1])));
-          //  }
+            }
+            else if (temp.startsWith("/buyandsell/info")) {
+              return _buildRoute(
+                  settings,
+                  Buyandsell_information(
+                      post: widget.bloc.buynSellPostBloc
+                          .getBuynSellPost(temp.split("/buyandsell/info")[1])));
+           }
           else {
               switch (settings.name) {
                 case "/":
@@ -326,11 +327,11 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 case "/buyandsell/category":
                   return _buildRoute(settings, BuyAndSellCategoryPage());
                 // case "/buyandsell/info":
-                //   return _buildRoute(settings, BuyAndSellInfoPage());
+                //   return _buildRoute(settings, Buyandsell_information());
                 case "/buyandsell/createPost":
                   return _buildRoute(settings, BuyAndSellForm());
-                case "/buyandsell/giveinfo":
-                  return _buildRoute(settings, Buyandsell_information());
+                // case "/buyandsell/giveinfo":
+                //   return _buildRoute(settings, Buyandsell_information());
 
 
                 // case "/complaints":
