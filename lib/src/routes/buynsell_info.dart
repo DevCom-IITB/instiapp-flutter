@@ -78,7 +78,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                 semanticLabel: "Show navigation drawer",
               ),
               onPressed: () {
-                // _scaffoldKey.currentState?.openDrawer();
+                _scaffoldKey.currentState?.openDrawer();
               },
             ),
           ],
@@ -129,7 +129,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
             children: [
               Container(
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 11, 0, 0),
-                  child: Text("Brand Name",
+                  child: Text(bnsPost?.brand ?? "",
                       style: theme.textTheme.bodySmall!
                           .copyWith(color: Colors.black)
                       // style: TextStyle(
@@ -177,38 +177,35 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
           ]),
           SizedBox(height: screen_h * 0.28),
           Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                  margin: EdgeInsets.fromLTRB(screen_w * 0.1, 8, 0, 0),
-                  child: Text(
-                      'Contact Details - ' + (bnsPost?.contactDetails ?? ""),
-                      style: theme.textTheme.headline6!
-                          .copyWith(fontWeight: FontWeight.bold, fontSize: 17)
-                      // style: TextStyle(
-                      //     fontSize: myfont, fontWeight: FontWeight.w600),
-                      )),
-              Container(
-                  margin: EdgeInsets.fromLTRB(screen_w * 0.3, 11, 0, 0),
+                  margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                   child: Column(
                     children: [
                       Text(
-                          "Negotiable -" +
-                              ((bnsPost?.negotiable ?? false) ? "Yes" : "No"),
-                          style:
-                              theme.textTheme.headline6!.copyWith(fontSize: 17)
-                          // style: TextStyle(
-                          //     fontSize: myfont, fontWeight: FontWeight.w500),
-                          ),
+                        "Negotiable -" +
+                            ((bnsPost?.negotiable ?? false) ? "Yes" : "No"),
+                        style: theme.textTheme.bodySmall!
+                            .copyWith(color: Colors.black54),
+                        textAlign: TextAlign.left,
+                        // style: TextStyle(
+                        //     fontSize: myfont, fontWeight: FontWeight.w500),
+                      ),
                       Text(
-                          (bnsPost!.action == 'giveaway'
-                              ? "Give Away"
-                              : "Price - ₹" + (bnsPost!.price ?? 0).toString()),
-                          style: theme.textTheme.headline4!
-                              .copyWith(fontWeight: FontWeight.bold)
-                          // style: TextStyle(
-                          //     fontSize: myfont * 1.5,
-                          //     fontWeight: FontWeight.w800),
-                          )
+                        'Contact Details - ' + (bnsPost?.contactDetails ?? ""),
+                        style: theme.textTheme.headline6!.copyWith(
+                            fontWeight: FontWeight.bold, fontSize: 17),
+                        textAlign: TextAlign.left,
+                      ),
+                      Text(
+                        (bnsPost!.action == 'giveaway'
+                            ? "Give Away"
+                            : "Price - ₹" + (bnsPost!.price ?? 0).toString()),
+                        style: theme.textTheme.headline4!.copyWith(
+                            fontSize: 17, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.left,
+                      )
                     ],
                   ))
             ],
