@@ -11,7 +11,6 @@ import '../utils/title_with_backbutton.dart';
 
 class BuySellPage extends StatefulWidget {
   BuySellPage({Key? key}) : super(key: key);
-  //final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   State<BuySellPage> createState() => _BuySellPageState();
@@ -34,23 +33,19 @@ class Sellpage extends StatefulWidget {
   State<Sellpage> createState() => _SellpageState();
 }
 
-
-
 class _SellpageState extends State<Sellpage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-
   BnSType bnstype = BnSType.All;
   bool firstBuild = true;
   bool MyPosts = false;
+  int _currentTab = 0;
 
   @override
   void initState() {
     super.initState();
   }
 
-
   Widget build(BuildContext context) {
-
     BuynSellPostBloc buynSellPostBloc =
         BlocProvider.of(context)!.bloc.buynSellPostBloc;
 
@@ -95,15 +90,15 @@ class _SellpageState extends State<Sellpage> {
         ),
         floatingActionButtonLocation:
         FloatingActionButtonLocation.endDocked,
-         floatingActionButton: isLoggedIn
-        ?FloatingActionButton.extended(
+        floatingActionButton: isLoggedIn
+            ?FloatingActionButton.extended(
           icon: Icon(Icons.add_outlined),
           label: Text("Add Item"),
           onPressed: () {
             Navigator.of(context).pushNamed("/buyandsell/category");
           },
         )
-        :Text(""),
+            :SizedBox(height: 0,width: 0,),
         body: SafeArea(
           child: isLoggedIn
               ? SingleChildScrollView(
@@ -119,7 +114,7 @@ class _SellpageState extends State<Sellpage> {
                             "Buy & Sell (Beta)",
                             style: theme.textTheme.headline4,
                           ),
-                         
+
 
                         ],
                       ),
@@ -295,7 +290,7 @@ class _SellpageState extends State<Sellpage> {
         height: screen_h * 0.65,
         width: screen_w * 1.2,
         child: Card(
-          
+
           color: theme.cardColor,
           margin: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
           child: InkWell(onTap: (){Navigator.of(context).pushNamed("/buyandsell/giveinfo");},
