@@ -274,7 +274,7 @@ class _SellpageState extends State<Sellpage> {
                       Center(
                         child: Container(
                           padding: EdgeInsets.all(10),
-                          height: screen_h * 0.5,
+                          height: screen_h * 0.6,
                           width: screen_w * 0.4,
                           child: CachedNetworkImage(
                             imageUrl: (posts[index].imageUrl?[0] ?? ''),
