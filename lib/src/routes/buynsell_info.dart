@@ -240,7 +240,6 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
     );
   }
 }
-
 class ImageCarousel extends StatefulWidget {
   final List<String>? imageList;
 
@@ -266,10 +265,9 @@ class _ImageCarouselState extends State<ImageCarousel> {
 
     if (widget.imageList == null || widget.imageList!.isEmpty) {
       return Container(
-        child: Center(child: Image.asset(
-        'assets/buynsell/noimg.png'
-      )));
-        }
+        child: Center(child: Image.asset('assets/buynsell/noimg.png')),
+      );
+    }
 
     return Row(
       children: [
@@ -369,12 +367,19 @@ class _ImageCarouselState extends State<ImageCarousel> {
       dots.add(
         Padding(
           padding: const EdgeInsets.all(5.0),
-          child: Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: _currentIndex == i ? Colors.blueGrey : Colors.grey,
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                _currentIndex = i;
+              });
+            },
+            child: Container(
+              width: 6,
+              height: 6,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _currentIndex == i ? Colors.blueGrey : Colors.grey,
+              ),
             ),
           ),
         ),
