@@ -31,6 +31,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
   BuynSellPost currRequest = BuynSellPost();
 
   File? _imageFile;
+  List<File> imageFiles = [];
 
   List<ActionChoices> actionChoices = [
     ActionChoices(value: "sell", text: "Sell"),
@@ -670,44 +671,77 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                           ],
                         ),
                       ),
-                      Row(
+                      Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          ElevatedButton(
-                            child: const DefaultTextStyle(
-                              style: TextStyle(color: Colors.blue),
-                              child: Text('Cancel'),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.white,
-                            ),
-                            onPressed: () {},
+                          SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  ...(bnsPost.imageUrl ?? [])
+                                      .asMap()
+                                      .entries
+                                      .map((e) => _buildImageUrl(
+                                            e.value,
+                                            e.key,
+                                          )),
+                                  ...imageFiles
+                                      .asMap()
+                                      .entries
+                                      .map((e) => _buildImageFile(
+                                            e.value,
+                                            e.key,
+                                          )),
+                                ],
+                              )),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                child: const DefaultTextStyle(
+                                  style: TextStyle(color: Colors.blue),
+                                  child: Text('Cancel'),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.white,
+                                ),
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/buyandsell');
+                                },
+                              ),
+                              const SizedBox(width: 20),
+                              ElevatedButton(
+                                onPressed: isButtonDisabled
+                                    ? null
+                                    : () async {
+                                        bnsPost.user = profile;
+                                        if (bnsPost.imageUrl == null)
+                                          bnsPost.imageUrl = [];
+                                        for (int i = 0;
+                                            i < imageFiles.length;
+                                            i++) {
+                                          ImageUploadResponse resp =
+                                              await bloc.client.uploadImage(
+                                                  bloc.getSessionIdHeader(),
+                                                  imageFiles[i]);
+                                          bnsPost.imageUrl!
+                                              .add(resp.pictureURL!);
+                                        }
+                                        // ignore: avoid_print
+                                        print(bnsPost.imageUrl);
+                                        handleTap();
+                                        if (_formKey.currentState!.validate()) {
+                                          bloc.buynSellPostBloc
+                                              .createBuynSellPost(bnsPost);
+                                          Navigator.pushNamed(
+                                              context, '/buyandsell');
+                                        }
+                                      },
+                                child: const Text('Submit'),
+                              ),
+                              const SizedBox(width: 20),
+                            ],
                           ),
-                          const SizedBox(width: 20),
-                          ElevatedButton(
-                            onPressed: isButtonDisabled
-                                ? null
-                                : () async {
-                                    bnsPost.user = profile;
-                                    handleTap();
-                                    if (_formKey.currentState!.validate()) {
-                                      if (_imageFile != null) {
-                                        ImageUploadResponse resp =
-                                            await bloc.client.uploadImage(
-                                                bloc.getSessionIdHeader(),
-                                                _imageFile!);
-                                        bnsPost.imageUrl = resp.pictureURL;
-                                      }
-
-                                      bloc.buynSellPostBloc
-                                          .createBuynSellPost(bnsPost);
-                                      Navigator.pushNamed(
-                                          context, '/buyandsell');
-                                    }
-                                  },
-                            child: const Text('Submit'),
-                          ),
-                          const SizedBox(width: 20),
                         ],
                       ),
                     ],
@@ -732,7 +766,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
       // print(resp.pictureURL);
       if (await pi.length() / 1000000 <= 10) {
         setState(() {
-          _imageFile = File(pi.path);
+          imageFiles.add(File(pi.path));
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -742,59 +776,59 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
     }
   }
 
-  // Widget _buildImageUrl(String url, int index) {
-  //   return Stack(
-  //     children: [
-  //       Image.network(
-  //         url,
-  //         height: MediaQuery.of(context).size.height / 7.5,
-  //         width: MediaQuery.of(context).size.height / 7.5,
-  //         fit: BoxFit.scaleDown,
-  //       ),
-  //       Positioned(
-  //         right: 0,
-  //         top: 0,
-  //         child: Container(
-  //           child: IconButton(
-  //             icon: Icon(Icons.close),
-  //             onPressed: () {
-  //               setState(() {
-  //                 currRequest.imageUrl!;
-  //               });
-  //             },
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
+  Widget _buildImageUrl(String url, int index) {
+    return Stack(
+      children: [
+        Image.network(
+          url,
+          height: MediaQuery.of(context).size.height / 7.5,
+          width: MediaQuery.of(context).size.height / 7.5,
+          fit: BoxFit.scaleDown,
+        ),
+        Positioned(
+          right: 0,
+          top: 0,
+          child: Container(
+            child: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                setState(() {
+                  bnsPost.imageUrl!.removeAt(index);
+                });
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
-  // Widget _buildImageFile(File file, int index) {
-  //   return Stack(
-  //     children: [
-  //       Image.file(
-  //         file,
-  //         height: MediaQuery.of(context).size.height / 7.5,
-  //         width: MediaQuery.of(context).size.height / 7.5,
-  //         fit: BoxFit.scaleDown,
-  //       ),
-  //       Positioned(
-  //         right: 0,
-  //         top: 0,
-  //         child: Container(
-  //           child: IconButton(
-  //             icon: Icon(Icons.close),
-  //             onPressed: () {
-  //               setState(() {
-  //                 //imageFile.remove;
-  //               });
-  //             },
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
+  Widget _buildImageFile(File file, int index) {
+    return Stack(
+      children: [
+        Image.file(
+          file,
+          height: MediaQuery.of(context).size.height / 7.5,
+          width: MediaQuery.of(context).size.height / 7.5,
+          fit: BoxFit.scaleDown,
+        ),
+        Positioned(
+          right: 0,
+          top: 0,
+          child: Container(
+            child: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                setState(() {
+                  imageFiles.removeAt(index);
+                });
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   bool isButtonDisabled = false;
 
@@ -803,8 +837,6 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
       setState(() {
         isButtonDisabled = true;
       });
-      // Perform the action that the button triggers here
-
       Future.delayed(Duration(seconds: 10), () {
         setState(() {
           isButtonDisabled = false;
