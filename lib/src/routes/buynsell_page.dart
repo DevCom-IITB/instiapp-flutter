@@ -137,38 +137,60 @@ class _SellpageState extends State<Sellpage> {
                         Row(children: [
                           Expanded(
                               child: Container(
-                            padding: EdgeInsets.fromLTRB(10, 10, 5, 10),
-                            child: RaisedButton(
-                                color: !MyPosts
-                                    ? theme.bottomAppBarColor
-                                    : theme.cardColor,
-                                onPressed: () => {
+                                padding: EdgeInsets.fromLTRB(10, 10, 5, 10),
+                                child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(15)),
+                                        primary: theme.cardColor,
+                                        side: BorderSide(
+                                          width: 2,
+                                          color: MyPosts
+                                              ? theme.cardColor
+                                              : Colors.blue,
+                                        )),
+                                    // color: !MyPosts
+                                    //     ? theme.bottomAppBarColor
+                                    //     : theme.cardColor,
+                                    onPressed: () => {
                                       setState(() {
                                         MyPosts = false;
                                       }),
                                       buynSellPostBloc.refresh()
                                     },
-                                child: Text(
-                                  "All Posts",
-                                  style: theme.textTheme.headline6,
-                                )),
-                          )),
+                                    child: Text(
+                                      "All Posts",
+                                      style: theme.textTheme.headline6,
+                                    )),
+                              )),
                           Expanded(
                               child: Container(
-                            padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
-                            child: RaisedButton(
-                                color: MyPosts
-                                    ? theme.bottomAppBarColor
-                                    : theme.cardColor,
-                                onPressed: () => {
-                                      setState(() {
-                                        MyPosts = true;
-                                      }),
-                                      buynSellPostBloc.refresh()
-                                    },
-                                child: Text("Your Posts",
-                                    style: theme.textTheme.headline6)),
-                          )),
+                                padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
+                                child: ElevatedButton(
+                                  child: Text("Your Posts",
+                                      style: theme.textTheme.headline6),
+                                  onPressed: () => {
+                                    setState(() {
+                                      MyPosts = true;
+                                    }),
+                                    buynSellPostBloc.refresh()
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(15)),
+                                      primary: theme.cardColor,
+                                      side: BorderSide(
+                                        width: 2,
+                                        color: !MyPosts
+                                            ? theme.cardColor
+                                            : Colors.blue,
+                                      )),
+                                  // color: MyPosts
+                                  //     ? theme.bottomAppBarColor
+                                  //     : theme.cardColor,
+                                ),
+                              )),
                         ]),
                         StreamBuilder<List<BuynSellPost>>(
                             stream: buynSellPostBloc.buynsellposts,
