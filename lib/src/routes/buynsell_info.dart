@@ -1,7 +1,4 @@
-import 'package:InstiApp/src/utils/title_with_backbutton.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import '../api/model/buynsellPost.dart';
 
@@ -48,11 +45,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> imageList = [
-      'https://images.unsplash.com/photo-1682685797742-42c9987a2c34?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80',
-      'https://images.unsplash.com/photo-1684346819553-11174cbc8f05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80',
-      'https://images.unsplash.com/photo-1683380381470-8bb7e42aa5b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-    ];
+    List<String>? imageList = bnsPost?.imageUrl;
     double screen_wr = MediaQuery.of(context).size.width;
     double screen_hr = MediaQuery.of(context).size.height;
     double x, y;
@@ -118,7 +111,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                 child: SizedBox(
                   height: screen_h / 1.2,
                   width: screen_w / 1,
-                  child: ImageCarousel(imageList),
+                  child: ImageCarousel(imageList ?? []),
                 ),
               ),
               Spacer(),
@@ -130,8 +123,8 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
               Container(
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 11, 0, 0),
                   child: Text(bnsPost?.brand ?? "",
-                      style: theme.textTheme.bodySmall!
-                          .copyWith(color: Colors.black)
+                      style: theme.textTheme.bodySmall
+                          ?.copyWith(color: Colors.black)
                       // style: TextStyle(
                       //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
                       )),
@@ -143,8 +136,8 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
               Container(
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
                   child: Text(bnsPost?.name ?? "",
-                      style: theme.textTheme.headline5!
-                          .copyWith(fontWeight: FontWeight.bold)
+                      style: theme.textTheme.headline5
+                          ?.copyWith(fontWeight: FontWeight.bold)
                       // style: TextStyle(
                       //     fontSize: myfont * 1.5, fontWeight: FontWeight.w700),
                       )),
@@ -155,7 +148,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
               margin: EdgeInsets.fromLTRB(screen_w * 0.1, 5, 0, 0),
               child: Text("Condition -" + (bnsPost?.condition ?? '0') + '/10',
                   style:
-                      theme.textTheme.headline6!.copyWith(color: Colors.black)
+                      theme.textTheme.headline6?.copyWith(color: Colors.black)
                   // style: TextStyle(fontSize: myfont, fontWeight: FontWeight.w100),
                   ),
             )
@@ -169,7 +162,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
                   style:
-                      theme.textTheme.bodySmall!.copyWith(color: Colors.black54)
+                      theme.textTheme.bodySmall?.copyWith(color: Colors.black54)
                   // style: TextStyle(
                   //     fontSize: myfont * 0.75, fontWeight: FontWeight.w100),
                   ),
@@ -186,23 +179,23 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                       Text(
                         "Negotiable -" +
                             ((bnsPost?.negotiable ?? false) ? "Yes" : "No"),
-                        style: theme.textTheme.bodySmall!
-                            .copyWith(color: Colors.black54),
+                        style: theme.textTheme.bodySmall
+                            ?.copyWith(color: Colors.black54),
                         textAlign: TextAlign.left,
                         // style: TextStyle(
                         //     fontSize: myfont, fontWeight: FontWeight.w500),
                       ),
                       Text(
                         'Contact Details - ' + (bnsPost?.contactDetails ?? ""),
-                        style: theme.textTheme.headline6!.copyWith(
+                        style: theme.textTheme.headline6?.copyWith(
                             fontWeight: FontWeight.bold, fontSize: 17),
                         textAlign: TextAlign.left,
                       ),
                       Text(
-                        (bnsPost!.action == 'giveaway'
+                        (bnsPost?.action == 'giveaway'
                             ? "Give Away"
-                            : "Price - ₹" + (bnsPost!.price ?? 0).toString()),
-                        style: theme.textTheme.headline4!.copyWith(
+                            : "Price - ₹" + (bnsPost?.price ?? 0).toString()),
+                        style: theme.textTheme.headline4?.copyWith(
                             fontSize: 17, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.left,
                       )
