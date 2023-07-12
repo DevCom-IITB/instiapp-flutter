@@ -1,4 +1,7 @@
+import 'package:InstiApp/src/utils/title_with_backbutton.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import '../api/model/buynsellPost.dart';
 
@@ -111,7 +114,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                 child: SizedBox(
                   height: screen_h / 1.2,
                   width: screen_w / 1,
-                  child: ImageCarousel(imageList ?? []),
+                  child: ImageCarousel(imageList),
                 ),
               ),
               Spacer(),
@@ -123,11 +126,11 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
               Container(
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 11, 0, 0),
                   child: Text(bnsPost?.brand ?? "",
-                      style: theme.textTheme.bodySmall
-                          ?.copyWith(color: Colors.black)
-                      // style: TextStyle(
-                      //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
-                      )),
+                      style: theme.textTheme.headline6!
+                          .copyWith(fontWeight: FontWeight.w100, fontSize: 20))
+                // style: TextStyle(
+                //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
+              ),
             ],
           ),
           Row(
@@ -136,73 +139,100 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
               Container(
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
                   child: Text(bnsPost?.name ?? "",
-                      style: theme.textTheme.headline5
-                          ?.copyWith(fontWeight: FontWeight.bold)
-                      // style: TextStyle(
-                      //     fontSize: myfont * 1.5, fontWeight: FontWeight.w700),
-                      )),
+                      style: theme.textTheme.headline5!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                      )
+                    // style: TextStyle(
+                    //     fontSize: myfont * 1.5, fontWeight: FontWeight.w700),
+                  )),
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             Container(
               margin: EdgeInsets.fromLTRB(screen_w * 0.1, 5, 0, 0),
-              child: Text("Condition -" + (bnsPost?.condition ?? '0') + '/10',
-                  style:
-                      theme.textTheme.headline6?.copyWith(color: Colors.black)
-                  // style: TextStyle(fontSize: myfont, fontWeight: FontWeight.w100),
-                  ),
+              child: Text("Condition - " + (bnsPost?.condition ?? '0') + '/10',
+                  style: theme.textTheme.headline6!
+                      .copyWith(fontSize: 15, fontWeight: FontWeight.w500)
+                // style: TextStyle(fontSize: myfont, fontWeight: FontWeight.w100),
+              ),
             )
           ]),
-          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+          Column(children: [
             Container(
               width: screen_w * 0.9,
-              margin: EdgeInsets.fromLTRB(screen_w * 0.1, 8, 0, 0),
+              height: screen_h*0.5,
+              margin: EdgeInsets.fromLTRB(0, 8, 0, 0),
               child: Text(bnsPost?.description ?? "",
                   maxLines: 10,
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
-                  style:
-                      theme.textTheme.bodySmall?.copyWith(color: Colors.black54)
-                  // style: TextStyle(
-                  //     fontSize: myfont * 0.75, fontWeight: FontWeight.w100),
-                  ),
+                  style: theme.textTheme.bodySmall!.copyWith(fontSize: 13)
+                // style: TextStyle(
+                //     fontSize: myfont * 0.75, fontWeight: FontWeight.w100),
+              ),
             ),
+            SizedBox(
+              height: screen_h * 0.07,
+            ),
+            SizedBox(
+              width: screen_w,
+              child: Text(
+                "Negotiable - " +
+                    ((bnsPost?.negotiable ?? false) ? "Yes" : "No"),
+                style: theme.textTheme.bodyLarge!
+                    .copyWith(fontSize: 18, fontWeight: FontWeight.w400),
+                textAlign: TextAlign.end,
+
+                // style: TextStyle(
+                //     fontSize: myfont, fontWeight: FontWeight.w500),
+              ),
+            ),
+            SizedBox(height: 0.09*screen_h,),
+            SizedBox(width: screen_w,
+              child: Row(crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Contact Details' ,
+                              style: theme.textTheme.headline6!
+                                  .copyWith(fontWeight: FontWeight.bold, fontSize: 17),
+
+                            ),
+                          ],
+                        ),Container(margin: EdgeInsets.fromLTRB(0, 5 , 0, 0),
+                          child: Row(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [Icon(Icons.phone_outlined),
+                              Text(
+                                (bnsPost?.contactDetails ?? "") ,
+                                style: theme.textTheme.headline1!
+                                    .copyWith(fontWeight: FontWeight.w100, fontSize: 17),
+
+                              ),
+                            ],
+                          ),
+                        )
+                        ,],
+                    ),
+                  ),Spacer(),
+                  Container(margin: EdgeInsets.fromLTRB(0, screen_h*0.06, 0, 0),
+                    child: Text(
+                      (bnsPost!.action == 'giveaway'
+                          ? "GiveAway"
+                          : "Price - ₹" + (bnsPost!.price ?? 0).toString()),
+                      style: theme.textTheme.headline4!
+                          .copyWith(fontSize: 25, fontWeight: FontWeight.w600),
+                      textAlign: TextAlign.left,
+                    ),
+                  )],
+              ),
+            ),
+
           ]),
-          SizedBox(height: screen_h * 0.28),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                  margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                  child: Column(
-                    children: [
-                      Text(
-                        "Negotiable -" +
-                            ((bnsPost?.negotiable ?? false) ? "Yes" : "No"),
-                        style: theme.textTheme.bodySmall
-                            ?.copyWith(color: Colors.black54),
-                        textAlign: TextAlign.left,
-                        // style: TextStyle(
-                        //     fontSize: myfont, fontWeight: FontWeight.w500),
-                      ),
-                      Text(
-                        'Contact Details - ' + (bnsPost?.contactDetails ?? ""),
-                        style: theme.textTheme.headline6?.copyWith(
-                            fontWeight: FontWeight.bold, fontSize: 17),
-                        textAlign: TextAlign.left,
-                      ),
-                      Text(
-                        (bnsPost?.action == 'giveaway'
-                            ? "Give Away"
-                            : "Price - ₹" + (bnsPost?.price ?? 0).toString()),
-                        style: theme.textTheme.headline4?.copyWith(
-                            fontSize: 17, fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.left,
-                      )
-                    ],
-                  ))
-            ],
-          )
 
           // Add more widgets below the image card
         ]),
@@ -212,7 +242,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
 }
 
 class ImageCarousel extends StatefulWidget {
-  final List<String> imageList;
+  final List<String>? imageList;
 
   ImageCarousel(this.imageList);
 
@@ -233,6 +263,14 @@ class _ImageCarouselState extends State<ImageCarousel> {
     screen_hr >= screen_wr ? y = 0.9 : y = 0.8;
     var screen_w = screen_wr * y;
     var screen_h = screen_hr * x;
+
+    if (widget.imageList == null || widget.imageList!.isEmpty) {
+      return Container(
+        child: Center(child: Image.asset(
+        'assets/buynsell/noimg.png'
+      )));
+        }
+
     return Row(
       children: [
         Expanded(
@@ -244,7 +282,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
                   height: screen_h * 0.7,
                   width: screen_w * 0.6,
                   child: PageView.builder(
-                    itemCount: widget.imageList.length,
+                    itemCount: widget.imageList!.length,
                     onPageChanged: (index) {
                       setState(() {
                         _currentIndex = index;
@@ -260,7 +298,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(15.0),
                           child: Image.network(
-                            widget.imageList[index],
+                            widget.imageList![index],
                             fit: BoxFit.fitHeight,
                           ),
                         ),
@@ -276,7 +314,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: widget.imageList.length,
+            itemCount: widget.imageList!.length,
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
@@ -304,7 +342,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.network(
-                          widget.imageList[index],
+                          widget.imageList![index],
                           width: 80,
                           height: 80,
                           fit: BoxFit.cover,
@@ -327,7 +365,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
 
   List<Widget> _buildDotIndicator() {
     List<Widget> dots = [];
-    for (int i = 0; i < widget.imageList.length; i++) {
+    for (int i = 0; i < widget.imageList!.length; i++) {
       dots.add(
         Padding(
           padding: const EdgeInsets.all(5.0),
