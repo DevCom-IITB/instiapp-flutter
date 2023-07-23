@@ -8,7 +8,7 @@ part of 'apiclient.dart';
 
 class _InstiAppApi implements InstiAppApi {
   _InstiAppApi(this._dio, {this.baseUrl}) {
-    baseUrl ??= 'https://a4c1-2409-40d4-1079-5787-6562-fcc7-1169-c4cd.ngrok-free.app/api';
+    baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
   }
 
   final Dio _dio;
