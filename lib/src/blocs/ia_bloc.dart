@@ -17,6 +17,7 @@ import 'package:InstiApp/src/api/response/alumni_login_response.dart';
 import 'package:InstiApp/src/api/response/getencr_response.dart';
 import 'package:InstiApp/src/blocs/ach_to_vefiry_bloc.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
+import 'package:InstiApp/src/blocs/buynsell_post_bloc.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
 import 'package:InstiApp/src/blocs/community_bloc.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
@@ -130,6 +131,7 @@ class InstiAppBloc {
   late VerifyBloc bodyAchBloc;
   late CommunityBloc communityBloc;
   late CommunityPostBloc communityPostBloc;
+  late BuynSellPostBloc buynSellPostBloc;
   // actual current state
   Session? currSession;
   var _hostels = <Hostel>[];
@@ -274,6 +276,7 @@ class InstiAppBloc {
     messCalendarBloc = MessCalendarBloc(this);
     communityBloc = CommunityBloc(this);
     communityPostBloc = CommunityPostBloc(this);
+    buynSellPostBloc = BuynSellPostBloc(this);
 
     _initNotificationBatch();
   }
