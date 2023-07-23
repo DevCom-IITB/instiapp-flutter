@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import '../api/model/buynsellPost.dart';
@@ -123,11 +124,11 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
               Container(
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 11, 0, 0),
                   child: Text(bnsPost?.brand ?? "",
-                      style: theme.textTheme.headline6!
-                          .copyWith(fontWeight: FontWeight.w100, fontSize: 20))
-                // style: TextStyle(
-                //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
-              ),
+                      style: theme.textTheme.headline6
+                          ?.copyWith(fontWeight: FontWeight.w100, fontSize: 20))
+                  // style: TextStyle(
+                  //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
+                  ),
             ],
           ),
           Row(
@@ -136,38 +137,38 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
               Container(
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
                   child: Text(bnsPost?.name ?? "",
-                      style: theme.textTheme.headline5!.copyWith(
+                      style: theme.textTheme.headline5?.copyWith(
                         fontWeight: FontWeight.bold,
                         fontSize: 30,
                       )
-                    // style: TextStyle(
-                    //     fontSize: myfont * 1.5, fontWeight: FontWeight.w700),
-                  )),
+                      // style: TextStyle(
+                      //     fontSize: myfont * 1.5, fontWeight: FontWeight.w700),
+                      )),
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             Container(
               margin: EdgeInsets.fromLTRB(screen_w * 0.1, 5, 0, 0),
               child: Text("Condition - " + (bnsPost?.condition ?? '0') + '/10',
-                  style: theme.textTheme.headline6!
-                      .copyWith(fontSize: 15, fontWeight: FontWeight.w500)
-                // style: TextStyle(fontSize: myfont, fontWeight: FontWeight.w100),
-              ),
+                  style: theme.textTheme.headline6
+                      ?.copyWith(fontSize: 15, fontWeight: FontWeight.w500)
+                  // style: TextStyle(fontSize: myfont, fontWeight: FontWeight.w100),
+                  ),
             )
           ]),
           Column(children: [
             Container(
               width: screen_w * 0.9,
-              height: screen_h*0.5,
+              height: screen_h * 0.5,
               margin: EdgeInsets.fromLTRB(0, 8, 0, 0),
               child: Text(bnsPost?.description ?? "",
                   maxLines: 10,
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
-                  style: theme.textTheme.bodySmall!.copyWith(fontSize: 13)
-                // style: TextStyle(
-                //     fontSize: myfont * 0.75, fontWeight: FontWeight.w100),
-              ),
+                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 13)
+                  // style: TextStyle(
+                  //     fontSize: myfont * 0.75, fontWeight: FontWeight.w100),
+                  ),
             ),
             SizedBox(
               height: screen_h * 0.07,
@@ -177,17 +178,21 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
               child: Text(
                 "Negotiable - " +
                     ((bnsPost?.negotiable ?? false) ? "Yes" : "No"),
-                style: theme.textTheme.bodyLarge!
-                    .copyWith(fontSize: 18, fontWeight: FontWeight.w400),
+                style: theme.textTheme.bodyLarge
+                    ?.copyWith(fontSize: 18, fontWeight: FontWeight.w400),
                 textAlign: TextAlign.end,
 
                 // style: TextStyle(
                 //     fontSize: myfont, fontWeight: FontWeight.w500),
               ),
             ),
-            SizedBox(height: 0.09*screen_h,),
-            SizedBox(width: screen_w,
-              child: Row(crossAxisAlignment: CrossAxisAlignment.start,
+            SizedBox(
+              height: 0.09 * screen_h,
+            ),
+            SizedBox(
+              width: screen_w,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     child: Column(
@@ -195,40 +200,45 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                         Row(
                           children: [
                             Text(
-                              'Contact Details' ,
-                              style: theme.textTheme.headline6!
-                                  .copyWith(fontWeight: FontWeight.bold, fontSize: 17),
-
+                              'Contact Details',
+                              style: theme.textTheme.headline6?.copyWith(
+                                  fontWeight: FontWeight.bold, fontSize: 17),
                             ),
                           ],
-                        ),Container(margin: EdgeInsets.fromLTRB(0, 5 , 0, 0),
-                          child: Row(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [Icon(Icons.phone_outlined),
+                        ),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(Icons.phone_outlined),
                               Text(
-                                (bnsPost?.contactDetails ?? "") ,
-                                style: theme.textTheme.headline1!
-                                    .copyWith(fontWeight: FontWeight.w100, fontSize: 17),
-
+                                (bnsPost?.contactDetails ?? ""),
+                                style: theme.textTheme.headline1?.copyWith(
+                                    fontWeight: FontWeight.w100, fontSize: 17),
                               ),
                             ],
                           ),
-                        )
-                        ,],
+                        ),
+                      ],
                     ),
-                  ),Spacer(),
-                  Container(margin: EdgeInsets.fromLTRB(0, screen_h*0.06, 0, 0),
+                  ),
+                  Spacer(),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0, screen_h * 0.06, 0, 0),
                     child: Text(
-                      (bnsPost!.action == 'giveaway'
+                      (bnsPost?.action == 'giveaway'
                           ? "GiveAway"
-                          : "Price - ₹" + (bnsPost!.price ?? 0).toString()),
-                      style: theme.textTheme.headline4!
-                          .copyWith(fontSize: 25, fontWeight: FontWeight.w600),
+                          : "Price - ₹" + (bnsPost?.price ?? 0).toString()),
+                      style: theme.textTheme.headline4
+                          ?.copyWith(fontSize: 25, fontWeight: FontWeight.w600),
                       textAlign: TextAlign.left,
                     ),
-                  )],
+                  )
+                ],
               ),
             ),
-
           ]),
 
           // Add more widgets below the image card
@@ -237,6 +247,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
     );
   }
 }
+
 class ImageCarousel extends StatefulWidget {
   final List<String>? imageList;
 
@@ -277,7 +288,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
                   height: screen_h * 0.7,
                   width: screen_w * 0.6,
                   child: PageView.builder(
-                    itemCount: widget.imageList!.length,
+                    itemCount: widget.imageList?.length,
                     onPageChanged: (index) {
                       setState(() {
                         _currentIndex = index;
@@ -292,8 +303,8 @@ class _ImageCarouselState extends State<ImageCarousel> {
                         },
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(15.0),
-                          child: Image.network(
-                            widget.imageList![index],
+                          child: CachedNetworkImage(
+                            imageUrl: widget.imageList?[index] ?? "",
                             fit: BoxFit.fitHeight,
                           ),
                         ),
@@ -309,7 +320,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: widget.imageList!.length,
+            itemCount: widget.imageList?.length,
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
@@ -336,8 +347,8 @@ class _ImageCarouselState extends State<ImageCarousel> {
                       width: screen_w * 0.1,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          widget.imageList![index],
+                        child: CachedNetworkImage(
+                          imageUrl: widget.imageList?[index] ?? "",
                           width: 80,
                           height: 80,
                           fit: BoxFit.cover,
@@ -360,7 +371,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
 
   List<Widget> _buildDotIndicator() {
     List<Widget> dots = [];
-    for (int i = 0; i < widget.imageList!.length; i++) {
+    for (int i = 0; i < (widget.imageList?.length ?? 0); i++) {
       dots.add(
         Padding(
           padding: const EdgeInsets.all(5.0),
