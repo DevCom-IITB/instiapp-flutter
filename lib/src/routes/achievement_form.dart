@@ -242,9 +242,7 @@ class _CreateAchievementPage extends State<Home> {
                 : NestedScrollView(
                     headerSliverBuilder:
                         (BuildContext context, bool innerBoxIsScrolled) {
-                      return <Widget>[
-
-                      ];
+                      return <Widget>[];
                     },
                     body: TabBarView(
                       // These are the contents of the tab views, below the tabs.
@@ -1280,6 +1278,7 @@ class _QRViewExampleState extends State<QRViewExample> {
   }
 }
 
+// ignore: unused_element
 class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   final PreferredSize child;
 
