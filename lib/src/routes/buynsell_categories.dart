@@ -74,64 +74,62 @@ class BuyAndSellCategoryPage extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        child: Flexible(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10.0, 45.0, 0, 10),
-                  child: Row(
-                    children: [
-                      Center(
-                        child: TitleWithBackButton(
-                          child: Text(
-                            "Choose Category",
-                            style: theme.textTheme.headline4,
-                          ),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 45.0, 0, 10),
+                child: Row(
+                  children: [
+                    Center(
+                      child: TitleWithBackButton(
+                        child: Text(
+                          "Choose Category",
+                          style: theme.textTheme.headline4,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(14.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      CategoryButton("Electronics"),
-                      CategoryButton("Stationary"),
-                      CategoryButton("Bicycle")
-                    ],
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(14.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    CategoryButton("Electronics"),
+                    CategoryButton("Stationary"),
+                    CategoryButton("Bicycle")
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(14.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      CategoryButton("Books"),
-                      CategoryButton("Daily Needs"),
-                      CategoryButton("Acessories")
-                    ],
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(14.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    CategoryButton("Books"),
+                    CategoryButton("Daily Needs"),
+                    CategoryButton("Acessories")
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(14.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      CategoryButton("Sports"),
-                      CategoryButton("Miscellaneous"),
-                      Expanded(child: Container()),
-                    ],
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(14.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    CategoryButton("Sports"),
+                    CategoryButton("Miscellaneous"),
+                    Expanded(child: Container()),
+                  ],
                 ),
-              ]),
-        ),
+              ),
+            ]),
       ),
     );
   }

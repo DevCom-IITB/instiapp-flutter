@@ -714,28 +714,34 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                 onPressed: isButtonDisabled
                                     ? null
                                     : () async {
-                                        bnsPost.user = profile;
-                                        if (bnsPost.imageUrl == null)
-                                          bnsPost.imageUrl = [];
-                                        for (int i = 0;
-                                            i < imageFiles.length;
-                                            i++) {
-                                          ImageUploadResponse resp =
-                                              await bloc.client.uploadImage(
-                                                  bloc.getSessionIdHeader(),
-                                                  imageFiles[i]);
-                                          bnsPost.imageUrl!
-                                              .add(resp.pictureURL!);
-                                        }
-                                        // ignore: avoid_print
-                                        print(bnsPost.imageUrl);
-                                        handleTap();
+                                        setState(() {
+                                          isButtonDisabled = true;
+                                        });
                                         if (_formKey.currentState!.validate()) {
+                                          bnsPost.user = profile;
+                                          if (bnsPost.imageUrl == null)
+                                            bnsPost.imageUrl = [];
+                                          for (int i = 0;
+                                              i < imageFiles.length;
+                                              i++) {
+                                            ImageUploadResponse resp =
+                                                await bloc.client.uploadImage(
+                                                    bloc.getSessionIdHeader(),
+                                                    imageFiles[i]);
+                                            bnsPost.imageUrl!
+                                                .add(resp.pictureURL!);
+                                          }
+                                          // ignore: avoid_print
+                                          print(bnsPost.imageUrl);
+
                                           bloc.buynSellPostBloc
                                               .createBuynSellPost(bnsPost);
                                           Navigator.pushNamed(
                                               context, '/buyandsell');
                                         }
+                                        setState(() {
+                                          isButtonDisabled = false;
+                                        });
                                       },
                                 child: const Text('Submit'),
                               ),
