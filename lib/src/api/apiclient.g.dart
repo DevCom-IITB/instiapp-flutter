@@ -8,8 +8,9 @@ part of 'apiclient.dart';
 
 class _InstiAppApi implements InstiAppApi {
   _InstiAppApi(this._dio, {this.baseUrl}) {
-    // baseUrl ??= 'http://192.168.230.89:8000/api';
-    baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
+    baseUrl ??=
+        'http://192.168.29.88:8000/api';
+        // 'https://272c-2405-201-5004-3c2f-d836-b028-6ac-ad9.ngrok-free.app/api';
   }
 
   final Dio _dio;
@@ -1164,7 +1165,7 @@ class _InstiAppApi implements InstiAppApi {
 
   @override
   Future<CommunityPostListResponse> getCommunityPosts(
-      sessionId, status, query) async {
+      sessionId, status, query, id) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'status': status,

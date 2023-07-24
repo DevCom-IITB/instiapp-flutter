@@ -79,11 +79,11 @@ class _CommunityDetailsState extends State<CommunityDetails> {
         appBarSearchStyle:
             AppBarSearchStyle(hintText: "Search " + (community?.name ?? "")),
         //TODO: Uncomment leading style
-        // leadingStyle: LeadingStyle(
-        //     icon: Icons.arrow_back,
-        //     onPressed: () async {
-        //       Navigator.of(context).pop();
-        //     }),
+        leadingStyle: LeadingStyle(
+            icon: Icons.arrow_back,
+            onPressed: () async {
+              Navigator.of(context).pop();
+            }),
       ),
       drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
@@ -474,8 +474,8 @@ class CommunityPostSection extends StatefulWidget {
 
 class _CommunityPostSectionState extends State<CommunityPostSection> {
   bool firstBuild = true;
-  // final Community? community;
-
+ //  final Community? community;
+ //String id=community.id;
   CPType cpType = CPType.All;
 
   _CommunityPostSectionState();
@@ -496,7 +496,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
 
     if (firstBuild) {
       communityPostBloc.query = "";
-      communityPostBloc.refresh();
+      communityPostBloc.refresh(id:widget.community?.id ?? "id");
       firstBuild = false;
     }
 
@@ -527,7 +527,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                               loading = true;
                               cpType = CPType.All;
                             });
-                            await communityPostBloc.refresh(type: CPType.All);
+                            await communityPostBloc.refresh(type: CPType.All,id:widget.community?.id ?? "id");
                             setState(() {
                               loading = false;
                             });
@@ -546,7 +546,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                               cpType = CPType.YourPosts;
                             });
                             await communityPostBloc.refresh(
-                                type: CPType.YourPosts);
+                                type: CPType.YourPosts,id:widget.community?.id ?? "id");
                             setState(() {
                               loading = false;
                             });
@@ -567,7 +567,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                                     cpType = CPType.PendingPosts;
                                   });
                                   await communityPostBloc.refresh(
-                                      type: CPType.PendingPosts);
+                                      type: CPType.PendingPosts,id:widget.community?.id ?? "id");
                                   setState(() {
                                     loading = false;
                                   });
@@ -589,7 +589,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                                     cpType = CPType.ReportedContent;
                                   });
                                   await communityPostBloc.refresh(
-                                    type: CPType.ReportedContent,
+                                    type: CPType.ReportedContent,id:widget.community?.id ?? "id"
                                   );
                                   setState(() {
                                     loading = false;
