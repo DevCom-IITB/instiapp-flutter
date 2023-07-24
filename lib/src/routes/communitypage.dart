@@ -205,11 +205,11 @@ class _CommunityPageState extends State<CommunityPage> {
 
       if (firstCallBack) {
         //TODO: Remove this navigation if more than one community
-        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-          Navigator.of(context).pop();
-          CommunityDetails.navigateWith(context, communityBloc, communities[0]);
-        });
-        firstCallBack = false;
+        // WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+        //   Navigator.of(context).pop();
+        //   CommunityDetails.navigateWith(context, communityBloc, communities[0]);
+        // });
+        // firstCallBack = false;
       }
 
       return (communities

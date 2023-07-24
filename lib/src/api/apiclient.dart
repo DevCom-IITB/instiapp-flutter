@@ -42,10 +42,10 @@ import 'package:dio/dio.dart';
 import 'model/offersecret.dart';
 part 'apiclient.g.dart';
 
-// @rt.RestApi(baseUrl: "http://192.168.230.89:8000/api")
+@rt.RestApi(baseUrl: "http://192.168.29.88:8000/api")
 // @rt.RestApi(baseUrl: "http://10.105.177.150/api")
-@rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
-// @rt.RestApi(baseUrl: "https://0ac7-103-21-125-80.in.ngrok.io/api")
+// @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
+// @rt.RestApi(baseUrl: "https://272c-2405-201-5004-3c2f-d836-b028-6ac-ad9.ngrok-free.app/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
@@ -336,7 +336,8 @@ abstract class InstiAppApi {
   Future<CommunityPostListResponse> getCommunityPosts(
       @rt.Header("Cookie") String sessionId,
       @rt.Query("status") int? status,
-      @rt.Query("query") String query);
+      @rt.Query("query") String query,
+      @rt.Path() String id);
 
   @rt.GET("/communityposts/{id}")
   Future<CommunityPost> getCommunityPost(
