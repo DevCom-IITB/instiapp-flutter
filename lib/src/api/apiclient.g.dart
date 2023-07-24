@@ -8,9 +8,7 @@ part of 'apiclient.dart';
 
 class _InstiAppApi implements InstiAppApi {
   _InstiAppApi(this._dio, {this.baseUrl}) {
-    baseUrl ??=
-        'http://192.168.29.88:8000/api';
-        // 'https://272c-2405-201-5004-3c2f-d836-b028-6ac-ad9.ngrok-free.app/api';
+    baseUrl ??= 'http://192.168.1.103:8000/api';
   }
 
   final Dio _dio;
@@ -1169,7 +1167,8 @@ class _InstiAppApi implements InstiAppApi {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'status': status,
-      r'query': query
+      r'query': query,
+      r'community': id
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{r'Cookie': sessionId};
