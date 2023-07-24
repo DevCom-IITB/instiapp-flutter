@@ -42,7 +42,7 @@ import 'package:dio/dio.dart';
 import 'model/offersecret.dart';
 part 'apiclient.g.dart';
 
-@rt.RestApi(baseUrl: "http://192.168.29.88:8000/api")
+@rt.RestApi(baseUrl: "http://192.168.1.103:8000/api")
 // @rt.RestApi(baseUrl: "http://10.105.177.150/api")
 // @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
 // @rt.RestApi(baseUrl: "https://272c-2405-201-5004-3c2f-d836-b028-6ac-ad9.ngrok-free.app/api")
@@ -337,7 +337,7 @@ abstract class InstiAppApi {
       @rt.Header("Cookie") String sessionId,
       @rt.Query("status") int? status,
       @rt.Query("query") String query,
-      @rt.Path() String id);
+      @rt.Query("community") String id);
 
   @rt.GET("/communityposts/{id}")
   Future<CommunityPost> getCommunityPost(
