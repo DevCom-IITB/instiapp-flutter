@@ -1,4 +1,4 @@
-import 'dart:async';
+ import 'dart:async';
 
 import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
@@ -277,7 +277,12 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                       isBody: true,
                       entityID: temp.split("/putentity/body/")[1],
                       cookie: widget.bloc.getSessionIdHeader()));
-            } else if (temp.startsWith("/buyandsell/info")) {
+            } else if (temp.startsWith("/map/")) {
+              return _buildRoute(
+                  settings,
+                  MapPage(
+                      location:temp.split("/map/")[1]));
+            }else if (temp.startsWith("/buyandsell/info")) {
               return _buildRoute(
                   settings,
                   BuyAndSellInfoPage(
@@ -390,7 +395,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   void handleAppLink(Uri? uri) {
     if (uri == null) return;
-    // print(uri.pathSegments);
+    print(uri.pathSegments);
     String routeName = "/";
     if (uri.pathSegments.length == 1) {
       routeName = {
@@ -406,9 +411,11 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             "view-post": "/groups",
             "discussions": "/groups",
             "group": "/group/${uri.pathSegments[1]}",
+            "map": "/map/${uri.pathSegments[1]}",
           }[uri.pathSegments[0]] ??
           routeName;
     }
+    print(routeName);
     _navigatorKey.currentState?.pushReplacementNamed(routeName);
   }
 
