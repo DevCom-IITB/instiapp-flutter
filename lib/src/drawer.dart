@@ -172,15 +172,15 @@ class _NavDrawerState extends State<NavDrawer> {
                         highlight: indexSnapshot.data == 15,
                         selected: indexSnapshot.data == 15,
                       ),
-                      9: NavListTile(
-                        icon: Icons.verified_outlined,
-                        title: "Achievements",
+                      7: NavListTile(
+                        icon: Icons.map_outlined,
+                        title: "Map",
                         onTap: () {
-                          changeSelection(9, drawerState!);
-                          navigateNamed('/achievements');
+                          changeSelection(8, drawerState!);
+                          navigateNamed('/map');
                         },
-                        highlight: indexSnapshot.data == 9,
-                        selected: indexSnapshot.data == 9,
+                        highlight: indexSnapshot.data == 8,
+                        selected: indexSnapshot.data == 8,
                       ),
                       17: NavListTile(
                         icon: Icons.currency_rupee_outlined,
@@ -194,8 +194,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       ),
                       8: NavExpansionTile(
                         title: "Utilities",
-                        initiallyExpanded: indexSnapshot.data == 8 ||
-                            indexSnapshot.data == 11 ||
+                        initiallyExpanded: indexSnapshot.data == 11 ||
                             indexSnapshot.data == 12 ||
                             indexSnapshot.data == 7,
                         leading: Icons.construction_outlined,
@@ -209,16 +208,6 @@ class _NavDrawerState extends State<NavDrawer> {
                             },
                             highlight: indexSnapshot.data == 7,
                             selected: indexSnapshot.data == 7,
-                          ),
-                          NavListTile(
-                            icon: Icons.map_outlined,
-                            title: "Map",
-                            onTap: () {
-                              changeSelection(8, drawerState!);
-                              navigateNamed('/map');
-                            },
-                            highlight: indexSnapshot.data == 8,
-                            selected: indexSnapshot.data == 8,
                           ),
                           NavListTile(
                             icon: Icons.link_outlined,
@@ -241,6 +230,16 @@ class _NavDrawerState extends State<NavDrawer> {
                             selected: indexSnapshot.data == 12,
                           ),
                         ],
+                      ),
+                      9: NavListTile(
+                        icon: Icons.verified_outlined,
+                        title: "Achievements",
+                        onTap: () {
+                          changeSelection(9, drawerState!);
+                          navigateNamed('/achievements');
+                        },
+                        highlight: indexSnapshot.data == 9,
+                        selected: indexSnapshot.data == 9,
                       ),
                       13: NavListTile(
                         icon: Icons.query_stats,
