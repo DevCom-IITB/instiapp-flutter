@@ -395,7 +395,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   void handleAppLink(Uri? uri) {
     if (uri == null) return;
-    print(uri.pathSegments);
     String routeName = "/";
     if (uri.pathSegments.length == 1) {
       routeName = {
@@ -415,7 +414,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           }[uri.pathSegments[0]] ??
           routeName;
     }
-    print(routeName);
     _navigatorKey.currentState?.pushReplacementNamed(routeName);
   }
 
