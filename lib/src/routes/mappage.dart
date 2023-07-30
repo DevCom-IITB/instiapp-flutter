@@ -5,8 +5,11 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:jaguar/jaguar.dart' as jag;
 import 'package:flutter_webview_pro/webview_flutter.dart' as webview;
+import '../api/model/venue.dart';
 
 class MapPage extends StatefulWidget {
+  final String? location;
+  MapPage({this.location});
   @override
   _MapPageState createState() => _MapPageState();
 }
@@ -15,7 +18,8 @@ class _MapPageState extends State<MapPage> {
   late jag.Jaguar server;
 
   final String hostUrl = "www.insti.app";
-  final String mapUrl = "https://www.insti.app/map/?sandbox=true";
+  // final String mapUrl = "https://www.insti.app/map/?sandbox=true";
+  String mapUrl ="https://www.insti.app/map/?sandbox=true";
 
   StreamSubscription<String>? onUrlChangedSub;
   webview.WebViewController? webViewController;
@@ -27,6 +31,8 @@ class _MapPageState extends State<MapPage> {
 
   @override
   void initState() {
+    print(widget.location);
+    mapUrl = ("https://www.insti.app/map/${Uri.encodeComponent(widget.location ?? "")}?sandbox=true");
     super.initState();
   }
 
@@ -39,7 +45,9 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("%20");
     theme = Theme.of(context);
+    print(mapUrl);
     return Scaffold(
       key: _scaffoldKey,
       drawer: NavDrawer(),
