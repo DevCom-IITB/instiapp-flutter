@@ -135,10 +135,15 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
+                  width: screen_w * 0.9,
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
                   child: Text(bnsPost?.name ?? "",
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+
                       style: theme.textTheme.headline5?.copyWith(
                         fontWeight: FontWeight.bold,
+                        // fontSize: 30,
                         fontSize: 30,
                       )
                       // style: TextStyle(
@@ -200,7 +205,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                         Row(
                           children: [
                             Text(
-                              'Contact Details',
+                              'Phone number',
                               style: theme.textTheme.headline6?.copyWith(
                                   fontWeight: FontWeight.bold, fontSize: 17),
                             ),
@@ -273,7 +278,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
 
     if (widget.imageList == null || widget.imageList!.isEmpty) {
       return Container(
-        child: Center(child: Image.asset('assets/buynsell/noimg.png')),
+        child: Center(child: Image.asset('assets/buynsell/DevcomLogo.png')),
       );
     }
 
