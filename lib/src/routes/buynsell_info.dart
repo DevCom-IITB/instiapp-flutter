@@ -218,7 +218,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Icon(Icons.phone_outlined),
-                              Text(
+                              SelectableText(
                                 (bnsPost?.contactDetails ?? ""),
                                 style: theme.textTheme.headline1?.copyWith(
                                     fontWeight: FontWeight.w100, fontSize: 17),
