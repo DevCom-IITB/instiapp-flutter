@@ -538,7 +538,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                             const Expanded(
                               flex: 2,
                               child: Text(
-                                'Contact Details',
+                                'Phone Number',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16.0,
@@ -553,13 +553,13 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                   TextFormField(
                                     decoration: const InputDecoration(
                                         hintText:
-                                            'Enter contact no. / address, etc',
+                                            'Enter contact no.',
                                         contentPadding: EdgeInsets.symmetric(
                                             vertical: 20, horizontal: 10),
                                         border: OutlineInputBorder()),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter contact no. name';
+                                        return 'Please enter contact no.';
                                       }
                                       return null;
                                     },

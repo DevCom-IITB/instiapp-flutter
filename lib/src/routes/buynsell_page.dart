@@ -279,12 +279,12 @@ class _SellpageState extends State<Sellpage> {
                           child: CachedNetworkImage(
                             imageUrl: (posts[index].imageUrl?[0] ?? ''),
                             placeholder: (context, url) => new Image.asset(
-                              'assets/buynsell/noimg.png',
+                              'assets/buynsell/DevcomLogo.png',
                               fit: BoxFit.fill,
                             ),
                             errorWidget: (context, url, error) =>
                                 new Image.asset(
-                              'assets/buynsell/noimg.png',
+                              'assets/buynsell/DevcomLogo.png',
                               fit: BoxFit.fill,
                             ),
                             fit: BoxFit.fitHeight,
@@ -426,7 +426,7 @@ class _SellpageState extends State<Sellpage> {
                     padding: EdgeInsets.fromLTRB(0, 8, 10, 0),
                     child: Text(
                       (posts[index].description ?? ""),
-                      maxLines: 3,
+
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodyText2,
                       // style: TextStyle(
