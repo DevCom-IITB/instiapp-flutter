@@ -130,7 +130,17 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                   //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
                   ),
             ],
+          ),Row(mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+
+              Container(margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
+                child: Text(
+                  '${bnsPost?.user?.userName ?? ""} (${bnsPost?.user?.userLDAPId ?? ""})',
+                ),
+              ),
+            ],
           ),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -218,11 +228,14 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Icon(Icons.phone_outlined),
-                              SelectableText(
-                                (bnsPost?.contactDetails ?? ""),
+                              Text(
+                                bnsPost?.user?.userContactNumber ?? "",
                                 style: theme.textTheme.headline1?.copyWith(
-                                    fontWeight: FontWeight.w100, fontSize: 17),
+                                  fontWeight: FontWeight.w100,
+                                  fontSize: 17,
+                                ),
                               ),
+
                             ],
                           ),
                         ),
