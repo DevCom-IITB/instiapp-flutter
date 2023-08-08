@@ -123,9 +123,13 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
             children: [
               Container(
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 11, 0, 0),
-                  child: Text(bnsPost?.brand ?? "",
-                      style: theme.textTheme.headline6
-                          ?.copyWith(fontWeight: FontWeight.w100, fontSize: 20))
+                  child: Container(width: screen_w,
+                    child: Text(bnsPost?.brand ?? "",
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.headline6
+                            ?.copyWith(fontWeight: FontWeight.w100, fontSize: 20)),
+                  )
                   // style: TextStyle(
                   //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
                   ),
