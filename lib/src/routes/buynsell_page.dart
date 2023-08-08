@@ -70,7 +70,8 @@ class _SellpageState extends State<Sellpage> {
     return Scaffold(
         key: _scaffoldKey,
         drawer: NavDrawer(),
-        bottomNavigationBar: MyBottomAppBar(
+        bottomNavigationBar: MyBottomAppBar(shape:RoundedNotchedRectangle(),
+      notchMargin:4.0,
           child: new Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -92,6 +93,7 @@ class _SellpageState extends State<Sellpage> {
             ? FloatingActionButton.extended(
                 icon: Icon(Icons.add_outlined),
                 label: Text("Add Item"),
+
                 onPressed: () {
                   Navigator.of(context).pushNamed("/buyandsell/category");
                 },
@@ -252,8 +254,8 @@ class _SellpageState extends State<Sellpage> {
 
     return Center(
       child: (SizedBox(
-        height: screen_h * 0.65,
-        width: screen_w * 1.2,
+        height: screen_h * 0.7,
+        width:screen_w * 1.2 ,
         child: Card(
           color: theme.cardColor,
           margin: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
@@ -273,7 +275,7 @@ class _SellpageState extends State<Sellpage> {
                     children: [
                       Center(
                         child: Container(
-                          padding: EdgeInsets.all(10),
+                          padding: EdgeInsets.all(5),
                           height: screen_h * 0.6,
                           width: screen_w * 0.4,
                           child: CachedNetworkImage(
@@ -312,11 +314,10 @@ class _SellpageState extends State<Sellpage> {
                   margin:
                       EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 105, 10, 0),
                   child: Text(
-                    posts[index].brand ?? "",
+                    (posts[index].brand ?? "").length <= 10
+                        ? posts[index].brand ?? ""
+                        : (posts[index].brand ?? "").substring(0, 10) + '...',
                     style: theme.textTheme.bodyText2,
-                    // style: TextStyle(
-                    //     fontSize: (myfont.toInt()).toDouble() * 0.7,
-                    //     fontWeight: FontWeight.w600),
                     maxLines: 1,
                   ),
                 ),
@@ -423,9 +424,9 @@ class _SellpageState extends State<Sellpage> {
                     margin:
                         EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 35, 0, 0)),
                 Container(
-                    padding: EdgeInsets.fromLTRB(0, 8, 10, 0),
+                    padding: EdgeInsets.fromLTRB(0, 13, 10, 0),
                     child: Text(
-                      (posts[index].description ?? ""),
+                      (posts[index].description ?? ""),maxLines: 2,
 
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodyText2,
