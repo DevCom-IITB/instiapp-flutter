@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>259853447628-c8oqskpps37cp7utc9eg66cfverl1uou.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.259853447628-c8oqskpps37cp7utc9eg66cfverl1uou</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>259853447628-6hcftl72mg4ku9qvigs89f2etit8096f.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBh5H5f1gSyCjV7Gp3UnKAsT8ORR3IpMcY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>259853447628</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>app.instiapp.flutter</string>
+	<key>PROJECT_ID</key>
+	<string>astral-theory-207617</string>
+	<key>STORAGE_BUCKET</key>
+	<string>astral-theory-207617.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:259853447628:ios:9e225f255f93748e70ed69</string>
+	<key>DATABASE_URL</key>
+	<string>https://astral-theory-207617.firebaseio.com</string>
+</dict>
+</plist>
