@@ -62,8 +62,8 @@ class _SellpageState extends State<Sellpage> {
     var theme = Theme.of(context);
     bool isLoggedIn = bloc.currSession != null;
 
-    screen_hr >= screen_wr ? x = 0.35 : x = 0.73;
-    screen_hr >= screen_wr ? y = 0.9 : y = 0.49;
+    screen_hr >= screen_wr ? x = 0.35 : x = 0.83;
+    screen_hr >= screen_wr ? y = 0.9 : y = 0.5;
     double screen_w = screen_wr * y;
     double screen_h = screen_hr * x;
     double myfont = ((18 / 274.4) * screen_h);
@@ -277,7 +277,7 @@ class _SellpageState extends State<Sellpage> {
                         child: Container(
                           padding: EdgeInsets.all(5),
                           height: screen_h * 0.6,
-                          width: screen_w * 0.4,
+                          width: screen_w * 0.35,
                           child: CachedNetworkImage(
                             imageUrl: (posts[index].imageUrl?[0] ?? ''),
                             placeholder: (context, url) => new Image.asset(
