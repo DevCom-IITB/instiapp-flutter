@@ -280,21 +280,25 @@ class _SellpageState extends State<Sellpage> {
                           padding: EdgeInsets.fromLTRB(0,0,5,0),
                           height: screen_h ,
                           width: screen_h * 0.20 / 0.43,
-                          child: CachedNetworkImage(
-                            imageUrl: (posts[index].imageUrl?[0] ?? ''),
-                            placeholder: (context, url) => new Image.asset(
-                              'assets/buynsell/DevcomLogo.png',
-                              fit: BoxFit.fill,
-                            ),
-                            errorWidget: (context, url, error) =>
-                                new Image.asset(
-                              'assets/buynsell/DevcomLogo.png',
-                              fit: BoxFit.fill,
-                            ),
-                            fit: BoxFit.fitHeight,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(10),
+                        bottomLeft: Radius.circular(10)),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(10),
+                        topLeft: Radius.circular(10)),
+                    child: CachedNetworkImage(
+                      imageUrl: (posts[index].imageUrl?[0] ?? ''),
+                      placeholder: (context, url) => Image.asset(
+                        'assets/buynsell/DevcomLogo.png',
+                        fit: BoxFit.fill,
+                      ),
+                      fit: BoxFit.cover,
                           ),
                         ),
-                      ),
+                      ),),
                     ],
                   ),
                 ),
