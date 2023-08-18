@@ -62,10 +62,12 @@ class _SellpageState extends State<Sellpage> {
     var theme = Theme.of(context);
     bool isLoggedIn = bloc.currSession != null;
 
-    screen_hr >= screen_wr ? x = 0.35 : x = 0.83;
+    screen_hr >= screen_wr ? x = 0.35 : x = 0.80;
+    if(1 >=screen_hr/screen_wr&&screen_hr/screen_wr >=0.5){x=0.3;}
     screen_hr >= screen_wr ? y = 0.9 : y = 0.5;
     double screen_w = screen_wr * y;
     double screen_h = screen_hr * x;
+    double a = screen_hr/screen_wr;
     double myfont = ((18 / 274.4) * screen_h);
     return Scaffold(
         key: _scaffoldKey,
@@ -275,9 +277,9 @@ class _SellpageState extends State<Sellpage> {
                     children: [
                       Center(
                         child: Container(
-                          padding: EdgeInsets.all(5),
-                          height: screen_h * 0.6,
-                          width: screen_w * 0.35,
+                          padding: EdgeInsets.fromLTRB(0,0,5,0),
+                          height: screen_h ,
+                          width: screen_h * 0.20 / 0.43,
                           child: CachedNetworkImage(
                             imageUrl: (posts[index].imageUrl?[0] ?? ''),
                             placeholder: (context, url) => new Image.asset(
