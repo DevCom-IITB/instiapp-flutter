@@ -289,6 +289,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
     double x, y;
 
     screen_hr >= screen_wr ? x = 0.35 : x = 1;
+    if(0.5<=screen_hr/screen_wr&&screen_hr/screen_wr<=1){x=0.8;}
     screen_hr >= screen_wr ? y = 0.9 : y = 0.8;
     var screen_w = screen_wr * y;
     var screen_h = screen_hr * x;
