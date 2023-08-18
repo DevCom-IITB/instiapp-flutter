@@ -63,7 +63,7 @@ class _SellpageState extends State<Sellpage> {
     bool isLoggedIn = bloc.currSession != null;
 
     screen_hr >= screen_wr ? x = 0.35 : x = 0.80;
-    if(1 >=screen_hr/screen_wr&&screen_hr/screen_wr >=0.5){x=0.3;}
+    if(1 >=screen_hr/screen_wr&&screen_hr/screen_wr >=0.5){x=0.35;}
     screen_hr >= screen_wr ? y = 0.9 : y = 0.5;
     double screen_w = screen_wr * y;
     double screen_h = screen_hr * x;
@@ -327,20 +327,7 @@ class _SellpageState extends State<Sellpage> {
                     maxLines: 1,
                   ),
                 ),
-                Container(
-                    margin:
-                        EdgeInsets.fromLTRB(0, screen_h * 0.28 / 0.43, 18, 0),
-                    child: Row(
-                      children: [
-                        Spacer(),
-                        Text(
-                          (posts[index].negotiable ?? false)
-                              ? "Negotiable"
-                              : "Non-Negotiable",
-                          style: theme.textTheme.bodyText2,
-                        )
-                      ],
-                    )),
+
                 Container(
                     margin: EdgeInsets.fromLTRB(
                         screen_w * 0.7, 110, screen_h * 0.04 / 1.5, 1),
