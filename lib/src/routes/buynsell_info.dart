@@ -233,7 +233,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                             children: [
                               Icon(Icons.phone_outlined),
                               Text(
-                                bnsPost?.user?.userContactNumber ?? "",
+                                bnsPost?.contactDetails?? "",
                                 style: theme.textTheme.headline1?.copyWith(
                                   fontWeight: FontWeight.w100,
                                   fontSize: 17,
