@@ -290,11 +290,15 @@ class _SellpageState extends State<Sellpage> {
                         bottomLeft: Radius.circular(10),
                         topLeft: Radius.circular(10)),
                     child: CachedNetworkImage(
-                      imageUrl: (posts[index].imageUrl?[0] ?? ''),
+                      imageUrl: posts[index].imageUrl?[0] ?? '',
                       placeholder: (context, url) => Image.asset(
                         'assets/buynsell/DevcomLogo.png',
                         fit: BoxFit.fill,
-                      ),
+                      ),errorWidget: (context, url, error) =>
+                    new Image.asset(
+                      'assets/buynsell/DevcomLogo.png',
+                      fit: BoxFit.fill,
+                    ),
                       fit: BoxFit.cover,
                           ),
                         ),
