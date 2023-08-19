@@ -11,6 +11,8 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 
 import '../bloc_provider.dart';
 import '../utils/title_with_backbutton.dart';
+import 'package:flutter/services.dart';
+
 
 class NavigateArguments {
   final BuynSellPost? post;
@@ -99,9 +101,16 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       TitleWithBackButton(
-                        child: Text(
-                          "Create Post",
-                          style: theme.textTheme.headline4,
+
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Create Post",
+                              style: theme.textTheme.headline4,
+                            ),SizedBox(height: 20,),
+                            Text("Your Name and LDAP will be visible by default",style:TextStyle(color: Colors.red),maxLines: 2,)
+                          ],
                         ),
                       ),
                       Padding(
@@ -538,7 +547,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                             const Expanded(
                               flex: 2,
                               child: Text(
-                                'Contact Details',
+                                'Phone Number',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16.0,
@@ -551,15 +560,19 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                                      LengthLimitingTextInputFormatter(10),
+                                    ],
                                     decoration: const InputDecoration(
-                                        hintText:
-                                            'Enter contact no. / address, etc',
-                                        contentPadding: EdgeInsets.symmetric(
-                                            vertical: 20, horizontal: 10),
-                                        border: OutlineInputBorder()),
+                                      hintText: 'Enter 10 digits contact no.',
+                                      contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                                      border: OutlineInputBorder(),
+                                    ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter contact no. name';
+                                        return 'Please enter contact no.';
                                       }
                                       return null;
                                     },
@@ -567,6 +580,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                       bnsPost.contactDetails = value;
                                     },
                                   ),
+
                                 ],
                               ),
                             ),
