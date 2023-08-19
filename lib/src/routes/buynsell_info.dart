@@ -123,22 +123,41 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
             children: [
               Container(
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 11, 0, 0),
-                  child: Text(bnsPost?.brand ?? "",
-                      style: theme.textTheme.headline6
-                          ?.copyWith(fontWeight: FontWeight.w100, fontSize: 20))
+                  child: Container(width: screen_w,
+                    child: Text(bnsPost?.brand ?? "",
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.headline6
+                            ?.copyWith(fontWeight: FontWeight.w100, fontSize: 20)),
+                  )
                   // style: TextStyle(
                   //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
                   ),
             ],
+          ),Row(mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+
+              Container(margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
+                child: Text(
+                  '${bnsPost?.user?.userName ?? ""} (${bnsPost?.user?.userLDAPId ?? ""})',
+                ),
+              ),
+            ],
           ),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
+                  width: screen_w * 0.9,
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
                   child: Text(bnsPost?.name ?? "",
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+
                       style: theme.textTheme.headline5?.copyWith(
                         fontWeight: FontWeight.bold,
+                        // fontSize: 30,
                         fontSize: 30,
                       )
                       // style: TextStyle(
@@ -200,7 +219,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                         Row(
                           children: [
                             Text(
-                              'Contact Details',
+                              'Phone number',
                               style: theme.textTheme.headline6?.copyWith(
                                   fontWeight: FontWeight.bold, fontSize: 17),
                             ),
@@ -214,10 +233,13 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                             children: [
                               Icon(Icons.phone_outlined),
                               Text(
-                                (bnsPost?.contactDetails ?? ""),
+                                bnsPost?.contactDetails?? "",
                                 style: theme.textTheme.headline1?.copyWith(
-                                    fontWeight: FontWeight.w100, fontSize: 17),
+                                  fontWeight: FontWeight.w100,
+                                  fontSize: 17,
+                                ),
                               ),
+
                             ],
                           ),
                         ),
@@ -267,13 +289,14 @@ class _ImageCarouselState extends State<ImageCarousel> {
     double x, y;
 
     screen_hr >= screen_wr ? x = 0.35 : x = 1;
+    if(0.5<=screen_hr/screen_wr&&screen_hr/screen_wr<=1){x=0.8;}
     screen_hr >= screen_wr ? y = 0.9 : y = 0.8;
     var screen_w = screen_wr * y;
     var screen_h = screen_hr * x;
 
     if (widget.imageList == null || widget.imageList!.isEmpty) {
       return Container(
-        child: Center(child: Image.asset('assets/buynsell/noimg.png')),
+        child: Center(child: Image.asset('assets/buynsell/DevcomLogo.png')),
       );
     }
 
