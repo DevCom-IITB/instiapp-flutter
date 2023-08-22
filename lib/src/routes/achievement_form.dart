@@ -242,33 +242,7 @@ class _CreateAchievementPage extends State<Home> {
                 : NestedScrollView(
                     headerSliverBuilder:
                         (BuildContext context, bool innerBoxIsScrolled) {
-                      return <Widget>[
-                        SliverPersistentHeader(
-                          floating: true,
-                          pinned: true,
-                          delegate: _SliverTabBarDelegate(
-                            child: PreferredSize(
-                              preferredSize: Size.fromHeight(72),
-                              child: Material(
-                                elevation: 4.0,
-                                child: TabBar(
-                                  labelColor: theme.colorScheme.secondary,
-                                  unselectedLabelColor: theme.disabledColor,
-                                  tabs: [
-                                    Tab(
-                                        text: "Associations",
-                                        icon:
-                                            Icon(Icons.work_outline_outlined)),
-                                    Tab(
-                                        text: "Events",
-                                        icon: Icon(Icons.event_outlined)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ];
+                      return <Widget>[];
                     },
                     body: TabBarView(
                       // These are the contents of the tab views, below the tabs.
@@ -1304,6 +1278,7 @@ class _QRViewExampleState extends State<QRViewExample> {
   }
 }
 
+// ignore: unused_element
 class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   final PreferredSize child;
 

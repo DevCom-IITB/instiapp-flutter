@@ -1,7 +1,11 @@
-import 'dart:async';
+ import 'dart:async';
 
 import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
+import 'package:InstiApp/src/routes/buynsell_categories.dart';
+import 'package:InstiApp/src/routes/buynsell_createpost.dart';
+import 'package:InstiApp/src/routes/buynsell_info.dart';
+import 'package:InstiApp/src/routes/buynsell_page.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
 import 'package:InstiApp/src/routes/communitydetails.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
@@ -273,6 +277,17 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                       isBody: true,
                       entityID: temp.split("/putentity/body/")[1],
                       cookie: widget.bloc.getSessionIdHeader()));
+            } else if (temp.startsWith("/map/")) {
+              return _buildRoute(
+                  settings,
+                  MapPage(
+                      location:temp.split("/map/")[1]));
+            }else if (temp.startsWith("/buyandsell/info")) {
+              return _buildRoute(
+                  settings,
+                  BuyAndSellInfoPage(
+                      post: widget.bloc.buynSellPostBloc
+                          .getBuynSellPost(temp.split("/buyandsell/info")[1])));
             } else {
               switch (settings.name) {
                 case "/":
@@ -304,10 +319,23 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, ChatPage());
                 case "/groups":
                   return _buildRoute(settings, CommunityPage());
+                case "/buynsell":
+                  return _buildRoute(settings, Sellpage());
                 case "/explore":
                   return _buildRoute(settings, ExplorePage());
                 case "/calendar":
                   return _buildRoute(settings, CalendarPage());
+                case "/buyandsell":
+                  return _buildRoute(settings, Sellpage());
+                case "/buyandsell/category":
+                  return _buildRoute(settings, BuyAndSellCategoryPage());
+                // case "/buyandsell/info":
+                //   return _buildRoute(settings, Buyandsell_information());
+                case "/buyandsell/createPost":
+                  return _buildRoute(settings, BuyAndSellForm());
+                // case "/buyandsell/giveinfo":
+                //   return _buildRoute(settings, Buyandsell_information());
+
                 // case "/complaints":
                 //   return _buildRoute(settings, ComplaintsPage());
                 // case "/newcomplaint":
@@ -315,6 +343,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 case "/putentity/event":
                   return _buildRoute(settings,
                       EventForm(cookie: widget.bloc.getSessionIdHeader()));
+
                 case "/map":
                   // return _buildRoute(settings, NativeMapPage());
                   return _buildRoute(settings, MapPage());
@@ -366,7 +395,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   void handleAppLink(Uri? uri) {
     if (uri == null) return;
-    // print(uri.pathSegments);
     String routeName = "/";
     if (uri.pathSegments.length == 1) {
       routeName = {
@@ -382,6 +410,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             "view-post": "/groups",
             "discussions": "/groups",
             "group": "/group/${uri.pathSegments[1]}",
+            "map": "/map/${uri.pathSegments[1]}",
           }[uri.pathSegments[0]] ??
           routeName;
     }
