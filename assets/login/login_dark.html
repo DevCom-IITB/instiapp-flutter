@@ -4,6 +4,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+
         a {
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
@@ -100,6 +101,21 @@
             background-color: black;
             color: white;
         }
+        .loading-circle {display: none;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top: 4px solid #0028BF;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+      margin-top: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
     </style>
 </head>
 
@@ -112,13 +128,14 @@
 
     <div class="lowerdiv">
         <div class="logindiv">
-            <a class="login"
+            <a class="login" onclick="showLoading()"
                 href="https://gymkhana.iitb.ac.in/profiles/oauth/authorize/?client_id=vR1pU7wXWyve1rUkg0fMS6StL1Kr6paoSmRIiLXJ&response_type=code&scope=basic%20profile%20picture%20sex%20ldap%20phone%20insti_address%20program%20secondary_emails&redirect_uri=https://www.insti.app/login-android.html">
                 <!-- href="https://gymkhana.iitb.ac.in/profiles/oauth/authorize/?client_id=5jyMJufq0Vk0aDlj9Hnudsj84UfbFZlYRUnn02Xd&response_type=code&scope=basic%20profile%20picture%20sex%20ldap%20phone%20insti_address%20program%20secondary_emails&redirect_uri=https://www.insti.app/login-android.html">  -->
                 <!-- href="https://gymkhana.iitb.ac.in/profiles/oauth/authorize/?client_id=8iPdGfcUEoe6P3IHmQQ63CuPW4glQd1mbsdQtHkW&response_type=code&scope=basic%20profile%20picture%20sex%20ldap%20phone%20insti_address%20program%20secondary_emails&redirect_uri=https://www.insti.app/login-android.html"> -->
                 <!-- href="https://gymkhana.iitb.ac.in/profiles/oauth/authorize/?client_id=MQXcx3EHMqoGW57dXM27j2HSzEpvGAARASXraRmX&response_type=code&scope=basic%20profile%20picture%20sex%20ldap%20phone%20insti_address%20program%20secondary_emails&redirect_uri=https://www.insti.app/login-android.html"> -->
                 LOG IN VIA SSO
             </a>
+            <div class="loading-circle" id="loadingSpinner"></div>
             <br><br>
             or
             <br><br>
@@ -133,6 +150,22 @@
             </a>
         </div>
     </div>
+    <script>
+  function showLoading() {
+  var loginLink = document.querySelector(".login");
+  var loadingCircle = document.querySelector(".loading-circle");
+
+  loginLink.style.display = "none";
+  loadingCircle.style.display = "block";
+
+
+  setTimeout(function () {
+    loginLink.style.display = "inline";
+    loadingCircle.style.display = "none";
+  }, 5000);
+}
+
+  </script>
 </body>
 
 </html>
