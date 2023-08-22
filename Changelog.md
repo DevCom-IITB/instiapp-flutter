@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+## 2.4.1
+
+- Move map page outside utilities
+- Implement deep links for map page
+- Fix Android 11+ url open issue
+- Remove Google Maps library (due to iOS limitations)
+
+## 2.4.0
+
+- Implement Buy and Sell
+
+## 2.3.0
+
+- Revert 5 year b'day changes
+
+## 2.2.2 (reverted)
+
+- 5 year b'day changes
+
 ## v2.2.1
 
 - Add a comment in Mess Menu page for hostel councils

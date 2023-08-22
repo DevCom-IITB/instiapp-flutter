@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:InstiApp/src/api/model/UserTag.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/buynsellPost.dart';
 import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/event.dart';
@@ -382,4 +383,25 @@ abstract class InstiAppApi {
   @rt.POST('/achievements-offer')
   Future<dynamic> createAchievement(
       sessionId, @rt.Body() OfferedAchievements offeredAchievements);
+
+//Buy & Sell
+  @rt.GET('/buy/products')
+  Future<List<BuynSellPost>> getBuynSellPosts(
+      @rt.Header("Cookie") String sessionId);
+
+  @rt.GET('/buy/products/{id}')
+  Future<BuynSellPost> getBuynSellPost(
+      @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+
+  @rt.DELETE('/buy/products/{id}')
+  Future<BuynSellPost> deleteBuynSellPost(
+      @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+
+  @rt.PUT('/buy/products/{id}')
+  Future<BuynSellPost> updateBuynSellPost(@rt.Header("Cookie") String sessionId,
+      @rt.Path() String id, @rt.Body() BuynSellPost post);
+
+  @rt.POST("/buy/products")
+  Future<BuynSellPost> createBuynSellPost(
+      @rt.Header("Cookie") String sessionId, @rt.Body() BuynSellPost post);
 }
