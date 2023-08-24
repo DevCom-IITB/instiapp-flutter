@@ -131,7 +131,7 @@ class _SellpageState extends State<Sellpage> {
                   children: <Widget>[
                     TitleWithBackButton(
                       child: Text(
-                        "Buy & Sell (Beta) ${screen_w} ${screen_h}",
+                        "Buy & Sell (Beta)",
                         style: theme.textTheme.headline4,
                       ),
                     ),
