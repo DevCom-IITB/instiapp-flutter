@@ -51,7 +51,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 
 void main() async {
@@ -60,6 +60,7 @@ void main() async {
   await Firebase.initializeApp();
   InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
   FirebaseMessaging.onBackgroundMessage(sendMessage);
+  await dotenv.load(fileName: ".env");
 
   AwesomeNotifications().initialize(
     'resource://drawable/ic_launcher_foreground',
