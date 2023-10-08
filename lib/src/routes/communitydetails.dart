@@ -78,11 +78,12 @@ class _CommunityDetailsState extends State<CommunityDetails> {
         searchIcon: true,
         appBarSearchStyle:
             AppBarSearchStyle(hintText: "Search " + (community?.name ?? "")),
-        leadingStyle: LeadingStyle(
-            icon: Icons.arrow_back,
-            onPressed: () async {
-              Navigator.of(context).pop();
-            }),
+        //TODO: Uncomment leading style
+        // leadingStyle: LeadingStyle(
+        //     icon: Icons.arrow_back,
+        //     onPressed: () async {
+        //       Navigator.of(context).pop();
+        //     }),
       ),
       drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
@@ -495,7 +496,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
 
     if (firstBuild) {
       communityPostBloc.query = "";
-      communityPostBloc.refresh(id: widget.community?.id);
+      communityPostBloc.refresh();
       firstBuild = false;
     }
 
@@ -526,9 +527,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                               loading = true;
                               cpType = CPType.All;
                             });
-                            await communityPostBloc.refresh(
-                                type: CPType.All,
-                                id: widget.community?.id);
+                            await communityPostBloc.refresh(type: CPType.All);
                             setState(() {
                               loading = false;
                             });
@@ -547,8 +546,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                               cpType = CPType.YourPosts;
                             });
                             await communityPostBloc.refresh(
-                                type: CPType.YourPosts,
-                                id: widget.community?.id);
+                                type: CPType.YourPosts);
                             setState(() {
                               loading = false;
                             });
@@ -569,8 +567,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                                     cpType = CPType.PendingPosts;
                                   });
                                   await communityPostBloc.refresh(
-                                      type: CPType.PendingPosts,
-                                      id: widget.community?.id);
+                                      type: CPType.PendingPosts);
                                   setState(() {
                                     loading = false;
                                   });
@@ -592,8 +589,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                                     cpType = CPType.ReportedContent;
                                   });
                                   await communityPostBloc.refresh(
-                                      type: CPType.ReportedContent,
-                                      id: widget.community?.id);
+	                                    type: CPType.ReportedContent,
+                                  );
                                   setState(() {
                                     loading = false;
                                   });

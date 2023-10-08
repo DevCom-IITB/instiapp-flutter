@@ -1163,12 +1163,11 @@ class _InstiAppApi implements InstiAppApi {
 
   @override
   Future<CommunityPostListResponse> getCommunityPosts(
-      sessionId, status, query, id) async {
+      sessionId, status, query) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'status': status,
-      r'query': query,
-      r'community': id
+      r'query': query
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{r'Cookie': sessionId};
