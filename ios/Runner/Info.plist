@@ -27,11 +27,11 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>To add your interested/going events to your phone calendar</string>
 	<key>NSCameraUsageDescription</key>
-	<string>This app needs camera access to scan QR codes</string>
+	<string>This app needs camera access to scan QR codes and to upload product images</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string></string>
+	<string>This app uses your location for navigation in instimap</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>This app uses your location for navigation in instimap</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string></string>
 	<key>NSPhotoLibraryUsageDescription</key>
