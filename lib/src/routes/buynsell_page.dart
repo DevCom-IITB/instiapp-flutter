@@ -66,7 +66,7 @@ class _SellpageState extends State<Sellpage> {
     if(1 >=screen_hr/screen_wr&&screen_hr/screen_wr >=0.5){x=0.35;}
     screen_hr >= screen_wr ? y = 0.9 : y = 0.5;
     double screen_w = screen_wr * y;
-    double screen_h = screen_hr * x;
+    double screen_h = 270;
 
     double myfont = ((18 / 274.4) * screen_h);
     return Scaffold(
