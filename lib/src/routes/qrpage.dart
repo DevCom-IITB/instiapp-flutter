@@ -8,11 +8,9 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'qr_encryption.dart';
+
 import '../api/model/user.dart';
-
-
-
+import 'qr_encryption.dart';
 
 class QRPage extends StatefulWidget {
   const QRPage({Key? key}) : super(key: key);
@@ -23,13 +21,11 @@ class QRPage extends StatefulWidget {
 
 class _QRPageState extends State<QRPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  String qrString="";
+  String qrString = "";
   bool first = true;
   bool loading = true;
   bool error = false;
   User? profile;
-
-
 
   @override
   void initState() {
@@ -37,8 +33,7 @@ class _QRPageState extends State<QRPage> {
   }
 
   void getQRString(bloc) async {
-
-    final qr_encryption= QREncryption(profile!);
+    final qr_encryption = QREncryption(profile!);
     String qr = (qr_encryption.Encrypt()).toString();
     if (qr == "Error") {
       setState(() {
@@ -48,7 +43,6 @@ class _QRPageState extends State<QRPage> {
     } else {
       setState(() {
         qrString = (qr_encryption.Encrypt()).toString();
-        print(qrString);
         loading = false;
       });
     }
@@ -151,7 +145,8 @@ class _QRPageState extends State<QRPage> {
                                 data: '${qrString}',
                                 size: MediaQuery.of(context).size.width / 2,
                                 foregroundColor: Colors.black,
-                                embeddedImage: AssetImage('assets/buynsell/DevcomLogo.png'),
+                                embeddedImage: AssetImage(
+                                    'assets/buynsell/DevcomLogo.png'),
                               ),
                             ),
                 ],
@@ -170,5 +165,4 @@ class _QRPageState extends State<QRPage> {
           : null,
     );
   }
-
 }
