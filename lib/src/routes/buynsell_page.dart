@@ -1,10 +1,10 @@
 import 'package:InstiApp/src/api/model/buynsellPost.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/buynsell_post_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
 
 import '../api/model/user.dart';
 import '../utils/title_with_backbutton.dart';
@@ -41,6 +41,8 @@ class _SellpageState extends State<Sellpage> {
   bool firstBuild = true;
   bool MyPosts = false;
 
+  late double x;
+
   @override
   void initState() {
     super.initState();
@@ -57,13 +59,15 @@ class _SellpageState extends State<Sellpage> {
 
     double screen_wr = MediaQuery.of(context).size.width;
     double screen_hr = MediaQuery.of(context).size.height;
-    double x, y;
+    double y;
     var bloc = BlocProvider.of(context)!.bloc;
     var theme = Theme.of(context);
     bool isLoggedIn = bloc.currSession != null;
 
     screen_hr >= screen_wr ? x = 0.35 : x = 0.80;
-    if(1 >=screen_hr/screen_wr&&screen_hr/screen_wr >=0.5){x=0.35;}
+    if (1 >= screen_hr / screen_wr && screen_hr / screen_wr >= 0.5) {
+      x = 0.35;
+    }
     screen_hr >= screen_wr ? y = 0.9 : y = 0.5;
     double screen_w = screen_wr * y;
     double screen_h = 270;
@@ -72,8 +76,9 @@ class _SellpageState extends State<Sellpage> {
     return Scaffold(
         key: _scaffoldKey,
         drawer: NavDrawer(),
-        bottomNavigationBar: MyBottomAppBar(shape:RoundedNotchedRectangle(),
-      notchMargin:4.0,
+        bottomNavigationBar: MyBottomAppBar(
+          shape: RoundedNotchedRectangle(),
+          notchMargin: 4.0,
           child: new Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -95,7 +100,6 @@ class _SellpageState extends State<Sellpage> {
             ? FloatingActionButton.extended(
                 icon: Icon(Icons.add_outlined),
                 label: Text("Add Item"),
-
                 onPressed: () {
                   Navigator.of(context).pushNamed("/buyandsell/category");
                 },
@@ -141,60 +145,60 @@ class _SellpageState extends State<Sellpage> {
                         Row(children: [
                           Expanded(
                               child: Container(
-                                padding: EdgeInsets.fromLTRB(10, 10, 5, 10),
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
+                            padding: EdgeInsets.fromLTRB(10, 10, 5, 10),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
                                             BorderRadius.circular(15)),
-                                        primary: theme.cardColor,
-                                        side: BorderSide(
-                                          width: 2,
-                                          color: MyPosts
-                                              ? theme.cardColor
-                                              : Colors.blue,
-                                        )),
-                                    // color: !MyPosts
-                                    //     ? theme.bottomAppBarColor
-                                    //     : theme.cardColor,
-                                    onPressed: () => {
+                                    primary: theme.cardColor,
+                                    side: BorderSide(
+                                      width: 2,
+                                      color: MyPosts
+                                          ? theme.cardColor
+                                          : Colors.blue,
+                                    )),
+                                // color: !MyPosts
+                                //     ? theme.bottomAppBarColor
+                                //     : theme.cardColor,
+                                onPressed: () => {
                                       setState(() {
                                         MyPosts = false;
                                       }),
                                       buynSellPostBloc.refresh()
                                     },
-                                    child: Text(
-                                      "All Posts",
-                                      style: theme.textTheme.headline6,
-                                    )),
-                              )),
+                                child: Text(
+                                  "All Posts",
+                                  style: theme.textTheme.headline6,
+                                )),
+                          )),
                           Expanded(
                               child: Container(
-                                padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
-                                child: ElevatedButton(
-                                  child: Text("Your Posts",
-                                      style: theme.textTheme.headline6),
-                                  onPressed: () => {
-                                    setState(() {
-                                      MyPosts = true;
-                                    }),
-                                    buynSellPostBloc.refresh()
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(15)),
-                                      primary: theme.cardColor,
-                                      side: BorderSide(
-                                        width: 2,
-                                        color: !MyPosts
-                                            ? theme.cardColor
-                                            : Colors.blue,
-                                      )),
-                                  // color: MyPosts
-                                  //     ? theme.bottomAppBarColor
-                                  //     : theme.cardColor,
-                                ),
-                              )),
+                            padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
+                            child: ElevatedButton(
+                              child: Text("Your Posts",
+                                  style: theme.textTheme.headline6),
+                              onPressed: () => {
+                                setState(() {
+                                  MyPosts = true;
+                                }),
+                                buynSellPostBloc.refresh()
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15)),
+                                  primary: theme.cardColor,
+                                  side: BorderSide(
+                                    width: 2,
+                                    color: !MyPosts
+                                        ? theme.cardColor
+                                        : Colors.blue,
+                                  )),
+                              // color: MyPosts
+                              //     ? theme.bottomAppBarColor
+                              //     : theme.cardColor,
+                            ),
+                          )),
                         ]),
                         StreamBuilder<List<BuynSellPost>>(
                             stream: buynSellPostBloc.buynsellposts,
@@ -257,7 +261,7 @@ class _SellpageState extends State<Sellpage> {
     return Center(
       child: (SizedBox(
         height: screen_h * 0.7,
-        width:screen_w * 1.2 ,
+        width: screen_w * 1.2,
         child: Card(
           color: theme.cardColor,
           margin: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
@@ -277,32 +281,34 @@ class _SellpageState extends State<Sellpage> {
                     children: [
                       Center(
                         child: Container(
-                          padding: EdgeInsets.fromLTRB(0,0,5,0),
-                          height: screen_h ,
+                          padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                          height: screen_h,
                           width: screen_h * 0.20 / 0.43,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10)),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(10),
-                        topLeft: Radius.circular(10)),
-                    child: CachedNetworkImage(
-                      imageUrl: posts[index].imageUrl?[0] ?? '',
-                      placeholder: (context, url) => Image.asset(
-                        'assets/buynsell/DevcomLogo.png',
-                        fit: BoxFit.fill,
-                      ),errorWidget: (context, url, error) =>
-                    new Image.asset(
-                      'assets/buynsell/DevcomLogo.png',
-                      fit: BoxFit.fill,
-                    ),
-                      fit: BoxFit.cover,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(10),
+                                bottomLeft: Radius.circular(10)),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(10),
+                                topLeft: Radius.circular(10)),
+                            child: CachedNetworkImage(
+                              imageUrl: posts[index].imageUrl?[0] ?? '',
+                              placeholder: (context, url) => Image.asset(
+                                'assets/buynsell/DevcomLogo.png',
+                                fit: BoxFit.fill,
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  new Image.asset(
+                                'assets/buynsell/DevcomLogo.png',
+                                fit: BoxFit.fill,
+                              ),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ),),
+                      ),
                     ],
                   ),
                 ),
@@ -331,7 +337,6 @@ class _SellpageState extends State<Sellpage> {
                     maxLines: 1,
                   ),
                 ),
-
                 Container(
                     margin: EdgeInsets.fromLTRB(
                         screen_w * 0.7, 110, screen_h * 0.04 / 1.5, 1),
@@ -423,7 +428,7 @@ class _SellpageState extends State<Sellpage> {
                 Container(
                     padding: EdgeInsets.fromLTRB(0, 13, 10, 0),
                     child: Text(
-                      (posts[index].description ?? ""),maxLines: 2,
+                      (posts[index].description ?? ""), maxLines: 2,
 
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodyText2,
@@ -452,5 +457,3 @@ class _SellpageState extends State<Sellpage> {
     );
   }
 }
-
-
