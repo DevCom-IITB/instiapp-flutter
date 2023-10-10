@@ -1,6 +1,7 @@
+import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:InstiApp/src/utils/common_widgets.dart';
+
 import '../api/model/buynsellPost.dart';
 
 class BuyAndSellInfoPage extends StatefulWidget {
@@ -123,21 +124,24 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
             children: [
               Container(
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 11, 0, 0),
-                  child: Container(width: screen_w,
+                  child: Container(
+                    width: screen_w,
                     child: Text(bnsPost?.brand ?? "",
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.headline6
-                            ?.copyWith(fontWeight: FontWeight.w100, fontSize: 20)),
+                        style: theme.textTheme.headline6?.copyWith(
+                            fontWeight: FontWeight.w100, fontSize: 20)),
                   )
                   // style: TextStyle(
                   //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
                   ),
             ],
-          ),Row(mainAxisAlignment: MainAxisAlignment.start,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-
-              Container(margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
+              Container(
+                margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
                 child: Text(
                   '${bnsPost?.user?.userName ?? ""} (${bnsPost?.user?.userLDAPId ?? ""})',
                 ),
@@ -154,7 +158,6 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                   child: Text(bnsPost?.name ?? "",
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-
                       style: theme.textTheme.headline5?.copyWith(
                         fontWeight: FontWeight.bold,
                         // fontSize: 30,
@@ -194,22 +197,6 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
             ),
             SizedBox(
               width: screen_w,
-              child: Text(
-                "Negotiable - " +
-                    ((bnsPost?.negotiable ?? false) ? "Yes" : "No"),
-                style: theme.textTheme.bodyLarge
-                    ?.copyWith(fontSize: 18, fontWeight: FontWeight.w400),
-                textAlign: TextAlign.end,
-
-                // style: TextStyle(
-                //     fontSize: myfont, fontWeight: FontWeight.w500),
-              ),
-            ),
-            SizedBox(
-              height: 0.09 * screen_h,
-            ),
-            SizedBox(
-              width: screen_w,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -233,31 +220,51 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                             children: [
                               Icon(Icons.phone_outlined),
                               Text(
-                                bnsPost?.contactDetails?? "",
+                                bnsPost?.contactDetails ?? "",
                                 style: theme.textTheme.headline1?.copyWith(
                                   fontWeight: FontWeight.w100,
                                   fontSize: 17,
                                 ),
                               ),
-
                             ],
                           ),
                         ),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Negotiable - " +
+                                    ((bnsPost?.negotiable ?? false)
+                                        ? "Yes"
+                                        : "No"),
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                    fontSize: 18, fontWeight: FontWeight.w400),
+                              ),
+                            ],
+
+                            // style: TextStyle(
+                            //     fontSize: myfont, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                          child: Text(
+                            (bnsPost?.action == 'giveaway'
+                                ? "GiveAway"
+                                : "Price - ₹" +
+                                    (bnsPost?.price ?? 0).toString()),
+                            style: theme.textTheme.headline4?.copyWith(
+                                fontSize: 25, fontWeight: FontWeight.w600),
+                            textAlign: TextAlign.left,
+                          ),
+                        )
                       ],
                     ),
                   ),
                   Spacer(),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(0, screen_h * 0.06, 0, 0),
-                    child: Text(
-                      (bnsPost?.action == 'giveaway'
-                          ? "GiveAway"
-                          : "Price - ₹" + (bnsPost?.price ?? 0).toString()),
-                      style: theme.textTheme.headline4
-                          ?.copyWith(fontSize: 25, fontWeight: FontWeight.w600),
-                      textAlign: TextAlign.left,
-                    ),
-                  )
                 ],
               ),
             ),
@@ -289,7 +296,9 @@ class _ImageCarouselState extends State<ImageCarousel> {
     double x, y;
 
     screen_hr >= screen_wr ? x = 0.35 : x = 1;
-    if(0.5<=screen_hr/screen_wr&&screen_hr/screen_wr<=1){x=0.8;}
+    if (0.5 <= screen_hr / screen_wr && screen_hr / screen_wr <= 1) {
+      x = 0.8;
+    }
     screen_hr >= screen_wr ? y = 0.9 : y = 0.8;
     var screen_w = screen_wr * y;
     var screen_h = screen_hr * x;
