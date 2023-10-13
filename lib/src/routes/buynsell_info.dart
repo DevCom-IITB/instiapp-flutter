@@ -202,62 +202,41 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                 children: [
                   Container(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
                             Text(
-                              'Phone number',
-                              style: theme.textTheme.headline6?.copyWith(
-                                  fontWeight: FontWeight.bold, fontSize: 17),
+                              'Phone number - ' +
+                                  (bnsPost?.contactDetails ?? ""),
+                              style: theme.textTheme.headline4?.copyWith(
+                                  fontSize: 20, fontWeight: FontWeight.w400),
                             ),
                           ],
                         ),
                         Container(
-                          margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Icon(Icons.phone_outlined),
-                              Text(
-                                bnsPost?.contactDetails ?? "",
-                                style: theme.textTheme.headline1?.copyWith(
-                                  fontWeight: FontWeight.w100,
-                                  fontSize: 17,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 "Negotiable - " +
                                     ((bnsPost?.negotiable ?? false)
                                         ? "Yes"
                                         : "No"),
-                                style: theme.textTheme.bodyLarge?.copyWith(
-                                    fontSize: 18, fontWeight: FontWeight.w400),
+                                style: theme.textTheme.headline4?.copyWith(
+                                    fontSize: 20, fontWeight: FontWeight.w400),
                               ),
                             ],
-
-                            // style: TextStyle(
-                            //     fontSize: myfont, fontWeight: FontWeight.w500),
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
                           child: Text(
                             (bnsPost?.action == 'giveaway'
                                 ? "GiveAway"
                                 : "Price - ₹" +
                                     (bnsPost?.price ?? 0).toString()),
                             style: theme.textTheme.headline4?.copyWith(
-                                fontSize: 25, fontWeight: FontWeight.w600),
+                                fontSize: 20, fontWeight: FontWeight.w400),
                             textAlign: TextAlign.left,
                           ),
                         )
