@@ -474,8 +474,8 @@ class CommunityPostSection extends StatefulWidget {
 
 class _CommunityPostSectionState extends State<CommunityPostSection> {
   bool firstBuild = true;
-  // final Community? community;
-
+  //  final Community? community;
+  //String id=community.id;
   CPType cpType = CPType.All;
 
   _CommunityPostSectionState();
@@ -589,7 +589,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                                     cpType = CPType.ReportedContent;
                                   });
                                   await communityPostBloc.refresh(
-                                    type: CPType.ReportedContent,
+	                                    type: CPType.ReportedContent,
                                   );
                                   setState(() {
                                     loading = false;
