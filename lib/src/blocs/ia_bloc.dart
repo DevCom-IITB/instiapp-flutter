@@ -130,6 +130,7 @@ class InstiAppBloc {
   late VerifyBloc bodyAchBloc;
   late CommunityBloc communityBloc;
   late CommunityPostBloc communityPostBloc;
+  late BuynSellPostBloc buynSellPostBloc;
   // actual current state
   Session? currSession;
   var _hostels = <Hostel>[];
@@ -274,6 +275,7 @@ class InstiAppBloc {
     messCalendarBloc = MessCalendarBloc(this);
     communityBloc = CommunityBloc(this);
     communityPostBloc = CommunityPostBloc(this);
+    lostAndFoundBloc = LostAndFoundBloc(this);
 
     _initNotificationBatch();
   }
