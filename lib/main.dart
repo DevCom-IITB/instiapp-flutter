@@ -12,6 +12,8 @@ import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/routes/externalblogpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
+import 'package:InstiApp/src/routes/lostandfoundfeedpage.dart';
+import 'package:InstiApp/src/routes/lostandfoundinfo.dart';
 import 'package:InstiApp/src/routes/mappage.dart';
 import 'package:InstiApp/src/routes/messcalendarpage.dart';
 // import 'package:InstiApp/src/routes/newcomplaintpage.dart';
@@ -334,6 +336,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, ExternalBlogPage());
                 case "/query":
                   return _buildRoute(settings, QueryPage());
+                case "/lostandfound":
+                  return _buildRoute(settings, LostPage());
+                case "/lostandfoundinfo":
+                  return _buildRoute(settings, LostAndFoundInfoPage());
                 case "/query/add":
                   return _buildRoute(settings, QueryAddPage());
                 case "/messcalendar":
