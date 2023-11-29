@@ -1,27 +1,27 @@
-import 'package:InstiApp/src/api/model/buynsellPost.dart';
+import 'package:InstiApp/src/api/model/lostandfound.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
-enum BnSType { All }
+enum lostAndFoundType { All }
 
-class BuynSellPostBloc {
-  final String storageID = "BuynSellPost";
+class LostAndFoundPostBloc {
+  final String storageID = "LostandFoundPost";
 
   InstiAppBloc bloc;
 
-  List<BuynSellPost> _buynsellPosts = [];
+  List<LostAndFoundPost> _lostAndFoundPosts = [];
 
-  ValueStream<List<BuynSellPost>> get buynsellposts => _buynsellSubject.stream;
+  ValueStream<List<LostAndFoundPost>> get lostAndFoundPosts => _buynsellSubject.stream;
   final _buynsellSubject = BehaviorSubject<List<BuynSellPost>>();
 
   String query = "";
 
-  BuynSellPostBloc(this.bloc);
+  LostAndFoundPostBloc(this.bloc);
 
   get buynsellpost => null;
 
   Future<BuynSellPost?> getBuynSellPost(String id) async {
-    return await bloc.client.getBuynSellPost(bloc.getSessionIdHeader(), id);
+    return await bloc.client.getLostAndFoundPost(bloc.getSessionIdHeader(), id);
   }
 
   Future<BuynSellPost?> deleteBuynSellPost(String id) async {

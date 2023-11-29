@@ -7,6 +7,7 @@ import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/lostandfound.dart';
 import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
@@ -43,6 +44,8 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:InstiApp/src/api/model/notification.dart' as ntf;
 import 'package:dio/dio.dart';
+import 'package:InstiApp/src/blocs/lost_and_found_bloc.dart';
+
 
 enum AddToCalendar { AlwaysAsk, Yes, No }
 
@@ -130,7 +133,7 @@ class InstiAppBloc {
   late VerifyBloc bodyAchBloc;
   late CommunityBloc communityBloc;
   late CommunityPostBloc communityPostBloc;
-  late BuynSellPostBloc buynSellPostBloc;
+  late LostAndFoundPostBloc lostAndFoundPostBloc;
   // actual current state
   Session? currSession;
   var _hostels = <Hostel>[];

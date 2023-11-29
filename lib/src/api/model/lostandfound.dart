@@ -101,9 +101,9 @@ class LostAndFoundPost {
   }
 
   factory LostAndFoundPost.fromJson(Map<String, dynamic> json) =>
-      _$LostAndFoundFromJson(json);
+      _$LostAndFoundPostFromJson(json);
 
-  Map<String, dynamic> toJson() => _$BuynSellPostToJson(this);
+  Map<String, dynamic> toJson() => _$LostAndFoundPostToJson(this);
 
-  getBuynSellPost(String s) {}
+  getLostAndFoundPost(String s) {}
 }
