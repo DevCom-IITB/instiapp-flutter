@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:InstiApp/src/api/model/UserTag.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/buynsellPost.dart';
 import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/event.dart';
@@ -42,10 +43,10 @@ import 'package:dio/dio.dart';
 import 'model/offersecret.dart';
 part 'apiclient.g.dart';
 
-// @rt.RestApi(baseUrl: "http://192.168.230.89:8000/api")
+//@rt.RestApi(baseUrl: "http://192.168.1.103:8000/api")
 // @rt.RestApi(baseUrl: "http://10.105.177.150/api")
-@rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
-// @rt.RestApi(baseUrl: "https://0ac7-103-21-125-80.in.ngrok.io/api")
+ @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
+// @rt.RestApi(baseUrl: "https://272c-2405-201-5004-3c2f-d836-b028-6ac-ad9.ngrok-free.app/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
@@ -381,4 +382,25 @@ abstract class InstiAppApi {
   @rt.POST('/achievements-offer')
   Future<dynamic> createAchievement(
       sessionId, @rt.Body() OfferedAchievements offeredAchievements);
+
+//Buy & Sell
+  @rt.GET('/buy/products')
+  Future<List<BuynSellPost>> getBuynSellPosts(
+      @rt.Header("Cookie") String sessionId);
+
+  @rt.GET('/buy/products/{id}')
+  Future<BuynSellPost> getBuynSellPost(
+      @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+
+  @rt.DELETE('/buy/products/{id}')
+  Future<BuynSellPost> deleteBuynSellPost(
+      @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+
+  @rt.PUT('/buy/products/{id}')
+  Future<BuynSellPost> updateBuynSellPost(@rt.Header("Cookie") String sessionId,
+      @rt.Path() String id, @rt.Body() BuynSellPost post);
+
+  @rt.POST("/buy/products")
+  Future<BuynSellPost> createBuynSellPost(
+      @rt.Header("Cookie") String sessionId, @rt.Body() BuynSellPost post);
 }
