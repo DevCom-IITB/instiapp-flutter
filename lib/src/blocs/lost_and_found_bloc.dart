@@ -1,8 +1,8 @@
-import 'package:InstiApp/src/api/model/lostandfound.dart';
+import 'package:InstiApp/src/api/model/lostandfoundPost.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
-enum lostAndFoundType { All }
+enum lnFType { All }
 
 class LostAndFoundPostBloc {
   final String storageID = "LostandFoundPost";
@@ -11,8 +11,9 @@ class LostAndFoundPostBloc {
 
   List<LostAndFoundPost> _lostAndFoundPosts = [];
 
-  ValueStream<List<LostAndFoundPost>> get lostAndFoundPosts => _buynsellSubject.stream;
-  final _buynsellSubject = BehaviorSubject<List<BuynSellPost>>();
+  ValueStream<List<LostAndFoundPost>> get lostAndFoundPosts =>
+      _lnfSubject.stream;
+  final _lnfSubject = BehaviorSubject<List<LostAndFoundPost>>();
 
   String query = "";
 
@@ -20,26 +21,13 @@ class LostAndFoundPostBloc {
 
   get buynsellpost => null;
 
-  Future<BuynSellPost?> getBuynSellPost(String id) async {
+  Future<LostAndFoundPost?> getLostAndFoundPost(String id) async {
     return await bloc.client.getLostAndFoundPost(bloc.getSessionIdHeader(), id);
   }
 
-  Future<BuynSellPost?> deleteBuynSellPost(String id) async {
-    return await bloc.client.deleteBuynSellPost(bloc.getSessionIdHeader(), id);
-  }
-
-  Future<void> updateBuynSellPost(BuynSellPost post) async {
-    await bloc.client
-        .updateBuynSellPost(bloc.getSessionIdHeader(), post.id!, post);
-  }
-
-  Future<void> refresh({BnSType type = BnSType.All}) async {
-    _buynsellPosts =
-    (await bloc.client.getBuynSellPosts(bloc.getSessionIdHeader()));
-    _buynsellSubject.add(_buynsellPosts);
-  }
-
-  Future<void> createBuynSellPost(BuynSellPost post) async {
-    await bloc.client.createBuynSellPost(bloc.getSessionIdHeader(), post);
+  Future<void> refresh({lnFType type = lnFType.All}) async {
+    _lostAndFoundPosts =
+        (await bloc.client.getLostAndFoundPosts(bloc.getSessionIdHeader()));
+    _lnfSubject.add(_lostAndFoundPosts);
   }
 }

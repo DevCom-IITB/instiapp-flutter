@@ -24,6 +24,7 @@ class CommunityPostPage extends StatefulWidget {
       CommunityPost communityPost) {
     Navigator.push(
       context,
+
       MaterialPageRoute(
         settings: RouteSettings(
           name: "/post/${communityPost.id ?? ""}",
