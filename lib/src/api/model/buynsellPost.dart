@@ -1,15 +1,15 @@
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'lostandfound.g.dart';
+part 'buynsellPost.g.dart';
 
 @JsonSerializable()
-class LostAndFoundPost {
+class BuynSellPost {
   @JsonKey(name: "id")
   String? id;
 
   @JsonKey(name: "str_id")
-  String? lostAndFoundPostStrId;
+  String? buysellPostStrId;
 
   @JsonKey(name: "name")
   String? name;
@@ -21,16 +21,16 @@ class LostAndFoundPost {
   List<String>? imageUrl;
 
   @JsonKey(name: "brand")
-  String? foundAt;
+  String? brand;
 
-  // @JsonKey(name: "warranty")
-  // bool? warranty;
-  //
-  // @JsonKey(name: "packaging")
-  // bool? packaging;
+  @JsonKey(name: "warranty")
+  bool? warranty;
+
+  @JsonKey(name: "packaging")
+  bool? packaging;
 
   @JsonKey(name: "condition")
-  String? whenFound;
+  String? condition;
 
   @JsonKey(name: "action")
   String? action;
@@ -42,10 +42,10 @@ class LostAndFoundPost {
   bool? deleted;
 
   @JsonKey(name: "price")
-  bool? ifClaimed;
+  int? price;
 
-  // @JsonKey(name: "negotiable")
-  // bool? negotiable;
+  @JsonKey(name: "negotiable")
+  bool? negotiable;
 
   @JsonKey(name: "contact_details")
   String? contactDetails;
@@ -70,20 +70,20 @@ class LostAndFoundPost {
     return 'BuySellPost{id:$id, content:$name}';
   }
 
-  LostAndFoundPost({
+  BuynSellPost({
     this.id,
-    this.lostAndFoundPostStrId,
+    this.buysellPostStrId,
     this.name,
     this.description,
     this.imageUrl,
-    this.foundAt,
-    // this.warranty,
-    // this.packaging,
-    this.whenFound,
+    this.brand,
+    this.warranty,
+    this.packaging,
+    this.condition,
     this.action,
     this.status,
     this.deleted,
-    this.ifClaimed,
+    this.price,
     this.timeOfCreation,
     this.timeBefore,
   }) {
@@ -100,10 +100,10 @@ class LostAndFoundPost {
     }
   }
 
-  factory LostAndFoundPost.fromJson(Map<String, dynamic> json) =>
-      _$LostAndFoundPostFromJson(json);
+  factory BuynSellPost.fromJson(Map<String, dynamic> json) =>
+      _$BuynSellPostFromJson(json);
 
-  Map<String, dynamic> toJson() => _$LostAndFoundPostToJson(this);
+  Map<String, dynamic> toJson() => _$BuynSellPostToJson(this);
 
-  getLostAndFoundPost(String s) {}
+  getBuynSellPost(String s) {}
 }

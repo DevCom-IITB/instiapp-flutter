@@ -1,52 +1,53 @@
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-// import '../api/model/buynsellPost.dart';
 
-class LostAndFoundInfoPage extends StatefulWidget {
-  // final Future<BuynSellPost?> post;
+import '../api/model/buynsellPost.dart';
 
-  LostAndFoundInfoPage();
+class BuyAndSellInfoPage extends StatefulWidget {
+  final Future<BuynSellPost?> post;
 
-  // static void navigateWith(
-  //     BuildContext context, BuynSellPost bloc, BuynSellPost post) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       settings: RouteSettings(
-  //         name: "/${post.id ?? ""}",
-  //       ),
-  //       builder: (context) => BuyAndSellInfoPage(
-  //         post: bloc.getBuynSellPost(post.id ?? ""),
-  //       ),
-  //     ),
-  //   );
-  // }
+  BuyAndSellInfoPage({required this.post});
+
+  static void navigateWith(
+      BuildContext context, BuynSellPost bloc, BuynSellPost post) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        settings: RouteSettings(
+          name: "/${post.id ?? ""}",
+        ),
+        builder: (context) => BuyAndSellInfoPage(
+          post: bloc.getBuynSellPost(post.id ?? ""),
+        ),
+      ),
+    );
+  }
 
   @override
-  State<LostAndFoundInfoPage> createState() => _LostAndFoundInfoPageState();
+  State<BuyAndSellInfoPage> createState() => _BuyAndSellInfoPageState();
 }
 
-class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
+class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  // BuynSellPost? bnsPost;
+  BuynSellPost? bnsPost;
 
   @override
   void initState() {
     super.initState();
-    // widget.post.then((bnsPost) {
-    //   if (this.mounted) {
-    //     setState(() {
-    //       this.bnsPost = bnsPost;
-    //     });
-    //   }
-    // });
+    widget.post.then((bnsPost) {
+      if (this.mounted) {
+        setState(() {
+          this.bnsPost = bnsPost;
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // List<String>? imageList = bnsPost?.imageUrl;
+    List<String>? imageList = bnsPost?.imageUrl;
     double screen_wr = MediaQuery.of(context).size.width;
     double screen_hr = MediaQuery.of(context).size.height;
     double x, y;
@@ -112,39 +113,41 @@ class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
                 child: SizedBox(
                   height: screen_h / 1.2,
                   width: screen_w / 1,
-                  // child: ImageCarousel(imageList),
+                  child: ImageCarousel(imageList),
                 ),
               ),
               Spacer(),
             ],
           ),
-          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Container(
-              margin: EdgeInsets.fromLTRB(screen_w * 0.1, 11, 0, 0),
-              child: Container(
-                width: screen_w,
-                child: Text('found at ',
-                    // bnsPost?.brand ?? "",
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.headline6
-                        ?.copyWith(fontWeight: FontWeight.w100, fontSize: 20)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                  margin: EdgeInsets.fromLTRB(screen_w * 0.1, 11, 0, 0),
+                  child: Container(
+                    width: screen_w,
+                    child: Text(bnsPost?.brand ?? "",
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.headline6?.copyWith(
+                            fontWeight: FontWeight.w100, fontSize: 20)),
+                  )
+                  // style: TextStyle(
+                  //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
+                  ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
+                child: Text(
+                  '${bnsPost?.user?.userName ?? ""} (${bnsPost?.user?.userLDAPId ?? ""})',
+                ),
               ),
-              // style: TextStyle(
-              //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
-            ),
-          ]),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.start,
-          //   children: [
-          //     Container(
-          //       margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
-          //       child: Text(
-          //         '${bnsPost?.user?.userName ?? ""} (${bnsPost?.user?.userLDAPId ?? ""})',
-          //       ),
-          //     ),
-          //   ],
-          // ),
+            ],
+          ),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -152,8 +155,7 @@ class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
               Container(
                   width: screen_w * 0.9,
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
-                  child: Text('naefwefssssssswefme',
-                      // bnsPost?.name ?? "",
+                  child: Text(bnsPost?.name ?? "",
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.headline5?.copyWith(
@@ -166,23 +168,22 @@ class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
                       )),
             ],
           ),
-          // Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-          //   Container(
-          //     margin: EdgeInsets.fromLTRB(screen_w * 0.1, 5, 0, 0),
-          //     child: Text("Condition - " + (bnsPost?.condition ?? '0') + '/10',
-          //         style: theme.textTheme.headline6
-          //             ?.copyWith(fontSize: 15, fontWeight: FontWeight.w500)
-          //         // style: TextStyle(fontSize: myfont, fontWeight: FontWeight.w100),
-          //         ),
-          //   )
-          // ]),
+          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Container(
+              margin: EdgeInsets.fromLTRB(screen_w * 0.1, 5, 0, 0),
+              child: Text("Condition - " + (bnsPost?.condition ?? '0') + '/10',
+                  style: theme.textTheme.headline6
+                      ?.copyWith(fontSize: 15, fontWeight: FontWeight.w500)
+                  // style: TextStyle(fontSize: myfont, fontWeight: FontWeight.w100),
+                  ),
+            )
+          ]),
           Column(children: [
             Container(
               width: screen_w * 0.9,
               height: screen_h * 0.5,
               margin: EdgeInsets.fromLTRB(0, 8, 0, 0),
-              child: Text('description',
-                  // bnsPost?.description ?? "",
+              child: Text(bnsPost?.description ?? "",
                   maxLines: 10,
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
@@ -194,22 +195,6 @@ class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
             SizedBox(
               height: screen_h * 0.07,
             ),
-            // SizedBox(
-            //   width: screen_w,
-            //   child: Text(
-            //     "Negotiable - " +
-            //         ((bnsPost?.negotiable ?? false) ? "Yes" : "No"),
-            //     style: theme.textTheme.bodyLarge
-            //         ?.copyWith(fontSize: 18, fontWeight: FontWeight.w400),
-            //     textAlign: TextAlign.end,
-            //
-            //     // style: TextStyle(
-            //     //     fontSize: myfont, fontWeight: FontWeight.w500),
-            //   ),
-            // ),
-            SizedBox(
-              height: 0.09 * screen_h,
-            ),
             SizedBox(
               width: screen_w,
               child: Row(
@@ -217,47 +202,48 @@ class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
                 children: [
                   Container(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
                             Text(
-                              'Phone number',
-                              style: theme.textTheme.headline6?.copyWith(
-                                  fontWeight: FontWeight.bold, fontSize: 17),
+                              'Phone number - ' +
+                                  (bnsPost?.contactDetails ?? ""),
+                              style: theme.textTheme.headline4?.copyWith(
+                                  fontSize: 20, fontWeight: FontWeight.w400),
                             ),
                           ],
                         ),
                         Container(
-                          margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Icon(Icons.phone_outlined),
                               Text(
-                                'contact details',
-                                // bnsPost?.contactDetails ?? "",
-                                style: theme.textTheme.headline1?.copyWith(
-                                  fontWeight: FontWeight.w100,
-                                  fontSize: 17,
-                                ),
+                                "Negotiable - " +
+                                    ((bnsPost?.negotiable ?? false)
+                                        ? "Yes"
+                                        : "No"),
+                                style: theme.textTheme.headline4?.copyWith(
+                                    fontSize: 20, fontWeight: FontWeight.w400),
                               ),
                             ],
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.fromLTRB(0, screen_h * 0.06, 0, 0),
                           child: Text(
-                            'claimed or not claimed',
+                            (bnsPost?.action == 'giveaway'
+                                ? "GiveAway"
+                                : "Price - ₹" +
+                                    (bnsPost?.price ?? 0).toString()),
                             style: theme.textTheme.headline4?.copyWith(
-                                fontSize: 25, fontWeight: FontWeight.w600),
+                                fontSize: 20, fontWeight: FontWeight.w400),
                             textAlign: TextAlign.left,
                           ),
                         )
                       ],
                     ),
                   ),
+                  Spacer(),
                 ],
               ),
             ),

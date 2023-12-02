@@ -4,12 +4,17 @@ import 'dart:io';
 import 'package:InstiApp/src/api/model/UserTag.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/buynsellPost.dart';
 import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/lostandfoundPost.dart';
+import 'package:InstiApp/src/api/model/mess.dart';
 import 'package:InstiApp/src/api/model/messCalEvent.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
 import 'package:InstiApp/src/api/model/offeredAchievements.dart';
+import 'package:InstiApp/src/api/model/post.dart';
+import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/model/venue.dart';
 import 'package:InstiApp/src/api/request/ach_verify_request.dart';
@@ -33,19 +38,18 @@ import 'package:InstiApp/src/api/response/getencr_response.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/api/response/news_feed_response.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
-import 'package:InstiApp/src/api/model/mess.dart';
-import 'package:InstiApp/src/api/model/post.dart';
-import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/response/user_tags_reach_response.dart';
-import 'package:retrofit/retrofit.dart' as rt;
 import 'package:dio/dio.dart';
+import 'package:retrofit/retrofit.dart' as rt;
+
 import 'model/offersecret.dart';
+
 part 'apiclient.g.dart';
 
-// @rt.RestApi(baseUrl: "http://192.168.230.89:8000/api")
+//@rt.RestApi(baseUrl: "http://192.168.1.103:8000/api")
 // @rt.RestApi(baseUrl: "http://10.105.177.150/api")
 @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
-// @rt.RestApi(baseUrl: "https://0ac7-103-21-125-80.in.ngrok.io/api")
+// @rt.RestApi(baseUrl: "https://272c-2405-201-5004-3c2f-d836-b028-6ac-ad9.ngrok-free.app/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
@@ -381,4 +385,34 @@ abstract class InstiAppApi {
   @rt.POST('/achievements-offer')
   Future<dynamic> createAchievement(
       sessionId, @rt.Body() OfferedAchievements offeredAchievements);
+
+//Buy & Sell
+  @rt.GET('/buy/products')
+  Future<List<BuynSellPost>> getBuynSellPosts(
+      @rt.Header("Cookie") String sessionId);
+
+  @rt.GET('/buy/products/{id}')
+  Future<BuynSellPost> getBuynSellPost(
+      @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+
+  @rt.DELETE('/buy/products/{id}')
+  Future<BuynSellPost> deleteBuynSellPost(
+      @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+
+  @rt.PUT('/buy/products/{id}')
+  Future<BuynSellPost> updateBuynSellPost(@rt.Header("Cookie") String sessionId,
+      @rt.Path() String id, @rt.Body() BuynSellPost post);
+
+  @rt.POST("/buy/products")
+  Future<BuynSellPost> createBuynSellPost(
+      @rt.Header("Cookie") String sessionId, @rt.Body() BuynSellPost post);
+
+  //Lost & Found
+  @rt.GET('/lnf/products')
+  Future<List<LostAndFoundPost>> getLostAndFoundPosts(
+      @rt.Header("Cookie") String sessionId);
+
+  @rt.GET('/lnf/products/{id}')
+  Future<LostAndFoundPost> getLostAndFoundPost(
+      @rt.Header("Cookie") String sessionId, @rt.Path() String id);
 }
