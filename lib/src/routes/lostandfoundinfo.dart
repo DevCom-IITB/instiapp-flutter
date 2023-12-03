@@ -1,7 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
 // import '../api/model/buynsellPost.dart';
 
 class LostAndFoundInfoPage extends StatefulWidget {
@@ -60,218 +59,214 @@ class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
     var screen_h = screen_hr * x;
 
     return Scaffold(
-        bottomNavigationBar: MyBottomAppBar(
-          shape: RoundedNotchedRectangle(),
-          child: new Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.menu_outlined,
-                  color: Colors.blue.withOpacity(0),
-                  semanticLabel: "Show navigation drawer",
-                ),
-                onPressed: () {
-                  _scaffoldKey.currentState?.openDrawer();
-                },
+      bottomNavigationBar: MyBottomAppBar(
+        shape: RoundedNotchedRectangle(),
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.menu_outlined,
+                color: Colors.blue.withOpacity(0),
+                semanticLabel: "Show navigation drawer",
               ),
-            ],
-          ),
+              onPressed: () {
+                _scaffoldKey.currentState?.openDrawer();
+              },
+            ),
+          ],
         ),
-        body: SingleChildScrollView(
-          child: Column(children: [
-            Container(
+      ),
+      body: SingleChildScrollView(
+        child: Column(children: [
+          Container(
+            padding: EdgeInsets.only(top: 32, left: 16),
+            alignment: Alignment.topLeft,
+            child: Container(
               padding: EdgeInsets.only(top: 32, left: 16),
               alignment: Alignment.topLeft,
-              child: Container(
-                padding: EdgeInsets.only(top: 32, left: 16),
-                alignment: Alignment.topLeft,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.blueAccent,
-                      width: 2.0,
-                    ),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.blueAccent,
+                    width: 2.0,
                   ),
-                  child: IconButton(
-                    icon: Icon(Icons.arrow_back_ios_outlined,
-                        color: Colors.blueAccent),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
+                ),
+                child: IconButton(
+                  icon: Icon(Icons.arrow_back_ios_outlined,
+                      color: Colors.blueAccent),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  margin: EdgeInsets.fromLTRB(screen_w * 0.1, 15, 0, 0),
-                  child: SizedBox(
-                    height: screen_h / 1.2,
-                    width: screen_w / 1,
-                    // child: ImageCarousel(imageList),
-                  ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                margin: EdgeInsets.fromLTRB(screen_w * 0.1, 15, 0, 0),
+                child: SizedBox(
+                  height: screen_h / 1.2,
+                  width: screen_w / 1,
+                  // child: ImageCarousel(imageList),
                 ),
-                Spacer(),
-              ],
+              ),
+              Spacer(),
+            ],
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Container(
+              margin: EdgeInsets.fromLTRB(screen_w * 0.1, 11, 0, 0),
+              child: Container(
+                width: screen_w,
+                child: Text('found at ',
+                    // bnsPost?.brand ?? "",
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.headline6
+                        ?.copyWith(fontWeight: FontWeight.w100, fontSize: 20)),
+              ),
+              // style: TextStyle(
+              //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
             ),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+          ]),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.start,
+          //   children: [
+          //     Container(
+          //       margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
+          //       child: Text(
+          //         '${bnsPost?.user?.userName ?? ""} (${bnsPost?.user?.userLDAPId ?? ""})',
+          //       ),
+          //     ),
+          //   ],
+          // ),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                  width: screen_w * 0.9,
+                  margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
+                  child: Text('naefwefssssssswefme',
+                      // bnsPost?.name ?? "",
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.headline5?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        // fontSize: 30,
+                        fontSize: 30,
+                      )
+                      // style: TextStyle(
+                      //     fontSize: myfont * 1.5, fontWeight: FontWeight.w700),
+                      )),
+            ],
+          ),
+          // Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+          //   Container(
+          //     margin: EdgeInsets.fromLTRB(screen_w * 0.1, 5, 0, 0),
+          //     child: Text("Condition - " + (bnsPost?.condition ?? '0') + '/10',
+          //         style: theme.textTheme.headline6
+          //             ?.copyWith(fontSize: 15, fontWeight: FontWeight.w500)
+          //         // style: TextStyle(fontSize: myfont, fontWeight: FontWeight.w100),
+          //         ),
+          //   )
+          // ]),
+          Column(children: [
+            Container(
+              width: screen_w * 0.9,
+              height: screen_h * 0.5,
+              margin: EdgeInsets.fromLTRB(0, 8, 0, 0),
+              child: Text('description',
+                  // bnsPost?.description ?? "",
+                  maxLines: 10,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
+                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 13)
+                  // style: TextStyle(
+                  //     fontSize: myfont * 0.75, fontWeight: FontWeight.w100),
+                  ),
+            ),
+            SizedBox(
+              height: screen_h * 0.07,
+            ),
+            // SizedBox(
+            //   width: screen_w,
+            //   child: Text(
+            //     "Negotiable - " +
+            //         ((bnsPost?.negotiable ?? false) ? "Yes" : "No"),
+            //     style: theme.textTheme.bodyLarge
+            //         ?.copyWith(fontSize: 18, fontWeight: FontWeight.w400),
+            //     textAlign: TextAlign.end,
+            //
+            //     // style: TextStyle(
+            //     //     fontSize: myfont, fontWeight: FontWeight.w500),
+            //   ),
+            // ),
+            SizedBox(
+              height: 0.09 * screen_h,
+            ),
+            SizedBox(
+              width: screen_w,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    margin: EdgeInsets.fromLTRB(screen_w * 0.1, 11, 0, 0),
-                    child: Container(
-                        width: screen_w,
-                        child: Text('found at ',
-                          // bnsPost?.brand ?? "",
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.headline6?.copyWith(
-                              fontWeight: FontWeight.w100, fontSize: 20)),
-                        ),
-                      // style: TextStyle(
-                      //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
-                    ),
-
-                  ]),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.start,
-                  //   children: [
-                  //     Container(
-                  //       margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
-                  //       child: Text(
-                  //         '${bnsPost?.user?.userName ?? ""} (${bnsPost?.user?.userLDAPId ?? ""})',
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                          width: screen_w * 0.9,
-                          margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
-                          child: Text('naefwefssssssswefme',
-                              // bnsPost?.name ?? "",
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.headline5?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                // fontSize: 30,
-                                fontSize: 30,
-                              )
-                            // style: TextStyle(
-                            //     fontSize: myfont * 1.5, fontWeight: FontWeight.w700),
-                          )),
-                    ],
-                  ),
-                  // Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  //   Container(
-                  //     margin: EdgeInsets.fromLTRB(screen_w * 0.1, 5, 0, 0),
-                  //     child: Text("Condition - " + (bnsPost?.condition ?? '0') + '/10',
-                  //         style: theme.textTheme.headline6
-                  //             ?.copyWith(fontSize: 15, fontWeight: FontWeight.w500)
-                  //         // style: TextStyle(fontSize: myfont, fontWeight: FontWeight.w100),
-                  //         ),
-                  //   )
-                  // ]),
-                  Column(children: [
-                    Container(
-                      width: screen_w * 0.9,
-                      height: screen_h * 0.5,
-                      margin: EdgeInsets.fromLTRB(0, 8, 0, 0),
-                      child: Text('description',
-                          // bnsPost?.description ?? "",
-                          maxLines: 10,
-                          overflow: TextOverflow.ellipsis,
-                          softWrap: false,
-                          style: theme.textTheme.bodySmall?.copyWith(fontSize: 13)
-                        // style: TextStyle(
-                        //     fontSize: myfont * 0.75, fontWeight: FontWeight.w100),
-                      ),
-                    ),
-                    SizedBox(
-                      height: screen_h * 0.07,
-                    ),
-                    // SizedBox(
-                    //   width: screen_w,
-                    //   child: Text(
-                    //     "Negotiable - " +
-                    //         ((bnsPost?.negotiable ?? false) ? "Yes" : "No"),
-                    //     style: theme.textTheme.bodyLarge
-                    //         ?.copyWith(fontSize: 18, fontWeight: FontWeight.w400),
-                    //     textAlign: TextAlign.end,
-                    //
-                    //     // style: TextStyle(
-                    //     //     fontSize: myfont, fontWeight: FontWeight.w500),
-                    //   ),
-                    // ),
-                    SizedBox(
-                      height: 0.09 * screen_h,
-                    ),
-                    SizedBox(
-                      width: screen_w,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Phone number',
-                                      style: theme.textTheme.headline6?.copyWith(
-                                          fontWeight: FontWeight.bold, fontSize: 17),
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Icon(Icons.phone_outlined),
-                                      Text('contact details',
-                                        // bnsPost?.contactDetails ?? "",
-                                        style: theme.textTheme.headline1?.copyWith(
-                                          fontWeight: FontWeight.w100,
-                                          fontSize: 17,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.fromLTRB(0, screen_h * 0.06, 0, 0),
-                                  child: Text(
-                                    'claimed or not claimed',
-                                    style: theme.textTheme.headline4
-                                        ?.copyWith(fontSize: 25, fontWeight: FontWeight.w600),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                )
-                              ],
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Phone number',
+                              style: theme.textTheme.headline6?.copyWith(
+                                  fontWeight: FontWeight.bold, fontSize: 17),
                             ),
+                          ],
+                        ),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(Icons.phone_outlined),
+                              Text(
+                                'contact details',
+                                // bnsPost?.contactDetails ?? "",
+                                style: theme.textTheme.headline1?.copyWith(
+                                  fontWeight: FontWeight.w100,
+                                  fontSize: 17,
+                                ),
+                              ),
+                            ],
                           ),
-
-                        ],
-                      ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0, screen_h * 0.06, 0, 0),
+                          child: Text(
+                            'claimed or not claimed',
+                            style: theme.textTheme.headline4?.copyWith(
+                                fontSize: 25, fontWeight: FontWeight.w600),
+                            textAlign: TextAlign.left,
+                          ),
+                        )
+                      ],
                     ),
-                  ]),
+                  ),
+                ],
+              ),
+            ),
+          ]),
 
-                  // Add more widgets below the image card
-                ]),
-          ),
-        );
+          // Add more widgets below the image card
+        ]),
+      ),
+    );
   }
 }
 
