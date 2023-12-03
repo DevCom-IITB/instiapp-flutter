@@ -26,6 +26,7 @@ import 'package:InstiApp/src/routes/externalblogpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:InstiApp/src/routes/loginpage.dart';
 import 'package:InstiApp/src/routes/lostandfoundfeedpage.dart';
+import 'package:InstiApp/src/routes/lostandfoundinfo.dart';
 import 'package:InstiApp/src/routes/mappage.dart';
 import 'package:InstiApp/src/routes/messcalendarpage.dart';
 import 'package:InstiApp/src/routes/messpage.dart';
@@ -291,9 +292,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             } else if (temp.startsWith("/lostandfound/info")) {
               return _buildRoute(
                   settings,
-                  BuyAndSellInfoPage(
-                      post: widget.bloc.buynSellPostBloc.getBuynSellPost(
-                          temp.split("/lostandfound/info")[1])));
+                  LostAndFoundInfoPage(
+                      item: widget.bloc.lostAndFoundPostBloc
+                          .getLostAndFoundPost(
+                              temp.split("/lostandfound/info")[1])));
             } else {
               switch (settings.name) {
                 case "/":
