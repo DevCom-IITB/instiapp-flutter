@@ -11,7 +11,7 @@ import '../utils/title_with_backbutton.dart';
 
 
 class LostNFoundPage extends StatefulWidget {
-  LostNFoundPage({Key? key}) : super(key: key);
+  LostNFoundPage({Key? key, Future<LostAndFoundPost?> item}) : super(key: key);
   //final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
