@@ -1,7 +1,6 @@
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-
 import '../api/model/buynsellPost.dart';
 
 class BuyAndSellInfoPage extends StatefulWidget {

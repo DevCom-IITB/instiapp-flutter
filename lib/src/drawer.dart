@@ -193,7 +193,7 @@ class _NavDrawerState extends State<NavDrawer> {
                         selected: indexSnapshot.data == 17,
                       ),
                       18: NavListTile(
-                        icon: Icons.verified_outlined,
+                        icon: Icons.fmd_bad,
                         title: "Lost And Found",
                         onTap: () {
                           changeSelection(9, drawerState!);
