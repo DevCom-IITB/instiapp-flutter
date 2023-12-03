@@ -1,27 +1,29 @@
+import 'package:InstiApp/src/api/model/lostandfoundPost.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-// import '../api/model/buynsellPost.dart';
+
+import '../api/model/lostandfoundPost.dart';
 
 class LostAndFoundInfoPage extends StatefulWidget {
-  // final Future<BuynSellPost?> post;
+  final Future<LostAndFoundPost?> item;
 
-  LostAndFoundInfoPage();
+  LostAndFoundInfoPage({required this.item});
 
-  // static void navigateWith(
-  //     BuildContext context, BuynSellPost bloc, BuynSellPost post) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       settings: RouteSettings(
-  //         name: "/${post.id ?? ""}",
-  //       ),
-  //       builder: (context) => BuyAndSellInfoPage(
-  //         post: bloc.getBuynSellPost(post.id ?? ""),
-  //       ),
-  //     ),
-  //   );
-  // }
+  static void navigateWith(
+      BuildContext context, LostAndFoundPost bloc, LostAndFoundPost item) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        settings: RouteSettings(
+          name: "/${item.id ?? ""}",
+        ),
+        builder: (context) => LostAndFoundInfoPage(
+          item: bloc.getLostAndFoundPost(item.id ?? ""),
+        ),
+      ),
+    );
+  }
 
   @override
   State<LostAndFoundInfoPage> createState() => _LostAndFoundInfoPageState();
@@ -30,18 +32,18 @@ class LostAndFoundInfoPage extends StatefulWidget {
 class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  // BuynSellPost? bnsPost;
+  LostAndFoundPost? lnfPost;
 
   @override
   void initState() {
     super.initState();
-    // widget.post.then((bnsPost) {
-    //   if (this.mounted) {
-    //     setState(() {
-    //       this.bnsPost = bnsPost;
-    //     });
-    //   }
-    // });
+    widget.item.then((lnfPost) {
+      if (this.mounted) {
+        setState(() {
+          this.lnfPost = lnfPost;
+        });
+      }
+    });
   }
 
   @override
