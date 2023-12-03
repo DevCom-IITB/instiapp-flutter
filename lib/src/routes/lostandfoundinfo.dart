@@ -3,8 +3,6 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../api/model/lostandfoundPost.dart';
-
 class LostAndFoundInfoPage extends StatefulWidget {
   final Future<LostAndFoundPost?> item;
 
@@ -125,15 +123,12 @@ class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
               margin: EdgeInsets.fromLTRB(screen_w * 0.1, 11, 0, 0),
               child: Container(
                 width: screen_w,
-                child: Text('found at ',
-                    // bnsPost?.brand ?? "",
+                child: Text(lnfPost?.foundAt ?? "",
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.headline6
                         ?.copyWith(fontWeight: FontWeight.w100, fontSize: 20)),
               ),
-              // style: TextStyle(
-              //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
             ),
           ]),
           // Row(
@@ -154,13 +149,11 @@ class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
               Container(
                   width: screen_w * 0.9,
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
-                  child: Text('naefwefssssssswefme',
-                      // bnsPost?.name ?? "",
+                  child: Text(lnfPost?.name ?? "",
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.headline5?.copyWith(
                         fontWeight: FontWeight.bold,
-                        // fontSize: 30,
                         fontSize: 30,
                       )
                       // style: TextStyle(
@@ -168,47 +161,21 @@ class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
                       )),
             ],
           ),
-          // Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-          //   Container(
-          //     margin: EdgeInsets.fromLTRB(screen_w * 0.1, 5, 0, 0),
-          //     child: Text("Condition - " + (bnsPost?.condition ?? '0') + '/10',
-          //         style: theme.textTheme.headline6
-          //             ?.copyWith(fontSize: 15, fontWeight: FontWeight.w500)
-          //         // style: TextStyle(fontSize: myfont, fontWeight: FontWeight.w100),
-          //         ),
-          //   )
-          // ]),
+
           Column(children: [
             Container(
               width: screen_w * 0.9,
               height: screen_h * 0.5,
               margin: EdgeInsets.fromLTRB(0, 8, 0, 0),
-              child: Text('description',
-                  // bnsPost?.description ?? "",
+              child: Text(lnfPost?.description ?? "",
                   maxLines: 10,
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
-                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 13)
-                  // style: TextStyle(
-                  //     fontSize: myfont * 0.75, fontWeight: FontWeight.w100),
-                  ),
+                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 13)),
             ),
             SizedBox(
               height: screen_h * 0.07,
             ),
-            // SizedBox(
-            //   width: screen_w,
-            //   child: Text(
-            //     "Negotiable - " +
-            //         ((bnsPost?.negotiable ?? false) ? "Yes" : "No"),
-            //     style: theme.textTheme.bodyLarge
-            //         ?.copyWith(fontSize: 18, fontWeight: FontWeight.w400),
-            //     textAlign: TextAlign.end,
-            //
-            //     // style: TextStyle(
-            //     //     fontSize: myfont, fontWeight: FontWeight.w500),
-            //   ),
-            // ),
             SizedBox(
               height: 0.09 * screen_h,
             ),
@@ -221,37 +188,33 @@ class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        lnfPost?.claimed == false
+                            ? Container(
+                                child: Text(
+                                  'Claimed by ' +
+                                      (lnfPost?.claimedBy?.userLDAPId ?? ""),
+                                  style: theme.textTheme.headline6?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 17),
+                                ),
+                              )
+                            : Container(),
                         Row(
                           children: [
                             Text(
-                              'Phone number',
+                              'Phone number - ' +
+                                  (lnfPost?.contactDetails ?? ""),
                               style: theme.textTheme.headline6?.copyWith(
                                   fontWeight: FontWeight.bold, fontSize: 17),
                             ),
                           ],
                         ),
                         Container(
-                          margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Icon(Icons.phone_outlined),
-                              Text(
-                                'contact details',
-                                // bnsPost?.contactDetails ?? "",
-                                style: theme.textTheme.headline1?.copyWith(
-                                  fontWeight: FontWeight.w100,
-                                  fontSize: 17,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
                           margin: EdgeInsets.fromLTRB(0, screen_h * 0.06, 0, 0),
                           child: Text(
-                            'claimed or not claimed',
+                            lnfPost?.claimed == true
+                                ? "Claimed"
+                                : "Not Claimed",
                             style: theme.textTheme.headline4?.copyWith(
                                 fontSize: 25, fontWeight: FontWeight.w600),
                             textAlign: TextAlign.left,
@@ -260,6 +223,7 @@ class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
                       ],
                     ),
                   ),
+                  Spacer(),
                 ],
               ),
             ),
