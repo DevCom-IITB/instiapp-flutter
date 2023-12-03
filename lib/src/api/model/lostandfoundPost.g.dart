@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'lostandfound.dart';
+part of 'lostandfoundPost.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
