@@ -7,6 +7,8 @@ import 'package:jaguar/jaguar.dart' as jag;
 import 'package:flutter_webview_pro/webview_flutter.dart' as webview;
 
 class MapPage extends StatefulWidget {
+  final String? location;
+  MapPage({this.location});
   @override
   _MapPageState createState() => _MapPageState();
 }
@@ -15,7 +17,8 @@ class _MapPageState extends State<MapPage> {
   late jag.Jaguar server;
 
   final String hostUrl = "www.insti.app";
-  final String mapUrl = "https://www.insti.app/map/?sandbox=true";
+  // final String mapUrl = "https://www.insti.app/map/?sandbox=true";
+  String mapUrl = "https://www.insti.app/map/?sandbox=true";
 
   StreamSubscription<String>? onUrlChangedSub;
   webview.WebViewController? webViewController;
@@ -27,6 +30,8 @@ class _MapPageState extends State<MapPage> {
 
   @override
   void initState() {
+    mapUrl =
+        ("https://www.insti.app/map/${Uri.encodeComponent(widget.location ?? "")}?sandbox=true");
     super.initState();
   }
 
@@ -77,12 +82,7 @@ class _MapPageState extends State<MapPage> {
         onWebViewCreated: (webview.WebViewController webViewController) {
           this.webViewController = webViewController;
         },
-        navigationDelegate: (webview.NavigationRequest request) {
-          if (request.url.startsWith(mapUrl)) {
-            return webview.NavigationDecision.prevent;
-          }
-          return webview.NavigationDecision.navigate;
-        },
+        zoomEnabled: false,
         geolocationEnabled: true,
       ),
     );
