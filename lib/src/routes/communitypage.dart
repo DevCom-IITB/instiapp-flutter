@@ -204,11 +204,11 @@ class _CommunityPageState extends State<CommunityPage> {
       //move to next page
 
       if (firstCallBack) {
-        //TODO: Remove this navigation if more than one community
-        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-          Navigator.of(context).pop();
-          CommunityDetails.navigateWith(context, communityBloc, communities[0]);
-        });
+        // //TODO: Remove this navigation if more than one community
+        // WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+        //   Navigator.of(context).pop();
+        //   CommunityDetails.navigateWith(context, communityBloc, communities[0]);
+        // });
         firstCallBack = false;
       }
 
@@ -244,8 +244,7 @@ class _CommunityPageState extends State<CommunityPage> {
               .cover, //I assumed you want to occupy the entire space of the card
           image: community.coverImg != null
               ? CachedNetworkImageProvider(community.coverImg!)
-              : CachedNetworkImageProvider(
-                  "https://devcom-iitb.org/images/logos/DC_logo.png"),
+              : Image.asset('assets/buynsell/DevcomLogo.png').image,
           colorFilter:
               ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.darken),
         ),
