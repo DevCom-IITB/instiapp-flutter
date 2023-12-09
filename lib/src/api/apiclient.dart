@@ -340,7 +340,8 @@ abstract class InstiAppApi {
   Future<CommunityPostListResponse> getCommunityPosts(
       @rt.Header("Cookie") String sessionId,
       @rt.Query("status") int? status,
-      @rt.Query("query") String query);
+      @rt.Query("query") String query,
+      @rt.Query("community") String id);
 
   @rt.GET("/communityposts/{id}")
   Future<CommunityPost> getCommunityPost(
