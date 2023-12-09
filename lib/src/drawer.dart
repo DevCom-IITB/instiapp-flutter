@@ -192,6 +192,16 @@ class _NavDrawerState extends State<NavDrawer> {
                         highlight: indexSnapshot.data == 17,
                         selected: indexSnapshot.data == 17,
                       ),
+                      18: NavListTile(
+                        icon: Icons.fmd_bad,
+                        title: "Lost And Found",
+                        onTap: () {
+                          changeSelection(9, drawerState!);
+                          navigateNamed('/lostandfound');
+                        },
+                        highlight: indexSnapshot.data == 18,
+                        selected: indexSnapshot.data == 18,
+                      ),
                       8: NavExpansionTile(
                         title: "Utilities",
                         initiallyExpanded: indexSnapshot.data == 11 ||
