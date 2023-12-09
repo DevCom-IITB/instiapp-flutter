@@ -1,13 +1,12 @@
+import 'package:InstiApp/src/api/model/lostandfoundPost.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/lost_and_found_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:InstiApp/src/api/model/lostandfoundPost.dart';
 
 import '../api/model/lostandfoundPost.dart';
-import '../api/model/user.dart';
 import '../utils/title_with_backbutton.dart';
 
 class LostNFoundPage extends StatefulWidget {
@@ -151,17 +150,12 @@ class _LostpageState extends State<LostPage> {
       double myfont, BuildContext context, AsyncSnapshot snapshot) {
     List<LostAndFoundPost> posts = snapshot.data!;
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context)!.bloc;
 
     return Center(
       child: (SizedBox(
         height: screen_h * 0.7,
         width: screen_w * 1.2,
-        child: Stack(
-          alignment: Alignment.center
-            ,
-            children: [
-
+        child: Stack(alignment: Alignment.center, children: [
           Card(
             color: theme.cardColor,
             margin: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
@@ -229,7 +223,8 @@ class _LostpageState extends State<LostPage> {
                     child: Text(
                       (posts[index].foundAt ?? "").length <= 10
                           ? posts[index].foundAt ?? ""
-                          : (posts[index].foundAt ?? "").substring(0, 10) + '...',
+                          : (posts[index].foundAt ?? "").substring(0, 10) +
+                              '...',
                       style: theme.textTheme.bodyText2,
                       maxLines: 1,
                     ),
@@ -256,7 +251,6 @@ class _LostpageState extends State<LostPage> {
                         Icons.access_time,
                         size: ((myfont / 18 * 12).toInt()).toDouble(),
                       ),
-
                       Text(' ' + (posts[index].timeBefore ?? ""),
                           style: theme.textTheme.bodyText1!.copyWith(
                             fontWeight: FontWeight.bold,
@@ -266,20 +260,19 @@ class _LostpageState extends State<LostPage> {
                     margin:
                         EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 135, 0, 0),
                   ),
-                 Container(
-                      margin:
-                          EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 35, 0, 0)),
+                  Container(
+                      margin: EdgeInsets.fromLTRB(
+                          screen_h * 0.20 / 0.43, 35, 0, 0)),
                   Container(
                       padding: EdgeInsets.fromLTRB(0, 13, 10, 0),
                       child: Text(
-                          (posts[index].description ?? ""), maxLines: 2,
-
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.bodyText2,
-
-                          ),
-                      margin:
-                          EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 43, 0, 0)),
+                        (posts[index].description ?? ""),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodyText2,
+                      ),
+                      margin: EdgeInsets.fromLTRB(
+                          screen_h * 0.20 / 0.43, 43, 0, 0)),
                   Row(
                     children: [
                       Spacer(),
@@ -295,17 +288,22 @@ class _LostpageState extends State<LostPage> {
               side: BorderSide(color: Colors.blue),
             ),
           ),
-
-             if(posts[index].claimed== true) Container(
-                width: screen_w*0.15,
-                height: screen_w*0.15,
-                decoration: new BoxDecoration(
-                  color: Colors.green,
-                  shape: BoxShape.circle,
-                ),
+          if (posts[index].claimed == true)
+            Container(
+              width: screen_w * 0.15,
+              height: screen_w * 0.15,
+              decoration: new BoxDecoration(
+                color: Colors.green,
+                shape: BoxShape.circle,
               ),
-              if(posts[index].claimed== true)Container(
-                  child: Icon( Icons.check, color: Colors.white, size: screen_w * 0.15,)),
+            ),
+          if (posts[index].claimed == true)
+            Container(
+                child: Icon(
+              Icons.check,
+              color: Colors.white,
+              size: screen_w * 0.15,
+            )),
         ]),
       )),
     );
