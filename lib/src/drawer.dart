@@ -164,7 +164,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       ),
                       15: NavListTile(
                         icon: Icons.forum_outlined,
-                        title: "Insight Discussion Forum",
+                        title: "Communities",
                         onTap: () {
                           changeSelection(15, drawerState!);
                           navigateNamed('/groups');

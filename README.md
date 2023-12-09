@@ -14,11 +14,12 @@ For help getting started with Flutter, view online
 ## Getting Started
 
 1. Follow instructions at [Flutter Website](https://flutter.io/) to download and setup flutter and its dependencies
-2. Clone this repo
-3. Run `flutter packages get` to get all the dependency packages
-4. Run `flutter packages pub run build_runner build --delete-conflicting-outputs` to generate code for JSON Serailizing and Retrofit ApiClient
-5. Run `flutter run` to run the app on any device/simulator/emulator.
-6. \[_Optional but recommended_\] Use either Visual Studio Code or Android Studio to code/debug.
+2. We use Flutter version 2.10.5
+3. Clone this repo
+4. Run `flutter packages get` to get all the dependency packages
+5. Run `flutter packages pub run build_runner build --delete-conflicting-outputs` to generate code for JSON Serializing and Retrofit ApiClient
+6. Run `flutter run` to run the app on any device/simulator/emulator.
+7. \[_Optional but recommended_\] Use either Visual Studio Code or Android Studio to code/debug.
 
 ## pod install error on M1 mac
 
