@@ -41,10 +41,15 @@ class CommunityPostBloc {
         bloc.getSessionIdHeader(), post.id!, reaction);
   }
 
-  Future refresh({CPType type = CPType.All}) async {
+  Future refresh({CPType type = CPType.All, required String? id}) async {
     // _communityPosts = defCommunities;
     // _communitySubject.add(defCommunities);
     // print("refresh");
+    if (id == null) {
+      _communitySubject.add([]);
+      return;
+    }
+
     int? status;
     switch (type) {
       case CPType.All:
@@ -60,9 +65,9 @@ class CommunityPostBloc {
         status = null;
         break;
     }
-    _communityPosts = (await bloc.client
-                .getCommunityPosts(bloc.getSessionIdHeader(), status, query))
-            .data ??
+    _communityPosts = (await bloc.client.getCommunityPosts(
+        bloc.getSessionIdHeader(), status, query, id))
+        .data ??
         [];
 
     // print("community" + _communityPosts.toString());
