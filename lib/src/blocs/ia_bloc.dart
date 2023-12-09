@@ -1,13 +1,19 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io' show Platform;
+
 import 'package:InstiApp/main.dart';
+import 'package:InstiApp/src/api/apiclient.dart';
 import 'package:InstiApp/src/api/chatbotapiclient.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/mess.dart';
+import 'package:InstiApp/src/api/model/notification.dart' as ntf;
 import 'package:InstiApp/src/api/model/role.dart';
+import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
 import 'package:InstiApp/src/api/request/postFAQ_request.dart';
@@ -16,6 +22,7 @@ import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/api/response/alumni_login_response.dart';
 import 'package:InstiApp/src/api/response/getencr_response.dart';
 import 'package:InstiApp/src/blocs/ach_to_vefiry_bloc.dart';
+import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
 import 'package:InstiApp/src/blocs/buynsell_post_bloc.dart';
 import 'package:InstiApp/src/blocs/calendar_bloc.dart';
@@ -23,27 +30,22 @@ import 'package:InstiApp/src/blocs/community_bloc.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/blocs/complaints_bloc.dart';
 import 'package:InstiApp/src/blocs/drawer_bloc.dart';
-import 'package:InstiApp/src/api/apiclient.dart';
-import 'package:InstiApp/src/api/model/mess.dart';
-import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
+import 'package:InstiApp/src/blocs/lost_and_found_bloc.dart';
 import 'package:InstiApp/src/blocs/map_bloc.dart';
-import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
 import 'package:InstiApp/src/blocs/mess_calendar_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
-import 'dart:collection';
 import 'package:rxdart/rxdart.dart';
 // import 'package:http/io_client.dart';
 // import 'package:http/browser_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:InstiApp/src/api/model/notification.dart' as ntf;
-import 'package:dio/dio.dart';
 
 enum AddToCalendar { AlwaysAsk, Yes, No }
 
@@ -132,6 +134,7 @@ class InstiAppBloc {
   late CommunityBloc communityBloc;
   late CommunityPostBloc communityPostBloc;
   late BuynSellPostBloc buynSellPostBloc;
+  late LostAndFoundPostBloc lostAndFoundPostBloc;
   // actual current state
   Session? currSession;
   var _hostels = <Hostel>[];
@@ -277,6 +280,7 @@ class InstiAppBloc {
     communityBloc = CommunityBloc(this);
     communityPostBloc = CommunityPostBloc(this);
     buynSellPostBloc = BuynSellPostBloc(this);
+    lostAndFoundPostBloc = LostAndFoundPostBloc(this);
 
     _initNotificationBatch();
   }

@@ -1,44 +1,44 @@
+import 'package:InstiApp/src/api/model/lostandfoundPost.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import '../api/model/buynsellPost.dart';
 
-class BuyAndSellInfoPage extends StatefulWidget {
-  final Future<BuynSellPost?> post;
+class LostAndFoundInfoPage extends StatefulWidget {
+  final Future<LostAndFoundPost?> item;
 
-  BuyAndSellInfoPage({required this.post});
+  LostAndFoundInfoPage({required this.item});
 
   static void navigateWith(
-      BuildContext context, BuynSellPost bloc, BuynSellPost post) {
+      BuildContext context, LostAndFoundPost bloc, LostAndFoundPost item) {
     Navigator.push(
       context,
       MaterialPageRoute(
         settings: RouteSettings(
-          name: "/${post.id ?? ""}",
+          name: "/${item.id ?? ""}",
         ),
-        builder: (context) => BuyAndSellInfoPage(
-          post: bloc.getBuynSellPost(post.id ?? ""),
+        builder: (context) => LostAndFoundInfoPage(
+          item: bloc.getLostAndFoundPost(item.id ?? ""),
         ),
       ),
     );
   }
 
   @override
-  State<BuyAndSellInfoPage> createState() => _BuyAndSellInfoPageState();
+  State<LostAndFoundInfoPage> createState() => _LostAndFoundInfoPageState();
 }
 
-class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
+class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  BuynSellPost? bnsPost;
+  LostAndFoundPost? lnfPost;
 
   @override
   void initState() {
     super.initState();
-    widget.post.then((bnsPost) {
+    widget.item.then((lnfPost) {
       if (this.mounted) {
         setState(() {
-          this.bnsPost = bnsPost;
+          this.lnfPost = lnfPost;
         });
       }
     });
@@ -46,7 +46,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<String>? imageList = bnsPost?.imageUrl;
+    // List<String>? imageList = bnsPost?.imageUrl;
     double screen_wr = MediaQuery.of(context).size.width;
     double screen_hr = MediaQuery.of(context).size.height;
     double x, y;
@@ -112,41 +112,36 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                 child: SizedBox(
                   height: screen_h / 1.2,
                   width: screen_w / 1,
-                  child: ImageCarousel(imageList),
+                  // child: ImageCarousel(imageList),
                 ),
               ),
               Spacer(),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                  margin: EdgeInsets.fromLTRB(screen_w * 0.1, 11, 0, 0),
-                  child: Container(
-                    width: screen_w,
-                    child: Text(bnsPost?.brand ?? "",
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.headline6?.copyWith(
-                            fontWeight: FontWeight.w100, fontSize: 20)),
-                  )
-                  // style: TextStyle(
-                  //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
-                  ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
-                child: Text(
-                  '${bnsPost?.user?.userName ?? ""} (${bnsPost?.user?.userLDAPId ?? ""})',
-                ),
+          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Container(
+              margin: EdgeInsets.fromLTRB(screen_w * 0.1, 11, 0, 0),
+              child: Container(
+                width: screen_w,
+                child: Text(lnfPost?.foundAt ?? "",
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.headline6
+                        ?.copyWith(fontWeight: FontWeight.w100, fontSize: 20)),
               ),
-            ],
-          ),
+            ),
+          ]),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.start,
+          //   children: [
+          //     Container(
+          //       margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
+          //       child: Text(
+          //         '${bnsPost?.user?.userName ?? ""} (${bnsPost?.user?.userLDAPId ?? ""})',
+          //       ),
+          //     ),
+          //   ],
+          // ),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -154,12 +149,11 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
               Container(
                   width: screen_w * 0.9,
                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
-                  child: Text(bnsPost?.name ?? "",
+                  child: Text(lnfPost?.name ?? "",
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.headline5?.copyWith(
                         fontWeight: FontWeight.bold,
-                        // fontSize: 30,
                         fontSize: 30,
                       )
                       // style: TextStyle(
@@ -167,32 +161,23 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                       )),
             ],
           ),
-          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Container(
-              margin: EdgeInsets.fromLTRB(screen_w * 0.1, 5, 0, 0),
-              child: Text("Condition - " + (bnsPost?.condition ?? '0') + '/10',
-                  style: theme.textTheme.headline6
-                      ?.copyWith(fontSize: 15, fontWeight: FontWeight.w500)
-                  // style: TextStyle(fontSize: myfont, fontWeight: FontWeight.w100),
-                  ),
-            )
-          ]),
+
           Column(children: [
             Container(
               width: screen_w * 0.9,
               height: screen_h * 0.5,
               margin: EdgeInsets.fromLTRB(0, 8, 0, 0),
-              child: Text(bnsPost?.description ?? "",
+              child: Text(lnfPost?.description ?? "",
                   maxLines: 10,
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
-                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 13)
-                  // style: TextStyle(
-                  //     fontSize: myfont * 0.75, fontWeight: FontWeight.w100),
-                  ),
+                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 13)),
             ),
             SizedBox(
               height: screen_h * 0.07,
+            ),
+            SizedBox(
+              height: 0.09 * screen_h,
             ),
             SizedBox(
               width: screen_w,
@@ -201,41 +186,37 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                 children: [
                   Container(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        lnfPost?.claimed == false
+                            ? Container(
+                                child: Text(
+                                  'Claimed by ' +
+                                      (lnfPost?.claimedBy?.userLDAPId ?? ""),
+                                  style: theme.textTheme.headline6?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 17),
+                                ),
+                              )
+                            : Container(),
                         Row(
                           children: [
                             Text(
                               'Phone number - ' +
-                                  (bnsPost?.contactDetails ?? ""),
-                              style: theme.textTheme.headline4?.copyWith(
-                                  fontSize: 20, fontWeight: FontWeight.w400),
+                                  (lnfPost?.contactDetails ?? ""),
+                              style: theme.textTheme.headline6?.copyWith(
+                                  fontWeight: FontWeight.bold, fontSize: 17),
                             ),
                           ],
                         ),
                         Container(
-                          child: Row(
-                            children: [
-                              Text(
-                                "Negotiable - " +
-                                    ((bnsPost?.negotiable ?? false)
-                                        ? "Yes"
-                                        : "No"),
-                                style: theme.textTheme.headline4?.copyWith(
-                                    fontSize: 20, fontWeight: FontWeight.w400),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
+                          margin: EdgeInsets.fromLTRB(0, screen_h * 0.06, 0, 0),
                           child: Text(
-                            (bnsPost?.action == 'giveaway'
-                                ? "GiveAway"
-                                : "Price - ₹" +
-                                    (bnsPost?.price ?? 0).toString()),
+                            lnfPost?.claimed == true
+                                ? "Claimed"
+                                : "Not Claimed",
                             style: theme.textTheme.headline4?.copyWith(
-                                fontSize: 20, fontWeight: FontWeight.w400),
+                                fontSize: 25, fontWeight: FontWeight.w600),
                             textAlign: TextAlign.left,
                           ),
                         )

@@ -1,14 +1,22 @@
- import 'dart:async';
+import 'dart:async';
 
+import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/routes/aboutpage.dart';
+import 'package:InstiApp/src/routes/achievement_form.dart';
+import 'package:InstiApp/src/routes/alumniLoginPage.dart';
+import 'package:InstiApp/src/routes/alumni_OTP_Page.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/buynsell_categories.dart';
 import 'package:InstiApp/src/routes/buynsell_createpost.dart';
 import 'package:InstiApp/src/routes/buynsell_info.dart';
 import 'package:InstiApp/src/routes/buynsell_page.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
+import 'package:InstiApp/src/routes/chatbot.dart';
 import 'package:InstiApp/src/routes/communitydetails.dart';
+import 'package:InstiApp/src/routes/communitypage.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
+import 'package:InstiApp/src/routes/createpost_form.dart';
 import 'package:InstiApp/src/routes/event_form.dart';
 // import 'package:InstiApp/src/routes/complaintpage.dart';
 // import 'package:InstiApp/src/routes/complaintspage.dart';
@@ -16,15 +24,17 @@ import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/routes/externalblogpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
+import 'package:InstiApp/src/routes/loginpage.dart';
+import 'package:InstiApp/src/routes/lostandfoundfeedpage.dart';
+import 'package:InstiApp/src/routes/lostandfoundinfo.dart';
 import 'package:InstiApp/src/routes/mappage.dart';
 import 'package:InstiApp/src/routes/messcalendarpage.dart';
+import 'package:InstiApp/src/routes/messpage.dart';
 // import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
-import 'package:InstiApp/src/routes/chatbot.dart';
-import 'package:InstiApp/src/routes/communitypage.dart';
 import 'package:InstiApp/src/routes/notificationspage.dart';
+import 'package:InstiApp/src/routes/placementblogpage.dart';
 import 'package:InstiApp/src/routes/putentitypage.dart';
-import 'package:InstiApp/src/routes/createpost_form.dart';
 import 'package:InstiApp/src/routes/qrpage.dart';
 import 'package:InstiApp/src/routes/queryaddpage.dart';
 import 'package:InstiApp/src/routes/querypage.dart';
@@ -32,27 +42,19 @@ import 'package:InstiApp/src/routes/quicklinkspage.dart';
 import 'package:InstiApp/src/routes/settingspage.dart';
 import 'package:InstiApp/src/routes/trainingblogpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
-import 'package:InstiApp/src/routes/achievement_form.dart';
 import 'package:InstiApp/src/routes/your_achievements.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
 import 'package:InstiApp/src/utils/notif_settings.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:InstiApp/src/bloc_provider.dart';
-import 'package:InstiApp/src/blocs/ia_bloc.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:InstiApp/src/routes/messpage.dart';
-import 'package:InstiApp/src/routes/loginpage.dart';
-import 'package:InstiApp/src/routes/alumniLoginPage.dart';
-import 'package:InstiApp/src/routes/alumni_OTP_Page.dart';
-import 'package:InstiApp/src/routes/placementblogpage.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:uni_links/uni_links.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
 
 void main() async {
   GlobalKey<MyAppState> key = GlobalKey();
@@ -280,15 +282,20 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                       cookie: widget.bloc.getSessionIdHeader()));
             } else if (temp.startsWith("/map/")) {
               return _buildRoute(
-                  settings,
-                  MapPage(
-                      location:temp.split("/map/")[1]));
-            }else if (temp.startsWith("/buyandsell/info")) {
+                  settings, MapPage(location: temp.split("/map/")[1]));
+            } else if (temp.startsWith("/buyandsell/info")) {
               return _buildRoute(
                   settings,
                   BuyAndSellInfoPage(
                       post: widget.bloc.buynSellPostBloc
                           .getBuynSellPost(temp.split("/buyandsell/info")[1])));
+            } else if (temp.startsWith("/lostandfound/info")) {
+              return _buildRoute(
+                  settings,
+                  LostAndFoundInfoPage(
+                      item: widget.bloc.lostAndFoundPostBloc
+                          .getLostAndFoundPost(
+                              temp.split("/lostandfound/info")[1])));
             } else {
               switch (settings.name) {
                 case "/":
@@ -364,6 +371,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, ExternalBlogPage());
                 case "/query":
                   return _buildRoute(settings, QueryPage());
+                case "/lostandfound":
+                  return _buildRoute(settings, LostPage());
                 case "/query/add":
                   return _buildRoute(settings, QueryAddPage());
                 case "/messcalendar":
