@@ -4,6 +4,7 @@ import 'package:InstiApp/src/blocs/lost_and_found_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../api/model/lostandfoundPost.dart';
@@ -238,8 +239,9 @@ class _LostpageState extends State<LostPage> {
                           Text(
                             (posts[index].claimed == true
                                 ? "Claimed"
-                                : "Not claimed"),
+                                : "Not\nclaimed"),
                             style: theme.textTheme.bodyText1,
+                            textAlign: TextAlign.center,
                           )
                         ],
                       )),
