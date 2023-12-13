@@ -60,6 +60,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
         });
       }
     });
+
   }
 
   @override
@@ -493,7 +494,16 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
     var communityPostBloc = bloc.communityPostBloc;
-
+    () async {
+      setState(() {
+        loading = true;
+        cpType = CPType.All;
+      });
+      await communityPostBloc.refresh(
+          type: CPType.All,
+          id: widget.community?.id);
+    };
+  loading=false;
     if (firstBuild) {
       communityPostBloc.query = "";
       communityPostBloc.refresh(id: widget.community?.id);

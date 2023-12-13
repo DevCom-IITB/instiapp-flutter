@@ -22,6 +22,7 @@ class CommunityPostPage extends StatefulWidget {
 
   static void navigateWith(BuildContext context, CommunityPostBloc bloc,
       CommunityPost communityPost) {
+
     Navigator.push(
       context,
 
@@ -61,6 +62,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
 
   @override
   Widget build(BuildContext context) {
+    initState();
     ThemeData theme = Theme.of(context);
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
 
