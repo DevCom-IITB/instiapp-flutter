@@ -11,6 +11,7 @@ EventCreateRequest _$EventCreateRequestFromJson(Map<String, dynamic> json) =>
       eventName: json['name'] as String?,
       eventDescription: json['description'] as String?,
       eventImageURL: json['image_url'] as String?,
+      eventLongDescription: json['longdescription'] as String?,
       eventWebsiteURL: json['website_url'] as String?,
       eventStartTime: json['start_time'] as String?,
       eventEndTime: json['end_time'] as String?,
@@ -36,6 +37,7 @@ Map<String, dynamic> _$EventCreateRequestToJson(EventCreateRequest instance) =>
     <String, dynamic>{
       'name': instance.eventName,
       'description': instance.eventDescription,
+      'longdescription': instance.eventLongDescription,
       'website_url': instance.eventWebsiteURL,
       'image_url': instance.eventImageURL,
       'start_time': instance.eventStartTime,

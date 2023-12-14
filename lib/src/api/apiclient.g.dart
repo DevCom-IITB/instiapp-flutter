@@ -8,7 +8,7 @@ part of 'apiclient.dart';
 
 class _InstiAppApi implements InstiAppApi {
   _InstiAppApi(this._dio, {this.baseUrl}) {
-    baseUrl ??= 'https://2ba5-103-21-127-77.ngrok-free.app/api';
+    baseUrl ??= 'http://192.168.192.161:8000/api';
   }
 
   final Dio _dio;
@@ -275,6 +275,21 @@ class _InstiAppApi implements InstiAppApi {
     await _dio.fetch<void>(_setStreamType<void>(
         Options(method: 'DELETE', headers: _headers, extra: _extra)
             .compose(_dio.options, '/events/${uuid}',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    return null;
+  }
+
+  @override
+  Future<void> pushMail(sessionId, uuid, approval) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = approval;
+    await _dio.fetch<void>(_setStreamType<void>(
+        Options(method: 'POST', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/events/${uuid}/verify-and-send-mail',
                 queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     return null;

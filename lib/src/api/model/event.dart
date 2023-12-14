@@ -31,6 +31,9 @@ class Event extends elt.Event {
   @JsonKey(name: "description")
   String? eventDescription;
 
+  @JsonKey(name: "longdescription")
+  String? eventLongDescription;
+
   @JsonKey(name: "image_url")
   String? eventImageURL;
 

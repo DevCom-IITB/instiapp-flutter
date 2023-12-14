@@ -19,6 +19,7 @@ import 'package:share/share.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:device_calendar/device_calendar.dart' as cal;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 
 class EventPage extends StatefulWidget {
   final Event? initialEvent;
@@ -226,6 +227,47 @@ class _EventPageState extends State<EventPage> {
                       Divider(),
                       SizedBox(
                         height: 64.0,
+                      ),
+                      Container(
+                        child: bloc.currSession?.profile?.userRoles?.any(
+                                    (role) => role.rolePermissions!
+                                        .contains("VerE")) ??
+                                false
+                            ? Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 28.0, vertical: 16.0),
+                                child: Text(
+                                  event!.eventLongDescription ?? "",
+                                  style:
+                                      theme.textTheme.subtitle1 ?? TextStyle(),
+                                ),
+                              )
+                            : null,
+                      ),
+                      Container(
+                        child: bloc.currSession?.profile?.userRoles?.any(
+                                    (role) => role.rolePermissions!
+                                        .contains("VerE")) ??
+                                false
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextButton(
+                                  child: Text('Push Mail'),
+                                  onPressed: () {
+                                    bloc.client.pushMail(
+                                        bloc.getSessionIdHeader(),
+                                        event!.eventID ?? "",
+                                        "approval");
+                                  },
+                                  style: TextButton.styleFrom(
+                                    primary: Colors.black,
+                                    backgroundColor: Colors.amber,
+                                    onSurface: Colors.grey,
+                                    elevation: 5.0,
+                                  ),
+                                ),
+                              )
+                            : null,
                       )
                     ]),
                 ),
