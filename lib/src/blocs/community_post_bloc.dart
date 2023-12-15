@@ -45,8 +45,9 @@ class CommunityPostBloc {
     // _communityPosts = defCommunities;
     // _communitySubject.add(defCommunities);
     // print("refresh");
+
+    _communitySubject.add([]);
     if (id == null) {
-      _communitySubject.add([]);
       return;
     }
 
@@ -66,8 +67,8 @@ class CommunityPostBloc {
         break;
     }
     _communityPosts = (await bloc.client.getCommunityPosts(
-        bloc.getSessionIdHeader(), status, query, id))
-        .data ??
+                bloc.getSessionIdHeader(), status, query, id))
+            .data ??
         [];
 
     // print("community" + _communityPosts.toString());
