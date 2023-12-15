@@ -79,6 +79,13 @@ class _EventPageState extends State<EventPage> {
         event = ev;
       }
     });
+
+    // widget.eventFuture.then((ev) {
+    //   print("fwkfnlw");
+    //   setState(() {
+    //     this.event = ev;
+    //   });
+    // });
   }
 
   @override
