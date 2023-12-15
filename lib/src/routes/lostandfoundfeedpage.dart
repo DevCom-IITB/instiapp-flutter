@@ -238,8 +238,9 @@ class _LostpageState extends State<LostPage> {
                           Text(
                             (posts[index].claimed == true
                                 ? "Claimed"
-                                : "Not claimed"),
+                                : "Not\nclaimed"),
                             style: theme.textTheme.bodyText1,
+                            textAlign: TextAlign.center,
                           )
                         ],
                       )),
