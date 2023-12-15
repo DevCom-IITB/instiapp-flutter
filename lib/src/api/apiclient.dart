@@ -46,7 +46,7 @@ import 'model/offersecret.dart';
 
 part 'apiclient.g.dart';
 
-@rt.RestApi(baseUrl: "http://192.168.192.161:8000/api")
+@rt.RestApi(baseUrl: "http://192.168.64.161:8000/api")
 // @rt.RestApi(baseUrl: "http://10.105.177.150/api")
 // @rt.RestApi(baseUrl: "https://2ba5-103-21-127-77.ngrok-free.app/api")
 // @rt.RestApi(baseUrl: "https://272c-2405-201-5004-3c2f-d836-b028-6ac-ad9.ngrok-free.app/api")
@@ -118,11 +118,10 @@ abstract class InstiAppApi {
   @rt.DELETE('/events/{uuid}')
   Future<void> deleteEvent(
       @rt.Header('Cookie') String sessionId, @rt.Path() String uuid);
-  @rt.POST('/events/{uuid}/verify-and-send-mail')
+  @rt.POST('/events/{uuid}/approve-mail')
   Future<void> pushMail(
     @rt.Header("Cookie") String sessionId,
     @rt.Path() String uuid,
-    @rt.Body() String approval,
   );
 
   @rt.GET("/events")

@@ -255,9 +255,9 @@ class _EventPageState extends State<EventPage> {
                                   child: Text('Push Mail'),
                                   onPressed: () {
                                     bloc.client.pushMail(
-                                        bloc.getSessionIdHeader(),
-                                        event!.eventID ?? "",
-                                        "approval");
+                                      bloc.getSessionIdHeader(),
+                                      event!.eventID ?? "",
+                                    );
                                   },
                                   style: TextButton.styleFrom(
                                     primary: Colors.black,
@@ -311,6 +311,7 @@ class _EventPageState extends State<EventPage> {
       ),
       onTap: () {
         BodyPage.navigateWith(context, bloc, body: body);
+        print(body.bodyName);
       },
     );
   }

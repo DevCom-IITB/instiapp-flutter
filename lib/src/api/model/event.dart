@@ -31,6 +31,9 @@ class Event extends elt.Event {
   @JsonKey(name: "description")
   String? eventDescription;
 
+  @JsonKey(name: "verification_body")
+  List<Body>? verificationBodies;
+
   @JsonKey(name: "longdescription")
   String? eventLongDescription;
 
@@ -140,6 +143,7 @@ class Event extends elt.Event {
       {this.eventID,
       this.eventStrID,
       this.eventName,
+      this.verificationBodies,
       this.eventDescription,
       this.eventImageURL,
       this.eventStartTime,
