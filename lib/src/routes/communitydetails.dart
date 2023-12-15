@@ -1,17 +1,17 @@
 import 'dart:async';
 
 import 'package:InstiApp/src/api/model/community.dart';
+import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/community_bloc.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
-import 'package:InstiApp/src/api/model/communityPost.dart';
-import 'package:InstiApp/src/routes/createpost_form.dart';
-import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
+import 'package:InstiApp/src/routes/createpost_form.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 
 import '../bloc_provider.dart';
 
@@ -494,15 +494,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
     var communityPostBloc = bloc.communityPostBloc;
-    () async {
-      setState(() {
-        loading = true;
-        cpType = CPType.All;
-      });
-      await communityPostBloc.refresh(
-          type: CPType.All,
-          id: widget.community?.id);
-    };
+   
   loading=false;
     if (firstBuild) {
       communityPostBloc.query = "";
