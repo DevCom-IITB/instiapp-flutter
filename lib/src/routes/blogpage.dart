@@ -299,8 +299,6 @@ class _BlogPageState extends State<BlogPage> {
 
   // Follow button widget
   ElevatedButton _buildFollowBody(ThemeData theme, InstiAppBloc bloc) {
-    print('Creating Follow Button');
-    print(body?.bodyName);
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         primary: body?.bodyUserFollows ?? false
@@ -362,12 +360,10 @@ class _BlogPageState extends State<BlogPage> {
         if (bloc.currSession == null) {
           return;
         }
-        print('Button has been Pressed');
         setState(() {
           loadingFollow = true;
         });
         if (body != null) {
-          print('Body not null');
           await bloc.updateFollowBody(body!);
         }
         setState(() {
