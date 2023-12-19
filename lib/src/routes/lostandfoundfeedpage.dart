@@ -92,6 +92,22 @@ class _LostpageState extends State<LostPage> {
             ],
           ),
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        floatingActionButton: FloatingActionButton.extended(
+          icon: Icon(Icons.info),
+          label: Text("Info"),
+          onPressed: () => showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                      title: const Text('What is Lost and Found?'),
+                      content: const Text(' description'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('OK'),
+                        )
+                      ])),
+        ),
         body: SafeArea(
             child: !isLoggedIn
                 ? Container(
