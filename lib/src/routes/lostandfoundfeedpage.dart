@@ -6,6 +6,7 @@ import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 
 import '../api/model/lostandfoundPost.dart';
 import '../utils/title_with_backbutton.dart';
@@ -99,12 +100,26 @@ class _LostpageState extends State<LostPage> {
           onPressed: () => showDialog<String>(
               context: context,
               builder: (BuildContext context) => AlertDialog(
-                      title: const Text('What is Lost and Found?'),
-                      content: const Text(' description'),
+                      title:  Text('How to use Lost and Found'),
+                      content: SingleChildScrollView(child:  Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text('If you find a lost item:', style:TextStyle(fontWeight:FontWeight.w600 ) ,),
+                          Text('Give the item to the nearest security office \n'),
+                          Text('If you want to claim your lost item:', style:TextStyle(fontWeight:FontWeight.w600 ) ,),
+                          Text('Use the contact details provided to claim your item\n'),
+                          Text('Only the security offices can post items on Lost and Found, students can only claim items and report lost items to the security offices'),
+                        ],
+                      )),
                       actions: <Widget>[
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('OK'),
+                        Center(
+                          child: TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child:  Text('OK' ,style: TextStyle(color: Colors.white), ),
+                            style: TextButton.styleFrom(backgroundColor: Colors.lightBlue),
+
+                          ),
                         )
                       ])),
         ),
