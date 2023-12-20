@@ -10,6 +10,7 @@ import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/api/model/notification.dart' as ntf;
 import 'package:rxdart/rxdart.dart';
 import 'package:upgrader/upgrader.dart';
+import '../lost_and_found_icon.dart';
 
 // A Navigation Drawer
 class NavDrawer extends StatefulWidget {
@@ -193,7 +194,8 @@ class _NavDrawerState extends State<NavDrawer> {
                         selected: indexSnapshot.data == 17,
                       ),
                       18: NavListTile(
-                        icon: Icons.fmd_bad,
+                        icon: LostAndFoundIcon.lost_and_found_icon,
+                        custom_widget: true,
                         title: "Lost And Found",
                         onTap: () {
                           changeSelection(9, drawerState!);
@@ -515,20 +517,23 @@ class NavListTile extends StatelessWidget {
   final bool selected;
   final bool highlight;
   final Widget? trailing;
+  final bool custom_widget;
 
-  NavListTile({
-    // Key? key,
-    this.icon,
-    this.title,
-    this.onTap,
-    this.selected = false,
-    this.highlight = false,
-    this.trailing,
-  });
+  NavListTile(
+      {
+      // Key? key,
+      this.icon,
+      this.title,
+      this.onTap,
+      this.selected = false,
+      this.highlight = false,
+      this.trailing,
+      this.custom_widget = false});
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
+
     ListTileThemeData listTileTheme = ListTileTheme.of(context);
     return Container(
       decoration: !highlight
@@ -542,10 +547,19 @@ class NavListTile extends StatelessWidget {
         // key: Key(highlight.toString()),
         selected: selected,
         enabled: true,
-        leading: Icon(
-          this.icon,
-          color: theme.colorScheme.onSurface,
-        ),
+        leading: !this.custom_widget
+            ? Icon(
+                this.icon,
+                color: theme.colorScheme.onSurface,
+              )
+            : Transform.translate(
+              offset: Offset(-3,3),
+              child: Icon(
+                  //for lost and found icon
+                  this.icon,
+                  color: theme.colorScheme.onSurface,
+                  size: 32),
+            ),
         dense: true,
         title: Text(
           this.title!,
