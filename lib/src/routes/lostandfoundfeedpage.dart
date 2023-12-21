@@ -170,7 +170,7 @@ class _LostpageState extends State<LostPage> {
                           stream: lnFPostBloc.lostAndFoundPosts,
                           builder: (BuildContext context,
                               AsyncSnapshot<List<LostAndFoundPost>> snapshot) {
-                            if (snapshot.data!.isNotEmpty) {
+                            if (snapshot.data?.length!=0) {
                               return ListView.builder(
                                 primary: false,
                                 shrinkWrap: true,
