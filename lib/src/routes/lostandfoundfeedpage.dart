@@ -170,7 +170,7 @@ class _LostpageState extends State<LostPage> {
                           stream: lnFPostBloc.lostAndFoundPosts,
                           builder: (BuildContext context,
                               AsyncSnapshot<List<LostAndFoundPost>> snapshot) {
-                            if (snapshot.data?.length!=0) {
+                            if (snapshot.data?.length != 0) {
                               return ListView.builder(
                                 primary: false,
                                 shrinkWrap: true,
@@ -180,7 +180,7 @@ class _LostpageState extends State<LostPage> {
                                     return Center(
                                         child:
                                             CircularProgressIndicatorExtended(
-                                      label: Text("Loading..."),
+                                             label: Text("Loading..."),
                                     ));
                                   }
 
@@ -206,12 +206,9 @@ class _LostpageState extends State<LostPage> {
 
   Widget _buildContent(double screen_h, double screen_w, int index,
       double myfont, BuildContext context, AsyncSnapshot snapshot) {
-    print('random bullshit');
     List<LostAndFoundPost> posts = snapshot.data!;
     var theme = Theme.of(context);
-    print(posts.isEmpty);
-    print("truetruetruetruetrue");
-    // if (posts.isNotEmpty) {
+
     return Center(
       child: (SizedBox(
         height: screen_h * 0.7,
@@ -371,14 +368,5 @@ class _LostpageState extends State<LostPage> {
         ),
       )),
     );
-    // } else {
-    //   return Center(
-    //     child: Container(
-    //     height: screen_h * 0.7,
-    //     width: screen_w * 1.2,
-    //       color: Colors.green,
-    //       child: Text("No Posts have been added yet"),
-    // ));
-    // }
   }
 }
