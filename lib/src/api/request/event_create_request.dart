@@ -1,4 +1,5 @@
 // import 'package:InstiApp/src/api/model/UserTag.dart';
+import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -28,6 +29,8 @@ class EventCreateRequest {
   List<String>? eventBodiesID;
   @JsonKey(name: "notify")
   bool? notify;
+  @JsonKey(name: "verification_body")
+  List<Body>? verBody;
   @JsonKey(name: "user_tags")
   List<int>? eventUserTags;
   @JsonKey(name: "event_interest")
@@ -36,6 +39,7 @@ class EventCreateRequest {
   List<String>? eventInterestsID;
 
   EventCreateRequest({
+    this.verBody,
     this.eventName,
     this.eventDescription,
     this.eventImageURL,

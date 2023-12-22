@@ -580,6 +580,7 @@ class _EventFormState extends State<EventForm> {
   late bool eventIsAllDay = false;
   late List<Venue> eventVenues = [Venue()];
   late List<Body> eventBodies = [];
+  late List<Body> eventVerBodies = [];
   List<User> eventBlankGoing = [];
   List<User> eventBlankInterested = [];
   TextEditingController eventWesbiteURLController = TextEditingController();
@@ -882,6 +883,7 @@ class _EventFormState extends State<EventForm> {
                           )),
                     )
                     .toList(),
+
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: MultiSelectDialogField(
@@ -907,6 +909,37 @@ class _EventFormState extends State<EventForm> {
                     },
                     validator: (List<Body?>? values) {
                       if (eventBodies.isEmpty) {
+                        return "Select at least one body.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: MultiSelectDialogField(
+                    title: Text('Verifying Bodies *'),
+                    initialValue: eventVerBodies,
+                    buttonText: eventVerBodies.isEmpty
+                        ? Text('Verifying Bodies *')
+                        : Text(eventVerBodies
+                            .map((e) => e.bodyName!)
+                            .toList()
+                            .join(',')),
+                    items: [...bodyOptions]
+                        .map((e) => MultiSelectItem<Body?>(e, e.bodyName!))
+                        .toList(),
+                    onConfirm: (values) {
+                      setState(() {
+                        eventVerBodies.clear();
+                        for (int i = 0; i < values.length; i++) {
+                          eventVerBodies.add(values[i] as Body);
+                        }
+                        values.clear();
+                      });
+                    },
+                    validator: (List<Body?>? values) {
+                      if (eventVerBodies.isEmpty) {
                         return "Select at least one body.";
                       }
                       return null;
@@ -1048,11 +1081,13 @@ class _EventFormState extends State<EventForm> {
                           .map((e) => e.venueShortName!)
                           .toList(),
                       eventBodiesID: eventBodies.map((e) => e.bodyID!).toList(),
+        
                       eventInterest: eventInterests,
                       eventInterestsID:
                           eventInterests.map((e) => e.id!).toList(),
                       eventUserTags: eventUserTags,
                       notify: eventNotifications,
+                      verBody: eventVerBodies,
                     );
                     if (!editingEvent) {
                       //assuming all validators are written right, try-catch is unnecessary.
