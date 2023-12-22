@@ -236,10 +236,10 @@ class _EventPageState extends State<EventPage> {
                         height: 64.0,
                       ),
                       Container(
-                        child: bloc.currSession?.profile?.userRoles?.any(
+                        child: (bloc.currSession?.profile?.userRoles?.any(
                                     (role) => role.rolePermissions!
                                         .contains("VerE")) ??
-                                false
+                                false)
                             ? Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 28.0, vertical: 16.0),
