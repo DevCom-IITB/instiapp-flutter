@@ -298,64 +298,16 @@ class _BlogPageState extends State<BlogPage> {
   }
 
   // Follow button widget
-  ElevatedButton _buildFollowBody(ThemeData theme, InstiAppBloc bloc) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        primary: body?.bodyUserFollows ?? false
-            ? theme.colorScheme.secondary
-            : theme.scaffoldBackgroundColor,
-        onPrimary: body?.bodyUserFollows ?? false
-            ? theme.floatingActionButtonTheme.foregroundColor
-            : theme.textTheme.bodyText1?.color,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            color: theme.colorScheme.secondary,
-          ),
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-        ),
+  FloatingActionButton _buildFollowBody(ThemeData theme, InstiAppBloc bloc) {
+    return FloatingActionButton.extended(
+      label: Text(
+        body?.bodyUserFollows ?? false ? "Following" : "Follow",
+        style: TextStyle(
+            color:
+                body?.bodyUserFollows ?? false ? Colors.white : Colors.black),
       ),
-      child: Row(children: () {
-        var rowChildren = <Widget>[
-          Text(
-            body?.bodyUserFollows ?? false ? "Following" : "Follow",
-            // style: TextStyle(color: Colors.black),
-          ),
-          SizedBox(
-            width: 8.0,
-          ),
-          body?.bodyFollowersCount != null
-              ? Text("${body?.bodyFollowersCount}")
-              : SizedBox(
-                  height: 18,
-                  width: 18,
-                  child: CircularProgressIndicator(
-                    valueColor: new AlwaysStoppedAnimation<Color>(
-                      body?.bodyUserFollows ?? false
-                          ? theme.floatingActionButtonTheme.foregroundColor!
-                          : theme.colorScheme.secondary,
-                    ),
-                    strokeWidth: 2,
-                  )),
-        ];
-        if (loadingFollow) {
-          rowChildren.insertAll(0, [
-            SizedBox(
-                height: 18,
-                width: 18,
-                child: CircularProgressIndicator(
-                  valueColor: new AlwaysStoppedAnimation<Color>(
-                      body?.bodyUserFollows ?? false
-                          ? theme.floatingActionButtonTheme.foregroundColor!
-                          : theme.colorScheme.secondary),
-                  strokeWidth: 2,
-                )),
-            SizedBox(
-              width: 8.0,
-            )
-          ]);
-        }
-        return rowChildren;
-      }()),
+      backgroundColor:
+          body?.bodyUserFollows ?? false ? Colors.red : Colors.white,
       onPressed: () async {
         if (bloc.currSession == null) {
           return;

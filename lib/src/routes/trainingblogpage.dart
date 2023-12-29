@@ -29,6 +29,7 @@ class _TrainingBlogPageState extends State<TrainingBlogPage> {
   }
 
   Future<Body> dostuff() async {
+    // ignore: unused_local_variable
     final response = await http.get(Uri.parse(
         'https://gymkhana.iitb.ac.in/instiapp/api/bodies/9cb8659c-bfdf-4e30-a2f0-057f86697123'));
     Body internship_body =
