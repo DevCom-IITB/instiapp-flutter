@@ -29,7 +29,8 @@ class _ExternalBlogPageState extends State<ExternalBlogPage> {
   }
 
   Future<Body> dostuff() async {
-    final response = await http.get(Uri.parse(
+    // ignore: unused_local_variable
+    var response = await http.get(Uri.parse(
         'https://gymkhana.iitb.ac.in/instiapp/api/bodies/8e303dca-9b2d-4501-bf7e-addca5e0c798'));
     Body external_body =
         await bloc.getBody("8e303dca-9b2d-4501-bf7e-addca5e0c798");
