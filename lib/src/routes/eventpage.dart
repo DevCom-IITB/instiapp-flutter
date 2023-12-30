@@ -259,12 +259,39 @@ class _EventPageState extends State<EventPage> {
                             ? Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextButton(
-                                  child: Text('Push Mail'),
+                                  child: Text('Accept and Push Mail'),
                                   onPressed: () {
                                     bloc.client.pushMail(
                                       bloc.getSessionIdHeader(),
                                       event!.eventID ?? "",
                                     );
+                                    Navigator.of(context).pop();
+                                  },
+                                  style: TextButton.styleFrom(
+                                    primary: Colors.black,
+                                    backgroundColor: Colors.amber,
+                                    onSurface: Colors.grey,
+                                    elevation: 5.0,
+                                  ),
+                                ),
+                              )
+                            : null,
+                      ),
+                      Container(
+                        child: bloc.currSession?.profile?.userRoles?.any(
+                                    (role) => role.rolePermissions!
+                                        .contains("VerE")) ??
+                                false
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextButton(
+                                  child: Text('Reject Mail'),
+                                  onPressed: () {
+                                    bloc.client.rejectMail(
+                                      bloc.getSessionIdHeader(),
+                                      event!.eventID ?? "",
+                                    );
+                                    Navigator.of(context).pop();
                                   },
                                   style: TextButton.styleFrom(
                                     primary: Colors.black,
