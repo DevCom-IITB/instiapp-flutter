@@ -123,6 +123,11 @@ abstract class InstiAppApi {
     @rt.Header("Cookie") String sessionId,
     @rt.Path() String uuid,
   );
+  @rt.POST('/events/{uuid}/reject-mail')
+  Future<void> rejectMail(
+    @rt.Header("Cookie") String sessionId,
+    @rt.Path() String uuid,
+  );
 
   @rt.GET("/events")
   Future<NewsFeedResponse> getNewsFeed(@rt.Header("Cookie") String sessionId);
