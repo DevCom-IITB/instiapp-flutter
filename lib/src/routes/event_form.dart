@@ -983,7 +983,7 @@ class _EventFormState extends State<EventForm> {
                     maxLines: 4,
                     controller: eventLongDescController,
                     decoration: InputDecoration(
-                      label: Text('Long Description'),
+                      label: Text('Email Content'),
                     ),
                     style: TextStyle(),
                   ),
@@ -1081,13 +1081,12 @@ class _EventFormState extends State<EventForm> {
                           .map((e) => e.venueShortName!)
                           .toList(),
                       eventBodiesID: eventBodies.map((e) => e.bodyID!).toList(),
-        
                       eventInterest: eventInterests,
                       eventInterestsID:
                           eventInterests.map((e) => e.id!).toList(),
                       eventUserTags: eventUserTags,
                       notify: eventNotifications,
-                      verBody: eventVerBodies,
+                      verBody: eventVerBodies.map((e) => e.bodyID!).toList(),
                     );
                     if (!editingEvent) {
                       //assuming all validators are written right, try-catch is unnecessary.
