@@ -10,7 +10,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       eventID: json['id'] as String?,
       eventStrID: json['str_id'] as String?,
       eventName: json['name'] as String?,
-      verificationBodies: (json['verification_body'] as List<dynamic>?)
+      verificationBodies: (json['verification_bodies'] as List<dynamic>?)
           ?.map((e) => Body.fromJson(e as Map<String, dynamic>))
           .toList(),
       eventDescription: json['description'] as String?,
@@ -53,7 +53,7 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'str_id': instance.eventStrID,
       'name': instance.eventName,
       'description': instance.eventDescription,
-      'verification_body': instance.verificationBodies,
+      'verification_bodies': instance.verificationBodies,
       'longdescription': instance.eventLongDescription,
       'image_url': instance.eventImageURL,
       'start_time': instance.eventStartTime,

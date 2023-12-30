@@ -29,8 +29,8 @@ class EventCreateRequest {
   List<String>? eventBodiesID;
   @JsonKey(name: "notify")
   bool? notify;
-  @JsonKey(name: "verification_body")
-  List<Body>? verBody;
+  @JsonKey(name: "verification_bodies_id")
+  List<String>? verBody;
   @JsonKey(name: "user_tags")
   List<int>? eventUserTags;
   @JsonKey(name: "event_interest")

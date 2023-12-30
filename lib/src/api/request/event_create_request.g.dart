@@ -8,8 +8,8 @@ part of 'event_create_request.dart';
 
 EventCreateRequest _$EventCreateRequestFromJson(Map<String, dynamic> json) =>
     EventCreateRequest(
-      verBody: (json['verification_body'] as List<dynamic>?)
-          ?.map((e) => Body.fromJson(e as Map<String, dynamic>))
+      verBody: (json['verification_bodies_id'] as List<dynamic>?)
+          ?.map((e) => e as String)
           .toList(),
       eventName: json['name'] as String?,
       eventDescription: json['description'] as String?,
@@ -49,7 +49,7 @@ Map<String, dynamic> _$EventCreateRequestToJson(EventCreateRequest instance) =>
       'venue_names': instance.eventVenueNames,
       'bodies_id': instance.eventBodiesID,
       'notify': instance.notify,
-      'verification_body': instance.verBody,
+      'verification_bodies_id': instance.verBody,
       'user_tags': instance.eventUserTags,
       'event_interest': instance.eventInterest,
       'interests_id': instance.eventInterestsID,
