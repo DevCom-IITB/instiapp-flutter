@@ -153,14 +153,15 @@ class _BlogPageState extends State<BlogPage> {
 
     // follow-button
     var footerButtons = <Widget>[];
+    var followButton = _buildFollowBody(theme, bloc);
 
-    if (body != null) {
-      if (bloc.currSession != null) {
-        footerButtons.addAll([
-          _buildFollowBody(theme, bloc),
-        ]);
-      }
-    }
+    // if (body != null) {
+    //   if (bloc.currSession != null) {
+    //     footerButtons.addAll([
+    //       _buildFollowBody(theme, bloc),
+    //     ]);
+    //   }
+    // }
 
     if (firstBuild) {
       blogBloc?.query = "";
@@ -173,6 +174,7 @@ class _BlogPageState extends State<BlogPage> {
       key: _scaffoldKey,
       drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
+        notchMargin: 4.0,
         shape: RoundedNotchedRectangle(),
         child: new Row(
           mainAxisSize: MainAxisSize.max,
@@ -191,104 +193,106 @@ class _BlogPageState extends State<BlogPage> {
           ],
         ),
       ),
-      body: SafeArea(
-        child: StreamBuilder(
-          stream: bloc.session,
-          builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
-            if ((snapshot.hasData && snapshot.data != null) ||
-                !widget.loginNeeded) {
-              return GestureDetector(
-                onTap: () {
-                  _focusNode.unfocus();
-                },
-                child: RefreshIndicator(
-                  key: _refreshIndicatorKey,
-                  onRefresh: _handleRefresh,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: StreamBuilder<UnmodifiableListView<Post>>(
-                        stream: blogBloc!.blog,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<UnmodifiableListView<Post>>
-                                snapshot) {
-                          return ListView.builder(
-                            controller: _hideButtonController,
-                            itemBuilder: (BuildContext context, int index) {
-                              if (index == 0) {
-                                return _blogHeader(context, blogBloc, bloc);
-                              }
-                              return _buildPost(blogBloc, index - 1,
-                                  snapshot.data, theme, context);
-                            },
-                            itemCount: (snapshot.data == null
-                                    ? 0
-                                    : ((snapshot.data!.isNotEmpty &&
-                                            snapshot.data!.last.content == null)
-                                        ? snapshot.data!.length - 1
-                                        : snapshot.data!.length)) +
-                                2,
-                          );
-                        }),
-                  ),
-                ),
-              );
-            } else {
-              return ListView(
-                children: <Widget>[
-                  TitleWithBackButton(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          widget.title,
-                          style: theme.textTheme.headline3,
-                        ),
-                      ],
+      body: Stack(
+        children: [
+          StreamBuilder(
+            stream: bloc.session,
+            builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
+              if ((snapshot.hasData && snapshot.data != null) ||
+                  !widget.loginNeeded) {
+                return GestureDetector(
+                  onTap: () {
+                    _focusNode.unfocus();
+                  },
+                  child: RefreshIndicator(
+                    key: _refreshIndicatorKey,
+                    onRefresh: _handleRefresh,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: StreamBuilder<UnmodifiableListView<Post>>(
+                          stream: blogBloc!.blog,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<UnmodifiableListView<Post>>
+                                  snapshot) {
+                            return ListView.builder(
+                              controller: _hideButtonController,
+                              itemBuilder: (BuildContext context, int index) {
+                                if (index == 0) {
+                                  return _blogHeader(context, blogBloc, bloc);
+                                }
+                                return _buildPost(blogBloc, index - 1,
+                                    snapshot.data, theme, context);
+                              },
+                              itemCount: (snapshot.data == null
+                                      ? 0
+                                      : ((snapshot.data!.isNotEmpty &&
+                                              snapshot.data!.last.content ==
+                                                  null)
+                                          ? snapshot.data!.length - 1
+                                          : snapshot.data!.length)) +
+                                  2,
+                            );
+                          }),
                     ),
                   ),
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(28.0),
-                      child: Text(
-                        "You must be logged in to view ${widget.title}",
-                        style: theme.textTheme.headline6,
-                        textAlign: TextAlign.center,
+                );
+              } else {
+                return ListView(
+                  children: <Widget>[
+                    TitleWithBackButton(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            widget.title,
+                            style: theme.textTheme.headline3,
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ],
-              );
-            }
-          },
-        ),
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(28.0),
+                        child: Text(
+                          "You must be logged in to view ${widget.title}",
+                          style: theme.textTheme.headline6,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+          Positioned(
+              bottom: 40,
+              right: 30,
+              child: isFabVisible == 0
+                  ? widget.postType == PostType.Query
+                      ? FloatingActionButton.extended(
+                          tooltip: "Ask a Question",
+                          onPressed: () {
+                            Navigator.of(context).pushNamed("/query/add");
+                          },
+                          icon: Icon(Icons.add),
+                          label: Text("Ask a Question"),
+                        )
+                      : Container()
+                  : FloatingActionButton(
+                      tooltip: "Go to the Top",
+                      onPressed: () {
+                        _hideButtonController!.animateTo(0.0,
+                            curve: Curves.fastOutSlowIn,
+                            duration: const Duration(milliseconds: 600));
+                      },
+                      child: Icon(Icons.keyboard_arrow_up_outlined),
+                    )),
+        ],
       ),
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      floatingActionButton: isFabVisible == 0
-          ? widget.postType == PostType.Query
-              ? FloatingActionButton.extended(
-                  tooltip: "Ask a Question",
-                  onPressed: () {
-                    Navigator.of(context).pushNamed("/query/add");
-                  },
-                  icon: Icon(Icons.add),
-                  label: Text("Ask a Question"),
-                )
-              : null
-          : FloatingActionButton(
-              tooltip: "Go to the Top",
-              onPressed: () {
-                _hideButtonController!.animateTo(0.0,
-                    curve: Curves.fastOutSlowIn,
-                    duration: const Duration(milliseconds: 600));
-              },
-              child: Icon(Icons.keyboard_arrow_up_outlined),
-            ),
-      persistentFooterButtons: [
-        FooterButtons(
-          footerButtons: footerButtons,
-        )
-      ],
+      floatingActionButton: followButton,
     );
   }
 
@@ -1004,8 +1008,6 @@ class _BlogPageState extends State<BlogPage> {
             }));
   }
 }
-
-
 
 // class BodyPage extends StatefulWidget {
 //   final Body? initialBody;
