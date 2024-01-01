@@ -103,6 +103,9 @@ flutter:
         - asset: fonts/IBMPlexSans/IBMPlexSans-BoldItalic.ttf
           style: italic
           weight: 700
+    - family: LostAndFoundIcon
+      fonts:
+        - asset: fonts/LostAndFoundIcon.ttf
   uses-material-design: true
 # targets:
 #   $default:
