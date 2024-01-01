@@ -21,7 +21,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 // Follow button libraries
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
-import 'package:InstiApp/src/utils/footer_buttons.dart';
 
 // import 'package:flutter/foundation.dart';
 TextSpan highlight(String result, String query, BuildContext context) {
@@ -152,7 +151,6 @@ class _BlogPageState extends State<BlogPage> {
         as NotificationRouteArguments?;
 
     // follow-button
-    var footerButtons = <Widget>[];
     var followButton = _buildFollowBody(theme, bloc);
 
     // if (body != null) {
