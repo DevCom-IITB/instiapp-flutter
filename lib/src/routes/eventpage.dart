@@ -19,7 +19,7 @@ import 'package:share/share.dart';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:device_calendar/device_calendar.dart' as cal;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:InstiApp/src/blocs/ia_bloc.dart';
+
 
 class EventPage extends StatefulWidget {
   final Event? initialEvent;
