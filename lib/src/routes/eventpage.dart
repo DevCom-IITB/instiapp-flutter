@@ -345,7 +345,7 @@ class _EventPageState extends State<EventPage> {
       ),
       onTap: () {
         BodyPage.navigateWith(context, bloc, body: body);
-        print(body.bodyName);
+
       },
     );
   }
