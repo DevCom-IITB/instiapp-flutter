@@ -1,5 +1,4 @@
 // import 'package:InstiApp/src/api/model/UserTag.dart';
-import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
