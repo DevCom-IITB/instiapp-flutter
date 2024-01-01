@@ -10,6 +10,8 @@ class EventCreateRequest {
   String? eventName;
   @JsonKey(name: "description")
   String? eventDescription;
+  @JsonKey(name: "longdescription")
+  String? eventLongDescription;
   @JsonKey(name: "website_url")
   String? eventWebsiteURL;
   @JsonKey(name: "image_url")
@@ -26,6 +28,8 @@ class EventCreateRequest {
   List<String>? eventBodiesID;
   @JsonKey(name: "notify")
   bool? notify;
+  @JsonKey(name: "verification_bodies_id")
+  List<String>? verBody;
   @JsonKey(name: "user_tags")
   List<int>? eventUserTags;
   @JsonKey(name: "event_interest")
@@ -34,9 +38,11 @@ class EventCreateRequest {
   List<String>? eventInterestsID;
 
   EventCreateRequest({
+    this.verBody,
     this.eventName,
     this.eventDescription,
     this.eventImageURL,
+    this.eventLongDescription,
     this.eventWebsiteURL,
     this.eventStartTime,
     this.eventEndTime,

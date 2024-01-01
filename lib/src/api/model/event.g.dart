@@ -10,6 +10,9 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       eventID: json['id'] as String?,
       eventStrID: json['str_id'] as String?,
       eventName: json['name'] as String?,
+      verificationBodies: (json['verification_bodies'] as List<dynamic>?)
+          ?.map((e) => Body.fromJson(e as Map<String, dynamic>))
+          .toList(),
       eventDescription: json['description'] as String?,
       eventImageURL: json['image_url'] as String?,
       eventStartTime: json['start_time'] as String?,
@@ -39,15 +42,19 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       eventInterest: (json['event_interest'] as List<dynamic>?)
           ?.map((e) => Interest.fromJson(e as Map<String, dynamic>))
           .toList(),
-    )..eventStartDate = json['eventStartDate'] == null
-        ? null
-        : DateTime.parse(json['eventStartDate'] as String);
+    )
+      ..eventLongDescription = json['longdescription'] as String?
+      ..eventStartDate = json['eventStartDate'] == null
+          ? null
+          : DateTime.parse(json['eventStartDate'] as String);
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'id': instance.eventID,
       'str_id': instance.eventStrID,
       'name': instance.eventName,
       'description': instance.eventDescription,
+      'verification_bodies': instance.verificationBodies,
+      'longdescription': instance.eventLongDescription,
       'image_url': instance.eventImageURL,
       'start_time': instance.eventStartTime,
       'end_time': instance.eventEndTime,

@@ -419,11 +419,10 @@ class InstiAppBloc {
   // Section
   // Navigator helper
   Future<Event?> getEvent(String uuid) async {
-    try {
-      return _events.firstWhere((event) => event.eventID == uuid);
-    } catch (ex) {
-      return client.getEvent(getSessionIdHeader(), uuid);
-    }
+    // try {
+    //   return _events.firstWhere((event) => event.eventID == uuid);
+    // } catch (ex) {
+    return client.getEvent(getSessionIdHeader(), uuid);
   }
 
   Future<Body> getBody(String uuid) async {
