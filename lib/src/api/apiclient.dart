@@ -45,7 +45,7 @@ import 'model/offersecret.dart';
 
 part 'apiclient.g.dart';
 
-@rt.RestApi(baseUrl: "http://127.0.0.1:8000/api")
+// @rt.RestApi(baseUrl: "http://127.0.0.1:8000/api")
 // @rt.RestApi(baseUrl: "http://10.105.177.150/api")
 @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
 // @rt.RestApi(baseUrl: "https://dcae-2405-201-5004-30e9-a45d-9897-ea81-3414.ngrok-free.app/api")

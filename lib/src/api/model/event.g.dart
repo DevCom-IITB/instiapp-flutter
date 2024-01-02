@@ -44,6 +44,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
           .toList(),
     )
       ..eventLongDescription = json['longdescription'] as String?
+      ..emailVerified = json['email_verified'] as bool?
       ..eventStartDate = json['eventStartDate'] == null
           ? null
           : DateTime.parse(json['eventStartDate'] as String);
@@ -59,6 +60,7 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'start_time': instance.eventStartTime,
       'end_time': instance.eventEndTime,
       'all_day': instance.allDayEvent,
+      'email_verified': instance.emailVerified,
       'venues': instance.eventVenues,
       'bodies': instance.eventBodies,
       'offered_achievements': instance.eventOfferedAchievements,
