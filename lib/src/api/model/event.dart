@@ -49,6 +49,9 @@ class Event extends elt.Event {
   @JsonKey(name: "all_day")
   bool? allDayEvent;
 
+  @JsonKey(name: "email_verified")
+  bool? emailVerified;
+
   @JsonKey(name: "venues")
   List<Venue>? eventVenues;
 

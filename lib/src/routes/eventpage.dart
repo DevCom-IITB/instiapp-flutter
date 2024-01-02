@@ -20,7 +20,6 @@ import 'package:markdown/markdown.dart' as markdown;
 import 'package:device_calendar/device_calendar.dart' as cal;
 import 'package:timezone/timezone.dart' as tz;
 
-
 class EventPage extends StatefulWidget {
   final Event? initialEvent;
   final Future<Event?> eventFuture;
@@ -236,10 +235,11 @@ class _EventPageState extends State<EventPage> {
                         height: 64.0,
                       ),
                       Container(
-                        child: (bloc.currSession?.profile?.userRoles?.any(
-                                    (role) => role.rolePermissions!
-                                        .contains("VerE")) ??
-                                false)
+                        child: !(event!.emailVerified ?? false) &&
+                                ((bloc.currSession?.profile?.userRoles?.any(
+                                        (role) => role.rolePermissions!
+                                            .contains("VerE")) ??
+                                    false))
                             ? Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 28.0, vertical: 16.0),
@@ -252,10 +252,11 @@ class _EventPageState extends State<EventPage> {
                             : null,
                       ),
                       Container(
-                        child: bloc.currSession?.profile?.userRoles?.any(
-                                    (role) => role.rolePermissions!
-                                        .contains("VerE")) ??
-                                false
+                        child: !(event!.emailVerified ?? false) &&
+                                ((bloc.currSession?.profile?.userRoles?.any(
+                                        (role) => role.rolePermissions!
+                                            .contains("VerE")) ??
+                                    false))
                             ? Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextButton(
@@ -278,10 +279,11 @@ class _EventPageState extends State<EventPage> {
                             : null,
                       ),
                       Container(
-                        child: bloc.currSession?.profile?.userRoles?.any(
-                                    (role) => role.rolePermissions!
-                                        .contains("VerE")) ??
-                                false
+                        child: !(event!.emailVerified ?? false) &&
+                                ((bloc.currSession?.profile?.userRoles?.any(
+                                        (role) => role.rolePermissions!
+                                            .contains("VerE")) ??
+                                    false))
                             ? Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextButton(
@@ -345,7 +347,6 @@ class _EventPageState extends State<EventPage> {
       ),
       onTap: () {
         BodyPage.navigateWith(context, bloc, body: body);
-
       },
     );
   }
