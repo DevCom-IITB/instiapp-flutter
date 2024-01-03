@@ -19,6 +19,9 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+// Follow button libraries
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
+
 // import 'package:flutter/foundation.dart';
 TextSpan highlight(String result, String query, BuildContext context) {
   // var bloc = BlocProvider.of(context)!.bloc;
@@ -70,9 +73,13 @@ class BlogPage extends StatefulWidget {
   final String title;
   final PostType postType;
   final bool loginNeeded;
+  final Body? initialBody;
 
   BlogPage(
-      {required this.postType, required this.title, this.loginNeeded = true});
+      {required this.postType,
+      required this.title,
+      this.initialBody,
+      this.loginNeeded = true});
 
   @override
   _BlogPageState createState() => _BlogPageState();
@@ -100,9 +107,15 @@ class _BlogPageState extends State<BlogPage> {
 
   late NotificationRouteArguments? args;
 
+  Body? body; // follow-button
+  bool loadingFollow = false; // follow-button
+
   @override
   void initState() {
     super.initState();
+
+    body = widget.initialBody; //defining the body - follow button
+
     _searchFieldController = TextEditingController();
     _hideButtonController = ScrollController();
     _hideButtonController!.addListener(() {
@@ -132,10 +145,21 @@ class _BlogPageState extends State<BlogPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context)!.bloc;
+    var bloc = BlocProvider.of(context)!.bloc; // follow-button plugin
     var blogBloc = bloc.getPostsBloc(widget.postType);
     args = ModalRoute.of(context)!.settings.arguments
         as NotificationRouteArguments?;
+
+    // follow-button
+    var followButton = _buildFollowBody(theme, bloc);
+
+    // if (body != null) {
+    //   if (bloc.currSession != null) {
+    //     footerButtons.addAll([
+    //       _buildFollowBody(theme, bloc),
+    //     ]);
+    //   }
+    // }
 
     if (firstBuild) {
       blogBloc?.query = "";
@@ -148,6 +172,7 @@ class _BlogPageState extends State<BlogPage> {
       key: _scaffoldKey,
       drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
+        notchMargin: 4.0,
         shape: RoundedNotchedRectangle(),
         child: new Row(
           mainAxisSize: MainAxisSize.max,
@@ -166,105 +191,141 @@ class _BlogPageState extends State<BlogPage> {
           ],
         ),
       ),
-      body: SafeArea(
-        child: StreamBuilder(
-          stream: bloc.session,
-          builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
-            if ((snapshot.hasData && snapshot.data != null) ||
-                !widget.loginNeeded) {
-              return GestureDetector(
-                onTap: () {
-                  _focusNode.unfocus();
-                },
-                child: RefreshIndicator(
-                  key: _refreshIndicatorKey,
-                  onRefresh: _handleRefresh,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: StreamBuilder<UnmodifiableListView<Post>>(
-                        stream: blogBloc!.blog,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<UnmodifiableListView<Post>>
-                                snapshot) {
-                          return ListView.builder(
-                            controller: _hideButtonController,
-                            itemBuilder: (BuildContext context, int index) {
-                              if (index == 0) {
-                                return _blogHeader(context, blogBloc, bloc);
-                              }
-                              return _buildPost(blogBloc, index - 1,
-                                  snapshot.data, theme, context);
-                            },
-                            itemCount: (snapshot.data == null
-                                    ? 0
-                                    : ((snapshot.data!.isNotEmpty &&
-                                            snapshot.data!.last.content == null)
-                                        ? snapshot.data!.length - 1
-                                        : snapshot.data!.length)) +
-                                2,
-                          );
-                        }),
-                  ),
-                ),
-              );
-            } else {
-              return ListView(
-                children: <Widget>[
-                  TitleWithBackButton(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          widget.title,
-                          style: theme.textTheme.headline3,
-                        ),
-                      ],
+      body: Stack(
+        children: [
+          StreamBuilder(
+            stream: bloc.session,
+            builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
+              if ((snapshot.hasData && snapshot.data != null) ||
+                  !widget.loginNeeded) {
+                return GestureDetector(
+                  onTap: () {
+                    _focusNode.unfocus();
+                  },
+                  child: RefreshIndicator(
+                    key: _refreshIndicatorKey,
+                    onRefresh: _handleRefresh,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: StreamBuilder<UnmodifiableListView<Post>>(
+                          stream: blogBloc!.blog,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<UnmodifiableListView<Post>>
+                                  snapshot) {
+                            return ListView.builder(
+                              controller: _hideButtonController,
+                              itemBuilder: (BuildContext context, int index) {
+                                if (index == 0) {
+                                  return _blogHeader(context, blogBloc, bloc);
+                                }
+                                return _buildPost(blogBloc, index - 1,
+                                    snapshot.data, theme, context);
+                              },
+                              itemCount: (snapshot.data == null
+                                      ? 0
+                                      : ((snapshot.data!.isNotEmpty &&
+                                              snapshot.data!.last.content ==
+                                                  null)
+                                          ? snapshot.data!.length - 1
+                                          : snapshot.data!.length)) +
+                                  2,
+                            );
+                          }),
                     ),
                   ),
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(28.0),
-                      child: Text(
-                        "You must be logged in to view ${widget.title}",
-                        style: theme.textTheme.headline6,
-                        textAlign: TextAlign.center,
+                );
+              } else {
+                return ListView(
+                  children: <Widget>[
+                    TitleWithBackButton(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            widget.title,
+                            style: theme.textTheme.headline3,
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ],
-              );
-            }
-          },
-        ),
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(28.0),
+                        child: Text(
+                          "You must be logged in to view ${widget.title}",
+                          style: theme.textTheme.headline6,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+          Positioned(
+              bottom: 40,
+              right: 30,
+              child: isFabVisible == 0
+                  ? widget.postType == PostType.Query
+                      ? FloatingActionButton.extended(
+                          tooltip: "Ask a Question",
+                          onPressed: () {
+                            Navigator.of(context).pushNamed("/query/add");
+                          },
+                          icon: Icon(Icons.add),
+                          label: Text("Ask a Question"),
+                        )
+                      : Container()
+                  : FloatingActionButton(
+                      tooltip: "Go to the Top",
+                      onPressed: () {
+                        _hideButtonController!.animateTo(0.0,
+                            curve: Curves.fastOutSlowIn,
+                            duration: const Duration(milliseconds: 600));
+                      },
+                      child: Icon(Icons.keyboard_arrow_up_outlined),
+                    )),
+        ],
       ),
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      floatingActionButton: isFabVisible == 0
-          ? widget.postType == PostType.Query
-              ? FloatingActionButton.extended(
-                  tooltip: "Ask a Question",
-                  onPressed: () {
-                    Navigator.of(context).pushNamed("/query/add");
-                  },
-                  icon: Icon(Icons.add),
-                  label: Text("Ask a Question"),
-                )
-              : null
-          : FloatingActionButton(
-              tooltip: "Go to the Top",
-              onPressed: () {
-                _hideButtonController!.animateTo(0.0,
-                    curve: Curves.fastOutSlowIn,
-                    duration: const Duration(milliseconds: 600));
-              },
-              child: Icon(Icons.keyboard_arrow_up_outlined),
-            ),
+      floatingActionButton: followButton,
     );
   }
 
   Future<void> _handleRefresh() {
     var blogbloc = BlocProvider.of(context)!.bloc.getPostsBloc(widget.postType);
     return blogbloc!.refresh(force: blogbloc.query.isEmpty);
+  }
+
+  // Follow button widget
+  FloatingActionButton _buildFollowBody(ThemeData theme, InstiAppBloc bloc) {
+    return FloatingActionButton.extended(
+      label: Text(
+        body?.bodyUserFollows ?? false ? "Following" : "Follow",
+        style: TextStyle(
+            color:
+                body?.bodyUserFollows ?? false ? Colors.white : Colors.black),
+      ),
+      backgroundColor:
+          body?.bodyUserFollows ?? false ? Colors.red : Colors.white,
+      onPressed: () async {
+        if (bloc.currSession == null) {
+          return;
+        }
+        setState(() {
+          loadingFollow = true;
+        });
+        if (body != null) {
+          await bloc.updateFollowBody(body!);
+        }
+        setState(() {
+          loadingFollow = false;
+          // event has changes
+        });
+      },
+    );
   }
 
   Widget _buildPost(PostBloc bloc, int index, List<Post>? posts,
@@ -945,3 +1006,64 @@ class _BlogPageState extends State<BlogPage> {
             }));
   }
 }
+
+// class BodyPage extends StatefulWidget {
+//   final Body? initialBody;
+//   final Future<Body>? bodyFuture;
+//   final String? heroTag;
+//
+//   BodyPage({this.bodyFuture, this.initialBody, this.heroTag});
+//
+//   static void navigateWith(BuildContext context, InstiAppBloc bloc,
+//       {Body? body, Role? role}) {
+//     Navigator.push(
+//       context,
+//       MaterialPageRoute(
+//         settings: RouteSettings(
+//           name: "/body/${(role?.roleBodyDetails ?? body)?.bodyID}",
+//         ),
+//         builder: (context) => BodyPage(
+//           initialBody: role?.roleBodyDetails ?? body,
+//           bodyFuture:
+//           bloc.getBody((role?.roleBodyDetails ?? body)?.bodyID ?? ""),
+//           heroTag: role?.roleID ?? body?.bodyID,
+//         ),
+//       ),
+//     );
+//   }
+//
+//   @override
+//   _BodyPageState createState() => _BodyPageState();
+// }
+//
+// class _BodyPageState extends State<BodyPage> {
+//   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+//   Body? body;
+//
+//   bool loadingFollow = false;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     body = widget.initialBody;
+//     widget.bodyFuture?.then((b) {
+//       var tableParse = markdown.TableSyntax();
+//       b.bodyDescription = markdown.markdownToHtml(
+//           b.bodyDescription
+//               ?.split('\n')
+//               .map((s) => s.trimRight())
+//               .toList()
+//               .join('\n') ??
+//               "",
+//           blockSyntaxes: [tableParse]);
+//       if (this.mounted) {
+//         setState(() {
+//           body = b;
+//         });
+//       } else {
+//         body = b;
+//       }
+//     });
+//   }
+//
+// }
