@@ -60,7 +60,6 @@ class _CommunityDetailsState extends State<CommunityDetails> {
         });
       }
     });
-
   }
 
   @override
@@ -297,27 +296,27 @@ class CommunityAboutSectionState extends State<CommunityAboutSection> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-              child: TabBar(
-                tabs: [
-                  Tab(
-                    child: Text(
-                      "About",
-                      style: theme.textTheme.bodyText1,
-                    ),
+            child: TabBar(
+              tabs: [
+                Tab(
+                  child: Text(
+                    "About",
+                    style: theme.textTheme.bodyText1,
                   ),
-                  Tab(
-                    child: Text(
-                      "Members",
-                      style: theme.textTheme.bodyText1,
-                    ),
-                  )
-                ],
-                onTap: (index) {
-                  setState(() {
-                    _selectedIndex = index;
-                  });
-                },
-              ),
+                ),
+                Tab(
+                  child: Text(
+                    "Members",
+                    style: theme.textTheme.bodyText1,
+                  ),
+                )
+              ],
+              onTap: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+            ),
           ),
           IndexedStack(
             children: [
@@ -425,7 +424,11 @@ class CommunityAboutSectionState extends State<CommunityAboutSection> {
 
   Widget _buildFeaturedPosts(ThemeData theme, List<CommunityPost>? posts) {
     if (posts == null || posts.isEmpty) {
-      return Container();
+      return Center(
+        child: CircularProgressIndicatorExtended(
+          label: Text("Getting Featured Posts"),
+        ),
+      );
     }
     return Column(
       children: [
@@ -494,8 +497,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
     var communityPostBloc = bloc.communityPostBloc;
-   
-  loading=false;
+
+    loading = false;
     if (firstBuild) {
       communityPostBloc.query = "";
       communityPostBloc.refresh(id: widget.community?.id);
@@ -530,8 +533,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                               cpType = CPType.All;
                             });
                             await communityPostBloc.refresh(
-                                type: CPType.All,
-                                id: widget.community?.id);
+                                type: CPType.All, id: widget.community?.id);
                             setState(() {
                               loading = false;
                             });
@@ -573,8 +575,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                                   });
                                   await communityPostBloc.refresh(
                                       type: CPType.PendingPosts,
-                                      id: widget.community?.id
-                                  );
+                                      id: widget.community?.id);
                                   setState(() {
                                     loading = false;
                                   });
@@ -624,6 +625,14 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                           stream: communityPostBloc.communityposts,
                           builder: (BuildContext context,
                               AsyncSnapshot<List<CommunityPost>> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicatorExtended(
+                                  label: Text("Getting the latest posts"),
+                                ),
+                              );
+                            }
                             return Column(
                               children: _buildPostList(snapshot, theme,
                                   communityPostBloc, community.id),
