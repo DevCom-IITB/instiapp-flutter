@@ -46,7 +46,7 @@ class CommunityPostBloc {
     // _communitySubject.add(defCommunities);
     // print("refresh");
 
-    _communitySubject.add([]);
+    // _communitySubject.add([]);
     if (id == null) {
       return;
     }
