@@ -113,13 +113,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       initAppLinksState();
     }
 
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() async {
     _appLinksSub.cancel();
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     disposeNotification();
     super.dispose();
   }
@@ -163,13 +163,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             primaryContainer: widget.bloc.primaryColor[200],
             secondaryContainer: widget.bloc.accentColor[200],
             brightness: widget.bloc.brightness.toBrightness(),
-            onBackground: widget.bloc.brightness == AppBrightness.light
-                ? Colors.black
-                : Colors.white,
             surface: widget.bloc.brightness == AppBrightness.light
                 ? Colors.white
                 : widget.bloc.brightness.toColor(),
-            surfaceVariant: widget.bloc.brightness == AppBrightness.light
+            surfaceContainerHighest: widget.bloc.brightness == AppBrightness.light
                 ? Color(0xFFE8ECF2)
                 : Color(0xFF121212),
             onSurface: widget.bloc.brightness == AppBrightness.light
@@ -184,38 +181,57 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           ),
           primarySwatch: Colors.primaries.firstWhereOrNull(
               (c) => c.value == widget.bloc.accentColor.value),
-
-          toggleableActiveColor: widget.bloc.accentColor,
           textSelectionTheme:
               TextSelectionThemeData(selectionColor: widget.bloc.accentColor),
 
           canvasColor: widget.bloc.brightness.toColor(),
-
-          bottomAppBarColor: widget.bloc.primaryColor,
           brightness: widget.bloc.brightness.toBrightness(),
 
           textTheme: TextTheme(
-              headline4: TextStyle(
+              headlineMedium: TextStyle(
                 color: widget.bloc.brightness == AppBrightness.light
                     ? Colors.black
                     : Colors.white,
               ),
-              headline3: TextStyle(
+              displaySmall: TextStyle(
                 color: widget.bloc.brightness == AppBrightness.light
                     ? Colors.black
                     : Colors.white,
               ),
-              headline2: TextStyle(
+              displayMedium: TextStyle(
                 color: widget.bloc.brightness == AppBrightness.light
                     ? Colors.black
                     : Colors.white,
               ),
-              headline1: TextStyle(
+              displayLarge: TextStyle(
                 color: widget.bloc.brightness == AppBrightness.light
                     ? Colors.black
                     : Colors.white,
               ),
-              headline5: TextStyle()),
+              headlineSmall: TextStyle()), checkboxTheme: CheckboxThemeData(
+ fillColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+ if (states.contains(WidgetState.disabled)) { return null; }
+ if (states.contains(WidgetState.selected)) { return widget.bloc.accentColor; }
+ return null;
+ }),
+ ), radioTheme: RadioThemeData(
+ fillColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+ if (states.contains(WidgetState.disabled)) { return null; }
+ if (states.contains(WidgetState.selected)) { return widget.bloc.accentColor; }
+ return null;
+ }),
+ ), switchTheme: SwitchThemeData(
+ thumbColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+ if (states.contains(WidgetState.disabled)) { return null; }
+ if (states.contains(WidgetState.selected)) { return widget.bloc.accentColor; }
+ return null;
+ }),
+ trackColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+ if (states.contains(WidgetState.disabled)) { return null; }
+ if (states.contains(WidgetState.selected)) { return widget.bloc.accentColor; }
+ return null;
+ }),
+ ), bottomAppBarTheme: BottomAppBarTheme(color: widget.bloc.primaryColor),
         ),
         onGenerateRoute: (RouteSettings settings) {
           // print(settings.name);

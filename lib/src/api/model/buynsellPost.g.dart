@@ -21,7 +21,7 @@ BuynSellPost _$BuynSellPostFromJson(Map<String, dynamic> json) => BuynSellPost(
       action: json['action'] as String?,
       status: json['status'] as bool?,
       deleted: json['deleted'] as bool?,
-      price: json['price'] as int?,
+      price: (json['price'] as num?)?.toInt(),
       timeOfCreation: json['time_of_creation'] as String?,
     )
       ..negotiable = json['negotiable'] as bool?

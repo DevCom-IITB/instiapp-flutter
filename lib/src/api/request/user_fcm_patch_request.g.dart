@@ -9,7 +9,7 @@ part of 'user_fcm_patch_request.dart';
 UserFCMPatchRequest _$UserFCMPatchRequestFromJson(Map<String, dynamic> json) =>
     UserFCMPatchRequest(
       userFCMId: json['fcm_id'] as String?,
-      userAndroidVersion: json['android_version'] as int?,
+      userAndroidVersion: (json['android_version'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$UserFCMPatchRequestToJson(

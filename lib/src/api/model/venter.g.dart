@@ -31,7 +31,7 @@ Complaint _$ComplaintFromJson(Map<String, dynamic> json) => Complaint(
       images:
           (json['images'] as List<dynamic>?)?.map((e) => e as String).toList(),
       isSubscribed: json['is_subscribed'] as bool?,
-      voteCount: json['voteCount'] as int?,
+      voteCount: (json['voteCount'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$ComplaintToJson(Complaint instance) => <String, dynamic>{
