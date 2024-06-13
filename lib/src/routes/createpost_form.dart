@@ -107,7 +107,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                       ),
                       Text(
                         "Login To Make Post",
-                        style: theme.textTheme.headline5,
+                        style: theme.textTheme.headlineSmall,
                         textAlign: TextAlign.center,
                       )
                     ],
@@ -135,9 +135,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                     },
                                     child: Icon(Icons.close),
                                     style: TextButton.styleFrom(
-                                        primary: Colors.black,
-                                        backgroundColor: theme.canvasColor,
-                                        onSurface: Colors.grey,
+                                        foregroundColor: Colors.black, backgroundColor: theme.canvasColor, disabledForegroundColor: Colors.grey.withOpacity(0.38),
                                         elevation: 0.0),
                                   ),
                                 ),
@@ -186,13 +184,13 @@ class _CreatePostPage extends State<CreatePostPage> {
                                       ),
                                     ),
                                     style: ButtonStyle(
-                                        foregroundColor: MaterialStateProperty
+                                        foregroundColor: WidgetStateProperty
                                             .all(Colors.white),
                                         backgroundColor:
-                                            MaterialStateProperty.all(
+                                            WidgetStateProperty.all(
                                                 Color.fromARGB(
                                                     255, 72, 115, 235)),
-                                        shape: MaterialStateProperty.all<
+                                        shape: WidgetStateProperty.all<
                                                 RoundedRectangleBorder>(
                                             RoundedRectangleBorder(
                                           borderRadius:
@@ -211,7 +209,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                       bottom: BorderSide(
                                           width: 1,
                                           color: theme
-                                              .colorScheme.surfaceVariant))),
+                                              .colorScheme.surfaceContainerHighest))),
                               child: ListTile(
                                 leading: NullableCircleAvatar(
                                   (click == true)
@@ -249,16 +247,16 @@ class _CreatePostPage extends State<CreatePostPage> {
                                       : Icons.sentiment_neutral),
                                   style: ButtonStyle(
                                       foregroundColor: (click == true)
-                                          ? MaterialStateProperty.all(
+                                          ? WidgetStateProperty.all(
                                               Colors.grey)
-                                          : MaterialStateProperty.all(
+                                          : WidgetStateProperty.all(
                                               Colors.white),
                                       backgroundColor: (click == true)
-                                          ? MaterialStateProperty.all(
+                                          ? WidgetStateProperty.all(
                                               Colors.white)
-                                          : MaterialStateProperty.all(
+                                          : WidgetStateProperty.all(
                                               Colors.black),
-                                      shape: MaterialStateProperty.all<
+                                      shape: WidgetStateProperty.all<
                                               RoundedRectangleBorder>(
                                           RoundedRectangleBorder(
                                               borderRadius:

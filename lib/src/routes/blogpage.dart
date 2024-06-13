@@ -29,7 +29,7 @@ TextSpan highlight(String result, String query, BuildContext context) {
   TextStyle posRes =
       TextStyle(color: Colors.white, backgroundColor: Colors.red);
   TextStyle? negRes = theme.textTheme
-      .subtitle1; // TextStyle(backgroundColor: bloc.bloc.brightness.toColor().withOpacity(1.0),);
+      .titleMedium; // TextStyle(backgroundColor: bloc.bloc.brightness.toColor().withOpacity(1.0),);
   if (result == "" || query == "") return TextSpan(text: result, style: negRes);
   result.replaceAll('\n', " ").replaceAll("  ", "");
 
@@ -243,7 +243,7 @@ class _BlogPageState extends State<BlogPage> {
                         children: <Widget>[
                           Text(
                             widget.title,
-                            style: theme.textTheme.headline3,
+                            style: theme.textTheme.displaySmall,
                           ),
                         ],
                       ),
@@ -253,7 +253,7 @@ class _BlogPageState extends State<BlogPage> {
                         padding: const EdgeInsets.all(28.0),
                         child: Text(
                           "You must be logged in to view ${widget.title}",
-                          style: theme.textTheme.headline6,
+                          style: theme.textTheme.titleLarge,
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -369,7 +369,7 @@ class _BlogPageState extends State<BlogPage> {
             ),
             Text(
               "Ask your queries!",
-              style: theme.textTheme.headline5,
+              style: theme.textTheme.headlineSmall,
               textAlign: TextAlign.center,
             )
           ],
@@ -396,7 +396,7 @@ class _BlogPageState extends State<BlogPage> {
                 child: Center(
                     child: Text.rich(
                   TextSpan(children: [
-                    TextSpan(text: "👎 ", style: theme.textTheme.headline5),
+                    TextSpan(text: "👎 ", style: theme.textTheme.headlineSmall),
                     TextSpan(text: " No Suitable Results"),
                   ]),
                 )),
@@ -422,7 +422,7 @@ class _BlogPageState extends State<BlogPage> {
         args?.key == ActionKeys.LIKE_REACT &&
         firstNotifAct) {
       firstNotifAct = false;
-      WidgetsBinding.instance?.addPostFrameCallback(
+      WidgetsBinding.instance.addPostFrameCallback(
           (_) => _pressedReact(post, theme, bloc, context));
     }
 
@@ -460,34 +460,30 @@ class _BlogPageState extends State<BlogPage> {
                           children: <Widget>[
                             widget.postType == PostType.ChatBot
                                 ? RichText(
-                                    textScaleFactor: 0.8,
-                                    // textHeightBehavior: ,
                                     text: TextSpan(
                                         text: "Click here to know more",
                                         style:
-                                            theme.textTheme.subtitle1!.copyWith(
+                                            theme.textTheme.titleMedium!.copyWith(
                                           fontWeight: FontWeight.normal,
                                           color: Colors.blue,
                                           decoration: TextDecoration.underline,
                                         )),
                                     textAlign: TextAlign.start,
                                     strutStyle: StrutStyle.fromTextStyle(
-                                        theme.textTheme.headline5!.copyWith(
+                                        theme.textTheme.headlineSmall!.copyWith(
                                             fontWeight: FontWeight.w900,
                                             color: Colors.blue),
                                         height: 0.7,
-                                        fontWeight: FontWeight.w900))
+                                        fontWeight: FontWeight.w900), textScaler: TextScaler.linear(0.8))
                                 : RichText(
-                                    textScaleFactor: 1.55,
-                                    // textHeightBehavior: ,
                                     text: highlight(
                                         post.title, bloc.query, context),
                                     textAlign: TextAlign.start,
                                     strutStyle: StrutStyle.fromTextStyle(
-                                        theme.textTheme.headline5!.copyWith(
+                                        theme.textTheme.headlineSmall!.copyWith(
                                             fontWeight: FontWeight.w900),
                                         height: 0.7,
-                                        fontWeight: FontWeight.w900)),
+                                        fontWeight: FontWeight.w900), textScaler: TextScaler.linear(1.55)),
                             // Text(
                             //   post.title,
                             //   textAlign: TextAlign.start,
@@ -505,7 +501,7 @@ class _BlogPageState extends State<BlogPage> {
                                       message: "Open body page",
                                       child: Text(
                                         "${((post as NewsArticle).body?.bodyName)} | ${post.published}",
-                                        style: theme.textTheme.subtitle1
+                                        style: theme.textTheme.titleMedium
                                             ?.copyWith(color: Colors.lightBlue),
                                       ),
                                     ),
@@ -515,7 +511,7 @@ class _BlogPageState extends State<BlogPage> {
                                     : Text(
                                         post.published,
                                         textAlign: TextAlign.start,
-                                        style: theme.textTheme.subtitle1,
+                                        style: theme.textTheme.titleMedium,
                                       ),
                             SizedBox(
                               height: 4.0,
@@ -565,7 +561,7 @@ class _BlogPageState extends State<BlogPage> {
                       child: CommonHtml(
                           data: post.content,
                           defaultTextStyle:
-                              theme.textTheme.subtitle1 ?? TextStyle())),
+                              theme.textTheme.titleMedium ?? TextStyle())),
                 )),
             widget.postType == PostType.External
                 ? Padding(
@@ -575,7 +571,7 @@ class _BlogPageState extends State<BlogPage> {
                     ),
                     child: Text(
                       "By " + post.body,
-                      style: theme.textTheme.bodyText1,
+                      style: theme.textTheme.bodyLarge,
                     ),
                   )
                 : SizedBox(),
@@ -643,7 +639,7 @@ class _BlogPageState extends State<BlogPage> {
                                                 text:
                                                     "${nonZeroReactions.map((s) => reactionToEmoji[s]).join()} ",
                                                 style:
-                                                    theme.textTheme.headline5),
+                                                    theme.textTheme.headlineSmall),
                                             TextSpan(
                                                 text:
                                                     " ${((article.userReaction ?? -1) < 0) ? "" : "You "}${((article.userReaction ?? -1) >= 0 && (totalNumberOfReactions ?? 0) > 1) ? "and " : ""}${numberOfPeopleOtherThanYou > 0 ? (numberOfPeopleOtherThanYou.toString() + " other " + (numberOfPeopleOtherThanYou > 1 ? "people " : "person ")) : ""}reacted"),
@@ -656,7 +652,7 @@ class _BlogPageState extends State<BlogPage> {
                                             TextSpan(
                                                 text: "👍 ",
                                                 style:
-                                                    theme.textTheme.headline5),
+                                                    theme.textTheme.headlineSmall),
                                             TextSpan(text: " Like"),
                                           ]),
                                         )),
@@ -726,7 +722,7 @@ class _BlogPageState extends State<BlogPage> {
                                                   child: Text(
                                                     reactionToEmoji[s] ?? "",
                                                     style: theme
-                                                        .textTheme.headline5,
+                                                        .textTheme.headlineSmall,
                                                   ),
                                                   onPressed: () {
                                                     Navigator.of(context,
@@ -767,7 +763,7 @@ class _BlogPageState extends State<BlogPage> {
                                       TextSpan(children: [
                                         TextSpan(
                                             text: "👍 ",
-                                            style: theme.textTheme.headline5),
+                                            style: theme.textTheme.headlineSmall),
                                         TextSpan(text: " Like"),
                                       ]),
                                     )),
@@ -824,7 +820,7 @@ class _BlogPageState extends State<BlogPage> {
                     : theme.cardColor,
                 child: Text(
                   reactionToEmoji[s] ?? "",
-                  style: theme.textTheme.headline5,
+                  style: theme.textTheme.headlineSmall,
                 ),
                 onPressed: () {
                   Navigator.of(context, rootNavigator: true).pop(s);
@@ -859,7 +855,7 @@ class _BlogPageState extends State<BlogPage> {
               Expanded(
                 child: Text(
                   widget.title,
-                  style: theme.textTheme.headline3,
+                  style: theme.textTheme.displaySmall,
                 ),
               ),
               AnimatedContainer(
@@ -903,14 +899,14 @@ class _BlogPageState extends State<BlogPage> {
                   duration: Duration(milliseconds: 500),
                   child: TextField(
                     controller: _searchFieldController,
-                    cursorColor: theme.textTheme.bodyText2?.color,
-                    style: theme.textTheme.bodyText2,
+                    cursorColor: theme.textTheme.bodyMedium?.color,
+                    style: theme.textTheme.bodyMedium,
                     focusNode: _focusNode,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30)),
-                      labelStyle: theme.textTheme.bodyText2,
-                      hintStyle: theme.textTheme.bodyText2,
+                      labelStyle: theme.textTheme.bodyMedium,
+                      hintStyle: theme.textTheme.bodyMedium,
                       prefixIcon: Icon(
                         Icons.search_outlined,
                       ),
@@ -966,7 +962,7 @@ class _BlogPageState extends State<BlogPage> {
               return MultiSelectDialogField<String?>(
                 title: Text(
                   "Filters",
-                  style: theme.textTheme.subtitle1,
+                  style: theme.textTheme.titleMedium,
                 ),
                 searchable: true,
                 decoration: BoxDecoration(),
