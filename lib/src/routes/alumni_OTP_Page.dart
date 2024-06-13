@@ -54,7 +54,7 @@ class _AlumniOTPPageState extends State<AlumniOTPPage> {
               initialValue: "",
               decoration: InputDecoration(labelText: "Enter the OTP here."),
               onChanged: (value) => {
-                setState(() => {_bloc!.setAlumniOTP(value)})
+                setState(() {_bloc!.setAlumniOTP(value);})
               },
             ),
             SizedBox(

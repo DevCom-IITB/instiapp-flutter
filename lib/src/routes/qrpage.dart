@@ -94,7 +94,7 @@ class _QRPageState extends State<QRPage> {
                     ),
                     Text(
                       "Login To View QR",
-                      style: theme.textTheme.headline5,
+                      style: theme.textTheme.headlineSmall,
                       textAlign: TextAlign.center,
                     )
                   ],
@@ -106,7 +106,7 @@ class _QRPageState extends State<QRPage> {
                   TitleWithBackButton(
                     child: Text(
                       "QR Code",
-                      style: theme.textTheme.headline3,
+                      style: theme.textTheme.displaySmall,
                     ),
                   ),
                   loading
@@ -126,7 +126,7 @@ class _QRPageState extends State<QRPage> {
                                   ),
                                   Text(
                                     "Some error in generating QR",
-                                    style: theme.textTheme.headline5,
+                                    style: theme.textTheme.headlineSmall,
                                     textAlign: TextAlign.center,
                                   )
                                 ],
@@ -140,11 +140,11 @@ class _QRPageState extends State<QRPage> {
                               margin: EdgeInsets.all(50),
                               alignment: Alignment.center,
                               height: MediaQuery.of(context).size.height / 2,
-                              child: QrImage(
+                              child: QrImageView(
                                 // data: '',
                                 data: '${qrString}',
                                 size: MediaQuery.of(context).size.width / 2,
-                                foregroundColor: Colors.black,
+                                // foregroundColor: Colors.black,
                                 embeddedImage: AssetImage(
                                     'assets/buynsell/DevcomLogo.png'),
                               ),
