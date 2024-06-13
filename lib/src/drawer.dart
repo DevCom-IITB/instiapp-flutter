@@ -41,12 +41,12 @@ class _NavDrawerState extends State<NavDrawer> {
     navi = Navigator.of(context);
 
     return UpgradeAlert(
+      showReleaseNotes: true,
+      dialogStyle: UpgradeDialogStyle.cupertino,
       upgrader: Upgrader(
         // debugLogging: true,
         // debugDisplayAlways: true,
-        dialogStyle: UpgradeDialogStyle.cupertino,
         durationUntilAlertAgain: Duration(days: 1),
-        showReleaseNotes: false,
         messages: MyUpgraderMessages(),
       ),
       child: Drawer(
@@ -313,7 +313,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                 title: Text(
                                   snapshot.data?.profile?.userName ??
                                       'Not Logged in',
-                                  style: theme.textTheme.bodyText2
+                                  style: theme.textTheme.bodyMedium
                                       ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 subtitle: snapshot.data != null
@@ -321,7 +321,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                         snapshot.data?.profile
                                                 ?.userRollNumber ??
                                             "",
-                                        style: theme.textTheme.bodyText2)
+                                        style: theme.textTheme.bodyMedium)
                                     : ElevatedButton(
                                         child: Text(
                                           "Log in",
@@ -413,7 +413,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                                               "${snapshot.data?.length}",
                                                               style: theme
                                                                   .textTheme
-                                                                  .overline
+                                                                  .labelSmall
                                                                   ?.copyWith(
                                                                 color: theme
                                                                     .colorScheme
@@ -553,13 +553,13 @@ class NavListTile extends StatelessWidget {
                 color: theme.colorScheme.onSurface,
               )
             : Transform.translate(
-              offset: Offset(-3,3),
-              child: Icon(
-                  //for lost and found icon
-                  this.icon,
-                  color: theme.colorScheme.onSurface,
-                  size: 32),
-            ),
+                offset: Offset(-3, 3),
+                child: Icon(
+                    //for lost and found icon
+                    this.icon,
+                    color: theme.colorScheme.onSurface,
+                    size: 32),
+              ),
         dense: true,
         title: Text(
           this.title!,

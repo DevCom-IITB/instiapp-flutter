@@ -10,7 +10,7 @@ class ErrorInterceptor extends Interceptor {
   ErrorInterceptor({required this.context, required this.navigatorKey});
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) async {
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     // print("Error");
     final res = err.response;
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
