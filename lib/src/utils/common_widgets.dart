@@ -2042,9 +2042,9 @@ class _DropdownMultiSelectState<T> extends State<DropdownMultiSelect<T>> {
             dropdownBuilder: buildDropdownMenuItems,
             style: theme.textTheme.titleMedium,
             validator: (value) {
-              if (value == null) {
-                return 'Please select a Skill';
-              }
+              // if (value == null) {
+              //   return 'Please select a Skill';
+              // }
               return null;
             },
           ),
