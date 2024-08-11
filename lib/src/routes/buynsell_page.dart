@@ -122,7 +122,7 @@ class _SellpageState extends State<Sellpage> {
                       ),
                       Text(
                         "Login To View Buy and Sell Posts",
-                        style: theme.textTheme.headline5,
+                        style: theme.textTheme.headlineSmall,
                         textAlign: TextAlign.center,
                       )
                     ],
@@ -136,7 +136,7 @@ class _SellpageState extends State<Sellpage> {
                     TitleWithBackButton(
                       child: Text(
                         "Buy & Sell (Beta)",
-                        style: theme.textTheme.headline4,
+                        style: theme.textTheme.headlineMedium,
                       ),
                     ),
                     Center(
@@ -150,8 +150,7 @@ class _SellpageState extends State<Sellpage> {
                                 style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(15)),
-                                    primary: theme.cardColor,
+                                            BorderRadius.circular(15)), backgroundColor: theme.cardColor,
                                     side: BorderSide(
                                       width: 2,
                                       color: MyPosts
@@ -169,7 +168,7 @@ class _SellpageState extends State<Sellpage> {
                                     },
                                 child: Text(
                                   "All Posts",
-                                  style: theme.textTheme.headline6,
+                                  style: theme.textTheme.titleLarge,
                                 )),
                           )),
                           Expanded(
@@ -177,7 +176,7 @@ class _SellpageState extends State<Sellpage> {
                             padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
                             child: ElevatedButton(
                               child: Text("Your Posts",
-                                  style: theme.textTheme.headline6),
+                                  style: theme.textTheme.titleLarge),
                               onPressed: () => {
                                 setState(() {
                                   MyPosts = true;
@@ -186,8 +185,7 @@ class _SellpageState extends State<Sellpage> {
                               },
                               style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15)),
-                                  primary: theme.cardColor,
+                                      borderRadius: BorderRadius.circular(15)), backgroundColor: theme.cardColor,
                                   side: BorderSide(
                                     width: 2,
                                     color: !MyPosts
@@ -318,7 +316,7 @@ class _SellpageState extends State<Sellpage> {
                       EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 11, 0, 50),
                   child: Text(
                     posts[index].name ?? "",
-                    style: theme.textTheme.headline6,
+                    style: theme.textTheme.titleLarge,
                     //style: TextStyle(
                     //     fontSize: (myfont.toInt()).toDouble(),
                     //     fontWeight: FontWeight.w600),
@@ -333,7 +331,7 @@ class _SellpageState extends State<Sellpage> {
                     (posts[index].brand ?? "").length <= 10
                         ? posts[index].brand ?? ""
                         : (posts[index].brand ?? "").substring(0, 10) + '...',
-                    style: theme.textTheme.bodyText2,
+                    style: theme.textTheme.bodyMedium,
                     maxLines: 1,
                   ),
                 ),
@@ -345,7 +343,7 @@ class _SellpageState extends State<Sellpage> {
                             borderRadius: BorderRadius.circular(5),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.red,
+                                backgroundColor: Colors.red,
                               ),
                               onPressed: () {
                                 showDialog(
@@ -386,7 +384,7 @@ class _SellpageState extends State<Sellpage> {
                                     ? "GiveAway"
                                     : "₹" +
                                         (posts[index].price ?? 0).toString()),
-                                style: theme.textTheme.bodyText1,
+                                style: theme.textTheme.bodyLarge,
 
                                 // style:
                                 //     TextStyle(fontSize: w, fontWeight: FontWeight.w800),
@@ -403,7 +401,7 @@ class _SellpageState extends State<Sellpage> {
                               size: ((myfont / 18 * 12).toInt()).toDouble(),
                             ),
                             Text(' ' + (posts[index].timeBefore ?? ""),
-                                style: theme.textTheme.bodyText1!.copyWith(
+                                style: theme.textTheme.bodyLarge!.copyWith(
                                   fontWeight: FontWeight.bold,
                                 )
                                 //theme.textTheme.labelSmall
@@ -420,7 +418,7 @@ class _SellpageState extends State<Sellpage> {
                     child: Text(
                       "Condition: " + (posts[index].condition ?? "") + "/10",
                       style: //TextStyle(
-                          theme.textTheme.bodyText2,
+                          theme.textTheme.bodyMedium,
                       // fontSize: ((myfont / 18 * 12).toInt()).toDouble()),
                     ),
                     margin:
@@ -431,7 +429,7 @@ class _SellpageState extends State<Sellpage> {
                       (posts[index].description ?? ""), maxLines: 2,
 
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodyText2,
+                      style: theme.textTheme.bodyMedium,
                       // style: TextStyle(
                       //     fontWeight: FontWeight.w500,
                       //     fontSize: ((myfont / 16 * 12).toInt()).toDouble()),

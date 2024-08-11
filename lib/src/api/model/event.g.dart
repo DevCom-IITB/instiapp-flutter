@@ -27,10 +27,11 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       eventOfferedAchievements: (json['offered_achievements'] as List<dynamic>?)
           ?.map((e) => OfferedAchievements.fromJson(e as Map<String, dynamic>))
           .toList(),
-      eventInterestedCount: json['interested_count'] as int? ?? 0,
-      eventGoingCount: json['going_count'] as int? ?? 0,
-      eventUserTags:
-          (json['user_tags'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      eventInterestedCount: (json['interested_count'] as num?)?.toInt() ?? 0,
+      eventGoingCount: (json['going_count'] as num?)?.toInt() ?? 0,
+      eventUserTags: (json['user_tags'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList(),
       eventInterested: (json['interested'] as List<dynamic>?)
           ?.map((e) => User.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -38,7 +39,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
           ?.map((e) => User.fromJson(e as Map<String, dynamic>))
           .toList(),
       eventWebsiteURL: json['website_url'] as String?,
-      eventUserUesInt: json['user_ues'] as int?,
+      eventUserUesInt: (json['user_ues'] as num?)?.toInt(),
       eventInterest: (json['event_interest'] as List<dynamic>?)
           ?.map((e) => Interest.fromJson(e as Map<String, dynamic>))
           .toList(),

@@ -126,7 +126,7 @@ class _NativeMapPageState extends State<NativeMapPage> {
               ),
               child: Text(
                 v.venueName ?? "",
-                style: theme.textTheme.headline4,
+                style: theme.textTheme.headlineMedium,
               ),
             ),
             Container(

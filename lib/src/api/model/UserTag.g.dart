@@ -7,7 +7,7 @@ part of 'UserTag.dart';
 // **************************************************************************
 
 UserTag _$UserTagFromJson(Map<String, dynamic> json) => UserTag(
-      tagID: json['id'] as int?,
+      tagID: (json['id'] as num?)?.toInt(),
       tagName: json['name'] as String?,
     );
 
@@ -18,7 +18,7 @@ Map<String, dynamic> _$UserTagToJson(UserTag instance) => <String, dynamic>{
 
 UserTagHolder _$UserTagHolderFromJson(Map<String, dynamic> json) =>
     UserTagHolder(
-      holderID: json['id'] as int?,
+      holderID: (json['id'] as num?)?.toInt(),
       holderName: json['name'] as String?,
       holderTags: (json['tags'] as List<dynamic>?)
           ?.map((e) => UserTag.fromJson(e as Map<String, dynamic>))

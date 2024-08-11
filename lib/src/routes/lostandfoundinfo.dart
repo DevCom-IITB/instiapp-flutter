@@ -126,7 +126,7 @@ class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
                 child: Text(lnfPost?.foundAt ?? "",
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.headline6
+                    style: theme.textTheme.titleLarge
                         ?.copyWith(fontWeight: FontWeight.w100, fontSize: 20)),
               ),
             ),
@@ -152,7 +152,7 @@ class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
                   child: Text(lnfPost?.name ?? "",
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.headline5?.copyWith(
+                      style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         fontSize: 30,
                       )
@@ -193,7 +193,7 @@ class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
                                 child: Text(
                                   'Claimed by ' +
                                       (lnfPost?.claimedBy?.userLDAPId ?? ""),
-                                  style: theme.textTheme.headline6?.copyWith(
+                                  style: theme.textTheme.titleLarge?.copyWith(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 17),
                                 ),
@@ -204,7 +204,7 @@ class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
                             Text(
                               'Phone number - ' +
                                   (lnfPost?.contactDetails ?? ""),
-                              style: theme.textTheme.headline6?.copyWith(
+                              style: theme.textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.bold, fontSize: 17),
                             ),
                           ],
@@ -215,7 +215,7 @@ class _LostAndFoundInfoPageState extends State<LostAndFoundInfoPage> {
                             lnfPost?.claimed == true
                                 ? "Claimed"
                                 : "Not Claimed",
-                            style: theme.textTheme.headline4?.copyWith(
+                            style: theme.textTheme.headlineMedium?.copyWith(
                                 fontSize: 25, fontWeight: FontWeight.w600),
                             textAlign: TextAlign.left,
                           ),

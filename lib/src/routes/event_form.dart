@@ -16,9 +16,9 @@ import 'package:InstiApp/src/utils/event_form_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/src/widgets/form.dart' as flut;
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class CreateEventBtn extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -39,9 +39,9 @@ class CreateEventBtn extends StatelessWidget {
         },
         child: Text(isEditing ? 'Update' : 'Create'),
         style: TextButton.styleFrom(
-            primary: Colors.black,
+            foregroundColor: Colors.black,
             backgroundColor: Colors.amber,
-            onSurface: Colors.grey,
+            disabledForegroundColor: Colors.grey.withOpacity(0.38),
             elevation: 5.0),
       ),
     );
@@ -65,9 +65,9 @@ class DeleteEventBtn extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
         style: TextButton.styleFrom(
-            primary: Colors.black,
+            foregroundColor: Colors.black,
             backgroundColor: Colors.red,
-            onSurface: Colors.grey,
+            disabledForegroundColor: Colors.grey.withOpacity(0.38),
             elevation: 5.0),
       ),
     );
@@ -159,9 +159,9 @@ class _AchievementAdderState extends State<AchievementAdder> {
                   });
                 },
                 style: TextButton.styleFrom(
-                  primary: Colors.black,
+                  foregroundColor: Colors.black,
                   backgroundColor: Colors.amber,
-                  onSurface: Colors.grey,
+                  disabledForegroundColor: Colors.grey.withOpacity(0.38),
                   elevation: 5.0,
                 ),
               ),
@@ -831,41 +831,45 @@ class _EventFormState extends State<EventForm> {
                     .map(
                       (venue) => Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: TypeAheadFormField<Venue>(
-                            noItemsFoundBuilder: (ctx) =>
-                                Text("No Venue Found."),
+                          child: TypeAheadField<Venue>(
+                            emptyBuilder: (ctx) => Text("No Venue Found."),
+                            builder: (context, controller, focusNode) {
+                              return TextField(
+                                  controller: venue,
+                                  focusNode: focusNode,
+                                  autofocus: true,
+                                  decoration: InputDecoration(
+                                    label: Text('Venue'),
+                                    suffixIcon: IconButton(
+                                      icon: (venues.indexOf(venue) > 0)
+                                          ? Icon(Icons.remove)
+                                          : Icon(Icons.add),
+                                      onPressed: () {
+                                        int index = venues.indexOf(venue);
+                                        if (venues.length > 1 && (index != 0)) {
+                                          setState(() {
+                                            eventVenues.removeAt(index);
+                                            venues.remove(venue);
+                                          });
+                                        } else {
+                                          setState(() {
+                                            eventVenues.add(Venue());
+                                            venues.add(TextEditingController());
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ));
+                            },
                             // initialValue: eventVenues[venues.indexOf(venue)].venueShortName!,
-                            textFieldConfiguration: TextFieldConfiguration(
-                                controller: venue,
-                                decoration: InputDecoration(
-                                  label: Text('Venue'),
-                                  suffixIcon: IconButton(
-                                    icon: (venues.indexOf(venue) > 0)
-                                        ? Icon(Icons.remove)
-                                        : Icon(Icons.add),
-                                    onPressed: () {
-                                      int index = venues.indexOf(venue);
-                                      if (venues.length > 1 && (index != 0)) {
-                                        setState(() {
-                                          eventVenues.removeAt(index);
-                                          venues.remove(venue);
-                                        });
-                                      } else {
-                                        setState(() {
-                                          eventVenues.add(Venue());
-                                          venues.add(TextEditingController());
-                                        });
-                                      }
-                                    },
-                                  ),
-                                )),
                             suggestionsCallback: (String q) => venueOptions
                                 .where((element) => (element.venueName! +
                                         element.venueShortName!)
                                     .toLowerCase()
-                                    .contains(q.toLowerCase())),
+                                    .contains(q.toLowerCase()))
+                                .toList(),
 
-                            onSuggestionSelected: (Venue v) {
+                            onSelected: (Venue v) {
                               int venueIndex = venues.indexOf(venue);
                               setState(() {
                                 // venues[venueIndex].clear();

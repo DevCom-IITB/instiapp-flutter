@@ -16,7 +16,7 @@ Body _$BodyFromJson(Map<String, dynamic> json) => Body(
           ?.map((e) => Event.fromJson(e as Map<String, dynamic>))
           .toList(),
       bodyID: json['id'] as String?,
-      bodyFollowersCount: json['followers_count'] as int?,
+      bodyFollowersCount: (json['followers_count'] as num?)?.toInt(),
       bodyImageURL: json['image_url'] as String?,
       bodyName: json['name'] as String?,
       bodyParents: (json['parents'] as List<dynamic>?)
