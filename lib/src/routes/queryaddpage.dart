@@ -1,11 +1,11 @@
 import 'package:InstiApp/src/api/request/postFAQ_request.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
+import 'package:InstiApp/src/components/dropdowns.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import '../bloc_provider.dart';
 import '../drawer.dart';
@@ -46,7 +46,7 @@ class _QueryAddPageState extends State<QueryAddPage> {
       return Container(
         child: Text(
           "Select a Category",
-          style: Theme.of(context).textTheme.bodyText1,
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
       );
     }
@@ -133,7 +133,7 @@ class _QueryAddPageState extends State<QueryAddPage> {
                       ),
                       Text(
                         "Login To Ask a Question",
-                        style: theme.textTheme.headline5,
+                        style: theme.textTheme.headlineSmall,
                         textAlign: TextAlign.center,
                       )
                     ],
@@ -154,7 +154,7 @@ class _QueryAddPageState extends State<QueryAddPage> {
                                     EdgeInsets.fromLTRB(15.0, 15.0, 10.0, 5.0),
                                 child: Text(
                                   "Couldn't find what you're looking for?",
-                                  style: theme.textTheme.headline4,
+                                  style: theme.textTheme.headlineMedium,
                                 )),
                             SizedBox(
                               height: 40,
@@ -192,39 +192,19 @@ class _QueryAddPageState extends State<QueryAddPage> {
                                       SizedBox(
                                         height: 20.0,
                                       ),
-                                      DropdownSearch<String>(
-                                        mode: Mode.DIALOG,
-                                        maxHeight: 700,
-                                        isFilteredOnline: false,
-                                        showSearchBox: true,
-                                        dropdownSearchDecoration:
-                                            InputDecoration(
-                                          labelText: "Category",
-                                          hintText: "Category",
-                                        ),
-                                        items: categories,
+                                      CustomDropdown<String>(
+                                        emptyText:
+                                            "No events found. Refine your search!",
                                         onChanged: onCategoryChange,
+                                        label: "Category",
+                                        itemBuilder:
+                                            _customPopupItemBuilderCategory,
+                                        asyncItems:
+                                            bloc.achievementBloc.searchForSkill,
                                         dropdownBuilder:
                                             buildDropdownMenuItemsCategory,
-                                        popupItemBuilder:
-                                            _customPopupItemBuilderCategory,
-                                        popupSafeArea: PopupSafeAreaProps(
-                                            top: true, bottom: true),
-                                        scrollbarProps: ScrollbarProps(
-                                          isAlwaysShown: true,
-                                          thickness: 7,
-                                        ),
-                                        emptyBuilder:
-                                            (BuildContext context, String? _) {
-                                          return Container(
-                                            alignment: Alignment.center,
-                                            padding: EdgeInsets.all(20),
-                                            child: Text(
-                                              "No events found. Refine your search!",
-                                              style: theme.textTheme.subtitle1,
-                                            ),
-                                          );
-                                        },
+                                        style: theme.textTheme.titleMedium,
+                                        items: categories,
                                       ),
                                     ])),
                             Container(
@@ -263,9 +243,10 @@ class _QueryAddPageState extends State<QueryAddPage> {
                                 },
                                 child: Text('Submit Question'),
                                 style: TextButton.styleFrom(
-                                    primary: Colors.black,
+                                    foregroundColor: Colors.black,
                                     backgroundColor: Colors.amber,
-                                    onSurface: Colors.grey,
+                                    disabledForegroundColor:
+                                        Colors.grey.withOpacity(0.38),
                                     elevation: 5.0),
                               ),
                             ),
@@ -293,7 +274,7 @@ class Card extends State<VerifyCard> {
       return ListTile(
         title: Text(
           widget.thing?.eventName ?? "",
-          style: theme.textTheme.headline6,
+          style: theme.textTheme.titleLarge,
         ),
         enabled: true,
         leading: NullableCircleAvatar(
@@ -327,7 +308,7 @@ class BodyCardState extends State<BodyCard> {
       return ListTile(
         title: Text(
           widget.thing?.bodyName ?? "",
-          style: theme.textTheme.headline6,
+          style: theme.textTheme.titleLarge,
         ),
         enabled: true,
         leading: NullableCircleAvatar(

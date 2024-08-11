@@ -9,7 +9,7 @@ part of 'user_tags_reach_response.dart';
 UserTagsReachResponse _$UserTagsReachResponseFromJson(
         Map<String, dynamic> json) =>
     UserTagsReachResponse(
-      json['count'] as int?,
+      (json['count'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$UserTagsReachResponseToJson(

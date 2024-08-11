@@ -89,7 +89,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               controller: _searchFieldController,
               cursorColor: widget.transparentBackground
                   ? Colors.white
-                  : theme!.textTheme.bodyText2?.color,
+                  : theme!.textTheme.bodyMedium?.color,
               style: theme!.textTheme.bodyLarge?.copyWith(
                   color: widget.transparentBackground ? Colors.white : null),
               focusNode: widget.appBarSearchStyle.focusNode,
@@ -137,7 +137,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
             backgroundColor: widget.transparentBackground
                 ? Colors.transparent
                 : theme!.colorScheme.surface,
-            foregroundColor: theme!.colorScheme.onBackground,
+            foregroundColor: theme!.colorScheme.onSurface,
             actions: actionButtons,
             elevation: 0,
             leading: widget.leadingStyle != null

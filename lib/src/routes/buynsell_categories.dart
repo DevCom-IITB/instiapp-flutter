@@ -3,7 +3,6 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 
-import '../utils/title_with_backbutton.dart';
 
 double screen_h = 0, screen_w = 0;
 
@@ -86,7 +85,7 @@ class BuyAndSellCategoryPage extends StatelessWidget {
                       child: TitleWithBackButton(
                         child: Text(
                           "Choose Category",
-                          style: theme.textTheme.headline4,
+                          style: theme.textTheme.headlineMedium,
                         ),
                       ),
                     ),
