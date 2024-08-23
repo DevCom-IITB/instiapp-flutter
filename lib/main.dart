@@ -155,7 +155,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         theme: ThemeData(
           // fontFamily: "SourceSansPro",
           fontFamily: "IBMPlexSans",
-
+          useMaterial3: false,
           primaryColor: widget.bloc.primaryColor,
           colorScheme: theme.colorScheme.copyWith(
             primary: widget.bloc.primaryColor,
@@ -166,9 +166,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             surface: widget.bloc.brightness == AppBrightness.light
                 ? Colors.white
                 : widget.bloc.brightness.toColor(),
-            surfaceContainerHighest: widget.bloc.brightness == AppBrightness.light
-                ? Color(0xFFE8ECF2)
-                : Color(0xFF121212),
+            surfaceContainerHighest:
+                widget.bloc.brightness == AppBrightness.light
+                    ? Color(0xFFE8ECF2)
+                    : Color(0xFF121212),
             onSurface: widget.bloc.brightness == AppBrightness.light
                 ? Colors.black
                 : Colors.white,
@@ -208,30 +209,54 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                     ? Colors.black
                     : Colors.white,
               ),
-              headlineSmall: TextStyle()), checkboxTheme: CheckboxThemeData(
- fillColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
- if (states.contains(WidgetState.disabled)) { return null; }
- if (states.contains(WidgetState.selected)) { return widget.bloc.accentColor; }
- return null;
- }),
- ), radioTheme: RadioThemeData(
- fillColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
- if (states.contains(WidgetState.disabled)) { return null; }
- if (states.contains(WidgetState.selected)) { return widget.bloc.accentColor; }
- return null;
- }),
- ), switchTheme: SwitchThemeData(
- thumbColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
- if (states.contains(WidgetState.disabled)) { return null; }
- if (states.contains(WidgetState.selected)) { return widget.bloc.accentColor; }
- return null;
- }),
- trackColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
- if (states.contains(WidgetState.disabled)) { return null; }
- if (states.contains(WidgetState.selected)) { return widget.bloc.accentColor; }
- return null;
- }),
- ), bottomAppBarTheme: BottomAppBarTheme(color: widget.bloc.primaryColor),
+              headlineSmall: TextStyle()),
+          checkboxTheme: CheckboxThemeData(
+            fillColor: WidgetStateProperty.resolveWith<Color?>(
+                (Set<WidgetState> states) {
+              if (states.contains(WidgetState.disabled)) {
+                return null;
+              }
+              if (states.contains(WidgetState.selected)) {
+                return widget.bloc.accentColor;
+              }
+              return null;
+            }),
+          ),
+          radioTheme: RadioThemeData(
+            fillColor: WidgetStateProperty.resolveWith<Color?>(
+                (Set<WidgetState> states) {
+              if (states.contains(WidgetState.disabled)) {
+                return null;
+              }
+              if (states.contains(WidgetState.selected)) {
+                return widget.bloc.accentColor;
+              }
+              return null;
+            }),
+          ),
+          switchTheme: SwitchThemeData(
+            thumbColor: WidgetStateProperty.resolveWith<Color?>(
+                (Set<WidgetState> states) {
+              if (states.contains(WidgetState.disabled)) {
+                return null;
+              }
+              if (states.contains(WidgetState.selected)) {
+                return widget.bloc.accentColor;
+              }
+              return null;
+            }),
+            trackColor: WidgetStateProperty.resolveWith<Color?>(
+                (Set<WidgetState> states) {
+              if (states.contains(WidgetState.disabled)) {
+                return null;
+              }
+              if (states.contains(WidgetState.selected)) {
+                return widget.bloc.accentColor;
+              }
+              return null;
+            }),
+          ),
+          bottomAppBarTheme: BottomAppBarTheme(color: widget.bloc.primaryColor),
         ),
         onGenerateRoute: (RouteSettings settings) {
           // print(settings.name);
