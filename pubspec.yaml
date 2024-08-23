@@ -94,7 +94,6 @@ flutter:
     - assets/map/assets/
     - assets/map/assets/map/
     - assets/buynsell/
-    - .env
   fonts:
     - family: IBMPlexSans
       fonts:
