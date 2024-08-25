@@ -14,6 +14,7 @@ class _InstiAppApi implements InstiAppApi {
     this.baseUrl,
   }) {
     baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
+    // baseUrl ??= 'http://10.198.49.150/api';
   }
 
   final Dio _dio;
@@ -693,6 +694,7 @@ class _InstiAppApi implements InstiAppApi {
               _dio.options.baseUrl,
               baseUrl,
             ))));
+            print(_result.data);
     final value = EventCreateResponse.fromJson(_result.data!);
     return value;
   }
