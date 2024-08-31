@@ -59,7 +59,7 @@ import 'package:uni_links/uni_links.dart';
 void main() async {
   GlobalKey<MyAppState> key = GlobalKey();
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(  );
   InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
   FirebaseMessaging.onBackgroundMessage(sendMessage);
   await dotenv.load(fileName: ".env");
