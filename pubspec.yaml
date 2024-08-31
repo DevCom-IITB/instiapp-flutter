@@ -86,6 +86,8 @@ dev_dependencies:
 # The following section is specific to Flutter.
 flutter:
   assets:
+    - .env
+    - .env.dev
     - assets/
     - assets/login/
     - assets/map/
@@ -94,7 +96,6 @@ flutter:
     - assets/map/assets/
     - assets/map/assets/map/
     - assets/buynsell/
-    - .env
   fonts:
     - family: IBMPlexSans
       fonts:
