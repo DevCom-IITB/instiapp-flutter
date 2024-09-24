@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 3.0.0
+
+- Upgraded to Flutter 3
+- Events with mailing added
+
 ## 2.4.1
 
 - Move map page outside utilities
