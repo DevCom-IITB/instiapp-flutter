@@ -59,9 +59,9 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) => setupNotifications(
+    WidgetsBinding.instance.addPostFrameCallback((_) => setupNotifications(
         widget.navigatorKey?.currentContext ?? context, widget.bloc));
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       String? args = ModalRoute.of(context)?.settings.arguments as String?;
       if (args != null) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -138,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Text(
                     "InstiApp",
-                    style: Theme.of(context).textTheme.headline4?.copyWith(
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         color: Theme.of(context).colorScheme.secondary),
                   ),
                   CircularProgressIndicatorExtended(

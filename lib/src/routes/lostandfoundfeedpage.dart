@@ -5,7 +5,6 @@ import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import '../api/model/lostandfoundPost.dart';
 import '../utils/title_with_backbutton.dart';
 
 class LostNFoundPage extends StatefulWidget {
@@ -147,7 +146,7 @@ class _LostpageState extends State<LostPage> {
                         ),
                         Text(
                           "Login To View Lost and Found Posts",
-                          style: theme.textTheme.headline5,
+                          style: theme.textTheme.headlineSmall,
                           textAlign: TextAlign.center,
                         )
                       ],
@@ -161,7 +160,7 @@ class _LostpageState extends State<LostPage> {
                       TitleWithBackButton(
                         child: Text(
                           "Lost & Found (Beta)",
-                          style: theme.textTheme.headline4,
+                          style: theme.textTheme.headlineMedium,
                         ),
                       ),
                       StreamBuilder<List<LostAndFoundPost>>(
@@ -269,7 +268,7 @@ class _LostpageState extends State<LostPage> {
                           screen_h * 0.20 / 0.43, 11, 0, 50),
                       child: Text(
                         posts[index].name ?? "",
-                        style: theme.textTheme.headline6,
+                        style: theme.textTheme.titleLarge,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
@@ -282,7 +281,7 @@ class _LostpageState extends State<LostPage> {
                             ? posts[index].foundAt ?? ""
                             : (posts[index].foundAt ?? "").substring(0, 10) +
                                 '...',
-                        style: theme.textTheme.bodyText2,
+                        style: theme.textTheme.bodyMedium,
                         maxLines: 1,
                       ),
                     ),
@@ -296,7 +295,7 @@ class _LostpageState extends State<LostPage> {
                               (posts[index].claimed == true
                                   ? "Claimed"
                                   : "Not\nclaimed"),
-                              style: theme.textTheme.bodyText1,
+                              style: theme.textTheme.bodyLarge,
                               textAlign: TextAlign.center,
                             )
                           ],
@@ -310,7 +309,7 @@ class _LostpageState extends State<LostPage> {
                           size: ((myfont / 18 * 12).toInt()).toDouble(),
                         ),
                         Text(' ' + (posts[index].timeBefore ?? ""),
-                            style: theme.textTheme.bodyText1!.copyWith(
+                            style: theme.textTheme.bodyLarge!.copyWith(
                               fontWeight: FontWeight.bold,
                             ))
                       ]),
@@ -327,7 +326,7 @@ class _LostpageState extends State<LostPage> {
                           (posts[index].description ?? ""),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.bodyText2,
+                          style: theme.textTheme.bodyMedium,
                         ),
                         margin: EdgeInsets.fromLTRB(
                             screen_h * 0.20 / 0.43, 43, 0, 0)),

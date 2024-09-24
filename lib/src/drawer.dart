@@ -41,12 +41,12 @@ class _NavDrawerState extends State<NavDrawer> {
     navi = Navigator.of(context);
 
     return UpgradeAlert(
+      showReleaseNotes: true,
+      dialogStyle: UpgradeDialogStyle.cupertino,
       upgrader: Upgrader(
         // debugLogging: true,
         // debugDisplayAlways: true,
-        dialogStyle: UpgradeDialogStyle.cupertino,
         durationUntilAlertAgain: Duration(days: 1),
-        showReleaseNotes: false,
         messages: MyUpgraderMessages(),
       ),
       child: Drawer(
@@ -96,71 +96,81 @@ class _NavDrawerState extends State<NavDrawer> {
                         highlight: indexSnapshot.data == 2,
                         selected: indexSnapshot.data == 2,
                       ),
-                      3: NavExpansionTile(
-                        title: "Mess",
-                        leading: Icons.restaurant_outlined,
-                        initiallyExpanded:
-                            indexSnapshot.data == 3 || indexSnapshot.data == 14,
+                      3: Column(
                         children: [
-                          NavListTile(
-                            icon: Icons.restaurant_outlined,
-                            title: "Mess Menu",
-                            onTap: () {
-                              changeSelection(3, drawerState!);
-                              navigateNamed('/mess');
-                            },
-                            highlight: indexSnapshot.data == 3,
-                            selected: indexSnapshot.data == 3,
-                          ),
-                          NavListTile(
-                            icon: Icons.restaurant_outlined,
-                            title: "Take your meal",
-                            onTap: () {
-                              changeSelection(3, drawerState!);
-                              navigateNamed('/messcalendar/qr');
-                            },
-                            highlight: indexSnapshot.data == 14,
-                            selected: indexSnapshot.data == 14,
-                          ),
+                          Divider(),
+                          NavExpansionTile(
+                            title: "Mess",
+                            leading: Icons.restaurant_outlined,
+                            initiallyExpanded: indexSnapshot.data == 3 ||
+                                indexSnapshot.data == 14,
+                            children: [
+                              NavListTile(
+                                icon: Icons.restaurant_outlined,
+                                title: "Mess Menu",
+                                onTap: () {
+                                  changeSelection(3, drawerState!);
+                                  navigateNamed('/mess');
+                                },
+                                highlight: indexSnapshot.data == 3,
+                                selected: indexSnapshot.data == 3,
+                              ),
+                              NavListTile(
+                                icon: Icons.restaurant_outlined,
+                                title: "Take your meal",
+                                onTap: () {
+                                  changeSelection(3, drawerState!);
+                                  navigateNamed('/messcalendar/qr');
+                                },
+                                highlight: indexSnapshot.data == 14,
+                                selected: indexSnapshot.data == 14,
+                              ),
+                            ],
+                          )
                         ],
                       ),
-                      4: NavExpansionTile(
-                        leading: Icons.work_outline,
-                        title: "Blogs",
-                        initiallyExpanded: indexSnapshot.data! <= 6 &&
-                            indexSnapshot.data! >= 4,
+                      4: Column(
                         children: [
-                          NavListTile(
-                            icon: Icons.work_outline,
-                            title: "Placement Blog",
-                            onTap: () {
-                              changeSelection(4, drawerState!);
-                              navigateNamed('/placeblog');
-                            },
-                            highlight: indexSnapshot.data == 4,
-                            selected: indexSnapshot.data == 4,
+                          NavExpansionTile(
+                            leading: Icons.work_outline,
+                            title: "Blogs",
+                            initiallyExpanded: indexSnapshot.data! <= 6 &&
+                                indexSnapshot.data! >= 4,
+                            children: [
+                              NavListTile(
+                                icon: Icons.work_outline,
+                                title: "Placement Blog",
+                                onTap: () {
+                                  changeSelection(4, drawerState!);
+                                  navigateNamed('/placeblog');
+                                },
+                                highlight: indexSnapshot.data == 4,
+                                selected: indexSnapshot.data == 4,
+                              ),
+                              NavListTile(
+                                icon: Icons.work_outline,
+                                title: "Internship Blog",
+                                onTap: () {
+                                  changeSelection(5, drawerState!);
+                                  navigateNamed('/trainblog');
+                                },
+                                highlight: indexSnapshot.data == 5,
+                                selected: indexSnapshot.data == 5,
+                              ),
+                              NavListTile(
+                                // key: Key((indexSnapshot.data == 6).toString()),
+                                icon: Icons.work_outline,
+                                title: "External Blog",
+                                onTap: () {
+                                  changeSelection(6, drawerState!);
+                                  navigateNamed('/externalblog');
+                                },
+                                highlight: indexSnapshot.data == 6,
+                                selected: indexSnapshot.data == 6,
+                              ),
+                            ],
                           ),
-                          NavListTile(
-                            icon: Icons.work_outline,
-                            title: "Internship Blog",
-                            onTap: () {
-                              changeSelection(5, drawerState!);
-                              navigateNamed('/trainblog');
-                            },
-                            highlight: indexSnapshot.data == 5,
-                            selected: indexSnapshot.data == 5,
-                          ),
-                          NavListTile(
-                            // key: Key((indexSnapshot.data == 6).toString()),
-                            icon: Icons.work_outline,
-                            title: "External Blog",
-                            onTap: () {
-                              changeSelection(6, drawerState!);
-                              navigateNamed('/externalblog');
-                            },
-                            highlight: indexSnapshot.data == 6,
-                            selected: indexSnapshot.data == 6,
-                          ),
+                          Divider(),
                         ],
                       ),
                       15: NavListTile(
@@ -313,7 +323,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                 title: Text(
                                   snapshot.data?.profile?.userName ??
                                       'Not Logged in',
-                                  style: theme.textTheme.bodyText2
+                                  style: theme.textTheme.bodyMedium
                                       ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 subtitle: snapshot.data != null
@@ -321,7 +331,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                         snapshot.data?.profile
                                                 ?.userRollNumber ??
                                             "",
-                                        style: theme.textTheme.bodyText2)
+                                        style: theme.textTheme.bodyMedium)
                                     : ElevatedButton(
                                         child: Text(
                                           "Log in",
@@ -413,7 +423,7 @@ class _NavDrawerState extends State<NavDrawer> {
                                                               "${snapshot.data?.length}",
                                                               style: theme
                                                                   .textTheme
-                                                                  .overline
+                                                                  .labelSmall
                                                                   ?.copyWith(
                                                                 color: theme
                                                                     .colorScheme
@@ -553,13 +563,13 @@ class NavListTile extends StatelessWidget {
                 color: theme.colorScheme.onSurface,
               )
             : Transform.translate(
-              offset: Offset(-3,3),
-              child: Icon(
-                  //for lost and found icon
-                  this.icon,
-                  color: theme.colorScheme.onSurface,
-                  size: 32),
-            ),
+                offset: Offset(-3, 3),
+                child: Icon(
+                    //for lost and found icon
+                    this.icon,
+                    color: theme.colorScheme.onSurface,
+                    size: 32),
+              ),
         dense: true,
         title: Text(
           this.title!,

@@ -84,7 +84,7 @@ class _FeedPageState extends State<FeedPage> {
                       Expanded(
                         child: Text(
                           "Feed",
-                          style: theme.textTheme.headline3,
+                          style: theme.textTheme.displaySmall,
                         ),
                       ),
                       AnimatedContainer(
@@ -190,7 +190,7 @@ class _FeedPageState extends State<FeedPage> {
                   EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               title: Text(
                 event.eventName ?? "",
-                style: theme.textTheme.headline6,
+                style: theme.textTheme.titleLarge,
               ),
               enabled: true,
               subtitle: Text(event.getSubTitle()),
@@ -202,7 +202,7 @@ class _FeedPageState extends State<FeedPage> {
       return ListTile(
         title: Text(
           event.eventName ?? "",
-          style: theme.textTheme.headline6,
+          style: theme.textTheme.titleLarge,
         ),
         enabled: true,
         leading: NullableCircleAvatar(

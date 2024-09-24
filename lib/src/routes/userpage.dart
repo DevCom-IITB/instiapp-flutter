@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:dropdown_search/dropdown_search.dart';
+import 'package:InstiApp/src/components/dropdowns.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/role.dart';
@@ -130,7 +130,7 @@ class _UserPageState extends State<UserPage> {
       return Container(
         child: Text(
           "Search for an interest",
-          style: Theme.of(context).textTheme.bodyText1,
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
       );
     }
@@ -177,7 +177,7 @@ class _UserPageState extends State<UserPage> {
         user = u;
       }
     });
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       var bloc = BlocProvider.of(context)?.bloc;
       bloc?.getUser("me").then((result) {
         if (result.userLDAPId == widget.initialUser?.userLDAPId) {
@@ -270,16 +270,17 @@ class _UserPageState extends State<UserPage> {
                                 ),
                                 title: Text(
                                   user!.userName ?? "",
-                                  style: theme.textTheme.headline5?.copyWith(
-                                      fontFamily: theme
-                                          .textTheme.headline3?.fontFamily),
+                                  style: theme.textTheme.headlineSmall
+                                      ?.copyWith(
+                                          fontFamily: theme.textTheme
+                                              .displaySmall?.fontFamily),
                                 ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     user!.userRollNumber != null
                                         ? Text(user!.userRollNumber ?? "",
-                                            style: theme.textTheme.headline6)
+                                            style: theme.textTheme.titleLarge)
                                         : CircularProgressIndicatorExtended(
                                             size: 12,
                                             label: Text("Loading Roll Number"),
@@ -298,8 +299,8 @@ class _UserPageState extends State<UserPage> {
                                                 message: "E-mail this person",
                                                 child: user!.userEmail != null
                                                     ? Text(user!.userEmail!,
-                                                        style: theme
-                                                            .textTheme.headline6
+                                                        style: theme.textTheme
+                                                            .titleLarge
                                                             ?.copyWith(
                                                                 color: Colors
                                                                     .lightBlue))
@@ -325,7 +326,7 @@ class _UserPageState extends State<UserPage> {
                                                 child: Text(
                                                     user!.userContactNumber!,
                                                     style: theme
-                                                        .textTheme.headline6
+                                                        .textTheme.titleLarge
                                                         ?.copyWith(
                                                             color: Colors
                                                                 .lightBlue)),
@@ -352,61 +353,30 @@ class _UserPageState extends State<UserPage> {
                                               SizedBox(
                                                 height: 20.0,
                                               ),
+
                                               cansee
-                                                  ? DropdownSearch<Interest>(
-                                                      mode: Mode.DIALOG,
-                                                      maxHeight: 700,
-                                                      isFilteredOnline: true,
-                                                      showSearchBox: true,
-                                                      dropdownSearchDecoration:
-                                                          InputDecoration(
-                                                        labelText: "Interests",
-                                                        hintText: "Interests",
-                                                      ),
+                                                  ? CustomDropdown<Interest>(
+                                                      emptyText:
+                                                          "No interests found. Refine your search!",
+                                                      onChanged: onBodyChange,
+                                                      label: "Interests",
+                                                      itemBuilder:
+                                                          _customPopupItemBuilderInterest,
+                                                      asyncItems: bloc
+                                                          .achievementBloc
+                                                          .searchForInterest,
+                                                      dropdownBuilder:
+                                                          buildDropdownMenuItemsInterest,
+                                                      style: theme.textTheme
+                                                          .titleMedium,
                                                       validator: (value) {
                                                         if (value == null) {
                                                           return 'Please select a organization';
                                                         }
                                                         return null;
                                                       },
-                                                      onChanged: onBodyChange,
-                                                      onFind: bloc
-                                                          .achievementBloc
-                                                          .searchForInterest,
-                                                      dropdownBuilder:
-                                                          buildDropdownMenuItemsInterest,
-                                                      popupItemBuilder:
-                                                          _customPopupItemBuilderInterest,
-                                                      // popupSafeArea:
-                                                      // PopupSafeArea(
-                                                      //     top: true,
-                                                      //     bottom: true),
-                                                      scrollbarProps:
-                                                          ScrollbarProps(
-                                                        isAlwaysShown: true,
-                                                        thickness: 7,
-                                                      ),
                                                       selectedItem:
                                                           _selectedInterest,
-                                                      emptyBuilder:
-                                                          (BuildContext context,
-                                                              String? _) {
-                                                        return Container(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  20),
-                                                          child: Text(
-                                                            "No interests found. Refine your search!",
-                                                            style: theme
-                                                                .textTheme
-                                                                .subtitle1,
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          ),
-                                                        );
-                                                      },
                                                     )
                                                   : SizedBox(),
                                               _buildChips(context),
@@ -597,7 +567,7 @@ class _UserPageState extends State<UserPage> {
     return ListTile(
       title: Text(
         event.eventName ?? "",
-        style: theme.textTheme.headline6,
+        style: theme.textTheme.titleLarge,
       ),
       enabled: true,
       leading: NullableCircleAvatar(
@@ -614,8 +584,8 @@ class _UserPageState extends State<UserPage> {
 
   Widget _buildBodyTile(InstiAppBloc bloc, TextTheme theme, Body body) {
     return ListTile(
-      title: Text(body.bodyName ?? "", style: theme.headline6),
-      subtitle: Text(body.bodyShortDescription ?? "", style: theme.subtitle2),
+      title: Text(body.bodyName ?? "", style: theme.titleLarge),
+      subtitle: Text(body.bodyShortDescription ?? "", style: theme.titleSmall),
       leading: NullableCircleAvatar(
         body.bodyImageURL ?? "",
         Icons.people_outline_outlined,
@@ -629,8 +599,9 @@ class _UserPageState extends State<UserPage> {
 
   Widget _buildRoleTile(InstiAppBloc bloc, TextTheme theme, Role role) {
     return ListTile(
-      title: Text(role.roleBodyDetails?.bodyName ?? "", style: theme.headline6),
-      subtitle: Text(role.roleName ?? "", style: theme.subtitle2),
+      title:
+          Text(role.roleBodyDetails?.bodyName ?? "", style: theme.titleLarge),
+      subtitle: Text(role.roleName ?? "", style: theme.titleSmall),
       leading: NullableCircleAvatar(
         role.roleBodyDetails?.bodyImageURL ?? "",
         Icons.people_outline_outlined,
@@ -644,9 +615,10 @@ class _UserPageState extends State<UserPage> {
 
   Widget _buildFormerRoleTile(InstiAppBloc bloc, TextTheme theme, Role role) {
     return ListTile(
-      title: Text(role.roleBodyDetails?.bodyName ?? "", style: theme.headline6),
+      title:
+          Text(role.roleBodyDetails?.bodyName ?? "", style: theme.titleLarge),
       subtitle: Text("Former ${role.roleName} ${role.year ?? ""}",
-          style: theme.subtitle2),
+          style: theme.titleSmall),
       leading: NullableCircleAvatar(
         role.roleBodyDetails?.bodyImageURL ?? "",
         Icons.people_outline_outlined,

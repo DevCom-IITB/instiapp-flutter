@@ -97,9 +97,9 @@ NewsArticle _$NewsArticleFromJson(Map<String, dynamic> json) => NewsArticle(
           ? null
           : Body.fromJson(json['body'] as Map<String, dynamic>),
       reactionCount: (json['reactions_count'] as Map<String, dynamic>?)?.map(
-        (k, e) => MapEntry(k, e as int),
+        (k, e) => MapEntry(k, (e as num).toInt()),
       ),
-      userReaction: json['user_reaction'] as int?,
+      userReaction: (json['user_reaction'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$NewsArticleToJson(NewsArticle instance) =>

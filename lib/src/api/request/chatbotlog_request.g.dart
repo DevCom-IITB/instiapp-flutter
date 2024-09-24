@@ -10,7 +10,7 @@ ChatBotLogRequest _$ChatBotLogRequestFromJson(Map<String, dynamic> json) =>
     ChatBotLogRequest(
       json['question'] as String?,
       json['answer'] as String?,
-      json['reaction'] as int?,
+      (json['reaction'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$ChatBotLogRequestToJson(ChatBotLogRequest instance) =>

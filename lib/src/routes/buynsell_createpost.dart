@@ -107,7 +107,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                           children: [
                             Text(
                               "Create Post",
-                              style: theme.textTheme.headline4,
+                              style: theme.textTheme.headlineMedium,
                             ),SizedBox(height: 20,),
                             Text("Your Name and LDAP will be visible by default",style:TextStyle(color: Colors.red),maxLines: 2,)
                           ],
@@ -717,7 +717,7 @@ class _BuyAndSellFormState extends State<BuyAndSellForm> {
                                   child: Text('Cancel'),
                                 ),
                                 style: ElevatedButton.styleFrom(
-                                  primary: Colors.white,
+                                  backgroundColor: Colors.white,
                                 ),
                                 onPressed: () {
                                   Navigator.pushNamed(context, '/buyandsell');

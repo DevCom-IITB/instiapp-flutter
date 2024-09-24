@@ -94,7 +94,7 @@ class _PutEntityPageState extends State<PutEntityPage> {
           ? Center(
               child: Text(
                 "Permission Denined",
-                style: theme.textTheme.headline1,
+                style: theme.textTheme.displayLarge,
               ),
             )
           : webview.WebView(
