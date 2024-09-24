@@ -80,7 +80,7 @@ class _VerifyAchPageState extends State<VerifyAchPage> {
                 SliverToBoxAdapter(
                   child: Text(
                     "Verify",
-                    style: theme.textTheme.headline3,
+                    style: theme.textTheme.displaySmall,
                   ),
                 ),
                 SliverToBoxAdapter(
@@ -246,7 +246,7 @@ class _VerifyListItemState extends State<VerifyListItem> {
               },
               child: Text(verifyText),
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.deepPurple),
+                backgroundColor: WidgetStateProperty.all(Colors.deepPurple),
               ),
             ),
             ElevatedButton(
@@ -264,8 +264,8 @@ class _VerifyListItemState extends State<VerifyListItem> {
               ),
               style: ButtonStyle(
                 backgroundColor: isVerified || isDismissed
-                    ? MaterialStateProperty.all(Colors.grey)
-                    : MaterialStateProperty.all(Colors.yellow),
+                    ? WidgetStateProperty.all(Colors.grey)
+                    : WidgetStateProperty.all(Colors.yellow),
               ),
             ),
             TextButton(
@@ -277,7 +277,7 @@ class _VerifyListItemState extends State<VerifyListItem> {
                 style: TextStyle(color: Colors.red),
               ),
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.transparent),
+                backgroundColor: WidgetStateProperty.all(Colors.transparent),
               ),
             ),
           ],

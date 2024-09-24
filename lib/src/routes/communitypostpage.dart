@@ -144,7 +144,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                       children: [
                         Expanded(child: SizedBox()),
                         Container(
-                          color: theme.colorScheme.surfaceVariant,
+                          color: theme.colorScheme.surfaceContainerHighest,
                           padding:
                               EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                           child: Row(
@@ -152,7 +152,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                               Expanded(
                                 child: TextField(
                                   controller: _commentController,
-                                  cursorColor: theme.textTheme.bodyText2?.color,
+                                  cursorColor: theme.textTheme.bodyMedium?.color,
                                   style: theme.textTheme.bodyLarge,
                                   focusNode: _commentFocusNode,
                                   decoration: InputDecoration(
@@ -556,7 +556,7 @@ class _CommentState extends State<Comment> {
                   flex: 3,
                   child: Text(
                     "View ${communityPost.commentsCount} Replies",
-                    style: theme.textTheme.subtitle2?.copyWith(
+                    style: theme.textTheme.titleSmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.bold,
                     ),
@@ -659,7 +659,7 @@ class _CommentState extends State<Comment> {
                             padding: EdgeInsets.all(5),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(100),
-                              color: theme.colorScheme.surfaceVariant,
+                              color: theme.colorScheme.surfaceContainerHighest,
                             ),
                             child: Row(
                               children: emojis

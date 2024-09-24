@@ -11,7 +11,7 @@ NewsFeedResponse _$NewsFeedResponseFromJson(Map<String, dynamic> json) =>
       (json['data'] as List<dynamic>?)
           ?.map((e) => Event.fromJson(e as Map<String, dynamic>))
           .toList(),
-      json['count'] as int?,
+      (json['count'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$NewsFeedResponseToJson(NewsFeedResponse instance) =>

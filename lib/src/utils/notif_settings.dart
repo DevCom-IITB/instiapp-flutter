@@ -109,23 +109,23 @@ List<NotificationChannel> notifChannels = [
 /// List of channel groups used in the app
 List<NotificationChannelGroup> notifGroups = [
   NotificationChannelGroup(
-    channelGroupkey: NotificationGroups.MISCELLANEOUS_GROUP,
+    channelGroupKey: NotificationGroups.MISCELLANEOUS_GROUP,
     channelGroupName: 'Miscellaneous',
   ),
   NotificationChannelGroup(
-    channelGroupkey: NotificationGroups.BLOG,
+    channelGroupKey: NotificationGroups.BLOG,
     channelGroupName: 'Blogs',
   ),
   NotificationChannelGroup(
-    channelGroupkey: NotificationGroups.NEWS,
+    channelGroupKey: NotificationGroups.NEWS,
     channelGroupName: 'News',
   ),
   NotificationChannelGroup(
-    channelGroupkey: NotificationGroups.COMMUNITY,
+    channelGroupKey: NotificationGroups.COMMUNITY,
     channelGroupName: 'Community',
   ),
   NotificationChannelGroup(
-    channelGroupkey: NotificationGroups.EVENT,
+    channelGroupKey: NotificationGroups.EVENT,
     channelGroupName: 'Events',
   ),
 ];
@@ -178,6 +178,54 @@ class NotificationType {
   static const String EXTERNAL = "externalblogentry";
 }
 
+class NotificationController {
+  @pragma("vm:entry-point")
+  static Future<void> onNotificationCreatedMethod(
+      ReceivedNotification receivedNotification) async {}
+
+  @pragma("vm:entry-point")
+  static Future<void> onNotificationDisplayedMethod(
+      ReceivedNotification receivedNotification) async {}
+
+  @pragma("vm:entry-point")
+  static Future<void> onDismissActionReceivedMethod(
+      ReceivedAction receivedAction) async {}
+
+  @pragma("vm:entry-point")
+  static Future<void> onActionReceivedMethod(
+      customHandler, ReceivedAction receivedAction) async {
+    // Navigate into pages, avoiding to open the notification details page over another details page already opened
+    return customHandler(receivedAction);
+  }
+}
+
+/// Gives the route to navigate to from a notification
+String routeFromNotification(RichNotification fromMap) {
+  // Navigating to correct page
+  return {
+        NotificationType.BLOG:
+            fromMap.notificationExtra?.contains("/internship") ?? false
+                ? "/trainblog"
+                : "/placeblog",
+        NotificationType.PLACEMENT: "/placeblog",
+        NotificationType.COMMUNITY:
+            "/group/${fromMap.notificationObjectID ?? ""}",
+        NotificationType.COMMUNITYPOST:
+            "/communitypost/${fromMap.notificationObjectID ?? ""}",
+        NotificationType.COMMUNITYPOSTUSERREACTION: "/groups",
+        NotificationType.INTERNSHIP: "/trainblog",
+        NotificationType.BODY: "/body/${fromMap.notificationObjectID ?? ""}",
+        NotificationType.EVENT: "/event/${fromMap.notificationObjectID ?? ""}",
+        NotificationType.USER: "/user/${fromMap.notificationObjectID ?? ""}",
+        NotificationType.NEWS: "/news",
+        NotificationType.COMPLAINTS:
+            "/complaint/${fromMap.notificationExtra ?? ""}?reload=true",
+        NotificationType.QUERY: "/query",
+        NotificationType.EXTERNAL: "/externalblog",
+      }[fromMap.notificationType] ??
+      "/";
+}
+
 /// Setup notifications with awesome notifications
 ///
 /// [context] is the [BuildContext] of the app
@@ -190,34 +238,6 @@ void setupNotifications(BuildContext context, InstiAppBloc bloc) async {
 
   /// Listen for incoming notifs and send a notification to the user
   FirebaseMessaging.onMessage.listen(sendMessage);
-
-  /// Gives the route to navigate to from a notification
-  String routeFromNotification(RichNotification fromMap) {
-    // Navigating to correct page
-    return {
-          NotificationType.BLOG:
-              fromMap.notificationExtra?.contains("/internship") ?? false
-                  ? "/trainblog"
-                  : "/placeblog",
-          NotificationType.PLACEMENT: "/placeblog",
-          NotificationType.COMMUNITY:
-              "/group/${fromMap.notificationObjectID ?? ""}",
-          NotificationType.COMMUNITYPOST:
-              "/communitypost/${fromMap.notificationObjectID ?? ""}",
-          NotificationType.COMMUNITYPOSTUSERREACTION: "/groups",
-          NotificationType.INTERNSHIP: "/trainblog",
-          NotificationType.BODY: "/body/${fromMap.notificationObjectID ?? ""}",
-          NotificationType.EVENT:
-              "/event/${fromMap.notificationObjectID ?? ""}",
-          NotificationType.USER: "/user/${fromMap.notificationObjectID ?? ""}",
-          NotificationType.NEWS: "/news",
-          NotificationType.COMPLAINTS:
-              "/complaint/${fromMap.notificationExtra ?? ""}?reload=true",
-          NotificationType.QUERY: "/query",
-          NotificationType.EXTERNAL: "/externalblog",
-        }[fromMap.notificationType] ??
-        "/";
-  }
 
   /// Handle what action to take depending on key
   void _handleActionKey(String actionKey, RichNotification notif) async {
@@ -256,8 +276,24 @@ void setupNotifications(BuildContext context, InstiAppBloc bloc) async {
     }
   }
 
-  // Listen to app opens from notifications
-  AwesomeNotifications().actionStream.listen(_handleNotification);
+  AwesomeNotifications().setListeners(
+    onActionReceivedMethod: (ReceivedAction receivedAction) {
+      return NotificationController.onActionReceivedMethod(
+          _handleNotification, receivedAction);
+    },
+    onNotificationCreatedMethod: (ReceivedNotification receivedNotification) {
+      return NotificationController.onNotificationCreatedMethod(
+          receivedNotification);
+    },
+    onNotificationDisplayedMethod: (ReceivedNotification receivedNotification) {
+      return NotificationController.onNotificationDisplayedMethod(
+          receivedNotification);
+    },
+    onDismissActionReceivedMethod: (ReceivedAction receivedAction) {
+      return NotificationController.onDismissActionReceivedMethod(
+          receivedAction);
+    },
+  );
 }
 
 void requestNotificationPermission(
@@ -418,5 +454,5 @@ List<NotificationActionButton>? getActionButtons(RichNotification notif) {
 
 /// Remember to dispose the notification sink when app is closed
 void disposeNotification() {
-  AwesomeNotifications().actionSink.close();
+  // AwesomeNotifications().actionSink.close();
 }

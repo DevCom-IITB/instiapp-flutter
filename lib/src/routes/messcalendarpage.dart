@@ -86,7 +86,7 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
                     ),
                     Text(
                       "Login To Have Your Meal",
-                      style: theme.textTheme.headline5,
+                      style: theme.textTheme.headlineSmall,
                       textAlign: TextAlign.center,
                     )
                   ],
@@ -106,7 +106,7 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
                           children: <Widget>[
                             Text(
                               "Mess Calendar",
-                              style: theme.textTheme.headline3,
+                              style: theme.textTheme.displaySmall,
                             ),
                             SizedBox(
                                 height: 18,
@@ -153,21 +153,21 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
                                       _eventIcon!);
                                 },
 
-                                headerTextStyle: theme.textTheme.headline6,
+                                headerTextStyle: theme.textTheme.titleLarge,
 
-                                weekendTextStyle: theme.textTheme.headline6
+                                weekendTextStyle: theme.textTheme.titleLarge
                                     ?.copyWith(fontSize: 18)
                                     .copyWith(color: Colors.red[800]),
-                                daysTextStyle: theme.textTheme.headline6
+                                daysTextStyle: theme.textTheme.titleLarge
                                     ?.copyWith(fontSize: 18),
-                                inactiveDaysTextStyle: theme.textTheme.headline6
+                                inactiveDaysTextStyle: theme.textTheme.titleLarge
                                     ?.copyWith(fontSize: 18),
-                                nextDaysTextStyle: theme.textTheme.headline6
+                                nextDaysTextStyle: theme.textTheme.titleLarge
                                     ?.copyWith(fontSize: 18)
                                     .copyWith(
                                         color: theme.colorScheme.onSurface
                                             .withAlpha(150)),
-                                prevDaysTextStyle: theme.textTheme.headline6
+                                prevDaysTextStyle: theme.textTheme.titleLarge
                                     ?.copyWith(fontSize: 18)
                                     .copyWith(
                                         color: theme.colorScheme.onSurface
@@ -201,7 +201,7 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
                                     theme.primaryColor.withOpacity(0.3),
                                 selectedDayButtonColor:
                                     theme.colorScheme.secondary,
-                                selectedDayTextStyle: theme.textTheme.headline6
+                                selectedDayTextStyle: theme.textTheme.titleLarge
                                     ?.copyWith(
                                         color: theme.colorScheme.onSecondary),
 
@@ -239,7 +239,7 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
                                                 false)
                                         ? "${snapshot.data?[_currentDate]?.length} Meals"
                                         : "No meals",
-                                    style: theme.textTheme.button?.copyWith(
+                                    style: theme.textTheme.labelLarge?.copyWith(
                                       color: theme.colorScheme.onSecondary,
                                     ),
                                   ),
@@ -272,7 +272,7 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
     return ListTile(
       title: Text(
         event.title ?? "",
-        style: theme.textTheme.headline6,
+        style: theme.textTheme.titleLarge,
       ),
       enabled: true,
       // leading: NullableCircleAvatar(

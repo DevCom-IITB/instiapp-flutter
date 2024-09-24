@@ -10,7 +10,7 @@ MessCalEvent _$MessCalEventFromJson(Map<String, dynamic> json) => MessCalEvent(
       eid: json['id'] as String?,
       title: json['title'] as String?,
       dateTime: json['datetime'] as String?,
-      hostel: json['hostel'] as int?,
+      hostel: (json['hostel'] as num?)?.toInt(),
     )..eventStartDate = json['eventStartDate'] == null
         ? null
         : DateTime.parse(json['eventStartDate'] as String);

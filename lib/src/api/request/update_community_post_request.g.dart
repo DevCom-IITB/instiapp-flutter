@@ -9,7 +9,7 @@ part of 'update_community_post_request.dart';
 UpdateCommunityPostRequest _$UpdateCommunityPostRequestFromJson(
         Map<String, dynamic> json) =>
     UpdateCommunityPostRequest(
-      status: json['status'] as int?,
+      status: (json['status'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$UpdateCommunityPostRequestToJson(

@@ -128,7 +128,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                     child: Text(bnsPost?.brand ?? "",
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.headline6?.copyWith(
+                        style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w100, fontSize: 20)),
                   )
                   // style: TextStyle(
@@ -157,7 +157,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                   child: Text(bnsPost?.name ?? "",
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.headline5?.copyWith(
+                      style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         // fontSize: 30,
                         fontSize: 30,
@@ -171,7 +171,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
             Container(
               margin: EdgeInsets.fromLTRB(screen_w * 0.1, 5, 0, 0),
               child: Text("Condition - " + (bnsPost?.condition ?? '0') + '/10',
-                  style: theme.textTheme.headline6
+                  style: theme.textTheme.titleLarge
                       ?.copyWith(fontSize: 15, fontWeight: FontWeight.w500)
                   // style: TextStyle(fontSize: myfont, fontWeight: FontWeight.w100),
                   ),
@@ -209,7 +209,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                             Text(
                               'Phone number - ' +
                                   (bnsPost?.contactDetails ?? ""),
-                              style: theme.textTheme.headline4?.copyWith(
+                              style: theme.textTheme.headlineMedium?.copyWith(
                                   fontSize: 20, fontWeight: FontWeight.w400),
                             ),
                           ],
@@ -222,7 +222,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                                     ((bnsPost?.negotiable ?? false)
                                         ? "Yes"
                                         : "No"),
-                                style: theme.textTheme.headline4?.copyWith(
+                                style: theme.textTheme.headlineMedium?.copyWith(
                                     fontSize: 20, fontWeight: FontWeight.w400),
                               ),
                             ],
@@ -234,7 +234,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                                 ? "GiveAway"
                                 : "Price - ₹" +
                                     (bnsPost?.price ?? 0).toString()),
-                            style: theme.textTheme.headline4?.copyWith(
+                            style: theme.textTheme.headlineMedium?.copyWith(
                                 fontSize: 20, fontWeight: FontWeight.w400),
                             textAlign: TextAlign.left,
                           ),

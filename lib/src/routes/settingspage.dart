@@ -58,7 +58,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 TitleWithBackButton(
                   child: Text(
                     "Settings",
-                    style: theme.textTheme.headline3,
+                    style: theme.textTheme.displaySmall,
                   ),
                 )
               ];
@@ -69,7 +69,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         horizontal: 28.0, vertical: 12.0),
                     child: Text(
                       "Profile settings",
-                      style: theme.textTheme.headline6?.copyWith(
+                      style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: theme.primaryColor),
                     ),
@@ -142,7 +142,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       left: 28.0, right: 28.0, top: 8.0, bottom: 24.0),
                   child: Text(
                     "App settings",
-                    style: theme.textTheme.headline6?.copyWith(
+                    style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold, color: theme.primaryColor),
                   ),
                 ),
@@ -150,7 +150,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 28.0),
                   child: Text(
                     "Default Homepage",
-                    style: theme.textTheme.bodyText2?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: theme.colorScheme.secondary),
                   ),
@@ -192,7 +192,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       top: 16.0, bottom: 12.0, left: 28.0, right: 28.0),
                   child: Text(
                     "App Theme",
-                    style: theme.textTheme.bodyText2?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: theme.colorScheme.secondary),
                   ),

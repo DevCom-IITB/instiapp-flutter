@@ -14,7 +14,7 @@ CommunityPost _$CommunityPostFromJson(Map<String, dynamic> json) =>
           ?.map((e) => CommunityPost.fromJson(e as Map<String, dynamic>))
           .toList(),
       content: json['content'] as String?,
-      commentsCount: json['comments_count'] as int?,
+      commentsCount: (json['comments_count'] as num?)?.toInt(),
       imageUrl: (json['image_url'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
@@ -22,11 +22,11 @@ CommunityPost _$CommunityPostFromJson(Map<String, dynamic> json) =>
           ? null
           : User.fromJson(json['posted_by'] as Map<String, dynamic>),
       reactionCount: (json['reactions_count'] as Map<String, dynamic>?)?.map(
-        (k, e) => MapEntry(k, e as int),
+        (k, e) => MapEntry(k, (e as num).toInt()),
       ),
       timeOfCreation: json['time_of_creation'] as String?,
       timeOfModification: json['time_of_modification'] as String?,
-      userReaction: json['user_reaction'] as int?,
+      userReaction: (json['user_reaction'] as num?)?.toInt(),
       mostLikedComment: json['most_liked_comment'] == null
           ? null
           : CommunityPost.fromJson(
@@ -34,9 +34,9 @@ CommunityPost _$CommunityPostFromJson(Map<String, dynamic> json) =>
       community: json['community'] == null
           ? null
           : Community.fromJson(json['community'] as Map<String, dynamic>),
-      threadRank: json['thread_rank'] as int?,
+      threadRank: (json['thread_rank'] as num?)?.toInt(),
       parent: json['parent'] as String?,
-      status: json['status'] as int?,
+      status: (json['status'] as num?)?.toInt(),
       interests: (json['interests'] as List<dynamic>?)
           ?.map((e) => Interest.fromJson(e as Map<String, dynamic>))
           .toList(),

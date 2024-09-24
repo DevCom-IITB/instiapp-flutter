@@ -1,13 +1,13 @@
 import 'dart:developer';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
+import 'package:InstiApp/src/components/dropdowns.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/request/achievement_create_request.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import '../bloc_provider.dart';
 import '../drawer.dart';
@@ -38,7 +38,7 @@ class _CreateAchievementPage extends State<Home> {
       return Container(
         child: Text(
           "Search for an InstiApp Event",
-          style: Theme.of(context).textTheme.bodyText1,
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
       );
     }
@@ -73,7 +73,7 @@ class _CreateAchievementPage extends State<Home> {
       return Container(
         child: Text(
           "Search for an organisation",
-          style: Theme.of(context).textTheme.bodyText1,
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
       );
     }
@@ -109,7 +109,7 @@ class _CreateAchievementPage extends State<Home> {
       return Container(
         child: Text(
           "Search for a skill",
-          style: Theme.of(context).textTheme.bodyText1,
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
       );
     }
@@ -232,7 +232,7 @@ class _CreateAchievementPage extends State<Home> {
                         ),
                         Text(
                           "Login To View Achievements",
-                          style: theme.textTheme.headline5,
+                          style: theme.textTheme.headlineSmall,
                           textAlign: TextAlign.center,
                         )
                       ],
@@ -274,8 +274,8 @@ class _CreateAchievementPage extends State<Home> {
                                                       15.0, 15.0, 10.0, 5.0),
                                                   child: Text(
                                                     'Verification Request',
-                                                    style: theme
-                                                        .textTheme.headline4,
+                                                    style: theme.textTheme
+                                                        .headlineMedium,
                                                   )),
                                               SizedBox(
                                                 height: 40,
@@ -368,56 +368,22 @@ class _CreateAchievementPage extends State<Home> {
                                                         SizedBox(
                                                           height: 20.0,
                                                         ),
-                                                        DropdownSearch<Event>(
-                                                          mode: Mode.DIALOG,
-                                                          dropdownSearchDecoration:
-                                                              InputDecoration(
-                                                            labelText:
-                                                                "Event (Optional)",
-                                                            hintText:
-                                                                "Event (Optional)",
-                                                          ),
-                                                          maxHeight: 700,
-                                                          isFilteredOnline:
-                                                              true,
-                                                          showSearchBox: true,
+                                                        CustomDropdown<Event>(
+                                                          emptyText:
+                                                              "No events found. Refine your search!",
                                                           onChanged:
                                                               onEventChange,
-                                                          onFind: bloc
+                                                          label:
+                                                              "Event (Optional)",
+                                                          itemBuilder:
+                                                              _customPopupItemBuilderEvent,
+                                                          asyncItems: bloc
                                                               .achievementBloc
                                                               .searchForEvent,
                                                           dropdownBuilder:
                                                               buildDropdownMenuItemsEvent,
-                                                          popupItemBuilder:
-                                                              _customPopupItemBuilderEvent,
-                                                          // popupSafeArea:
-                                                          // PopupSafeArea(
-                                                          //     top: true,
-                                                          //     bottom: true),
-                                                          scrollbarProps:
-                                                              ScrollbarProps(
-                                                            isAlwaysShown: true,
-                                                            thickness: 7,
-                                                          ),
-                                                          emptyBuilder:
-                                                              (BuildContext
-                                                                      context,
-                                                                  String? _) {
-                                                            return Container(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .all(20),
-                                                              child: Text(
-                                                                "No events found. Refine your search!",
-                                                                style: theme
-                                                                    .textTheme
-                                                                    .subtitle1,
-                                                              ),
-                                                            );
-                                                          },
+                                                          style: theme.textTheme
+                                                              .titleMedium,
                                                         ),
                                                         SizedBox(
                                                           height: this.selectedE
@@ -447,67 +413,30 @@ class _CreateAchievementPage extends State<Home> {
                                                         SizedBox(
                                                           height: 20.0,
                                                         ),
-
-                                                        DropdownSearch<Body>(
-                                                          mode: Mode.DIALOG,
-                                                          maxHeight: 700,
-                                                          isFilteredOnline:
-                                                              true,
-                                                          showSearchBox: true,
-                                                          dropdownSearchDecoration:
-                                                              InputDecoration(
-                                                                  labelText:
-                                                                      "Verifying Authority",
-                                                                  hintText:
-                                                                      "Verifying Authority"),
+                                                        CustomDropdown<Body>(
+                                                          emptyText:
+                                                              "No verifying authorities found. Refine your search!",
+                                                          label:
+                                                              "Verifying Authority",
+                                                          itemBuilder:
+                                                              _customPopupItemBuilderBody,
+                                                          asyncItems: bloc
+                                                              .achievementBloc
+                                                              .searchForBody,
+                                                          dropdownBuilder:
+                                                              buildDropdownMenuItemsBody,
+                                                          style: theme.textTheme
+                                                              .titleMedium,
                                                           validator: (value) {
                                                             if (value == null) {
                                                               return 'Please select a organization';
                                                             }
                                                             return null;
                                                           },
-                                                          onChanged:
-                                                              onBodyChange,
-                                                          onFind: bloc
-                                                              .achievementBloc
-                                                              .searchForBody,
-                                                          dropdownBuilder:
-                                                              buildDropdownMenuItemsBody,
-                                                          popupItemBuilder:
-                                                              _customPopupItemBuilderBody,
-                                                          // popupSafeArea:
-                                                          // PopupSafeArea(
-                                                          //     top: true,
-                                                          //     bottom: true),
-                                                          scrollbarProps:
-                                                              ScrollbarProps(
-                                                            isAlwaysShown: true,
-                                                            thickness: 7,
-                                                          ),
                                                           selectedItem:
                                                               _selectedBody,
-                                                          emptyBuilder:
-                                                              (BuildContext
-                                                                      context,
-                                                                  String? _) {
-                                                            return Container(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .all(20),
-                                                              child: Text(
-                                                                "No verifying authorities found. Refine your search!",
-                                                                style: theme
-                                                                    .textTheme
-                                                                    .subtitle1,
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                              ),
-                                                            );
-                                                          },
+                                                          onChanged:
+                                                              onBodyChange,
                                                         ),
                                                         SizedBox(
                                                           height: this.selectedB
@@ -562,10 +491,14 @@ class _CreateAchievementPage extends State<Home> {
                                                   child: Text(
                                                       'Request Verification'),
                                                   style: TextButton.styleFrom(
-                                                      primary: Colors.black,
+                                                      foregroundColor:
+                                                          Colors.black,
                                                       backgroundColor:
                                                           Color(0xffffd740),
-                                                      onSurface: Colors.grey,
+                                                      disabledForegroundColor:
+                                                          Colors.grey
+                                                              .withOpacity(
+                                                                  0.38),
                                                       elevation: 5.0),
                                                 ),
                                               ),
@@ -602,68 +535,31 @@ class _CreateAchievementPage extends State<Home> {
                                                         SizedBox(
                                                           height: 20.0,
                                                         ),
-
-                                                        DropdownSearch<Skill>(
-                                                          mode: Mode.DIALOG,
-                                                          maxHeight: 700,
-                                                          isFilteredOnline:
-                                                              true,
-                                                          showSearchBox: true,
-                                                          dropdownSearchDecoration:
-                                                              InputDecoration(
-                                                                  labelText:
-                                                                      "Title",
-                                                                  hintText:
-                                                                      "Titile"),
+                                                        CustomDropdown<Skill>(
+                                                          emptyText:
+                                                              "No skills found. Refine your search!",
+                                                          onChanged:
+                                                              onSkillChange,
+                                                          label: "Title",
+                                                          itemBuilder:
+                                                              _customPopupItemBuilderSkill,
+                                                          asyncItems: bloc
+                                                              .achievementBloc
+                                                              .searchForSkill,
+                                                          dropdownBuilder:
+                                                              buildDropdownMenuItemsSkill,
+                                                          style: theme.textTheme
+                                                              .titleMedium,
                                                           validator: (value) {
                                                             if (value == null) {
                                                               return 'Please select a Skill';
                                                             }
                                                             return null;
                                                           },
-                                                          onChanged:
-                                                              onSkillChange,
-                                                          onFind: bloc
-                                                              .achievementBloc
-                                                              .searchForSkill,
-                                                          dropdownBuilder:
-                                                              buildDropdownMenuItemsSkill,
-                                                          popupItemBuilder:
-                                                              _customPopupItemBuilderSkill,
-                                                          // popupSafeArea:
-                                                          // PopupSafeArea(
-                                                          //     top: true,
-                                                          //     bottom: true),
-                                                          scrollbarProps:
-                                                              ScrollbarProps(
-                                                            isAlwaysShown: true,
-                                                            thickness: 7,
-                                                          ),
                                                           selectedItem:
                                                               _selectedSkill,
-                                                          emptyBuilder:
-                                                              (BuildContext
-                                                                      context,
-                                                                  String? _) {
-                                                            return Container(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .all(20),
-                                                              child: Text(
-                                                                "No skills found. Refine your search!",
-                                                                style: theme
-                                                                    .textTheme
-                                                                    .subtitle1,
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                              ),
-                                                            );
-                                                          },
                                                         ),
+
                                                         SizedBox(
                                                           height: this.selectedB
                                                               ? 20.0
@@ -720,10 +616,14 @@ class _CreateAchievementPage extends State<Home> {
                                                   child: Text(
                                                       'Request Verification'),
                                                   style: TextButton.styleFrom(
-                                                      primary: Colors.black,
+                                                      foregroundColor:
+                                                          Colors.black,
                                                       backgroundColor:
                                                           Color(0xffffd740),
-                                                      onSurface: Colors.grey,
+                                                      disabledForegroundColor:
+                                                          Colors.grey
+                                                              .withOpacity(
+                                                                  0.38),
                                                       elevation: 5.0),
                                                 ),
                                               ),
@@ -1059,7 +959,7 @@ class Card extends State<VerifyCard> {
       return ListTile(
         title: Text(
           widget.thing.eventName!,
-          style: theme.textTheme.headline6,
+          style: theme.textTheme.titleLarge,
         ),
         enabled: true,
         leading: NullableCircleAvatar(
@@ -1092,7 +992,7 @@ class BodyCardState extends State<BodyCard> {
       return ListTile(
         title: Text(
           widget.thing?.bodyName ?? "",
-          style: theme.textTheme.headline6,
+          style: theme.textTheme.titleLarge,
         ),
         enabled: true,
         leading: NullableCircleAvatar(

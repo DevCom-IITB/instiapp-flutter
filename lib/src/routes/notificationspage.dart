@@ -69,7 +69,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       TitleWithBackButton(
                         child: Text(
                           widget.title,
-                          style: theme.textTheme.headline3,
+                          style: theme.textTheme.displaySmall,
                         ),
                       )
                     ] +
@@ -120,7 +120,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
           child:
-              Text.rich(TextSpan(style: theme.textTheme.headline6, children: [
+              Text.rich(TextSpan(style: theme.textTheme.titleLarge, children: [
             TextSpan(text: "No new "),
             TextSpan(
                 text: "notifications",

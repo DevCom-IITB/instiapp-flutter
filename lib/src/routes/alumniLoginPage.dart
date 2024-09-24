@@ -46,7 +46,7 @@ class _AlumniLoginPageState extends State<AlumniLoginPage> {
               initialValue: "",
               decoration: InputDecoration(labelText: "Enter your LDAP here."),
               onChanged: (value) => {
-                setState(() => {_bloc!.setAlumniID(value)})
+                setState(() {_bloc!.setAlumniID(value);})
               },
             ),
             SizedBox(
