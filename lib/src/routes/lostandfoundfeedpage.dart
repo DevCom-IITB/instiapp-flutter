@@ -167,6 +167,14 @@ class _LostpageState extends State<LostPage> {
                           stream: lnFPostBloc.lostAndFoundPosts,
                           builder: (BuildContext context,
                               AsyncSnapshot<List<LostAndFoundPost>> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicatorExtended(
+                                  label: Text("Getting the latest posts"),
+                                ),
+                              );
+                            }
                             if (snapshot.data?.length != 0) {
                               return ListView.builder(
                                 primary: false,
@@ -177,7 +185,7 @@ class _LostpageState extends State<LostPage> {
                                     return Center(
                                         child:
                                             CircularProgressIndicatorExtended(
-                                             label: Text("Loading..."),
+                                      label: Text("Loading..."),
                                     ));
                                   }
 

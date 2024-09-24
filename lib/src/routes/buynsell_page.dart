@@ -202,6 +202,14 @@ class _SellpageState extends State<Sellpage> {
                             stream: buynSellPostBloc.buynsellposts,
                             builder: (BuildContext context,
                                 AsyncSnapshot<List<BuynSellPost>> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                  child: CircularProgressIndicatorExtended(
+                                    label: Text("Getting the latest posts"),
+                                  ),
+                                );
+                              }
                               return ListView.builder(
                                 primary: false,
                                 shrinkWrap: true,
