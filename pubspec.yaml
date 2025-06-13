@@ -70,6 +70,9 @@ dependencies:
 
   collection: any
   timezone: any
+  firebase_core: any
+  firebase_core_platform_interface: ^4.2.2
+  flutter_svg: ^2.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -95,6 +98,7 @@ flutter:
     - assets/map/assets/
     - assets/map/assets/map/
     - assets/buynsell/
+    - assets/blogs/
   fonts:
     - family: IBMPlexSans
       fonts:
@@ -109,6 +113,11 @@ flutter:
     - family: LostAndFoundIcon
       fonts:
         - asset: fonts/LostAndFoundIcon.ttf
+    - family: DM Sans
+      fonts:
+        - asset: fonts/DM_Sans/DMSans-VariableFont_opsz,wght.ttf
+        - asset: fonts/DM_Sans/DMSans-Italic-VariableFont_opsz,wght.ttf
+          style: italic
   uses-material-design: true
 # targets:
 #   $default:

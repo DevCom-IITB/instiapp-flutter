@@ -322,6 +322,5 @@ class PostBloc {
         ChatBotLogRequest(article.body!, article.content!, reaction));
     return Future.delayed(Duration(milliseconds: 0));
   }
-
   void setState(Null Function() param0) {}
 }
