@@ -24,6 +24,8 @@ import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/routes/externalblogpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
+import 'package:InstiApp/src/routes/homepage.dart';
+import 'package:InstiApp/src/routes/homepage_qr.dart';
 import 'package:InstiApp/src/routes/loginpage.dart';
 import 'package:InstiApp/src/routes/lostandfoundfeedpage.dart';
 import 'package:InstiApp/src/routes/lostandfoundinfo.dart';
@@ -340,6 +342,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             } else {
               switch (settings.name) {
                 case "/":
+                //return _buildRoute(settings, Homepage());
                   return _buildRoute(
                       settings,
                       LoginPage(
@@ -347,6 +350,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                         scaffoldMessengerKey: scaffoldMessengerKey,
                         navigatorKey: _navigatorKey,
                       ));
+                      
                 case "/mess":
                   // print("Entereing here mess");
                   return _buildRoute(settings, MessPage());
@@ -355,7 +359,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 case "/trainblog":
                   return _buildRoute(settings, TrainingBlogPage());
                 case "/feed":
-                  return _buildRoute(settings, FeedPage());
+                //return _buildRoute(settings, HomepageQr());
+                  return _buildRoute(settings, Homepage());
+                  //return _buildRoute(settings, FeedPage());
                 case "/alumniLoginPage":
                   return _buildRoute(settings, AlumniLoginPage());
                 case "/alumni-OTP-Page":
