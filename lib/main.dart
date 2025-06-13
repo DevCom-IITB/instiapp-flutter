@@ -22,7 +22,7 @@ import 'package:InstiApp/src/routes/event_form.dart';
 // import 'package:InstiApp/src/routes/complaintspage.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
-import 'package:InstiApp/src/routes/externalblogpage.dart';
+// import 'package:InstiApp/src/routes/externalblogpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:InstiApp/src/routes/loginpage.dart';
 import 'package:InstiApp/src/routes/lostandfoundfeedpage.dart';
@@ -33,14 +33,15 @@ import 'package:InstiApp/src/routes/messpage.dart';
 // import 'package:InstiApp/src/routes/newcomplaintpage.dart';
 import 'package:InstiApp/src/routes/newspage.dart';
 import 'package:InstiApp/src/routes/notificationspage.dart';
-import 'package:InstiApp/src/routes/placementblogpage.dart';
+// import 'package:InstiApp/src/routes/placementblogpage.dart';
 import 'package:InstiApp/src/routes/putentitypage.dart';
 import 'package:InstiApp/src/routes/qrpage.dart';
 import 'package:InstiApp/src/routes/queryaddpage.dart';
 import 'package:InstiApp/src/routes/querypage.dart';
 import 'package:InstiApp/src/routes/quicklinkspage.dart';
 import 'package:InstiApp/src/routes/settingspage.dart';
-import 'package:InstiApp/src/routes/trainingblogpage.dart';
+// import 'package:InstiApp/src/routes/trainingblogpage.dart';
+import 'package:InstiApp/src/routes/blogpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/routes/your_achievements.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
@@ -351,9 +352,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   // print("Entereing here mess");
                   return _buildRoute(settings, MessPage());
                 case "/placeblog":
-                  return _buildRoute(settings, PlacementBlogPage());
+                  return _buildRoute(settings, BlogPage());
                 case "/trainblog":
-                  return _buildRoute(settings, TrainingBlogPage());
+                  return _buildRoute(settings, BlogPage());
                 case "/feed":
                   return _buildRoute(settings, FeedPage());
                 case "/alumniLoginPage":
@@ -363,9 +364,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 case "/quicklinks":
                   return _buildRoute(settings, QuickLinksPage());
                 case "/news":
-                  return _buildRoute(settings, NewsPage());
+                  return _buildRoute(settings, BlogPage());
                 case "/InSeek":
-                  return _buildRoute(settings, ChatPage());
+                  return _buildRoute(settings, BlogPage());
                 case "/groups":
                   return _buildRoute(settings, CommunityPage());
                 case "/buynsell":
@@ -409,9 +410,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 case "/posts/add":
                   return _buildRoute(settings, CreatePostPage());
                 case "/externalblog":
-                  return _buildRoute(settings, ExternalBlogPage());
+                  return _buildRoute(settings, BlogPage());
                 case "/query":
-                  return _buildRoute(settings, QueryPage());
+                  return _buildRoute(settings, BlogPage());
                 case "/lostandfound":
                   return _buildRoute(settings, LostPage());
                 case "/query/add":
@@ -499,3 +500,4 @@ extension FirstWhereOrNullExtension<E> on Iterable<E> {
     return null;
   }
 }
+

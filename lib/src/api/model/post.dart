@@ -45,7 +45,6 @@ class PlacementBlogPost extends Post {
 
   Map<String, dynamic> toJson() => _$PlacementBlogPostToJson(this);
 }
-
 @JsonSerializable()
 class ExternalBlogPost extends Post {
   @JsonKey(name: "body")
