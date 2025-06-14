@@ -2,6 +2,7 @@ import 'package:InstiApp/constants.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_dash/flutter_dash.dart';
 
 
 class Homepage extends StatefulWidget {
@@ -70,7 +71,15 @@ class _HomepageState extends State<Homepage> {
             //margin: EdgeInsets.only(left: 10,right: 0),
             child: Column(
               children: [
-                SizedBox(height: 40),
+                SizedBox(height: 20),
+                Dash(
+                  direction: Axis.horizontal,
+                  length: 368,
+                  dashLength: 6,
+                  dashGap: 7,
+                  dashColor: Color(0xFFDADADA),
+                ),
+                SizedBox(height: 20),
                 if(showQR)
                   qrOpen()
                 else
@@ -234,7 +243,15 @@ class _HomepageState extends State<Homepage> {
   Widget servicesWidget(){
     return Column(
       children: [
-        SizedBox(height: 40),
+        SizedBox(height: 20),
+        Dash(
+          direction: Axis.horizontal,
+          length: 368,
+          dashLength: 6,
+          dashGap: 7,
+          dashColor: Color(0xFFDADADA),
+        ),
+        SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.only(left: 12),
                   child: Row(
@@ -281,22 +298,40 @@ class _HomepageState extends State<Homepage> {
         borderRadius: BorderRadius.circular(50)
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
-        spacing: 26,
         children: navIconPaths.map((path){
           selectedIcon=path==selectedNavIcon;
-          return IconButton(
-            onPressed: (){
-              setState(() {
-                selectedNavIcon=path;
-              });
-            }, 
-            icon: SvgPicture.asset(
-              path,
-              colorFilter: ColorFilter.mode(selectedIcon?myConstants.instiappBlue:Colors.white, BlendMode.srcIn),
+          return SizedBox(
+            width: 70,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if(selectedIcon)
+                  SvgPicture.asset(
+                    'assets/icons/icon1.svg',
+                    width: 69,
+                    height: 10,
+                    colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                  )
+                else 
+                  SizedBox(height: 10),
+                IconButton(
+                  onPressed: (){
+                    setState(() {
+                      selectedNavIcon=path;
+                    });
+                  }, 
+                  icon: SvgPicture.asset(
+                    path,
+                    width: 24,
+                    height: 24,
+                    colorFilter: ColorFilter.mode(selectedIcon?myConstants.instiappBlue:Colors.white, BlendMode.srcIn),
+                  ),
+                  ),
+              ],
             ),
-            );
+          );
         }).toList(),
       ),
     );
@@ -404,6 +439,7 @@ class _HomepageState extends State<Homepage> {
         padding: const EdgeInsets.symmetric(horizontal: 7),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          
           children: [
             Text(
               'Mess Menu',
