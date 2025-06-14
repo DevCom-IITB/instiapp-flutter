@@ -21,6 +21,7 @@ dependencies:
   # cupertino_icons: ^1.0.1
   url_launcher: ^6.0.17
   qr_code_scanner: ^1.0.1
+  flutter_svg: ^2.1.0
   http: ^1.2.1
   rxdart: ^0.27.7
   flutter_widget_from_html_core: any
@@ -37,6 +38,7 @@ dependencies:
   flutter_material_color_picker: ^1.1.0+2
   flutter_typeahead: ^5.2.0
   image_picker: ^1.1.2
+  flutter_dash: ^1.0.0
 
   firebase_messaging: ^11.2.3
   flutter_local_notifications: ^17.1.2
@@ -72,7 +74,7 @@ dependencies:
   timezone: any
   firebase_core: any
   firebase_core_platform_interface: ^4.2.2
-  flutter_svg: ^2.1.0
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -99,6 +101,8 @@ flutter:
     - assets/map/assets/map/
     - assets/buynsell/
     - assets/blogs/
+    - assets/icons/
+    - assets/images/
   fonts:
     - family: IBMPlexSans
       fonts:
