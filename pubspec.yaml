@@ -101,8 +101,8 @@ flutter:
     - assets/map/assets/map/
     - assets/buynsell/
     - assets/blogs/
-    - assets/icons/
-    - assets/images/
+    - assets/homepage/icons/
+    - assets/homepage/images/
   fonts:
     - family: IBMPlexSans
       fonts:

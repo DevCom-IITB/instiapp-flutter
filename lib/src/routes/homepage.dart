@@ -14,8 +14,7 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   Constants myConstants=Constants();
-  List<IconData> navIcons=[Icons.home,Icons.circle,Icons.search,Icons.message,Icons.map];
-  List<String> navIconPaths=['assets/icons/home.svg','assets/icons/loader.svg','assets/icons/search.svg','assets/icons/message-square.svg','assets/icons/map.svg'];
+  List<String> navIconPaths=['assets/homepage/icons/home.svg','assets/homepage/icons/loader.svg','assets/homepage/icons/search.svg','assets/homepage/icons/message-square.svg','assets/homepage/icons/map.svg'];
   List<String> days=['Mon','Tue'];
   List<String> hostel=['H-1','H-2'];
   List<String> meals=['Breakfast','Lunch','Snacks','Dinner'];
@@ -56,7 +55,7 @@ class _HomepageState extends State<Homepage> {
   int selectedMeal=0;
   String _dropdownDay='Mon';
   bool showQR=false;
-  String selectedNavIcon='assets/icons/home.svg';
+  String selectedNavIcon='assets//homepage/icons/home.svg';
   bool selectedIcon=false;
 
   @override
@@ -123,7 +122,7 @@ class _HomepageState extends State<Homepage> {
                 right: 0,
                 bottom: 0,
                 child: SvgPicture.asset(
-                  'assets/icons/star.svg',
+                  'assets/homepage/icons/star.svg',
                 )
               ),
               Positioned(
@@ -132,7 +131,7 @@ class _HomepageState extends State<Homepage> {
                 right: 0,
                 bottom: 0,
                 child: SvgPicture.asset(
-                  'assets/icons/${path}.svg'
+                  'assets/homepage/icons/${path}.svg'
                 )
               )
             ],
@@ -166,7 +165,7 @@ class _HomepageState extends State<Homepage> {
                             borderRadius: BorderRadius.circular(22),
                             color: Colors.white,
                             image: DecorationImage(
-                              image: AssetImage('assets/images/profilenew.jpg'),
+                              image: AssetImage('assets/homepage/images/profilenew.jpg'),
                               fit: BoxFit.cover,
                               alignment: Alignment.topCenter
                             )
@@ -191,7 +190,7 @@ class _HomepageState extends State<Homepage> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(22),
                             image: DecorationImage(
-                              image: AssetImage('assets/images/instiappnew.png'),
+                              image: AssetImage('assets/homepage/images/instiappnew.png'),
                               fit: BoxFit.cover
                             )
                           ),
@@ -223,7 +222,7 @@ class _HomepageState extends State<Homepage> {
                                   width: 24,
                                   height: 24,
                                   child: SvgPicture.asset(
-                                    'assets/icons/bell.svg'
+                                    'assets/homepage/icons/bell.svg'
                                   ),
                                 ),
                               )
@@ -309,7 +308,7 @@ class _HomepageState extends State<Homepage> {
               children: [
                 if(selectedIcon)
                   SvgPicture.asset(
-                    'assets/icons/icon1.svg',
+                    'assets/homepage/icons/icon1.svg',
                     width: 69,
                     height: 10,
                     colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
@@ -367,7 +366,7 @@ class _HomepageState extends State<Homepage> {
                       child: SizedBox(
                         width: 24,
                         height: 24,
-                        child: SvgPicture.asset('assets/icons/refresh.svg'),
+                        child: SvgPicture.asset('assets/homepage/icons/refresh.svg'),
                       ),
                     ),
                   ),
@@ -397,7 +396,7 @@ class _HomepageState extends State<Homepage> {
                         child: SizedBox(
                           width: 29,
                           height: 29,
-                          child: SvgPicture.asset('assets/icons/arrow_down.svg'),
+                          child: SvgPicture.asset('assets/homepage/icons/arrow_down.svg'),
                         ),
                       ),
                     ),
@@ -410,7 +409,7 @@ class _HomepageState extends State<Homepage> {
                   child: SizedBox(
                     width: 197,
                     height: 197,
-                    child: SvgPicture.asset('assets/icons/bigqr.svg'),
+                    child: SvgPicture.asset('assets/homepage/icons/bigqr.svg'),
                   ),
                 ),
               ),
@@ -686,7 +685,7 @@ class _HomepageState extends State<Homepage> {
                 Container(
                   height: 75,
                   width: 75,
-                  child: SvgPicture.asset('assets/icons/qr.svg'),
+                  child: SvgPicture.asset('assets/homepage/icons/qr.svg'),
                 ),
               ],
             ),
