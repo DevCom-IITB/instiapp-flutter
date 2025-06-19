@@ -48,7 +48,7 @@ part 'apiclient.g.dart';
 @rt.RestApi(baseUrl: "http://127.0.0.1:8000/api")
 // @rt.RestApi(baseUrl: "http://10.198.49.150/api")
 // @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
-// @rt.RestApi(baseUrl: "https://dcae-2405-201-5004-30e9-a45d-9897-ea81-3414.ngrok-free.app/api")
+// @rt.RestApi(baseUrl: " https://3f85-2409-40c4-15a-8452-2d98-687f-18f5-b045.ngrok-free.app/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
