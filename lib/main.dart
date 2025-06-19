@@ -356,7 +356,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 case "/trainblog":
                   return _buildRoute(settings, BlogPage());
                 case "/feed":
-                  return _buildRoute(settings, FeedPage());
+                  return _buildRoute(settings, MessPage());
                 case "/alumniLoginPage":
                   return _buildRoute(settings, AlumniLoginPage());
                 case "/alumni-OTP-Page":
