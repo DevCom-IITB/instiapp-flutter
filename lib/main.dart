@@ -24,6 +24,7 @@ import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 // import 'package:InstiApp/src/routes/externalblogpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
+import 'package:InstiApp/src/routes/homepage.dart';
 import 'package:InstiApp/src/routes/loginpage.dart';
 import 'package:InstiApp/src/routes/lostandfoundfeedpage.dart';
 import 'package:InstiApp/src/routes/lostandfoundinfo.dart';
@@ -353,20 +354,21 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, MessPage());
                 case "/placeblog":
                   return _buildRoute(settings, BlogPage());
-                case "/trainblog":
-                  return _buildRoute(settings, BlogPage());
+                // case "/trainblog":
+                //   return _buildRoute(settings, BlogPage());
                 case "/feed":
-                  return _buildRoute(settings, MessPage());
+                  return _buildRoute(settings, Homepage());
+                  //return _buildRoute(settings, FeedPage());
                 case "/alumniLoginPage":
                   return _buildRoute(settings, AlumniLoginPage());
                 case "/alumni-OTP-Page":
                   return _buildRoute(settings, AlumniOTPPage());
                 case "/quicklinks":
                   return _buildRoute(settings, QuickLinksPage());
-                case "/news":
-                  return _buildRoute(settings, BlogPage());
-                case "/InSeek":
-                  return _buildRoute(settings, BlogPage());
+                // case "/news":
+                //   return _buildRoute(settings, BlogPage());
+                // case "/InSeek":
+                //   return _buildRoute(settings, BlogPage());
                 case "/groups":
                   return _buildRoute(settings, CommunityPage());
                 case "/buynsell":
@@ -409,10 +411,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, Home());
                 case "/posts/add":
                   return _buildRoute(settings, CreatePostPage());
-                case "/externalblog":
-                  return _buildRoute(settings, BlogPage());
-                case "/query":
-                  return _buildRoute(settings, BlogPage());
+                // case "/externalblog":
+                //   return _buildRoute(settings, BlogPage());
+                // case "/query":
+                //   return _buildRoute(settings, BlogPage());
                 case "/lostandfound":
                   return _buildRoute(settings, LostPage());
                 case "/query/add":

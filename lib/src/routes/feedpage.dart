@@ -224,6 +224,7 @@
 // }
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'homepage.dart';
 
 class FeedPage extends StatefulWidget {
   @override
@@ -328,6 +329,10 @@ class _FeedPageState extends State<FeedPage> {
               ),
               SizedBox(height: 23),
               Feedpost(),
+          //     Align(
+          //   alignment: Alignment.bottomCenter,
+          //   child: navBar(),
+          // )
           ]
         ),
       )
