@@ -65,6 +65,7 @@ class BlogPage extends StatefulWidget {
 }
 
 class _BlogPageState extends State<BlogPage> {
+  String view = 'normal';
   final bool loginNeeded = true;
   late Body body = Body(bodyName: 'Null');
   late var bloc;
@@ -200,7 +201,9 @@ class _BlogPageState extends State<BlogPage> {
                                             width: 24,
                                             fit: BoxFit.none,
                                           ),
-                                          onPressed: () {})),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          })),
                                 ),
                                 const Expanded(
                                   child: Center(
