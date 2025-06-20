@@ -354,8 +354,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, MessPage());
                 case "/placeblog":
                   return _buildRoute(settings, BlogPage());
-                case "/trainblog":
-                  return _buildRoute(settings, BlogPage());
+                // case "/trainblog":
+                //   return _buildRoute(settings, BlogPage());
                 case "/feed":
                   return _buildRoute(settings, Homepage());
                   //return _buildRoute(settings, FeedPage());
@@ -365,10 +365,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, AlumniOTPPage());
                 case "/quicklinks":
                   return _buildRoute(settings, QuickLinksPage());
-                case "/news":
-                  return _buildRoute(settings, BlogPage());
-                case "/InSeek":
-                  return _buildRoute(settings, BlogPage());
+                // case "/news":
+                //   return _buildRoute(settings, BlogPage());
+                // case "/InSeek":
+                //   return _buildRoute(settings, BlogPage());
                 case "/groups":
                   return _buildRoute(settings, CommunityPage());
                 case "/buynsell":
@@ -411,10 +411,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, Home());
                 case "/posts/add":
                   return _buildRoute(settings, CreatePostPage());
-                case "/externalblog":
-                  return _buildRoute(settings, BlogPage());
-                case "/query":
-                  return _buildRoute(settings, BlogPage());
+                // case "/externalblog":
+                //   return _buildRoute(settings, BlogPage());
+                // case "/query":
+                //   return _buildRoute(settings, BlogPage());
                 case "/lostandfound":
                   return _buildRoute(settings, LostPage());
                 case "/query/add":

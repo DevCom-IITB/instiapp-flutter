@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
-import 'package:InstiApp/src/drawer.dart';
+// import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
-import 'package:InstiApp/src/utils/title_with_backbutton.dart';
+// import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/notification.dart' as ntf;
@@ -17,11 +17,20 @@ class NotificationsPage extends StatefulWidget {
   _NotificationsPageState createState() => _NotificationsPageState();
 }
 
+final List<Map<String, dynamic>> filters = [
+  {'label': 'All', 'color': Colors.transparent, 'type': 'all'},
+  {'label': 'Unread', 'color': Colors.transparent, 'type': 'unread'},
+  {'label': 'Events', 'color': Colors.blueAccent, 'type': 'event'},
+  {'label': 'Blogs', 'color': Colors.purpleAccent, 'type': 'blog'},
+  {'label': 'News', 'color': Colors.orangeAccent, 'type': 'news'},
+  {'label': 'Complaints', 'color': Colors.redAccent, 'type': 'complaint'},
+];
+
 class _NotificationsPageState extends State<NotificationsPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
-
+  bool isPersonalSelected = true;
   bool clearAllLoading = false;
   bool shouldMarkAsRead = true;
   @override
@@ -32,77 +41,165 @@ class _NotificationsPageState extends State<NotificationsPage> {
     bloc.updateNotifications();
 
     return Scaffold(
-      key: _scaffoldKey,
-      drawer: NavDrawer(),
-      bottomNavigationBar: MyBottomAppBar(
-        shape: RoundedNotchedRectangle(),
-        child: new Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            IconButton(
-              tooltip: "Show bottom sheet",
-              icon: Icon(
-                Icons.menu_outlined,
-                semanticLabel: "Show bottom sheet",
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(52),
+        child: AppBar(
+          title: const SizedBox(
+            height: 31,
+            child: Center(
+              child: Text(
+                "Notifications",
+                style: TextStyle(
+                  fontFamily: 'DM Sans',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ),
+          backgroundColor: const Color(0xFFF6F6F6),
+          centerTitle: true,
+          elevation: 0,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: IconButton(
+              iconSize: 52,
+              padding: EdgeInsets.zero,
+              icon: const CircleAvatar(
+                backgroundColor: Color(0xCCEBEBEB),
+                radius: 25,
+                child: Icon(
+                  Icons.arrow_back,
+                  color: Colors.black,
+                  size: 28,
+                ),
               ),
               onPressed: () {
-                _scaffoldKey.currentState?.openDrawer();
+                Navigator.of(context).maybePop();
               },
+            ),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: IconButton(
+                iconSize: 52,
+                padding: EdgeInsets.zero,
+                icon: const CircleAvatar(
+                  backgroundColor: Color(0xCCEBEBEB),
+                  radius: 25,
+                  child: Icon(
+                    Icons.settings_outlined,
+                    color: Colors.black,
+                    size: 28,
+                  ),
+                ),
+                onPressed: () {},
+              ),
             ),
           ],
         ),
       ),
+      key: _scaffoldKey,
       body: SafeArea(
-        child: StreamBuilder<UnmodifiableListView<ntf.Notification>>(
-          stream: bloc.notifications,
-          builder: (BuildContext context,
-              AsyncSnapshot<UnmodifiableListView<ntf.Notification>> snapshot) {
-            return RefreshIndicator(
-              key: _refreshIndicatorKey,
-              onRefresh: () {
-                return bloc.updateNotifications();
-              },
-              child: ListView(
-                scrollDirection: Axis.vertical,
-                children: <Widget>[
-                      TitleWithBackButton(
-                        child: Text(
-                          widget.title,
-                          style: theme.textTheme.displaySmall,
-                        ),
-                      )
-                    ] +
-                    _buildContent(snapshot, theme, bloc),
-              ),
-            );
-          },
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      floatingActionButton: FloatingActionButton.extended(
-        tooltip: "Clear all notifications",
-        onPressed: () async {
-          setState(() {
-            clearAllLoading = true;
-          });
-          await bloc.clearAllNotifications();
-          setState(() {
-            clearAllLoading = false;
-          });
-        },
-        icon: clearAllLoading
-            ? SizedBox(
-                width: 18,
-                height: 18,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      theme.colorScheme.onPrimary),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // Personal/General Toggle Row
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0A0E21),
+                  borderRadius: BorderRadius.circular(50),
                 ),
-              )
-            : Icon(Icons.clear_all_outlined),
-        label: Text("Clear All"),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isPersonalSelected = true;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          decoration: BoxDecoration(
+                            color: isPersonalSelected
+                                ? const Color(0xFF2979FF)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              'Personal',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isPersonalSelected = false;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          decoration: BoxDecoration(
+                            color: !isPersonalSelected
+                                ? const Color(0xFF2979FF)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              'General',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Notification List with StreamBuilder
+              Expanded(
+                child: StreamBuilder<UnmodifiableListView<ntf.Notification>>(
+                  stream: bloc.notifications,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<UnmodifiableListView<ntf.Notification>>
+                          snapshot) {
+                    return RefreshIndicator(
+                      key: _refreshIndicatorKey,
+                      onRefresh: () {
+                        return bloc.updateNotifications();
+                      },
+                      child: ListView(
+                        scrollDirection: Axis.vertical,
+                        children: _buildContent(snapshot, theme, bloc),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -116,19 +213,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           .map((n) => _buildNotificationTile(theme, bloc, n))
           .toList();
     } else {
-      return [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-          child:
-              Text.rich(TextSpan(style: theme.textTheme.titleLarge, children: [
-            TextSpan(text: "No new "),
-            TextSpan(
-                text: "notifications",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            TextSpan(text: "."),
-          ])),
-        )
-      ];
+      return [];
     }
   }
 
@@ -137,28 +222,35 @@ class _NotificationsPageState extends State<NotificationsPage> {
     return Dismissible(
       key: Key("${notification.notificationId}" +
           Random().nextInt(10000).toString()),
+      direction: DismissDirection.startToEnd,
       background: Container(
-        color: Colors.red,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Icon(Icons.delete_outlined, color: Colors.white),
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.redAccent,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.redAccent.withAlpha((0.15 * 255).toInt()),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-      ),
-      secondaryBackground: Container(
-        color: Colors.red,
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.only(left: 28),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Icon(Icons.delete_outlined, color: Colors.white),
+          children: const [
+            Icon(Icons.delete_outline, color: Colors.white, size: 28),
+            SizedBox(width: 10),
+            Text(
+              "Delete",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                letterSpacing: 1,
+              ),
             ),
           ],
         ),
@@ -166,7 +258,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       onDismissed: (direction) async {
         await ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(
-              content: Text("Marked \"${notification.getTitle()}\" as read "),
+              content: Text("Marked \"${notification.getTitle()}\" as read"),
               action: SnackBarAction(
                 label: "Undo",
                 onPressed: () {
