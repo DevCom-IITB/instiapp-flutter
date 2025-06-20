@@ -1,13 +1,15 @@
 import 'dart:collection';
 
 import 'package:InstiApp/constants.dart';
+import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_dash/flutter_dash.dart';
-
+import "notificationspage.dart";
+import 'feedpage.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -17,43 +19,50 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  Constants myConstants=Constants();
-  List<String> navIconPaths=['assets/homepage/icons/home.svg','assets/homepage/icons/loader.svg','assets/homepage/icons/search.svg','assets/homepage/icons/message-square.svg','assets/homepage/icons/map.svg'];
-  List<String> days=['Mon','Tue'];
-  List<String> hostel=['H-1','H-2'];
-  List<String> meals=['Breakfast','Lunch','Snacks','Dinner'];
-  Map<String, Map<String, Map<String, List<String>>>> messMenu={
-  "H-1": {
-    "Mon": {
-      "Breakfast": ["H-1 Mon Breakfast"],
-      "Lunch": ["H-1 Mon Lunch"],
-      "Snacks": ["H-1 Mon Snacks"],
-      "Dinner": ["H-1 Mon Dinner"]
+  String currentpage = 'homepage';
+  Constants myConstants = Constants();
+  List<String> navIconPaths = [
+    'assets/homepage/icons/home.svg',
+    'assets/homepage/icons/loader.svg',
+    'assets/homepage/icons/search.svg',
+    'assets/homepage/icons/message-square.svg',
+    'assets/homepage/icons/map.svg'
+  ];
+  List<String> days = ['Mon', 'Tue'];
+  List<String> hostel = ['H-1', 'H-2'];
+  List<String> meals = ['Breakfast', 'Lunch', 'Snacks', 'Dinner'];
+  Map<String, Map<String, Map<String, List<String>>>> messMenu = {
+    "H-1": {
+      "Mon": {
+        "Breakfast": ["H-1 Mon Breakfast"],
+        "Lunch": ["H-1 Mon Lunch"],
+        "Snacks": ["H-1 Mon Snacks"],
+        "Dinner": ["H-1 Mon Dinner"]
+      },
+      "Tue": {
+        "Breakfast": ["H-1 Tue Breakfast"],
+        "Lunch": ["H-1 Tue Lunch"],
+        "Snacks": ["H-1 Tue Snacks"],
+        "Dinner": ["H-1 Tue Dinner"]
+      }
     },
-    "Tue": {
-      "Breakfast": ["H-1 Tue Breakfast"],
-      "Lunch": ["H-1 Tue Lunch"],
-      "Snacks": ["H-1 Tue Snacks"],
-      "Dinner": ["H-1 Tue Dinner"]
+    "H-2": {
+      "Mon": {
+        "Breakfast": ["H-2 Mon Breakfast"],
+        "Lunch": ["H-2 Mon Lunch"],
+        "Snacks": ["H-2 Mon Snacks"],
+        "Dinner": ["H-2 Mon Dinner"]
+      },
+      "Tue": {
+        "Breakfast": ["H-2 Tue Breakfast"],
+        "Lunch": ["H-2 Tue Lunch"],
+        "Snacks": ["H-2 Tue Snacks"],
+        "Dinner": ["H-2 Tue Dinner"]
+      }
     }
-  },
-  "H-2": {
-    "Mon": {
-      "Breakfast": ["H-2 Mon Breakfast"],
-      "Lunch": ["H-2 Mon Lunch"],
-      "Snacks": ["H-2 Mon Snacks"],
-      "Dinner": ["H-2 Mon Dinner"]
-    },
-    "Tue": {
-      "Breakfast": ["H-2 Tue Breakfast"],
-      "Lunch": ["H-2 Tue Lunch"],
-      "Snacks": ["H-2 Tue Snacks"],
-      "Dinner": ["H-2 Tue Dinner"]
-    }
-  }
   };
-  List<String> currentMealItems(){
-    return messMenu[_dropdownHostel]?[_dropdownDay]?[meals[selectedMeal]]??[];
+  List<String> currentMealItems() {
+    return messMenu[_dropdownHostel]?[_dropdownDay]?[meals[selectedMeal]] ?? [];
   }
   String _dropdownHostel='1';
   int selectedMeal=0;
@@ -100,7 +109,180 @@ class _HomepageState extends State<Homepage> {
     }
 
     return Scaffold(
-      backgroundColor:myConstants.instiappWhite,
+      body: Stack(
+        children: [
+          if(currentpage == 'homepage')
+          Homepagewidget(),
+          if (currentpage == 'explore')
+            ExplorePage(),
+          if (currentpage == 'Feed')
+            FeedPage(),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: navBar(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget services(String name, String path) {
+    return InkWell(
+      onTap: () {
+        if (name == "Buy & Sell") {
+        } else if (name == "Lost & Found") {
+        } else if (name == "Blogs") {
+          Navigator.of(context).pushNamed('/placeblog');
+        } else if (name == "Quick Links") {}
+      },
+      child: Container(
+        height: 94,
+        width: 180,
+        decoration: BoxDecoration(
+            color: myConstants.instiappGrey,
+            borderRadius: BorderRadius.circular(12)),
+        child: Stack(
+          children: [
+            Positioned(
+                left: 17,
+                top: 14,
+                right: 72,
+                child: Text(
+                  name,
+                  style: TextStyle(
+                    color: const Color(0xFF0F1620),
+                    fontSize: 16,
+                    fontFamily: 'DM Sans',
+                    fontWeight: FontWeight.w700,
+                  ),
+                )),
+            Positioned(
+                left: 95,
+                top: 12,
+                right: 0,
+                bottom: 0,
+                child: SvgPicture.asset(
+                  'assets/homepage/icons/star.svg',
+                )),
+            Positioned(
+                left: 122,
+                top: 31,
+                right: 0,
+                bottom: 0,
+                child: SvgPicture.asset('assets/homepage/icons/${path}.svg'))
+          ],
+        ),
+      ),
+    );
+  }
+
+  PreferredSizeWidget customAppBar() {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      backgroundColor: myConstants.instiappWhite,
+      elevation: 0,
+      flexibleSpace: SafeArea(
+          child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 52,
+              height: 52,
+              child: Stack(
+                children: [
+                  Positioned(
+                      left: 4,
+                      right: 4,
+                      top: 4,
+                      bottom: 4,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(22),
+                            color: Colors.white,
+                            image: DecorationImage(
+                                image: AssetImage(
+                                    'assets/homepage/images/profilenew.jpg'),
+                                fit: BoxFit.cover,
+                                alignment: Alignment.topCenter)),
+                      ))
+                ],
+              ),
+            ),
+            Container(
+              width: 52,
+              height: 52,
+              child: Stack(
+                children: [
+                  Positioned(
+                      left: 4,
+                      right: 4,
+                      top: 4,
+                      bottom: 4,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(22),
+                            image: DecorationImage(
+                                image: AssetImage(
+                                    'assets/homepage/images/instiappnew.png'),
+                                fit: BoxFit.cover)),
+                      ))
+                ],
+              ),
+            ),
+            Container(
+              width: 52,
+              height: 52,
+              child: Stack(
+                children: [
+                  Positioned(
+                      left: 4,
+                      right: 4,
+                      top: 4,
+                      bottom: 4,
+                      child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(22),
+                              color: myConstants.instiappGrey),
+                          child: Stack(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          NotificationsPage()));
+                                },
+                                child: Center(
+                                  child: Container(
+                                    width: 24,
+                                    height: 24,
+                                    child: SvgPicture.asset(
+                                      'assets/homepage/icons/bell.svg',
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          )))
+                ],
+              ),
+            ),
+          ],
+        ),
+      )),
+    );
+  }
+
+  Widget Homepagewidget() {
+    var bloc = BlocProvider.of(context)!.bloc;
+    if (firstBuild) {
+      bloc.updateHostels();
+      firstBuild = false;
+    }
+    return Scaffold(
+      backgroundColor: myConstants.instiappWhite,
       appBar: customAppBar(),
       body: Stack(
         children: [
@@ -141,159 +323,12 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
           ),
-          Align(alignment: Alignment.bottomCenter,child: navBar(),)
         ],
       ),
     );
   }
-  Widget services(String name,String path){
-    return Container(
-        height: 94,
-        width: 180,
-        decoration: BoxDecoration(
-          color: myConstants.instiappGrey,
-            borderRadius: BorderRadius.circular(12)
-        ),
-        child: Stack(
-          children: [
-              Positioned(
-                left: 17,
-                top: 14,
-                right: 72,
-                child:Text(
-                  name,
-                  style: TextStyle(
-                    color: const Color(0xFF0F1620),
-                    fontSize: 16,
-                    fontFamily: 'DM Sans',
-                    fontWeight: FontWeight.w700,
-                  ),
-                  )
-                ),
-              Positioned(
-                left: 95,
-                top: 12,
-                right: 0,
-                bottom: 0,
-                child: SvgPicture.asset(
-                  'assets/homepage/icons/star.svg',
-                )
-              ),
-              Positioned(
-                left: 122,
-                top: 31,
-                right: 0,
-                bottom: 0,
-                child: SvgPicture.asset(
-                  'assets/homepage/icons/${path}.svg'
-                )
-              )
-            ],
-          ),
-        );
-  }
-  PreferredSizeWidget customAppBar(){
-    return AppBar(
-      automaticallyImplyLeading: false,
-      backgroundColor: myConstants.instiappWhite,
-        elevation: 0,
-        flexibleSpace: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: 52,
-                  height: 52,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        left: 4,
-                        right: 4,
-                        top: 4,
-                        bottom: 4,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(22),
-                            color: Colors.white,
-                            image: DecorationImage(
-                              image: AssetImage('assets/homepage/images/profilenew.jpg'),
-                              fit: BoxFit.cover,
-                              alignment: Alignment.topCenter
-                            )
-                          ),
-                          
-                        )
-                        )
-                    ],
-                  ),
-                ),
-                Container(
-                  width: 52,
-                  height: 52,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        left: 4,
-                        right: 4,
-                        top: 4,
-                        bottom: 4,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(22),
-                            image: DecorationImage(
-                              image: AssetImage('assets/homepage/images/instiappnew.png'),
-                              fit: BoxFit.cover
-                            )
-                          ),
-                          
-                        )
-                        )
-                    ],
-                  ),
-                ),
-                Container(
-                  width: 52,
-                  height: 52,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        left: 4,
-                        right: 4,
-                        top: 4,
-                        bottom: 4,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(22),
-                            color: myConstants.instiappGrey
-                          ),
-                          child: Stack(
-                            children: [
-                              Center(
-                                child: Container(
-                                  width: 24,
-                                  height: 24,
-                                  child: SvgPicture.asset(
-                                    'assets/homepage/icons/bell.svg'
-                                  ),
-                                ),
-                              )
-                            ],
-                          )
-                        )
-                        )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            )
-          ),
-    );
-  }
-  Widget servicesWidget(){
+
+  Widget servicesWidget() {
     return Column(
       children: [
         SizedBox(height: 20),
@@ -339,46 +374,61 @@ class _HomepageState extends State<Homepage> {
       ],
     );
   }
-  Widget navBar(){
+
+  Widget navBar() {
     return Container(
       height: 80,
       width: 396,
       decoration: BoxDecoration(
-        color: myConstants.instiappDark,
-        borderRadius: BorderRadius.circular(50)
-      ),
+          color: myConstants.instiappDark,
+          borderRadius: BorderRadius.circular(50)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: navIconPaths.map((path){
-          selectedIcon=path==selectedNavIcon;
+        children: navIconPaths.map((path) {
+          selectedIcon = path == selectedNavIcon;
           return SizedBox(
             width: 70,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if(selectedIcon)
+                if (selectedIcon)
                   SvgPicture.asset(
                     'assets/homepage/icons/icon1.svg',
                     width: 69,
                     height: 10,
-                    colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                    colorFilter:
+                        ColorFilter.mode(Colors.white, BlendMode.srcIn),
                   )
-                else 
+                else
                   SizedBox(height: 10),
                 IconButton(
-                  onPressed: (){
+                  onPressed: () {
                     setState(() {
-                      selectedNavIcon=path;
+                      selectedNavIcon = path;
                     });
-                  }, 
+                    if (path == 'assets/homepage/icons/search.svg') {
+                        currentpage = 'explore';
+                    } else if (path ==
+                        'assets/homepage/icons/message-square.svg') {
+                        currentpage = 'Community';
+                    } else if (path == 'assets/homepage/icons/map.svg') {
+                        currentpage = 'Map';
+                    } else if (path == 'assets/homepage/icons/loader.svg') {
+                        currentpage = 'Feed';
+                    } else if (path == 'assets/homepage/icons/home.svg') {
+                        currentpage = 'homepage';
+                    }
+                  },
                   icon: SvgPicture.asset(
                     path,
                     width: 24,
                     height: 24,
-                    colorFilter: ColorFilter.mode(selectedIcon?myConstants.instiappBlue:Colors.white, BlendMode.srcIn),
+                    colorFilter: ColorFilter.mode(
+                        selectedIcon ? myConstants.instiappBlue : Colors.white,
+                        BlendMode.srcIn),
                   ),
-                  ),
+                ),
               ],
             ),
           );
@@ -386,6 +436,7 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
+
   Widget qrOpen() {
     return Material(
       shape: RoundedRectangleBorder(
@@ -417,7 +468,8 @@ class _HomepageState extends State<Homepage> {
                       child: SizedBox(
                         width: 24,
                         height: 24,
-                        child: SvgPicture.asset('assets/homepage/icons/refresh.svg'),
+                        child: SvgPicture.asset(
+                            'assets/homepage/icons/refresh.svg'),
                       ),
                     ),
                   ),
@@ -447,7 +499,8 @@ class _HomepageState extends State<Homepage> {
                         child: SizedBox(
                           width: 29,
                           height: 29,
-                          child: SvgPicture.asset('assets/homepage/icons/arrow_down.svg'),
+                          child: SvgPicture.asset(
+                              'assets/homepage/icons/arrow_down.svg'),
                         ),
                       ),
                     ),
@@ -748,4 +801,3 @@ class _HomepageState extends State<Homepage> {
   );
 } 
 }
-
