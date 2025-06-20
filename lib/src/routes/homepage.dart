@@ -1,4 +1,8 @@
+import 'dart:collection';
+
 import 'package:InstiApp/constants.dart';
+import 'package:InstiApp/src/api/model/mess.dart';
+import 'package:InstiApp/src/bloc_provider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -51,15 +55,50 @@ class _HomepageState extends State<Homepage> {
   List<String> currentMealItems(){
     return messMenu[_dropdownHostel]?[_dropdownDay]?[meals[selectedMeal]]??[];
   }
-  String _dropdownHostel='H-2';
+  String _dropdownHostel='1';
   int selectedMeal=0;
   String _dropdownDay='Mon';
   bool showQR=false;
   String selectedNavIcon='assets//homepage/icons/home.svg';
   bool selectedIcon=false;
+  bool firstBuild = true;
+  String _formatMeal(String? meal) {
+  return (meal ?? '')
+      .split(RegExp(r'[\n,]'))
+      .map((item) => item.trim())
+      .where((item) => item.isNotEmpty)
+      .join(' • ');
+}
+  String _mealString(List<Hostel> hostels) {
+      if (_dropdownHostel.isEmpty) return 'No menu';
+      // 1. pick hostel
+      final hostel = hostels
+          .firstWhere((h) => h.shortName == _dropdownHostel, orElse: () => Hostel());
+      // 2. pick day (Mon=1 … Sun=7)
+      final dayIndex = HostelMess.dayToName.entries
+          .firstWhere((e) => e.value.startsWith(_dropdownDay), orElse: () => const MapEntry(1,'Monday'))
+          .key;
+      final mess = hostel.mess?.firstWhere((m) => m.day == dayIndex, orElse: () => HostelMess());
+      // 3. pick meal
+      switch (selectedMeal) {
+        case 0: 
+          print("Breakfast is: ${mess?.breakfast}");
+          return _formatMeal(mess?.breakfast);
+        case 1: return _formatMeal(mess?.lunch);
+        case 2: return _formatMeal(mess?.snacks);
+        case 3: return _formatMeal(mess?.dinner);
+        default: return '—';
+      }
+    }
 
   @override
   Widget build(BuildContext context) {
+    var bloc = BlocProvider.of(context)!.bloc;
+    if (firstBuild) {
+      bloc.updateHostels();
+      firstBuild = false;
+    }
+
     return Scaffold(
       backgroundColor:myConstants.instiappWhite,
       appBar: customAppBar(),
@@ -68,23 +107,38 @@ class _HomepageState extends State<Homepage> {
           SingleChildScrollView(
             padding: EdgeInsets.only(bottom: 100),
             //margin: EdgeInsets.only(left: 10,right: 0),
-            child: Column(
-              children: [
-                SizedBox(height: 20),
-                Dash(
-                  direction: Axis.horizontal,
-                  length: 368,
-                  dashLength: 6,
-                  dashGap: 7,
-                  dashColor: Color(0xFFDADADA),
-                ),
-                SizedBox(height: 20),
-                if(showQR)
-                  qrOpen()
-                else
-                  qrClosed(),
-                servicesWidget(),
-              ], 
+            child: Padding(
+              padding: const EdgeInsets.only(left: 21,right: 22),
+              child: Column(
+                children: [
+                  SizedBox(height: 20),
+                  Dash(
+                    direction: Axis.horizontal,
+                    length: 368,
+                    dashLength: 6,
+                    dashGap: 7,
+                    dashColor: Color(0xFFDADADA),
+                  ),
+                  SizedBox(height: 20),
+                  if(showQR)
+                    qrOpen()
+                  else
+                    StreamBuilder<UnmodifiableListView<Hostel>>(
+                      stream: bloc.hostels,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+              
+                      final hostels = snapshot.data!;
+                      print("Available hostels: ${hostels.map((h) => h.shortName).toList()}");
+                      print("Selected: $_dropdownHostel");
+                      return qrClosed(hostels);
+                      },
+                    ),
+                  servicesWidget(),
+                ], 
+              ),
             ),
           ),
           Align(alignment: Alignment.bottomCenter,child: navBar(),)
@@ -251,21 +305,18 @@ class _HomepageState extends State<Homepage> {
           dashColor: Color(0xFFDADADA),
         ),
         SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.only(left: 12),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Services',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'DM Sans',
-                            fontWeight: FontWeight.w700
-                          ),
-                          ),
-                      ],
-                  ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Services',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'DM Sans',
+                          fontWeight: FontWeight.w700
+                        ),
+                        ),
+                    ],
                 ),
                 SizedBox(height: 16),
                 Row(
@@ -431,7 +482,7 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  Widget qrClosed() {
+  Widget qrClosed(List<Hostel> hostels) {
   return Column(
     children: [
       Padding(
@@ -460,12 +511,9 @@ class _HomepageState extends State<Homepage> {
                   ),
                   child: Center(
                     child: DropdownButton(
-                      items: days.map((day) {
-                        return DropdownMenuItem(
-                          value: day,
-                          child: Text(day),
-                        );
-                      }).toList(),
+                      items: HostelMess.dayToName.values
+                              .map((d) => DropdownMenuItem(value: d.substring(0,3), child: Text(d.substring(0,3))))
+                              .toList(),
                       onChanged: (String? newDay) {
                         setState(() {
                           _dropdownDay = newDay!;
@@ -477,6 +525,7 @@ class _HomepageState extends State<Homepage> {
                         color: Colors.grey[800],
                         fontWeight: FontWeight.w400,
                       ),
+                      underline: SizedBox(),
                     ),
                   ),
                 ),
@@ -488,26 +537,33 @@ class _HomepageState extends State<Homepage> {
                     color: myConstants.instiappGrey,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Center(
-                    child: DropdownButton(
-                      items: hostel.map((String hostel) {
-                        return DropdownMenuItem(
-                          value: hostel,
-                          child: Text(hostel),
+                  padding: EdgeInsets.only(left: 10),
+                  child: DropdownButton(
+                    items: hostels.map((h){
+                      final name=(h.shortName! =='tansa'||h.shortName! =='qip')
+                      ? h.shortName!
+                      : 'H-${h.shortName!}';
+                      return DropdownMenuItem(
+                        value: h.shortName!,
+                        child: Text(name)
                         );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _dropdownHostel = newValue!;
-                        });
-                      },
-                      value: _dropdownHostel,
-                      icon: Icon(Icons.keyboard_arrow_down),
-                      style: TextStyle(
-                        color: Colors.grey[800],
-                        fontWeight: FontWeight.w400,
-                      ),
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _dropdownHostel = newValue!;
+                      });
+                    },
+                    value: _dropdownHostel,
+                    icon: Padding(
+                      padding: const EdgeInsets.only(left: 7),
+                      child: Icon(Icons.keyboard_arrow_down),
                     ),
+                    style: TextStyle(
+                      color: Colors.grey[800],
+                      fontWeight: FontWeight.w400,
+                    ),
+                    underline: SizedBox(),
+                    
                   ),
                 ),
               ],
@@ -520,7 +576,7 @@ class _HomepageState extends State<Homepage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: 120,
+            width: 110,
             height: 184,
             child: Column(
               children: [
@@ -582,13 +638,9 @@ class _HomepageState extends State<Homepage> {
                       color: myConstants.instiappWhite,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: SizedBox(
-                      width: 210,
-                      height: 97,
+                    child: SingleChildScrollView(
                       child: Text(
-                        currentMealItems().join(' • ').isEmpty
-                            ? 'No menu found for the chosen slot'
-                            : currentMealItems().join(' • '),
+                        _mealString(hostels),
                         style: TextStyle(
                           color: const Color(0xFF1B3252),
                           fontSize: 14,
@@ -654,7 +706,7 @@ class _HomepageState extends State<Homepage> {
           ),
           child: Container(
             height: 96,
-            width: 380,
+            width: 368,
             padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
