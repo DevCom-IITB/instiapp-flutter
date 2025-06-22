@@ -126,7 +126,7 @@ class Event extends elt.Event {
 
       subtitle += "Ends in $timeDiff | ";
     }
-
+    
     if (startTime != null) {
       subtitle +=
           formatDate(startTime.toLocal(), [dd, " ", M, " | ", HH, ":", nn]);

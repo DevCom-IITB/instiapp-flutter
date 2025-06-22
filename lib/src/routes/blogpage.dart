@@ -76,6 +76,7 @@ class _BlogPageState extends State<BlogPage> {
   void initState() {
     super.initState();
     _fetchBody();
+    
   }
 
   void _fetchBody() async {
@@ -171,7 +172,7 @@ class _BlogPageState extends State<BlogPage> {
               builder:
                   (BuildContext context, AsyncSnapshot<Session?> snapshot) {
                 if ((snapshot.hasData && snapshot.data != null) ||
-                    !loginNeeded) {
+                    loginNeeded) {
                   return Scaffold(
                     backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                     body: SafeArea(
