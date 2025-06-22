@@ -1,5 +1,10 @@
+import 'dart:collection';
+
 import 'package:InstiApp/constants.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
+import 'package:InstiApp/src/api/model/mess.dart';
+import 'package:InstiApp/src/bloc_provider.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_dash/flutter_dash.dart';
@@ -59,16 +64,50 @@ class _HomepageState extends State<Homepage> {
   List<String> currentMealItems() {
     return messMenu[_dropdownHostel]?[_dropdownDay]?[meals[selectedMeal]] ?? [];
   }
-
-  String _dropdownHostel = 'H-2';
-  int selectedMeal = 0;
-  String _dropdownDay = 'Mon';
-  bool showQR = false;
-  String selectedNavIcon = 'assets//homepage/icons/home.svg';
-  bool selectedIcon = false;
+  String _dropdownHostel='1';
+  int selectedMeal=0;
+  String _dropdownDay='Mon';
+  bool showQR=false;
+  String selectedNavIcon='assets//homepage/icons/home.svg';
+  bool selectedIcon=false;
+  bool firstBuild = true;
+  String _formatMeal(String? meal) {
+  return (meal ?? '')
+      .split(RegExp(r'[\n,]'))
+      .map((item) => item.trim())
+      .where((item) => item.isNotEmpty)
+      .join(' • ');
+}
+  String _mealString(List<Hostel> hostels) {
+      if (_dropdownHostel.isEmpty) return 'No menu';
+      // 1. pick hostel
+      final hostel = hostels
+          .firstWhere((h) => h.shortName == _dropdownHostel, orElse: () => Hostel());
+      // 2. pick day (Mon=1 … Sun=7)
+      final dayIndex = HostelMess.dayToName.entries
+          .firstWhere((e) => e.value.startsWith(_dropdownDay), orElse: () => const MapEntry(1,'Monday'))
+          .key;
+      final mess = hostel.mess?.firstWhere((m) => m.day == dayIndex, orElse: () => HostelMess());
+      // 3. pick meal
+      switch (selectedMeal) {
+        case 0: 
+          print("Breakfast is: ${mess?.breakfast}");
+          return _formatMeal(mess?.breakfast);
+        case 1: return _formatMeal(mess?.lunch);
+        case 2: return _formatMeal(mess?.snacks);
+        case 3: return _formatMeal(mess?.dinner);
+        default: return '—';
+      }
+    }
 
   @override
   Widget build(BuildContext context) {
+    var bloc = BlocProvider.of(context)!.bloc;
+    if (firstBuild) {
+      bloc.updateHostels();
+      firstBuild = false;
+    }
+
     return Scaffold(
       body: Stack(
         children: [
@@ -81,7 +120,7 @@ class _HomepageState extends State<Homepage> {
           Align(
             alignment: Alignment.bottomCenter,
             child: navBar(),
-          )
+          ),
         ],
       ),
     );
@@ -237,6 +276,11 @@ class _HomepageState extends State<Homepage> {
   }
 
   Widget Homepagewidget() {
+    var bloc = BlocProvider.of(context)!.bloc;
+    if (firstBuild) {
+      bloc.updateHostels();
+      firstBuild = false;
+    }
     return Scaffold(
       backgroundColor: myConstants.instiappWhite,
       appBar: customAppBar(),
@@ -245,20 +289,38 @@ class _HomepageState extends State<Homepage> {
           SingleChildScrollView(
             padding: EdgeInsets.only(bottom: 100),
             //margin: EdgeInsets.only(left: 10,right: 0),
-            child: Column(
-              children: [
-                SizedBox(height: 20),
-                Dash(
-                  direction: Axis.horizontal,
-                  length: 368,
-                  dashLength: 6,
-                  dashGap: 7,
-                  dashColor: Color(0xFFDADADA),
-                ),
-                SizedBox(height: 20),
-                if (showQR) qrOpen() else qrClosed(),
-                servicesWidget(),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.only(left: 21,right: 22),
+              child: Column(
+                children: [
+                  SizedBox(height: 20),
+                  Dash(
+                    direction: Axis.horizontal,
+                    length: 368,
+                    dashLength: 6,
+                    dashGap: 7,
+                    dashColor: Color(0xFFDADADA),
+                  ),
+                  SizedBox(height: 20),
+                  if(showQR)
+                    qrOpen()
+                  else
+                    StreamBuilder<UnmodifiableListView<Hostel>>(
+                      stream: bloc.hostels,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+              
+                      final hostels = snapshot.data!;
+                      print("Available hostels: ${hostels.map((h) => h.shortName).toList()}");
+                      print("Selected: $_dropdownHostel");
+                      return qrClosed(hostels);
+                      },
+                    ),
+                  servicesWidget(),
+                ], 
+              ),
             ),
           ),
         ],
@@ -278,39 +340,37 @@ class _HomepageState extends State<Homepage> {
           dashColor: Color(0xFFDADADA),
         ),
         SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.only(left: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                'Services',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontFamily: 'DM Sans',
-                    fontWeight: FontWeight.w700),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            services("Buy & Sell", "buy_and_sell"),
-            SizedBox(width: 8),
-            services("Lost & Found", "lost_and_found")
-          ],
-        ),
-        SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            services("Blogs", "blogs"),
-            SizedBox(width: 8),
-            services("Quick Links", "quick_links")
-          ],
-        ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Services',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'DM Sans',
+                          fontWeight: FontWeight.w700
+                        ),
+                        ),
+                    ],
+                ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    services("Buy & Sell","buy_and_sell"),
+                    SizedBox(width: 8),
+                    services("Lost & Found","lost_and_found")
+                  ],
+                ),
+                SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    services("Blogs","blogs"),
+                    SizedBox(width: 8),
+                    services("Quick Links","quick_links")
+                  ],
+                ),
       ],
     );
   }
@@ -475,266 +535,269 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  Widget qrClosed() {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 7),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Mess Menu',
-                style: TextStyle(
-                  color: const Color(0xFF15202D),
-                  fontSize: 20,
-                  fontFamily: 'DM Sans',
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              Row(
-                children: [
-                  Container(
-                    height: 40,
-                    width: 78.5,
-                    decoration: BoxDecoration(
-                      color: myConstants.instiappGrey,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: DropdownButton(
-                        items: days.map((day) {
-                          return DropdownMenuItem(
-                            value: day,
-                            child: Text(day),
-                          );
-                        }).toList(),
-                        onChanged: (String? newDay) {
-                          setState(() {
-                            _dropdownDay = newDay!;
-                          });
-                        },
-                        value: _dropdownDay,
-                        icon: Icon(Icons.keyboard_arrow_down),
-                        style: TextStyle(
-                          color: Colors.grey[800],
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Container(
-                    height: 40,
-                    width: 78.5,
-                    decoration: BoxDecoration(
-                      color: myConstants.instiappGrey,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: DropdownButton(
-                        items: hostel.map((String hostel) {
-                          return DropdownMenuItem(
-                            value: hostel,
-                            child: Text(hostel),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _dropdownHostel = newValue!;
-                          });
-                        },
-                        value: _dropdownHostel,
-                        icon: Icon(Icons.keyboard_arrow_down),
-                        style: TextStyle(
-                          color: Colors.grey[800],
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-        ),
-        SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+  Widget qrClosed(List<Hostel> hostels) {
+  return Column(
+    children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 7),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          
           children: [
-            SizedBox(
-              width: 120,
-              height: 184,
-              child: Column(
-                children: [
-                  for (int i = 0; i < meals.length; i++) ...[
-                    GestureDetector(
-                      onTap: () {
+            Text(
+              'Mess Menu',
+              style: TextStyle(
+                color: const Color(0xFF15202D),
+                fontSize: 20,
+                fontFamily: 'DM Sans',
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            Row(
+              children: [
+                Container(
+                  height: 40,
+                  width: 78.5,
+                  decoration: BoxDecoration(
+                    color: myConstants.instiappGrey,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Center(
+                    child: DropdownButton(
+                      items: HostelMess.dayToName.values
+                              .map((d) => DropdownMenuItem(value: d.substring(0,3), child: Text(d.substring(0,3))))
+                              .toList(),
+                      onChanged: (String? newDay) {
                         setState(() {
-                          selectedMeal = i;
+                          _dropdownDay = newDay!;
                         });
                       },
-                      child: Container(
-                        height: 40,
-                        width: 120,
-                        decoration: BoxDecoration(
-                          color: selectedMeal == i
-                              ? myConstants.instiappBlue
-                              : myConstants.instiappGrey,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Center(
-                          child: Text(
-                            meals[i],
-                            style: TextStyle(
-                              color: selectedMeal == i
-                                  ? Colors.white
-                                  : Color(0xCC0F1620),
-                              fontFamily: 'DM Sans',
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
+                      value: _dropdownDay,
+                      icon: Icon(Icons.keyboard_arrow_down),
+                      style: TextStyle(
+                        color: Colors.grey[800],
+                        fontWeight: FontWeight.w400,
                       ),
+                      underline: SizedBox(),
                     ),
-                    if (i != meals.length - 1) SizedBox(height: 8),
-                  ],
-                ],
-              ),
-            ),
-            SizedBox(width: 8),
-            SizedBox(
-              width: 250,
-              height: 184,
-              child: Container(
-                padding: EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: myConstants.instiappDark,
-                  borderRadius: BorderRadius.circular(15),
+                  ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      width: 242,
-                      height: 129,
-                      decoration: BoxDecoration(
-                        color: myConstants.instiappWhite,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: SizedBox(
-                        width: 210,
-                        height: 97,
-                        child: Text(
-                          currentMealItems().join(' • ').isEmpty
-                              ? 'No menu found for the chosen slot'
-                              : currentMealItems().join(' • '),
-                          style: TextStyle(
-                            color: const Color(0xFF1B3252),
-                            fontSize: 14,
-                            fontFamily: 'DM Sans',
-                            fontWeight: FontWeight.w500,
-                            height: 1.31,
-                          ),
-                        ),
-                      ),
+                SizedBox(width: 8),
+                Container(
+                  height: 40,
+                  width: 78.5,
+                  decoration: BoxDecoration(
+                    color: myConstants.instiappGrey,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: EdgeInsets.only(left: 10),
+                  child: DropdownButton(
+                    items: hostels.map((h){
+                      final name=(h.shortName! =='tansa'||h.shortName! =='qip')
+                      ? h.shortName!
+                      : 'H-${h.shortName!}';
+                      return DropdownMenuItem(
+                        value: h.shortName!,
+                        child: Text(name)
+                        );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _dropdownHostel = newValue!;
+                      });
+                    },
+                    value: _dropdownHostel,
+                    icon: Padding(
+                      padding: const EdgeInsets.only(left: 7),
+                      child: Icon(Icons.keyboard_arrow_down),
                     ),
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "12:30 PM - 2:30 PM",
-                            style: TextStyle(
-                              color: myConstants.instiappWhite,
-                              fontSize: 14,
-                              fontFamily: 'DM Sans',
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          Container(
-                            width: 40,
-                            height: 30,
-                            decoration: ShapeDecoration(
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(width: 1, color: Colors.white),
-                                borderRadius: BorderRadius.circular(80),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                    style: TextStyle(
+                      color: Colors.grey[800],
+                      fontWeight: FontWeight.w400,
                     ),
-                  ],
+                    underline: SizedBox(),
+                    
+                  ),
                 ),
-              ),
-            ),
+              ],
+            )
           ],
         ),
-        SizedBox(height: 20),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              showQR = true;
-            });
-          },
-          child: Material(
-            color: Color(0xFFF1F5F9),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-              side: BorderSide(
-                color: myConstants.instiappBlue,
-                width: 6,
-                strokeAlign: BorderSide.strokeAlignInside,
-              ),
-            ),
-            child: Container(
-              height: 96,
-              width: 380,
-              padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(
-                        'My QR',
-                        style: TextStyle(
-                          color: Color(0xFF275489),
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
+      ),
+      SizedBox(height: 20),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 110,
+            height: 184,
+            child: Column(
+              children: [
+                for (int i = 0; i < meals.length; i++) ...[
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedMeal = i;
+                      });
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        color: selectedMeal == i
+                            ? myConstants.instiappBlue
+                            : myConstants.instiappGrey,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Center(
+                        child: Text(
+                          meals[i],
+                          style: TextStyle(
+                            color: selectedMeal == i
+                                ? Colors.white
+                                : Color(0xCC0F1620),
+                            fontFamily: 'DM Sans',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
-                      Text(
-                        'Mess • Gym • Swimming & more...',
+                    ),
+                  ),
+                  if (i != meals.length - 1) SizedBox(height: 8),
+                ],
+              ],
+            ),
+          ),
+          SizedBox(width: 8),
+          SizedBox(
+            width: 250,
+            height: 184,
+            child: Container(
+              padding: EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: myConstants.instiappDark,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    width: 242,
+                    height: 129,
+                    decoration: BoxDecoration(
+                      color: myConstants.instiappWhite,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Text(
+                        _mealString(hostels),
                         style: TextStyle(
-                          color: const Color(0xFF15202D),
+                          color: const Color(0xFF1B3252),
                           fontSize: 14,
                           fontFamily: 'DM Sans',
                           fontWeight: FontWeight.w500,
+                          height: 1.31,
                         ),
                       ),
-                    ],
+                    ),
                   ),
                   Container(
-                    height: 75,
-                    width: 75,
-                    child: SvgPicture.asset('assets/homepage/icons/qr.svg'),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "12:30 PM - 2:30 PM",
+                          style: TextStyle(
+                            color: myConstants.instiappWhite,
+                            fontSize: 14,
+                            fontFamily: 'DM Sans',
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Container(
+                          width: 40,
+                          height: 30,
+                          decoration: ShapeDecoration(
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                  width: 1, color: Colors.white),
+                              borderRadius: BorderRadius.circular(80),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
           ),
+        ],
+      ),
+      SizedBox(height: 20),
+      GestureDetector(
+        onTap: () {
+          setState(() {
+            showQR = true;
+          });
+        },
+        child: Material(
+          color: Color(0xFFF1F5F9),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+            side: BorderSide(
+              color: myConstants.instiappBlue,
+              width: 6,
+              strokeAlign: BorderSide.strokeAlignInside,
+            ),
+          ),
+          child: Container(
+            height: 96,
+            width: 368,
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      'My QR',
+                      style: TextStyle(
+                        color: Color(0xFF275489),
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      'Mess • Gym • Swimming & more...',
+                      style: TextStyle(
+                        color: const Color(0xFF15202D),
+                        fontSize: 14,
+                        fontFamily: 'DM Sans',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  height: 75,
+                  width: 75,
+                  child: SvgPicture.asset('assets/homepage/icons/qr.svg'),
+                ),
+              ],
+            ),
+          ),
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+} 
 }
