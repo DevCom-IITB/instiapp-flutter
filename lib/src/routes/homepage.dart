@@ -118,7 +118,7 @@ class _HomepageState extends State<Homepage> {
           if(currentpage == 'homepage')
           Homepagewidget(),
           if (currentpage == 'explore')
-            ExplorePage(),
+          ExplorePage(),
           if (currentpage == 'Feed')
             FeedPage(),
           Align(
@@ -135,6 +135,7 @@ class _HomepageState extends State<Homepage> {
       onTap: () {
         if (name == "Buy & Sell") {
         } else if (name == "Lost & Found") {
+          Navigator.of(context).pushNamed('/settings');
         } else if (name == "Blogs") {
           Navigator.of(context).pushNamed('/placeblog');
         } else if (name == "Quick Links") {}
