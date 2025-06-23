@@ -730,7 +730,7 @@ class _UserPageState extends State<UserPage>
                             width: 51,
                             height: 50,
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(4), // optional: round corners
+                              borderRadius: BorderRadius.circular(4),
                               child: Image.asset(
                                 'assets/profilepage/logo.png',
                                 fit: BoxFit.contain,
@@ -805,7 +805,7 @@ class _UserPageState extends State<UserPage>
   Widget _buildProfileInfoItem(String label, String value, double fsize) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min, // ← Important for spacing
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           label,
@@ -906,14 +906,7 @@ class _UserPageState extends State<UserPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: const Text(
-                    'Part of',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(height: 12),
+                // const SizedBox(height: 12),
                 // Scrollable list of groups
                 Expanded(
                   child: ListView.separated(
@@ -946,14 +939,7 @@ class _UserPageState extends State<UserPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: const Text(
-                    'Part of',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(height: 12),
+                // const SizedBox(height: 12),
                 // Scrollable list of groups
                 Expanded(
                   child: ListView.separated(
@@ -981,22 +967,23 @@ class _UserPageState extends State<UserPage>
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: InkWell(
         onTap: () {
-          
+          // Handle tap
         },
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Circular group photo
+            // Group photo
             Container(
               width: 56,
               height: 56,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 image: group.photoUrl != null
-                  ? DecorationImage(
-                      image: NetworkImage(group.photoUrl!),
-                      fit: BoxFit.cover,
-                    )
-                  : null,
+                    ? DecorationImage(
+                        image: NetworkImage(group.photoUrl!),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
               ),
               child: group.photoUrl == null
                   ? const Icon(Icons.people, size: 24)
@@ -1004,27 +991,43 @@ class _UserPageState extends State<UserPage>
             ),
             const SizedBox(width: 16),
             // Group info
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  group.name,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          group.name,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  group.about,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          group.about,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
