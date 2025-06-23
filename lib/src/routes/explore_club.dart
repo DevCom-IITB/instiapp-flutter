@@ -16,6 +16,41 @@ class ExploreClubPage extends StatefulWidget {
   final Future<Body>? bodyFuture;
   final String? heroTag;
 
+  final List<Map<String, String>> bodyTitles = [
+    {
+      "bodyname": "Culturals@IITB",
+      "title": "Cult",
+    },
+    {
+      "bodyname": "Tech@IITB",
+      "title": "Tech",
+    },
+    {
+      "bodyname": "IITB Sports",
+      "title": "Sports",
+    },
+    {
+      "bodyname": "Departments",
+      "title": "Departments",
+    },
+    {
+      "bodyname": "Hostel Affairs",
+      "title": "Hostels",
+    },
+    {
+      "bodyname": "IIT Bombay",
+      "title": "Institute",
+    },
+    {
+      "bodyname": "DevCom",
+      "title": "DevCom",
+    },
+    {
+      "bodyname": "Placement Cell",
+      "title": "Placement",
+    },
+  ];
+
   ExploreClubPage({this.bodyFuture, this.initialBody, this.heroTag});
 
   static void navigateWith(BuildContext context, InstiAppBloc bloc,
@@ -43,6 +78,8 @@ class ExploreClubPage extends StatefulWidget {
 class _ExploreClubPageState extends State<ExploreClubPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   Body? body;
+  FocusNode _focusNode = FocusNode();
+  TextEditingController? _searchFieldController;
 
   bool loadingFollow = false;
 
@@ -50,7 +87,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
   void initState() {
     super.initState();
     body = widget.initialBody;
-    
+
     widget.bodyFuture?.then((b) {
       var tableParse = markdown.TableSyntax();
       b.bodyDescription = markdown.markdownToHtml(
@@ -75,6 +112,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
+    var exploreBloc = bloc.exploreBloc;
     // var footerButtons = <Widget>[];
     // var editAccess = false;
     // if (body != null) {
@@ -114,186 +152,184 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
     //   }
     // }
     return Scaffold(
-      key: _scaffoldKey,
-      drawer: NavDrawer(),
-      // bottomNavigationBar: MyBottomAppBar(
-      //   child: new Row(
-      //     mainAxisSize: MainAxisSize.max,
-      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //     children: <Widget>[
-      //       IconButton(
-      //         icon: Icon(
-      //           Icons.menu_outlined,
-      //           semanticLabel: "Show bottom sheet",
-      //         ),
-      //         onPressed: () {
-      //           _scaffoldKey.currentState?.openDrawer();
-      //         },
-      //       ),
-      //     ],
-      //   ),
-      // ),
-      
-      body: SafeArea(
-        child: body == null
-            ? Center(
-                child: CircularProgressIndicatorExtended(
-                label: Text("Loading the body page"),
-              ))
-            : ListView(
-                children: <Widget>[
-                  // TitleWithBackButton(
-                  //   child: Column(
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     children: <Widget>[
-                  //       Text(
-                  //         body?.bodyName ?? "",
-                  //         style: theme.textTheme.displaySmall,
-                  //       ),
-                  //       SizedBox(height: 8.0),
-                  //       Text(body?.bodyShortDescription ?? "",
-                  //           style: theme.textTheme.titleLarge),
-                  //     ],
-                  //   ),
-                  // ),
-                  // Padding(
-                  //   padding: const EdgeInsets.all(8.0),
-                  //   child: body?.bodyImageURL != null
-                  //       ? PhotoViewableImage(
-                  //           url: body?.bodyImageURL ?? defUrl,
-                  //           heroTag: widget.heroTag ?? body?.bodyID ?? "",
-                  //           fit: BoxFit.fitWidth,
-                  //         )
-                  //       : SizedBox(
-                  //           height: 0.0,
-                  //         ),
-                  // ),
-                  // body?.bodyImageURL != null
-                  //     ? SizedBox(
-                  //         height: 16.0,
-                  //       )
-                  //     : SizedBox(
-                  //         height: 0.0,
-                  //       ),
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(
-                  //       horizontal: 28.0, vertical: 16.0),
-                  //   child: CommonHtml(
-                  //       data: body?.bodyDescription ?? "",
-                  //       defaultTextStyle:
-                  //           theme.textTheme.titleMedium ?? TextStyle()),
-                  // ),
-                  // body?.bodyDescription != null
-                  //     ? SizedBox(
-                  //         height: 16.0,
-                  //       )
-                  //     : SizedBox(
-                  //         height: 0.0,
-                  //       ),
-                  Divider(),
-                ] // Events
-                  // ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                  //     body?.bodyEvents
-                  //         ?.map((e) => _buildEventTile(bloc, theme, e))
-                  //         .toList(),
-                  //     Padding(
-                  //       padding: const EdgeInsets.symmetric(
-                  //           horizontal: 28.0, vertical: 16.0),
-                  //       child: Text(
-                  //         "Events",
-                  //         style: theme.textTheme.headlineSmall,
-                  //       ),
-                  //     )))
-                  // Children
-                  ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                      body?.bodyChildren
-                          ?.map((b) {
-                          return _buildBodyTile(bloc, theme.textTheme, b);
-                          })
-                          .toList(),
-                        Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 28.0, vertical: 16.0),
-                        child: Text(
-                          (body?.bodyName == "Culturals@IITB")
-                            ? "Explore Cult"
-                            : "Organizations",
-                          style: theme.textTheme.headlineSmall,
+        key: _scaffoldKey,
+        drawer: NavDrawer(),
+        // bottomNavigationBar: MyBottomAppBar(
+        //   child: new Row(
+        //     mainAxisSize: MainAxisSize.max,
+        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     children: <Widget>[
+        //       IconButton(
+        //         icon: Icon(
+        //           Icons.menu_outlined,
+        //           semanticLabel: "Show bottom sheet",
+        //         ),
+        //         onPressed: () {
+        //           _scaffoldKey.currentState?.openDrawer();
+        //         },
+        //       ),
+        //     ],
+        //   ),
+        // ),
+
+        body: SafeArea(
+          child: body == null
+              ? Center(
+                  child: CircularProgressIndicatorExtended(
+                    label: Text("Loading the body page"),
+                  ),
+                )
+              : ListView(
+                  children: <Widget>[
+                    Stack(
+                        children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(20),
+                          bottomRight: Radius.circular(20),
+                          ),
+                          child: Image.asset(
+                          'assets/explore/culturals.png',
+                          height: 250,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          ),
                         ),
-                      )))
-                  // People
-                  // ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                  //     body?.bodyRoles
-                  //         ?.expand((r) {
-                  //           if (r.roleUsersDetail != null) {
-                  //             return r.roleUsersDetail!
-                  //                 .map((u) => u..currentRole = r.roleName)
-                  //                 .toList();
-                  //           }
-                  //           return [];
-                  //         })
-                  //         .map((u) => _buildUserTile(bloc, theme, u))
-                  //         .toList(),
-                  //     Padding(
-                  //       padding: const EdgeInsets.symmetric(
-                  //           horizontal: 28.0, vertical: 16.0),
-                  //       child: Text(
-                  //         "People",
-                  //         style: theme.textTheme.headlineSmall,
-                  //       ),
-                  //     )))
-                  // // Parents
-                  // ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                  //       body?.bodyParents
-                  //         ?.map((b) {
-                  //         debugPrint(b.toString());
-                  //         return _buildBodyTile(bloc, theme.textTheme, b);
-                  //         })
-                  //         .toList(),
-                  //     Padding(
-                  //       padding: const EdgeInsets.symmetric(
-                  //           horizontal: 28.0, vertical: 16.0),
-                  //       child: Text(
-                  //         "Part of",
-                  //         style: theme.textTheme.headlineSmall,
-                  //       ),
-                  //     )
-                  //     ))
-                  ..addAll([
+                        Positioned(
+                          top: 80,
+                          left: 24,
+                          right: 24,
+                          child: Material(
+                          elevation: 6,
+                          borderRadius: BorderRadius.circular(32),
+                          color: Colors.transparent,
+                          child: Container(
+                            height: 50, // Set height to 50px
+                            decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.98),
+                            borderRadius: BorderRadius.circular(32),
+                            boxShadow: [
+                              BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 12,
+                              offset: Offset(0, 4),
+                              ),
+                            ],
+                            ),
+                            child: TextField(
+                            controller: _searchFieldController,
+                            focusNode: _focusNode,
+                            cursorColor: theme.colorScheme.primary,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontSize: 18,
+                              color: Colors.black87,
+                              fontFamily: 'DM Sans',
+                            ),
+                            decoration: InputDecoration(
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(
+                              vertical: 14, // Adjust for 50px height
+                              horizontal: 20,
+                              ),
+                              prefixIcon: Icon(
+                              Icons.search_outlined,
+                              color: Colors.grey[600],
+                              size: 22, // Adjust icon size for 50px height
+                              ),
+                              hintText: "Search clubs...",
+                              hintStyle: TextStyle(
+                              color: Colors.grey[500],
+                              fontSize: 17,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'DM Sans',
+                              ),
+                              border: InputBorder.none,
+                              suffixIcon: IconButton(
+                              tooltip: "Clear search",
+                              icon: const Icon(Icons.close_outlined, size: 22), // Adjust icon size
+                              color: Colors.grey[500],
+                              onPressed: () {
+                                setState(() {
+                                _searchFieldController?.clear();
+                                });
+                              },
+                              ),
+                            ),
+                            ),
+                          ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 150,
+                          left: 24,
+                          right: 24,
+                          child: Text(
+                          (() {
+                            final bodyName = body?.bodyName ?? "";
+                            final match = widget.bodyTitles.firstWhere(
+                            (item) => item["bodyname"] == bodyName,
+                            orElse: () => {},
+                            );
+                            final title = match["title"] ?? "";
+                            return title.isNotEmpty
+                              ? "$title"
+                              : "Explore";
+                          })(),
+                          style: theme.textTheme.displaySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: 1.2,
+                            fontSize: 36,
+                            fontFamily: 'DM Sans',
+                            shadows: [
+                            Shadow(
+                              color: Colors.black.withOpacity(0.25),
+                              blurRadius: 8,
+                              offset: Offset(0, 2),
+                            ),
+                            ],
+                          ),
+                          textAlign: TextAlign.start,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    ...(body!.bodyChildren?.map((b) {
+                      return _buildBodyTile(bloc, theme.textTheme, b);
+                    }).toList() ?? []),
                     Divider(),
-                    SizedBox(
-                      height: 64.0,
-                    )
-                  ]),
-              ),
-      ),
-      // floatingActionButton: body == null
-      //     ? null
-      //     : editAccess
-      //         ? FloatingActionButton.extended(
-      //             icon: Icon(Icons.edit_outlined),
-      //             label: Text("Edit"),
-      //             tooltip: "Edit this Body",
-      //             onPressed: () {
-      //               Navigator.of(context)
-      //                   .pushNamed("/putentity/body/${body!.bodyID}");
-      //             },
-      //           )
-      //         : FloatingActionButton(
-      //             child: Icon(Icons.share_outlined),
-      //             tooltip: "Share this body",
-      //             onPressed: () async {
-      //               await Share.share(
-      //                   "Check this Institute Body: ${ShareURLMaker.getBodyURL(body!)}");
-      //             },
-      //           ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      // persistentFooterButtons: [
-      //   FooterButtons(
-      //     footerButtons: footerButtons,
-      //   )
-      // ],
-    );
+                    const SizedBox(height: 64.0),
+                  ],
+                ),
+        )
+// floatingActionButton: body == null
+        //     ? null
+        //     : editAccess
+        //         ? FloatingActionButton.extended(
+        //             icon: Icon(Icons.edit_outlined),
+        //             label: Text("Edit"),
+        //             tooltip: "Edit this Body",
+        //             onPressed: () {
+        //               Navigator.of(context)
+        //                   .pushNamed("/putentity/body/${body!.bodyID}");
+        //             },
+        //           )
+        //         : FloatingActionButton(
+        //             child: Icon(Icons.share_outlined),
+        //             tooltip: "Share this body",
+        //             onPressed: () async {
+        //               await Share.share(
+        //                   "Check this Institute Body: ${ShareURLMaker.getBodyURL(body!)}");
+        //             },
+        //           ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        // persistentFooterButtons: [
+        //   FooterButtons(
+        //     footerButtons: footerButtons,
+        //   )
+        // ],
+        );
   }
 
   List<Widget> _nonEmptyListWithHeaderOrEmpty(
@@ -390,61 +426,195 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
   //   );
   // }
 
+  // Widget _buildBodyTile(InstiAppBloc bloc, TextTheme theme, Body body) {
+  //   return GestureDetector(
+  //     onTap: () {
+  //       BodyPage.navigateWith(context, bloc, body: body);
+  //     },
+  //     child: Container(
+  //       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+  //       padding: const EdgeInsets.all(12),
+  //       decoration: BoxDecoration(
+  //         color: Colors.white,
+  //         borderRadius: BorderRadius.circular(12),
+  //         boxShadow: [
+  //           BoxShadow(
+  //             color: Colors.black.withOpacity(0.05),
+  //             blurRadius: 6,
+  //             offset: Offset(0, 3),
+  //           ),
+  //         ],
+  //         border: Border.all(color: Colors.black12),
+  //       ),
+  //       child: Row(
+  //         children: [
+  // NullableCircleAvatar(
+  //   body.bodyImageURL ?? "",
+  //   Icons.people_outline_outlined,
+  //   heroTag: body.bodyID ?? "",
+  //   radius: 25,
+  // ),
+  //           const SizedBox(width: 14),
+  //           Expanded(
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Text(
+  //                   body.bodyName ?? "",
+  //                   style:
+  //                       theme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+  //                   maxLines: 2,
+  //                   overflow: TextOverflow.ellipsis,
+  //                 ),
+  //                 const SizedBox(height: 6),
+  //                 Text(
+  //                   body.bodyShortDescription ?? "",
+  //                   style: theme.bodyMedium?.copyWith(color: Colors.grey[600]),
+  //                   maxLines: 2,
+  //                   overflow: TextOverflow.ellipsis,
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //           const Icon(Icons.chevron_right, color: Colors.black45),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
   Widget _buildBodyTile(InstiAppBloc bloc, TextTheme theme, Body body) {
-  return GestureDetector(
-    onTap: () {
-      BodyPage.navigateWith(context, bloc, body: body);
-    },
-    child: Container(
-      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 6,
-            offset: Offset(0, 3),
-          ),
-        ],
-        border: Border.all(color: Colors.black12),
-      ),
-      child: Row(
-        children: [
-          NullableCircleAvatar(
-            body.bodyImageURL ?? "",
-            Icons.people_outline_outlined,
-            heroTag: body.bodyID ?? "",
-            radius: 25,
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  body.bodyName ?? "",
-                  style: theme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  body.bodyShortDescription ?? "",
-                  style: theme.bodyMedium?.copyWith(color: Colors.grey[600]),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+    // debugPrint(body.bodyFollowersCount?.toString());
+    return GestureDetector(
+      onTap: () {
+        BodyPage.navigateWith(context, bloc, body: body);
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 10,
+              offset: Offset(0, 4),
             ),
-          ),
-          const Icon(Icons.chevron_right, color: Colors.black45),
-        ],
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Club Image/Logo
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: body.bodyImageURL != null &&
+                        body.bodyImageURL!.isNotEmpty
+                    ? Image.network(
+                        body.bodyImageURL!,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.people_outline,
+                            size: 28,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                      )
+                    : Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.people_outline,
+                          size: 28,
+                          color: Colors.grey[500],
+                        ),
+                      ),
+              ),
+            ),
+            const SizedBox(width: 16),
+
+            // Club Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    body.bodyName ?? "",
+                    style: theme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    body.bodyShortDescription ?? "",
+                    style: theme.bodyMedium?.copyWith(
+                      color: Colors.grey[600],
+                      fontSize: 14,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  
+                  Row(
+                    children: [
+                      Icon(
+                      Icons.people_outline,
+                      size: 16,
+                      color: Colors.blue[600],
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                      "${body.bodyFollowersCount?.toString() ?? '422'} senti",
+                      style: theme.bodySmall?.copyWith(
+                        color: Colors.blue[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // Arrow icon
+            Icon(
+              Icons.chevron_right,
+              color: Colors.grey[400],
+              size: 24,
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
 //   Widget _buildEventTile(InstiAppBloc bloc, ThemeData theme, Event event) {
 //     return ListTile(

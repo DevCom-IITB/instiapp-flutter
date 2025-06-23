@@ -15,6 +15,48 @@ class ExplorePage extends StatefulWidget {
   final bool fromNavigate;
   final String? parent;
 
+  final List<Map<String, String>> bodyTitles = [
+    {
+      "bodyname": "Culturals@IITB",
+      "title": "Culturals",
+      "image": "assets/explore/cult.png"
+    },
+    {
+      "bodyname": "Tech@IITB",
+      "title": "Tech",
+      "image": "assets/explore/tech.png"
+    },
+    {
+      "bodyname": "IITB Sports",
+      "title": "Sports",
+      "image": "assets/explore/sports.png"
+    },
+    {
+      "bodyname": "Departments",
+      "title": "Departments",
+      "image": "assets/explore/departments.png"
+    },
+    {
+      "bodyname": "Hostel Affairs",
+      "title": "Hostel Affairs",
+      "image": "assets/explore/hostels.png"
+    },
+    {
+      "bodyname": "IIT Bombay",
+      "title": "Institute",
+      "image": "assets/explore/ibs.png"
+    },
+    {
+      "bodyname": "DevCom",
+      "title": "DevCom",
+      "image": "assets/explore/tech.png"
+    },
+    {
+      "bodyname": "Placement Cell",
+      "title": "Placement",
+      "image": "assets/explore/tech.png"
+    },
+  ];
   ExplorePage(
       {this.searchMode = false, this.fromNavigate = false, this.parent});
 
@@ -122,95 +164,105 @@ class _ExplorePageState extends State<ExplorePage> {
           onTap: () {
             _focusNode.unfocus();
           },
-          child: ListView(
-            controller: _hideButtonController,
-            children: <Widget>[
-              RefreshIndicator(
-                key: _refreshIndicatorKey,
-                onRefresh: () {
-                  return exploreBloc.refresh();
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          child: RefreshIndicator(
+            key: _refreshIndicatorKey,
+            onRefresh: () => exploreBloc.refresh(),
+            child: ListView(
+              controller: _hideButtonController,
+              children: [
+                // Header section with image, title and search
+                Stack(
                   children: [
-                    TitleWithBackButton(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                      ),
+                      child: Image.asset(
+                        'assets/explore/explore.png',
+                        height: 180,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Positioned(
+                      top: 16,
+                      left: 16,
+                      right: 16,
+                      child: Column(
                         children: [
+                          Text(
+                            widget.title,
+                            style: theme.textTheme.displaySmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              letterSpacing: 1.2,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
                           Container(
-                            child: Text(
-                              widget.title,
-                              style: theme.textTheme.displaySmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                letterSpacing: 1.2,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.9),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: TextField(
+                              controller: _searchFieldController,
+                              focusNode: _focusNode,
+                              cursorColor: theme.textTheme.bodyMedium?.color,
+                              style: theme.textTheme.bodyMedium,
+                              decoration: InputDecoration(
+                                icon: const Icon(Icons.search_outlined),
+                                hintText: "Search events, bodies, users...",
+                                border: InputBorder.none,
+                                suffixIcon: IconButton(
+                                  tooltip: "Clear search",
+                                  icon: const Icon(Icons.close_outlined),
+                                  onPressed: () {
+                                    setState(() {
+                                      _searchFieldController?.clear();
+                                      exploreBloc.query = "";
+                                      exploreBloc.refresh();
+                                    });
+                                  },
+                                ),
                               ),
-                              textAlign: TextAlign.center,
+                              onChanged: (query) async {
+                                if (query.length > 4) {
+                                  exploreBloc.query = query;
+                                  exploreBloc.refresh();
+                                }
+                              },
+                              onSubmitted: (query) async {
+                                exploreBloc.query = query;
+                                await exploreBloc.refresh();
+                              },
                             ),
                           ),
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 8.0),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black12),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: TextField(
-                          controller: _searchFieldController,
-                          focusNode: _focusNode,
-                          cursorColor: theme.textTheme.bodyMedium?.color,
-                          style: theme.textTheme.bodyMedium,
-                          decoration: InputDecoration(
-                            icon: const Icon(Icons.search_outlined),
-                            hintText: "Search events, bodies, users...",
-                            border: InputBorder.none,
-                            suffixIcon: IconButton(
-                              tooltip: "Clear search",
-                              icon: const Icon(Icons.close_outlined),
-                              onPressed: () {
-                                setState(() {
-                                  _searchFieldController?.clear();
-                                  exploreBloc.query = "";
-                                  exploreBloc.refresh();
-                                });
-                              },
-                            ),
-                          ),
-                          onChanged: (query) async {
-                            if (query.length > 4) {
-                              exploreBloc.query = query;
-                              exploreBloc.refresh();
-                            }
-                          },
-                          onSubmitted: (query) async {
-                            exploreBloc.query = query;
-                            await exploreBloc.refresh();
-                          },
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: StreamBuilder<ExploreResponse>(
-                        stream: exploreBloc.explore,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<ExploreResponse> snapshot) {
-                          return Column(
-                            children:
-                                _buildContent(snapshot, theme, exploreBloc),
-                          );
-                        },
-                      ),
-                    ),
                   ],
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 16),
+
+                // Main content area
+                Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: StreamBuilder<ExploreResponse>(
+                    stream: exploreBloc.explore,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<ExploreResponse> snapshot) {
+                      return Column(
+                        children: _buildContent(snapshot, theme, exploreBloc),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -304,12 +356,11 @@ class _ExplorePageState extends State<ExplorePage> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: GridView.count(
                   shrinkWrap: true,
-                  physics:
-                      NeverScrollableScrollPhysics(), // so parent scroll works
+                  physics: NeverScrollableScrollPhysics(),
                   crossAxisCount: 2,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  childAspectRatio: 0.9,
+                  childAspectRatio: 182 / 128,
                   children: bodies
                       .where((b) =>
                           b.bodyName == "Culturals@IITB" ||
@@ -336,6 +387,7 @@ class _ExplorePageState extends State<ExplorePage> {
                 ),
               ),
             ];
+
       //     +
       // (events
       //         ?.map((e) => _buildListTile(
@@ -387,49 +439,76 @@ class _ExplorePageState extends State<ExplorePage> {
   //     onTap: onClick,
   //   );
   // }
-  Widget _buildBodyCard(String id, String title, String subtitle, String url,
-      IconData fallbackIcon, VoidCallback onClick, ThemeData theme) {
+
+  Widget _buildBodyCard(
+    String id,
+    String title,
+    String subtitle,
+    String assetPath,
+    IconData fallbackIcon,
+    VoidCallback onClick,
+    ThemeData theme,
+  ) {
+    // Get the image path and display title from bodyTitles based on the title (bodyname)
+    final bodyData = widget.bodyTitles.firstWhere(
+      (element) => element["bodyname"] == title,
+      orElse: () => {"title": title, "image": ""},
+    );
+
+    final imagePath = bodyData["image"] ?? "";
+    final displayTitle = bodyData["title"] ?? title;
+
     return GestureDetector(
       onTap: onClick,
       child: Container(
+        width: 182,
+        height: 128,
         decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: Colors.black12),
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 4,
-              offset: Offset(0, 2),
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 8,
+              offset: Offset(0, 4),
             ),
           ],
         ),
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            NullableCircleAvatar(
-              url,
-              fallbackIcon,
-              heroTag: id,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: theme.textTheme.titleMedium,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              subtitle,
-              style: theme.textTheme.bodySmall,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Stack(
+            children: [
+              // Background image
+              Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+              // Semi-transparent overlay for readability
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.25),
+                ),
+              ),
+              // Title text at bottom-left
+              Positioned(
+                bottom: 8,
+                left: 8,
+                right: 8,
+                child: Text(
+                  displayTitle,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    letterSpacing: 0.5,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
