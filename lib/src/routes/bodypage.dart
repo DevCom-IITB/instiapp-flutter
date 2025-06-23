@@ -151,18 +151,21 @@ class _BodyPageState extends State<BodyPage> {
                       padding: EdgeInsets.only(
                           bottom: 90), // Add padding for the button
                       children: <Widget>[
-                        Stack(
-                          clipBehavior: Clip.none,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            // Cover Image
                             Container(
                               width: double.infinity,
-                              height: 180,
+                              height: 200,
                               decoration: BoxDecoration(
                                 color: Colors.grey.shade300,
                                 image: body?.bodyImageURL != null
                                     ? DecorationImage(
                                         image:
-                                            NetworkImage(body!.bodyImageURL!),
+                                            // NetworkImage(body!.bodyImageURL!),
+                                            AssetImage(
+                                                'assets/explore/symphony.png'),
                                         fit: BoxFit.cover,
                                       )
                                     : const DecorationImage(
@@ -171,23 +174,117 @@ class _BodyPageState extends State<BodyPage> {
                                       ),
                               ),
                             ),
-                            Positioned(
-                              bottom: -50,
-                              left: 16,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border:
-                                      Border.all(color: Colors.white, width: 3),
-                                ),
-                                child: const CircleAvatar(
-                                  radius: 60,
-                                  backgroundColor: Colors.grey,
-                                  backgroundImage:
-                                      AssetImage('assets/symphony.png'),
-                                ),
+
+                            // Profile Card Section
+                            Container(
+                              width: double.infinity,
+                              height: 140,
+                              // padding: const EdgeInsets.all(20),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF0F1620),
                               ),
-                            ),
+                              child: Stack(
+                                children: [
+                                  // Rotated background image
+                                  Positioned(
+                                    left: 0,
+                                    child: SizedBox(
+                                      width: 105,
+                                      height: 199,
+                                      child: Transform.rotate(
+                                        angle:
+                                            3.1416, // -180 degrees in radians
+                                        child: Image.asset(
+                                          'assets/explore/background.png',
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                                  Row(
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                              color: Colors.white, width: 2),
+                                        ),
+                                        child: CircleAvatar(
+                                          radius: 35,
+                                          backgroundColor: Colors.black,
+                                          backgroundImage:
+                                              body?.bodyImageURL != null
+                                                  ? NetworkImage(
+                                                      body!.bodyImageURL!)
+                                                  : const AssetImage(
+                                                          'assets/symphony.png')
+                                                      as ImageProvider,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 20),
+
+                                      // Profile Info
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              body?.bodyName ?? 'Symphony',
+                                              style: const TextStyle(
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Text(
+                                              body?.bodyShortDescription ??
+                                                  'Music Club of IITB',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.white70,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 6),
+                                            RichText(
+                                              text: TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    text: (body
+                                                            ?.bodyFollowersCount
+                                                            ?.toString() ??
+                                                        '422'),
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  const TextSpan(
+                                                    text: ' Senti',
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            )
                           ],
                         ),
                         Padding(
@@ -195,36 +292,36 @@ class _BodyPageState extends State<BodyPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 30),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          body?.bodyName ?? "",
-                                          style: const TextStyle(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: 'DM Sans',
-                                          ),
-                                        ),
-                                        const SizedBox(height: 6),
-                                        Text(
-                                          body?.bodyShortDescription ?? "",
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.black54,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              // const SizedBox(height: 30),
+                              // Row(
+                              //   crossAxisAlignment: CrossAxisAlignment.start,
+                              //   children: [
+                              //     Expanded(
+                              //       child: Column(
+                              //         crossAxisAlignment:
+                              //             CrossAxisAlignment.start,
+                              //         children: [
+                              //           Text(
+                              //             body?.bodyName ?? "",
+                              //             style: const TextStyle(
+                              //               fontSize: 24,
+                              //               fontWeight: FontWeight.bold,
+                              //               fontFamily: 'DM Sans',
+                              //             ),
+                              //           ),
+                              //           const SizedBox(height: 6),
+                              //           Text(
+                              //             body?.bodyShortDescription ?? "",
+                              //             style: const TextStyle(
+                              //               fontSize: 18,
+                              //               color: Colors.black54,
+                              //             ),
+                              //           ),
+                              //         ],
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
                               const SizedBox(height: 24),
                               DefaultTabController(
                                 length: 3,
@@ -268,8 +365,15 @@ class _BodyPageState extends State<BodyPage> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     CommonHtml(
-                                                      data: body?.bodyDescription ?? "",
-                                                      defaultTextStyle: (theme.textTheme.titleMedium ?? const TextStyle()).copyWith(fontSize: 24),
+                                                      data:
+                                                          body?.bodyDescription ??
+                                                              "",
+                                                      defaultTextStyle: (theme
+                                                                  .textTheme
+                                                                  .titleMedium ??
+                                                              const TextStyle())
+                                                          .copyWith(
+                                                              fontSize: 24),
                                                     ),
                                                     body?.bodyDescription !=
                                                             null
