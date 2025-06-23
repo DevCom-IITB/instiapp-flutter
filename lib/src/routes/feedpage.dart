@@ -11,6 +11,7 @@ import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 class FeedPage extends StatefulWidget {
   @override
@@ -42,95 +43,98 @@ class _FeedPageState extends State<FeedPage> {
           child: CustomScrollView(
             slivers: [
               SliverToBoxAdapter(
-                child: Column( 
-            children: [
-              Center(
-              child: Container(
-                padding: EdgeInsets.only(top: 10.5, bottom: 10.5),
-                child: Text(
-                  'Feed',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'DM Sans',
+                child: Column(children: [
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.only(top: 10.5, bottom: 10.5),
+                      child: Text(
+                        'Feed',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'DM Sans',
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
-          SizedBox(height: 8),
-          Container(
-              margin: EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
+                  SizedBox(height: 8),
                   Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                          color: Color.fromRGBO(239, 239, 239, 1),
-                          borderRadius: BorderRadius.circular(50),
-                          border: Border.all(
-                            color: Color.fromRGBO(210, 213, 218, 1),
-                          )),
+                      margin: EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          SvgPicture.asset(
-                            'assets/blogs/setting-4.svg',
-                          ),
+                          Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Color.fromRGBO(239, 239, 239, 1),
+                                  borderRadius: BorderRadius.circular(50),
+                                  border: Border.all(
+                                    color: Color.fromRGBO(210, 213, 218, 1),
+                                  )),
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/blogs/setting-4.svg',
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Sort',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'DM Sans',
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  SvgPicture.asset(
+                                    'assets/blogs/chevron-down.svg',
+                                  ),
+                                ],
+                              )),
                           SizedBox(width: 8),
-                          Text(
-                            'Sort',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'DM Sans',
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                                color: Color.fromRGBO(239, 239, 239, 1),
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                  color: Color.fromRGBO(210, 213, 218, 1),
+                                )),
+                            child: Text(
+                              'Events',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'DM Sans',
+                              ),
                             ),
                           ),
                           SizedBox(width: 8),
-                          SvgPicture.asset(
-                            'assets/blogs/chevron-down.svg',
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                                color: Color.fromRGBO(239, 239, 239, 1),
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                  color: Color.fromRGBO(210, 213, 218, 1),
+                                )),
+                            child: Text(
+                              'Announcements',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'DM Sans',
+                              ),
+                            ),
                           ),
                         ],
                       )),
-                  SizedBox(width: 8),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                        color: Color.fromRGBO(239, 239, 239, 1),
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(
-                          color: Color.fromRGBO(210, 213, 218, 1),
-                        )),
-                    child: Text(
-                      'Events',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'DM Sans',
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                        color: Color.fromRGBO(239, 239, 239, 1),
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(
-                          color: Color.fromRGBO(210, 213, 218, 1),
-                        )),
-                    child: Text(
-                      'Announcements',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'DM Sans',
-                      ),
-                    ),
-                  ),
-                ],
-              )),
-              SizedBox(height: 23),]
-              ),),
+                  SizedBox(height: 23),
+                ]),
+              ),
               StreamBuilder(
                 stream: bloc.events,
                 builder: (context,
@@ -163,7 +167,7 @@ class _FeedPageState extends State<FeedPage> {
               ),
               SliverToBoxAdapter(
                 child: SizedBox(
-                  height: 32,
+                  height: 100,
                 ),
               )
             ],
@@ -171,7 +175,8 @@ class _FeedPageState extends State<FeedPage> {
         ),
       ),
     );
-  }}
+  }
+}
 
 //   Widget _buildEvent(ThemeData theme, InstiAppBloc bloc, Event event) {
 //     if (event.eventBigImage) {
@@ -380,6 +385,10 @@ class _FeedPageState extends State<FeedPage> {
 //     ));
 //   }
 // }
+String formatDate(String dateStr) {
+  DateTime date = DateTime.parse(dateStr);
+  return DateFormat('d MMMM').format(date); // e.g., "23 June"
+}
 
 Widget Feedpost(InstiAppBloc bloc, Event event) {
   return Container(
@@ -391,32 +400,30 @@ Widget Feedpost(InstiAppBloc bloc, Event event) {
         ),
       ),
       child: Column(children: [
-        ClipRRect(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
+          ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16),
+              topRight: Radius.circular(16),
+            ),
+            // child: Image.asset(
+            //   'assets/blogs/Techfest.png',
+            //   width: double.infinity,
+            //   fit: BoxFit.cover,
+            // ),
+            child: Hero(
+                tag: event.eventID ?? "",
+                child: CachedNetworkImage(
+                  imageUrl: event.eventImageURL?? event.eventBodies?[0].bodyImageURL ?? "",
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                )),
           ),
-          // child: Image.asset(
-          //   'assets/blogs/Techfest.png',
-          //   width: double.infinity,
-          //   fit: BoxFit.cover,
-          // ),
-          child: Ink.image(
-                  child: Container(),
-                  image: CachedNetworkImageProvider(
-                    event.eventImageURL ??
-                        event.eventBodies?[0].bodyImageURL ??
-                        "",
-                  ),
-                  fit: BoxFit.cover,
-                ),
-        ),        
         Container(
           width: double.infinity,
           margin: EdgeInsets.only(left: 16, top: 12, right: 16),
           child: Text(
-            event.eventStartDate != null
-                ? '${event.eventStartDate!.day} ${event.eventStartDate!.month}'
+            event.eventStartTime != null
+                ? '${formatDate(event.eventStartTime!)} - ${formatDate(event.eventEndTime!)}'
                 : 'Unknown Date',
             style: TextStyle(
               fontSize: 12,
@@ -463,16 +470,18 @@ Widget Feedpost(InstiAppBloc bloc, Event event) {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: Image.asset(
-                    'assets/blogs/e-cell.jpg',
-                    width: 24,
-                    height: 24,
-                  ),
-                ),
+                    borderRadius: BorderRadius.circular(50),
+                    child: CachedNetworkImage(
+                      imageUrl: event.eventBodies?[0].bodyImageURL ?? "",
+                      width: 24,
+                      height: 24,
+                      fit: BoxFit.cover,
+                      errorWidget: (context, error, stackTrace) =>
+                          Icon(Icons.groups_2_outlined, size: 24),
+                    )),
                 SizedBox(width: 8),
                 Text(
-                  'Techfest',
+                  event.eventBodies?[0].bodyName ?? "",
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
