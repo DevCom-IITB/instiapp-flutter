@@ -71,7 +71,7 @@ class _BlogPageState extends State<BlogPage> {
   late var bloc;
   late PostType postType;
   String? selectedDepartment;
-  bool isLoading = false;
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
@@ -83,7 +83,7 @@ class _BlogPageState extends State<BlogPage> {
     bloc = BlocProvider.of(context)!.bloc;
     body = await dostuff();
     setState(() {
-      isLoading = false;
+      isLoading = true;
     });
   }
 
@@ -153,6 +153,7 @@ class _BlogPageState extends State<BlogPage> {
       blogBloc?.query = "";
       blogBloc?.refresh();
       firstBuild = false;
+      isLoading = true;
     }
     return GestureDetector(
       onTap: () {
