@@ -1,22 +1,22 @@
 import 'dart:async';
-import 'dart:math';
-import 'package:InstiApp/src/components/dropdowns.dart';
-import 'package:InstiApp/src/api/model/body.dart';
-import 'package:InstiApp/src/api/model/event.dart';
-import 'package:InstiApp/src/api/model/role.dart';
+// import 'dart:math';
+// import 'package:InstiApp/src/components/dropdowns.dart';
+// import 'package:InstiApp/src/api/model/body.dart';
+// import 'package:InstiApp/src/api/model/event.dart';
+// import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
-import 'package:InstiApp/src/drawer.dart';
-import 'package:InstiApp/src/routes/bodypage.dart';
-import 'package:InstiApp/src/routes/eventpage.dart';
+// import 'package:InstiApp/src/drawer.dart';
+// import 'package:InstiApp/src/routes/bodypage.dart';
+// import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
-import 'package:InstiApp/src/utils/share_url_maker.dart';
-import 'package:InstiApp/src/utils/title_with_backbutton.dart';
+// import 'package:InstiApp/src/utils/share_url_maker.dart';
+// import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:share/share.dart';
-import 'package:url_launcher/url_launcher.dart';
+// import 'package:share/share.dart';
+// import 'package:url_launcher/url_launcher.dart';
+import 'package:barcode_widget/barcode_widget.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String title;
@@ -655,24 +655,7 @@ class _UserPageState extends State<UserPage>
                       padding: EdgeInsets.all(6),
                       margin: EdgeInsets.only(bottom: 4),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child: Image.network(
-                          'https://picsum.photos/308/72',
-                          height: 50,
-                          fit: BoxFit.contain,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Icon(
-                            Icons.image_not_supported,
-                            size: 50,
-                            color: Colors.grey,
-                          ),
-                        ),
+                        child: _buildRollNumberBarcode(height: 50),
                       ),
                     ),
                   ],
@@ -800,17 +783,7 @@ class _UserPageState extends State<UserPage>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ClipRRect(
-                    child: Image.network(
-                      'https://picsum.photos/308/72',
-                      width: double.infinity,
-                      height: 72,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) => const Icon(
-                        Icons.image_not_supported,
-                        size: 72,
-                        color: Colors.grey,
-                      ),
-                    ),
+                    child: _buildRollNumberBarcode(height: 72),
                   ),
                   Text(
                     user?.userRollNumber ?? 'Loading...',
@@ -855,6 +828,34 @@ class _UserPageState extends State<UserPage>
           overflow: TextOverflow.ellipsis,
         ),
       ],
+    );
+  }
+
+  Widget _buildRollNumberBarcode({double? height}) {
+    final rollNumber = user?.userRollNumber;
+    
+    if (rollNumber == null || rollNumber.isEmpty) {
+      return Container(
+        height: height ?? 50,
+        color: Colors.white,
+        child: Center(
+          child: Text(
+            'SCAN UNAVAILABLE',
+            style: TextStyle(
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return BarcodeWidget(
+      barcode: Barcode.code128(),
+      data: rollNumber.toUpperCase(),
+      width: double.infinity,
+      height: height ?? 50,
+      drawText: false,
     );
   }
 
