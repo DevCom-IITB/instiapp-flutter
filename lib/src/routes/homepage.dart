@@ -133,7 +133,9 @@ class _HomepageState extends State<Homepage> {
         } else if (name == "Lost & Found") {
         } else if (name == "Blogs") {
           Navigator.of(context).pushNamed('/placeblog');
-        } else if (name == "Quick Links") {}
+        } else if (name == "Quick Links") {
+          Navigator.of(context).pushNamed('/quicklinks');
+        }
       },
       child: Container(
         height: 94,
@@ -302,10 +304,9 @@ class _HomepageState extends State<Homepage> {
                     dashColor: Color(0xFFDADADA),
                   ),
                   SizedBox(height: 20),
-                  if(showQR)
-                    qrOpen()
-                  else
-                    StreamBuilder<UnmodifiableListView<Hostel>>(
+                  Stack(
+                    children: [
+                      StreamBuilder<UnmodifiableListView<Hostel>>(
                       stream: bloc.hostels,
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
@@ -313,11 +314,15 @@ class _HomepageState extends State<Homepage> {
                         }
               
                       final hostels = snapshot.data!;
-                      print("Available hostels: ${hostels.map((h) => h.shortName).toList()}");
-                      print("Selected: $_dropdownHostel");
                       return qrClosed(hostels);
                       },
-                    ),
+                      ),
+                      if(showQR) ...[
+                        qrOpen(),
+                        SizedBox(height: 32)
+                      ]
+                    ],
+                  ),
                   servicesWidget(),
                 ], 
               ),
@@ -331,15 +336,7 @@ class _HomepageState extends State<Homepage> {
   Widget servicesWidget() {
     return Column(
       children: [
-        SizedBox(height: 20),
-        Dash(
-          direction: Axis.horizontal,
-          length: 368,
-          dashLength: 6,
-          dashGap: 7,
-          dashColor: Color(0xFFDADADA),
-        ),
-        SizedBox(height: 20),
+        
                 Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -449,7 +446,7 @@ class _HomepageState extends State<Homepage> {
       ),
       child: Container(
         width: 380,
-        height: 380,
+        height: 370,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -797,6 +794,15 @@ class _HomepageState extends State<Homepage> {
           ),
         ),
       ),
+      SizedBox(height: 20),
+      Dash(
+        direction: Axis.horizontal,
+        length: 368,
+        dashLength: 6,
+        dashGap: 7,
+        dashColor: Color(0xFFDADADA),
+      ),
+      SizedBox(height: 20),
     ],
   );
 } 
