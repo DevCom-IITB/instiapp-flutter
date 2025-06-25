@@ -744,53 +744,51 @@ class _HomepageState extends State<Homepage> {
             showQR = true;
           });
         },
-        child: Material(
-          color: Color(0xFFF1F5F9),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-            side: BorderSide(
-              color: myConstants.instiappBlue,
-              width: 6,
-              strokeAlign: BorderSide.strokeAlignInside,
-            ),
-          ),
-          child: Container(
-            height: 96,
-            width: 368,
-            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      'My QR',
-                      style: TextStyle(
-                        color: Color(0xFF275489),
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
+        child: Container(
+          height: 96,
+          width: 380,
+          child: Stack(
+            children: [
+              SvgPicture.asset('assets/homepage/icons/border.svg'),
+              Container(
+              height: 96,
+              width: 380,
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        'My QR',
+                        style: TextStyle(
+                          color: Color(0xFF275489),
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'Mess • Gym • Swimming & more...',
-                      style: TextStyle(
-                        color: const Color(0xFF15202D),
-                        fontSize: 14,
-                        fontFamily: 'DM Sans',
-                        fontWeight: FontWeight.w500,
+                      Text(
+                        'Mess • Gym • Swimming & more...',
+                        style: TextStyle(
+                          color: const Color(0xFF15202D),
+                          fontSize: 14,
+                          fontFamily: 'DM Sans',
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                Container(
-                  height: 75,
-                  width: 75,
-                  child: SvgPicture.asset('assets/homepage/icons/qr.svg'),
-                ),
-              ],
-            ),
+                    ],
+                  ),
+                  Container(
+                    height: 75,
+                    width: 75,
+                    child: SvgPicture.asset('assets/homepage/icons/qr.svg'),
+                  ),
+                ],
+              ),
+            )
+            ],
           ),
         ),
       ),
