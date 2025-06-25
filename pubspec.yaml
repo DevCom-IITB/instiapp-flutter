@@ -103,6 +103,7 @@ flutter:
     - assets/blogs/
     - assets/homepage/icons/
     - assets/homepage/images/
+    - assets/quicklinks/icons/
   fonts:
     - family: IBMPlexSans
       fonts:

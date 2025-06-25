@@ -39,6 +39,7 @@ import 'package:InstiApp/src/routes/putentitypage.dart';
 import 'package:InstiApp/src/routes/qrpage.dart';
 import 'package:InstiApp/src/routes/queryaddpage.dart';
 import 'package:InstiApp/src/routes/querypage.dart';
+import 'package:InstiApp/src/routes/quicklinks.dart';
 import 'package:InstiApp/src/routes/quicklinkspage.dart';
 import 'package:InstiApp/src/routes/settingspage.dart';
 // import 'package:InstiApp/src/routes/trainingblogpage.dart';
@@ -363,12 +364,14 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, AlumniLoginPage());
                 case "/alumni-OTP-Page":
                   return _buildRoute(settings, AlumniOTPPage());
-                case "/quicklinks":
-                  return _buildRoute(settings, QuickLinksPage());
+                //case "/quicklinks":
+                  //return _buildRoute(settings, QuickLinksPage());
                 // case "/news":
                 //   return _buildRoute(settings, BlogPage());
                 // case "/InSeek":
                 //   return _buildRoute(settings, BlogPage());
+                case "/quicklinks":
+                  return _buildRoute(settings, Quicklinks());
                 case "/groups":
                   return _buildRoute(settings, CommunityPage());
                 case "/buynsell":
