@@ -20,6 +20,8 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   # cupertino_icons: ^1.0.1
   url_launcher: ^6.0.17
+  barcode: ^2.0.4
+  barcode_widget: ^2.0.4
   qr_code_scanner: ^1.0.1
   flutter_svg: ^2.1.0
   http: ^1.2.1
