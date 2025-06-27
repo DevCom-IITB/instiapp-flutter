@@ -11,6 +11,10 @@ import 'package:flutter_dash/flutter_dash.dart';
 import "notificationspage.dart";
 import 'feedpage.dart';
 
+import 'package:InstiApp/src/routes/userpage.dart';
+import 'package:InstiApp/src/api/model/user.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
+
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
 
@@ -178,6 +182,8 @@ class _HomepageState extends State<Homepage> {
   }
 
   PreferredSizeWidget customAppBar() {
+    final bloc = BlocProvider.of(context)!.bloc;
+
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: myConstants.instiappWhite,
@@ -189,28 +195,67 @@ class _HomepageState extends State<Homepage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              width: 52,
-              height: 52,
-              child: Stack(
-                children: [
-                  Positioned(
-                      left: 4,
-                      right: 4,
-                      top: 4,
-                      bottom: 4,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(22),
-                            color: Colors.white,
-                            image: DecorationImage(
-                                image: AssetImage(
-                                    'assets/homepage/images/profilenew.jpg'),
-                                fit: BoxFit.cover,
-                                alignment: Alignment.topCenter)),
-                      ))
-                ],
-              ),
+            StreamBuilder<Session?>(
+              stream: bloc.session,
+              builder: (context, snapshot) {
+                final isLoggedIn = snapshot.hasData && snapshot.data?.profile != null;
+                final user = snapshot.data?.profile;
+                
+                Widget avatarContent;
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  avatarContent = Center(child: CircularProgressIndicator(strokeWidth: 2));
+                } else if (snapshot.hasError) {
+                  avatarContent = Icon(Icons.error_outline, size: 28, color: Colors.red);
+                } else if (isLoggedIn) {
+                  avatarContent = ClipRRect(
+                    borderRadius: BorderRadius.circular(22),
+                    child: Image.network(
+                      user!.userProfilePictureUrl ?? '',
+                      width: 44,
+                      height: 44,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Icon(
+                        Icons.person,
+                        size: 28,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  );
+                } else {
+                  avatarContent = Icon(
+                    Icons.person_outline,
+                    size: 28,
+                    color: Colors.red,
+                  );
+                }
+                
+                return InkWell(
+                  borderRadius: BorderRadius.circular(22),
+                  onTap: () {
+                    if (isLoggedIn) {
+                      UserPage.navigateWith(context, bloc, user);
+                    } else {
+                      Navigator.of(context).pushReplacementNamed('/');
+                    }
+                  },
+                  child: Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(22),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        )
+                      ],
+                    ),
+                    child: avatarContent,
+                  ),
+                );
+              },
             ),
             Container(
               width: 52,
