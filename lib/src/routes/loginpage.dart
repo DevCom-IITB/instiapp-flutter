@@ -63,8 +63,8 @@ class _LoginPageState extends State<LoginPage> {
         widget.navigatorKey?.currentContext ?? context, widget.bloc));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       String? args = ModalRoute.of(context)?.settings.arguments as String?;
-      if (args != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      if (args != null && widget.scaffoldMessengerKey != null) {
+        widget.scaffoldMessengerKey!.currentState?.showSnackBar(SnackBar(
           content: Text(args),
           duration: Duration(seconds: 2),
         ));
@@ -124,9 +124,9 @@ class _LoginPageState extends State<LoginPage> {
       firstBuild = false;
     }
 
-    return loading
-        ? Material(
-            child: Center(
+    return Scaffold(
+      body: loading
+          ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -146,15 +146,15 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ],
               ),
+            )
+          : webview.WebView(
+              javascriptMode: webview.JavascriptMode.unrestricted,
+              initialUrl: loginurl,
+              onPageStarted: checkPageUrl,
+              onPageFinished: checkPageUrl,
+              gestureNavigationEnabled: true,
             ),
-          )
-        : webview.WebView(
-            javascriptMode: webview.JavascriptMode.unrestricted,
-            initialUrl: loginurl,
-            onPageStarted: checkPageUrl,
-            onPageFinished: checkPageUrl,
-            gestureNavigationEnabled: true,
-          );
+    );
   }
 
   Future<void> checkPageUrl(String url) async {
