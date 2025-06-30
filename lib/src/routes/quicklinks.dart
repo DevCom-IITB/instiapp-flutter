@@ -1,5 +1,6 @@
 import 'package:InstiApp/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dash/flutter_dash.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -12,56 +13,59 @@ class Quicklinks extends StatefulWidget {
 
 class _QuicklinksState extends State<Quicklinks> {
   Constants myConstants=Constants();
-  Widget LinkContainer(String label,String link){
-    return Container(
-              height: 63,
-              width: 380,
-              decoration: ShapeDecoration(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    width: 1,
-                    color: const Color(0xFFD2D5DA),
+  bool isTop=false;
+  bool isBottom=false;
+  Widget LinkContainer(String label,String link,bool isTop,bool isBottom){
+    return GestureDetector(
+      onTap: () async{
+        final url=Uri.parse(link);
+        if(await canLaunchUrl(url)){
+          await launchUrl(url);
+        } else{
+          throw "Could not launch ${url}";
+        }
+      },
+      child: Container(
+                height: 63,
+                width: 380,
+                decoration: BoxDecoration(
+                  color: myConstants.instiappGrey,
+                  borderRadius: BorderRadius.vertical(
+                      top: isTop?Radius.circular(16):Radius.zero,
+                      bottom: isBottom?Radius.circular(16):Radius.zero
                   ),
-                  borderRadius: BorderRadius.circular(8),
+                  border: isBottom?null:Border(
+                    bottom: BorderSide(
+                      width: 1,
+                      color: Color(0x80D2D5DA)
+                    )
+                  )
                 ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      label,
-                      style: TextStyle(
-                        fontFamily: 'DM Sans',
-                        fontSize: 24,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xFF306FDC),
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        label,
+                        style: TextStyle(
+                          fontFamily: 'DM Sans',
+                          color: const Color(0xFF0F1620),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: () async{
-                        final url=Uri.parse(link);
-                        if(await canLaunchUrl(url)){
-                          await launchUrl(url);
-                        }
-                        else {
-                          throw "Could not launch ${url}";
-                        }
-
-                      },
-                      child: Container(
+                      Container(
                         height: 24,
                         width: 24,
-                        child: SvgPicture.asset('assets/quicklinks/icons/export.svg'),
-                      ),
-                    )
-                  ],
-                ),
-                ),
-            );
+                        child: SvgPicture.asset('assets/quicklinks/icons/external_link.svg'),
+                      )
+                    ],
+                  ),
+                  ),
+              ),
+    );
   }
 
 Widget LinkSection(String title,Map<String,String> links){
@@ -71,7 +75,7 @@ Widget LinkSection(String title,Map<String,String> links){
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         child: Text(
           title,
           style: TextStyle(
@@ -83,9 +87,7 @@ Widget LinkSection(String title,Map<String,String> links){
           ),
       ),
       for(int i=0;i<keys.length;i++) ...[
-        LinkContainer(keys[i],values[i]),
-        if(i!=keys.length-1)
-          SizedBox(height: 8),
+        LinkContainer(keys[i],values[i],i==0,i==keys.length-1),
       ],
     ],
   );
@@ -97,7 +99,7 @@ Widget LinkSection(String title,Map<String,String> links){
       "Devcom": {
         "Leave Portal": "https://google.com",
         "Resume Portal": "https://google.com",
-        "AMS": "https://google.com"
+        "AMS": "https://ams.iitb.ac.in/pages/login"
       },
       "Academic": {
         "ASC": "https://asc.iitb.ac.in/acadmenu/",
@@ -108,21 +110,21 @@ Widget LinkSection(String title,Map<String,String> links){
         "Central Library": "https://www.library.iitb.ac.in/"
       },
       "Calendar": {
-        "Academic Calendar": "https://google.com",
-        "Academic Timetable": "https://google.com",
-        "Holidays List": "https://google.com",
-        "Circulars": "https://google.com",
-        "Course List": "https://google.com",
+        "Academic Calendar": "https://acad.iitb.ac.in/academics/calendar-and-timetable",
+        "Academic Timetable": "https://acad.iitb.ac.in/academics/calendar-and-timetable",
+        "Holidays List": "https://www.iitb.ac.in/holidays-list",
+        "Circulars": "https://www.iitb.ac.in/newacadhome/circular.jsp",
+        "Course List": "https://portal.iitb.ac.in/asc/Courses",
       },
       "Services": {
-        "WebMail": "https://google.com",
-        "CAMP": "https://google.com",
-        "Microsoft Store": "https://google.com",
-        "BigHome Cloud": "https://google.com",
+        "WebMail": "https://webmail-sso.iitb.ac.in/",
+        "CAMP": "https://camp.iitb.ac.in/",
+        "Microsoft Store": "https://www.cc.iitb.ac.in/attachments/microsoft/ReadMe.pdf",
+        "BigHome Cloud": "https://bighome.iitb.ac.in/index.php/login",
       },
       "Miscellaneous": {
-        "Intercom Extensions": "https://google.com",
-        "Hospital": "https://google.com",
+        "Intercom Extensions": "https://portal.iitb.ac.in/telephone/",
+        "Hospital": "https://www.iitb.ac.in/hospital/",
       }
     };
     List<String> linkLabel=quickLinks.keys.toList();
@@ -135,6 +137,7 @@ Widget LinkSection(String title,Map<String,String> links){
         child: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Color(0xFFF6F6F6),
+          //backgroundColor: Colors.red[200],
           elevation: 0,
           flexibleSpace: SafeArea(
           child: Padding(
@@ -203,6 +206,14 @@ Widget LinkSection(String title,Map<String,String> links){
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 12),
+              Dash(
+                direction: Axis.horizontal,
+                dashLength: 6,
+                length: 378,
+                dashGap: 7,
+                dashColor: Color(0xFFDADADA),
+              ),
               for(int i=0;i<linkLabel.length;i++) ...[
                 SizedBox(height: 24),
                 LinkSection(linkLabel[i], links[i]),
