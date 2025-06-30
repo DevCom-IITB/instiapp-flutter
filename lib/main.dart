@@ -7,8 +7,6 @@ import 'package:InstiApp/src/routes/achievement_form.dart';
 import 'package:InstiApp/src/routes/alumniLoginPage.dart';
 import 'package:InstiApp/src/routes/alumni_OTP_Page.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
-import 'package:InstiApp/src/routes/buynsell_categories.dart';
-import 'package:InstiApp/src/routes/buynsell_createpost.dart';
 import 'package:InstiApp/src/routes/buynsell_info.dart';
 import 'package:InstiApp/src/routes/buynsell_page.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
@@ -137,17 +135,29 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-      systemNavigationBarColor: widget.bloc.primaryColor,
-      systemNavigationBarIconBrightness: Brightness.values[1 -
-          ThemeData.estimateBrightnessForColor(widget.bloc.primaryColor).index],
-      statusBarColor: widget.bloc.brightness
-          .toColor(), //or set color with: Color(0xFF0000FF)
-      statusBarIconBrightness:
-          Brightness.values[1 - widget.bloc.brightness.toBrightness().index],
-      statusBarBrightness:
-          Brightness.values[widget.bloc.brightness.toBrightness().index],
-    ));
+
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
+
+
+    // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+    //   systemNavigationBarColor: widget.bloc.primaryColor,
+    //   systemNavigationBarIconBrightness: Brightness.values[1 -
+    //       ThemeData.estimateBrightnessForColor(widget.bloc.primaryColor).index],
+    //   statusBarColor: widget.bloc.brightness
+    //       .toColor(), //or set color with: Color(0xFF0000FF)
+    //   statusBarIconBrightness:
+    //       Brightness.values[1 - widget.bloc.brightness.toBrightness().index],
+    //   statusBarBrightness:
+    //       Brightness.values[widget.bloc.brightness.toBrightness().index],
+    // ));
 
     return BlocProvider(
       widget.bloc,
@@ -327,12 +337,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             } else if (temp.startsWith("/map/")) {
               return _buildRoute(
                   settings, MapPage(location: temp.split("/map/")[1]));
-            } else if (temp.startsWith("/buyandsell/info")) {
-              return _buildRoute(
-                  settings,
-                  BuyAndSellInfoPage(
-                      post: widget.bloc.buynSellPostBloc
-                          .getBuynSellPost(temp.split("/buyandsell/info")[1])));
+            // } else if (temp.startsWith("/buyandsell/info")) {
+            //   return _buildRoute(
+            //       settings,
+            //       BuyAndSellInfoPage(
+            //           postFuture: widget.bloc.buynSellPostBloc
+            //               .getBuynSellPost(temp.split("/buyandsell/info")[1]),
+            //               onBookmarkChanged: (id, isBookmarked) {},));
             } else if (temp.startsWith("/lostandfound/info")) {
               return _buildRoute(
                   settings,
@@ -375,21 +386,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 case "/groups":
                   return _buildRoute(settings, CommunityPage());
                 case "/buynsell":
-                  return _buildRoute(settings, Sellpage());
+                  return _buildRoute(settings, BuySellPage());
                 case "/explore":
                   return _buildRoute(settings, ExplorePage());
                 case "/calendar":
                   return _buildRoute(settings, CalendarPage());
                 case "/buyandsell":
-                  return _buildRoute(settings, Sellpage());
-                case "/buyandsell/category":
-                  return _buildRoute(settings, BuyAndSellCategoryPage());
-                // case "/buyandsell/info":
-                //   return _buildRoute(settings, Buyandsell_information());
-                case "/buyandsell/createPost":
-                  return _buildRoute(settings, BuyAndSellForm());
-                // case "/buyandsell/giveinfo":
-                //   return _buildRoute(settings, Buyandsell_information());
+                  return _buildRoute(settings, BuySellPage());
 
                 // case "/complaints":
                 //   return _buildRoute(settings, ComplaintsPage());
