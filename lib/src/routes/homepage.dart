@@ -132,6 +132,7 @@ class _HomepageState extends State<Homepage> {
     return InkWell(
       onTap: () {
         if (name == "Buy & Sell") {
+          Navigator.of(context).pushNamed('/buyandsell');
         } else if (name == "Lost & Found") {
           Navigator.of(context).pushNamed('/settings');
         } else if (name == "Blogs") {

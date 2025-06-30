@@ -38,11 +38,17 @@ class BuynSellPost {
   @JsonKey(name: "status")
   bool? status;
 
+  bool? isSold = false;
+
+  bool? isBookmarked = false;
+
   @JsonKey(name: "deleted")
   bool? deleted;
 
   @JsonKey(name: "price")
   int? price;
+
+  int? originalPrice = -1;
 
   @JsonKey(name: "negotiable")
   bool? negotiable;
