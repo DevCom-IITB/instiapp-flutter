@@ -83,7 +83,7 @@ class _BlogPageState extends State<BlogPage> {
     bloc = BlocProvider.of(context)!.bloc;
     body = await dostuff();
     setState(() {
-      isLoading = false;
+      isLoading = true;
     });
   }
 
@@ -143,7 +143,6 @@ class _BlogPageState extends State<BlogPage> {
 
   List<String>? currCat;
 
-
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -154,6 +153,7 @@ class _BlogPageState extends State<BlogPage> {
       blogBloc?.query = "";
       blogBloc?.refresh();
       firstBuild = false;
+      isLoading = true;
     }
     return GestureDetector(
       onTap: () {
@@ -171,7 +171,7 @@ class _BlogPageState extends State<BlogPage> {
               builder:
                   (BuildContext context, AsyncSnapshot<Session?> snapshot) {
                 if ((snapshot.hasData && snapshot.data != null) ||
-                    !loginNeeded) {
+                    loginNeeded) {
                   return Scaffold(
                     backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                     body: SafeArea(
@@ -406,10 +406,10 @@ class _BlogPageState extends State<BlogPage> {
                                       isDense: true,
                                       contentPadding: EdgeInsets.zero,
                                     ),
-                                    onChanged: (query) async {
+                                    onChanged: (query) async {   
                                       if (postType != PostType.ChatBot &&
                                           query.length > 4) {
-                                        blogBloc!.query = query;
+                                      blogBloc!.query = query;
                                         blogBloc.refresh();
                                       }
                                     },
@@ -527,7 +527,7 @@ class _BlogPageState extends State<BlogPage> {
                                       builder: (BuildContext context,
                                           AsyncSnapshot<
                                                   UnmodifiableListView<Post>>
-                                              snapshot) {
+                                              snapshot) {                                      
                                         return ListView.builder(
                                           controller: _hideButtonController,
                                           itemBuilder: (BuildContext context,
@@ -572,7 +572,7 @@ class _BlogPageState extends State<BlogPage> {
                         child: Padding(
                           padding: const EdgeInsets.all(28.0),
                           child: Text(
-                            "You must be logged in to view ${"Blogs"}",
+                            "You must be logged in to view Blogs",
                             style: theme.textTheme.titleLarge,
                             textAlign: TextAlign.center,
                           ),
@@ -598,69 +598,12 @@ class _BlogPageState extends State<BlogPage> {
 
     final Post? post =
         (posts != null && posts.length > index) ? posts[index] : null;
-    if (post == null &&
-        (postType != PostType.ChatBot ||
-            (postType == PostType.ChatBot && bloc.query.isNotEmpty))) {
-      return Card(
-          child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(child: Text("This might take a while")),
-      ));
-    }
-
-    if (bloc.query.isEmpty && bloc.postType == PostType.ChatBot) {
-      if (post == null || post.content == null) return SizedBox();
-      return Container(
-        alignment: Alignment.center,
-        padding: EdgeInsets.all(50),
-        child: Column(
-          children: [
-            Icon(
-              Icons.bolt,
-              size: 200,
-              color: Colors.grey[600],
-            ),
-            Text(
-              "Ask your queries!",
-              style: theme.textTheme.headlineSmall,
-              textAlign: TextAlign.center,
-            )
-          ],
-          crossAxisAlignment: CrossAxisAlignment.center,
-        ),
-      );
-    }
-
     if (post?.content == null) {
-      if (bloc.postType == PostType.ChatBot) {
-        if (bloc.bloc.currSession != null)
-          return GestureDetector(
-              onTap: () async {
-                await bloc.updateUserReactionChatBot(
-                    ChatBot("", "", "", "", "", "", body: bloc.query), 2);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("Reaction Noted ❤️"),
-                  duration: Duration(seconds: 1),
-                ));
-              },
-              child: Card(
-                  child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(
-                    child: Text.rich(
-                  TextSpan(children: [
-                    TextSpan(text: "👎 ", style: theme.textTheme.headlineSmall),
-                    TextSpan(text: " No Suitable Results"),
-                  ]),
-                )),
-              )));
-        return SizedBox();
-      }
-      return Card(
+      return Container(
           child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
-          child: Text("End of results"),
+          child: Text(""),
         ),
       ));
     }
@@ -673,140 +616,125 @@ class _BlogPageState extends State<BlogPage> {
       child: Container(
         margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
         decoration: BoxDecoration(
-          color: const Color.fromRGBO(246, 246, 246, 1),
+          color: const Color.fromRGBO(48, 111, 220, 1),
           borderRadius: BorderRadius.circular(14),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(14),
-          child: IntrinsicHeight(
-            child: Row(
-              children: [
-                Container(
-                  width: 6,
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    color: const Color.fromRGBO(48, 111, 220, 1),
-                  ),
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.only(
+                    left: 18, right: 16, top: 16, bottom: 16),
+                margin: const EdgeInsets.only(left: 6),
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(246, 246, 246, 1),
                 ),
-                Expanded(
-                    child: Container(
-                        padding: const EdgeInsets.only(
-                            left: 18, right: 16, top: 16, bottom: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  height: 48,
-                                  width: 48,
-                                  decoration: BoxDecoration(
-                                    color:
-                                        const Color.fromRGBO(48, 111, 220, 1),
-                                    borderRadius: BorderRadius.circular(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          height: 48,
+                          width: 48,
+                          decoration: BoxDecoration(
+                            color: const Color.fromRGBO(48, 111, 220, 1),
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          child: SvgPicture.asset(
+                            'assets/blogs/briefcase.svg',
+                            height: 24,
+                            width: 24,
+                            fit: BoxFit.none,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Expanded(
+                          child: Container(
+                            margin: const EdgeInsets.only(
+                                top: 3, bottom: 3, right: 16),
+                            child: Container(
+                              child: RichText(
+                                text: highlight(post.title, bloc.query, context),
+                                strutStyle: StrutStyle.fromTextStyle(
+                                  TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'DM Sans',
+                                    fontWeight: FontWeight.w700,
                                   ),
-                                  child: SvgPicture.asset(
-                                    'assets/blogs/briefcase.svg',
-                                    height: 24,
-                                    width: 24,
-                                    fit: BoxFit.none,
-                                  ),
+                                  height: 1.0,
+                                  fontWeight: FontWeight.w700,
                                 ),
-                                const SizedBox(
-                                  width: 8,
-                                ),
-                                Container(
-                                  height: 42,
-                                  width: 227.4,
-                                  margin: const EdgeInsets.only(
-                                      top: 3, bottom: 3, right: 16),
-                                  child: SingleChildScrollView(
-                                    child: RichText(
-                                      text: highlight(
-                                          post.title, bloc.query, context),
-                                      strutStyle: StrutStyle.fromTextStyle(
-                                        TextStyle(
-                                          fontSize: 16,
-                                          fontFamily: 'DM Sans',
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                        height: 1.0,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      // style: TextStyle(
-                                      //   fontSize: 16,
-                                      //   fontFamily: 'DM Sans',
-                                      //   fontWeight: FontWeight.w700,
-                                      // ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 40,
-                                  height: 48,
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(2),
-                                      onTap: () async {
-                                        if (await canLaunchUrl(
-                                            Uri.parse(post.link))) {
-                                          await launchUrl(
-                                            Uri.parse(post.link),
-                                            mode:
-                                                LaunchMode.externalApplication,
-                                          );
-                                        }
-                                      },
-                                      child: Center(
-                                        child: SvgPicture.asset(
-                                          'assets/blogs/external-link.svg',
-                                          height: 24,
-                                          width: 24,
-                                          fit: BoxFit.none,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Container(
-                                child: Text(
-                              post.published,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontFamily: 'DM Sans',
-                                fontWeight: FontWeight.w700,
-                                color: const Color.fromRGBO(48, 111, 220, 1),
-                              ),
-                            )),
-                            const SizedBox(
-                              height: 8,
-                            ),
-
-                            Container(
-                              child: CommonHtml(
-                                data: post.content,
-                                defaultTextStyle:
-                                    Theme.of(context).textTheme.bodyMedium ??
-                                        TextStyle(),
+                                // style: TextStyle(
+                                //   fontSize: 16,
+                                //   fontFamily: 'DM Sans',
+                                //   fontWeight: FontWeight.w700,
+                                // ),
                               ),
                             ),
-                          ],
-                        ))),
-              ],
-            ),
-          ),
-        ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 40,
+                          height: 48,
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(2),
+                              onTap: () async {
+                                if (await canLaunchUrl(Uri.parse(post.link))) {
+                                  await launchUrl(
+                                    Uri.parse(post.link),
+                                    mode: LaunchMode.externalApplication,
+                                  );
+                                }
+                              },
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  'assets/blogs/external-link.svg',
+                                  height: 24,
+                                  width: 24,
+                                  fit: BoxFit.none,
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                        child: Text(
+                      post.published,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'DM Sans',
+                        fontWeight: FontWeight.w700,
+                        color: const Color.fromRGBO(48, 111, 220, 1),
+                      ),
+                    )),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Container(
+                      child: CommonHtml(
+                        data: post.content,
+                        defaultTextStyle:
+                            Theme.of(context).textTheme.bodyMedium ??
+                                TextStyle(),
+                      ),
+                    ),
+                  ],
+                ))),
       ),
     );
   }
-
 }
+
 class CommonHtml extends StatelessWidget {
   final String? data;
   final TextStyle defaultTextStyle;
