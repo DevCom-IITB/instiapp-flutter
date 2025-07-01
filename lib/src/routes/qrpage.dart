@@ -11,6 +11,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 import '../api/model/user.dart';
 import 'qr_encryption.dart';
+import './qrpagehelperfunctions.dart';
 
 class QRPage extends StatefulWidget {
   const QRPage({Key? key}) : super(key: key);
@@ -26,6 +27,20 @@ class _QRPageState extends State<QRPage> {
   bool loading = true;
   bool error = false;
   User? profile;
+
+  String connectionStatus = 'not connected'; //for debugging if necessary at some point
+  final RemoteTap remoteTap = RemoteTap();
+
+  void startRemoteDiscovery() {
+    remoteTap.startDiscovering(
+      StatusHandler: (status) {
+        setState(() {
+          connectionStatus = status;
+        });
+      },
+      profile: profile!,
+    );
+  }
 
   @override
   void initState() {
@@ -140,14 +155,35 @@ class _QRPageState extends State<QRPage> {
                               margin: EdgeInsets.all(50),
                               alignment: Alignment.center,
                               height: MediaQuery.of(context).size.height / 2,
-                              child: QrImageView(
-                                // data: '',
-                                data: '${qrString}',
-                                size: MediaQuery.of(context).size.width / 2,
-                                // foregroundColor: Colors.black,
-                                embeddedImage: AssetImage(
-                                    'assets/buynsell/DevcomLogo.png'),
-                              ),
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    QrImageView(
+                                      // data: '',
+                                      data: '${qrString}',
+                                      size: MediaQuery.of(context).size.width / 2,
+                                      // foregroundColor: Colors.black,
+                                      embeddedImage: AssetImage(
+                                          'assets/buynsell/DevcomLogo.png'),
+                                    ),
+                                    SizedBox(height: 20),
+                                    TextButton(
+                                      onPressed: () {
+                                        remoteTap.permissionsHandler(context).then((_) {
+                                          startRemoteDiscovery();
+                                        });
+                                      },
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.restaurant),
+                                          SizedBox(width: 8),
+                                          Text("Tap Card Remotely"),
+                                        ],
+                                      ),
+                                    ),
+                                  ]
+                                ),
                             ),
                 ],
               ),
