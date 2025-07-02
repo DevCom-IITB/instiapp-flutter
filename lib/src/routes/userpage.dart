@@ -17,214 +17,9 @@ import 'package:flutter/material.dart';
 // import 'package:share/share.dart';
 // import 'package:url_launcher/url_launcher.dart';
 import 'package:barcode_widget/barcode_widget.dart';
-
-class CustomAppBar extends StatelessWidget {
-  final String title;
-  final VoidCallback? onBack;
-  final VoidCallback? onOther;
-  final IconData other;
-
-  const CustomAppBar({
-    super.key,
-    required this.title,
-    this.onBack,
-    this.onOther,
-    this.other = Icons.info_outline,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildIconBackground(
-            Icons.arrow_back,
-            onPressed: onBack ?? () => Navigator.pop(context),
-          ),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF0F1620),
-            ),
-          ),
-          _buildIconBackground(other, onPressed: onOther),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildIconBackground(IconData icon, {VoidCallback? onPressed}) {
-    return Container(
-      width: 52,
-      height: 52,
-      decoration: BoxDecoration(
-        color: const Color.fromRGBO(235, 235, 235, 0.8),
-        shape: BoxShape.circle,
-      ),
-      child: Center(
-        child: IconButton(
-          padding: EdgeInsets.zero,
-          icon: Icon(icon, color: const Color(0xFF0F1620)),
-          onPressed: onPressed,
-          constraints: const BoxConstraints(),
-        ),
-      ),
-    );
-  }
-}
-
-class SettingsItem extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final Color? color;
-  final bool top;
-  final bool bottom;
-  final VoidCallback onTap;
-
-  const SettingsItem({
-    super.key,
-    required this.title,
-    required this.icon,
-    this.color,
-    this.top = false,
-    this.bottom = false,
-    this.onTap = _noop,
-  });
-
-  static void _noop() {}
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 1),
-      decoration: BoxDecoration(
-        color: const Color(0xFFEFEFEF),
-        borderRadius: BorderRadius.vertical(
-          top: top ? const Radius.circular(14) : Radius.zero,
-          bottom: bottom ? const Radius.circular(14) : Radius.zero,
-        ),
-      ),
-      child: ListTile(
-        leading: Icon(icon, color: color ?? const Color(0xFF1E293B)),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: color ?? const Color(0xFF1E293B),
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        trailing: title == 'Logout' ? null : const Icon(Icons.chevron_right),
-        onTap: onTap,
-      ),
-    );
-  }
-}
-
-class ToggleItem extends StatelessWidget {
-  final String title;
-  final bool value;
-  final Function(bool) onChanged;
-  final bool top;
-  final bool bottom;
-  final IconData? icon;
-
-  const ToggleItem({
-    super.key,
-    required this.title,
-    required this.value,
-    required this.onChanged,
-    this.top = false,
-    this.bottom = false,
-    this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 1),
-      decoration: BoxDecoration(
-        color: const Color(0xFFEFEFEF),
-        borderRadius: BorderRadius.vertical(
-          top: top ? const Radius.circular(14) : Radius.zero,
-          bottom: bottom ? const Radius.circular(14) : Radius.zero,
-        ),
-      ),
-      child: SwitchListTile(
-        activeTrackColor: Color.fromRGBO(37, 99, 235, 1),
-        activeColor: Colors.white,
-        secondary:
-            icon != null ? Icon(icon, color: const Color(0xFF1E293B)) : null,
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-        value: value,
-        onChanged: onChanged,
-      ),
-    );
-  }
-}
-
-class DecoratedButton extends StatelessWidget {
-  final String text;
-  final VoidCallback? onPressed;
-  final Color backgroundColor;
-  final Color textColor;
-  final String? backgroundImageAsset;
-  final double borderRadius;
-  final double height;
-  final double fontSize;
-  final FontWeight fontWeight;
-
-  const DecoratedButton({
-    Key? key,
-    required this.text,
-    required this.onPressed,
-    this.backgroundColor = Colors.transparent,
-    this.textColor = Colors.white,
-    this.backgroundImageAsset,
-    this.borderRadius = 30,
-    this.height = 48,
-    this.fontSize = 20,
-    this.fontWeight = FontWeight.w600,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final bool isEnabled = onPressed != null;
-
-    return Opacity(
-      opacity: isEnabled ? 1.0 : 0.6,
-      child: InkWell(
-        onTap: isEnabled ? onPressed : null,
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: Container(
-          height: height,
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(borderRadius),
-            image: backgroundImageAsset != null
-                ? DecorationImage(
-                    image: AssetImage(backgroundImageAsset!),
-                    fit: BoxFit.cover,
-                  )
-                : null,
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            text,
-            style: TextStyle(
-              color: textColor,
-              fontSize: fontSize,
-              fontWeight: fontWeight,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+import 'package:InstiApp/src/widgets/appbar.dart';
+import 'package:InstiApp/src/widgets/buttons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserPage extends StatefulWidget {
   final User? initialUser;
@@ -257,9 +52,15 @@ class _UserPageState extends State<UserPage>
   User? user;
   bool cansee = false;
   TabController? _tabController;
-  bool isProfileVisible = true;
+  bool NotificationVisibility = true;
   List<Group> associations = [];
   List<Group> following = [];
+  bool loggingOutLoading = false;
+  bool updatingProfile = false;
+  bool sendingFeedback = false;
+
+  final String updateProfileUrl = "https://gymkhana.iitb.ac.in/sso/user";
+  final String feedbackUrl = "https://insti.app/feedback";
 
   @override
   void initState() {
@@ -860,14 +661,16 @@ class _UserPageState extends State<UserPage>
   }
 
   Widget _buildSettingsSection() {
+    var bloc = BlocProvider.of(context)?.bloc;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Column(
         children: [
           ToggleItem(
-            title: 'Profile Visibility',
-            value: isProfileVisible,
-            onChanged: (val) => setState(() => isProfileVisible = val),
+            title: 'Notifications',
+            value: NotificationVisibility,
+            onChanged: (val) => setState(() => NotificationVisibility = val),
             top: true,
             icon: Icons.visibility_off_outlined,
           ),
@@ -878,18 +681,69 @@ class _UserPageState extends State<UserPage>
               Navigator.pushNamed(context, '/settings');
             },
           ),
-          const SettingsItem(
-            title: 'About',
-            icon: Icons.info_outline,
+          SettingsItem(
+            title: updatingProfile ? 'Opening...' : 'Edit Profile',
+            icon: Icons.edit_outlined,
+            color: updatingProfile ? Colors.grey : null,
+            onTap: () async {
+              setState(() => updatingProfile = true);
+              try {
+                await Future.delayed(const Duration(milliseconds: 300));
+
+                if (await canLaunchUrl(Uri.parse(updateProfileUrl))) {
+                  await launchUrl(
+                    Uri.parse(updateProfileUrl),
+                    mode: LaunchMode.externalApplication,
+                  );
+                }
+              } finally {
+                setState(() => updatingProfile = false);
+              }
+            },
+          ),
+          SettingsItem(
+            title: sendingFeedback ? 'Opening...' : 'Feedback',
+            icon: Icons.feedback_outlined,
             bottom: true,
+            color: sendingFeedback ? Colors.grey : null,
+            onTap: () async {
+              setState(() => sendingFeedback = true);
+              try {
+                await Future.delayed(const Duration(milliseconds: 300));
+
+                if (await canLaunchUrl(Uri.parse(feedbackUrl))) {
+                  await launchUrl(
+                    Uri.parse(feedbackUrl),
+                    mode: LaunchMode.externalApplication,
+                  );
+                }
+              } finally {
+                setState(() => sendingFeedback = false);
+              }
+            },
           ),
           const SizedBox(height: 24),
-          const SettingsItem(
-            title: 'Logout',
+          SettingsItem(
+            title: loggingOutLoading ? 'Logging out...' : 'Logout',
             icon: Icons.logout,
             top: true,
             bottom: true,
-            color: Color(0xFFFF272A),
+            color: loggingOutLoading ? Colors.grey : const Color(0xFFFF272A),
+            onTap: () async {
+              if (bloc == null) return;
+              
+              setState(() => loggingOutLoading = true);
+              try {
+                await bloc.logout();
+
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/', 
+                  (Route<dynamic> route) => false
+                );
+              } finally {
+                setState(() => loggingOutLoading = false);
+              }
+            },
           ),
         ],
       ),
