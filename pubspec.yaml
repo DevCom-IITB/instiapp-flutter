@@ -22,6 +22,7 @@ dependencies:
   url_launcher: ^6.0.17
   barcode: ^2.0.4
   barcode_widget: ^2.0.4
+  share_plus: ^7.0.0
   qr_code_scanner: ^1.0.1
   flutter_svg: ^2.1.0
   http: ^1.2.1
@@ -98,6 +99,7 @@ flutter:
     - assets/login/
     - assets/map/
     - assets/communities/
+    - assets/categories/
     - assets/communities/emojis/
     - assets/map/assets/
     - assets/map/assets/map/
@@ -108,6 +110,7 @@ flutter:
     - assets/homepage/images/
     - assets/profilepage/
     - assets/feed/
+    - assets/quicklinks/icons/
   fonts:
     - family: IBMPlexSans
       fonts:
