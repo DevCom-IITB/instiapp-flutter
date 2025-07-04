@@ -1,9 +1,11 @@
 import 'dart:collection';
 
+import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +13,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:InstiApp/src/routes/explore_club.dart';
+import 'package:InstiApp/src/routes/bodypage.dart';
+import 'package:share/share.dart';
 
 class FeedPage extends StatefulWidget {
   @override
@@ -473,7 +477,8 @@ class _specificblogpageState extends State<Specificblogpage> {
                 maxChildSize: 0.95,
                 builder: (context, scrollController) {
                   return Container(
-                      padding: EdgeInsets.only(top: 10, left: 16, right: 16),
+                      padding: EdgeInsets.only(
+                          top: 10, left: 16, right: 16, bottom: 20),
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(246, 246, 246, 1),
                         borderRadius:
@@ -740,7 +745,7 @@ class _specificblogpageState extends State<Specificblogpage> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 80),
+                            SizedBox(height: 70),
                           ],
                         ),
                       ));
@@ -777,15 +782,16 @@ class _specificblogpageState extends State<Specificblogpage> {
                                   width: 24,
                                   fit: BoxFit.none,
                                 ),
-                                onPressed: () {
-                                  
+                                onPressed: () async {
+                                  await Share.share(
+                                      "Check this event: ${ShareURLMaker.getEventURL(widget.event)}");
                                 }),
                           ),
                           SizedBox(width: 8),
                           Expanded(
                               child: InkWell(
                             onTap: () {
-                              ExploreClubPage.navigateWith(
+                              BodyPage.navigateWith(
                                 context,
                                 widget.bloc,
                                 body: widget.event.eventBodies?[0],
@@ -887,3 +893,8 @@ class FullscreenImagePage extends StatelessWidget {
     );
   }
 }
+
+// onTap: () {
+//                       Share.share(
+//                           "Check this community: ${ShareURLMaker.getCommunityURL(community)}");
+//                     },

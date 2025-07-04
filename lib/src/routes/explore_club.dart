@@ -581,8 +581,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 8),
-                  
+                  const SizedBox(height: 8),                  
                   Row(
                     children: [
                       Icon(
