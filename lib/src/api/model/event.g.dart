@@ -38,13 +38,19 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       eventGoing: (json['going'] as List<dynamic>?)
           ?.map((e) => User.fromJson(e as Map<String, dynamic>))
           .toList(),
-      eventWebsiteURL: json['website_url'] as String?,
+      // eventWebsiteURL: json['website_url'] as String?,
+      eventWebsiteURL: (json['website_url'] is List &&
+              (json['website_url'] as List).isNotEmpty)
+          ? (json['website_url'] as List).first as String
+          : json['website_url'] is String
+              ? json['website_url'] as String
+              : null,
       eventUserUesInt: (json['user_ues'] as num?)?.toInt(),
       eventInterest: (json['event_interest'] as List<dynamic>?)
           ?.map((e) => Interest.fromJson(e as Map<String, dynamic>))
           .toList(),
     )
-      ..eventLongDescription = json['longdescription'] as String?
+      // ..eventLongDescription = json['longdescription'] as String?
       ..emailVerified = json['email_verified'] as bool?
       ..eventStartDate = json['eventStartDate'] == null
           ? null

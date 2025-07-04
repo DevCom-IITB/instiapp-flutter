@@ -6,6 +6,7 @@ import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/explore_club.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -661,37 +662,32 @@ class _ExplorePageState extends State<ExplorePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Bodycard(
-                            context, "Tech@IITB", "assets/explore/tech.png"),
-                        Bodycard(
-                            context, "Tech@IITB", "assets/explore/tech.png"),
+                        Bodycard(context, "Cult", "assets/explore/cult.png"),
+                        Bodycard(context, "Tech", "assets/explore/tech.png"),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Bodycard(context, "Sports", "assets/explore/sport.png"),
+                        Bodycard(context, "I.Bs", "assets/explore/ibs.png"),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Bodycard(
-                            context, "Tech@IITB", "assets/explore/tech.png"),
-                        Bodycard(
-                            context, "Tech@IITB", "assets/explore/tech.png"),
+                            context, "Hostels", "assets/explore/hostels.png"),
+                        Bodycard(context, "Departments",
+                            "assets/explore/departments.png"),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        Bodycard(context, "Food", "assets/explore/food.png"),
                         Bodycard(
-                            context, "Tech@IITB", "assets/explore/tech.png"),
-                        Bodycard(
-                            context, "Tech@IITB", "assets/explore/tech.png"),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Bodycard(
-                            context, "Tech@IITB", "assets/explore/tech.png"),
-                        Bodycard(
-                            context, "Tech@IITB", "assets/explore/tech.png"),
+                            context, "Scenes", "assets/explore/scenes.png"),
                       ],
                     ),
                     SizedBox(height: 80),
@@ -753,6 +749,12 @@ class _ExploresearchState extends State<Exploresearch> {
   void initState() {
     super.initState();
     loadRecentSearches();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      var bloc = BlocProvider.of(context)!.bloc;
+      var exploreBloc = bloc.exploreBloc;
+      exploreBloc.query = "";
+      exploreBloc.refresh();
+    });
   }
 
   bool firstBuild = true;
@@ -766,8 +768,6 @@ class _ExploresearchState extends State<Exploresearch> {
     var bloc = BlocProvider.of(context)!.bloc;
     var exploreBloc = bloc.exploreBloc;
     if (firstBuild) {
-      exploreBloc.query = "";
-      exploreBloc.refresh();
       firstBuild = false;
     }
     return Scaffold(
@@ -779,8 +779,7 @@ class _ExploresearchState extends State<Exploresearch> {
             child: Column(
               children: [
                 SizedBox(height: 20),
-                Hero(
-                  tag: 'search',
+                Container(
                   child: Material(
                     color: Colors.transparent,
                     child: Container(
@@ -809,10 +808,13 @@ class _ExploresearchState extends State<Exploresearch> {
                           SizedBox(
                             width: 20,
                           ),
-                          SvgPicture.asset(
-                            'assets/explore/search.svg',
-                            height: 24,
-                            width: 24,
+                          Hero(
+                            tag: 'search',
+                            child: SvgPicture.asset(
+                              'assets/explore/search.svg',
+                              height: 24,
+                              width: 24,
+                            ),
                           ),
                           SizedBox(
                             width: 20,
@@ -841,8 +843,18 @@ class _ExploresearchState extends State<Exploresearch> {
                               ),
                               onChanged: (query) async {
                                 if (query.length > 4) {
-                                  exploreBloc.query = query;
-                                  exploreBloc.refresh();
+                                  setState(() {
+                                  if (query.isNotEmpty &&
+                                      !recentSearches.contains(query)) {
+                                    recentSearches.insert(0, query);
+                                    if (recentSearches.length > 5) {
+                                      recentSearches.removeLast();
+                                    }
+                                  }
+                                });
+                                await saveRecentSearches();
+                                exploreBloc.query = query;
+                                await exploreBloc.refresh();
                                 }
                               },
                               onSubmitted: (query) async {
@@ -868,29 +880,33 @@ class _ExploresearchState extends State<Exploresearch> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
                 if (_searchFieldController.text == '')
                   Container(
-                    margin: EdgeInsets.only(left: 16, right: 8),
+                    margin: EdgeInsets.only(left: 16, right: 8, top: 20),
                     height: 144,
                     child:
                         ListView(scrollDirection: Axis.horizontal, children: [
                       SearchBodycard(
-                          context, 'Tech', 'assets/explore/tech.png'),
+                          context, 'Cult', 'assets/explore/cult.png'),
+                      SearchBodycard(
+                          context, 'Sports', 'assets/explore/sport.png'),
                       SearchBodycard(
                           context, 'Tech', 'assets/explore/tech.png'),
                       SearchBodycard(
-                          context, 'Tech', 'assets/explore/tech.png'),
+                          context, 'Hostels', 'assets/explore/hostels.png'),
+                      SearchBodycard(context, 'I.Bs', 'assets/explore/ibs.png'),
                       SearchBodycard(
-                          context, 'Tech', 'assets/explore/tech.png'),
+                          context, 'Food', 'assets/explore/food.png'),
                       SearchBodycard(
-                          context, 'Tech', 'assets/explore/tech.png'),
+                          context, 'Scenes', 'assets/explore/scenes.png'),
+                      SearchBodycard(context, 'Departments',
+                          'assets/explore/departments.png'),
                     ]),
                   ),
-                if (_searchFieldController.text == '')
+                if (_searchFieldController.text == '' &&
+                    recentSearches.isNotEmpty)
                   Container(
-                      margin: EdgeInsets.only(
-                          left: 16, right: 16, top: 23, bottom: 43),
+                      margin: EdgeInsets.only(left: 16, right: 16, top: 23),
                       child: Column(children: [
                         Container(
                             child: Row(
@@ -925,8 +941,7 @@ class _ExploresearchState extends State<Exploresearch> {
                           ],
                         )),
                         SizedBox(height: 8),
-                        if (_searchFieldController.text == '')
-                        Expanded(
+                        Container(
                             child: ListView(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
@@ -934,22 +949,69 @@ class _ExploresearchState extends State<Exploresearch> {
                               .map((search) => RecentSearch(search, () {
                                     setState(() {
                                       _searchFieldController.text = search;
+                                      exploreBloc.query = search;
+                                      exploreBloc.refresh();
                                     });
                                   }))
                               .toList(),
                         )),
                       ])),
-                Container(
-                  child: StreamBuilder<ExploreResponse>(
-                    stream: exploreBloc.explore,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<ExploreResponse> snapshot) {
-                      return Column(
-                        children: _buildContent(snapshot, theme, exploreBloc),
-                      );
-                    },
+                if (_searchFieldController.text == '')
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.only(
+                          top: 22, left: 16, right: 16, bottom: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(bottom: 8),
+                            child: Text(
+                              'Popular',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontFamily: 'DM Sans',
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: StreamBuilder<ExploreResponse>(
+                                stream: exploreBloc.explore,
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<ExploreResponse> snapshot) {
+                                  return Column(
+                                    children: _buildContent(
+                                        context,snapshot, theme, exploreBloc),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                )
+                if (_searchFieldController.text != '')
+                  Expanded(
+                    child: Container(
+                        margin: EdgeInsets.only(left: 16, right: 16, top: 11),
+                        child: SingleChildScrollView(
+                          child: StreamBuilder<ExploreResponse>(
+                            stream: exploreBloc.explore,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<ExploreResponse> snapshot) {
+                              return Column(
+                                children:
+                                    _buildContent(context,snapshot, theme, exploreBloc),
+                              );
+                            },
+                          ),
+                        )),
+                  ),
               ],
             )),
       ),
@@ -1266,83 +1328,109 @@ Widget RecentSearch(String searchtext, VoidCallback onTap) {
 //     );
 //   }
 
-  List<Widget> _buildContent(AsyncSnapshot<ExploreResponse> snapshot,
-      ThemeData theme, ExploreBloc exploreBloc) {
-    if (snapshot.hasData) {
-      var bodies = snapshot.data!.bodies;
-      var events = snapshot.data!.events;
-      var users = snapshot.data!.users;
-      if (bodies?.isEmpty == true &&
-          events?.isEmpty == true &&
-          users?.isEmpty == true) {
-        return [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-            child: Text.rich(
-                TextSpan(style: theme.textTheme.titleLarge, children: [
-              TextSpan(text: "Nothing found for the query "),
-              TextSpan(
-                  text: "\"${exploreBloc.query}\"",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              TextSpan(text: "."),
-            ])),
-          )
-        ];
-      }
-      //move to next page
-      return (bodies
-                  ?.map((b) => _buildListTile(
-                      b.bodyID ?? "",
-                      b.bodyName ?? "",
-                      b.bodyShortDescription ?? "",
-                      b.bodyImageURL ?? "",
-                      Icons.people_outline_outlined,
-                      theme))
-                  .toList() ??
-              []) +
-          (events
-                  ?.map((e) => _buildListTile(
-                      e.eventID ?? "",
-                      e.eventName ?? "",
-                      e.getSubTitle(),
-                      e.eventImageURL ?? e.eventBodies?[0].bodyImageURL ?? "",
-                      Icons.event_outlined,
-                      theme))
-                  .toList() ??
-              []) +
-          (users
-                  ?.map((u) => _buildListTile(
-                      u.userID ?? "",
-                      u.userName ?? "",
-                      u.userLDAPId ?? "",
-                      u.userProfilePictureUrl ?? "",
-                      Icons.person_outline_outlined,
-                      theme))
-                  .toList() ??
-              []);
-    } else {
+List<Widget> _buildContent(
+  BuildContext context,
+  AsyncSnapshot<ExploreResponse> snapshot,
+  ThemeData theme,
+  ExploreBloc exploreBloc,
+) {
+  if (snapshot.hasData) {
+    var bodies = snapshot.data!.bodies;
+    var events = snapshot.data!.events;
+    var users = snapshot.data!.users;
+    if (bodies?.isEmpty == true &&
+        events?.isEmpty == true &&
+        users?.isEmpty == true) {
       return [
-        Center(
-            child: CircularProgressIndicatorExtended(
-          label: Text("Loading the some default bodies"),
-        ))
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
+          child:
+              Text.rich(TextSpan(style: theme.textTheme.titleLarge, children: [
+            TextSpan(text: "Nothing found for the query "),
+            TextSpan(
+                text: "\"${exploreBloc.query}\"",
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            TextSpan(text: "."),
+          ])),
+        )
       ];
     }
+    //move to next page
+    return (bodies
+            ?.map((b) => _buildListTile(
+                b.bodyID ?? "",
+                b.bodyName ?? "",
+                b.bodyShortDescription ?? "",
+                b.bodyImageURL ?? "",
+                Icons.people_outline_outlined,
+                () =>
+                    BodyPage.navigateWith(context, exploreBloc.bloc, body: b)))
+            .toList() ??
+        []);
+  } else {
+    return [
+      Center(
+          child: CircularProgressIndicatorExtended(
+        label: Text("Loading bodies"),
+      ))
+    ];
   }
+}
 
 //RELATED TO TILES
-  Widget _buildListTile(String id, String title, String subtitle, String url,
-      IconData fallbackIcon, ThemeData theme) {
-    return ListTile(
-      leading: NullableCircleAvatar(
-        url,
-        fallbackIcon,
-        heroTag: id,
+Widget _buildListTile(String id, String title, String subtitle, String url,
+    IconData fallbackIcon, VoidCallback onClick) {
+  return Container(
+      margin: EdgeInsets.only(
+        top: 16,
       ),
-      title: Text(
-        title,
-        style: theme.textTheme.titleLarge,
-      ),
-      subtitle: Text(subtitle),
-    );
-  }
+      child: InkWell(
+        onTap: onClick,
+        child: Row(children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(18.0),
+            child: CachedNetworkImage(
+              imageUrl: url,
+              height: 63,
+              width: 63,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Center(child: Icon(fallbackIcon)),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ),
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontFamily: 'DM Sans',
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: 'DM Sans',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 16),
+          SvgPicture.asset(
+            'assets/explore/chevron-right.svg',
+            height: 24,
+            width: 24,
+          ),
+        ]),
+      ));
+}
