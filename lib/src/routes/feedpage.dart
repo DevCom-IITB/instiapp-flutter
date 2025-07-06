@@ -89,81 +89,81 @@ class _FeedPageState extends State<FeedPage> {
                     dashColor: Color(0xFFDADADA),
                   ),
                   SizedBox(height: 20),
-                  Container(
-                      margin: EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              decoration: BoxDecoration(
-                                  color: Color.fromRGBO(239, 239, 239, 1),
-                                  borderRadius: BorderRadius.circular(50),
-                                  border: Border.all(
-                                    color: Color.fromRGBO(210, 213, 218, 1),
-                                  )),
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/feed/setting-4.svg',
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Sort',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: 'DM Sans',
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  SvgPicture.asset(
-                                    'assets/feed/chevron-down.svg',
-                                  ),
-                                ],
-                              )),
-                          SizedBox(width: 8),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                                color: Color.fromRGBO(239, 239, 239, 1),
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: Color.fromRGBO(210, 213, 218, 1),
-                                )),
-                            child: Text(
-                              'Events',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'DM Sans',
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                                color: Color.fromRGBO(239, 239, 239, 1),
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: Color.fromRGBO(210, 213, 218, 1),
-                                )),
-                            child: Text(
-                              'Announcements',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'DM Sans',
-                              ),
-                            ),
-                          ),
-                        ],
-                      )),
-                  SizedBox(height: 23),
+                  // Container(
+                  //     margin: EdgeInsets.symmetric(horizontal: 16),
+                  //     child: Row(
+                  //       mainAxisAlignment: MainAxisAlignment.start,
+                  //       children: [
+                  //         Container(
+                  //             padding: EdgeInsets.symmetric(
+                  //                 horizontal: 16, vertical: 8),
+                  //             decoration: BoxDecoration(
+                  //                 color: Color.fromRGBO(239, 239, 239, 1),
+                  //                 borderRadius: BorderRadius.circular(50),
+                  //                 border: Border.all(
+                  //                   color: Color.fromRGBO(210, 213, 218, 1),
+                  //                 )),
+                  //             child: Row(
+                  //               children: [
+                  //                 SvgPicture.asset(
+                  //                   'assets/feed/setting-4.svg',
+                  //                 ),
+                  //                 SizedBox(width: 8),
+                  //                 Text(
+                  //                   'Sort',
+                  //                   style: TextStyle(
+                  //                     fontSize: 14,
+                  //                     fontWeight: FontWeight.w500,
+                  //                     fontFamily: 'DM Sans',
+                  //                   ),
+                  //                 ),
+                  //                 SizedBox(width: 8),
+                  //                 SvgPicture.asset(
+                  //                   'assets/feed/chevron-down.svg',
+                  //                 ),
+                  //               ],
+                  //             )),
+                  //         SizedBox(width: 8),
+                  //         Container(
+                  //           padding: EdgeInsets.symmetric(
+                  //               horizontal: 16, vertical: 8),
+                  //           decoration: BoxDecoration(
+                  //               color: Color.fromRGBO(239, 239, 239, 1),
+                  //               borderRadius: BorderRadius.circular(50),
+                  //               border: Border.all(
+                  //                 color: Color.fromRGBO(210, 213, 218, 1),
+                  //               )),
+                  //           child: Text(
+                  //             'Events',
+                  //             style: TextStyle(
+                  //               fontSize: 14,
+                  //               fontWeight: FontWeight.w500,
+                  //               fontFamily: 'DM Sans',
+                  //             ),
+                  //           ),
+                  //         ),
+                  //         SizedBox(width: 8),
+                  //         Container(
+                  //           padding: EdgeInsets.symmetric(
+                  //               horizontal: 16, vertical: 8),
+                  //           decoration: BoxDecoration(
+                  //               color: Color.fromRGBO(239, 239, 239, 1),
+                  //               borderRadius: BorderRadius.circular(50),
+                  //               border: Border.all(
+                  //                 color: Color.fromRGBO(210, 213, 218, 1),
+                  //               )),
+                  //           child: Text(
+                  //             'Announcements',
+                  //             style: TextStyle(
+                  //               fontSize: 14,
+                  //               fontWeight: FontWeight.w500,
+                  //               fontFamily: 'DM Sans',
+                  //             ),
+                  //           ),
+                  //         ),
+                  //   ],
+                  // )),
+                  // SizedBox(height: 23),
                 ]),
               ),
               StreamBuilder(
@@ -349,12 +349,25 @@ class Specificblogpage extends StatefulWidget {
   final InstiAppBloc bloc;
 
   Specificblogpage({required this.event, required this.bloc});
-
   @override
   _specificblogpageState createState() => _specificblogpageState();
 }
 
 class _specificblogpageState extends State<Specificblogpage> {
+  late Future<Body> body;
+  Body? fullbody;
+
+  @override
+  void initState() {
+    super.initState();
+    body = widget.bloc.getBody(widget.event.eventBodies?[0].bodyID ?? "");
+    body.then((value) {
+      setState(() {
+        fullbody = value;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -474,7 +487,7 @@ class _specificblogpageState extends State<Specificblogpage> {
               DraggableScrollableSheet(
                 initialChildSize: 0.5,
                 minChildSize: 0.5,
-                maxChildSize: 0.95,
+                maxChildSize: 0.85,
                 builder: (context, scrollController) {
                   return Container(
                       padding: EdgeInsets.only(
@@ -513,8 +526,9 @@ class _specificblogpageState extends State<Specificblogpage> {
                                     ),
                                   ),
                                 ),
-                                if (widget.event.eventBodies?[0].bodyParents !=
-                                    null)
+                                if (fullbody != null &&
+                                    fullbody!.bodyParents != null &&
+                                    fullbody!.bodyParents!.isNotEmpty)
                                   Container(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 6),
@@ -524,22 +538,27 @@ class _specificblogpageState extends State<Specificblogpage> {
                                       ),
                                       child: Row(
                                         children: [
-                                          CachedNetworkImage(
-                                            imageUrl: widget
-                                                    .event
-                                                    .eventBodies?[0]
-                                                    .bodyParents![0]
-                                                    .bodyImageURL ??
-                                                "",
-                                            placeholder: (context, url) =>
-                                                CircularProgressIndicator(),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    Icon(Icons.error),
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            child: CachedNetworkImage(
+                                              width: 20,
+                                              height: 20,
+                                              fit: BoxFit.cover,
+                                              imageUrl: fullbody!
+                                                      .bodyParents![0]
+                                                      .bodyImageURL ??
+                                                  "",
+                                              placeholder: (context, url) =>
+                                                  CircularProgressIndicator(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Icon(Icons.error),
+                                            ),
                                           ),
                                           SizedBox(width: 8),
                                           Text(
-                                            widget.event.eventBodies?[0]
+                                            fullbody!
                                                     .bodyParents![0].bodyName ??
                                                 "",
                                             style: TextStyle(

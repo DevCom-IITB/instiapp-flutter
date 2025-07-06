@@ -3,12 +3,15 @@ import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
+import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explore_club.dart';
+import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dash/flutter_dash.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:flutter/rendering.dart';
@@ -571,35 +574,32 @@ class _ExplorePageState extends State<ExplorePage> {
                           builder: (context) => Exploresearch(),
                         ));
                   },
-                  child: Hero(
-                    tag: 'search',
-                    child: Container(
-                      margin: const EdgeInsets.only(left: 16, right: 16),
-                      height: 50,
-                      padding: const EdgeInsets.only(
-                          left: 14, right: 14, top: 13, bottom: 13),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Image(
-                            image: AssetImage('assets/blogs/search.png'),
-                            height: 24,
-                            width: 24,
-                          ),
-                          const SizedBox(width: 20),
-                          Text('Search clubs',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: 'DM Sans',
-                                color: Color.fromRGBO(0, 0, 0, 0.4),
-                              )),
-                        ],
-                      ),
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 16, right: 16),
+                    height: 50,
+                    padding: const EdgeInsets.only(
+                        left: 14, right: 14, top: 13, bottom: 13),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Image(
+                          image: AssetImage('assets/blogs/search.png'),
+                          height: 24,
+                          width: 24,
+                        ),
+                        const SizedBox(width: 20),
+                        Text('Search clubs, events, users...',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'DM Sans',
+                              color: Color.fromRGBO(0, 0, 0, 0.4),
+                            )),
+                      ],
                     ),
                   ),
                 ),
@@ -842,19 +842,11 @@ class _ExploresearchState extends State<Exploresearch> {
                                 contentPadding: EdgeInsets.zero,
                               ),
                               onChanged: (query) async {
-                                if (query.length > 4) {
+                                if (query.length > 3) {
                                   setState(() {
-                                  if (query.isNotEmpty &&
-                                      !recentSearches.contains(query)) {
-                                    recentSearches.insert(0, query);
-                                    if (recentSearches.length > 5) {
-                                      recentSearches.removeLast();
-                                    }
-                                  }
-                                });
-                                await saveRecentSearches();
-                                exploreBloc.query = query;
-                                await exploreBloc.refresh();
+                                    exploreBloc.query = query;
+                                  });
+                                  await exploreBloc.refresh();
                                 }
                               },
                               onSubmitted: (query) async {
@@ -862,13 +854,13 @@ class _ExploresearchState extends State<Exploresearch> {
                                   if (query.isNotEmpty &&
                                       !recentSearches.contains(query)) {
                                     recentSearches.insert(0, query);
-                                    if (recentSearches.length > 5) {
+                                    if (recentSearches.length > 20) {
                                       recentSearches.removeLast();
                                     }
                                   }
+                                  exploreBloc.query = query;
                                 });
-                                await saveRecentSearches();
-                                exploreBloc.query = query;
+                                await saveRecentSearches();                                
                                 await exploreBloc.refresh();
                               },
                               autofocus: true,
@@ -880,7 +872,82 @@ class _ExploresearchState extends State<Exploresearch> {
                     ),
                   ),
                 ),
-                if (_searchFieldController.text == '')
+                if (exploreBloc.query == '' && recentSearches.isNotEmpty) ...[
+                  Container(
+                      margin: EdgeInsets.only(left: 16, right: 16, top: 23),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                                child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Recent Search',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    fontFamily: 'DM Sans',
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () async {
+                                    setState(() {
+                                      recentSearches.clear();
+                                    });
+                                    await saveRecentSearches();
+                                  },
+                                  child: Text(
+                                    'Clear All',
+                                    style: TextStyle(
+                                      color: const Color(0xFF306FDC),
+                                      fontSize: 15,
+                                      fontFamily: 'DM Sans',
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )),
+                            SizedBox(height: 18),
+                            Container(
+                                child: Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              alignment: WrapAlignment.start,
+                              crossAxisAlignment: WrapCrossAlignment.start,
+                              children: recentSearches
+                                  .map((search) => RecentSearch(
+                                        search,
+                                        () {
+                                          setState(() {
+                                            _searchFieldController.text =
+                                                search;
+                                            exploreBloc.query = search;
+                                            exploreBloc.refresh();
+                                          });
+                                        },
+                                        () async {
+                                          setState(() {
+                                            recentSearches.remove(search);
+                                          });
+                                          await saveRecentSearches();
+                                        },
+                                      ))
+                                  .toList(),
+                            )),
+                          ])),
+                  SizedBox(height: 20),
+                  Dash(
+                    direction: Axis.horizontal,
+                    length: 368,
+                    dashLength: 6,
+                    dashGap: 7,
+                    dashColor: Color(0xFFDADADA),
+                  ),
+                ],
+                if (exploreBloc.query == '')
                   Container(
                     margin: EdgeInsets.only(left: 16, right: 8, top: 20),
                     height: 144,
@@ -903,60 +970,7 @@ class _ExploresearchState extends State<Exploresearch> {
                           'assets/explore/departments.png'),
                     ]),
                   ),
-                if (_searchFieldController.text == '' &&
-                    recentSearches.isNotEmpty)
-                  Container(
-                      margin: EdgeInsets.only(left: 16, right: 16, top: 23),
-                      child: Column(children: [
-                        Container(
-                            child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Recent Search',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontFamily: 'DM Sans',
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () async {
-                                setState(() {
-                                  recentSearches.clear();
-                                });
-                                await saveRecentSearches();
-                              },
-                              child: Text(
-                                'Clear All',
-                                style: TextStyle(
-                                  color: const Color(0xFF306FDC),
-                                  fontSize: 15,
-                                  fontFamily: 'DM Sans',
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        )),
-                        SizedBox(height: 8),
-                        Container(
-                            child: ListView(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          children: recentSearches
-                              .map((search) => RecentSearch(search, () {
-                                    setState(() {
-                                      _searchFieldController.text = search;
-                                      exploreBloc.query = search;
-                                      exploreBloc.refresh();
-                                    });
-                                  }))
-                              .toList(),
-                        )),
-                      ])),
-                if (_searchFieldController.text == '')
+                if (exploreBloc.query == '')
                   Expanded(
                     child: Container(
                       width: double.infinity,
@@ -985,7 +999,7 @@ class _ExploresearchState extends State<Exploresearch> {
                                     AsyncSnapshot<ExploreResponse> snapshot) {
                                   return Column(
                                     children: _buildContent(
-                                        context,snapshot, theme, exploreBloc),
+                                        context, snapshot, theme, exploreBloc),
                                   );
                                 },
                               ),
@@ -995,7 +1009,7 @@ class _ExploresearchState extends State<Exploresearch> {
                       ),
                     ),
                   ),
-                if (_searchFieldController.text != '')
+                if (exploreBloc.query != '')
                   Expanded(
                     child: Container(
                         margin: EdgeInsets.only(left: 16, right: 16, top: 11),
@@ -1005,8 +1019,8 @@ class _ExploresearchState extends State<Exploresearch> {
                             builder: (BuildContext context,
                                 AsyncSnapshot<ExploreResponse> snapshot) {
                               return Column(
-                                children:
-                                    _buildContent(context,snapshot, theme, exploreBloc),
+                                children: _buildContent(
+                                    context, snapshot, theme, exploreBloc),
                               );
                             },
                           ),
@@ -1049,30 +1063,41 @@ Widget SearchBodycard(BuildContext context, String title, String imagePath) {
   ));
 }
 
-Widget RecentSearch(String searchtext, VoidCallback onTap) {
-  return InkWell(
-    onTap: onTap,
-    child: Container(
-      margin: EdgeInsets.only(top: 8, bottom: 8),
-      child: Row(
-        children: [
-          SvgPicture.asset('assets/explore/recentclock.svg'),
-          SizedBox(width: 16),
-          Expanded(
+Widget RecentSearch(
+    String searchtext, VoidCallback onTap, VoidCallback onDelete) {
+  return Container(
+    padding: EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(50),
+      color: Color.fromRGBO(239, 239, 239, 1),
+      border: Border.all(
+        color: Color.fromRGBO(210, 213, 218, 1),
+        width: 1,
+      ),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        InkWell(
+          onTap: onTap,
+          child: Container(
             child: Text(
               searchtext,
               style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
+                color: const Color(0xFF0F1620),
+                fontSize: 14,
                 fontFamily: 'DM Sans',
-                fontWeight: FontWeight.w400,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
-          SizedBox(width: 16),
-          SvgPicture.asset('assets/explore/arrowupleft.svg'),
-        ],
-      ),
+        ),
+        SizedBox(width: 8),
+        InkWell(
+          onTap: onDelete,
+          child: SvgPicture.asset('assets/explore/x.svg'),
+        ),
+      ],
     ),
   );
 }
@@ -1357,16 +1382,39 @@ List<Widget> _buildContent(
     }
     //move to next page
     return (bodies
-            ?.map((b) => _buildListTile(
-                b.bodyID ?? "",
-                b.bodyName ?? "",
-                b.bodyShortDescription ?? "",
-                b.bodyImageURL ?? "",
-                Icons.people_outline_outlined,
-                () =>
-                    BodyPage.navigateWith(context, exploreBloc.bloc, body: b)))
-            .toList() ??
-        []);
+                ?.map((b) => _buildListTile(
+                    b.bodyID ?? "",
+                    b.bodyName ?? "",
+                    b.bodyShortDescription ?? "",
+                    b.bodyImageURL ?? "",
+                    Icons.people_outline_outlined,
+                    () => BodyPage.navigateWith(context, exploreBloc.bloc,
+                        body: b)))
+                .toList() ??
+            []) +
+        (events
+                ?.map((e) => _buildListTile(
+                      e.eventID ?? "",
+                      e.eventName ?? "",
+                      e.getSubTitle(),
+                      e.eventImageURL ?? e.eventBodies?[0].bodyImageURL ?? "",
+                      Icons.event_outlined,
+                      () =>
+                          EventPage.navigateWith(context, exploreBloc.bloc, e),
+                    ))
+                .toList() ??
+            []) +
+        (users
+                ?.map((u) => _buildListTile(
+                      u.userID ?? "",
+                      u.userName ?? "",
+                      u.userLDAPId ?? "",
+                      u.userProfilePictureUrl ?? "",
+                      Icons.person_outline_outlined,
+                      () => UserPage.navigateWith(context, exploreBloc.bloc, u),
+                    ))
+                .toList() ??
+            []);
   } else {
     return [
       Center(
@@ -1395,7 +1443,7 @@ Widget _buildListTile(String id, String title, String subtitle, String url,
               width: 63,
               fit: BoxFit.cover,
               placeholder: (context, url) => Center(child: Icon(fallbackIcon)),
-              errorWidget: (context, url, error) => Icon(Icons.error),
+              errorWidget: (context, url, error) => Icon(Icons.people),
             ),
           ),
           SizedBox(width: 16),
