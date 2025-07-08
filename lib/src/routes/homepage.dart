@@ -166,8 +166,11 @@ class _HomepageState extends State<Homepage> {
                 top: 12,
                 right: 0,
                 bottom: 0,
-                child: SvgPicture.asset(
-                  'assets/homepage/icons/star.svg',
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: SvgPicture.asset(
+                    'assets/homepage/icons/star.svg',
+                  ),
                 )),
             Positioned(
                 left: 122,

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:InstiApp/constants.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/role.dart';
@@ -14,6 +15,8 @@ import 'package:InstiApp/src/utils/footer_buttons.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dash/flutter_dash.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
 import 'package:markdown/markdown.dart' as markdown;
@@ -48,10 +51,43 @@ class BodyPage extends StatefulWidget {
 }
 
 class _BodyPageState extends State<BodyPage> {
+  Constants myConstants = Constants();
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   Body? body;
-
+  bool showLinks=false;
   bool loadingFollow = false;
+  List<String> linkIcon=["globe","whatsapp","instagram"];
+  List<String> linkLabel=["Website","Whatsapp Group","Instagram"];
+  Widget clubQuickLinkContainer(String icon, String label){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Container(
+              height: 24,
+              width: 24,
+              child: SvgPicture.asset('assets/explore_new/${icon}.svg'),
+            ),
+            SizedBox(width: 9),
+            Text(
+              label,
+              style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          ],
+        ),
+        Container(
+          height: 24,
+          width: 24,
+          child: SvgPicture.asset('assets/quicklinks/icons/external_link.svg'),
+        ),
+      ],
+    );
+  }
 
   @override
   void initState() {
@@ -79,6 +115,19 @@ class _BodyPageState extends State<BodyPage> {
 
   @override
   Widget build(BuildContext context) {
+    final parent = body?.bodyParents?.first;
+    final imageUrl = parent?.bodyImageURL;
+    final title=parent?.bodyName;
+    Map<String,String> parentBody = {
+      "Culturals@IITB": "ICC",
+      "IITB Sports": "ISC",
+      "Tech@IITB": "ITC",
+      "IIT Bombay": "IITB",
+      "Hostel Affairs": "HA",
+      "Departments": "IITB",
+      "DevCom": "DC",
+      "Placement Cell": "IITB"
+    };
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
     var footerButtons = <Widget>[];
@@ -120,8 +169,10 @@ class _BodyPageState extends State<BodyPage> {
       }
     }
     return Scaffold(
+      //backgroundColor: Colors.blue[300],
+      backgroundColor: Color(0xFFF6F6F6),
       key: _scaffoldKey,
-      drawer: NavDrawer(),
+      // drawer: NavDrawer(),
       // bottomNavigationBar: MyBottomAppBar(
       //   child: new Row(
       //     mainAxisSize: MainAxisSize.max,
@@ -139,49 +190,82 @@ class _BodyPageState extends State<BodyPage> {
       //     ],
       //   ),
       // ),
-      body: SafeArea(
-        child: body == null
-            ? Center(
-                child: CircularProgressIndicatorExtended(
-                label: Text("Loading the body page"),
-              ))
-            : Stack(
-                children: [
-                  ListView(
+      body: body == null
+          ? Center(
+              child: CircularProgressIndicatorExtended(
+              label: Text("Loading the body page"),
+            ))
+          : Stack(
+              children: [
+                SafeArea(
+                  child: ListView(
                       padding: EdgeInsets.only(
-                          bottom: 90), // Add padding for the button
+                          bottom: 20), // Add padding for the button
                       children: <Widget>[
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Cover Image
-                            Container(
-                              width: double.infinity,
-                              height: 200,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                image: body?.bodyImageURL != null
+                            Stack(
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  height: 200,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade300,
+                                    //borderRadius: BorderRadius.circular(40),
+                                    image: body?.bodyImageURL != null
                                     ? DecorationImage(
                                         image:
                                             // NetworkImage(body!.bodyImageURL!),
                                             AssetImage(
-                                                'assets/explore/symphony.png'),
+                                              'assets/explore/symphony.png'
+                                            ),
                                         fit: BoxFit.cover,
                                       )
                                     : const DecorationImage(
                                         image: AssetImage('assets/photo.png'),
                                         fit: BoxFit.cover,
                                       ),
-                              ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 16,),
+                                  child: GestureDetector(
+                                    onTap: (){
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Container(
+                                      height: 52,
+                                      width: 52,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(alpha: 0.60),
+                                        borderRadius: BorderRadius.circular(25)
+                                      ),
+                                      child: Center(
+                                        child: Container(
+                                          height: 24,
+                                          width: 24,
+                                          child: SvgPicture.asset('assets/quicklinks/icons/arrow_left.svg'),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
-
+                            
                             // Profile Card Section
                             Container(
                               width: double.infinity,
-                              height: 140,
+                              // height: 125,
+                              padding: EdgeInsets.fromLTRB(16, 22, 16, 20),
                               // padding: const EdgeInsets.all(20),
                               decoration: const BoxDecoration(
                                 color: Color(0xFF0F1620),
+                                borderRadius: BorderRadius.vertical(
+                                  bottom: Radius.circular(24)
+                                )
                               ),
                               child: Stack(
                                 children: [
@@ -201,8 +285,9 @@ class _BodyPageState extends State<BodyPage> {
                                       ),
                                     ),
                                   ),
-
+                        
                                   Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Container(
                                         decoration: BoxDecoration(
@@ -223,14 +308,14 @@ class _BodyPageState extends State<BodyPage> {
                                         ),
                                       ),
                                       const SizedBox(width: 20),
-
+                        
                                       // Profile Info
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                              MainAxisAlignment.start,
                                           children: [
                                             Text(
                                               body?.bodyName ?? 'Symphony',
@@ -280,6 +365,45 @@ class _BodyPageState extends State<BodyPage> {
                                           ],
                                         ),
                                       ),
+                                      Container(
+                                        height: 35,
+                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFF15263C),
+                                          borderRadius: BorderRadius.circular(8)
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Container(
+                                              height: 20,
+                                              width: 20,
+                                              decoration: BoxDecoration(
+                                                // color: Colors.amber[100],
+                                                borderRadius: BorderRadius.circular(10),
+                                                image: DecorationImage(
+                                                  image: imageUrl != null && imageUrl.isNotEmpty
+                                                    ? NetworkImage(imageUrl)
+                                                    : const AssetImage('assets/explore_new/images/org.png') as ImageProvider,
+                                                  // image: AssetImage(
+                                                  //   'assets/explore_new/images/org.png',
+                                                  // ),
+                                                  fit: BoxFit.cover
+                                                  )
+                                              ),
+                                            ),
+                                            SizedBox(width: 8,),
+                                            Text(
+                                              parentBody[title ?? ""] ?? "",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w700,
+                                                color: const Color(0xFFF6F6F6)
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      )
                                     ],
                                   ),
                                 ],
@@ -385,7 +509,7 @@ class _BodyPageState extends State<BodyPage> {
                                                           ),
                                                     Divider(),
                                                     const SizedBox(height: 20),
-
+                        
                                                     // Photo Album Section
                                                     const Text(
                                                       'Photo Album',
@@ -424,9 +548,9 @@ class _BodyPageState extends State<BodyPage> {
                                                         },
                                                       ),
                                                     ),
-
+                        
                                                     const SizedBox(height: 24),
-
+                        
                                                     // Part Of Section
                                                     const Text(
                                                       'Part of',
@@ -450,7 +574,7 @@ class _BodyPageState extends State<BodyPage> {
                                                   ],
                                                 ),
                                               ),
-
+                        
                                               // Events Tab
                                               body?.bodyEvents == null ||
                                                       body!.bodyEvents!.isEmpty
@@ -485,7 +609,7 @@ class _BodyPageState extends State<BodyPage> {
                                                                     e))
                                                       ],
                                                     ),
-
+                        
                                               // People Tab
                                               people.isEmpty
                                                   ? const Center(
@@ -627,103 +751,213 @@ class _BodyPageState extends State<BodyPage> {
                       //   SizedBox(
                       //     height: 64.0,
                       //   )
-
+                        
                       // ]),
                       ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
+                ),
+              if(showLinks)
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
                     child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 8,
-                            offset: Offset(0, -2),
-                          ),
-                        ],
+                      padding: EdgeInsets.fromLTRB(20, 16, 20, 24),
+                      height: 292,
+                      width: 380,
+                      decoration: BoxDecoration(
+                        color: myConstants.instiappDark,
+                        borderRadius: BorderRadius.vertical(
+                          bottom: Radius.circular(40),
+                          top: Radius.circular(20)
+                        )
                       ),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blueAccent,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Quick Links",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  setState(() {
+                                    showLinks=false;
+                                  });
+                                },
+                                child: Container(
+                                  height: 21,
+                                  width: 21,
+                                  child: SvgPicture.asset('assets/explore_new/x.svg'),
+                                ),
+                              )
+                            ],
                           ),
-                          onPressed: () {
-                            // Handle Join Action
-                          },
-                          child: const Text(
-                            'Join',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'DM Sans',
-                              color: Colors.white,
-                            ),
+                          SizedBox(height: 16),
+                          Dash(
+                            direction: Axis.horizontal,
+                            length: 339,
+                            dashLength: 6,
+                            dashGap: 7,
+                            dashColor: Colors.white.withValues(alpha: 0.10),
                           ),
-                        ),
+                          SizedBox(height: 16),
+                          for(int i=0;i<=2;i++)...[
+                            clubQuickLinkContainer(linkIcon[i],linkLabel[i]),
+                            if(i!=3)
+                              SizedBox(height: 12)
+                          ] 
+                        ],
                       ),
                     ),
                   ),
-                  // TitleWithBackButton(
-                  // child: Column(
-                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                  //   children: <Widget>[
-                  //     Text(
-                  //       body?.bodyName ?? "",
-                  //       style: theme.textTheme.displaySmall,
-                  //     ),
-                  //     SizedBox(height: 8.0),
-                  //     Text(body?.bodyShortDescription ?? "",
-                  //         style: theme.textTheme.titleLarge),
-                  //   ],
-                  // ),
-                  // ),
-                  // Padding(
-                  //   padding: const EdgeInsets.all(8.0),
-                  //   child: body?.bodyImageURL != null
-                  //       ? PhotoViewableImage(
-                  //           url: body?.bodyImageURL ?? defUrl,
-                  //           heroTag: widget.heroTag ?? body?.bodyID ?? "",
-                  //           fit: BoxFit.fitWidth,
-                  //         )
-                  //       : SizedBox(
-                  //           height: 0.0,
-                  //         ),
-                  // ),
-                  // body?.bodyImageURL != null
-                  //     ? SizedBox(
-                  //         height: 16.0,
-                  //       )
-                  //     : SizedBox(
-                  //         height: 0.0,
-                  //       ),
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(
-                  //       horizontal: 28.0, vertical: 16.0),
-                  //   child: CommonHtml(
-                  //       data: body?.bodyDescription ?? "",
-                  //       defaultTextStyle:
-                  //           theme.textTheme.titleMedium ?? TextStyle()),
-                  // ),
-                  // body?.bodyDescription != null
-                  //     ? SizedBox(
-                  //         height: 16.0,
-                  //       )
-                  //     : SizedBox(
-                  //         height: 0.0,
-                  //       ),
-                  // Divider(),
-                ],
-              ),
-      ),
+                ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    // color: Colors.transparent,
+                    // decoration: const BoxDecoration(
+                    //   color: Colors.white,
+                    //   borderRadius: BorderRadius.all(Radius.circular(50)),
+                    //   boxShadow: [
+                    //     BoxShadow(
+                    //       color: Colors.black12,
+                    //       blurRadius: 8,
+                    //       offset: Offset(0, -2),
+                    //     ),
+                    //   ],
+                    // ),
+                    child: Container(
+                      height: 64,
+                      width: 380,
+                      decoration: BoxDecoration(
+                        color: myConstants.instiappDark,
+                        borderRadius: BorderRadius.circular(50)
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                showLinks=true;
+                              });
+                            },
+                            child: Container(
+                              height: 52,
+                              width: 52,
+                              decoration: BoxDecoration(
+                                color: Color(0xFF2B4E83),
+                                borderRadius: BorderRadius.circular(50)
+                              ),
+                              child: Container(
+                                height: 24,
+                                width: 24,
+                                child: Center(
+                                  child: SvgPicture.asset(
+                                    'assets/explore_new/link.svg',
+                                    height: 24,
+                                    width: 24,
+                                    ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8,),
+                          Container(
+                            width: 308,
+                            height: 52,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: myConstants.instiappBlue,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                              ),
+                              onPressed: () async {
+                                if(body!=null){
+                                  
+                                    await bloc.updateFollowBody(body!);
+                                    setState((){});
+                                  
+                                }  
+                              },
+                              child: Text(
+                                (body!.bodyUserFollows ?? false) ? 'Joined' : 'Join',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'DM Sans',
+                                  color: Colors.white,
+                                ),
+                              )
+                              
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                // TitleWithBackButton(
+                // child: Column(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: <Widget>[
+                //     Text(
+                //       body?.bodyName ?? "",
+                //       style: theme.textTheme.displaySmall,
+                //     ),
+                //     SizedBox(height: 8.0),
+                //     Text(body?.bodyShortDescription ?? "",
+                //         style: theme.textTheme.titleLarge),
+                //   ],
+                // ),
+                // ),
+                // Padding(
+                //   padding: const EdgeInsets.all(8.0),
+                //   child: body?.bodyImageURL != null
+                //       ? PhotoViewableImage(
+                //           url: body?.bodyImageURL ?? defUrl,
+                //           heroTag: widget.heroTag ?? body?.bodyID ?? "",
+                //           fit: BoxFit.fitWidth,
+                //         )
+                //       : SizedBox(
+                //           height: 0.0,
+                //         ),
+                // ),
+                // body?.bodyImageURL != null
+                //     ? SizedBox(
+                //         height: 16.0,
+                //       )
+                //     : SizedBox(
+                //         height: 0.0,
+                //       ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(
+                //       horizontal: 28.0, vertical: 16.0),
+                //   child: CommonHtml(
+                //       data: body?.bodyDescription ?? "",
+                //       defaultTextStyle:
+                //           theme.textTheme.titleMedium ?? TextStyle()),
+                // ),
+                // body?.bodyDescription != null
+                //     ? SizedBox(
+                //         height: 16.0,
+                //       )
+                //     : SizedBox(
+                //         height: 0.0,
+                //       ),
+                // Divider(),
+              ],
+            ),
       // floatingActionButton: body == null
       //     ? null
       //     : editAccess

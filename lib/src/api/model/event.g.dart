@@ -44,7 +44,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
           ?.map((e) => Interest.fromJson(e as Map<String, dynamic>))
           .toList(),
     )
-      ..eventLongDescription = json['longdescription'] as String?
+      ..eventLongDescription = json['description'] as String?
       ..emailVerified = json['email_verified'] as bool?
       ..eventStartDate = json['eventStartDate'] == null
           ? null

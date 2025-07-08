@@ -116,19 +116,40 @@ Widget LinkSection(String title,Map<String,String> links){
         "Circulars": "https://www.iitb.ac.in/newacadhome/circular.jsp",
         "Course List": "https://portal.iitb.ac.in/asc/Courses",
       },
-      "Services": {
-        "WebMail": "https://webmail-sso.iitb.ac.in/",
-        "CAMP": "https://camp.iitb.ac.in/",
-        "Microsoft Store": "https://www.cc.iitb.ac.in/attachments/microsoft/ReadMe.pdf",
-        "BigHome Cloud": "https://bighome.iitb.ac.in/index.php/login",
-      },
-      "Miscellaneous": {
-        "Intercom Extensions": "https://portal.iitb.ac.in/telephone/",
-        "Hospital": "https://www.iitb.ac.in/hospital/",
-      }
+      // "Services": {
+      //   "WebMail": "https://webmail-sso.iitb.ac.in/",
+      //   "CAMP": "https://camp.iitb.ac.in/",
+      //   "Microsoft Store": "https://www.cc.iitb.ac.in/attachments/microsoft/ReadMe.pdf",
+      //   "BigHome Cloud": "https://bighome.iitb.ac.in/index.php/login",
+      // },
+      // "Miscellaneous": {
+      //   "Intercom Extensions": "https://portal.iitb.ac.in/telephone/",
+      //   "Hospital": "https://www.iitb.ac.in/hospital/",
+      // }
     };
     List<String> linkLabel=quickLinks.keys.toList();
     List<Map<String,String>> links=quickLinks.values.toList();
+    Widget emergencyContainer(String label){
+      return Container(
+              padding: EdgeInsets.symmetric(horizontal: 8,vertical: 4),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: const Color(0xFFD2D5DA),
+                  width: 1
+                ),
+                borderRadius: BorderRadius.circular(4)
+              ),
+              child: Text(
+                label,
+                style: TextStyle(
+                color: const Color(0xFF7E8287),
+                fontSize: 12,
+                fontFamily: 'DM Sans',
+                fontWeight: FontWeight.w700,
+                ),
+              ),
+            );
+    }
 
     return Scaffold(
       backgroundColor: Color(0xFFF6F6F6),
@@ -213,6 +234,91 @@ Widget LinkSection(String title,Map<String,String> links){
                 length: 378,
                 dashGap: 7,
                 dashColor: Color(0xFFDADADA),
+              ),
+              SizedBox(height: 24),
+              GestureDetector(
+                onTap: () async {
+                  final url=Uri.parse("https://www.iitb.ac.in/safety/en/emergency-contact-number");
+                  if(await canLaunchUrl(url)){
+                    await launchUrl(url);
+                  } else{
+                    throw "Could not launch ${url}";
+                  }
+                },
+                child: Container(
+                  height: 96,
+                  width: 380,
+                  //padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Color(0xFFED0033),
+                      width: 1
+                    )
+                  ),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: 16,
+                        bottom: 16,
+                        right: 126,
+                        top: 16,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          //mainAxisAlignment: MainAxisAlignment.spaceBe,
+                          children: [
+                            Text(
+                              "Emergency Contact",
+                              style: TextStyle(
+                                color: const Color(0xFF0F1620),
+                                fontSize: 20,
+                                fontFamily: 'DM Sans',
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            SizedBox(height: 10,),
+                            Row(
+                              children: [
+                                emergencyContainer("QRT"),
+                                SizedBox(width: 4),
+                                emergencyContainer("Ambulance"),
+                                SizedBox(width: 4),
+                                emergencyContainer("Main Gate"),
+                                SizedBox(width: 4),
+                                Text(
+                                  "...",
+                                  style: TextStyle(
+                                    color: const Color(0xFFD2D5DA),
+                                    fontSize: 20,
+                                    fontFamily: 'DM Sans',
+                                    fontWeight: FontWeight.w400
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        )
+                        ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        left: 292,
+                        top: 12,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: SvgPicture.asset('assets/quicklinks/icons/star.svg'),
+                        )
+                      ),
+                      Positioned(
+                        bottom: 16,
+                        right: 13.29,
+                        top: 45,
+                        left: 324,
+                        child: SvgPicture.asset('assets/quicklinks/icons/bell.svg')
+                        )
+                    ],
+                  ),
+                ),
               ),
               for(int i=0;i<linkLabel.length;i++) ...[
                 SizedBox(height: 24),
