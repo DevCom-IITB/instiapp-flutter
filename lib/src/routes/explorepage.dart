@@ -535,6 +535,7 @@ class _ExplorePageState extends State<ExplorePage> {
   TextEditingController? _searchFieldController;
   @override
   Widget build(BuildContext context) {
+    var bloc = BlocProvider.of(context)!.bloc;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
@@ -662,24 +663,62 @@ class _ExplorePageState extends State<ExplorePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Bodycard(context, "Cult", "assets/explore/cult.png"),
-                        Bodycard(context, "Tech", "assets/explore/tech.png"),
+                        InkWell(
+                          onTap: () => ExploreClubPage.navigateWith(
+                            context,
+                            bloc,
+                            bodyID: "91199c20-7488-41c5-9f6b-6f6c7c5b897d",
+                          ),
+                          child: Bodycard(
+                              context, "Cult", "assets/explore/cult.png"),
+                        ),
+                        InkWell(
+                          onTap: () => ExploreClubPage.navigateWith(
+                            context,
+                            bloc,
+                            bodyID: "81e05a1a-7fd1-45b5-84f6-074e52c0f085",
+                          ),
+                          child: Bodycard(
+                              context, "Tech", "assets/explore/tech.png"),
+                        ),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Bodycard(context, "Sports", "assets/explore/sport.png"),
+                        InkWell(
+                          onTap: () => ExploreClubPage.navigateWith(
+                            context,
+                            bloc,
+                            bodyID: "a9f81e69-fcc9-4fe3-b261-9e5e7a13f898",
+                          ),
+                          child: Bodycard(
+                              context, "Sports", "assets/explore/sport.png"),
+                        ),
                         Bodycard(context, "I.Bs", "assets/explore/ibs.png"),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Bodycard(
-                            context, "Hostels", "assets/explore/hostels.png"),
-                        Bodycard(context, "Departments",
-                            "assets/explore/departments.png"),
+                        InkWell(
+                          onTap: () => ExploreClubPage.navigateWith(
+                            context,
+                            bloc,
+                            bodyID: "f3ae5230-4441-4586-81a8-bf75a2e47318",
+                          ),
+                          child: Bodycard(
+                              context, "Hostels", "assets/explore/hostels.png"),
+                        ),
+                        InkWell(
+                          onTap: () => ExploreClubPage.navigateWith(
+                            context,
+                            bloc,
+                            bodyID: "252ddc80-910b-4f63-b68a-de30a62a947e",
+                          ),
+                          child: Bodycard(context, "Departments",
+                              "assets/explore/departments.png"),
+                        ),
                       ],
                     ),
                     Row(
@@ -701,27 +740,28 @@ class _ExplorePageState extends State<ExplorePage> {
 }
 
 Widget Bodycard(BuildContext context, String title, String imagePath) {
-  return GestureDetector( 
-    
+  return GestureDetector(
+      child: InkWell(
     child: Container(
-    height: 128,
-    width: 182,
-    margin: const EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 8),
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(14),
-      image: DecorationImage(
-        image: AssetImage(imagePath),
-        fit: BoxFit.cover,
+      height: 128,
+      width: 182,
+      margin: const EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        image: DecorationImage(
+          image: AssetImage(imagePath),
+          fit: BoxFit.cover,
+        ),
       ),
-    ),
-    child: Text(
-      title,
-      style: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w900,
-        color: Colors.white,
-        fontFamily: 'DM Sans',
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w900,
+          color: Colors.white,
+          fontFamily: 'DM Sans',
+        ),
       ),
     ),
   ));
@@ -861,7 +901,7 @@ class _ExploresearchState extends State<Exploresearch> {
                                   }
                                   exploreBloc.query = query;
                                 });
-                                await saveRecentSearches();                                
+                                await saveRecentSearches();
                                 await exploreBloc.refresh();
                               },
                               autofocus: true,
