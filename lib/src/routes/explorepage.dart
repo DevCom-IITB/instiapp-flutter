@@ -701,8 +701,9 @@ class _ExplorePageState extends State<ExplorePage> {
 }
 
 Widget Bodycard(BuildContext context, String title, String imagePath) {
-  return GestureDetector(
-      child: Container(
+  return GestureDetector( 
+    
+    child: Container(
     height: 128,
     width: 182,
     margin: const EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 8),
