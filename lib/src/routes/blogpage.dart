@@ -83,7 +83,7 @@ class _BlogPageState extends State<BlogPage> {
     bloc = BlocProvider.of(context)!.bloc;
     body = await dostuff();
     setState(() {
-      isLoading = true;
+      isLoading = false;
     });
   }
 
@@ -417,7 +417,7 @@ class _BlogPageState extends State<BlogPage> {
                                       blogBloc!.query = query;
                                       await blogBloc.refresh();
                                     },
-                                    autofocus: true,
+                                    // autofocus: true,
                                     maxLines: 1,
                                   ),
                                 )

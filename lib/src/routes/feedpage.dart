@@ -1,14 +1,20 @@
 import 'dart:collection';
 
+import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_dash/flutter_dash.dart';
+import 'package:InstiApp/src/routes/explore_club.dart';
+import 'package:InstiApp/src/routes/bodypage.dart';
+import 'package:share/share.dart';
 
 class FeedPage extends StatefulWidget {
   @override
@@ -26,6 +32,9 @@ class _FeedPageState extends State<FeedPage> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Color.fromRGBO(246, 246, 246, 1),
+    ));
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
     if (firstBuild) {
@@ -33,6 +42,7 @@ class _FeedPageState extends State<FeedPage> {
       firstBuild = false;
     }
     return Scaffold(
+      backgroundColor: Color.fromRGBO(246, 246, 246, 1),
       key: _scaffoldKey,
       body: SafeArea(
         child: RefreshIndicator(
@@ -43,93 +53,117 @@ class _FeedPageState extends State<FeedPage> {
                 child: Column(children: [
                   Center(
                     child: Container(
-                      padding: EdgeInsets.only(top: 10.5, bottom: 10.5),
-                      child: Text(
-                        'Feed',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          fontFamily: 'DM Sans',
-                        ),
-                      ),
-                    ),
+                        padding: EdgeInsets.only(top: 10.5, bottom: 10.5),
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Insti ',
+                                style: TextStyle(
+                                  color: const Color(0xFF0F1620),
+                                  fontSize: 24,
+                                  fontFamily: 'DM Sans',
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'Feed',
+                                style: TextStyle(
+                                  color: const Color(0xFF306FDC),
+                                  fontSize: 24,
+                                  fontFamily: 'DM Sans',
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          textAlign: TextAlign.center,
+                        )),
                   ),
-                  SizedBox(height: 8),
-                  Container(
-                      margin: EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              decoration: BoxDecoration(
-                                  color: Color.fromRGBO(239, 239, 239, 1),
-                                  borderRadius: BorderRadius.circular(50),
-                                  border: Border.all(
-                                    color: Color.fromRGBO(210, 213, 218, 1),
-                                  )),
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/feed/setting-4.svg',
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Sort',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: 'DM Sans',
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  SvgPicture.asset(
-                                    'assets/feed/chevron-down.svg',
-                                  ),
-                                ],
-                              )),
-                          SizedBox(width: 8),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                                color: Color.fromRGBO(239, 239, 239, 1),
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: Color.fromRGBO(210, 213, 218, 1),
-                                )),
-                            child: Text(
-                              'Events',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'DM Sans',
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                                color: Color.fromRGBO(239, 239, 239, 1),
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: Color.fromRGBO(210, 213, 218, 1),
-                                )),
-                            child: Text(
-                              'Announcements',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'DM Sans',
-                              ),
-                            ),
-                          ),
-                        ],
-                      )),
-                  SizedBox(height: 23),
+                  SizedBox(height: 2),
+                  Dash(
+                    direction: Axis.horizontal,
+                    length: 368,
+                    dashLength: 6,
+                    dashGap: 7,
+                    dashColor: Color(0xFFDADADA),
+                  ),
+                  SizedBox(height: 20),
+                  // Container(
+                  //     margin: EdgeInsets.symmetric(horizontal: 16),
+                  //     child: Row(
+                  //       mainAxisAlignment: MainAxisAlignment.start,
+                  //       children: [
+                  //         Container(
+                  //             padding: EdgeInsets.symmetric(
+                  //                 horizontal: 16, vertical: 8),
+                  //             decoration: BoxDecoration(
+                  //                 color: Color.fromRGBO(239, 239, 239, 1),
+                  //                 borderRadius: BorderRadius.circular(50),
+                  //                 border: Border.all(
+                  //                   color: Color.fromRGBO(210, 213, 218, 1),
+                  //                 )),
+                  //             child: Row(
+                  //               children: [
+                  //                 SvgPicture.asset(
+                  //                   'assets/feed/setting-4.svg',
+                  //                 ),
+                  //                 SizedBox(width: 8),
+                  //                 Text(
+                  //                   'Sort',
+                  //                   style: TextStyle(
+                  //                     fontSize: 14,
+                  //                     fontWeight: FontWeight.w500,
+                  //                     fontFamily: 'DM Sans',
+                  //                   ),
+                  //                 ),
+                  //                 SizedBox(width: 8),
+                  //                 SvgPicture.asset(
+                  //                   'assets/feed/chevron-down.svg',
+                  //                 ),
+                  //               ],
+                  //             )),
+                  //         SizedBox(width: 8),
+                  //         Container(
+                  //           padding: EdgeInsets.symmetric(
+                  //               horizontal: 16, vertical: 8),
+                  //           decoration: BoxDecoration(
+                  //               color: Color.fromRGBO(239, 239, 239, 1),
+                  //               borderRadius: BorderRadius.circular(50),
+                  //               border: Border.all(
+                  //                 color: Color.fromRGBO(210, 213, 218, 1),
+                  //               )),
+                  //           child: Text(
+                  //             'Events',
+                  //             style: TextStyle(
+                  //               fontSize: 14,
+                  //               fontWeight: FontWeight.w500,
+                  //               fontFamily: 'DM Sans',
+                  //             ),
+                  //           ),
+                  //         ),
+                  //         SizedBox(width: 8),
+                  //         Container(
+                  //           padding: EdgeInsets.symmetric(
+                  //               horizontal: 16, vertical: 8),
+                  //           decoration: BoxDecoration(
+                  //               color: Color.fromRGBO(239, 239, 239, 1),
+                  //               borderRadius: BorderRadius.circular(50),
+                  //               border: Border.all(
+                  //                 color: Color.fromRGBO(210, 213, 218, 1),
+                  //               )),
+                  //           child: Text(
+                  //             'Announcements',
+                  //             style: TextStyle(
+                  //               fontSize: 14,
+                  //               fontWeight: FontWeight.w500,
+                  //               fontFamily: 'DM Sans',
+                  //             ),
+                  //           ),
+                  //         ),
+                  //   ],
+                  // )),
+                  // SizedBox(height: 23),
                 ]),
               ),
               StreamBuilder(
@@ -175,216 +209,9 @@ class _FeedPageState extends State<FeedPage> {
   }
 }
 
-//   Widget _buildEvent(ThemeData theme, InstiAppBloc bloc, Event event) {
-//     if (event.eventBigImage) {
-//       return InkWell(
-//         onTap: () {
-//           _openEventPage(bloc, event);
-//         },
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.stretch,
-//           children: <Widget>[
-//             Hero(
-//               tag: event.eventID ?? "",
-//               child: Material(
-//                 type: MaterialType.transparency,
-//                 child: Ink.image(
-//                   child: Container(),
-//                   image: CachedNetworkImageProvider(
-//                     event.eventImageURL ??
-//                         event.eventBodies?[0].bodyImageURL ??
-//                         "",
-//                   ),
-//                   height: MediaQuery.of(context).size.width * 0.6,
-//                   fit: BoxFit.cover,
-//                 ),
-//               ),
-//             ),
-//             ListTile(
-//               contentPadding:
-//                   EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-//               title: Text(
-//                 event.eventName ?? "",
-//                 style: theme.textTheme.titleLarge,
-//               ),
-//               enabled: true,
-//               subtitle: Text(event.getSubTitle()),
-//             )
-//           ],
-//         ),
-//       );
-//     } else {
-//       return ListTile(
-//         title: Text(
-//           event.eventName ?? "",
-//           style: theme.textTheme.titleLarge,
-//         ),
-//         enabled: true,
-//         leading: NullableCircleAvatar(
-//           event.eventImageURL ?? event.eventBodies?[0].bodyImageURL ?? "",
-//           Icons.event_outlined,
-//           heroTag: event.eventID ?? "",
-//         ),
-//         subtitle: Text(event.getSubTitle()),
-//         onTap: () {
-//           _openEventPage(bloc, event);
-//         },
-//       );
-//     }
-//   }
-
-//   _openEventPage(InstiAppBloc bloc, Event event) {
-//     EventPage.navigateWith(context, bloc, event);
-//   }
-// }
-// import 'package:flutter/material.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
-// import 'homepage.dart';
-
-// class FeedPage extends StatefulWidget {
-//   @override
-//   _FeedPageState createState() => _FeedPageState();
-// }
-
-// class _FeedPageState extends State<FeedPage> {
-//   bool firstBuild = true;
-//   @override
-//   Widget build(BuildContext context) {
-//     var bloc = BlocProvider.of(context)!.bloc;
-//     if (firstBuild) {
-//       bloc.updateEvents();
-//       firstBuild = false;
-//     }
-//     return Scaffold(
-//         body: SafeArea(
-//       child: RefreshIndicator(
-//         onRefresh: () => bloc.updateEvents(),
-//           child: CustomScrollView(
-//             slivers: [
-//         Column(children: [
-//           Center(
-//             child: Container(
-//               padding: EdgeInsets.only(top: 10.5, bottom: 10.5),
-//               child: Text(
-//                 'Feed',
-//                 style: TextStyle(
-//                   fontSize: 24,
-//                   fontWeight: FontWeight.w700,
-//                   fontFamily: 'DM Sans',
-//                 ),
-//               ),
-//             ),
-//           ),
-//           SizedBox(height: 8),
-//           Container(
-//               margin: EdgeInsets.symmetric(horizontal: 16),
-//               child: Row(
-//                 mainAxisAlignment: MainAxisAlignment.start,
-//                 children: [
-//                   Container(
-//                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//                       decoration: BoxDecoration(
-//                           color: Color.fromRGBO(239, 239, 239, 1),
-//                           borderRadius: BorderRadius.circular(50),
-//                           border: Border.all(
-//                             color: Color.fromRGBO(210, 213, 218, 1),
-//                           )),
-//                       child: Row(
-//                         children: [
-//                           SvgPicture.asset(
-//                             'assets/blogs/setting-4.svg',
-//                           ),
-//                           SizedBox(width: 8),
-//                           Text(
-//                             'Sort',
-//                             style: TextStyle(
-//                               fontSize: 14,
-//                               fontWeight: FontWeight.w500,
-//                               fontFamily: 'DM Sans',
-//                             ),
-//                           ),
-//                           SizedBox(width: 8),
-//                           SvgPicture.asset(
-//                             'assets/blogs/chevron-down.svg',
-//                           ),
-//                         ],
-//                       )),
-//                   SizedBox(width: 8),
-//                   Container(
-//                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//                     decoration: BoxDecoration(
-//                         color: Color.fromRGBO(239, 239, 239, 1),
-//                         borderRadius: BorderRadius.circular(50),
-//                         border: Border.all(
-//                           color: Color.fromRGBO(210, 213, 218, 1),
-//                         )),
-//                     child: Text(
-//                       'Events',
-//                       style: TextStyle(
-//                         fontSize: 14,
-//                         fontWeight: FontWeight.w500,
-//                         fontFamily: 'DM Sans',
-//                       ),
-//                     ),
-//                   ),
-//                   SizedBox(width: 8),
-//                   Container(
-//                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//                     decoration: BoxDecoration(
-//                         color: Color.fromRGBO(239, 239, 239, 1),
-//                         borderRadius: BorderRadius.circular(50),
-//                         border: Border.all(
-//                           color: Color.fromRGBO(210, 213, 218, 1),
-//                         )),
-//                     child: Text(
-//                       'Announcements',
-//                       style: TextStyle(
-//                         fontSize: 14,
-//                         fontWeight: FontWeight.w500,
-//                         fontFamily: 'DM Sans',
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               )),
-//           SizedBox(height: 23),
-//           StreamBuilder(
-//             stream: bloc.events,
-//             builder:
-//                 (context, AsyncSnapshot<UnmodifiableListView<Event>> snapshot) {
-//               if (snapshot.hasData) {
-//                 if (snapshot.data!.length > 0) {
-//                   return SliverList(
-//                     delegate: SliverChildBuilderDelegate(
-//                         (context, index) => Feedpost(bloc, snapshot.data![index]),
-//                         childCount: snapshot.data!.length),
-//                   );
-//                 } else {
-//                   return SliverToBoxAdapter(
-//                     child: Center(
-//                       child: Text("No upcoming events"),
-//                     ),
-//                   );
-//                 }
-//               } else {
-//                 return SliverToBoxAdapter(
-//                   child: Center(
-//                     child: CircularProgressIndicatorExtended(
-//                       label: Text("Getting the latest events"),
-//                     ),
-//                   ),
-//                 );
-//               }
-//             },
-//           ),
-//         ]),])
-//       ),
-//     ));
-//   }
-// }
 String formatDate(String dateStr) {
   DateTime date = DateTime.parse(dateStr);
-  return DateFormat('d MMMM').format(date); // e.g., "23 June"
+  return DateFormat('d MMM').format(date); // e.g., "23 June"
 }
 
 String formatTime(String timeStr) {
@@ -398,17 +225,14 @@ Widget Feedpost(BuildContext context, InstiAppBloc bloc, Event event) {
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Specificblogpage(event: event),
+            builder: (context) => Specificblogpage(event: event, bloc: bloc),
           ));
     },
     child: Container(
         margin: EdgeInsets.only(left: 16, right: 16, bottom: 12),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Color.fromRGBO(210, 213, 218, 1),
-          ),
-        ),
+            borderRadius: BorderRadius.circular(16),
+            color: Color.fromRGBO(239, 239, 239, 1)),
         child: Column(children: [
           ClipRRect(
             borderRadius: BorderRadius.only(
@@ -416,25 +240,70 @@ Widget Feedpost(BuildContext context, InstiAppBloc bloc, Event event) {
               topRight: Radius.circular(16),
             ),
             child: Hero(
-                tag: event.eventID ?? "",
-                child: CachedNetworkImage(
-                  imageUrl: event.eventImageURL ??
-                      event.eventBodies?[0].bodyImageURL ??
-                      "",
-                  placeholder: (context, url) => CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
-                )),
+              tag: event.eventID ?? "",
+              child: CachedNetworkImage(
+                imageUrl: event.eventImageURL ??
+                    event.eventBodies?[0].bodyImageURL ??
+                    "",
+                width: double.infinity,
+                height: 475,
+                fit: BoxFit.cover,
+                placeholder: (context, url) =>
+                    Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              ),
+            ),
           ),
           Container(
+              height: 36,
+              decoration: BoxDecoration(
+                image: const DecorationImage(
+                  image: AssetImage('assets/feed/Text Area.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(width: 16),
+                  ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: CachedNetworkImage(
+                        imageUrl: event.eventBodies?[0].bodyImageURL ?? "",
+                        width: 28,
+                        height: 28,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, error, stackTrace) =>
+                            Icon(Icons.groups_2_outlined, size: 24),
+                      )),
+                  SizedBox(width: 16),
+                  Text(
+                    event.eventBodies?[0].bodyName ?? "",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontFamily: 'DM Sans',
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              )),
+          Container(
             width: double.infinity,
-            margin: EdgeInsets.only(left: 16, top: 12, right: 16),
+            margin: EdgeInsets.only(left: 16, top: 16, right: 16),
             child: Text(
-              event.eventStartTime != null
-                  ? '${formatDate(event.eventStartTime!)} - ${formatDate(event.eventEndTime!)}'
-                  : 'Unknown Date',
+              (event.eventStartTime != null
+                      ? formatDate(event.eventStartTime ?? "") +
+                          (formatDate(event.eventEndTime ?? "") !=
+                                  formatDate(event.eventStartTime ?? "")
+                              ? ' - ' + formatDate(event.eventEndTime ?? "")
+                              : '')
+                      : 'Unknown Date') +
+                  ', ' +
+                  formatTime(event.eventStartTime ?? ''),
               style: TextStyle(
                 fontSize: 12,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
                 fontFamily: 'DM Sans',
                 color: Color.fromRGBO(48, 111, 220, 1),
               ),
@@ -457,7 +326,6 @@ Widget Feedpost(BuildContext context, InstiAppBloc bloc, Event event) {
             margin: EdgeInsets.only(
               left: 16,
               right: 16,
-              top: 8,
             ),
             child: Text(
               event.eventVenues?.isNotEmpty ?? false
@@ -467,53 +335,44 @@ Widget Feedpost(BuildContext context, InstiAppBloc bloc, Event event) {
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 fontFamily: 'DM Sans',
+                color: const Color(0xCC0F1620),
               ),
             ),
           ),
-          Container(
-              width: double.infinity,
-              margin: EdgeInsets.only(left: 16, right: 17),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: CachedNetworkImage(
-                        imageUrl: event.eventBodies?[0].bodyImageURL ?? "",
-                        width: 24,
-                        height: 24,
-                        fit: BoxFit.cover,
-                        errorWidget: (context, error, stackTrace) =>
-                            Icon(Icons.groups_2_outlined, size: 24),
-                      )),
-                  SizedBox(width: 8),
-                  Text(
-                    event.eventBodies?[0].bodyName ?? "",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'DM Sans',
-                    ),
-                  ),
-                ],
-              )),
-          SizedBox(height: 13),
+          SizedBox(height: 20),
         ])),
   );
 }
 
 class Specificblogpage extends StatefulWidget {
   final Event event;
+  final InstiAppBloc bloc;
 
-  Specificblogpage({required this.event});
-
+  Specificblogpage({required this.event, required this.bloc});
   @override
   _specificblogpageState createState() => _specificblogpageState();
 }
 
 class _specificblogpageState extends State<Specificblogpage> {
+  late Future<Body> body;
+  Body? fullbody;
+
+  @override
+  void initState() {
+    super.initState();
+    body = widget.bloc.getBody(widget.event.eventBodies?[0].bodyID ?? "");
+    body.then((value) {
+      setState(() {
+        fullbody = value;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Color.fromRGBO(246, 246, 246, 1),
+    ));
     return Scaffold(
       backgroundColor: Color.fromRGBO(246, 246, 246, 1),
       body: SafeArea(
@@ -559,23 +418,80 @@ class _specificblogpageState extends State<Specificblogpage> {
                 ],
               )),
           SizedBox(height: 12),
+          Container(
+              height: 36,
+              decoration: BoxDecoration(
+                image: const DecorationImage(
+                  image: AssetImage('assets/feed/Text Area.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(width: 16),
+                  ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            widget.event.eventBodies?[0].bodyImageURL ?? "",
+                        width: 28,
+                        height: 28,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, error, stackTrace) =>
+                            Icon(Icons.groups_2_outlined, size: 24),
+                      )),
+                  SizedBox(width: 10),
+                  Text(
+                    widget.event.eventBodies?[0].bodyName ?? "",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontFamily: 'DM Sans',
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              )),
           Expanded(
             child: Stack(children: [
-              CachedNetworkImage(
-                imageUrl: widget.event.eventImageURL ??
-                    widget.event.eventBodies?[0].bodyImageURL ??
-                    "",
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => FullscreenImagePage(
+                        imageUrl: widget.event.eventImageURL ??
+                            widget.event.eventBodies?[0].bodyImageURL ??
+                            "",
+                        heroTag: widget.event.eventID,
+                      ),
+                    ),
+                  );
+                },
+                child: Hero(
+                  tag: widget.event.eventID ?? "",
+                  child: CachedNetworkImage(
+                    imageUrl: widget.event.eventImageURL ??
+                        widget.event.eventBodies?[0].bodyImageURL ??
+                        "",
+                    height: 412,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) =>
+                        Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
+                ),
               ),
               DraggableScrollableSheet(
-                initialChildSize: 0.54,
-                minChildSize: 0.3,
-                maxChildSize: 1,
+                initialChildSize: 0.5,
+                minChildSize: 0.5,
+                maxChildSize: 0.85,
                 builder: (context, scrollController) {
                   return Container(
                       padding: EdgeInsets.only(
-                          top: 10, left: 16, right: 16, bottom: 10),
+                          top: 10, left: 16, right: 16, bottom: 20),
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(246, 246, 246, 1),
                         borderRadius:
@@ -600,16 +516,19 @@ class _specificblogpageState extends State<Specificblogpage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  widget.event.eventName ?? "",
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w700,
-                                    fontFamily: 'DM Sans',
+                                Expanded(
+                                  child: Text(
+                                    widget.event.eventName ?? "",
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: 'DM Sans',
+                                    ),
                                   ),
                                 ),
-                                if (widget.event.eventBodies?[0].bodyParents !=
-                                    null)
+                                if (fullbody != null &&
+                                    fullbody!.bodyParents != null &&
+                                    fullbody!.bodyParents!.isNotEmpty)
                                   Container(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 6),
@@ -619,22 +538,27 @@ class _specificblogpageState extends State<Specificblogpage> {
                                       ),
                                       child: Row(
                                         children: [
-                                          CachedNetworkImage(
-                                            imageUrl: widget
-                                                    .event
-                                                    .eventBodies?[0]
-                                                    .bodyParents![0]
-                                                    .bodyImageURL ??
-                                                "",
-                                            placeholder: (context, url) =>
-                                                CircularProgressIndicator(),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    Icon(Icons.error),
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            child: CachedNetworkImage(
+                                              width: 20,
+                                              height: 20,
+                                              fit: BoxFit.cover,
+                                              imageUrl: fullbody!
+                                                      .bodyParents![0]
+                                                      .bodyImageURL ??
+                                                  "",
+                                              placeholder: (context, url) =>
+                                                  CircularProgressIndicator(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Icon(Icons.error),
+                                            ),
                                           ),
                                           SizedBox(width: 8),
                                           Text(
-                                            widget.event.eventBodies?[0]
+                                            fullbody!
                                                     .bodyParents![0].bodyName ??
                                                 "",
                                             style: TextStyle(
@@ -705,9 +629,26 @@ class _specificblogpageState extends State<Specificblogpage> {
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  formatDate(widget.event
-                                                          .eventStartTime ??
-                                                      ""),
+                                                  widget.event.eventStartTime !=
+                                                          null
+                                                      ? formatDate(widget.event
+                                                                  .eventStartTime ??
+                                                              "") +
+                                                          (formatDate(widget
+                                                                          .event
+                                                                          .eventEndTime ??
+                                                                      "") !=
+                                                                  formatDate(widget
+                                                                          .event
+                                                                          .eventStartTime ??
+                                                                      "")
+                                                              ? ' - ' +
+                                                                  formatDate(widget
+                                                                          .event
+                                                                          .eventEndTime ??
+                                                                      "")
+                                                              : '')
+                                                      : 'Unknown Date',
                                                   style: TextStyle(
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w700,
@@ -822,7 +763,8 @@ class _specificblogpageState extends State<Specificblogpage> {
                                   color: Color.fromRGBO(15, 22, 32, 1),
                                 ),
                               ),
-                            )
+                            ),
+                            SizedBox(height: 70),
                           ],
                         ),
                       ));
@@ -859,12 +801,21 @@ class _specificblogpageState extends State<Specificblogpage> {
                                   width: 24,
                                   fit: BoxFit.none,
                                 ),
-                                onPressed: () {}),
+                                onPressed: () async {
+                                  await Share.share(
+                                      "Check this event: ${ShareURLMaker.getEventURL(widget.event)}");
+                                }),
                           ),
                           SizedBox(width: 8),
                           Expanded(
                               child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              BodyPage.navigateWith(
+                                context,
+                                widget.bloc,
+                                body: widget.event.eventBodies?[0],
+                              );
+                            },
                             child: Container(
                                 padding: EdgeInsets.only(
                                     left: 16, right: 24, top: 13, bottom: 13),
@@ -919,3 +870,50 @@ class _specificblogpageState extends State<Specificblogpage> {
     );
   }
 }
+
+class FullscreenImagePage extends StatelessWidget {
+  final String imageUrl;
+  final String? heroTag;
+
+  const FullscreenImagePage({Key? key, required this.imageUrl, this.heroTag})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(children: [
+        AppBar(
+          backgroundColor: Colors.black,
+          elevation: 0,
+          leading: BackButton(
+            color: Colors.white, // optional: set icon color
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+        GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Center(
+            child: heroTag != null
+                ? Hero(
+                    tag: heroTag!,
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      fit: BoxFit.contain,
+                    ),
+                  )
+                : CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    fit: BoxFit.contain,
+                  ),
+          ),
+        ),
+      ]),
+    );
+  }
+}
+
+// onTap: () {
+//                       Share.share(
+//                           "Check this community: ${ShareURLMaker.getCommunityURL(community)}");
+//                     },
