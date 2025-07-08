@@ -109,6 +109,8 @@ flutter:
     - assets/profilepage/
     - assets/feed/
     - assets/quicklinks/icons/
+    - assets/explore_new/
+    - assets/explore_new/images/
   fonts:
     - family: IBMPlexSans
       fonts:
