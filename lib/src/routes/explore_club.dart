@@ -14,7 +14,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markdown/markdown.dart' as markdown;
 
 class ExploreClubPage extends StatefulWidget {
-  final Body? initialBody;
   final Future<Body>? bodyFuture;
   final String? heroTag;
 
@@ -53,21 +52,20 @@ class ExploreClubPage extends StatefulWidget {
     },
   ];
 
-  ExploreClubPage({this.bodyFuture, this.initialBody, this.heroTag});
+  ExploreClubPage({this.bodyFuture, this.heroTag});
 
   static void navigateWith(BuildContext context, InstiAppBloc bloc,
-      {Body? body, Role? role}) {
+      {required String bodyID, Role? role,}) {
     Navigator.push(
       context,
       MaterialPageRoute(
         settings: RouteSettings(
-          name: "/body/${(role?.roleBodyDetails ?? body)?.bodyID}",
+          name: "/body/${bodyID}",
         ),
         builder: (context) => ExploreClubPage(
-          initialBody: role?.roleBodyDetails ?? body,
           bodyFuture:
-              bloc.getBody((role?.roleBodyDetails ?? body)?.bodyID ?? ""),
-          heroTag: role?.roleID ?? body?.bodyID,
+              bloc.getBody(bodyID),
+          heroTag: bodyID,
         ),
       ),
     );
@@ -89,7 +87,6 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
   @override
   void initState() {
     super.initState();
-    body = widget.initialBody;
 
     widget.bodyFuture?.then((b) {
       var tableParse = markdown.TableSyntax();
