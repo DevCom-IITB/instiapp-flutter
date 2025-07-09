@@ -695,7 +695,15 @@ class _ExplorePageState extends State<ExplorePage> {
                           child: Bodycard(
                               context, "Sports", "assets/explore/sport.png"),
                         ),
-                        Bodycard(context, "I.Bs", "assets/explore/ibs.png"),
+                        InkWell(
+                          onTap: () => ExploreClubPage.navigateWith(
+                            context,
+                            bloc,
+                            bodyID: "44fe710a-8ede-4d59-a25b-a86434373209",
+                          ),
+                          child: Bodycard(context, "Academics",
+                              "assets/explore/scenes.png"),
+                        ),
                       ],
                     ),
                     Row(
@@ -725,8 +733,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Bodycard(context, "Food", "assets/explore/food.png"),
-                        Bodycard(
-                            context, "Scenes", "assets/explore/scenes.png"),
+                        Bodycard(context, "I.Bs", "assets/explore/ibs.png"),
                       ],
                     ),
                     SizedBox(height: 80),
@@ -994,21 +1001,95 @@ class _ExploresearchState extends State<Exploresearch> {
                     height: 144,
                     child:
                         ListView(scrollDirection: Axis.horizontal, children: [
-                      SearchBodycard(
-                          context, 'Cult', 'assets/explore/cult.png'),
-                      SearchBodycard(
-                          context, 'Sports', 'assets/explore/sport.png'),
-                      SearchBodycard(
-                          context, 'Tech', 'assets/explore/tech.png'),
-                      SearchBodycard(
-                          context, 'Hostels', 'assets/explore/hostels.png'),
-                      SearchBodycard(context, 'I.Bs', 'assets/explore/ibs.png'),
-                      SearchBodycard(
-                          context, 'Food', 'assets/explore/food.png'),
-                      SearchBodycard(
-                          context, 'Scenes', 'assets/explore/scenes.png'),
-                      SearchBodycard(context, 'Departments',
-                          'assets/explore/departments.png'),
+                      InkWell(
+                        onTap: () {
+                          ExploreClubPage.navigateWith(
+                            context,
+                            bloc,
+                            bodyID: "91199c20-7488-41c5-9f6b-6f6c7c5b897d",
+                          );
+                        },
+                        child: SearchBodycard(
+                            context, 'Cult', 'assets/explore/cult.png'),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          ExploreClubPage.navigateWith(
+                            context,
+                            bloc,
+                            bodyID: "a9f81e69-fcc9-4fe3-b261-9e5e7a13f898",
+                          );
+                        },
+                        child: SearchBodycard(
+                            context, 'Sports', 'assets/explore/sport.png'),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          ExploreClubPage.navigateWith(
+                            context,
+                            bloc,
+                            bodyID: "81e05a1a-7fd1-45b5-84f6-074e52c0f085",
+                          );
+                        },
+                        child: SearchBodycard(
+                            context, 'Tech', 'assets/explore/tech.png'),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          ExploreClubPage.navigateWith(
+                            context,
+                            bloc,
+                            bodyID: "44fe710a-8ede-4d59-a25b-a86434373209",
+                          );
+                        },
+                        child: SearchBodycard(
+                            context, 'Academics', 'assets/explore/scenes.png'),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          ExploreClubPage.navigateWith(
+                            context,
+                            bloc,
+                            bodyID: "252ddc80-910b-4f63-b68a-de30a62a947e",
+                          );
+                        },
+                        child: SearchBodycard(context, 'Departments',
+                            'assets/explore/departments.png'),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          ExploreClubPage.navigateWith(
+                            context,
+                            bloc,
+                            bodyID: "f3ae5230-4441-4586-81a8-bf75a2e47318",
+                          );
+                        },
+                        child: SearchBodycard(
+                            context, 'Hostels', 'assets/explore/hostels.png'),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          ExploreClubPage.navigateWith(
+                            context,
+                            bloc,
+                            bodyID: "b6e2e0e2-9b7e-4e8c-8c2e-1f2e8b2e8c2e",
+                          );
+                        },
+                        child: SearchBodycard(
+                            context, 'I.Bs', 'assets/explore/ibs.png'),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          ExploreClubPage.navigateWith(
+                            context,
+                            bloc,
+                            bodyID: "d1f2e3c4-b5a6-7d8e-9f0a-b1c2d3e4f5a6",
+                          );
+                        },
+                        child: SearchBodycard(
+                            context, 'Food', 'assets/explore/food.png'),
+                      ),
+                      
                     ]),
                   ),
                 if (exploreBloc.query == '')
@@ -1423,7 +1504,7 @@ List<Widget> _buildContent(
     }
     //move to next page
     return (bodies
-                ?.map((b) => _buildListTile(
+                ?.map((b) => _buildListTile(                  
                     b.bodyID ?? "",
                     b.bodyName ?? "",
                     b.bodyShortDescription ?? "",
