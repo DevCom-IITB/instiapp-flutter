@@ -76,15 +76,26 @@ class ToggleItem extends StatelessWidget {
           bottom: bottom ? const Radius.circular(14) : Radius.zero,
         ),
       ),
-      child: SwitchListTile(
-        activeColor: Colors.blue.shade700,
-        activeTrackColor: Colors.blue.shade300,
-        inactiveThumbColor: Colors.grey.shade400,
-        inactiveTrackColor: Colors.grey.shade300,
-        secondary: icon != null ? Icon(icon, color: const Color(0xFF1E293B)) : null,
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-        value: value,
-        onChanged: onChanged,
+      child: Theme(
+        data: ThemeData.light().copyWith(
+          switchTheme: SwitchThemeData(
+            thumbColor: WidgetStateProperty.resolveWith((states) {
+              return Colors.white;
+            }),
+            trackColor: WidgetStateProperty.resolveWith((states) {
+              return states.contains(WidgetState.selected)
+                  ? Color.fromRGBO(48, 111, 220, 1)
+                  : Color.fromRGBO(210, 213, 218, 1);
+            }),
+            trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+          ),
+        ),
+        child: SwitchListTile(
+          secondary: icon != null ? Icon(icon, color: const Color(0xFF1E293B)) : null,
+          title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+          value: value,
+          onChanged: onChanged,
+        ),
       ),
     );
   }

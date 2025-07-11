@@ -239,7 +239,7 @@ class _BodyPageState extends State<BodyPage> {
                                       height: 52,
                                       width: 52,
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withValues(alpha: 0.60),
+                                        color: Colors.white.withOpacity(0.60),
                                         borderRadius: BorderRadius.circular(25)
                                       ),
                                       child: Center(
@@ -806,7 +806,7 @@ class _BodyPageState extends State<BodyPage> {
                             length: 339,
                             dashLength: 6,
                             dashGap: 7,
-                            dashColor: Colors.white.withValues(alpha: 0.10),
+                            dashColor: Colors.white.withOpacity(0.10),
                           ),
                           SizedBox(height: 16),
                           for(int i=0;i<=2;i++)...[

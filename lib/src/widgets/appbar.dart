@@ -23,7 +23,13 @@ class CustomAppBar extends StatelessWidget {
         children: [
           _buildIconBackground(
             Icons.arrow_back,
-            onPressed: onBack ?? () => Navigator.pop(context),
+            onPressed: onBack ?? () {
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              } else {
+                Navigator.of(context).pushReplacementNamed('/feed');
+              }
+            },
           ),
           Text(
             title,

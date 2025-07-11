@@ -24,22 +24,62 @@ class BuynSellPostBloc {
     return await bloc.client.getBuynSellPost(bloc.getSessionIdHeader(), id);
   }
 
-  Future<BuynSellPost?> deleteBuynSellPost(String id) async {
-    return await bloc.client.deleteBuynSellPost(bloc.getSessionIdHeader(), id);
+  Future<void> deleteBuynSellPost(String id) async {
+    try {
+      final deletedPost = await bloc.client.deleteBuynSellPost(
+        bloc.getSessionIdHeader(), 
+        id
+      );
+      
+      if (deletedPost != null) {
+        if (deletedPost.deleted == true) {
+          _buynsellPosts.removeWhere((post) => post.id == id);
+          _buynsellSubject.add(_buynsellPosts);
+        } else {
+          throw Exception('Unauthorized deletion attempt');
+        }
+      } else {
+        _buynsellPosts.removeWhere((post) => post.id == id);
+        _buynsellSubject.add(_buynsellPosts);
+      }
+    } catch (e) {
+      _buynsellSubject.addError('Failed to delete item: ${e.toString()}');
+      rethrow;
+    }
   }
 
   Future<void> updateBuynSellPost(BuynSellPost post) async {
-    await bloc.client
-        .updateBuynSellPost(bloc.getSessionIdHeader(), post.id!, post);
+    final updatedPost = await bloc.client.updateBuynSellPost(
+      bloc.getSessionIdHeader(), 
+      post.id!, 
+      post
+    );
+    final index = _buynsellPosts.indexWhere((p) => p.id == post.id);
+    if (index != -1) {
+      _buynsellPosts[index] = updatedPost;
+      _buynsellSubject.add(_buynsellPosts);
+    }
   }
 
-  Future<void> refresh({BnSType type = BnSType.All}) async {
-    _buynsellPosts =
-        (await bloc.client.getBuynSellPosts(bloc.getSessionIdHeader()));
+  Future<void> refresh({bool showAll = true}) async {
+    _buynsellPosts = await bloc.client.getBuynSellPosts(
+      bloc.getSessionIdHeader(),
+      showAll: showAll
+    );
     _buynsellSubject.add(_buynsellPosts);
   }
 
   Future<void> createBuynSellPost(BuynSellPost post) async {
-    await bloc.client.createBuynSellPost(bloc.getSessionIdHeader(), post);
+    final newPost = await bloc.client.createBuynSellPost(
+      bloc.getSessionIdHeader(), 
+      post
+    );
+    _buynsellPosts.add(newPost);
+    _buynsellSubject.add(_buynsellPosts);
+  }
+
+  Future<void> markAsSold(String id) async {
+    await bloc.client.markBuynSellPostAsSold(bloc.getSessionIdHeader(), id);
+    await refresh();
   }
 }

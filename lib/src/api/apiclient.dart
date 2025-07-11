@@ -48,7 +48,7 @@ part 'apiclient.g.dart';
 // @rt.RestApi(baseUrl: "http://127.0.0.1:8000/api")
 // @rt.RestApi(baseUrl: "http://10.198.49.150/api")
 @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
-// @rt.RestApi(baseUrl: "https://a6c715a9e425.ngrok-free.app/api")
+// @rt.RestApi(baseUrl: "https://6549148c5162.ngrok-free.app/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
@@ -399,14 +399,15 @@ abstract class InstiAppApi {
 //Buy & Sell
   @rt.GET('/buy/products')
   Future<List<BuynSellPost>> getBuynSellPosts(
-      @rt.Header("Cookie") String sessionId);
+      @rt.Header("Cookie") String sessionId,
+      {@rt.Query('all') bool showAll = true});
 
   @rt.GET('/buy/products/{id}')
   Future<BuynSellPost> getBuynSellPost(
       @rt.Header("Cookie") String sessionId, @rt.Path() String id);
 
   @rt.DELETE('/buy/products/{id}')
-  Future<BuynSellPost> deleteBuynSellPost(
+  Future<BuynSellPost?> deleteBuynSellPost(
       @rt.Header("Cookie") String sessionId, @rt.Path() String id);
 
   @rt.PUT('/buy/products/{id}')
@@ -416,6 +417,10 @@ abstract class InstiAppApi {
   @rt.POST("/buy/products")
   Future<BuynSellPost> createBuynSellPost(
       @rt.Header("Cookie") String sessionId, @rt.Body() BuynSellPost post);
+
+  @rt.POST('/buy/products/{id}/sold')
+  Future<BuynSellPost> markBuynSellPostAsSold(
+      @rt.Header("Cookie") String sessionId, @rt.Path() String id);
 
   //Lost & Found
   @rt.GET('/lnf/products')

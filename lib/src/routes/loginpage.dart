@@ -1,504 +1,612 @@
-// import 'dart:async';
-// import 'dart:io';
-
-// import 'package:InstiApp/src/api/interceptors.dart';
-// import 'package:InstiApp/src/utils/common_widgets.dart';
-// import 'package:InstiApp/src/utils/notif_settings.dart';
-// import 'package:dio/dio.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_webview_pro/webview_flutter.dart' as webview;
-// import 'package:InstiApp/src/api/apiclient.dart';
-// import 'package:InstiApp/src/api/model/user.dart';
-// import 'package:InstiApp/src/bloc_provider.dart';
-// import 'package:InstiApp/src/blocs/ia_bloc.dart';
-// import 'package:jaguar/jaguar.dart' as jag;
-// import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
-
-// class LoginPage extends StatefulWidget {
-//   final InstiAppBloc bloc;
-//   final GlobalKey<ScaffoldMessengerState>? scaffoldMessengerKey;
-//   final GlobalKey<NavigatorState>? navigatorKey;
-//   LoginPage(this.bloc, {this.scaffoldMessengerKey, this.navigatorKey});
-
-//   @override
-//   _LoginPageState createState() => _LoginPageState();
-// }
-
-// class _LoginPageState extends State<LoginPage> {
-//   jag.Jaguar? server;
-//   final Dio dio = Dio();
-
-//   final String successUrl = "https://www.insti.app/login-android.html";
-//   final String guestUrl = "https://guesturi";
-//   final String alumniUrl = "https://alumniurl";
-//   final String gymkhanaUrl = "https://gymkhana.iitb.ac.in";
-//   final String httpGymkhanaUrl = "http://gymkhana.iitb.ac.in";
-//   final String ssoLogin = "https://sso.iitb.ac.in/login";
-//   final String ssoAuth = "https://sso.iitb.ac.in/authorize";
-//   InstiAppBloc? _bloc;
-//   StreamSubscription<String>? onUrlChangedSub;
-//   var loading = true;
-//   bool firstBuild = true;
-//   // StreamSubscription<WebViewStateChanged>? onStateChangedSub;
-
-//   String statusMessage = "Initializing";
-
-//   String? loginurl;
-//   Session? currSession;
-
-//   @override
-//   void dispose() {
-//     server?.close();
-
-//     onUrlChangedSub?.cancel();
-//     // onStateChangedSub?.cancel();
-//     super.dispose();
-//   }
-
-//   @override
-//   void initState() {
-//     super.initState();
-
-//     WidgetsBinding.instance.addPostFrameCallback((_) => setupNotifications(
-//         widget.navigatorKey?.currentContext ?? context, widget.bloc));
-//     WidgetsBinding.instance.addPostFrameCallback((_) {
-//       String? args = ModalRoute.of(context)?.settings.arguments as String?;
-//       if (args != null) {
-//         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//           content: Text(args),
-//           duration: Duration(seconds: 2),
-//         ));
-//       }
-//     });
-
-//     _bloc = widget.bloc;
-//     if (Platform.isAndroid) {
-//       webview.WebView.platform = webview.SurfaceAndroidWebView();
-//     }
-
-//     // Creating login url
-//     loginurl = "http://127.0.0.1:9399/" +
-//         ((_bloc!.brightness.toBrightness() == Brightness.dark)
-//             ? "login_dark.html"
-//             : "login.html");
-
-//     checkLogin().then((Session? sess) {
-//       // If session already exists, continue to homepage with current session
-//       if (sess != null) {
-//         _bloc!.patchFcmKey().then((_) {
-//           _bloc?.reloadCurrentUser();
-//         });
-
-//         Navigator.of(context).pushReplacementNamed(_bloc!.homepageName);
-//         return;
-//       }
-
-//       // No stored session found
-//       startLoginPageServer().then((_) async {
-//         await Future.delayed(Duration(milliseconds: 200));
-//         setState(() {
-//           loading = false;
-//         });
-//       });
-//     });
-//   }
-
-//   Future<Session?> checkLogin() async {
-//     await _bloc?.restorePrefs();
-//     return _bloc?.currSession;
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     _bloc = BlocProvider.of(context)!.bloc;
-
-//     if (firstBuild) {
-//       if (widget.scaffoldMessengerKey?.currentContext != null &&
-//           widget.navigatorKey != null) {
-//         if (widget.bloc.dio.interceptors.length == 0)
-//           widget.bloc.dio
-//             ..interceptors.add(ErrorInterceptor(
-//                 context: widget.scaffoldMessengerKey!.currentContext!,
-//                 navigatorKey: widget.navigatorKey!));
-//       }
-//       firstBuild = false;
-//     }
-
-//     return loading
-//         ? Material(
-//             child: Center(
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                 children: <Widget>[
-//                   Image(
-//                     color: Theme.of(context).colorScheme.secondary,
-//                     image: AssetImage('assets/login/lotus.png'),
-//                     width: 250.0,
-//                     fit: BoxFit.scaleDown,
-//                   ),
-//                   Text(
-//                     "InstiApp",
-//                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-//                         color: Theme.of(context).colorScheme.secondary),
-//                   ),
-//                   CircularProgressIndicatorExtended(
-//                     label: Text(statusMessage),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           )
-//         : webview.WebView(
-//             javascriptMode: webview.JavascriptMode.unrestricted,
-//             initialUrl: loginurl,
-//             onPageStarted: checkPageUrl,
-//             onPageFinished: checkPageUrl,
-//             gestureNavigationEnabled: true,
-//           );
-//   }
-
-//   Future<void> checkPageUrl(String url) async {
-//     if (url.startsWith(successUrl)) {
-//       var uri = Uri.parse(url);
-//       var code = uri.queryParameters['code'];
-
-//       setState(() {
-//         loading = true;
-//       });
-//       await login(code ?? "", "https://www.insti.app/login-android.html");
-//       setState(() {
-//         loading = false;
-//       });
-//     } else if (url.startsWith(guestUrl)) {
-//       setState(() {
-//         loading = true;
-//       });
-//       Navigator.of(context)
-//           .pushNamedAndRemoveUntil(_bloc!.homepageName, (r) => false);
-//     } else if (url.startsWith(alumniUrl)) {
-//       // print(alumniUrl);
-//       setState(() {
-//         loading = true;
-//       });
-//       Navigator.of(context)
-//           .pushNamedAndRemoveUntil(_bloc!.alumniLoginPage, (r) => false);
-//     }
-//   }
-
-//   Future<void> startLoginPageServer() async {
-//     server = jag.Jaguar(port: 9399, multiThread: true);
-//     server?.addRoute(serveFlutterAssets(prefix: "login/"));
-//     return server?.serve();
-//   }
-
-//   login(final String authCode, final String redirectUrl) async {
-//     setState(() {
-//       statusMessage = "Logging you in";
-//     });
-//     var response;
-//     try {
-//       response = await InstiAppApi(dio).login(authCode, redirectUrl);
-//     } catch (e) {
-//       // print(e);
-//     }
-//     if (response?.sessionid != null) {
-//       _bloc?.updateSession(response);
-//       setState(() {
-//         statusMessage = "Logged in";
-//       });
-//       _bloc?.patchFcmKey();
-
-//       Navigator.of(context).pushReplacementNamed(_bloc?.homepageName ?? "");
-
-//       this.onUrlChangedSub?.cancel();
-//     } else {
-//       setState(() {
-//         statusMessage = "Log in failed. Reinitializing.";
-//       });
-//       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//         content: Text("Authentication Failed"),
-//       ));
-//     }
-//   }
-// }
-
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_webview_pro/webview_flutter.dart' as webview;
 
 import 'package:InstiApp/src/api/apiclient.dart';
-import 'package:InstiApp/src/api/interceptors.dart';
-import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/notif_settings.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_webview_pro/webview_flutter.dart' as webview;
 
 class LoginPage extends StatefulWidget {
   final InstiAppBloc bloc;
   final GlobalKey<ScaffoldMessengerState>? scaffoldMessengerKey;
   final GlobalKey<NavigatorState>? navigatorKey;
-  
-  LoginPage(this.bloc, {this.scaffoldMessengerKey, this.navigatorKey});
+
+  const LoginPage(
+    this.bloc, {
+    Key? key,
+    this.scaffoldMessengerKey,
+    this.navigatorKey,
+  }) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<LoginPage> createState() => _OnboardingLoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _OnboardingLoginPageState extends State<LoginPage>
+    with TickerProviderStateMixin {
+  late AnimationController _resizeController;
+  late final AnimationController _moveController;
+  late AnimationController _welcomeController;
+  late AnimationController _homeTransitionController;
+  bool _showWelcome = false;
+  bool _showLoginOptions = false;
+  bool _isExitingToHome = false;
+
   final String successUrl = "https://www.insti.app/login-android.html";
   final String guestUrl = "https://guesturi";
   final String alumniUrl = "https://alumniurl";
-  InstiAppBloc? _bloc;
-  bool _loading = true;
   bool _isWebViewVisible = false;
-  bool _isSSOLoading = false;
-  String _statusMessage = "Initializing";
-  String? _webViewUrl;
-  Session? currSession;
   bool _processingSSO = false;
+  bool _isSSOLoading = false;
+  String? _webViewUrl;
+  String _statusMessage = "Initializing";
+  bool _loading = true;
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  InstiAppBloc? _bloc;
 
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => setupNotifications(
-        widget.navigatorKey?.currentContext ?? context, widget.bloc));
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final args = ModalRoute.of(context)?.settings.arguments as String?;
-      if (args != null && widget.scaffoldMessengerKey != null) {
-        widget.scaffoldMessengerKey!.currentState?.showSnackBar(SnackBar(
-          content: Text(args),
-          duration: const Duration(seconds: 2),
-        ));
-      }
-    });
-
     _bloc = widget.bloc;
+
     if (Platform.isAndroid) {
       webview.WebView.platform = webview.SurfaceAndroidWebView();
     }
 
-    checkLogin().then((Session? sess) {
-      if (sess != null) {
-        _bloc!.patchFcmKey().then((_) {
-          _bloc?.reloadCurrentUser();
-        });
-        Navigator.of(context).pushReplacementNamed(_bloc!.homepageName);
-        return;
+    /// Always restore session first.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setupNotifications(
+          widget.navigatorKey?.currentContext ?? context, _bloc!);
+
+      /// Any toast from args
+      final args = ModalRoute.of(context)?.settings.arguments as String?;
+      if (args != null && widget.scaffoldMessengerKey != null) {
+        widget.scaffoldMessengerKey!.currentState?.showSnackBar(
+          SnackBar(content: Text(args)),
+        );
       }
-      
-      setState(() {
-        _loading = false;
-      });
     });
+
+    _resizeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    _moveController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    _welcomeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+
+    _homeTransitionController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    _restoreSessionAndAnimate();
   }
 
-  Future<Session?> checkLogin() async {
+  Future<void> _restoreSessionAndAnimate() async {
     await _bloc?.restorePrefs();
-    return _bloc?.currSession;
+
+    await Future.delayed(const Duration(milliseconds: 500));
+    await _resizeController.forward();
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    if (_bloc?.currSession == null) {
+      setState(() => _showWelcome = true);
+      _moveController.forward();
+      _welcomeController.forward();
+    } else {
+      setState(() {
+        _isExitingToHome = true;
+      });
+
+      await Future.wait([
+        _homeTransitionController.forward(),
+        _bloc!.patchFcmKey(),
+        _bloc!.reloadCurrentUser(),
+      ]);
+
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed(_bloc!.homepageName);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _resizeController.dispose();
+    _welcomeController.dispose();
+    _moveController.dispose();
+    _homeTransitionController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_processingSSO) {
-      return _buildLoadingScreen(context);
-    }
-    
-    if (_isWebViewVisible) {
-      return _buildWebView();
-    }
+    if (_processingSSO) return _buildLoadingScreen(context);
+    if (_isWebViewVisible) return _buildWebView();
 
-    return _buildLoginOptions(context);
+    return _showLoginOptions
+        ? _buildLoginOptionsPage(context)
+        : _buildSplashOnboarding(context);
   }
 
-  Widget _buildLoadingScreen(BuildContext context) {
+  Widget _buildSplashOnboarding(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Image(
-              color: Theme.of(context).colorScheme.secondary,
-              image: const AssetImage('assets/login/lotus.png'),
-              width: 250.0,
-              fit: BoxFit.scaleDown,
+      backgroundColor: Color.fromRGBO(234, 245, 251, 1),
+      body: Stack(
+        children: [
+          AnimatedBuilder(
+            animation:
+                Listenable.merge([_moveController, _homeTransitionController]),
+            builder: (context, _) {
+              final screenHeight = MediaQuery.of(context).size.height;
+              double offsetY = 0;
+              double opacity = 0.2;
+
+              if (_isExitingToHome) {
+                final tHome = _homeTransitionController.value;
+                final curvedValue = Curves.easeInOutCubic.transform(tHome);
+
+                offsetY = lerpDouble(0, -screenHeight, curvedValue)!;
+                opacity = lerpDouble(0.2, 0.0, curvedValue)!;
+              } else {
+                final tMove = _moveController.value;
+                offsetY = lerpDouble(0, -screenHeight, tMove)!;
+              }
+
+              return Transform.translate(
+                offset: Offset(0, offsetY),
+                child: Opacity(
+                  opacity: opacity,
+                  child: _buildBackgroundLotuses(),
+                ),
+              );
+            },
+          ),
+          AnimatedBuilder(
+            animation: Listenable.merge([
+              _resizeController,
+              _moveController,
+              _homeTransitionController
+            ]),
+            builder: (context, _) {
+              final tResize = _resizeController.value;
+              final tMove = _moveController.value;
+              final tHome = _homeTransitionController.value;
+
+              final screen = MediaQuery.of(context).size;
+              final centerX = screen.width / 2;
+              final centerY = screen.height / 2;
+
+              double logoSize = lerpDouble(300, 150, tResize)!;
+              double fontSize = lerpDouble(64, 48, tResize)!;
+
+              // Phase 1: stacked center
+              final logoStartX = centerX - logoSize / 2;
+              final logoStartY = centerY - logoSize / 2;
+
+              final textStartX = centerX - fontSize * 2;
+              final textStartY = centerY + logoSize / 2 - 10;
+
+              // Phase 2: shrink + align horizontally (still centered)
+              final totalWidth = logoSize + 20 + fontSize * 8;
+              final logoMidX = centerX - totalWidth / 3;
+              final logoMidY = centerY - logoSize / 2;
+
+              final textMidX = logoMidX + logoSize + 20;
+              final textMidY = centerY - fontSize / 2;
+
+              // Phase 3: move entire pair to top
+              final logoEndX = logoMidX;
+              final logoEndY = 20;
+
+              final textEndX = textMidX;
+              final textEndY = logoEndY + logoSize / 2 - fontSize / 2;
+
+              double currentLogoX = lerpDouble(
+                  lerpDouble(logoStartX, logoMidX, tResize)!, logoEndX, tMove)!;
+              double currentLogoY = lerpDouble(
+                  lerpDouble(logoStartY, logoMidY, tResize)!, logoEndY, tMove)!;
+
+              double currentTextX = lerpDouble(
+                  lerpDouble(textStartX, textMidX, tResize)!, textEndX, tMove)!;
+              double currentTextY = lerpDouble(
+                  lerpDouble(textStartY, textMidY, tResize)!, textEndY, tMove)!;
+
+              double textOpacity = 1.0;
+
+              if (_isExitingToHome) {
+                logoSize = lerpDouble(150, 40, tHome)!;
+                fontSize = lerpDouble(48, 0, tHome)!;
+
+                final startX = centerX - totalWidth / 3;
+                final endX = centerX - logoSize / 2;
+                final startY = centerY - logoSize / 2;
+
+                currentLogoX = lerpDouble(startX, endX, tHome)!;
+                currentLogoY = lerpDouble(startY, 32, tHome)!;
+
+                textOpacity = lerpDouble(1.0, 0.0, tHome)!;
+              }
+
+              return Stack(
+                children: [
+                  Positioned(
+                    left: currentLogoX,
+                    top: currentLogoY,
+                    child: Image.asset(
+                      'assets/login/lotus.png',
+                      width: logoSize,
+                      height: logoSize,
+                    ),
+                  ),
+                  Positioned(
+                    left: currentTextX,
+                    top: currentTextY,
+                    child: Opacity(
+                      opacity: _isExitingToHome ? textOpacity : 1.0,
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Insti',
+                              style: TextStyle(
+                                fontSize: fontSize,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                              ),
+                            ),
+                            TextSpan(
+                              text: 'App',
+                              style: TextStyle(
+                                fontSize: fontSize,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          if (_showWelcome) ...[
+            /// Slide up the illustration
+            SlideTransition(
+              position: _welcomeController.drive(
+                Tween<Offset>(
+                  begin: const Offset(0, 0.5),
+                  end: Offset.zero,
+                ).chain(CurveTween(curve: Curves.easeOut)),
+              ),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: _buildClippedIllustrationWithWhiteBackground(),
+              ),
             ),
-            Text(
-              "InstiApp",
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.secondary),
-            ),
-            CircularProgressIndicatorExtended(
-              label: Text(_statusMessage),
+
+            /// Slide up the text + button
+            SlideTransition(
+              position: _welcomeController.drive(
+                Tween<Offset>(
+                  begin: const Offset(0, 1),
+                  end: Offset.zero,
+                ).chain(CurveTween(curve: Curves.easeOut)),
+              ),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: _buildGetStartedScreen(),
+              ),
             ),
           ],
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildLoginOptions(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = isDark ? const Color(0xFF0028BF) : const Color(0xFFFFD740);
-    final backgroundColor = isDark ? Colors.black : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black;
+  Widget _buildBackgroundLotuses() {
+    final List<double> tops = [-28, 66, 122, 217, 547, 531, 625, 766];
+    final List<double> lefts = [42, 299, -21, 249, -34, 208, 0, 251];
+    final List<double> sizes = [236, 151, 227, 102, 139, 189, 278, 161];
 
-    if (_loading) {
-      return _buildLoadingScreen(context);
-    }
+    return Stack(
+      children: List.generate(8, (index) {
+        return Positioned(
+          left: lefts[index],
+          top: tops[index],
+          child: Image.asset(
+            'assets/login/lotus.png',
+            width: sizes[index],
+            height: sizes[index],
+            color: Colors.blue,
+          ),
+        );
+      }),
+    );
+  }
 
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildClippedIllustrationWithWhiteBackground() {
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        Container(
+          width: 412,
+          height: 412 + 250,
+          color: Colors.white,
+        ),
+        ClipPath(
+          clipper: BottomCurveClipper(curveDepth: 25),
+          child: Image.asset(
+            'assets/login/campus_illustration.png',
+            width: 412,
+            height: 412,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGetStartedScreen() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text(
+          "Making Student Life",
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+        ),
+        Text.rich(
+          TextSpan(
             children: [
-              // Logo
-              Container(
-                width: MediaQuery.of(context).size.width * 0.45,
-                margin: const EdgeInsets.only(top: 50),
-                child: Image.asset(
-                  'assets/login/lotus.png',
-                  color: primaryColor,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                "InstiApp",
+              TextSpan(
+                text: 'Simpler ',
                 style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w200,
-                  color: textColor,
+                  color: Color(0xFF306FDC), // Hex: #306FDC
+                  fontSize: 28,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 100),
-              
-              // Login Buttons
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: Column(
-                  children: [
-                    if (_isSSOLoading)
-                      Column(
-                        children: [
-                          CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
-                          ),
-                          const SizedBox(height: 20),
-                          Text(
-                            "Redirecting to SSO...",
-                            style: TextStyle(color: textColor),
-                          ),
-                        ],
-                      )
-                    else
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
-                          onPressed: _handleSSOLogin,
-                          child: const Text(
-                            "LOG IN VIA SSO",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 24),
-                    Text(
-                      "or",
-                      style: TextStyle(color: textColor),
-                    ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: primaryColor,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                        onPressed: _handleAlumniLogin,
-                        child: const Text(
-                          "LOG IN AS AN ALUMNUS",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      "or",
-                      style: TextStyle(color: textColor),
-                    ),
-                    const SizedBox(height: 16),
-                    TextButton(
-                      onPressed: _handleGuestLogin,
-                      child: Text(
-                        "CONTINUE AS A GUEST",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w200,
-                          color: textColor,
-                        ),
-                      ),
-                    ),
-                  ],
+              TextSpan(
+                text: 'and ',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              TextSpan(
+                text: 'Smarter',
+                style: TextStyle(
+                  color: Color(0xFF306FDC),
+                  fontSize: 28,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
           ),
         ),
+        const SizedBox(height: 40),
+        SizedBox(
+          width: 300,
+          height: 64,
+          child: ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _showLoginOptions = true;
+              });
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue.shade700,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            child: const Text(
+              "Get Started",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        const SizedBox(height: 60),
+      ],
+    );
+  }
+
+  Widget _buildLoginOptionsPage(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Container(
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Text(
+                    "Get Started.",
+                    style: TextStyle(
+                        fontSize: 36,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "All Things Insti",
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal),
+                  ),
+                  Text(
+                    "Right at your fingertips.",
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal),
+                  ),
+                  const SizedBox(height: 50),
+                  Image.asset(
+                    'assets/login/person_illustration.png',
+                    height: 400,
+                    fit: BoxFit.contain,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: _buildLoginOptions(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoginOptions(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Color.fromRGBO(15, 22, 32, 1),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: TextButton(
+              onPressed: _handleGuestLogin,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Continue as Guest",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w200,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(
+                    Icons.arrow_forward,
+                    size: 20,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 32),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromRGBO(48, 111, 220, 1),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+              ),
+              onPressed: _handleSSOLogin,
+              child: Text(
+                _isSSOLoading ? "Redirecting to SSO..." : "Log in via SSO",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromRGBO(48, 111, 220, 1),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+              ),
+              onPressed: _handleAlumniLogin,
+              child: const Text(
+                "Log in as an Alumnus",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
       ),
     );
   }
 
   Widget _buildWebView() {
     return Scaffold(
-      body: Stack(
-        children: [
-          webview.WebView(
-            javascriptMode: webview.JavascriptMode.unrestricted,
-            initialUrl: _webViewUrl,
-            onPageStarted: (url) {
-              if (url.startsWith(successUrl)) {
-                // Immediately hide the WebView and show loading
-                setState(() {
-                  _isWebViewVisible = false;
-                  _processingSSO = true;
-                  _statusMessage = "Logging you in";
-                });
-                _handleSuccessUrl(url);
-              } else if (url.startsWith(guestUrl)) {
-                _handleGuestLogin();
-              } else if (url.startsWith(alumniUrl)) {
-                _handleAlumniLogin();
-              }
-            },
-            gestureNavigationEnabled: true,
-          ),
-        ],
+      body: webview.WebView(
+        javascriptMode: webview.JavascriptMode.unrestricted,
+        initialUrl: _webViewUrl,
+        onPageStarted: (url) {
+          if (url.startsWith(successUrl)) {
+            setState(() {
+              _isWebViewVisible = false;
+              _processingSSO = true;
+              _statusMessage = "Logging you in";
+            });
+            _handleSuccessUrl(url);
+          } else if (url.startsWith(guestUrl)) {
+            _handleGuestLogin();
+          } else if (url.startsWith(alumniUrl)) {
+            _handleAlumniLogin();
+          }
+        },
+        gestureNavigationEnabled: true,
+      ),
+    );
+  }
+
+  Widget _buildLoadingScreen(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('assets/login/lotus.png', width: 250),
+            const SizedBox(height: 20),
+            const Text("InstiApp",
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            CircularProgressIndicatorExtended(label: Text(_statusMessage)),
+          ],
+        ),
       ),
     );
   }
@@ -508,30 +616,22 @@ class _LoginPageState extends State<LoginPage> {
       _isSSOLoading = true;
     });
 
-    // Simulate the delay from the HTML loading animation
     Future.delayed(const Duration(milliseconds: 500), () {
       setState(() {
         _isWebViewVisible = true;
         _isSSOLoading = false;
-        _webViewUrl = "https://gymkhana.iitb.ac.in/profiles/oauth/authorize/?client_id=vR1pU7wXWyve1rUkg0fMS6StL1Kr6paoSmRIiLXJ&response_type=code&scope=basic%20profile%20picture%20sex%20ldap%20phone%20insti_address%20program%20secondary_emails&redirect_uri=https://www.insti.app/login-android.html";
+        _webViewUrl =
+            "https://gymkhana.iitb.ac.in/profiles/oauth/authorize/?client_id=vR1pU7wXWyve1rUkg0fMS6StL1Kr6paoSmRIiLXJ&response_type=code&scope=basic%20profile%20picture%20sex%20ldap%20phone%20insti_address%20program%20secondary_emails&redirect_uri=https://www.insti.app/login-android.html";
       });
     });
   }
 
   void _handleAlumniLogin() {
-    setState(() {
-      _loading = true;
-      _statusMessage = "Redirecting to alumni login";
-    });
     Navigator.of(context)
         .pushNamedAndRemoveUntil(_bloc!.alumniLoginPage, (r) => false);
   }
 
   void _handleGuestLogin() {
-    setState(() {
-      _loading = true;
-      _statusMessage = "Continuing as guest";
-    });
     Navigator.of(context)
         .pushNamedAndRemoveUntil(_bloc!.homepageName, (r) => false);
   }
@@ -539,15 +639,14 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _handleSuccessUrl(String url) async {
     final uri = Uri.parse(url);
     final code = uri.queryParameters['code'];
-    
+
     if (code != null) {
       try {
-        // Use the bloc's dio instance instead of creating a new one
         final response = await InstiAppApi(_bloc!.dio).login(
-          code, 
+          code,
           "https://www.insti.app/login-android.html",
         );
-        
+
         if (response.sessionid != null) {
           _bloc?.updateSession(response);
           setState(() {
@@ -596,4 +695,34 @@ class _LoginPageState extends State<LoginPage> {
       });
     }
   }
+}
+
+class BottomCurveClipper extends CustomClipper<Path> {
+  final double curveDepth;
+
+  BottomCurveClipper({this.curveDepth = 80});
+
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+
+    path.moveTo(0, 0);
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width, size.height - 26);
+
+    path.quadraticBezierTo(
+      size.width / 5,
+      size.height + curveDepth,
+      0,
+      size.height - 132,
+    );
+
+    path.lineTo(0, 0);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }
