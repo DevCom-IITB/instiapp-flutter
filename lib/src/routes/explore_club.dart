@@ -207,7 +207,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                                       height: 52,
                                       width: 52,
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withValues(alpha: 0.60),
+                                        color: Colors.white.withOpacity(0.60),
                                         borderRadius: BorderRadius.circular(25)
                                       ),
                                       child: Center(

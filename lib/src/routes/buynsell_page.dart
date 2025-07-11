@@ -3,16 +3,12 @@ import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/blocs/buynsell_post_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:date_format/date_format.dart';
 import '../api/model/user.dart';
 import 'buynsell_info.dart';
 
 import 'package:flutter/material.dart';
 import '../widgets/appbar.dart';
-// import 'bnsbookmarked.dart';
-import 'bnseditpost.dart';
 import 'bnscreatepost.dart';
-// import 'bnsdetails.dart';
 
 class BuySellPage extends StatefulWidget {
   const BuySellPage({super.key});
@@ -39,7 +35,6 @@ class _BuySellPageState extends State<BuySellPage> {
   int _selectedFilterTabIndex = 0;
 
   // void _onBookmarkPressed() {}
-
   // void _onBookmarkPost(String id, bool isBookmarked) {}
 
   @override
@@ -114,11 +109,9 @@ class _BuySellPageState extends State<BuySellPage> {
                           }
 
                           // 3. Apply availability filter
-                          if (_currentFilter == 1 &&
-                              (post.isSold ?? false) == true)
+                          if (_currentFilter == 1 && (!post.status!) == true)
                             return false; // Available
-                          if (_currentFilter == 2 &&
-                              (post.isSold ?? false) == false)
+                          if (_currentFilter == 2 && (!post.status!) == false)
                             return false; // Sold
 
                           // 4. Apply search filter
@@ -172,13 +165,20 @@ class _BuySellPageState extends State<BuySellPage> {
                           );
                         }
 
-                        return ListView.separated(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: filteredPosts.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 16),
-                          itemBuilder: (context, index) =>
-                              _buildProductItem(filteredPosts[index]),
+                        return RefreshIndicator(
+                          onRefresh: () async {
+                            await buynSellPostBloc.refresh();
+                          },
+                          displacement: 40,
+                          edgeOffset: 0,
+                          child: ListView.separated(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            itemCount: filteredPosts.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 16),
+                            itemBuilder: (context, index) =>
+                                _buildProductItem(filteredPosts[index]),
+                          ),
                         );
                       },
                     ),
@@ -196,14 +196,16 @@ class _BuySellPageState extends State<BuySellPage> {
         (_currentTab == 1 && post.user?.userID == currentUser?.userID);
 
     final isNegotiable = post.negotiable ?? false;
-    final isSold = post.isSold ?? false;
+    final isSold = !post.status!;
 
     void navigateToDetail() {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => BuyAndSellInfoPage(
-            postFuture: Future.value(post),
+            postId: post.id!,
+            initialPost: post,
+            isMyPost: isCurrentUserPost ? true : false,
             // onBookmarkChanged: (id, isBookmarked) {
             //   _onBookmarkPost(id, isBookmarked);
             // },
@@ -212,21 +214,21 @@ class _BuySellPageState extends State<BuySellPage> {
       );
     }
 
-    return Opacity(
-      opacity: isSold && _currentFilter == 0 ? 0.7 : 1.0,
-      child: Container(
-        height: 254,
-        padding: const EdgeInsets.only(right: 16),
-        decoration: BoxDecoration(
-          color: const Color(0xFFEFEFEF),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          children: [
-            Stack(
-              children: [
-                // Image Container
-                GestureDetector(
+    return Container(
+      height: 254,
+      padding: const EdgeInsets.only(right: 16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEFEFEF),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Stack(
+            children: [
+              // Image Container
+              Opacity(
+                opacity: isSold && _currentFilter == 0 ? 0.6 : 1.0,
+                child: GestureDetector(
                   onTap: navigateToDetail,
                   child: Container(
                     width: 154,
@@ -265,268 +267,303 @@ class _BuySellPageState extends State<BuySellPage> {
                     ),
                   ),
                 ),
+              ),
 
-                // Bookmark Button
-                // Positioned(
-                //   top: 8,
-                //   left: 8,
-                //   child: Container(
-                //     height: 32,
-                //     width: 32,
-                //     padding: EdgeInsets.zero,
-                //     decoration: BoxDecoration(
-                //       color: Colors.black45,
-                //       shape: BoxShape.circle,
-                //     ),
-                //     child: IconButton(
-                //         padding: EdgeInsets.zero,
-                //         icon: Icon(
-                //           Icons.bookmark_border,
-                //           color: Colors.white,
-                //           size: 20,
-                //         ),
-                //         onPressed: () {
-                //           _onBookmarkPost(
-                //               post.id ?? '1', post.isBookmarked ?? false);
-                //         }),
-                //   ),
-                // ),
+              // Bookmark Button
+              // Positioned(
+              //   top: 8,
+              //   left: 8,
+              //   child: Container(
+              //     height: 32,
+              //     width: 32,
+              //     padding: EdgeInsets.zero,
+              //     decoration: BoxDecoration(
+              //       color: Colors.black45,
+              //       shape: BoxShape.circle,
+              //     ),
+              //     child: IconButton(
+              //         padding: EdgeInsets.zero,
+              //         icon: Icon(
+              //           Icons.bookmark_border,
+              //           color: Colors.white,
+              //           size: 20,
+              //         ),
+              //         onPressed: () {
+              //           _onBookmarkPost(
+              //               post.id ?? '1', post.isBookmarked ?? false);
+              //         }),
+              //   ),
+              // ),
 
-                // Edit/Delete Buttons (for user's posts)
-                if (isCurrentUserPost)
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 4,
-                        vertical: 2,
+              // Edit/Delete Buttons (for user's posts)
+              if (isCurrentUserPost && !isSold)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(32),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          padding: EdgeInsets.all(8),
+                          constraints: BoxConstraints(),
+                          icon: const Icon(
+                            Icons.delete_outline_outlined,
+                            size: 24,
+                            color: Colors.red,
+                          ),
+                          onPressed: () => {_confirmDelete(post.id)},
+                        ),
+                        IconButton(
+                          padding: EdgeInsets.all(8),
+                          constraints: BoxConstraints(),
+                          icon: const Icon(
+                            Icons.edit_outlined,
+                            size: 24,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {
+                            _navigateToEditPage(post);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+              if (isCurrentUserPost && isSold)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(32),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          padding: EdgeInsets.all(8),
+                          constraints: BoxConstraints(),
+                          icon: const Icon(
+                            Icons.delete_outline_outlined,
+                            size: 24,
+                            color: Colors.red,
+                          ),
+                          onPressed: () => {_confirmDelete(post.id)},
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+              // Mark as Sold Button
+              if (isCurrentUserPost && !isSold)
+                Positioned(
+                  bottom: 8,
+                  left: 8,
+                  right: 8,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Color.fromRGBO(48, 111, 220, 1),
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            side: BorderSide(
+                                color: Color.fromRGBO(48, 111, 220, 1),
+                                width: 2)),
+                        textStyle: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w700)),
+                    onPressed: () => _confirmMarkAsSold(post),
+                    child: const Text('Mark Sold'),
+                  ),
+                ),
+
+              // Sold Indicator
+              if (isCurrentUserPost && isSold)
+                Positioned(
+                  bottom: 8,
+                  left: 8,
+                  right: 8,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    margin: const EdgeInsets.only(bottom: 6),
+                    decoration: BoxDecoration(
+                      color: Color.fromRGBO(239, 239, 239, 1),
+                      border: Border.all(
+                        color: Color.fromRGBO(126, 130, 135, 1),
+                        width: 2,
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Center(
+                      child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.edit,
-                              size: 18,
-                              color: Colors.white,
+                          Icon(Icons.check_circle_outline,
+                              color: Color.fromRGBO(126, 130, 135, 1),
+                              size: 16),
+                          SizedBox(width: 6),
+                          Text(
+                            'Sold',
+                            style: TextStyle(
+                              color: Color.fromRGBO(126, 130, 135, 1),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
                             ),
-                            onPressed: () {
-                              // _navigateToEditPage(post);
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.delete,
-                              size: 18,
-                              color: Colors.red,
-                            ),
-                            onPressed: () => {
-                              // _confirmDelete(post)
-                            },
                           ),
                         ],
                       ),
                     ),
                   ),
-
-                // Mark as Sold Button
-                if (isCurrentUserPost && !isSold)
-                  Positioned(
-                    bottom: 8,
-                    left: 8,
-                    right: 8,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black.withOpacity(0.7),
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () => _confirmMarkAsSold(post.id ?? ''),
-                      child: const Text(
-                        'Mark as Sold',
-                        style: TextStyle(color: Colors.white, fontSize: 12),
-                      ),
-                    ),
-                  ),
-
-                // Sold Indicator
-                if (isCurrentUserPost && isSold)
-                  Positioned(
-                    bottom: 8,
-                    left: 8,
-                    right: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.7),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Center(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.check, color: Colors.white, size: 14),
-                            SizedBox(width: 4),
+                ),
+            ],
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 24, bottom: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            post.name ?? "Untitled Item",
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w700),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            post.action == 'giveaway'
+                                ? "Giveaway"
+                                : "₹${post.price ?? 0}",
+                            style: const TextStyle(
+                                fontSize: 24,
+                                color: Color.fromRGBO(48, 111, 220, 1),
+                                fontWeight: FontWeight.w700),
+                          ),
+                          if (post.originalPrice != null)
                             Text(
-                              'Sold',
+                              'Bought at ₹${post.originalPrice}',
                               style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color.fromRGBO(126, 130, 135, 1)),
+                            ),
+                        ],
+                      ),
+
+                      // Condition Tag
+                      isSold
+                          ? Container(
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.black),
+                              ),
+                              child: Text(
+                                'Sold',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            )
+                          : Container(
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: isNegotiable
+                                      ? const Color(0xFF67BC00)
+                                      : Colors.red,
+                                ),
+                              ),
+                              child: Text(
+                                isNegotiable ? 'Negotiable' : 'Fixed Price',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: isNegotiable
+                                      ? const Color(0xFF67BC00)
+                                      : Colors.red,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 24, bottom: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              post.name ?? "Untitled Item",
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w700),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              post.action == 'giveaway'
-                                  ? "Giveaway"
-                                  : "₹${post.price ?? 0}",
-                              style: const TextStyle(
-                                  fontSize: 24,
-                                  color: Color.fromRGBO(48, 111, 220, 1),
-                                  fontWeight: FontWeight.w700),
-                            ),
-                            if (post.originalPrice != -1)
+
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            post.description ?? "No description",
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w400),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.access_time,
+                                size: 16,
+                                color: Color.fromRGBO(126, 130, 135, 1),
+                              ),
+                              const SizedBox(width: 4),
                               Text(
-                                'Bought at ₹${post.originalPrice}',
+                                post.timeBefore ?? "Recently",
                                 style: TextStyle(
                                     fontSize: 14,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w700,
                                     color: Color.fromRGBO(126, 130, 135, 1)),
                               ),
-                          ],
-                        ),
-
-                        // Condition Tag
-                        isSold
-                            ? Container(
-                                margin: const EdgeInsets.symmetric(vertical: 8),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Colors.black),
-                                ),
-                                child: Text(
-                                  'Sold',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              )
-                            : Container(
-                                margin: const EdgeInsets.symmetric(vertical: 8),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: isNegotiable
-                                        ? const Color(0xFF67BC00)
-                                        : Colors.red,
-                                  ),
-                                ),
-                                child: Text(
-                                  isNegotiable ? 'Negotiable' : 'Fixed Price',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: isNegotiable
-                                        ? const Color(0xFF67BC00)
-                                        : Colors.red,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              post.description ?? "No description",
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w400),
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.access_time,
-                                  size: 16,
-                                  color: Color.fromRGBO(126, 130, 135, 1),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  post.timeBefore ?? "Recently",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color.fromRGBO(126, 130, 135, 1)),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
+                ),
 
-                  // Full-area InkWell for taps
-                  Positioned.fill(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: navigateToDetail,
-                    ),
+                // Full-area InkWell for taps
+                Positioned.fill(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: navigateToDetail,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   // Add these new methods for the additional functionality
-  void _confirmDelete(String id) {
+  void _confirmDelete(String? id) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -538,11 +575,10 @@ class _BuySellPageState extends State<BuySellPage> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              // setState(() {
-              //   _items.removeWhere((item) => item['id'] == id);
-              // });
+            onPressed: () async {
+              await bloc.buynSellPostBloc.deleteBuynSellPost(id!);
               Navigator.pop(context);
+              await bloc.buynSellPostBloc.refresh();
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
@@ -551,7 +587,7 @@ class _BuySellPageState extends State<BuySellPage> {
     );
   }
 
-  void _confirmMarkAsSold(String id) {
+  void _confirmMarkAsSold(BuynSellPost post) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -563,14 +599,10 @@ class _BuySellPageState extends State<BuySellPage> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              // setState(() {
-              //   final index = _items.indexWhere((item) => item['id'] == id);
-              //   if (index != -1) {
-              //     _items[index]['sold'] = true;
-              //   }
-              // });
+            onPressed: () async {
+              await bloc.buynSellPostBloc.markAsSold(post.id!);
               Navigator.pop(context);
+              await bloc.buynSellPostBloc.refresh();
             },
             child: const Text('Confirm'),
           ),
@@ -579,13 +611,18 @@ class _BuySellPageState extends State<BuySellPage> {
     );
   }
 
-  void _navigateToEditPage(Map<String, dynamic> item) {
+  void _navigateToEditPage(BuynSellPost post) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditPostPage(post: item), // Create this page
+        builder: (context) => PostItemFlow(
+          isEditable: true,
+          existingPost: post,
+        ),
       ),
-    );
+    ).then((_) async {
+      await bloc.buynSellPostBloc.refresh();
+    });
   }
 
   Widget _buildBottomNavBar() {
@@ -644,7 +681,9 @@ class _BuySellPageState extends State<BuySellPage> {
                   MaterialPageRoute(
                     builder: (context) => const PostItemFlow(),
                   ),
-                );
+                ).then((_) async {
+                  await buynSellPostBloc.refresh();
+                });
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -660,7 +699,7 @@ class _BuySellPageState extends State<BuySellPage> {
                     Icon(Icons.add_circle_outline, color: Colors.white),
                     SizedBox(width: 8),
                     Text(
-                      'Sell/Request',
+                      'Post Item',
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ],
@@ -841,7 +880,8 @@ class _BuySellPageState extends State<BuySellPage> {
                 children: [
                   // Header
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius:
@@ -860,9 +900,7 @@ class _BuySellPageState extends State<BuySellPage> {
                         Text(
                           'Filters',
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24
-                          ),
+                              fontWeight: FontWeight.bold, fontSize: 24),
                         ),
                         IconButton(
                           icon: const Icon(Icons.close),
@@ -882,14 +920,16 @@ class _BuySellPageState extends State<BuySellPage> {
                           width: 100,
                           decoration: const BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.only(topRight: Radius.circular(24)),
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(24)),
                           ),
                           child: Column(
                             children: [
                               ..._filterTabs.asMap().entries.map((entry) {
                                 final index = entry.key;
                                 final label = entry.value;
-                                final isSelected = index == _selectedFilterTabIndex;
+                                final isSelected =
+                                    index == _selectedFilterTabIndex;
 
                                 return GestureDetector(
                                   onTap: () {
@@ -898,22 +938,34 @@ class _BuySellPageState extends State<BuySellPage> {
                                     });
                                   },
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 0),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 18, horizontal: 0),
                                     decoration: BoxDecoration(
                                       // 1. base color: white if not selected, grey if selected
-                                      color: isSelected ? Color.fromRGBO(239, 239, 239, 1) : Colors.white,
+                                      color: isSelected
+                                          ? Color.fromRGBO(239, 239, 239, 1)
+                                          : Colors.white,
                                       // 2. gradient only on selected: blue line → grey
                                       gradient: isSelected
                                           ? const LinearGradient(
                                               begin: Alignment.centerLeft,
                                               end: Alignment.centerRight,
-                                              stops: [0.0, 0.05, 0.06, 0.7, 0.99],
+                                              stops: [
+                                                0.0,
+                                                0.05,
+                                                0.06,
+                                                0.7,
+                                                0.99
+                                              ],
                                               colors: [
                                                 Color.fromRGBO(48, 111, 220, 1),
                                                 Color.fromRGBO(48, 111, 220, 1),
-                                                Color.fromRGBO(48, 111, 220, 0.2),
-                                                Color.fromRGBO(239, 239, 239, 0.4),
-                                                Color.fromRGBO(239, 239, 239, 0.8)
+                                                Color.fromRGBO(
+                                                    48, 111, 220, 0.2),
+                                                Color.fromRGBO(
+                                                    239, 239, 239, 0.4),
+                                                Color.fromRGBO(
+                                                    239, 239, 239, 0.8)
                                               ],
                                             )
                                           : null,
@@ -935,7 +987,7 @@ class _BuySellPageState extends State<BuySellPage> {
                             ],
                           ),
                         ),
-                    
+
                         // Content area
                         Expanded(
                           child: Container(
@@ -943,7 +995,9 @@ class _BuySellPageState extends State<BuySellPage> {
                             decoration: BoxDecoration(
                               color: Color.fromRGBO(239, 239, 239, 1),
                               borderRadius: BorderRadius.only(
-                                topLeft: _selectedFilterTabIndex == 0 ? Radius.circular(0) : Radius.circular(24),
+                                topLeft: _selectedFilterTabIndex == 0
+                                    ? Radius.circular(0)
+                                    : Radius.circular(24),
                                 bottomLeft: Radius.circular(24),
                               ),
                             ),
@@ -1014,7 +1068,8 @@ class _BuySellPageState extends State<BuySellPage> {
                             child: Ink(
                               decoration: BoxDecoration(
                                 image: const DecorationImage(
-                                  image: AssetImage("assets/buynsell/filterbutton.png"),
+                                  image: AssetImage(
+                                      "assets/buynsell/filterbutton.png"),
                                   fit: BoxFit.cover,
                                 ),
                                 borderRadius: BorderRadius.circular(50),
@@ -1125,8 +1180,7 @@ class _BuySellPageState extends State<BuySellPage> {
         ),
       ),
       child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         title: Text(
           title,
           style: TextStyle(
@@ -1185,10 +1239,11 @@ class _BuySellPageState extends State<BuySellPage> {
                   final category = categories[index];
                   final isSelected =
                       _selectedCategories?.contains(category) ?? false;
-              
+
                   return Container(
                     decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFFF0F5FF) : Colors.white,
+                      color:
+                          isSelected ? const Color(0xFFF0F5FF) : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected
@@ -1203,8 +1258,9 @@ class _BuySellPageState extends State<BuySellPage> {
                         style: TextStyle(
                           fontWeight:
                               isSelected ? FontWeight.bold : FontWeight.normal,
-                          color:
-                              isSelected ? const Color(0xFF306FDC) : Colors.black,
+                          color: isSelected
+                              ? const Color(0xFF306FDC)
+                              : Colors.black,
                         ),
                       ),
                       value: isSelected,
@@ -1219,7 +1275,8 @@ class _BuySellPageState extends State<BuySellPage> {
                         });
                       },
                       controlAffinity: ListTileControlAffinity.leading,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 12),
                       checkboxShape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4)),
                       activeColor: const Color(0xFF306FDC),
@@ -1240,7 +1297,7 @@ class _BuySellPageState extends State<BuySellPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Product Negotiability',
+          'Product Price Negotiability',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -1277,8 +1334,7 @@ class _BuySellPageState extends State<BuySellPage> {
         ),
       ),
       child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         title: Text(
           title,
           style: TextStyle(

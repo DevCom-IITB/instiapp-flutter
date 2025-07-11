@@ -13,6 +13,7 @@ class _InstiAppApi implements InstiAppApi {
     this._dio, {
     this.baseUrl,
   }) {
+    // baseUrl ??= 'https://6549148c5162.ngrok-free.app/api';
     baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
     // baseUrl ??= 'https://a6c715a9e425.ngrok-free.app/api';
     // baseUrl ??= 'http://10.198.49.150/api';
@@ -696,7 +697,6 @@ class _InstiAppApi implements InstiAppApi {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-            print(_result.data);
     final value = EventCreateResponse.fromJson(_result.data!);
     return value;
   }
@@ -2408,9 +2408,12 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<List<BuynSellPost>> getBuynSellPosts(String sessionId) async {
+  Future<List<BuynSellPost>> getBuynSellPosts(
+    String sessionId, {
+    bool showAll = true,
+  }) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'all': showAll};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final Map<String, dynamic>? _data = null;
@@ -2469,7 +2472,7 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<BuynSellPost> deleteBuynSellPost(
+  Future<BuynSellPost?> deleteBuynSellPost(
     String sessionId,
     String id,
   ) async {
@@ -2479,7 +2482,7 @@ class _InstiAppApi implements InstiAppApi {
     _headers.removeWhere((k, v) => v == null);
     final Map<String, dynamic>? _data = null;
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<BuynSellPost>(Options(
+        .fetch<Map<String, dynamic>?>(_setStreamType<BuynSellPost>(Options(
       method: 'DELETE',
       headers: _headers,
       extra: _extra,
@@ -2495,7 +2498,8 @@ class _InstiAppApi implements InstiAppApi {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = BuynSellPost.fromJson(_result.data!);
+    final value =
+        _result.data == null ? null : BuynSellPost.fromJson(_result.data!);
     return value;
   }
 
@@ -2552,6 +2556,37 @@ class _InstiAppApi implements InstiAppApi {
             .compose(
               _dio.options,
               '/buy/products',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = BuynSellPost.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<BuynSellPost> markBuynSellPostAsSold(
+    String sessionId,
+    String id,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<BuynSellPost>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/buy/products/${id}/sold',
               queryParameters: queryParameters,
               data: _data,
             )

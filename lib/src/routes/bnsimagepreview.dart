@@ -4,17 +4,18 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:InstiApp/src/api/model/buynsellPost.dart';
 
 class ImagePreviewPage extends StatefulWidget {
   final List<String> imageUrls;
   final int initialIndex;
-  final String phoneNumber;
+  final BuynSellPost post;
 
   const ImagePreviewPage({
     Key? key,
     required this.imageUrls,
-    required this.phoneNumber,
     this.initialIndex = 0,
+    required this.post,
   }) : super(key: key);
 
   @override
@@ -73,7 +74,8 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
             imageProvider: NetworkImage(widget.imageUrls[index]),
             minScale: PhotoViewComputedScale.contained,
             maxScale: PhotoViewComputedScale.covered * 4,
-            heroAttributes: PhotoViewHeroAttributes(tag: widget.imageUrls[index]),
+            heroAttributes:
+                PhotoViewHeroAttributes(tag: widget.imageUrls[index]),
           );
         },
         loadingBuilder: (context, event) => Center(
@@ -88,11 +90,12 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomActionBar(widget.phoneNumber),
+      bottomNavigationBar: _buildBottomActionBar(widget.post),
     );
   }
 
-  Widget _buildBottomActionBar(String phoneNumber) {
+  Widget _buildBottomActionBar(BuynSellPost post) {
+    String phoneNumber = post.contactDetails ?? '';
     return Container(
       alignment: Alignment.topCenter,
       height: 88,
@@ -107,7 +110,6 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
       child: Container(
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: Colors.transparent,
           borderRadius: BorderRadius.circular(50),
         ),
         child: IntrinsicHeight(
@@ -115,7 +117,7 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildShareButton(),
+              _buildShareButton(post),
               _buildCopyNumberButton(phoneNumber),
               _buildWhatsAppButton(phoneNumber),
             ],
@@ -125,7 +127,7 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
     );
   }
 
-  Widget _buildShareButton() {
+  Widget _buildShareButton(BuynSellPost post) {
     return Container(
       width: 48,
       height: 48,
@@ -136,8 +138,17 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
       ),
       child: IconButton(
         icon: Icon(Icons.share, color: Colors.white),
-        onPressed: () {
-          // TODO: Implement share functionality
+        onPressed: () async {
+          final deepLink = 'https://www.insti.app/buynsell/${post.id}';
+
+          final shareText = '${post.name}\n'
+              '${post.price != null ? '₹${post.price}' : 'Giveaway'}\n'
+              'Check it out: $deepLink';
+
+          await Share.share(
+            shareText,
+            subject: '${post.name} on InstiApp',
+          );
         },
       ),
     );
@@ -171,7 +182,7 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
               );
               return;
             }
-            
+
             Clipboard.setData(ClipboardData(text: phoneNumber));
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("Phone number copied!")),
@@ -206,7 +217,7 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
             );
             return;
           }
-          
+
           final whatsappNumber = _getWhatsAppNumber(phoneNumber);
           final url = 'https://wa.me/$whatsappNumber';
           if (await canLaunchUrl(Uri.parse(url))) {

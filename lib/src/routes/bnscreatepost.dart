@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:InstiApp/src/api/model/buynsellPost.dart';
-import 'package:InstiApp/src/api/model/user.dart';
+import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import '../bloc_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,13 +10,22 @@ import '../widgets/dotted_divider.dart';
 import '../widgets/buttons.dart';
 
 class PostItemFlow extends StatefulWidget {
-  const PostItemFlow({super.key});
+  final bool isEditable;
+  final BuynSellPost? existingPost;
+  const PostItemFlow({
+    super.key,
+    this.isEditable = false,
+    this.existingPost,
+  });
 
   @override
   State<PostItemFlow> createState() => _PostItemFlowState();
 }
 
 class _PostItemFlowState extends State<PostItemFlow> {
+  late bool _isEditMode;
+  List<String> _existingImageUrls = [];
+
   int _currentStep = 0;
   final List<XFile> _images = [];
   String? _selectedCategory;
@@ -28,8 +37,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
   final TextEditingController _mobileController = TextEditingController();
   bool _isNegotiable = true;
   bool _isGiveAway = false;
-
-  BuynSellPost bnsPost = BuynSellPost();
+  bool isPosting = false;
 
   final List<Map<String, dynamic>> _categories = [
     {'name': 'Gadgets', 'icon': 'assets/categories/gadgets.png'},
@@ -55,9 +63,30 @@ class _PostItemFlowState extends State<PostItemFlow> {
   @override
   void initState() {
     super.initState();
-    bnsPost.warranty = false;
-    bnsPost.negotiable = false;
-    bnsPost.packaging = false;
+    _isEditMode = widget.isEditable;
+
+    if (_isEditMode && widget.existingPost != null) {
+      final post = widget.existingPost!;
+
+      _titleController.text = post.name ?? '';
+      _priceController.text = post.price?.toString() ?? '';
+      _boughtPriceController.text = post.originalPrice?.toString() ?? '';
+      _descController.text = post.description ?? '';
+      _mobileController.text = post.contactDetails ?? '';
+      _isNegotiable = post.negotiable ?? false;
+      _isGiveAway = post.action == 'giveaway';
+      _selectedCategory = post.category ?? 'Others';
+      // Check if category exists in frontend list
+      final categoryExists =
+          _categories.any((c) => c['name'] == _selectedCategory);
+
+      // Fallback to 'Others' if not found
+      if (!categoryExists) {
+        _selectedCategory = 'Others';
+      }
+
+      _existingImageUrls = List.from(post.imageUrl ?? []);
+    }
   }
 
   @override
@@ -68,7 +97,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
           children: [
             const SizedBox(height: 4),
             CustomAppBar(
-              title: 'Create Post',
+              title: _isEditMode ? 'Edit Post' : 'Create Post',
               onBack: _confirmExit,
               onOther: null,
             ),
@@ -170,9 +199,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
             child: Text(
               '0${step + 1}',
               style: TextStyle(
-                color: _currentStep == step
-                    ? Color(0xFF306FDC)
-                    : Colors.grey[600],
+                color:
+                    _currentStep == step ? Color(0xFF306FDC) : Colors.grey[600],
                 fontSize: 14,
               ),
             ),
@@ -181,9 +209,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
           Text(
             label,
             style: TextStyle(
-              color: _currentStep >= step
-                  ? Color(0xFF306FDC)
-                  : Colors.grey[600],
+              color:
+                  _currentStep >= step ? Color(0xFF306FDC) : Colors.grey[600],
               fontSize: 14,
             ),
           ),
@@ -229,6 +256,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
   }
 
   Widget _buildImageUploadPage() {
+    final totalImages = _existingImageUrls.length + _images.length;
+
     return Container(
       padding: EdgeInsets.fromLTRB(16, 20, 16, 16),
       child: Column(
@@ -290,10 +319,10 @@ class _PostItemFlowState extends State<PostItemFlow> {
                           ),
                         ],
                       ),
-                      const Icon(
-                        Icons.camera_alt,
-                        size: 48,
-                        color: Colors.blue,
+                      Image.asset(
+                        'assets/buynsell/Camera.png',
+                        width: 42,
+                        height: 36,  
                       ),
                     ],
                   ),
@@ -338,7 +367,11 @@ class _PostItemFlowState extends State<PostItemFlow> {
                           ),
                         ],
                       ),
-                      const Icon(Icons.upload, size: 48, color: Colors.blue),
+                      Image.asset(
+                        'assets/buynsell/Upload.png',
+                        width: 42,
+                        height: 36,  
+                      ),
                     ],
                   ),
                 ),
@@ -346,74 +379,19 @@ class _PostItemFlowState extends State<PostItemFlow> {
             ],
           ),
           const SizedBox(height: 20),
-          if (_images.isNotEmpty)
+          if (totalImages > 0)
             SizedBox(
               height: 220,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: _images.length,
+                itemCount: totalImages,
                 itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            File(_images[index].path),
-                            width: 160,
-                            height: 200,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Positioned(
-                          top: 8,
-                          right: 8,
-                          child: GestureDetector(
-                            onTap: () async {
-                              final confirm = await showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Remove Image'),
-                                  content: const Text(
-                                    'Are you sure you want to remove this image?',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(context, false),
-                                      child: const Text('Cancel'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(context, true),
-                                      child: const Text('Remove'),
-                                    ),
-                                  ],
-                                ),
-                              );
-                              if (confirm == true) {
-                                setState(() => _images.removeAt(index));
-                              }
-                            },
-                            child: Container(
-                              height: 30,
-                              width: 30,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color.fromRGBO(255, 255, 255, 0.6),
-                              ),
-                              child: const Icon(
-                                Icons.close,
-                                color: Colors.red,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
+                  if (index < _existingImageUrls.length) {
+                    return _buildExistingImageItem(index);
+                  } else {
+                    return _buildNewImageItem(
+                        index - _existingImageUrls.length);
+                  }
                 },
               ),
             ),
@@ -425,7 +403,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
               Expanded(
                 child: DecoratedButton(
                   text: 'Continue',
-                  onPressed: _images.isNotEmpty ? _nextStep : null,
+                  onPressed: totalImages > 0 ? _nextStep : null,
                   backgroundColor: const Color(0xFF0F1620),
                   textColor: Colors.white,
                   backgroundImageAsset: 'assets/buynsell/button_bg.png',
@@ -436,6 +414,162 @@ class _PostItemFlowState extends State<PostItemFlow> {
         ],
       ),
     );
+  }
+
+  // Builds an item for existing image (from server)
+  Widget _buildExistingImageItem(int index) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Stack(
+        children: [
+          // Network image for existing URLs
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(
+              _existingImageUrls[index],
+              width: 160,
+              height: 200,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, progress) {
+                return progress == null
+                    ? child
+                    : Container(
+                        width: 160,
+                        height: 200,
+                        color: Colors.grey[200],
+                        child: const Center(child: CircularProgressIndicator()),
+                      );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  width: 160,
+                  height: 200,
+                  color: Colors.grey[200],
+                  child: const Icon(Icons.broken_image, size: 50),
+                );
+              },
+            ),
+          ),
+          // Remove button
+          Positioned(
+            top: 8,
+            right: 8,
+            child: GestureDetector(
+              onTap: () => _removeExistingImage(index),
+              child: Container(
+                height: 30,
+                width: 30,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color.fromRGBO(255, 255, 255, 0.6),
+                ),
+                child: const Icon(
+                  Icons.close,
+                  color: Colors.red,
+                  size: 20,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Builds an item for newly added image (from device)
+  Widget _buildNewImageItem(int index) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Stack(
+        children: [
+          // File image for new selections
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.file(
+              File(_images[index].path),
+              width: 160,
+              height: 200,
+              fit: BoxFit.cover,
+            ),
+          ),
+          // Remove button
+          Positioned(
+            top: 8,
+            right: 8,
+            child: GestureDetector(
+              onTap: () => _removeNewImage(index),
+              child: Container(
+                height: 30,
+                width: 30,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color.fromRGBO(255, 255, 255, 0.6),
+                ),
+                child: const Icon(
+                  Icons.close,
+                  color: Colors.red,
+                  size: 20,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Handles removal of existing images (from server)
+  Future<void> _removeExistingImage(int index) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Remove Image'),
+        content: const Text('Remove this image from your post?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Remove'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      setState(() {
+        _existingImageUrls.removeAt(index);
+      });
+    }
+  }
+
+  // Handles removal of new images (from device)
+  Future<void> _removeNewImage(int index) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Remove Image'),
+        content: const Text('Are you sure you want to remove this image?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Remove'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      setState(() {
+        _images.removeAt(index);
+      });
+    }
   }
 
   Widget _buildCategoryPage() {
@@ -539,6 +673,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
   }
 
   Widget _buildDetailsPage() {
+    final totalImages = _existingImageUrls.length + _images.length;
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -565,13 +701,13 @@ class _PostItemFlowState extends State<PostItemFlow> {
                 children: [
                   Row(
                     children: [
-                      if (_images.isNotEmpty) _buildImagePreview(0),
-                      if (_images.length > 1)
+                      if (totalImages > 0) _buildImagePreview(0),
+                      if (totalImages > 1)
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: _buildImagePreview(1),
                         ),
-                      if (_images.length > 2)
+                      if (totalImages > 2)
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: GestureDetector(
@@ -586,34 +722,26 @@ class _PostItemFlowState extends State<PostItemFlow> {
                                       shrinkWrap: true,
                                       gridDelegate:
                                           const SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 2,
-                                            crossAxisSpacing: 8,
-                                            mainAxisSpacing: 8,
-                                          ),
-                                      itemCount: _images.length,
+                                        crossAxisCount: 2,
+                                        crossAxisSpacing: 8,
+                                        mainAxisSpacing: 8,
+                                      ),
+                                      itemCount: totalImages,
                                       itemBuilder: (context, index) {
                                         return Stack(
                                           children: [
-                                            Image.file(
-                                              File(_images[index].path),
-                                            ),
-                                            Positioned(
-                                              top: 0,
-                                              right: 0,
-                                              child: IconButton(
-                                                icon: const Icon(
-                                                  Icons.close,
-                                                  color: Colors.red,
-                                                ),
-                                                onPressed: () {
-                                                  setState(
-                                                    () =>
-                                                        _images.removeAt(index),
-                                                  );
-                                                  Navigator.pop(context);
-                                                },
-                                              ),
-                                            ),
+                                            index < _existingImageUrls.length
+                                                ? Image.network(
+                                                    _existingImageUrls[index],
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : Image.file(
+                                                    File(_images[index -
+                                                            _existingImageUrls
+                                                                .length]
+                                                        .path),
+                                                    fit: BoxFit.cover,
+                                                  )
                                           ],
                                         );
                                       },
@@ -637,7 +765,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                               ),
                               child: Center(
                                 child: Text(
-                                  '+${_images.length - 2}',
+                                  '+${totalImages - 2}',
                                   style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w500,
@@ -661,9 +789,10 @@ class _PostItemFlowState extends State<PostItemFlow> {
                       ),
                       child: Center(
                         child: Image.asset(
-                          _categories.firstWhere(
-                            (c) => c['name'] == _selectedCategory,
-                          )['icon'],
+                          _getCategoryIcon(_selectedCategory!),
+                          // _categories.firstWhere(
+                          //   (c) => c['name'] == _selectedCategory,
+                          // )['icon'],
                           width: 48,
                           height: 48,
                           fit: BoxFit.contain,
@@ -739,47 +868,48 @@ class _PostItemFlowState extends State<PostItemFlow> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        _isGiveAway ? _buildGiveAwayDisplay() :
-                        TextFormField(
-                          controller: _priceController,
-                          decoration: InputDecoration(
-                            isDense: true,
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 12,
-                            ),
-                            hintText: 'Enter Price',
-                            prefixIcon: Padding(
-                              padding: EdgeInsets.only(
-                                left: 8,
-                              ), // optional: aligns with text vertically
-                              child: Text(
-                                '₹',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black, // or grey
+                        _isGiveAway
+                            ? _buildGiveAwayDisplay()
+                            : TextFormField(
+                                controller: _priceController,
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: 12,
+                                    horizontal: 12,
+                                  ),
+                                  hintText: 'Enter Price',
+                                  prefixIcon: Padding(
+                                    padding: EdgeInsets.only(
+                                      left: 8,
+                                    ), // optional: aligns with text vertically
+                                    child: Text(
+                                      '₹',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black, // or grey
+                                      ),
+                                    ),
+                                  ),
+                                  prefixIconConstraints: BoxConstraints(
+                                    minWidth: 0,
+                                    minHeight: 0,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
                                 ),
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a price';
+                                  }
+                                  if (double.tryParse(value) == null) {
+                                    return 'Please enter a valid number';
+                                  }
+                                  return null;
+                                },
                               ),
-                            ),
-                            prefixIconConstraints: BoxConstraints(
-                              minWidth: 0,
-                              minHeight: 0,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a price';
-                            }
-                            if (double.tryParse(value) == null) {
-                              return 'Please enter a valid number';
-                            }
-                            return null;
-                          },
-                        ),
                       ],
                     ),
                   ),
@@ -839,66 +969,66 @@ class _PostItemFlowState extends State<PostItemFlow> {
 
               // Price Type (ChoiceChips)
               if (!_isGiveAway)
-              Row(
-                children: [
-                  ChoiceChip(
-                    label: const Text('Negotiable'),
-                    selected: _isNegotiable,
-                    onSelected: (selected) {
-                      setState(() => _isNegotiable = true);
-                    },
-                    selectedColor: Color(0xFF306FDC),
-                    backgroundColor: Colors.grey[200],
-                    labelStyle: TextStyle(
-                      color: _isNegotiable ? Colors.white : Colors.black,
-                      fontWeight: FontWeight.w600,
+                Row(
+                  children: [
+                    ChoiceChip(
+                      label: const Text('Negotiable'),
+                      selected: _isNegotiable,
+                      onSelected: (selected) {
+                        setState(() => _isNegotiable = true);
+                      },
+                      selectedColor: Color(0xFF306FDC),
+                      backgroundColor: Colors.grey[200],
+                      labelStyle: TextStyle(
+                        color: _isNegotiable ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      checkmarkColor: Colors.white,
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                    const SizedBox(width: 12),
+                    ChoiceChip(
+                      label: const Text('Fixed'),
+                      selected: !_isNegotiable,
+                      onSelected: (selected) {
+                        setState(() => _isNegotiable = false);
+                      },
+                      selectedColor: Color(0xFF306FDC),
+                      backgroundColor: Colors.grey[200],
+                      labelStyle: TextStyle(
+                        color: !_isNegotiable ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      checkmarkColor: Colors.white,
                     ),
-                    checkmarkColor: Colors.white,
-                  ),
-                  const SizedBox(width: 12),
-                  ChoiceChip(
-                    label: const Text('Fixed'),
-                    selected: !_isNegotiable,
-                    onSelected: (selected) {
-                      setState(() => _isNegotiable = false);
-                    },
-                    selectedColor: Color(0xFF306FDC),
-                    backgroundColor: Colors.grey[200],
-                    labelStyle: TextStyle(
-                      color: !_isNegotiable ? Colors.white : Colors.black,
-                      fontWeight: FontWeight.w600,
+                    const SizedBox(width: 12),
+                    ChoiceChip(
+                      label: const Text('Give Away'),
+                      selected: _isGiveAway,
+                      onSelected: (selected) {
+                        setState(() {
+                          _isGiveAway = true;
+                          _priceController.text = '0';
+                        });
+                      },
+                      selectedColor: Colors.green[200],
+                      backgroundColor: Colors.grey[200],
+                      labelStyle: TextStyle(
+                        color: _isGiveAway ? Colors.green : Colors.black,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      checkmarkColor: Colors.green,
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    checkmarkColor: Colors.white,
-                  ),
-                  const SizedBox(width: 12),
-                  ChoiceChip(
-                    label: const Text('Give Away'),
-                    selected: _isGiveAway,
-                    onSelected: (selected) {
-                      setState(() {
-                        _isGiveAway = true;
-                        _priceController.text = '0';
-                      });
-                    },
-                    selectedColor: Colors.green[200],
-                    backgroundColor: Colors.grey[200],
-                    labelStyle: TextStyle(
-                      color: _isGiveAway ? Colors.green : Colors.black,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    checkmarkColor: Colors.green,
-                  ),
-                ],
-              ),
+                  ],
+                ),
               const SizedBox(height: 16),
 
               // Description
@@ -920,30 +1050,29 @@ class _PostItemFlowState extends State<PostItemFlow> {
               const SizedBox(height: 8),
               TextFormField(
                 controller: _descController,
-                buildCounter:
-                    (
-                      BuildContext context, {
-                      required int currentLength,
-                      required bool isFocused,
-                      required int? maxLength,
-                    }) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Character Limit',
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
-                          ),
-                          Text(
-                            '$currentLength/$maxLength',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      );
-                    },
+                buildCounter: (
+                  BuildContext context, {
+                  required int currentLength,
+                  required bool isFocused,
+                  required int? maxLength,
+                }) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Character Limit',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                      Text(
+                        '$currentLength/$maxLength',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  );
+                },
                 decoration: InputDecoration(
                   isDense: true,
                   contentPadding: EdgeInsets.symmetric(
@@ -1023,36 +1152,117 @@ class _PostItemFlowState extends State<PostItemFlow> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: DecoratedButton(
-                      text: 'Post',
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          // Save the post data
-                          final postData = {
-                            'images': _images.map((img) => img.path).toList(),
-                            'category': _selectedCategory,
-                            'title': _titleController.text,
-                            'price': _isGiveAway ? 0.0 : double.parse(_priceController.text),
-                            'isGiveAway': _isGiveAway,
-                            'isNegotiable': _isGiveAway ? false : _isNegotiable,
-                            'originalPrice': _boughtPriceController.text.isNotEmpty
-                                ? double.parse(_boughtPriceController.text)
-                                : null,
-                            'description': _descController.text,
-                            'mobile': _mobileController.text,
-                          };
-                          print('Post data: $postData');
-                          // Here you would typically:
-                          // 1. Upload images to storage
-                          // 2. Save post data to database
-                          // 3. Navigate to success screen or back to home
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Item posted successfully!'),
-                            ),
-                          );
-                          Navigator.pop(context); // Return to previous screen
-                        }
-                      },
+                      text: isPosting ? 'Posting...' : 'Post',
+                      onPressed: isPosting
+                          ? null
+                          : () async {
+                              if (_formKey.currentState!.validate()) {
+                                setState(() => isPosting = true);
+
+                                // Bloc Instance
+                                final bloc = BlocProvider.of(context)!.bloc;
+
+                                late BuynSellPost bnsPost;
+
+                                if (_isEditMode) {
+                                  // Changes in existing post
+                                  bnsPost = widget.existingPost!;
+                                  bnsPost.name = _titleController.text;
+                                  bnsPost.description = _descController.text;
+                                  bnsPost.contactDetails =
+                                      _mobileController.text;
+                                  bnsPost.negotiable =
+                                      _isGiveAway ? false : _isNegotiable;
+                                  bnsPost.action =
+                                      _isGiveAway ? "giveaway" : "sell";
+                                  bnsPost.originalPrice = int.tryParse(
+                                          _boughtPriceController.text) ??
+                                      null;
+                                  bnsPost.price = _isGiveAway
+                                      ? 0
+                                      : int.tryParse(_priceController.text) ??
+                                          0;
+                                  bnsPost.category = _selectedCategory;
+                                } else {
+                                  // BuynSell Post Creation
+                                  bnsPost = BuynSellPost()
+                                    ..name = _titleController.text
+                                    ..description = _descController.text
+                                    ..contactDetails = _mobileController.text
+                                    ..negotiable =
+                                        _isGiveAway ? false : _isNegotiable
+                                    ..action = _isGiveAway ? "giveaway" : "sell"
+                                    ..originalPrice = int.tryParse(
+                                            _boughtPriceController.text) ??
+                                        null
+                                    ..price = _isGiveAway
+                                        ? 0
+                                        : int.tryParse(_priceController.text) ??
+                                            0
+                                    ..category = _selectedCategory;
+                                }
+
+                                try {
+                                  // Upload Images and get URLs
+                                  List<String> imageUrls = [];
+
+                                  if (_isEditMode) {
+                                    imageUrls.addAll(_existingImageUrls);
+                                  }
+
+                                  for (XFile image in _images) {
+                                    File file = File(image.path);
+                                    if (await file.length() / 1000000 > 10) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Image size should be less than 10MB',
+                                          ),
+                                        ),
+                                      );
+                                      continue;
+                                    }
+
+                                    ImageUploadResponse resp =
+                                        await bloc.client.uploadImage(
+                                      bloc.getSessionIdHeader(),
+                                      file,
+                                    );
+                                    imageUrls.add(resp.pictureURL!);
+                                  }
+
+                                  bnsPost.imageUrl = imageUrls;
+
+                                  if (_isEditMode) {
+                                    bloc.buynSellPostBloc
+                                        .updateBuynSellPost(bnsPost);
+                                  } else {
+                                    bloc.buynSellPostBloc
+                                        .createBuynSellPost(bnsPost);
+                                  }
+
+                                  // Show success message
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(_isEditMode
+                                          ? 'Post updated successfully!'
+                                          : 'Item posted successfully!'),
+                                    ),
+                                  );
+                                  Navigator.pop(context);
+                                } catch (e) {
+                                  // Handle errors
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Error posting item: $e'),
+                                    ),
+                                  );
+                                } finally {
+                                  setState(() => isPosting = false);
+                                }
+                              }
+                            },
                       backgroundColor: const Color(0xFF0F1620),
                       textColor: Colors.white,
                       backgroundImageAsset: 'assets/buynsell/button_bg.png',
@@ -1067,57 +1277,137 @@ class _PostItemFlowState extends State<PostItemFlow> {
     );
   }
 
+  // Add this helper function to your _PostItemFlowState class
+  String _getCategoryIcon(String categoryName) {
+    try {
+      return _categories.firstWhere(
+        (c) => c['name'] == categoryName,
+      )['icon'];
+    } catch (e) {
+      return 'assets/categories/other.png'; // Fallback to Others icon
+    }
+  }
+
   Widget _buildImagePreview(int index) {
-    return Stack(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Image.file(
-            File(_images[index].path),
-            width: 60,
-            height: 60,
-            fit: BoxFit.cover,
-          ),
-        ),
-        Positioned(
-          top: 0,
-          right: 0,
-          child: GestureDetector(
-            onTap: () async {
-              final confirm = await showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Remove Image'),
-                  content: const Text(
-                    'Are you sure you want to remove this image?',
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: const Text('Remove'),
-                    ),
-                  ],
-                ),
-              );
-              if (confirm == true) {
-                setState(() => _images.removeAt(index));
-              }
-            },
-            child: Container(
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.red,
-              ),
-              child: const Icon(Icons.close, color: Colors.white, size: 16),
+    final totalImages = _existingImageUrls.length + _images.length;
+    if (index >= totalImages) {
+      return SizedBox.shrink();
+    }
+
+    // Determine if it's an existing image or a new one
+    if (index < _existingImageUrls.length) {
+      // Existing image from server
+      return Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(
+              _existingImageUrls[index],
+              width: 60,
+              height: 60,
+              fit: BoxFit.cover,
             ),
           ),
-        ),
-      ],
-    );
+          Positioned(
+            top: 0,
+            right: 0,
+            child: GestureDetector(
+              onTap: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Remove Image'),
+                    content: const Text(
+                      'Are you sure you want to remove this image?',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('Remove'),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirm == true) {
+                  setState(() {
+                    _existingImageUrls.removeAt(index);
+                  });
+                }
+              },
+              child: Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.red,
+                ),
+                child: const Icon(Icons.close, color: Colors.white, size: 16),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      // Newly added image
+      final newIndex = index - _existingImageUrls.length;
+      if (newIndex < _images.length) {
+        return Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.file(
+                File(_images[newIndex].path),
+                width: 60,
+                height: 60,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: GestureDetector(
+                onTap: () async {
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Remove Image'),
+                      content: const Text(
+                        'Are you sure you want to remove this image?',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          child: const Text('Remove'),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (confirm == true) {
+                    setState(() {
+                      _images.removeAt(newIndex);
+                    });
+                  }
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.red,
+                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 16),
+                ),
+              ),
+            ),
+          ],
+        );
+      }
+    }
+    return const SizedBox.shrink();
   }
 
   Widget _buildGiveAwayDisplay() {
