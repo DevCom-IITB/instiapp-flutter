@@ -30,7 +30,14 @@ class _FeedPageState extends State<FeedPage> {
   IconData actionIcon = Icons.search_outlined;
 
   bool searchMode = false;
+  TextEditingController _searchController = TextEditingController();
+  String _searchQuery = "";
 
+@override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -52,6 +59,24 @@ class _FeedPageState extends State<FeedPage> {
             slivers: [
               SliverToBoxAdapter(
                 child: Column(children: [
+                  Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          hintText: "Search events...",
+                          prefixIcon: Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _searchQuery = value.trim().toLowerCase();
+                          });
+                        },
+                      ),
+                    ),
                   Center(
                     child: Container(
                         padding: EdgeInsets.only(top: 10.5, bottom: 10.5),
@@ -172,17 +197,21 @@ class _FeedPageState extends State<FeedPage> {
                 builder: (context,
                     AsyncSnapshot<UnmodifiableListView<Event>> snapshot) {
                   if (snapshot.hasData) {
-                    if (snapshot.data!.length > 0) {
+                    final filteredEvents = _searchQuery.isEmpty ? snapshot.data! : UnmodifiableListView(snapshot.data!.where((event) {
+                            final name = event.eventName?.toLowerCase() ?? "";
+                            return name.contains(_searchQuery);
+                          }).toList()); 
+                    if (filteredEvents.length > 0) {
                       return SliverList(
                         delegate: SliverChildBuilderDelegate(
                             (context, index) =>
-                                Feedpost(context, bloc, snapshot.data![index]),
-                            childCount: snapshot.data!.length),
+                                Feedpost(context, bloc, filteredEvents[index]),
+                            childCount: filteredEvents.length),
                       );
                     } else {
                       return SliverToBoxAdapter(
                         child: Center(
-                          child: Text("No upcoming events"),
+                          child: Text("No events"),
                         ),
                       );
                     }

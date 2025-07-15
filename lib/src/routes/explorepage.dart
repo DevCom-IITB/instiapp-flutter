@@ -14,513 +14,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:flutter/rendering.dart';
-
-// class ExplorePage extends StatefulWidget {
-//   final String title = "Explore";
-//   final bool searchMode;
-//   final bool fromNavigate;
-//   final String? parent;
-
-//   final List<Map<String, String>> bodyTitles = [
-//     {
-//       "bodyname": "Culturals@IITB",
-//       "title": "Culturals",
-//       "image": "assets/explore/cult.png"
-//     },
-//     {
-//       "bodyname": "Tech@IITB",
-//       "title": "Tech",
-//       "image": "assets/explore/tech.png"
-//     },
-//     {
-//       "bodyname": "IITB Sports",
-//       "title": "Sports",
-//       "image": "assets/explore/sports.png"
-//     },
-//     {
-//       "bodyname": "Departments",
-//       "title": "Departments",
-//       "image": "assets/explore/departments.png"
-//     },
-//     {
-//       "bodyname": "Hostel Affairs",
-//       "title": "Hostel Affairs",
-//       "image": "assets/explore/hostels.png"
-//     },
-//     {
-//       "bodyname": "IIT Bombay",
-//       "title": "Institute",
-//       "image": "assets/explore/ibs.png"
-//     },
-//     {
-//       "bodyname": "DevCom",
-//       "title": "DevCom",
-//       "image": "assets/explore/tech.png"
-//     },
-//     {
-//       "bodyname": "Placement Cell",
-//       "title": "Placement",
-//       "image": "assets/explore/tech.png"
-//     },
-//   ];
-//   ExplorePage(
-//       {this.searchMode = false, this.fromNavigate = false, this.parent});
-
-//   @override
-//   _ExplorePageState createState() => _ExplorePageState();
-
-//   static void navigateWith(BuildContext context, bool searchMode) {
-//     Navigator.pushReplacement(
-//       context,
-//       MaterialPageRoute(
-//         settings: RouteSettings(
-//           name: "/explore?searchMode=${searchMode ? "true" : "false"}",
-//         ),
-//         builder: (context) => ExplorePage(
-//           searchMode: searchMode,
-//           fromNavigate: true,
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// class _ExplorePageState extends State<ExplorePage> {
-//   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-//   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-//       GlobalKey<RefreshIndicatorState>();
-
-//   FocusNode _focusNode = FocusNode();
-//   ScrollController? _hideButtonController;
-//   TextEditingController? _searchFieldController;
-//   double isFabVisible = 0;
-
-//   bool searchMode = false;
-//   IconData actionIcon = Icons.search_outlined;
-
-//   bool firstBuild = true;
-
-//   @override
-//   void initState() {
-//     super.initState();
-
-//     // debugPrint("ExplorePage loaded with parent: ${widget.parent}");
-//     _searchFieldController = TextEditingController();
-//     _hideButtonController = ScrollController();
-//     _hideButtonController!.addListener(() {
-//       if (isFabVisible == 1 && _hideButtonController!.offset < 100) {
-//         setState(() {
-//           isFabVisible = 0;
-//         });
-//       } else if (isFabVisible == 0 && _hideButtonController!.offset > 100) {
-//         setState(() {
-//           isFabVisible = 1;
-//         });
-//       }
-//     });
-//   }
-
-//   @override
-//   void dispose() {
-//     _searchFieldController?.dispose();
-//     _hideButtonController?.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     var theme = Theme.of(context);
-//     var bloc = BlocProvider.of(context)!.bloc;
-//     var exploreBloc = bloc.exploreBloc;
-//     if (firstBuild) {
-//       exploreBloc.query = "";
-//       exploreBloc.refresh();
-//       searchMode = widget.searchMode;
-//       if (widget.fromNavigate) {
-//         bloc.drawerState.setPageIndex(2);
-//       }
-//       firstBuild = false;
-//     }
-
-//     return Scaffold(
-//       resizeToAvoidBottomInset: true,
-//       key: _scaffoldKey,
-//       drawer: NavDrawer(),
-//       // bottomNavigationBar: MyBottomAppBar(
-//       //   shape: RoundedNotchedRectangle(),
-//       //   child: new Row(
-//       //     mainAxisSize: MainAxisSize.max,
-//       //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//       //     children: <Widget>[
-//       //       IconButton(
-//       //         tooltip: "Show bottom sheet",
-//       //         icon: Icon(
-//       //           Icons.menu_outlined,
-//       //           semanticLabel: "Show bottom sheet",
-//       //         ),
-//       //         onPressed: () {
-//       //           _scaffoldKey.currentState?.openDrawer();
-//       //         },
-//       //       ),
-//       //     ],
-//       //   ),
-//       // ),
-//       body: SafeArea(
-//         child: GestureDetector(
-//           onTap: () {
-//             _focusNode.unfocus();
-//           },
-//           child: RefreshIndicator(
-//             key: _refreshIndicatorKey,
-//             onRefresh: () => exploreBloc.refresh(),
-//             child: ListView(
-//               controller: _hideButtonController,
-//               children: [
-//                 // Header section with image, title and search
-//                 Stack(
-//                   children: [
-//                     ClipRRect(
-//                       borderRadius: const BorderRadius.only(
-//                         bottomLeft: Radius.circular(20),
-//                         bottomRight: Radius.circular(20),
-//                       ),
-//                       child: Image.asset(
-//                         'assets/explore/explore.png',
-//                         height: 180,
-//                         width: double.infinity,
-//                         fit: BoxFit.cover,
-//                       ),
-//                     ),
-//                     Positioned(
-//                       top: 16,
-//                       left: 16,
-//                       right: 16,
-//                       child: Column(
-//                         children: [
-//                           Text(
-//                             widget.title,
-//                             style: theme.textTheme.displaySmall?.copyWith(
-//                               fontWeight: FontWeight.bold,
-//                               color: Colors.white,
-//                               letterSpacing: 1.2,
-//                             ),
-//                             textAlign: TextAlign.center,
-//                           ),
-//                           const SizedBox(height: 16),
-//                           Container(
-//                             padding: const EdgeInsets.symmetric(horizontal: 16),
-//                             decoration: BoxDecoration(
-//                               color: Colors.white.withOpacity(0.9),
-//                               borderRadius: BorderRadius.circular(30),
-//                             ),
-//                             child: TextField(
-//                               controller: _searchFieldController,
-//                               focusNode: _focusNode,
-//                               cursorColor: theme.textTheme.bodyMedium?.color,
-//                               style: theme.textTheme.bodyMedium,
-//                               decoration: InputDecoration(
-//                                 icon: const Icon(Icons.search_outlined),
-//                                 hintText: "Search events, bodies, users...",
-//                                 border: InputBorder.none,
-//                                 suffixIcon: IconButton(
-//                                   tooltip: "Clear search",
-//                                   icon: const Icon(Icons.close_outlined),
-//                                   onPressed: () {
-//                                     setState(() {
-//                                       _searchFieldController?.clear();
-//                                       exploreBloc.query = "";
-//                                       exploreBloc.refresh();
-//                                     });
-//                                   },
-//                                 ),
-//                               ),
-//                               onChanged: (query) async {
-//                                 if (query.length > 4) {
-//                                   exploreBloc.query = query;
-//                                   exploreBloc.refresh();
-//                                 }
-//                               },
-//                               onSubmitted: (query) async {
-//                                 exploreBloc.query = query;
-//                                 await exploreBloc.refresh();
-//                               },
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-
-//                 const SizedBox(height: 16),
-
-//                 // Main content area
-//                 Padding(
-//                   padding: const EdgeInsets.all(2.0),
-//                   child: StreamBuilder<ExploreResponse>(
-//                     stream: exploreBloc.explore,
-//                     builder: (BuildContext context,
-//                         AsyncSnapshot<ExploreResponse> snapshot) {
-//                       return Column(
-//                         children: _buildContent(snapshot, theme, exploreBloc),
-//                       );
-//                     },
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-
-//       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-//       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-//       floatingActionButton: isFabVisible == 0
-//           ? null
-//           : FloatingActionButton(
-//               tooltip: "Go to the Top",
-//               onPressed: () {
-//                 _hideButtonController!.animateTo(0.0,
-//                     curve: Curves.fastOutSlowIn,
-//                     duration: const Duration(milliseconds: 600));
-//               },
-//               child: Icon(Icons.keyboard_arrow_up_outlined),
-//             ),
-//     );
-//   }
-
-//   List<Widget> _buildContent(AsyncSnapshot<ExploreResponse> snapshot,
-//       ThemeData theme, ExploreBloc exploreBloc) {
-//     if (snapshot.hasData) {
-//       var bodies = snapshot.data!.bodies;
-//       // debugPrint(snapshot.data?.bodies.toString());
-//       // bodies?.forEach((b) {
-//       //   debugPrint("Body: ${b.bodyName}");
-//       //   debugPrint(
-//       //       "Body Parents: ${b.bodyParents?.map((p) => p.bodyName).toList()}");
-//       // });
-//       // debugPrint(snapshot.data.);
-//       var events = snapshot.data!.events;
-//       var users = snapshot.data!.users;
-//       if (bodies?.isEmpty == true &&
-//           events?.isEmpty == true &&
-//           users?.isEmpty == true) {
-//         return [
-//           Padding(
-//             padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
-//             child: Text.rich(
-//                 TextSpan(style: theme.textTheme.titleLarge, children: [
-//               TextSpan(text: "Nothing found for the query "),
-//               TextSpan(
-//                   text: "\"${exploreBloc.query}\"",
-//                   style: TextStyle(fontWeight: FontWeight.bold)),
-//               TextSpan(text: "."),
-//             ])),
-//           )
-//         ];
-//       }
-//       // if (bodies != null && bodies.length > 24) {
-//       //   var tenthBody = bodies[24];
-//       //   debugPrint("10th body name: ${tenthBody.bodyName}");
-//       //   debugPrint("10th body parents: ${tenthBody.bodyParents}");
-//       //   if (tenthBody.bodyParents != null &&
-//       //       tenthBody.bodyParents!.isNotEmpty) {
-//       //     for (var parent in tenthBody.bodyParents!) {
-//       //       debugPrint("Parent name: ${parent.bodyName}");
-//       //     }
-//       //   } else {
-//       //     debugPrint("No parents found for this body.");
-//       //   }
-//       // } else {
-//       //   debugPrint("Less than 10 bodies available.");
-//       // }
-//       //move to next page
-//       // body?.bodyParents
-//       //                     ?.map((b) {
-//       //                     debugPrint(b.toString());
-//       //                     return _buildBodyTile(bloc, theme.textTheme, b);
-//       //                     })
-//       //                     .toList(),
-//       // b.bodyParents?.map((p) {
-//       //   debugPrint(p.toString());
-//       // });
-//       // debugPrint("Body: ${b.bodyRoles}");
-//       // debugPrint("bodyParents type: ${b.bodyParents.runtimeType}");
-//       // debugPrint("bodyParents value: ${b.bodyParents}");
-//       // debugPrint("bodyParents == null: ${b.bodyParents == null}");
-//       // debugPrint("bodyParents?.isEmpty: ${b.bodyParents?.isEmpty}");
-//       // debugPrint("---");
-
-//       // b.bodyParents?.forEach((p) {
-//       //   debugPrint("Parent: ${p.toString()}");
-//       // });
-//       //
-//       return bodies == null || bodies.isEmpty
-//           ? []
-//           : [
-//               Padding(
-//                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-//                 child: GridView.count(
-//                   shrinkWrap: true,
-//                   physics: NeverScrollableScrollPhysics(),
-//                   crossAxisCount: 2,
-//                   crossAxisSpacing: 12,
-//                   mainAxisSpacing: 12,
-//                   childAspectRatio: 182 / 128,
-//                   children: bodies
-//                       .where((b) =>
-//                           b.bodyName == "Culturals@IITB" ||
-//                           b.bodyName == "Tech@IITB" ||
-//                           b.bodyName == "IITB Sports" ||
-//                           b.bodyName == "Departments" ||
-//                           b.bodyName == "Hostel Affairs" ||
-//                           b.bodyName == "IIT Bombay" ||
-//                           b.bodyName == "DevCom" ||
-//                           b.bodyName == "Placement Cell")
-//                       .map((b) {
-//                     return _buildBodyCard(
-//                       b.bodyID ?? "",
-//                       b.bodyName ?? "",
-//                       b.bodyShortDescription ?? "",
-//                       b.bodyImageURL ?? "",
-//                       Icons.people_outline_outlined,
-//                       () => ExploreClubPage.navigateWith(
-//                           context, exploreBloc.bloc,
-//                           body: b),
-//                       theme,
-//                     );
-//                   }).toList(),
-//                 ),
-//               ),
-//             ];
-
-//       //     +
-//       // (events
-//       //         ?.map((e) => _buildListTile(
-//       //             e.eventID ?? "",
-//       //             e.eventName ?? "",
-//       //             e.getSubTitle(),
-//       //             e.eventImageURL ?? e.eventBodies?[0].bodyImageURL ?? "",
-//       //             Icons.event_outlined,
-//       //             () =>
-//       //                 EventPage.navigateWith(context, exploreBloc.bloc, e),
-//       //             theme))
-//       //         .toList() ??
-//       //     []) +
-//       // (users
-//       //         ?.map((u) => _buildListTile(
-//       //             u.userID ?? "",
-//       //             u.userName ?? "",
-//       //             u.userLDAPId ?? "",
-//       //             u.userProfilePictureUrl ?? "",
-//       //             Icons.person_outline_outlined,
-//       //             () => UserPage.navigateWith(context, exploreBloc.bloc, u),
-//       //             theme))
-//       //         .toList() ??
-//       //     []);
-//     } else {
-//       return [
-//         Center(
-//             child: CircularProgressIndicatorExtended(
-//           label: Text("Loading the some default bodies"),
-//         ))
-//       ];
-//     }
-//   }
-
-// //RELATED TO TILES
-//   // Widget _buildListTile(String id, String title, String subtitle, String url,
-//   //     IconData fallbackIcon, VoidCallback onClick, ThemeData theme) {
-//   //   return ListTile(
-//   //     leading: NullableCircleAvatar(
-//   //       url,
-//   //       fallbackIcon,
-//   //       heroTag: id,
-//   //     ),
-//   //     title: Text(
-//   //       title,
-//   //       style: theme.textTheme.titleLarge,
-//   //     ),
-//   //     subtitle: Text(subtitle),
-//   //     onTap: onClick,
-//   //   );
-//   // }
-
-//   Widget _buildBodyCard(
-//     String id,
-//     String title,
-//     String subtitle,
-//     String assetPath,
-//     IconData fallbackIcon,
-//     VoidCallback onClick,
-//     ThemeData theme,
-//   ) {
-//     // Get the image path and display title from bodyTitles based on the title (bodyname)
-//     final bodyData = widget.bodyTitles.firstWhere(
-//       (element) => element["bodyname"] == title,
-//       orElse: () => {"title": title, "image": ""},
-//     );
-
-//     final imagePath = bodyData["image"] ?? "";
-//     final displayTitle = bodyData["title"] ?? title;
-
-//     return GestureDetector(
-//       onTap: onClick,
-//       child: Container(
-//         width: 182,
-//         height: 128,
-//         decoration: BoxDecoration(
-//           borderRadius: BorderRadius.circular(12),
-//           boxShadow: [
-//             BoxShadow(
-//               color: Colors.black.withOpacity(0.08),
-//               blurRadius: 8,
-//               offset: Offset(0, 4),
-//             ),
-//           ],
-//         ),
-//         child: ClipRRect(
-//           borderRadius: BorderRadius.circular(12),
-//           child: Stack(
-//             children: [
-//               // Background image
-//               Image.asset(
-//                 imagePath,
-//                 fit: BoxFit.cover,
-//                 width: double.infinity,
-//                 height: double.infinity,
-//               ),
-//               // Semi-transparent overlay for readability
-//               Container(
-//                 decoration: BoxDecoration(
-//                   color: Colors.black.withOpacity(0.25),
-//                 ),
-//               ),
-//               // Title text at bottom-left
-//               Positioned(
-//                 bottom: 8,
-//                 left: 8,
-//                 right: 8,
-//                 child: Text(
-//                   displayTitle,
-//                   style: theme.textTheme.titleMedium?.copyWith(
-//                     color: Colors.white,
-//                     fontWeight: FontWeight.bold,
-//                     fontSize: 16,
-//                     letterSpacing: 0.5,
-//                   ),
-//                   maxLines: 2,
-//                   overflow: TextOverflow.ellipsis,
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class ExplorePage extends StatefulWidget {
   @override
@@ -533,6 +26,8 @@ class _ExplorePageState extends State<ExplorePage> {
       GlobalKey<RefreshIndicatorState>();
   FocusNode _focusNode = FocusNode();
   TextEditingController? _searchFieldController;
+  String bodyID = "";
+  bool searchMode = false;
   @override
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of(context)!.bloc;
@@ -541,208 +36,231 @@ class _ExplorePageState extends State<ExplorePage> {
     ));
     return Scaffold(
         extendBodyBehindAppBar: true,
-        body: Container(
-            child: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(24),
-                  bottomRight: Radius.circular(24),
-                ),
-                image: DecorationImage(
-                  image: AssetImage('assets/explore/searchbackground.png'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: SafeArea(
-                  child: Column(children: [
-                SizedBox(height: 10.5),
-                Center(
-                    child: Text('Explore',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          fontFamily: 'DM Sans',
-                          color: Color.fromRGBO(15, 22, 32, 1),
-                        ))),
-                SizedBox(height: 30.5),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Exploresearch(),
-                        ));
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 16, right: 16),
-                    height: 50,
-                    padding: const EdgeInsets.only(
-                        left: 14, right: 14, top: 13, bottom: 13),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Image(
-                          image: AssetImage('assets/blogs/search.png'),
-                          height: 24,
-                          width: 24,
-                        ),
-                        const SizedBox(width: 20),
-                        Text('Search clubs, events, users...',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              fontFamily: 'DM Sans',
-                              color: Color.fromRGBO(0, 0, 0, 0.4),
-                            )),
-                      ],
-                    ),
+        body: Stack(children: [
+          Container(
+              child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
+                  ),
+                  image: DecorationImage(
+                    image: AssetImage('assets/explore/searchbackground.png'),
+                    fit: BoxFit.cover,
                   ),
                 ),
-                Container(
-                    margin: const EdgeInsets.only(
-                        left: 32, right: 32, top: 18, bottom: 20),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                child: SafeArea(
+                    child: Column(children: [
+                  SizedBox(height: 10.5),
+                  Center(
+                      child: Text('Explore',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: 'DM Sans',
+                            color: Color.fromRGBO(15, 22, 32, 1),
+                          ))),
+                  SizedBox(height: 30.5),
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        searchMode = true;
+                      });
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 16, right: 16),
+                      height: 50,
+                      padding: const EdgeInsets.only(
+                          left: 14, right: 14, top: 13, bottom: 13),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Container(
-                            width: double.infinity,
-                            child: RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: 'Around ',
-                                    style: TextStyle(
-                                      fontSize: 36,
-                                      fontWeight: FontWeight.w900,
-                                      color: Color.fromRGBO(15, 22, 32, 1),
-                                      fontFamily: 'DM Sans',
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: 'Insti',
-                                    style: TextStyle(
-                                      fontSize: 36,
-                                      fontWeight: FontWeight.w900,
-                                      color: Color.fromRGBO(
-                                          48, 111, 220, 1), // blue
-                                      fontFamily: 'DM Sans',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          Image(
+                            image: AssetImage('assets/blogs/search.png'),
+                            height: 24,
+                            width: 24,
                           ),
-                          Container(
-                            width: double.infinity,
-                            child: Text(
-                              'Heard about the new hostels',
+                          const SizedBox(width: 20),
+                          Text('Search clubs, events, users...',
                               style: TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w400,
                                 fontFamily: 'DM Sans',
-                                color: Color.fromRGBO(15, 22, 32, 1),
+                                color: Color.fromRGBO(0, 0, 0, 0.4),
+                              )),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                      margin: const EdgeInsets.only(
+                          left: 32, right: 32, top: 18, bottom: 20),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              child: RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: 'Around ',
+                                      style: TextStyle(
+                                        fontSize: 36,
+                                        fontWeight: FontWeight.w900,
+                                        color: Color.fromRGBO(15, 22, 32, 1),
+                                        fontFamily: 'DM Sans',
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: 'Insti',
+                                      style: TextStyle(
+                                        fontSize: 36,
+                                        fontWeight: FontWeight.w900,
+                                        color: Color.fromRGBO(
+                                            48, 111, 220, 1), // blue
+                                        fontFamily: 'DM Sans',
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
+                            Container(
+                              width: double.infinity,
+                              child: Text(
+                                'Heard about the new hostels',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'DM Sans',
+                                  color: Color.fromRGBO(15, 22, 32, 1),
+                                ),
+                              ),
+                            ),
+                          ]))
+                ])),
+              ),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: ListView(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          InkWell(
+                            // onTap: () => ExploreClubPage.navigateWith(
+                            //   context,
+                            //   bloc,
+                            //   bodyID: "91199c20-7488-41c5-9f6b-6f6c7c5b897d",
+                            // ),
+                            onTap: () {
+                              bodyID = "91199c20-7488-41c5-9f6b-6f6c7c5b897d";
+                              setState(() {});
+                            },
+                            child: Bodycard(
+                                context, "Cult", "assets/explore/cult.png"),
                           ),
-                        ]))
-              ])),
-            ),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.only(top: 12),
-                child: ListView(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.zero,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () => ExploreClubPage.navigateWith(
-                            context,
-                            bloc,
-                            bodyID: "91199c20-7488-41c5-9f6b-6f6c7c5b897d",
+                          InkWell(
+                            onTap: () {
+                              bodyID = "81e05a1a-7fd1-45b5-84f6-074e52c0f085";
+                              setState(() {});
+                            },
+                            child: Bodycard(
+                                context, "Tech", "assets/explore/tech.png"),
                           ),
-                          child: Bodycard(
-                              context, "Cult", "assets/explore/cult.png"),
-                        ),
-                        InkWell(
-                          onTap: () => ExploreClubPage.navigateWith(
-                            context,
-                            bloc,
-                            bodyID: "81e05a1a-7fd1-45b5-84f6-074e52c0f085",
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              bodyID = "a9f81e69-fcc9-4fe3-b261-9e5e7a13f898";
+                              setState(() {});
+                            },
+                            child: Bodycard(
+                                context, "Sports", "assets/explore/sport.png"),
                           ),
-                          child: Bodycard(
-                              context, "Tech", "assets/explore/tech.png"),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () => ExploreClubPage.navigateWith(
-                            context,
-                            bloc,
-                            bodyID: "a9f81e69-fcc9-4fe3-b261-9e5e7a13f898",
+                          InkWell(
+                            onTap: () {
+                              bodyID = "44fe710a-8ede-4d59-a25b-a86434373209";
+                              setState(() {});
+                            },
+                            child: Bodycard(context, "Academics",
+                                "assets/explore/scenes.png"),
                           ),
-                          child: Bodycard(
-                              context, "Sports", "assets/explore/sport.png"),
-                        ),
-                        InkWell(
-                          onTap: () => ExploreClubPage.navigateWith(
-                            context,
-                            bloc,
-                            bodyID: "44fe710a-8ede-4d59-a25b-a86434373209",
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          InkWell(
+                            // onTap: () => ExploreClubPage.navigateWith(
+                            //   context,
+                            //   bloc,
+                            //   bodyID: "f3ae5230-4441-4586-81a8-bf75a2e47318",
+                            // ),
+                            onTap: () {
+                              bodyID = "f3ae5230-4441-4586-81a8-bf75a2e47318";
+                              setState(() {});
+                            },
+                            child: Bodycard(context, "Hostels",
+                                "assets/explore/hostels.png"),
                           ),
-                          child: Bodycard(context, "Academics",
-                              "assets/explore/scenes.png"),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () => ExploreClubPage.navigateWith(
-                            context,
-                            bloc,
-                            bodyID: "f3ae5230-4441-4586-81a8-bf75a2e47318",
+                          InkWell(
+                            onTap: () {
+                              bodyID = "252ddc80-910b-4f63-b68a-de30a62a947e";
+                              setState(() {});
+                            },
+                            child: Bodycard(context, "Departments",
+                                "assets/explore/departments.png"),
                           ),
-                          child: Bodycard(
-                              context, "Hostels", "assets/explore/hostels.png"),
-                        ),
-                        InkWell(
-                          onTap: () => ExploreClubPage.navigateWith(
-                            context,
-                            bloc,
-                            bodyID: "252ddc80-910b-4f63-b68a-de30a62a947e",
-                          ),
-                          child: Bodycard(context, "Departments",
-                              "assets/explore/departments.png"),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Bodycard(context, "Food", "assets/explore/food.png"),
-                        Bodycard(context, "I.Bs", "assets/explore/ibs.png"),
-                      ],
-                    ),
-                    SizedBox(height: 80),
-                  ],
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Bodycard(context, "Food", "assets/explore/food.png"),
+                          Bodycard(context, "I.Bs", "assets/explore/ibs.png"),
+                        ],
+                      ),
+                      SizedBox(height: 80),
+                    ],
+                  ),
                 ),
               ),
+            ],
+          )),
+          if (searchMode)
+            Exploresearch(
+              onBack: (String id) {
+                setState(() {
+                  bodyID = id;
+                  searchMode = false;
+                });
+              },
             ),
-          ],
-        )));
+          if (bodyID != "")
+            ExploreClubPage(
+              bodyFuture: bloc.getBody(bodyID),
+              heroTag: bodyID,
+              onBack: () {
+                setState(() {
+                  bodyID = "";
+                });
+              },
+            ),
+        ]));
   }
 }
 
@@ -753,7 +271,6 @@ Widget Bodycard(BuildContext context, String title, String imagePath) {
       height: 128,
       width: 182,
       margin: const EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 8),
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
         image: DecorationImage(
@@ -761,20 +278,41 @@ Widget Bodycard(BuildContext context, String title, String imagePath) {
           fit: BoxFit.cover,
         ),
       ),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w900,
-          color: Colors.white,
-          fontFamily: 'DM Sans',
+      child: Stack(children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: Container(
+              height: 128,
+              width: 182,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment(0, 0),
+                  end: Alignment(0, 1.0),
+                  colors: [Colors.black.withValues(alpha: 0), Colors.black],
+                ),
+              )),
         ),
-      ),
+        Container(
+          padding: const EdgeInsets.all(16),
+          alignment: Alignment.bottomLeft,
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+              fontFamily: 'DM Sans',
+            ),
+          ),
+        ),
+      ]),
     ),
   ));
 }
 
 class Exploresearch extends StatefulWidget {
+  final Function(String) onBack;
+  Exploresearch({required this.onBack});
   @override
   _ExploresearchState createState() => _ExploresearchState();
 }
@@ -846,7 +384,9 @@ class _ExploresearchState extends State<Exploresearch> {
                       child: Row(
                         children: [
                           InkWell(
-                            onTap: () => Navigator.pop(context),
+                            onTap: () {
+                              widget.onBack('');
+                            },
                             child: SvgPicture.asset(
                               'assets/explore/arrow-left.svg',
                               height: 24,
@@ -890,7 +430,7 @@ class _ExploresearchState extends State<Exploresearch> {
                                 contentPadding: EdgeInsets.zero,
                               ),
                               onChanged: (query) async {
-                                if (query.length > 3) {
+                                if (query.length > 3 || query == '') {
                                   setState(() {
                                     exploreBloc.query = query;
                                   });
@@ -1003,93 +543,60 @@ class _ExploresearchState extends State<Exploresearch> {
                         ListView(scrollDirection: Axis.horizontal, children: [
                       InkWell(
                         onTap: () {
-                          ExploreClubPage.navigateWith(
-                            context,
-                            bloc,
-                            bodyID: "91199c20-7488-41c5-9f6b-6f6c7c5b897d",
-                          );
+                          widget.onBack('91199c20-7488-41c5-9f6b-6f6c7c5b897d');
                         },
                         child: SearchBodycard(
                             context, 'Cult', 'assets/explore/cult.png'),
                       ),
                       InkWell(
                         onTap: () {
-                          ExploreClubPage.navigateWith(
-                            context,
-                            bloc,
-                            bodyID: "a9f81e69-fcc9-4fe3-b261-9e5e7a13f898",
-                          );
+                          widget.onBack('a9f81e69-fcc9-4fe3-b261-9e5e7a13f898');
                         },
                         child: SearchBodycard(
                             context, 'Sports', 'assets/explore/sport.png'),
                       ),
                       InkWell(
                         onTap: () {
-                          ExploreClubPage.navigateWith(
-                            context,
-                            bloc,
-                            bodyID: "81e05a1a-7fd1-45b5-84f6-074e52c0f085",
-                          );
+                          widget.onBack('81e05a1a-7fd1-45b5-84f6-074e52c0f085');
                         },
                         child: SearchBodycard(
                             context, 'Tech', 'assets/explore/tech.png'),
                       ),
                       InkWell(
                         onTap: () {
-                          ExploreClubPage.navigateWith(
-                            context,
-                            bloc,
-                            bodyID: "44fe710a-8ede-4d59-a25b-a86434373209",
-                          );
+                          widget.onBack('44fe710a-8ede-4d59-a25b-a86434373209');
                         },
                         child: SearchBodycard(
                             context, 'Academics', 'assets/explore/scenes.png'),
                       ),
                       InkWell(
                         onTap: () {
-                          ExploreClubPage.navigateWith(
-                            context,
-                            bloc,
-                            bodyID: "252ddc80-910b-4f63-b68a-de30a62a947e",
-                          );
+                          widget.onBack('252ddc80-910b-4f63-b68a-de30a62a947e');
                         },
                         child: SearchBodycard(context, 'Departments',
                             'assets/explore/departments.png'),
                       ),
                       InkWell(
                         onTap: () {
-                          ExploreClubPage.navigateWith(
-                            context,
-                            bloc,
-                            bodyID: "f3ae5230-4441-4586-81a8-bf75a2e47318",
-                          );
+                          widget.onBack('f3ae5230-4441-4586-81a8-bf75a2e47318');
                         },
                         child: SearchBodycard(
                             context, 'Hostels', 'assets/explore/hostels.png'),
                       ),
                       InkWell(
                         onTap: () {
-                          ExploreClubPage.navigateWith(
-                            context,
-                            bloc,
-                            bodyID: "b6e2e0e2-9b7e-4e8c-8c2e-1f2e8b2e8c2e",
-                          );
+                          widget.onBack('b6e2e0e2-9b7e-4e8c-8c2e-1f2e8b2e8c2e');
                         },
                         child: SearchBodycard(
                             context, 'I.Bs', 'assets/explore/ibs.png'),
                       ),
                       InkWell(
                         onTap: () {
-                          ExploreClubPage.navigateWith(
-                            context,
-                            bloc,
-                            bodyID: "d1f2e3c4-b5a6-7d8e-9f0a-b1c2d3e4f5a6",
-                          );
+                          widget.onBack('d1f2e3c4-b5a6-7d8e-9f0a-b1c2d3e4f5a6');
                         },
                         child: SearchBodycard(
                             context, 'Food', 'assets/explore/food.png'),
                       ),
-                      
                     ]),
                   ),
                 if (exploreBloc.query == '')
@@ -1163,7 +670,6 @@ Widget SearchBodycard(BuildContext context, String title, String imagePath) {
     margin: const EdgeInsets.only(
       right: 8,
     ),
-    padding: const EdgeInsets.only(left: 10, bottom: 11),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(14),
       image: DecorationImage(
@@ -1171,17 +677,32 @@ Widget SearchBodycard(BuildContext context, String title, String imagePath) {
         fit: BoxFit.cover,
       ),
     ),
-    child: Container(
-        alignment: Alignment.bottomLeft,
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w900,
-            color: Colors.white,
-            fontFamily: 'DM Sans',
+    child: Stack(children: [
+      Container(
+        height: 144,
+        width: 128,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          gradient: LinearGradient(
+            begin: Alignment(0.0, 0.0),
+            end: Alignment(0.0, 1.00),
+            colors: [Colors.black.withValues(alpha: 0), Colors.black],
           ),
-        )),
+        ),
+      ),
+      Container(
+          alignment: Alignment.bottomLeft,
+          padding: const EdgeInsets.only(left: 10, bottom: 11),
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+              fontFamily: 'DM Sans',
+            ),
+          )),
+    ]),
   ));
 }
 
@@ -1224,257 +745,6 @@ Widget RecentSearch(
   );
 }
 
-// import 'package:InstiApp/src/api/response/explore_response.dart';
-// import 'package:InstiApp/src/bloc_provider.dart';
-// import 'package:InstiApp/src/blocs/explore_bloc.dart';
-// import 'package:InstiApp/src/drawer.dart';
-// import 'package:InstiApp/src/routes/bodypage.dart';
-// import 'package:InstiApp/src/routes/eventpage.dart';
-// import 'package:InstiApp/src/routes/userpage.dart';
-// import 'package:InstiApp/src/utils/common_widgets.dart';
-// import 'package:InstiApp/src/utils/title_with_backbutton.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter/rendering.dart';
-
-// class ExplorePage extends StatefulWidget {
-//   final String title = "Explore";
-//   final bool searchMode;
-//   final bool fromNavigate;
-
-//   ExplorePage({this.searchMode = false, this.fromNavigate = false});
-
-//   @override
-//   _ExplorePageState createState() => _ExplorePageState();
-
-//   static void navigateWith(BuildContext context, bool searchMode) {
-//     Navigator.pushReplacement(
-//       context,
-//       MaterialPageRoute(
-//         settings: RouteSettings(
-//           name: "/explore?searchMode=${searchMode ? "true" : "false"}",
-//         ),
-//         builder: (context) => ExplorePage(
-//           searchMode: searchMode,
-//           fromNavigate: true,
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// class _ExplorePageState extends State<ExplorePage> {
-//   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-//   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-//       GlobalKey<RefreshIndicatorState>();
-
-//   FocusNode _focusNode = FocusNode();
-//   ScrollController? _hideButtonController;
-//   TextEditingController? _searchFieldController;
-//   double isFabVisible = 0;
-
-//   bool searchMode = false;
-//   IconData actionIcon = Icons.search_outlined;
-
-//   bool firstBuild = true;
-
-//   @override
-//   void initState() {
-//     super.initState();
-
-//     _searchFieldController = TextEditingController();
-//     _hideButtonController = ScrollController();
-//     _hideButtonController!.addListener(() {
-//       if (isFabVisible == 1 && _hideButtonController!.offset < 100) {
-//         setState(() {
-//           isFabVisible = 0;
-//         });
-//       } else if (isFabVisible == 0 && _hideButtonController!.offset > 100) {
-//         setState(() {
-//           isFabVisible = 1;
-//         });
-//       }
-//     });
-//   }
-
-//   @override
-//   void dispose() {
-//     _searchFieldController?.dispose();
-//     _hideButtonController?.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     var theme = Theme.of(context);
-//     var bloc = BlocProvider.of(context)!.bloc;
-//     var exploreBloc = bloc.exploreBloc;
-//     if (firstBuild) {
-//       exploreBloc.query = "";
-//       exploreBloc.refresh();
-//       searchMode = widget.searchMode;
-//       if (widget.fromNavigate) {
-//         bloc.drawerState.setPageIndex(2);
-//       }
-//       firstBuild = false;
-//     }
-
-//     return Scaffold(
-//       resizeToAvoidBottomInset: true,
-//       key: _scaffoldKey,
-//       drawer: NavDrawer(),
-//       bottomNavigationBar: MyBottomAppBar(
-//         shape: RoundedNotchedRectangle(),
-//         child: new Row(
-//           mainAxisSize: MainAxisSize.max,
-//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//           children: <Widget>[
-//             IconButton(
-//               tooltip: "Show bottom sheet",
-//               icon: Icon(
-//                 Icons.menu_outlined,
-//                 semanticLabel: "Show bottom sheet",
-//               ),
-//               onPressed: () {
-//                 _scaffoldKey.currentState?.openDrawer();
-//               },
-//             ),
-//           ],
-//         ),
-//       ),
-//       body: SafeArea(
-//         child: GestureDetector(
-//           onTap: () {
-//             _focusNode.unfocus();
-//           },
-//           child: ListView(controller: _hideButtonController, children: <Widget>[
-//             RefreshIndicator(
-//               key: _refreshIndicatorKey,
-//               onRefresh: () {
-//                 return exploreBloc.refresh();
-//               },
-//               child: TitleWithBackButton(
-//                 child: Row(
-//                   mainAxisSize: MainAxisSize.max,
-//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                   crossAxisAlignment: CrossAxisAlignment.center,
-//                   children: <Widget>[
-//                     Expanded(
-//                       child: Text(
-//                         widget.title,
-//                         style: theme.textTheme.displaySmall,
-//                       ),
-//                     ),
-//                     AnimatedContainer(
-//                       duration: const Duration(milliseconds: 500),
-//                       width: searchMode ? 0.0 : null,
-//                       height: searchMode ? 0.0 : null,
-//                       decoration: ShapeDecoration(
-//                           shape: CircleBorder(
-//                               side: BorderSide(color: theme.primaryColor))),
-//                       child: searchMode
-//                           ? SizedBox()
-//                           : IconButton(
-//                               tooltip: "Search ${widget.title}",
-//                               padding: EdgeInsets.all(16.0),
-//                               icon: Icon(
-//                                 actionIcon,
-//                                 color: theme.primaryColor,
-//                               ),
-//                               color: theme.cardColor,
-//                               onPressed: () {
-//                                 setState(() {
-//                                   actionIcon = Icons.close_outlined;
-//                                   searchMode = !searchMode;
-//                                 });
-//                               },
-//                             ),
-//                     )
-//                   ],
-//                 ),
-//               ),
-//             ),
-//             !searchMode
-//                 ? SizedBox(
-//                     height: 0,
-//                   )
-//                 : PreferredSize(
-//                     preferredSize: Size.fromHeight(72),
-//                     child: AnimatedContainer(
-//                       color: theme.canvasColor,
-//                       padding: EdgeInsets.all(8.0),
-//                       duration: Duration(milliseconds: 500),
-//                       child: TextField(
-//                         controller: _searchFieldController,
-//                         cursorColor: theme.textTheme.bodyMedium?.color,
-//                         style: theme.textTheme.bodyMedium,
-//                         focusNode: _focusNode,
-//                         decoration: InputDecoration(
-//                           border: OutlineInputBorder(
-//                               borderRadius: BorderRadius.circular(30)),
-//                           labelStyle: theme.textTheme.bodyMedium,
-//                           hintStyle: theme.textTheme.bodyMedium,
-//                           prefixIcon: Icon(
-//                             Icons.search_outlined,
-//                           ),
-//                           suffixIcon: IconButton(
-//                             tooltip: "Search events, bodies, users...",
-//                             icon: Icon(Icons.close_outlined),
-//                             onPressed: () {
-//                               setState(() {
-//                                 actionIcon = Icons.search_outlined;
-//                                 exploreBloc.query = "";
-//                                 exploreBloc.refresh();
-//                                 searchMode = !searchMode;
-//                               });
-//                             },
-//                           ),
-//                           hintText: "Search events, bodies, users...",
-//                         ),
-//                         onChanged: (query) async {
-//                           if (query.length > 4) {
-//                             exploreBloc.query = query;
-//                             exploreBloc.refresh();
-//                           }
-//                         },
-//                         onSubmitted: (query) async {
-//                           exploreBloc.query = query;
-//                           await exploreBloc.refresh();
-//                         },
-//                         autofocus: true,
-//                       ),
-//                     ),
-//                   ),
-//             Padding(
-//               padding: const EdgeInsets.all(8.0),
-//               child: StreamBuilder<ExploreResponse>(
-//                 stream: exploreBloc.explore,
-//                 builder: (BuildContext context,
-//                     AsyncSnapshot<ExploreResponse> snapshot) {
-//                   return Column(
-//                     children: _buildContent(snapshot, theme, exploreBloc),
-//                   );
-//                 },
-//               ),
-//             ),
-//           ]),
-//         ),
-//       ),
-//       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-//       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-//       floatingActionButton: isFabVisible == 0
-//           ? null
-//           : FloatingActionButton(
-//               tooltip: "Go to the Top",
-//               onPressed: () {
-//                 _hideButtonController!.animateTo(0.0,
-//                     curve: Curves.fastOutSlowIn,
-//                     duration: const Duration(milliseconds: 600));
-//               },
-//               child: Icon(Icons.keyboard_arrow_up_outlined),
-//             ),
-//     );
-//   }
-
 List<Widget> _buildContent(
   BuildContext context,
   AsyncSnapshot<ExploreResponse> snapshot,
@@ -1504,7 +774,7 @@ List<Widget> _buildContent(
     }
     //move to next page
     return (bodies
-                ?.map((b) => _buildListTile(                  
+                ?.map((b) => _buildListTile(
                     b.bodyID ?? "",
                     b.bodyName ?? "",
                     b.bodyShortDescription ?? "",

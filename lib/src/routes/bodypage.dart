@@ -168,6 +168,7 @@ class _BodyPageState extends State<BodyPage> {
         ));
       }
     }
+
     return Scaffold(
       //backgroundColor: Colors.blue[300],
       backgroundColor: Color(0xFFF6F6F6),
@@ -513,8 +514,6 @@ class _BodyPageState extends State<BodyPage> {
                                                     // Photo Album Section
                                                     const Text(
                                                       'Photo Album',
-                                                      // 'children follower ' + body!.bodyChildren![0].bodyFollowersCount.toString() ?? '0' ,
-                                                      //in the same way can access in the explore_ page.dart
                                                       style: TextStyle(
                                                         fontSize: 20,
                                                         fontWeight:
