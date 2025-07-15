@@ -136,7 +136,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
@@ -146,7 +145,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         statusBarIconBrightness: Brightness.light,
       ),
     );
-
 
     // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
     //   systemNavigationBarColor: widget.bloc.primaryColor,
@@ -275,6 +273,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         onGenerateRoute: (RouteSettings settings) {
           // print(settings.name);
           var temp = settings.name;
+          final uri = Uri.parse(temp!);
+
           if (temp != null) {
             if (temp.startsWith("/event/")) {
               return _buildRoute(
@@ -338,13 +338,15 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             } else if (temp.startsWith("/map/")) {
               return _buildRoute(
                   settings, MapPage(location: temp.split("/map/")[1]));
-            // } else if (temp.startsWith("/buyandsell/info")) {
-            //   return _buildRoute(
-            //       settings,
-            //       BuyAndSellInfoPage(
-            //           postFuture: widget.bloc.buynSellPostBloc
-            //               .getBuynSellPost(temp.split("/buyandsell/info")[1]),
-            //               onBookmarkChanged: (id, isBookmarked) {},));
+            } else if (uri.pathSegments.isNotEmpty &&
+                uri.pathSegments[0] == 'buynsell') {
+              if (uri.pathSegments.length == 1) {
+                return _buildRoute(settings, BuySellPage());
+              } else if (uri.pathSegments.length == 2) {
+                final postId = uri.pathSegments[1];
+                return _buildRoute(
+                    settings, BuyAndSellInfoPage(postId: postId));
+              }
             } else if (temp.startsWith("/lostandfound/info")) {
               return _buildRoute(
                   settings,
@@ -371,13 +373,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 //   return _buildRoute(settings, BlogPage());
                 case "/feed":
                   return _buildRoute(settings, Homepage());
-                  //return _buildRoute(settings, FeedPage());
+                //return _buildRoute(settings, FeedPage());
                 case "/alumniLoginPage":
                   return _buildRoute(settings, AlumniLoginPage());
                 case "/alumni-OTP-Page":
                   return _buildRoute(settings, AlumniOTPPage());
                 //case "/quicklinks":
-                  //return _buildRoute(settings, QuickLinksPage());
+                //return _buildRoute(settings, QuickLinksPage());
                 // case "/news":
                 //   return _buildRoute(settings, BlogPage());
                 // case "/InSeek":
@@ -386,16 +388,12 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, Quicklinks());
                 case "/groups":
                   return _buildRoute(settings, CommunityPage());
-                case "/buynsell":
-                  return _buildRoute(settings, BuySellPage());
                 case "/explore":
                   return _buildRoute(settings, ExplorePage());
                 case "/explore-club":
                   return _buildRoute(settings, ExploreClubPage(onBack: () {  },));
                 case "/calendar":
                   return _buildRoute(settings, CalendarPage());
-                case "/buyandsell":
-                  return _buildRoute(settings, BuySellPage());
 
                 // case "/complaints":
                 //   return _buildRoute(settings, ComplaintsPage());
@@ -474,6 +472,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
             "discussions": "/groups",
             "group": "/group/${uri.pathSegments[1]}",
             "map": "/map/${uri.pathSegments[1]}",
+            "buynsell": "/buynsell/${uri.pathSegments[1]}",
           }[uri.pathSegments[0]] ??
           routeName;
     }
@@ -511,4 +510,3 @@ extension FirstWhereOrNullExtension<E> on Iterable<E> {
     return null;
   }
 }
-
