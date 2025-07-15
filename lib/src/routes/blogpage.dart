@@ -8,53 +8,54 @@ import 'package:InstiApp/src/api/model/post.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/blog_bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:html/parser.dart' as html_parser;
 
 TextSpan highlight(String result, String query, BuildContext context) {
-  var theme = Theme.of(context);
-  TextStyle posRes =
-      TextStyle(color: Colors.white, backgroundColor: Colors.red);
-  TextStyle? negRes = theme.textTheme
-      .titleMedium; // TextStyle(backgroundColor: bloc.bloc.brightness.toColor().withOpacity(1.0),);
+  TextStyle posRes = TextStyle(
+    color: Colors.black,
+    backgroundColor: Color.fromRGBO(0, 94, 255, 0.5),
+    fontSize: 16,
+    fontFamily: 'DM Sans',
+    fontWeight: FontWeight.w700,
+  );
+  TextStyle negRes = TextStyle(
+    color: Colors.black,
+    fontSize: 16,
+    fontFamily: 'DM Sans',
+    fontWeight: FontWeight.w700,
+  );
   if (result == "" || query == "") return TextSpan(text: result, style: negRes);
-  result.replaceAll('\n', " ").replaceAll("  ", "");
+  result = result.replaceAll('\n', " ").replaceAll("  ", "");
 
   var refinedMatch = result.toLowerCase();
   var refinedsearch = query.toLowerCase();
 
-  if (refinedMatch.contains(refinedsearch)) {
-    if (refinedMatch.substring(0, refinedsearch.length) == refinedsearch) {
-      return TextSpan(
-          style: posRes,
-          text: result.substring(0, refinedsearch.length),
-          children: [
-            highlight(result.substring(refinedsearch.length), query, context),
-          ]);
-    } else if (refinedsearch.length == refinedMatch.length) {
-      return TextSpan(text: result, style: posRes);
-    } else {
-      return TextSpan(
-          style: negRes,
-          text: result.substring(0, refinedMatch.indexOf(refinedsearch)),
-          children: [
-            highlight(result.substring(refinedMatch.indexOf(refinedsearch)),
-                query, context)
-          ]);
-    }
-  } else if (!refinedMatch.contains(refinedsearch)) {
+  if (refinedsearch.isEmpty || !refinedMatch.contains(refinedsearch)) {
     return TextSpan(text: result, style: negRes);
   }
 
+  int matchIndex = refinedMatch.indexOf(refinedsearch);
+  int matchEnd = matchIndex + refinedsearch.length;
+
   return TextSpan(
-    text: result.substring(0, refinedMatch.indexOf(refinedsearch)),
-    style: negRes,
     children: [
-      highlight(
-          result.substring(refinedMatch.indexOf(refinedsearch)), query, context)
+      if (matchIndex > 0)
+        TextSpan(
+          text: result.substring(0, matchIndex),
+          style: negRes,
+        ),
+      TextSpan(
+        text: result.substring(matchIndex, matchEnd),
+        style: posRes,
+      ),
+      if (matchEnd < result.length)
+        highlight(result.substring(matchEnd), query, context),
     ],
   );
 }
@@ -65,26 +66,33 @@ class BlogPage extends StatefulWidget {
 }
 
 class _BlogPageState extends State<BlogPage> {
-  String view = 'normal';
-  final bool loginNeeded = true;
+  String view = 'normal'; // 'normal' or 'company wise'
   late Body body = Body(bodyName: 'Null');
   late var bloc;
+  TextEditingController? _searchFieldController;
+
   late PostType postType;
   String? selectedDepartment;
   bool isLoading = true;
   @override
   void initState() {
     super.initState();
+    _searchFieldController = TextEditingController();
     _fetchBody();
   }
 
   void _fetchBody() async {
     setUrl();
-    bloc = BlocProvider.of(context)!.bloc;
     body = await dostuff();
     setState(() {
       isLoading = false;
     });
+  }
+
+  @override
+  void dispose() {
+    _searchFieldController?.dispose();
+    super.dispose();
   }
 
   Future<Body> dostuff() async {
@@ -131,22 +139,23 @@ class _BlogPageState extends State<BlogPage> {
       GlobalKey<RefreshIndicatorState>();
 
   FocusNode _focusNode = FocusNode();
-  TextEditingController? _searchFieldController;
   ScrollController? _hideButtonController;
   double isFabVisible = 0;
-
-  bool searchMode = false;
   IconData actionIcon = Icons.search_outlined;
 
   bool firstBuild = true;
   String? loadingReaction;
 
-  List<String>? currCat;
+  List<Post>? threads;
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Color.fromRGBO(246, 246, 246, 1),
+    ));
     var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context)!.bloc; // follow-button plugin
+    var bloc = BlocProvider.of(context)!.bloc;
+    bool isLoggedIn = bloc.currSession != null;
     var blogBloc = bloc.getPostsBloc(postType);
 
     if (firstBuild) {
@@ -165,15 +174,13 @@ class _BlogPageState extends State<BlogPage> {
         child: Scaffold(
             resizeToAvoidBottomInset: true,
             key: _scaffoldKey,
-            // drawer: NavDrawer(),
             body: StreamBuilder(
               stream: bloc.session,
               builder:
                   (BuildContext context, AsyncSnapshot<Session?> snapshot) {
-                if ((snapshot.hasData && snapshot.data != null) ||
-                    loginNeeded) {
+                if ((snapshot.hasData && snapshot.data != null) && isLoggedIn) {
                   return Scaffold(
-                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                    backgroundColor: const Color.fromRGBO(246, 246, 246, 1),
                     body: SafeArea(
                       child: Column(
                         children: <Widget>[
@@ -253,6 +260,9 @@ class _BlogPageState extends State<BlogPage> {
                                         internship = 0;
                                         external = 0;
                                         isLoading = true;
+                                        _searchFieldController?.clear();
+                                        _focusNode.unfocus();
+                                        blogBloc!.query = '';
                                         _fetchBody();
                                       });
                                     },
@@ -294,6 +304,9 @@ class _BlogPageState extends State<BlogPage> {
                                         internship = 1;
                                         external = 0;
                                         isLoading = true;
+                                        _searchFieldController?.clear();
+                                        _focusNode.unfocus();
+                                        blogBloc!.query = '';
                                         _fetchBody();
                                       });
                                     },
@@ -334,6 +347,9 @@ class _BlogPageState extends State<BlogPage> {
                                         internship = 0;
                                         external = 1;
                                         isLoading = true;
+                                        _searchFieldController?.clear();
+                                        _focusNode.unfocus();
+                                        blogBloc!.query = '';
                                         _fetchBody();
                                       });
                                     },
@@ -406,11 +422,12 @@ class _BlogPageState extends State<BlogPage> {
                                       isDense: true,
                                       contentPadding: EdgeInsets.zero,
                                     ),
-                                    onChanged: (query) async {   
-                                      if (postType != PostType.ChatBot &&
-                                          query.length > 4) {
-                                      blogBloc!.query = query;
-                                        blogBloc.refresh();
+                                    onChanged: (query) async {
+                                      if ((postType != PostType.ChatBot &&
+                                              query.length >= 4) ||
+                                          query.length == 0) {
+                                        blogBloc!.query = query;
+                                        await blogBloc.refresh();
                                       }
                                     },
                                     onSubmitted: (query) async {
@@ -466,7 +483,7 @@ class _BlogPageState extends State<BlogPage> {
                                             ),
                                             const SizedBox(width: 8),
                                             SvgPicture.asset(
-                                                'assets/blogs/chevron-down.svg'),
+                                                'assets/blogs/chevron-right.svg'),
                                           ],
                                         )),
                                     Container(
@@ -476,18 +493,26 @@ class _BlogPageState extends State<BlogPage> {
                                           height: 36,
                                           width: 36,
                                           decoration: BoxDecoration(
-                                            color: const Color.fromRGBO(
-                                                48, 111, 220, 1),
+                                            color: view == 'normal'
+                                                ? const Color.fromRGBO(
+                                                    48, 111, 220, 1)
+                                                : const Color.fromRGBO(
+                                                    239, 239, 239, 1),
                                             borderRadius:
                                                 BorderRadius.circular(18),
                                           ),
                                           child: IconButton(
                                               icon: SvgPicture.asset(
                                                 'assets/blogs/list.svg',
+                                                color: view == 'normal'
+                                                    ? Colors.white
+                                                    : Colors.black,
                                                 fit: BoxFit.none,
                                               ),
                                               onPressed: () {
-                                                print('Sort');
+                                                setState(() {
+                                                  view = 'normal';
+                                                });
                                               }),
                                         ),
                                         const SizedBox(width: 8),
@@ -495,8 +520,11 @@ class _BlogPageState extends State<BlogPage> {
                                           height: 36,
                                           width: 36,
                                           decoration: BoxDecoration(
-                                            color: const Color.fromRGBO(
-                                                239, 239, 239, 1),
+                                            color: view == 'company wise'
+                                                ? const Color.fromRGBO(
+                                                    48, 111, 220, 1)
+                                                : const Color.fromRGBO(
+                                                    239, 239, 239, 1),
                                             borderRadius:
                                                 BorderRadius.circular(18),
                                             border: Border.all(
@@ -508,48 +536,82 @@ class _BlogPageState extends State<BlogPage> {
                                           child: IconButton(
                                               icon: SvgPicture.asset(
                                                 'assets/blogs/list2.svg',
+                                                color: view == 'company wise'
+                                                    ? Colors.white
+                                                    : Colors.black,
                                                 fit: BoxFit.none,
                                               ),
                                               onPressed: () {
-                                                print('Grid');
+                                                setState(() {
+                                                  view = 'company wise';
+                                                });
                                               }),
                                         ),
                                       ],
                                     ))
                                   ])),
                           const SizedBox(height: 24),
-                          isLoading
-                              ? CircularProgressIndicator()
-                              : Expanded(
-                                  child: StreamBuilder<
-                                          UnmodifiableListView<Post>>(
-                                      stream: blogBloc!.blog,
-                                      builder: (BuildContext context,
-                                          AsyncSnapshot<
-                                                  UnmodifiableListView<Post>>
-                                              snapshot) {                                      
-                                        return ListView.builder(
-                                          controller: _hideButtonController,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return _buildPost(blogBloc, index,
-                                                snapshot.data, theme, context);
-                                          },
-                                          itemCount: (snapshot.data == null
-                                                  ? 0
-                                                  : ((snapshot.data!
-                                                              .isNotEmpty &&
-                                                          snapshot.data!.last
-                                                                  .content ==
-                                                              null)
-                                                      ? snapshot.data!.length -
-                                                          1
-                                                      : snapshot
-                                                          .data!.length)) +
-                                              1,
-                                        );
-                                      }),
-                                )
+                          if (view == 'normal')
+                            isLoading
+                                ? CircularProgressIndicator()
+                                : Expanded(
+                                    child: StreamBuilder<
+                                            UnmodifiableListView<Post>>(
+                                        stream: blogBloc!.blog,
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<
+                                                    UnmodifiableListView<Post>>
+                                                snapshot) {
+                                          return ListView.builder(
+                                            controller: _hideButtonController,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return _buildPost(
+                                                  blogBloc,
+                                                  index,
+                                                  snapshot.data,
+                                                  theme,
+                                                  context);
+                                            },
+                                            itemCount: (snapshot.data == null
+                                                    ? 0
+                                                    : ((snapshot.data!
+                                                                .isNotEmpty &&
+                                                            snapshot.data!.last
+                                                                    .content ==
+                                                                null)
+                                                        ? snapshot
+                                                                .data!.length -
+                                                            1
+                                                        : snapshot
+                                                            .data!.length)) +
+                                                1,
+                                          );
+                                        }),
+                                  ),
+                          if (view == 'company wise')
+                            Expanded(
+                                child:
+                                    StreamBuilder<UnmodifiableListView<Post>>(
+                              stream: blogBloc!.blog,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<UnmodifiableListView<Post>>
+                                      snapshot) {
+                                final List<Post> posts =
+                                    snapshot.data?.toList() ?? [];
+                                final Map<String, List<Post>> companyMap =
+                                    groupPostsByCompany(posts);
+                                return ListView(
+                                  children: <Widget>[
+                                    for (final entry in companyMap.entries)
+                                      Blogthread(
+                                        entry.value,
+                                        entry.key,
+                                      ),
+                                  ],
+                                ); 
+                              },
+                            ))
                         ],
                       ),
                     ),
@@ -585,6 +647,23 @@ class _BlogPageState extends State<BlogPage> {
             )),
       ),
     );
+  }
+
+  Map<String, List<Post>> groupPostsByCompany(List<Post> posts) {
+    final Map<String, List<Post>> companyMap = {};
+    for (final post in posts) {
+      final company = extractCompanyName(post.title!);
+      companyMap.putIfAbsent(company, () => []);
+      companyMap[company]!.add(post);
+    }
+    return companyMap;
+  }
+
+  String extractCompanyName(String title) {
+    if (title.contains('|')) {
+      return title.split('|')[0].trim();
+    }
+    return title.trim();
   }
 
   Future<void> _handleRefresh() {
@@ -627,82 +706,86 @@ class _BlogPageState extends State<BlogPage> {
                     left: 18, right: 16, top: 16, bottom: 16),
                 margin: const EdgeInsets.only(left: 6),
                 decoration: BoxDecoration(
-                  color: const Color.fromRGBO(246, 246, 246, 1),
+                  color: const Color.fromRGBO(239, 239, 239, 1),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          height: 48,
-                          width: 48,
-                          decoration: BoxDecoration(
-                            color: const Color.fromRGBO(48, 111, 220, 1),
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          child: SvgPicture.asset(
-                            'assets/blogs/briefcase.svg',
-                            height: 24,
-                            width: 24,
-                            fit: BoxFit.none,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Expanded(
-                          child: Container(
-                            margin: const EdgeInsets.only(
-                                top: 3, bottom: 3, right: 16),
-                            child: Container(
-                              child: RichText(
-                                text: highlight(post.title, bloc.query, context),
-                                strutStyle: StrutStyle.fromTextStyle(
-                                  TextStyle(
-                                    fontSize: 16,
-                                    fontFamily: 'DM Sans',
-                                    fontWeight: FontWeight.w700,
+                    Material(
+                      color: const Color.fromRGBO(239, 239, 239, 1),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(2),
+                        onTap: () async {
+                          if (await canLaunchUrl(Uri.parse(post.link))) {
+                            await launchUrl(
+                              Uri.parse(post.link),
+                              mode: LaunchMode.externalApplication,
+                            );
+                          }
+                        },
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 48,
+                              width: 48,
+                              decoration: BoxDecoration(
+                                color: const Color.fromRGBO(48, 111, 220, 1),
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              child: SvgPicture.asset(
+                                'assets/blogs/briefcase.svg',
+                                height: 24,
+                                width: 24,
+                                fit: BoxFit.none,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            Expanded(
+                              child: Container(
+                                margin: const EdgeInsets.only(
+                                    top: 3, bottom: 3, right: 16),
+                                child: Container(
+                                  child: RichText(
+                                    text: highlight(
+                                        post.title, bloc.query, context),
+                                    strutStyle: StrutStyle.fromTextStyle(
+                                      TextStyle(
+                                        fontSize: 16,
+                                        fontFamily: 'DM Sans',
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      height: 1.0,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    // style: TextStyle(
+                                    //   fontSize: 16,
+                                    //   fontFamily: 'DM Sans',
+                                    //   fontWeight: FontWeight.w700,
+                                    // ),
                                   ),
-                                  height: 1.0,
-                                  fontWeight: FontWeight.w700,
                                 ),
-                                // style: TextStyle(
-                                //   fontSize: 16,
-                                //   fontFamily: 'DM Sans',
-                                //   fontWeight: FontWeight.w700,
-                                // ),
                               ),
                             ),
-                          ),
+                            SizedBox(
+                              width: 40,
+                              height: 48,
+                              child: Material(
+                                color: Colors.transparent,
+                                child: Center(
+                                  child: SvgPicture.asset(
+                                    'assets/blogs/external-link.svg',
+                                    height: 24,
+                                    width: 24,
+                                    fit: BoxFit.none,
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
                         ),
-                        SizedBox(
-                          width: 40,
-                          height: 48,
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(2),
-                              onTap: () async {
-                                if (await canLaunchUrl(Uri.parse(post.link))) {
-                                  await launchUrl(
-                                    Uri.parse(post.link),
-                                    mode: LaunchMode.externalApplication,
-                                  );
-                                }
-                              },
-                              child: Center(
-                                child: SvgPicture.asset(
-                                  'assets/blogs/external-link.svg',
-                                  height: 24,
-                                  width: 24,
-                                  fit: BoxFit.none,
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
+                      ),
                     ),
                     SizedBox(
                       height: 20,
@@ -722,7 +805,7 @@ class _BlogPageState extends State<BlogPage> {
                     ),
                     Container(
                       child: CommonHtml(
-                        data: post.content,
+                        data: wrapTableWithDiv(post.content),
                         defaultTextStyle:
                             Theme.of(context).textTheme.bodyMedium ??
                                 TextStyle(),
@@ -733,6 +816,14 @@ class _BlogPageState extends State<BlogPage> {
       ),
     );
   }
+}
+
+String wrapTableWithDiv(String html) {
+  return html.replaceAllMapped(
+    RegExp(r'(<table[\s\S]*?>[\s\S]*?<\/table>)',
+        multiLine: true, caseSensitive: false),
+    (match) => '<div class="table-radius">${match.group(0)}</div>',
+  );
 }
 
 class CommonHtml extends StatelessWidget {
@@ -746,6 +837,21 @@ class CommonHtml extends StatelessWidget {
     return data != null
         ? HtmlWidget(
             data ?? "",
+            customStylesBuilder: (element) {
+              if (element.classes.contains('table-radius')) {
+                return {
+                  'border-radius': '8px',
+                  'overflow': 'hidden',
+                };
+              }
+              if (element.localName == 'table') {
+                return {
+                  'background-color': '#f6f6f6',
+                  'padding': '16px',
+                };
+              }
+              return null;
+            },
             factoryBuilder: () => SelectableWidgetFactory(),
             onTapUrl: (link) async {
               if (await canLaunchUrl(Uri.parse(link))) {
@@ -811,13 +917,21 @@ class CircularProgressIndicatorExtended extends StatelessWidget {
 }
 
 class Blogthread extends StatefulWidget {
-  const Blogthread({Key? key}) : super(key: key);
-
+  const Blogthread(this.posts, this.CompanyName);
+  final List<Post>? posts;
+  final String CompanyName;
   @override
   _BlogthreadState createState() => _BlogthreadState();
 }
 
 class _BlogthreadState extends State<Blogthread> {
+  String extractDepartmentName(String title) {
+    if (title.contains('|')) {
+      return title.split('|')[1].trim();
+    }
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -825,7 +939,7 @@ class _BlogthreadState extends State<Blogthread> {
         child: Stack(children: [
           Positioned(
             left: 24,
-            top: 0,
+            top: 12,
             bottom: 4,
             child: Container(
               width: 1,
@@ -864,7 +978,7 @@ class _BlogthreadState extends State<Blogthread> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                           Text(
-                            'Google',
+                            widget.CompanyName,
                             style: TextStyle(
                               fontSize: 20,
                               fontFamily: 'DM Sans',
@@ -873,7 +987,7 @@ class _BlogthreadState extends State<Blogthread> {
                             ),
                           ),
                           Text(
-                            'Interaction Design',
+                            extractDepartmentName(widget.posts!.first.title!),
                             style: TextStyle(
                               fontSize: 16,
                               fontFamily: 'DM Sans',
@@ -882,27 +996,28 @@ class _BlogthreadState extends State<Blogthread> {
                           ),
                         ])),
                     const SizedBox(width: 16),
-                    SizedBox(
-                      width: 40,
-                      height: 48,
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(2),
-                          onTap: () {},
-                          child: Center(
-                            child: SvgPicture.asset(
-                              'assets/blogs/external-link.svg',
-                              height: 24,
-                              width: 24,
-                              fit: BoxFit.none,
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
+                    // SizedBox(
+                    //   width: 40,
+                    //   height: 48,
+                    //   child: Material(
+                    //     color: Colors.transparent,
+                    //     child: InkWell(
+                    //       borderRadius: BorderRadius.circular(2),
+                    //       onTap: () {},
+                    //       child: Center(
+                    //         child: SvgPicture.asset(
+                    //           'assets/blogs/external-link.svg',
+                    //           height: 24,
+                    //           width: 24,
+                    //           fit: BoxFit.none,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // )
                   ])),
-              Companywiseblog(),
+              for (int i = 0; i < widget.posts!.length; i++)
+                Companywiseblog(widget.posts![i]),
             ],
           ),
         ]));
@@ -910,12 +1025,22 @@ class _BlogthreadState extends State<Blogthread> {
 }
 
 class Companywiseblog extends StatefulWidget {
-  const Companywiseblog({Key? key}) : super(key: key);
+  final Post? post;
+  const Companywiseblog(this.post);
   @override
   _CompanywiseblogState createState() => _CompanywiseblogState();
 }
 
 class _CompanywiseblogState extends State<Companywiseblog> {
+  String htmlToPlainText(String htmlData) {
+    final document = html_parser.parse(htmlData);
+    return document.body?.text ?? '';
+  }
+
+  String getFirstLine(String document) {
+    return document.split('\n').first;
+  }
+
   bool expandedview = false;
   @override
   Widget build(BuildContext context) {
@@ -928,120 +1053,119 @@ class _CompanywiseblogState extends State<Companywiseblog> {
               top: 20,
             ),
             decoration: BoxDecoration(
-              color: const Color.fromRGBO(246, 246, 246, 1),
+              color: const Color.fromRGBO(48, 111, 220, 1),
               borderRadius: BorderRadius.circular(14),
             ),
             child: ClipRRect(
                 borderRadius: BorderRadius.circular(14),
-                child: IntrinsicHeight(
-                    child: Row(children: [
-                  Container(
-                    width: 6,
-                    height: double.infinity,
+                child: Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.only(left: 6),
                     decoration: BoxDecoration(
-                      color: const Color.fromRGBO(48, 111, 220, 1),
+                      color: const Color.fromRGBO(239, 239, 239, 1),
                     ),
-                  ),
-                  Expanded(
-                      child: Container(
-                          padding: const EdgeInsets.only(
-                              left: 17, right: 16, top: 15, bottom: 18),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                  child: Column(children: [
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Thur, Nov 28, 22:53:02',
-                                        style: TextStyle(
-                                          color: const Color.fromRGBO(
-                                              48, 111, 220, 1),
-                                          fontSize: 16,
-                                          fontFamily: 'DM Sans',
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 14),
-                                      Container(
-                                        margin: const EdgeInsets.only(right: 4),
-                                        padding: const EdgeInsets.only(
-                                            left: 8,
-                                            right: 8,
-                                            top: 4,
-                                            bottom: 4),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: const Color.fromRGBO(
-                                                  104, 189, 0, 1),
-                                              width: 1.33),
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        child: Text(
-                                          'New',
-                                          style: TextStyle(
-                                            color:
-                                                Color.fromRGBO(104, 189, 0, 1),
-                                            fontSize: 10,
-                                            fontFamily: 'Inter',
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: const EdgeInsets.only(right: 4),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: const Color.fromRGBO(
-                                                  255, 171, 81, 1),
-                                              width: 1.33),
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        child: Text(
-                                          'Mention',
-                                          style: TextStyle(
-                                            color:
-                                                Color.fromRGBO(255, 171, 81, 1),
-                                            fontSize: 10,
-                                            fontFamily: 'Inter',
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ),
-                                      )
-                                    ]),
-                                SizedBox(height: 8),
-                                Container(
-                                  child: Text(
-                                      'The following students are waitlisted for the role of Iteraction Designer',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                        fontFamily: 'DM Sans',
-                                        fontWeight: FontWeight.w400,
-                                      )),
+                    padding: const EdgeInsets.only(
+                        left: 17, right: 16, top: 15, bottom: 18),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: Column(children: [
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.post!.published ?? "",
+                                  style: TextStyle(
+                                    color:
+                                        const Color.fromRGBO(48, 111, 220, 1),
+                                    fontSize: 16,
+                                    fontFamily: 'DM Sans',
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
-                              ])),
-                              InkWell(
-                                child: SvgPicture.asset(
-                                  'assets/blogs/chevron-right.svg',
-                                  height: 24,
-                                  width: 24,
-                                  fit: BoxFit.none,
-                                ),
-                                onTap: () {
-                                  setState(() {
-                                    expandedview = true;
-                                  });
-                                },
-                              ),
-                            ],
-                          )))
-                ])))),
+                                const SizedBox(width: 14),
+                                // Container(
+                                //   margin: const EdgeInsets.only(right: 4),
+                                //   padding: const EdgeInsets.only(
+                                //       left: 8,
+                                //       right: 8,
+                                //       top: 4,
+                                //       bottom: 4),
+                                //   decoration: BoxDecoration(
+                                //     border: Border.all(
+                                //         color: const Color.fromRGBO(
+                                //             104, 189, 0, 1),
+                                //         width: 1.33),
+                                //     borderRadius:
+                                //         BorderRadius.circular(12),
+                                //   ),
+                                //   child: Text(
+                                //     'New',
+                                //     style: TextStyle(
+                                //       color:
+                                //           Color.fromRGBO(104, 189, 0, 1),
+                                //       fontSize: 10,
+                                //       fontFamily: 'Inter',
+                                //       fontWeight: FontWeight.w700,
+                                //     ),
+                                //   ),
+                                // ),
+                                // Container(
+                                //   margin: const EdgeInsets.only(right: 4),
+                                //   padding: const EdgeInsets.symmetric(
+                                //       horizontal: 8, vertical: 4),
+                                //   decoration: BoxDecoration(
+                                //     border: Border.all(
+                                //         color: const Color.fromRGBO(
+                                //             255, 171, 81, 1),
+                                //         width: 1.33),
+                                //     borderRadius:
+                                //         BorderRadius.circular(12),
+                                //   ),
+                                //   child: Text(
+                                //     'Mention',
+                                //     style: TextStyle(
+                                //       color:
+                                //           Color.fromRGBO(255, 171, 81, 1),
+                                //       fontSize: 10,
+                                //       fontFamily: 'Inter',
+                                //       fontWeight: FontWeight.w700,
+                                //     ),
+                                //   ),
+                                // )
+                              ]),
+                          SizedBox(height: 8),
+                          Container(
+                              child: Text(
+                                  // getFirstLine(htmlToPlainText(
+                                  //     widget.post?.content ?? "") == "" ? htmlToPlainText(widget.post?.content ?? "") : getFirstLine(htmlToPlainText(
+                                  //     widget.post?.content ?? ""))),
+                                  //     maxLines: 2,
+                                  htmlToPlainText(widget.post?.content ?? ""),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontFamily: 'DM Sans',
+                                    fontWeight: FontWeight.w400,
+                                  ))),
+                        ])),
+                        InkWell(
+                          child: SvgPicture.asset(
+                            'assets/blogs/chevron-right.svg',
+                            height: 24,
+                            width: 24,
+                            fit: BoxFit.none,
+                          ),
+                          onTap: () {
+                            setState(() {
+                              expandedview = true;
+                            });
+                          },
+                        ),
+                      ],
+                    )))),
       if (expandedview)
         Container(
           margin: const EdgeInsets.only(
@@ -1049,177 +1173,62 @@ class _CompanywiseblogState extends State<Companywiseblog> {
             top: 20,
           ),
           decoration: BoxDecoration(
-            color: const Color.fromRGBO(246, 246, 246, 1),
+            color: const Color.fromRGBO(48, 111, 220, 1),
             borderRadius: BorderRadius.circular(14),
           ),
           child: ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: IntrinsicHeight(
-                  child: Row(children: [
-                Container(
-                  width: 6,
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    color: const Color.fromRGBO(48, 111, 220, 1),
-                  ),
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+                margin: const EdgeInsets.only(left: 6),
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(239, 239, 239, 1),
                 ),
-                Expanded(
-                  child: Container(
-                      padding: const EdgeInsets.only(
-                          left: 18, right: 16, top: 16, bottom: 16),
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          InkWell(
-                            child: SvgPicture.asset(
-                              'assets/blogs/chevron-right.svg',
-                              height: 24,
-                              width: 24,
-                              fit: BoxFit.none,
-                            ),
-                            onTap: () {
-                              setState(() {
-                                expandedview = false;
-                              });
-                            },
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                              child: Text(
-                            'Thur, Nov 28, 22:53:02',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontFamily: 'DM Sans',
-                              fontWeight: FontWeight.w700,
-                              color: const Color.fromRGBO(48, 111, 220, 1),
-                            ),
-                          )),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          Container(
-                            width: 340,
-                            child: Text.rich(
-                              TextSpan(
-                                text:
-                                    'The following students are waitlisted for the role of ',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'DM Sans',
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                children: [
-                                  TextSpan(
-                                    text: 'Iteraction Designer',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                              padding: EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: const Color.fromRGBO(255, 255, 255, 1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Table(columnWidths: const {
-                                0: IntrinsicColumnWidth(),
-                                1: IntrinsicColumnWidth(),
-                                2: FlexColumnWidth(),
-                              }, children: [
-                                TableRow(children: [
-                                  Text('Roll no:',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: 'DM Sans',
-                                        fontWeight: FontWeight.w700,
-                                      )),
-                                  SizedBox(width: 24),
-                                  Text('Name',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: 'DM Sans',
-                                        fontWeight: FontWeight.w700,
-                                      )),
-                                ]),
-                                TableRow(children: [
-                                  SizedBox(height: 8),
-                                  SizedBox(height: 8),
-                                  SizedBox(height: 8)
-                                ]),
-                                TableRow(children: [
-                                  Text('24B2399',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: 'DM Sans',
-                                        fontWeight: FontWeight.w400,
-                                      )),
-                                  SizedBox(width: 24),
-                                  Text('Lorem Ipsum Dolor',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: 'DM Sans',
-                                        fontWeight: FontWeight.w400,
-                                      )),
-                                ]),
-                                TableRow(children: [
-                                  Text('25B3256',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: 'DM Sans',
-                                        fontWeight: FontWeight.w400,
-                                      )),
-                                  SizedBox(width: 24),
-                                  Text('Dolor Ipsum ',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: 'DM Sans',
-                                        fontWeight: FontWeight.w400,
-                                      )),
-                                ]),
-                                TableRow(children: [
-                                  Text('24B2345',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: 'DM Sans',
-                                        fontWeight: FontWeight.w400,
-                                      )),
-                                  SizedBox(width: 24),
-                                  Text('Ipsum Dolor Lorem ',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: 'DM Sans',
-                                        fontWeight: FontWeight.w400,
-                                      )),
-                                ]),
-                                TableRow(children: [
-                                  Text('23B8973',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: 'DM Sans',
-                                        fontWeight: FontWeight.w400,
-                                      )),
-                                  SizedBox(width: 24),
-                                  Text('Dolor Lorem Ipsum ',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: 'DM Sans',
-                                        fontWeight: FontWeight.w400,
-                                      )),
-                                ]),
-                              ])),
-                        ],
-                      )),
-                )
-              ]))),
+                padding: const EdgeInsets.only(
+                    left: 18, right: 16, top: 16, bottom: 16),
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    InkWell(
+                      child: SvgPicture.asset(
+                        'assets/blogs/chevron-right.svg',
+                        height: 24,
+                        width: 24,
+                        fit: BoxFit.none,
+                      ),
+                      onTap: () {
+                        setState(() {
+                          expandedview = false;
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                        child: Text(
+                      widget.post!.published ?? "",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'DM Sans',
+                        fontWeight: FontWeight.w700,
+                        color: const Color.fromRGBO(48, 111, 220, 1),
+                      ),
+                    )),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Container(
+                      child: CommonHtml(
+                        data: widget.post?.content,
+                        defaultTextStyle:
+                            Theme.of(context).textTheme.bodyMedium ??
+                                TextStyle(),
+                      ),
+                    ),
+                  ],
+                )),
+          ),
         )
     ]));
   }

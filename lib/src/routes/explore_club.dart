@@ -16,6 +16,7 @@ import 'package:markdown/markdown.dart' as markdown;
 class ExploreClubPage extends StatefulWidget {
   final Future<Body>? bodyFuture;
   final String? heroTag;
+  final VoidCallback onBack;
 
   final List<Map<String, String>> bodyTitles = [
     {
@@ -50,26 +51,30 @@ class ExploreClubPage extends StatefulWidget {
       "bodyname": "Placement Cell",
       "title": "Placement",
     },
+    {
+      "bodyname": "UGAC",
+      "title": "Acadmics",
+    }
   ];
 
-  ExploreClubPage({this.bodyFuture, this.heroTag});
+  ExploreClubPage({this.bodyFuture, this.heroTag,required this.onBack,});
 
-  static void navigateWith(BuildContext context, InstiAppBloc bloc,
-      {required String bodyID, Role? role,}) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        settings: RouteSettings(
-          name: "/body/${bodyID}",
-        ),
-        builder: (context) => ExploreClubPage(
-          bodyFuture:
-              bloc.getBody(bodyID),
-          heroTag: bodyID,
-        ),
-      ),
-    );
-  }
+  // static void navigateWith(BuildContext context, InstiAppBloc bloc,
+  //     {required String bodyID, Role? role,}) {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       settings: RouteSettings(
+  //         name: "/body/${bodyID}",
+  //       ),
+  //       builder: (context) => ExploreClubPage(
+  //         bodyFuture:
+  //             bloc.getBody(bodyID),
+  //         heroTag: bodyID,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   _ExploreClubPageState createState() => _ExploreClubPageState();
@@ -83,12 +88,15 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
   TextEditingController? _searchFieldController;
 
   bool loadingFollow = false;
+    List<Body> Childrens = [];
 
   @override
   void initState() {
     super.initState();
 
     widget.bodyFuture?.then((b) {
+      Childrens = b.bodyChildren ?? [];
+      Childrens.sort((a, b) => (b.bodyFollowersCount ?? 0).compareTo(a.bodyFollowersCount ?? 0));
       var tableParse = markdown.TableSyntax();
       b.bodyDescription = markdown.markdownToHtml(
           b.bodyDescription
@@ -200,8 +208,8 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                         Padding(
                                   padding: const EdgeInsets.only(left: 16,),
                                   child: GestureDetector(
-                                    onTap: (){
-                                      Navigator.of(context).pop();
+                                    onTap: () {
+                                      widget.onBack();
                                     },
                                     child: Container(
                                       height: 52,
@@ -321,7 +329,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                       ],
                     ),
                     const SizedBox(height: 24),
-                    ...(body!.bodyChildren?.map((b) {
+                    ...(Childrens.map((b) {
                       return _buildBodyTile(bloc, theme.textTheme, b);
                     }).toList() ?? []),
                     Divider(),

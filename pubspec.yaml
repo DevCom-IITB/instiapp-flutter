@@ -42,7 +42,7 @@ dependencies:
   flutter_typeahead: ^5.2.0
   image_picker: ^1.1.2
   flutter_dash: ^1.0.0
-
+  html: ^0.15.4
   firebase_messaging: ^11.2.3
   flutter_local_notifications: ^17.1.2
   path_provider: ^2.0.8

@@ -43,6 +43,12 @@ class Body {
   @JsonKey(name: "blog_url")
   String? bodyBlogURL;
 
+  @JsonKey(name: "whatsapp_group_url")
+  String? bodyWhatsappGroupURL;
+
+  @JsonKey(name: "instagram_url")
+  String? bodyInstagramURL;
+
   @JsonKey(name: "user_follows")
   bool? bodyUserFollows;
 
@@ -68,7 +74,9 @@ class Body {
       this.bodyShortDescription,
       this.bodyStrID,
       this.bodyUserFollows,
-      this.bodyWebsiteURL});
+      this.bodyWebsiteURL,
+      this.bodyWhatsappGroupURL,
+      this.bodyInstagramURL});
 
   factory Body.fromJson(Map<String, dynamic> json) => _$BodyFromJson(json);
 

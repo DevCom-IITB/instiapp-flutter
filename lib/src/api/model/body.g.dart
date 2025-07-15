@@ -29,7 +29,13 @@ Body _$BodyFromJson(Map<String, dynamic> json) => Body(
       bodyStrID: json['str_id'] as String?,
       bodyUserFollows: json['user_follows'] as bool?,
       bodyWebsiteURL: json['website_url'] as String?,
+      bodyWhatsappGroupURL: json['whatsapp_group_url'] as String?,
+      bodyInstagramURL: json['instagram_url'] as String?,
+      bodyImages: (json['images'] as List<dynamic>?)
+          ?.map((e) => BodyImage.fromJson(e as Map<String, dynamic>))
+          .toList() ?? [],
     );
+
 
 Map<String, dynamic> _$BodyToJson(Body instance) => <String, dynamic>{
       'id': instance.bodyID,
@@ -46,4 +52,6 @@ Map<String, dynamic> _$BodyToJson(Body instance) => <String, dynamic>{
       'blog_url': instance.bodyBlogURL,
       'user_follows': instance.bodyUserFollows,
       'roles': instance.bodyRoles,
+      'whatsapp_group_url': instance.bodyWhatsappGroupURL,
+      'instagram_url': instance.bodyInstagramURL,
     };
