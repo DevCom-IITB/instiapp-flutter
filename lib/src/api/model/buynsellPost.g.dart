@@ -22,14 +22,16 @@ BuynSellPost _$BuynSellPostFromJson(Map<String, dynamic> json) => BuynSellPost(
       status: json['status'] as bool?,
       deleted: json['deleted'] as bool?,
       price: (json['price'] as num?)?.toInt(),
+      originalPrice: (json['original_price'] as num?)?.toInt(),
+      timeInactive: json['time_inactive'] as String?,
+      negotiable: json['negotiable'] as bool?,
+      contactDetails: json['contact_details'] as String?,
       timeOfCreation: json['time_of_creation'] as String?,
-    )
-      ..negotiable = json['negotiable'] as bool?
-      ..contactDetails = json['contact_details'] as String?
-      ..category = json['category'] as String?
-      ..user = json['user'] == null
+      category: json['category'] as String?,
+      user: json['user'] == null
           ? null
-          : User.fromJson(json['user'] as Map<String, dynamic>);
+          : User.fromJson(json['user'] as Map<String, dynamic>),
+    );
 
 Map<String, dynamic> _$BuynSellPostToJson(BuynSellPost instance) =>
     <String, dynamic>{
@@ -46,9 +48,11 @@ Map<String, dynamic> _$BuynSellPostToJson(BuynSellPost instance) =>
       'status': instance.status,
       'deleted': instance.deleted,
       'price': instance.price,
+      'original_price': instance.originalPrice,
       'negotiable': instance.negotiable,
       'contact_details': instance.contactDetails,
       'time_of_creation': instance.timeOfCreation,
       'category': instance.category,
+      'time_inactive': instance.timeInactive,
       'user': instance.user,
     };

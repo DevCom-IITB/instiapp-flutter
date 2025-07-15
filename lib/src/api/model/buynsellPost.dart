@@ -38,17 +38,14 @@ class BuynSellPost {
   @JsonKey(name: "status")
   bool? status;
 
-  bool? isSold = false;
-
-  bool? isBookmarked = false;
-
   @JsonKey(name: "deleted")
   bool? deleted;
 
   @JsonKey(name: "price")
   int? price;
 
-  int? originalPrice = -1;
+  @JsonKey(name: "original_price")
+  int? originalPrice;
 
   @JsonKey(name: "negotiable")
   bool? negotiable;
@@ -62,6 +59,9 @@ class BuynSellPost {
   @JsonKey(name: "category")
   String? category;
 
+  @JsonKey(name: "time_inactive")
+  String? timeInactive;
+
   @JsonKey(name: "user")
   User? user;
 
@@ -70,6 +70,8 @@ class BuynSellPost {
 
   @JsonKey(ignore: true)
   String? timeBefore;
+
+
 
   @override
   String toString() {
@@ -90,7 +92,13 @@ class BuynSellPost {
     this.status,
     this.deleted,
     this.price,
+    this.originalPrice,
+    this.timeInactive,
+    this.negotiable,
+    this.contactDetails,
     this.timeOfCreation,
+    this.category,
+    this.user,
     this.timeBefore,
   }) {
     if (timeOfCreation != null) {

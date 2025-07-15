@@ -672,7 +672,7 @@ class _UserPageState extends State<UserPage>
             value: NotificationVisibility,
             onChanged: (val) => setState(() => NotificationVisibility = val),
             top: true,
-            icon: Icons.visibility_off_outlined,
+            icon: Icons.notifications_none_outlined,
           ),
           SettingsItem(
             title: 'Settings',
