@@ -121,7 +121,10 @@ class _HomepageState extends State<Homepage> {
             FeedPage(),
           Align(
             alignment: Alignment.bottomCenter,
-            child: navBar(),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: navBar(),
+            ),
           ),
         ],
       ),
@@ -329,6 +332,7 @@ class _HomepageState extends State<Homepage> {
     var bloc = BlocProvider.of(context)!.bloc;
     return Scaffold(
       backgroundColor: myConstants.instiappWhite,
+      
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(52),
         child: customAppBar()

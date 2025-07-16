@@ -228,71 +228,71 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                                     ),
                                   ),
                                 ),
-                        Positioned(
-                          top: 72,
-                          left: 16,
-                          right: 16,
-                          child: Material(
-                          elevation: 6,
-                          borderRadius: BorderRadius.circular(32),
-                          color: Colors.transparent,
-                          child: Container(
-                            height: 50, // Set height to 50px
-                            width: 380,
-                            decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.98),
-                            borderRadius: BorderRadius.circular(32),
-                            // boxShadow: [
-                            //   BoxShadow(
-                            //   color: Colors.black.withOpacity(0.08),
-                            //   blurRadius: 12,
-                            //   offset: Offset(0, 4),
-                            //   ),
-                            // ],
-                            ),
-                            child: TextField(
-                            controller: _searchFieldController,
-                            focusNode: _focusNode,
-                            cursorColor: theme.colorScheme.primary,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontSize: 18,
-                              color: Colors.black87,
-                              fontFamily: 'DM Sans',
-                            ),
-                            decoration: InputDecoration(
-                              isDense: true,
-                              contentPadding: const EdgeInsets.symmetric(
-                              vertical: 14, // Adjust for 50px height
-                              horizontal: 20,
-                              ),
-                              prefixIcon: Icon(
-                              Icons.search_outlined,
-                              color: Colors.grey[600],
-                              size: 22, // Adjust icon size for 50px height
-                              ),
-                              hintText: "Search clubs...",
-                              hintStyle: TextStyle(
-                              color: Colors.grey[500],
-                              fontSize: 17,
-                              fontWeight: FontWeight.w400,
-                              fontFamily: 'DM Sans',
-                              ),
-                              border: InputBorder.none,
-                              suffixIcon: IconButton(
-                              tooltip: "Clear search",
-                              icon: const Icon(Icons.close_outlined, size: 22), // Adjust icon size
-                              color: Colors.grey[500],
-                              onPressed: () {
-                                setState(() {
-                                _searchFieldController?.clear();
-                                });
-                              },
-                              ),
-                            ),
-                            ),
-                          ),
-                          ),
-                        ),
+                        // Positioned(
+                        //   top: 72,
+                        //   left: 16,
+                        //   right: 16,
+                        //   child: Material(
+                        //   elevation: 6,
+                        //   borderRadius: BorderRadius.circular(32),
+                        //   color: Colors.transparent,
+                        //   child: Container(
+                        //     height: 50, // Set height to 50px
+                        //     width: 380,
+                        //     decoration: BoxDecoration(
+                        //     color: Colors.white.withOpacity(0.98),
+                        //     borderRadius: BorderRadius.circular(32),
+                        //     // boxShadow: [
+                        //     //   BoxShadow(
+                        //     //   color: Colors.black.withOpacity(0.08),
+                        //     //   blurRadius: 12,
+                        //     //   offset: Offset(0, 4),
+                        //     //   ),
+                        //     // ],
+                        //     ),
+                        //     child: TextField(
+                        //     controller: _searchFieldController,
+                        //     focusNode: _focusNode,
+                        //     cursorColor: theme.colorScheme.primary,
+                        //     style: theme.textTheme.bodyMedium?.copyWith(
+                        //       fontSize: 18,
+                        //       color: Colors.black87,
+                        //       fontFamily: 'DM Sans',
+                        //     ),
+                        //     decoration: InputDecoration(
+                        //       isDense: true,
+                        //       contentPadding: const EdgeInsets.symmetric(
+                        //       vertical: 14, // Adjust for 50px height
+                        //       horizontal: 20,
+                        //       ),
+                        //       prefixIcon: Icon(
+                        //       Icons.search_outlined,
+                        //       color: Colors.grey[600],
+                        //       size: 22, // Adjust icon size for 50px height
+                        //       ),
+                        //       hintText: "Search clubs...",
+                        //       hintStyle: TextStyle(
+                        //       color: Colors.grey[500],
+                        //       fontSize: 17,
+                        //       fontWeight: FontWeight.w400,
+                        //       fontFamily: 'DM Sans',
+                        //       ),
+                        //       border: InputBorder.none,
+                        //       suffixIcon: IconButton(
+                        //       tooltip: "Clear search",
+                        //       icon: const Icon(Icons.close_outlined, size: 22), // Adjust icon size
+                        //       color: Colors.grey[500],
+                        //       onPressed: () {
+                        //         setState(() {
+                        //         _searchFieldController?.clear();
+                        //         });
+                        //       },
+                        //       ),
+                        //     ),
+                        //     ),
+                        //   ),
+                        //   ),
+                        // ),
                         Positioned(
                           top: 150,
                           left: 24,
