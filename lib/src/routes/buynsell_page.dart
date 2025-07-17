@@ -31,7 +31,7 @@ class _BuySellPageState extends State<BuySellPage> {
   bool? _isNegotiable;
   String? _sortBy = 'Recently Added';
 
-  final List<String> _filterTabs = ['Sort', 'Category', 'Negotiable'];
+  final List<String> _filterTabs = ['Sort', 'Filter'];
   int _selectedFilterTabIndex = 0;
 
   // void _onBookmarkPressed() {}
@@ -197,6 +197,7 @@ class _BuySellPageState extends State<BuySellPage> {
 
     final isNegotiable = post.negotiable ?? false;
     final isSold = !post.status!;
+    final isGiveaway = post.action == 'giveaway';
 
     void navigateToDetail() {
       Navigator.push(
@@ -442,15 +443,15 @@ class _BuySellPageState extends State<BuySellPage> {
                           Text(
                             post.name ?? "Untitled Item",
                             style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w700),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Color.fromRGBO(41, 41, 41, 1)),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            post.action == 'giveaway'
-                                ? "Giveaway"
-                                : "₹${post.price ?? 0}",
+                            isGiveaway ? "Free" : "₹${post.price ?? 0}",
                             style: const TextStyle(
                                 fontSize: 24,
                                 color: Color.fromRGBO(48, 111, 220, 1),
@@ -461,7 +462,7 @@ class _BuySellPageState extends State<BuySellPage> {
                               'Bought at ₹${post.originalPrice}',
                               style: TextStyle(
                                   fontSize: 14,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w700,
                                   color: Color.fromRGBO(126, 130, 135, 1)),
                             ),
                         ],
@@ -496,18 +497,26 @@ class _BuySellPageState extends State<BuySellPage> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: isNegotiable
-                                      ? const Color(0xFF67BC00)
-                                      : Colors.red,
+                                  color: isGiveaway
+                                      ? Color.fromRGBO(48, 111, 220, 1)
+                                      : (isNegotiable
+                                          ? const Color(0xFF67BC00)
+                                          : Colors.red),
                                 ),
                               ),
                               child: Text(
-                                isNegotiable ? 'Negotiable' : 'Fixed Price',
+                                isGiveaway
+                                    ? 'GiveAway'
+                                    : (isNegotiable
+                                        ? 'Negotiable'
+                                        : 'Fixed Price'),
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: isNegotiable
-                                      ? const Color(0xFF67BC00)
-                                      : Colors.red,
+                                  color: isGiveaway
+                                      ? Color.fromRGBO(48, 111, 220, 1)
+                                      : (isNegotiable
+                                          ? const Color(0xFF67BC00)
+                                          : Colors.red),
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
@@ -564,49 +573,77 @@ class _BuySellPageState extends State<BuySellPage> {
 
   // Add these new methods for the additional functionality
   void _confirmDelete(String? id) {
+    bool isDeleting = false;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirm Delete'),
-        content: const Text('Are you sure you want to delete this post?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () async {
-              await bloc.buynSellPostBloc.deleteBuynSellPost(id!);
-              Navigator.pop(context);
-              await bloc.buynSellPostBloc.refresh();
-            },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-          ),
-        ],
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Confirm Delete'),
+            content: const Text('Are you sure you want to delete this post?'),
+            actions: [
+              TextButton(
+                onPressed: isDeleting ? null : () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: isDeleting
+                    ? null
+                    : () async {
+                        setState(() => isDeleting = true);
+
+                        try {
+                          await bloc.buynSellPostBloc.deleteBuynSellPost(id!);
+                          Navigator.pop(context);
+                          await bloc.buynSellPostBloc.refresh();
+                        } finally {
+                          bloc.buynSellPostBloc.refresh();
+                        }
+                      },
+                child: Text(isDeleting ? 'Deleting...' : 'Delete',
+                    style: TextStyle(color: Colors.red)),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
   void _confirmMarkAsSold(BuynSellPost post) {
+    bool isProcessing = false;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Mark as Sold'),
-        content: const Text('Are you sure you want to mark this item as sold?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () async {
-              await bloc.buynSellPostBloc.markAsSold(post.id!);
-              Navigator.pop(context);
-              await bloc.buynSellPostBloc.refresh();
-            },
-            child: const Text('Confirm'),
-          ),
-        ],
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Mark as Sold'),
+            content:
+                const Text('Are you sure you want to mark this item as sold?'),
+            actions: [
+              TextButton(
+                onPressed: isProcessing ? null : () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: isProcessing ? null : () async {
+                  setState(() => isProcessing = true);
+                  
+                  try {
+                    await bloc.buynSellPostBloc.markAsSold(post.id!);
+                    Navigator.pop(context);
+                    await bloc.buynSellPostBloc.refresh();
+                  } finally {
+                    bloc.buynSellPostBloc.refresh();
+                  }
+                },
+                child: Text(isProcessing ? 'Updating...' : 'Confirm'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -720,7 +757,8 @@ class _BuySellPageState extends State<BuySellPage> {
     return Container(
       margin: const EdgeInsets.only(right: 4),
       decoration: BoxDecoration(
-        color: isActive ? const Color(0xFF306FDC) : Colors.black,
+        color:
+            isActive ? const Color(0xFF306FDC) : Color.fromRGBO(21, 32, 46, 1),
         shape: BoxShape.circle,
       ),
       child: IconButton(
@@ -733,29 +771,35 @@ class _BuySellPageState extends State<BuySellPage> {
   Widget _buildSearchBar() {
     return Container(
       margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      height: 50,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(50),
-        border: Border.all(color: const Color(0xFF1B3252), width: 1.5),
+        image: DecorationImage(
+          image: AssetImage("assets/buynsell/searchborder.png"),
+          fit: BoxFit.fill,
+        ),
       ),
-      child: Row(
-        children: [
-          const Icon(Icons.search, size: 32),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              decoration: const InputDecoration.collapsed(
-                hintText: 'Search items...',
+      child: Center(
+        child: Row(
+          children: [
+            const Icon(Icons.search, size: 32),
+            const SizedBox(width: 10),
+            Expanded(
+              child: TextField(
+                decoration: const InputDecoration.collapsed(
+                  hintText: 'Search items...',
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value;
+                  });
+                },
               ),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -772,6 +816,7 @@ class _BuySellPageState extends State<BuySellPage> {
               'Filters',
               _isAnyFilterActive,
               icon: Icons.tune,
+              icon2: Icons.keyboard_arrow_down_outlined,
               onTap: () {
                 _openFilterBottomSheet();
               },
@@ -810,6 +855,7 @@ class _BuySellPageState extends State<BuySellPage> {
     String label,
     bool isSelected, {
     IconData? icon,
+    IconData? icon2,
     VoidCallback? onTap,
   }) {
     return GestureDetector(
@@ -846,6 +892,16 @@ class _BuySellPageState extends State<BuySellPage> {
                 fontWeight: FontWeight.w500,
               ),
             ),
+            if (icon2 != null)
+              const SizedBox(
+                width: 8,
+              ),
+            if (icon2 != null)
+              Icon(
+                icon2,
+                size: 20,
+                color: isSelected ? Colors.white : Colors.black,
+              ),
           ],
         ),
       ),
@@ -862,45 +918,30 @@ class _BuySellPageState extends State<BuySellPage> {
           builder: (BuildContext context, StateSetter setModalState) {
             return Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Color.fromRGBO(246, 246, 246, 1),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(24),
                   topRight: Radius.circular(24),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 20,
-                    spreadRadius: 2,
-                  ),
-                ],
               ),
-              height: MediaQuery.of(context).size.height * 0.75,
+              height: MediaQuery.of(context).size.height * 0.65,
               child: Column(
                 children: [
                   // Header
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Color.fromRGBO(246, 246, 246, 1),
                       borderRadius:
                           const BorderRadius.vertical(top: Radius.circular(24)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Filters',
+                          'Filter By',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 24),
+                              fontWeight: FontWeight.w700, fontSize: 20),
                         ),
                         IconButton(
                           icon: const Icon(Icons.close),
@@ -919,7 +960,7 @@ class _BuySellPageState extends State<BuySellPage> {
                         Container(
                           width: 100,
                           decoration: const BoxDecoration(
-                            color: Colors.white,
+                            color: Color.fromRGBO(246, 246, 246, 1),
                             borderRadius: BorderRadius.only(
                                 topRight: Radius.circular(24)),
                           ),
@@ -939,12 +980,12 @@ class _BuySellPageState extends State<BuySellPage> {
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 18, horizontal: 0),
+                                        vertical: 14, horizontal: 0),
                                     decoration: BoxDecoration(
                                       // 1. base color: white if not selected, grey if selected
                                       color: isSelected
                                           ? Color.fromRGBO(239, 239, 239, 1)
-                                          : Colors.white,
+                                          : Color.fromRGBO(246, 246, 246, 1),
                                       // 2. gradient only on selected: blue line → grey
                                       gradient: isSelected
                                           ? const LinearGradient(
@@ -977,7 +1018,7 @@ class _BuySellPageState extends State<BuySellPage> {
                                         style: const TextStyle(
                                           color: Colors.black,
                                           fontSize: 16,
-                                          fontWeight: FontWeight.w600,
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                     ),
@@ -1012,7 +1053,7 @@ class _BuySellPageState extends State<BuySellPage> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Color.fromRGBO(246, 246, 246, 1),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1109,94 +1150,58 @@ class _BuySellPageState extends State<BuySellPage> {
     switch (_filterTabs[_selectedFilterTabIndex]) {
       case 'Sort':
         return _buildSortPanel(setModalState);
-      case 'Category':
-        return _buildCategoryPanel(setModalState);
-      case 'Negotiable':
-        return _buildNegotiablePanel(setModalState);
+      case 'Filter':
+        return _buildFilterPanel(setModalState);
       default:
         return const SizedBox();
     }
   }
 
   Widget _buildSortPanel(StateSetter setModalState) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          'Sort By',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+    return Theme(
+      data: ThemeData.light(),
+      child: RadioTheme(
+        data: ThemeData.light().radioTheme.copyWith(
+              visualDensity: VisualDensity.compact,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              fillColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return Color.fromRGBO(48, 111, 220, 1);
+                }
+                return null;
+              }),
+            ),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            _buildSortOption(
+              'Recently Added',
+              'Recently Added',
+              setModalState,
+              isDefault: true,
+            ),
+            _buildSortOption(
+              'Oldest First',
+              'Oldest First',
+              setModalState,
+            ),
+            _buildSortOption(
+              'Price: Low to High',
+              'Price: Low to High',
+              setModalState,
+            ),
+            _buildSortOption(
+              'Price: High to Low',
+              'Price: High to Low',
+              setModalState,
+            ),
+          ],
         ),
-        const SizedBox(height: 24),
-        Expanded(
-          child: ListView(
-            children: [
-              _buildSortOption(
-                'Recently Added',
-                'Recently Added',
-                setModalState,
-                isDefault: true,
-              ),
-              const SizedBox(height: 12),
-              _buildSortOption(
-                'Oldest First',
-                'Oldest First',
-                setModalState,
-              ),
-              const SizedBox(height: 12),
-              _buildSortOption(
-                'Price: Low to High',
-                'Price: Low to High',
-                setModalState,
-              ),
-              const SizedBox(height: 12),
-              _buildSortOption(
-                'Price: High to Low',
-                'Price: High to Low',
-                setModalState,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSortOption(
-    String title,
-    String value,
-    StateSetter setModalState, {
-    bool isDefault = false,
-  }) {
-    final isSelected = _sortBy == value || (isDefault && _sortBy == null);
-    return Container(
-      decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFF0F5FF) : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isSelected ? const Color(0xFF306FDC) : const Color(0xFFEEF2F6),
-          width: 1.5,
-        ),
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? const Color(0xFF306FDC) : Colors.black,
-          ),
-        ),
-        trailing: isSelected
-            ? const Icon(Icons.check_circle, color: Color(0xFF306FDC))
-            : null,
-        onTap: () => setModalState(() => _sortBy = value),
       ),
     );
   }
 
-  Widget _buildCategoryPanel(StateSetter setModalState) {
+  Widget _buildFilterPanel(StateSetter setModalState) {
     final categories = [
       'Gadgets',
       'Appliances',
@@ -1207,604 +1212,147 @@ class _BuySellPageState extends State<BuySellPage> {
       'Clothes',
       'Sports',
       'Furniture',
-      'Others',
+      'Others'
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          'Select Categories',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+    return Theme(
+      data: ThemeData.light(),
+      child: RadioTheme(
+        data: ThemeData.light().radioTheme.copyWith(
+              visualDensity: VisualDensity.compact,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              fillColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return Color.fromRGBO(48, 111, 220, 1);
+                }
+                return null;
+              }),
+            ),
+        child: CheckboxTheme(
+          data: ThemeData.light().checkboxTheme.copyWith(
+                visualDensity: VisualDensity.compact,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                fillColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.selected)) {
+                    return Color.fromRGBO(48, 111, 220, 1);
+                  }
+                  return null;
+                }),
+                // side: const BorderSide(color: Colors.grey, width: 2),
               ),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'Select one or more categories',
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-        const SizedBox(height: 24),
-        Expanded(
           child: Scrollbar(
             thumbVisibility: true,
-            thickness: 6,
-            radius: const Radius.circular(3),
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: ListView.separated(
-                itemCount: categories.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final category = categories[index];
-                  final isSelected =
-                      _selectedCategories?.contains(category) ?? false;
-
-                  return Container(
-                    decoration: BoxDecoration(
-                      color:
-                          isSelected ? const Color(0xFFF0F5FF) : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: isSelected
-                            ? const Color(0xFF306FDC)
-                            : const Color(0xFFEEF2F6),
-                        width: 1.5,
-                      ),
-                    ),
-                    child: CheckboxListTile(
-                      title: Text(
-                        category,
-                        style: TextStyle(
-                          fontWeight:
-                              isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isSelected
-                              ? const Color(0xFF306FDC)
-                              : Colors.black,
-                        ),
-                      ),
-                      value: isSelected,
-                      onChanged: (value) {
-                        setModalState(() {
-                          _selectedCategories ??= <String>{};
-                          if (value == true) {
-                            _selectedCategories!.add(category);
-                          } else {
-                            _selectedCategories!.remove(category);
-                          }
-                        });
-                      },
-                      controlAffinity: ListTileControlAffinity.leading,
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 12),
-                      checkboxShape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4)),
-                      activeColor: const Color(0xFF306FDC),
-                      tileColor: Colors.transparent,
-                    ),
-                  );
-                },
-              ),
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _buildSectionTitle('By Category'),
+                ...categories.map((category) =>
+                    _buildCheckboxOption(category, setModalState)),
+                const SizedBox(height: 16),
+                _buildSectionTitle('By Negotiability'),
+                _buildRadioOption('Yes', true, setModalState),
+                _buildRadioOption('No', false, setModalState),
+                _buildRadioOption('Any', null, setModalState, isDefault: true),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildNegotiablePanel(StateSetter setModalState) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          'Product Price Negotiability',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontFamily: 'DM Sans',
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: Colors.black,
         ),
-        const SizedBox(height: 24),
-        Expanded(
-          child: Column(
-            children: [
-              _buildNegotiableOption('Yes', true, setModalState),
-              const SizedBox(height: 12),
-              _buildNegotiableOption('No', false, setModalState),
-              const SizedBox(height: 12),
-              _buildNegotiableOption('Any', null, setModalState),
-            ],
-          ),
-        ),
-      ],
+      ),
     );
   }
 
-  Widget _buildNegotiableOption(
+  Widget _buildRadioOption<T>(
     String title,
     bool? value,
-    StateSetter setModalState,
-  ) {
-    final isSelected = _isNegotiable == value;
-    return Container(
-      decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFF0F5FF) : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isSelected ? const Color(0xFF306FDC) : const Color(0xFFEEF2F6),
-          width: 1.5,
+    StateSetter setModalState, {
+    bool isDefault = false,
+  }) {
+    return RadioListTile<bool?>(
+      title: Text(
+        title,
+        style: const TextStyle(
+            fontFamily: 'DM Sans',
+            fontSize: 14,
+            color: Color.fromRGBO(15, 22, 32, 0.8),
+            fontWeight: FontWeight.w500),
+      ),
+      value: value,
+      groupValue: _isNegotiable,
+      onChanged: (v) => setModalState(() {
+        _isNegotiable = v;
+      }),
+      controlAffinity: ListTileControlAffinity.leading,
+      dense: true,
+      visualDensity: VisualDensity.compact,
+      contentPadding: EdgeInsets.zero,
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    );
+  }
+
+  Widget _buildSortOption(
+    String title,
+    String value,
+    StateSetter setModalState, {
+    bool isDefault = false,
+  }) {
+    return RadioListTile<String>(
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontFamily: 'DM Sans',
+          fontSize: 14,
+          color: Color.fromRGBO(15, 22, 32, 0.8),
+          fontWeight: FontWeight.w500,
         ),
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? const Color(0xFF306FDC) : Colors.black,
-          ),
-        ),
-        trailing: isSelected
-            ? const Icon(Icons.check_circle, color: Color(0xFF306FDC))
-            : null,
-        onTap: () => setModalState(() => _isNegotiable = value),
+      value: value,
+      groupValue: _sortBy ?? (isDefault ? value : null),
+      onChanged: (v) => setModalState(() => _sortBy = v!),
+      controlAffinity: ListTileControlAffinity.leading,
+      dense: true,
+      visualDensity: VisualDensity.compact,
+      contentPadding: EdgeInsets.zero,
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    );
+  }
+
+  Widget _buildCheckboxOption(String category, StateSetter setModalState) {
+    final isSelected = _selectedCategories?.contains(category) ?? false;
+    return CheckboxListTile(
+      title: Text(
+        category,
+        style: const TextStyle(
+            fontFamily: 'DM Sans',
+            fontSize: 14,
+            color: Color.fromRGBO(15, 22, 32, 0.8),
+            fontWeight: FontWeight.w500),
       ),
+      value: isSelected,
+      onChanged: (v) => setModalState(() {
+        _selectedCategories ??= <String>{};
+        v!
+            ? _selectedCategories!.add(category)
+            : _selectedCategories!.remove(category);
+      }),
+      controlAffinity: ListTileControlAffinity.leading,
+      dense: true,
+      visualDensity: VisualDensity.compact,
+      contentPadding: EdgeInsets.zero,
     );
   }
 }
-
-// import 'package:InstiApp/src/api/model/buynsellPost.dart';
-// import 'package:InstiApp/src/bloc_provider.dart';
-// import 'package:InstiApp/src/blocs/buynsell_post_bloc.dart';
-// import 'package:InstiApp/src/drawer.dart';
-// import 'package:InstiApp/src/utils/common_widgets.dart';
-// import 'package:cached_network_image/cached_network_image.dart';
-// import 'package:flutter/material.dart';
-
-// import '../api/model/user.dart';
-// import '../utils/title_with_backbutton.dart';
-
-// class BuySellPage extends StatefulWidget {
-//   BuySellPage({Key? key}) : super(key: key);
-//   //final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-
-//   @override
-//   State<BuySellPage> createState() => _BuySellPageState();
-// }
-
-// class _BuySellPageState extends State<BuySellPage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: Sellpage(),
-//     );
-//   }
-// }
-
-// class Sellpage extends StatefulWidget {
-//   const Sellpage({Key? key}) : super(key: key);
-
-//   @override
-//   State<Sellpage> createState() => _SellpageState();
-// }
-
-// class _SellpageState extends State<Sellpage> {
-//   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-
-//   BnSType bnstype = BnSType.All;
-//   bool firstBuild = true;
-//   bool MyPosts = false;
-
-//   late double x;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//   }
-
-//   Widget build(BuildContext context) {
-//     BuynSellPostBloc buynSellPostBloc =
-//         BlocProvider.of(context)!.bloc.buynSellPostBloc;
-
-//     User? profile = BlocProvider.of(context)!.bloc.currSession?.profile;
-//     if (firstBuild) {
-//       buynSellPostBloc.refresh();
-//     }
-
-//     double screen_wr = MediaQuery.of(context).size.width;
-//     double screen_hr = MediaQuery.of(context).size.height;
-//     double y;
-//     var bloc = BlocProvider.of(context)!.bloc;
-//     var theme = Theme.of(context);
-//     bool isLoggedIn = bloc.currSession != null;
-
-//     screen_hr >= screen_wr ? x = 0.35 : x = 0.80;
-//     if (1 >= screen_hr / screen_wr && screen_hr / screen_wr >= 0.5) {
-//       x = 0.35;
-//     }
-//     screen_hr >= screen_wr ? y = 0.9 : y = 0.5;
-//     double screen_w = screen_wr * y;
-//     double screen_h = 270;
-
-//     double myfont = ((18 / 274.4) * screen_h);
-//     return Scaffold(
-//         key: _scaffoldKey,
-//         drawer: NavDrawer(),
-//         bottomNavigationBar: MyBottomAppBar(
-//           shape: RoundedNotchedRectangle(),
-//           notchMargin: 4.0,
-//           child: new Row(
-//             mainAxisSize: MainAxisSize.max,
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             children: <Widget>[
-//               IconButton(
-//                 icon: Icon(
-//                   Icons.menu_outlined,
-//                   semanticLabel: "Show navigation drawer",
-//                 ),
-//                 onPressed: () {
-//                   _scaffoldKey.currentState?.openDrawer();
-//                 },
-//               ),
-//             ],
-//           ),
-//         ),
-//         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-//         floatingActionButton: isLoggedIn
-//             ? FloatingActionButton.extended(
-//                 icon: Icon(Icons.add_outlined),
-//                 label: Text("Add Item"),
-//                 onPressed: () {
-//                   Navigator.of(context).pushNamed("/buyandsell/category");
-//                 },
-//               )
-//             : SizedBox(
-//                 height: 0,
-//                 width: 0,
-//               ),
-//         body: SafeArea(
-//           child: !isLoggedIn
-//               ? Container(
-//                   alignment: Alignment.center,
-//                   padding: EdgeInsets.all(50),
-//                   child: Column(
-//                     children: [
-//                       Icon(
-//                         Icons.cloud,
-//                         size: 200,
-//                         color: Colors.grey[600],
-//                       ),
-//                       Text(
-//                         "Login To View Buy and Sell Posts",
-//                         style: theme.textTheme.headlineSmall,
-//                         textAlign: TextAlign.center,
-//                       )
-//                     ],
-//                     crossAxisAlignment: CrossAxisAlignment.center,
-//                   ),
-//                 )
-//               : SingleChildScrollView(
-//                   child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: <Widget>[
-//                     TitleWithBackButton(
-//                       child: Text(
-//                         "Buy & Sell (Beta)",
-//                         style: theme.textTheme.headlineMedium,
-//                       ),
-//                     ),
-//                     Center(
-//                         child: Column(
-//                       children: [
-//                         Row(children: [
-//                           Expanded(
-//                               child: Container(
-//                             padding: EdgeInsets.fromLTRB(10, 10, 5, 10),
-//                             child: ElevatedButton(
-//                                 style: ElevatedButton.styleFrom(
-//                                     shape: RoundedRectangleBorder(
-//                                         borderRadius:
-//                                             BorderRadius.circular(15)), backgroundColor: theme.cardColor,
-//                                     side: BorderSide(
-//                                       width: 2,
-//                                       color: MyPosts
-//                                           ? theme.cardColor
-//                                           : Colors.blue,
-//                                     )),
-//                                 // color: !MyPosts
-//                                 //     ? theme.bottomAppBarColor
-//                                 //     : theme.cardColor,
-//                                 onPressed: () => {
-//                                       setState(() {
-//                                         MyPosts = false;
-//                                       }),
-//                                       buynSellPostBloc.refresh()
-//                                     },
-//                                 child: Text(
-//                                   "All Posts",
-//                                   style: theme.textTheme.titleLarge,
-//                                 )),
-//                           )),
-//                           Expanded(
-//                               child: Container(
-//                             padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
-//                             child: ElevatedButton(
-//                               child: Text("Your Posts",
-//                                   style: theme.textTheme.titleLarge),
-//                               onPressed: () => {
-//                                 setState(() {
-//                                   MyPosts = true;
-//                                 }),
-//                                 buynSellPostBloc.refresh()
-//                               },
-//                               style: ElevatedButton.styleFrom(
-//                                   shape: RoundedRectangleBorder(
-//                                       borderRadius: BorderRadius.circular(15)), backgroundColor: theme.cardColor,
-//                                   side: BorderSide(
-//                                     width: 2,
-//                                     color: !MyPosts
-//                                         ? theme.cardColor
-//                                         : Colors.blue,
-//                                   )),
-//                               // color: MyPosts
-//                               //     ? theme.bottomAppBarColor
-//                               //     : theme.cardColor,
-//                             ),
-//                           )),
-//                         ]),
-//                         StreamBuilder<List<BuynSellPost>>(
-//                             stream: buynSellPostBloc.buynsellposts,
-//                             builder: (BuildContext context,
-//                                 AsyncSnapshot<List<BuynSellPost>> snapshot) {
-//                               return ListView.builder(
-//                                 primary: false,
-//                                 shrinkWrap: true,
-//                                 itemCount: MyPosts
-//                                     ? (snapshot.hasData
-//                                         ? snapshot.data!
-//                                             .where((post) =>
-//                                                 post.user?.userID ==
-//                                                     profile?.userID &&
-//                                                 post.deleted != true)
-//                                             .length
-//                                         : 0)
-//                                     : (snapshot.hasData
-//                                         ? snapshot.data!
-//                                             .where(
-//                                                 (post) => post.deleted != true)
-//                                             .length
-//                                         : 0),
-//                                 itemBuilder: (_, index) {
-//                                   if (!snapshot.hasData) {
-//                                     return Center(
-//                                         child:
-//                                             CircularProgressIndicatorExtended(
-//                                       label: Text("Loading..."),
-//                                     ));
-//                                   }
-//                                   return _buildContent(screen_h, screen_w,
-//                                       index, myfont, context, snapshot);
-//                                 },
-//                               );
-//                             }),
-//                       ],
-//                     )),
-//                   ],
-//                 )),
-//         ));
-//   }
-
-//   Widget _buildContent(double screen_h, double screen_w, int index,
-//       double myfont, BuildContext context, AsyncSnapshot snapshot) {
-//     List<BuynSellPost> posts = snapshot.data!;
-//     var theme = Theme.of(context);
-//     var bloc = BlocProvider.of(context)!.bloc;
-//     User? profile = bloc.currSession?.profile;
-//     if (MyPosts) {
-//       posts = posts
-//           .where((post) =>
-//               post.user?.userID == profile?.userID && post.deleted != true)
-//           .toList();
-//     } else {
-//       posts = snapshot.data;
-//       posts = posts.where((post) => post.deleted != true).toList();
-//     }
-
-//     return Center(
-//       child: (SizedBox(
-//         height: screen_h * 0.7,
-//         width: screen_w * 1.2,
-//         child: Card(
-//           color: theme.cardColor,
-//           margin: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-//           child: InkWell(
-//             onTap: () {
-//               Navigator.of(context)
-//                   .pushNamed("/buyandsell/info" + (posts[index].id ?? ""));
-//             },
-//             child: SizedBox(
-//                 child: Stack(
-//               children: [
-//                 ClipRRect(
-//                   borderRadius: BorderRadius.only(
-//                       topRight: Radius.circular(10),
-//                       topLeft: Radius.circular(10)),
-//                   child: Row(
-//                     children: [
-//                       Center(
-//                         child: Container(
-//                           padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
-//                           height: screen_h,
-//                           width: screen_h * 0.20 / 0.43,
-//                           decoration: BoxDecoration(
-//                             borderRadius: BorderRadius.only(
-//                                 topRight: Radius.circular(10),
-//                                 bottomLeft: Radius.circular(10)),
-//                           ),
-//                           child: ClipRRect(
-//                             borderRadius: BorderRadius.only(
-//                                 bottomLeft: Radius.circular(10),
-//                                 topLeft: Radius.circular(10)),
-//                             child: CachedNetworkImage(
-//                               imageUrl: posts[index].imageUrl?[0] ?? '',
-//                               placeholder: (context, url) => Image.asset(
-//                                 'assets/buynsell/DevcomLogo.png',
-//                                 fit: BoxFit.fill,
-//                               ),
-//                               errorWidget: (context, url, error) =>
-//                                   new Image.asset(
-//                                 'assets/buynsell/DevcomLogo.png',
-//                                 fit: BoxFit.fill,
-//                               ),
-//                               fit: BoxFit.cover,
-//                             ),
-//                           ),
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//                 Container(
-//                   padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-//                   margin:
-//                       EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 11, 0, 50),
-//                   child: Text(
-//                     posts[index].name ?? "",
-//                     style: theme.textTheme.titleLarge,
-//                     //style: TextStyle(
-//                     //     fontSize: (myfont.toInt()).toDouble(),
-//                     //     fontWeight: FontWeight.w600),
-//                     overflow: TextOverflow.ellipsis,
-//                     maxLines: 1,
-//                   ),
-//                 ),
-//                 Container(
-//                   margin:
-//                       EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 105, 10, 0),
-//                   child: Text(
-//                     (posts[index].brand ?? "").length <= 10
-//                         ? posts[index].brand ?? ""
-//                         : (posts[index].brand ?? "").substring(0, 10) + '...',
-//                     style: theme.textTheme.bodyMedium,
-//                     maxLines: 1,
-//                   ),
-//                 ),
-//                 Container(
-//                     margin: EdgeInsets.fromLTRB(
-//                         screen_w * 0.7, 110, screen_h * 0.04 / 1.5, 1),
-//                     child: MyPosts
-//                         ? ClipRRect(
-//                             borderRadius: BorderRadius.circular(5),
-//                             child: ElevatedButton(
-//                               style: ElevatedButton.styleFrom(
-//                                 backgroundColor: Colors.red,
-//                               ),
-//                               onPressed: () {
-//                                 showDialog(
-//                                   context: context,
-//                                   builder: (ctx) => AlertDialog(
-//                                     title: const Text("Delete Item"),
-//                                     content: const Text(
-//                                         "Are you sure you want to delete this item?"),
-//                                     actions: <Widget>[
-//                                       TextButton(
-//                                         onPressed: () {
-//                                           posts[index].deleted = true;
-//                                           bloc.buynSellPostBloc
-//                                               .updateBuynSellPost(posts[index]);
-//                                           Navigator.of(ctx).pop();
-//                                           bloc.buynSellPostBloc.refresh();
-//                                         },
-//                                         child: Text("Delete",
-//                                             maxLines: 1,
-//                                             style: TextStyle(
-//                                                 fontSize:
-//                                                     12.5 / 338 * screen_w)),
-//                                       ),
-//                                     ],
-//                                   ),
-//                                 );
-//                               },
-//                               child: Text("Delete",
-//                                   maxLines: 1,
-//                                   style: TextStyle(
-//                                       fontSize: 12.5 / 338 * screen_w)),
-//                             ))
-//                         : Row(
-//                             children: [
-//                               Spacer(),
-//                               Text(
-//                                 (posts[index].action == 'giveaway'
-//                                     ? "GiveAway"
-//                                     : "₹" +
-//                                         (posts[index].price ?? 0).toString()),
-//                                 style: theme.textTheme.bodyLarge,
-
-//                                 // style:
-//                                 //     TextStyle(fontSize: w, fontWeight: FontWeight.w800),
-//                               )
-//                             ],
-//                           )),
-//                 Container(
-//                   child: MyPosts
-//                       ? Container()
-//                       : Row(
-//                           children: [
-//                             Icon(
-//                               Icons.access_time,
-//                               size: ((myfont / 18 * 12).toInt()).toDouble(),
-//                             ),
-//                             Text(' ' + (posts[index].timeBefore ?? ""),
-//                                 style: theme.textTheme.bodyLarge!.copyWith(
-//                                   fontWeight: FontWeight.bold,
-//                                 )
-//                                 //theme.textTheme.labelSmall
-//                                 // style: TextStyle(
-//                                 //     fontWeight: FontWeight.w600,
-//                                 //     fontSize: ((myfont / 19 * 12).toInt()).toDouble()),
-//                                 ),
-//                           ],
-//                         ),
-//                   margin:
-//                       EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 135, 0, 0),
-//                 ),
-//                 Container(
-//                     child: Text(
-//                       "Condition: " + (posts[index].condition ?? "") + "/10",
-//                       style: //TextStyle(
-//                           theme.textTheme.bodyMedium,
-//                       // fontSize: ((myfont / 18 * 12).toInt()).toDouble()),
-//                     ),
-//                     margin:
-//                         EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 35, 0, 0)),
-//                 Container(
-//                     padding: EdgeInsets.fromLTRB(0, 13, 10, 0),
-//                     child: Text(
-//                       (posts[index].description ?? ""), maxLines: 2,
-
-//                       overflow: TextOverflow.ellipsis,
-//                       style: theme.textTheme.bodyMedium,
-//                       // style: TextStyle(
-//                       //     fontWeight: FontWeight.w500,
-//                       //     fontSize: ((myfont / 16 * 12).toInt()).toDouble()),
-//                     ),
-//                     margin:
-//                         EdgeInsets.fromLTRB(screen_h * 0.20 / 0.43, 43, 0, 0)),
-//                 Row(
-//                   children: [
-//                     Spacer(),
-//                     Container(),
-//                   ],
-//                 )
-//               ],
-//             )),
-//           ),
-//           elevation: 0,
-//           shape: RoundedRectangleBorder(
-//             borderRadius: BorderRadius.circular(10),
-//             side: BorderSide(color: Colors.blue),
-//           ),
-//         ),
-//       )),
-//     );
-//   }
-// }

@@ -166,7 +166,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         title: 'InstiApp',
         theme: ThemeData(
           // fontFamily: "SourceSansPro",
-          fontFamily: "IBMPlexSans",
+          fontFamily: "DM Sans",
           useMaterial3: false,
           primaryColor: widget.bloc.primaryColor,
           colorScheme: theme.colorScheme.copyWith(

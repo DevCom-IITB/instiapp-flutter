@@ -59,6 +59,24 @@ class User {
   @JsonKey(name: "name")
   String? userName;
 
+  @JsonKey(name: "department")
+  String? department;
+
+  @JsonKey(name: "department_name")
+  String? departmentName;
+
+  @JsonKey(name: "degree")
+  String? degree;
+
+  @JsonKey(name: "degree_name")
+  String? degreeName;
+
+  @JsonKey(name: "join_year")
+  String? joinYear;
+
+  @JsonKey(name: "graduation_year")
+  String? graduationYear;
+
   @JsonKey(name: "profile_pic")
   String? userProfilePictureUrl;
 
@@ -124,6 +142,12 @@ class User {
   User(
       {this.userID,
       this.userName,
+      this.department,
+      this.departmentName,
+      this.degree,
+      this.degreeName,
+      this.joinYear,
+      this.graduationYear,
       this.userProfilePictureUrl,
       this.userInterestedEvents,
       this.userGoingEvents,

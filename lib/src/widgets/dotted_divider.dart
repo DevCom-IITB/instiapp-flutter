@@ -9,7 +9,7 @@ class DottedDivider extends StatelessWidget {
 
   const DottedDivider({
     super.key,
-    this.color = Colors.grey,
+    this.color = const Color.fromRGBO(218, 218, 218, 1),
     this.height = 1,
     this.dashWidth = 4,
     this.dashSpace = 4,

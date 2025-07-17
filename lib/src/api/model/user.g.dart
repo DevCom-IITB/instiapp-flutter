@@ -47,6 +47,12 @@ Map<String, dynamic> _$SkillToJson(Skill instance) => <String, dynamic>{
 User _$UserFromJson(Map<String, dynamic> json) => User(
       userID: json['id'] as String?,
       userName: json['name'] as String?,
+      department: json['department'] as String?,
+      departmentName: json['department_name'] as String?,
+      degree: json['degree'] as String?,
+      degreeName: json['degree_name'] as String?,
+      joinYear: json['join_year'] as String?,
+      graduationYear: json['graduation_year'] as String?,
       userProfilePictureUrl: json['profile_pic'] as String?,
       userInterestedEvents: (json['events_interested'] as List<dynamic>?)
           ?.map((e) => Event.fromJson(e as Map<String, dynamic>))
@@ -86,6 +92,12 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'id': instance.userID,
       'name': instance.userName,
+      'department': instance.department,
+      'department_name': instance.departmentName,
+      'degree': instance.degree,
+      'degree_name': instance.degreeName,
+      'join_year': instance.joinYear,
+      'graduation_year': instance.graduationYear,
       'profile_pic': instance.userProfilePictureUrl,
       'events_interested': instance.userInterestedEvents,
       'events_going': instance.userGoingEvents,
