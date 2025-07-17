@@ -8,6 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import '../widgets/appbar.dart';
 import '../widgets/dotted_divider.dart';
 import '../widgets/buttons.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 class PostItemFlow extends StatefulWidget {
   final bool isEditable;
@@ -92,6 +94,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(246, 246, 246, 1),
       body: SafeArea(
         child: Column(
           children: [
@@ -191,7 +194,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
               border: Border.all(
                 color: _currentStep == step
                     ? Color(0xFF306FDC)
-                    : Colors.grey[400]!,
+                    : Color.fromRGBO(126, 130, 135, 1),
                 width: 2,
               ),
             ),
@@ -199,8 +202,9 @@ class _PostItemFlowState extends State<PostItemFlow> {
             child: Text(
               '0${step + 1}',
               style: TextStyle(
-                color:
-                    _currentStep == step ? Color(0xFF306FDC) : Colors.grey[600],
+                color: _currentStep == step
+                    ? Color(0xFF306FDC)
+                    : Color.fromRGBO(126, 130, 135, 1),
                 fontSize: 14,
               ),
             ),
@@ -209,8 +213,9 @@ class _PostItemFlowState extends State<PostItemFlow> {
           Text(
             label,
             style: TextStyle(
-              color:
-                  _currentStep >= step ? Color(0xFF306FDC) : Colors.grey[600],
+              color: _currentStep >= step
+                  ? Color(0xFF306FDC)
+                  : Color.fromRGBO(126, 130, 135, 1),
               fontSize: 14,
             ),
           ),
@@ -225,7 +230,9 @@ class _PostItemFlowState extends State<PostItemFlow> {
         padding: const EdgeInsets.only(top: 16),
         child: Container(
           height: 2,
-          color: _currentStep > step ? Color(0xFF306FDC) : Colors.grey[300],
+          color: _currentStep > step
+              ? Color(0xFF306FDC)
+              : Color.fromRGBO(126, 130, 135, 1),
         ),
       ),
     );
@@ -237,18 +244,23 @@ class _PostItemFlowState extends State<PostItemFlow> {
       margin: const EdgeInsets.fromLTRB(16, 4, 16, 16),
       height: 58,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!, width: 1),
+        border: Border.all(color: Color.fromRGBO(210, 213, 218, 1), width: 1),
         borderRadius: BorderRadius.circular(14),
       ),
       alignment: Alignment.center,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.visibility_outlined, size: 20),
+          Icon(
+            Icons.visibility_outlined,
+            size: 20,
+            color: Color.fromRGBO(27, 50, 82, 1),
+          ),
           const SizedBox(width: 8),
           const Text(
             'Your Name and LDAP will be visible by default',
-            style: TextStyle(fontSize: 14),
+            style:
+                TextStyle(fontSize: 14, color: Color.fromRGBO(27, 50, 82, 1)),
           ),
         ],
       ),
@@ -270,7 +282,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
               style: TextStyle(
                 color: Color(0xFF306FDC),
                 fontSize: 20,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w900,
               ),
             ),
           ),
@@ -283,7 +295,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
                 height: 80,
                 child: OutlinedButton(
                   style: OutlinedButton.styleFrom(
-                    backgroundColor: Colors.grey[200], // Greyish white
+                    backgroundColor:
+                        Color.fromRGBO(239, 239, 239, 1), // Greyish white
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -291,15 +304,36 @@ class _PostItemFlowState extends State<PostItemFlow> {
                       horizontal: 24,
                       vertical: 12,
                     ),
-                    side: const BorderSide(color: Colors.grey), // Light border
+                    side: BorderSide.none,
                   ),
                   onPressed: () async {
                     final picker = ImagePicker();
-                    final image = await picker.pickImage(
-                      source: ImageSource.camera,
-                    );
+                    final image = await picker.pickImage(source: ImageSource.camera);
+
                     if (image != null) {
-                      setState(() => _images.add(image));
+                      await Future.delayed(const Duration(milliseconds: 100));
+
+                      final file = File(image.path);
+                      if (await file.exists()) {
+                        final appDir = await getApplicationDocumentsDirectory();
+                        final fileName = path.basename(image.path);
+
+                        final imagesDir = Directory('${appDir.path}/user_images');
+                        if (!await imagesDir.exists()) {
+                          await imagesDir.create(recursive: true);
+                        }
+
+                        final savedFile = await file.copy('${imagesDir.path}/$fileName');
+
+                        setState(() => _images.add(XFile(savedFile.path)));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Could not access the captured image."),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      }
                     }
                   },
                   child: Row(
@@ -311,18 +345,24 @@ class _PostItemFlowState extends State<PostItemFlow> {
                         children: const [
                           Text(
                             'Take',
-                            style: TextStyle(fontSize: 16, color: Colors.black),
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromRGBO(15, 22, 32, 0.8)),
                           ),
                           Text(
                             'Image',
-                            style: TextStyle(fontSize: 16, color: Colors.black),
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromRGBO(15, 22, 32, 0.8)),
                           ),
                         ],
                       ),
                       Image.asset(
                         'assets/buynsell/Camera.png',
                         width: 42,
-                        height: 36,  
+                        height: 36,
                       ),
                     ],
                   ),
@@ -335,7 +375,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
                 height: 80,
                 child: OutlinedButton(
                   style: OutlinedButton.styleFrom(
-                    backgroundColor: Colors.grey[200], // Greyish white
+                    backgroundColor:
+                        Color.fromRGBO(239, 239, 239, 1), // Greyish white
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -343,12 +384,47 @@ class _PostItemFlowState extends State<PostItemFlow> {
                       horizontal: 24,
                       vertical: 12,
                     ),
-                    side: const BorderSide(color: Colors.grey), // Light border
+                    side: BorderSide.none,
                   ),
                   onPressed: () async {
                     final picker = ImagePicker();
-                    final images = await picker.pickMultiImage();
-                    setState(() => _images.addAll(images));
+                    final pickedImages = await picker.pickMultiImage();
+
+                    if (pickedImages.isNotEmpty) {
+                      final validImages = <XFile>[];
+                      int skipped = 0;
+
+                      final appDir = await getApplicationDocumentsDirectory();
+
+                      final imagesDir = Directory('${appDir.path}/user_images');
+                      if (!await imagesDir.exists()) {
+                        await imagesDir.create(recursive: true);
+                      }
+
+                      for (final image in pickedImages) {
+                        final file = File(image.path);
+                        if (await file.exists()) {
+                          final fileName = path.basename(image.path);
+                          final savedFile = await file.copy('${imagesDir.path}/$fileName');
+                          validImages.add(XFile(savedFile.path));
+                        } else {
+                          skipped++;
+                        }
+                      }
+
+                      if (validImages.isNotEmpty) {
+                        setState(() => _images.addAll(validImages));
+                      }
+
+                      if (skipped > 0) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Skipped $skipped image(s) that could not be loaded."),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    }
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -359,18 +435,24 @@ class _PostItemFlowState extends State<PostItemFlow> {
                         children: const [
                           Text(
                             'Upload',
-                            style: TextStyle(fontSize: 16, color: Colors.black),
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromRGBO(15, 22, 32, 0.8)),
                           ),
                           Text(
                             'Image',
-                            style: TextStyle(fontSize: 16, color: Colors.black),
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromRGBO(15, 22, 32, 0.8)),
                           ),
                         ],
                       ),
                       Image.asset(
                         'assets/buynsell/Upload.png',
                         width: 42,
-                        height: 36,  
+                        height: 36,
                       ),
                     ],
                   ),
@@ -387,10 +469,10 @@ class _PostItemFlowState extends State<PostItemFlow> {
                 itemCount: totalImages,
                 itemBuilder: (context, index) {
                   if (index < _existingImageUrls.length) {
-                    return _buildExistingImageItem(index);
+                    return _buildExistingImageItem(index, totalImages);
                   } else {
                     return _buildNewImageItem(
-                        index - _existingImageUrls.length);
+                        index - _existingImageUrls.length, totalImages);
                   }
                 },
               ),
@@ -417,14 +499,20 @@ class _PostItemFlowState extends State<PostItemFlow> {
   }
 
   // Builds an item for existing image (from server)
-  Widget _buildExistingImageItem(int index) {
+  Widget _buildExistingImageItem(int index, int totalImages) {
+    final isFirst = index == 0;
+    final isLast = index == totalImages - 1;
+
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.only(
+        left: isFirst ? 0 : 8,
+        right: isLast ? 0 : 8,
+      ),
       child: Stack(
         children: [
           // Network image for existing URLs
           ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(14),
             child: Image.network(
               _existingImageUrls[index],
               width: 160,
@@ -477,14 +565,20 @@ class _PostItemFlowState extends State<PostItemFlow> {
   }
 
   // Builds an item for newly added image (from device)
-  Widget _buildNewImageItem(int index) {
+  Widget _buildNewImageItem(int index, int totalImages) {
+    final isFirst = index == 0;
+    final isLast = index == totalImages - 1;
+
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.only(
+        left: isFirst ? 0 : 8,
+        right: isLast ? 0 : 8,
+      ),
       child: Stack(
         children: [
           // File image for new selections
           ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(14),
             child: Image.file(
               File(_images[index].path),
               width: 160,
@@ -524,7 +618,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Remove Image'),
-        content: const Text('Remove this image from your post?'),
+        content: const Text('Are you sure you want to remove this image?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -583,7 +677,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
             style: TextStyle(
               color: Color(0xFF306FDC),
               fontSize: 20,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w900,
             ),
           ),
         ),
@@ -608,8 +702,16 @@ class _PostItemFlowState extends State<PostItemFlow> {
                 borderRadius: BorderRadius.circular(8),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: isSelected ? Colors.blue : Colors.grey[200],
+                    color: isSelected
+                        ? Color(0xFFE9E9E9)
+                        : Color.fromRGBO(239, 239, 239, 1),
                     borderRadius: BorderRadius.circular(8),
+                    border: isSelected
+                        ? Border.all(
+                            color: Color.fromRGBO(48, 111, 220, 1),
+                            width: 1.5,
+                          )
+                        : null,
                   ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 4,
@@ -629,9 +731,9 @@ class _PostItemFlowState extends State<PostItemFlow> {
                           category['name'],
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: isSelected ? Colors.white : Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                            color: Color.fromRGBO(15, 22, 32, 0.8),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
@@ -672,6 +774,51 @@ class _PostItemFlowState extends State<PostItemFlow> {
     );
   }
 
+  Widget _buildImageGridItem(int index) {
+    final isExisting = index < _existingImageUrls.length;
+
+    return Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: isExisting
+              ? Image.network(
+                  _existingImageUrls[index],
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                )
+              : Image.file(
+                  File(_images[index - _existingImageUrls.length].path),
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+        ),
+        Positioned(
+          top: 6,
+          right: 6,
+          child: GestureDetector(
+            onTap: () {
+              isExisting
+                  ? _removeExistingImage(index)
+                  : _removeNewImage(index - _existingImageUrls.length);
+            },
+            child: Container(
+              width: 26,
+              height: 26,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.6),
+              ),
+              child: const Icon(Icons.close, color: Colors.red, size: 16),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildDetailsPage() {
     final totalImages = _existingImageUrls.length + _images.length;
 
@@ -683,18 +830,6 @@ class _PostItemFlowState extends State<PostItemFlow> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: EdgeInsets.only(top: 4, bottom: 8),
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Add Item Details',
-                  style: TextStyle(
-                    color: Color(0xFF306FDC),
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
               // Images preview
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -725,25 +860,11 @@ class _PostItemFlowState extends State<PostItemFlow> {
                                         crossAxisCount: 2,
                                         crossAxisSpacing: 8,
                                         mainAxisSpacing: 8,
+                                        childAspectRatio: 1,
                                       ),
                                       itemCount: totalImages,
                                       itemBuilder: (context, index) {
-                                        return Stack(
-                                          children: [
-                                            index < _existingImageUrls.length
-                                                ? Image.network(
-                                                    _existingImageUrls[index],
-                                                    fit: BoxFit.cover,
-                                                  )
-                                                : Image.file(
-                                                    File(_images[index -
-                                                            _existingImageUrls
-                                                                .length]
-                                                        .path),
-                                                    fit: BoxFit.cover,
-                                                  )
-                                          ],
-                                        );
+                                        return _buildImageGridItem(index);
                                       },
                                     ),
                                   ),
@@ -760,16 +881,16 @@ class _PostItemFlowState extends State<PostItemFlow> {
                               width: 60,
                               height: 60,
                               decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 230, 230, 230),
-                                borderRadius: BorderRadius.circular(8),
+                                color: Color.fromRGBO(239, 239, 239, 1),
+                                borderRadius: BorderRadius.circular(14),
                               ),
                               child: Center(
                                 child: Text(
                                   '+${totalImages - 2}',
                                   style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.grey,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color.fromRGBO(126, 130, 135, 1),
                                   ),
                                 ),
                               ),
@@ -784,7 +905,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                       width: 60,
                       height: 60,
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 230, 230, 230),
+                        color: Color.fromRGBO(239, 239, 239, 1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Center(
@@ -801,17 +922,33 @@ class _PostItemFlowState extends State<PostItemFlow> {
                     ),
                 ],
               ),
-              const SizedBox(height: 20),
-              // Form fields
 
+              const SizedBox(height: 20),
+
+              // Heading
+              Container(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Add Item Details',
+                  style: TextStyle(
+                    color: Color(0xFF306FDC),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Form fields
               // Title
               RichText(
                 text: const TextSpan(
                   text: 'Title',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(21, 32, 45, 1),
+                      fontSize: 16),
                   children: [
                     TextSpan(
                       text: '*',
@@ -827,12 +964,25 @@ class _PostItemFlowState extends State<PostItemFlow> {
                   isDense: true,
                   contentPadding: EdgeInsets.symmetric(
                     vertical: 12,
-                    horizontal: 12,
+                    horizontal: 16,
                   ),
                   hintText: 'Enter item name',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  hintStyle: TextStyle(
+                    color: Color.fromRGBO(126, 130, 135, 1),
+                    fontSize: 14,
                   ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(
+                      color: Color.fromRGBO(210, 213, 218, 1),
+                      width: 1,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -856,9 +1006,9 @@ class _PostItemFlowState extends State<PostItemFlow> {
                           text: const TextSpan(
                             text: 'Price',
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromRGBO(21, 32, 45, 1),
+                                fontSize: 16),
                             children: [
                               TextSpan(
                                 text: '*',
@@ -876,18 +1026,22 @@ class _PostItemFlowState extends State<PostItemFlow> {
                                   isDense: true,
                                   contentPadding: EdgeInsets.symmetric(
                                     vertical: 12,
-                                    horizontal: 12,
+                                    horizontal: 16,
                                   ),
-                                  hintText: 'Enter Price',
+                                  hintText: 'Enter Selling Price',
+                                  hintStyle: TextStyle(
+                                    color: Color.fromRGBO(126, 130, 135, 1),
+                                    fontSize: 14,
+                                  ),
                                   prefixIcon: Padding(
                                     padding: EdgeInsets.only(
                                       left: 8,
-                                    ), // optional: aligns with text vertically
+                                    ),
                                     child: Text(
                                       '₹',
                                       style: TextStyle(
                                         fontSize: 16,
-                                        color: Colors.black, // or grey
+                                        color: Colors.black,
                                       ),
                                     ),
                                   ),
@@ -896,8 +1050,17 @@ class _PostItemFlowState extends State<PostItemFlow> {
                                     minHeight: 0,
                                   ),
                                   border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(14),
                                   ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                    borderSide: BorderSide(
+                                      color: Color.fromRGBO(210, 213, 218, 1),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white,
                                 ),
                                 keyboardType: TextInputType.number,
                                 validator: (value) {
@@ -923,9 +1086,9 @@ class _PostItemFlowState extends State<PostItemFlow> {
                           text: const TextSpan(
                             text: 'Bought at',
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromRGBO(21, 32, 45, 1),
+                                fontSize: 16),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -935,18 +1098,22 @@ class _PostItemFlowState extends State<PostItemFlow> {
                             isDense: true,
                             contentPadding: EdgeInsets.symmetric(
                               vertical: 12,
-                              horizontal: 12,
+                              horizontal: 16,
                             ),
-                            hintText: 'Enter Price',
+                            hintText: 'Cost Price',
+                            hintStyle: TextStyle(
+                              color: Color.fromRGBO(126, 130, 135, 1),
+                              fontSize: 14,
+                            ),
                             prefixIcon: Padding(
                               padding: EdgeInsets.only(
                                 left: 8,
-                              ), // optional: aligns with text vertically
+                              ),
                               child: Text(
                                 '₹',
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: Colors.black, // or grey
+                                  color: Colors.black,
                                 ),
                               ),
                             ),
@@ -955,8 +1122,17 @@ class _PostItemFlowState extends State<PostItemFlow> {
                               minHeight: 0,
                             ),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(14),
                             ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: BorderSide(
+                                color: Color.fromRGBO(210, 213, 218, 1),
+                                width: 1,
+                              ),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
                           ),
                           keyboardType: TextInputType.number,
                         ),
@@ -972,13 +1148,17 @@ class _PostItemFlowState extends State<PostItemFlow> {
                 Row(
                   children: [
                     ChoiceChip(
-                      label: const Text('Negotiable'),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 8),
+                      label: const Text('Negotiable',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w500)),
                       selected: _isNegotiable,
                       onSelected: (selected) {
                         setState(() => _isNegotiable = true);
                       },
                       selectedColor: Color(0xFF306FDC),
-                      backgroundColor: Colors.grey[200],
+                      backgroundColor: Color.fromRGBO(239, 239, 239, 1),
                       labelStyle: TextStyle(
                         color: _isNegotiable ? Colors.white : Colors.black,
                         fontWeight: FontWeight.w600,
@@ -986,17 +1166,23 @@ class _PostItemFlowState extends State<PostItemFlow> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
+                      side: BorderSide(
+                          color: Color.fromRGBO(210, 213, 218, 1), width: 1),
                       checkmarkColor: Colors.white,
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     ChoiceChip(
-                      label: const Text('Fixed'),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 8),
+                      label: const Text('Fixed',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w500)),
                       selected: !_isNegotiable,
                       onSelected: (selected) {
                         setState(() => _isNegotiable = false);
                       },
                       selectedColor: Color(0xFF306FDC),
-                      backgroundColor: Colors.grey[200],
+                      backgroundColor: Color.fromRGBO(239, 239, 239, 1),
                       labelStyle: TextStyle(
                         color: !_isNegotiable ? Colors.white : Colors.black,
                         fontWeight: FontWeight.w600,
@@ -1004,11 +1190,19 @@ class _PostItemFlowState extends State<PostItemFlow> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
+                      side: BorderSide(
+                          color: Color.fromRGBO(210, 213, 218, 1), width: 1),
                       checkmarkColor: Colors.white,
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     ChoiceChip(
-                      label: const Text('Give Away'),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 8),
+                      label: const Text(
+                        'Give-Away',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w500),
+                      ),
                       selected: _isGiveAway,
                       onSelected: (selected) {
                         setState(() {
@@ -1017,7 +1211,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                         });
                       },
                       selectedColor: Colors.green[200],
-                      backgroundColor: Colors.grey[200],
+                      backgroundColor: Color.fromRGBO(239, 239, 239, 1),
                       labelStyle: TextStyle(
                         color: _isGiveAway ? Colors.green : Colors.black,
                         fontWeight: FontWeight.w600,
@@ -1025,6 +1219,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
+                      side: BorderSide(
+                          color: Color.fromRGBO(210, 213, 218, 1), width: 1),
                       checkmarkColor: Colors.green,
                     ),
                   ],
@@ -1037,7 +1233,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
                   text: 'Description',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: Color.fromRGBO(21, 32, 45, 1),
+                    fontSize: 16,
                   ),
                   children: [
                     TextSpan(
@@ -1076,13 +1273,26 @@ class _PostItemFlowState extends State<PostItemFlow> {
                 decoration: InputDecoration(
                   isDense: true,
                   contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12,
                     vertical: 12,
+                    horizontal: 16,
                   ),
                   hintText: 'Enter Description',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  hintStyle: TextStyle(
+                    color: Color.fromRGBO(126, 130, 135, 1),
+                    fontSize: 14,
                   ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(
+                      color: Color.fromRGBO(210, 213, 218, 1),
+                      width: 1,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
                 maxLines: 3,
                 maxLength: 250,
@@ -1101,9 +1311,9 @@ class _PostItemFlowState extends State<PostItemFlow> {
                 text: const TextSpan(
                   text: '10-Digit Mobile Number',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(21, 32, 45, 1),
+                      fontSize: 16),
                   children: [
                     TextSpan(
                       text: '*',
@@ -1118,13 +1328,26 @@ class _PostItemFlowState extends State<PostItemFlow> {
                 decoration: InputDecoration(
                   isDense: true,
                   contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12,
                     vertical: 12,
+                    horizontal: 16,
                   ),
                   hintText: 'Enter your mobile number',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  hintStyle: TextStyle(
+                    color: Color.fromRGBO(126, 130, 135, 1),
+                    fontSize: 14,
                   ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(
+                      color: Color.fromRGBO(210, 213, 218, 1),
+                      width: 1,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
                 keyboardType: TextInputType.phone,
                 validator: (value) {
@@ -1290,124 +1513,53 @@ class _PostItemFlowState extends State<PostItemFlow> {
 
   Widget _buildImagePreview(int index) {
     final totalImages = _existingImageUrls.length + _images.length;
-    if (index >= totalImages) {
-      return SizedBox.shrink();
-    }
+    if (index >= totalImages) return const SizedBox.shrink();
 
-    // Determine if it's an existing image or a new one
-    if (index < _existingImageUrls.length) {
-      // Existing image from server
-      return Stack(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.network(
-              _existingImageUrls[index],
-              width: 60,
-              height: 60,
-              fit: BoxFit.cover,
+    final isExisting = index < _existingImageUrls.length;
+    final imageWidget = isExisting
+        ? Image.network(
+            _existingImageUrls[index],
+            width: 60,
+            height: 60,
+            fit: BoxFit.cover,
+          )
+        : Image.file(
+            File(_images[index - _existingImageUrls.length].path),
+            width: 60,
+            height: 60,
+            fit: BoxFit.cover,
+          );
+
+    return Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: imageWidget,
+        ),
+        Positioned(
+          top: 2,
+          right: 2,
+          child: GestureDetector(
+            onTap: () {
+              if (isExisting) {
+                _removeExistingImage(index);
+              } else {
+                _removeNewImage(index - _existingImageUrls.length);
+              }
+            },
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.6),
+              ),
+              child: const Icon(Icons.close, color: Colors.red, size: 14),
             ),
           ),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: GestureDetector(
-              onTap: () async {
-                final confirm = await showDialog<bool>(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Remove Image'),
-                    content: const Text(
-                      'Are you sure you want to remove this image?',
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, true),
-                        child: const Text('Remove'),
-                      ),
-                    ],
-                  ),
-                );
-                if (confirm == true) {
-                  setState(() {
-                    _existingImageUrls.removeAt(index);
-                  });
-                }
-              },
-              child: Container(
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.red,
-                ),
-                child: const Icon(Icons.close, color: Colors.white, size: 16),
-              ),
-            ),
-          ),
-        ],
-      );
-    } else {
-      // Newly added image
-      final newIndex = index - _existingImageUrls.length;
-      if (newIndex < _images.length) {
-        return Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.file(
-                File(_images[newIndex].path),
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
-              ),
-            ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: GestureDetector(
-                onTap: () async {
-                  final confirm = await showDialog<bool>(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Remove Image'),
-                      content: const Text(
-                        'Are you sure you want to remove this image?',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, false),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, true),
-                          child: const Text('Remove'),
-                        ),
-                      ],
-                    ),
-                  );
-                  if (confirm == true) {
-                    setState(() {
-                      _images.removeAt(newIndex);
-                    });
-                  }
-                },
-                child: Container(
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.red,
-                  ),
-                  child: const Icon(Icons.close, color: Colors.white, size: 16),
-                ),
-              ),
-            ),
-          ],
-        );
-      }
-    }
-    return const SizedBox.shrink();
+        ),
+      ],
+    );
   }
 
   Widget _buildGiveAwayDisplay() {
