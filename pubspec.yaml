@@ -113,6 +113,7 @@ flutter:
     - assets/quicklinks/icons/
     - assets/explore_new/
     - assets/explore_new/images/
+    - assets/blogslogin/
   fonts:
     - family: IBMPlexSans
       fonts:

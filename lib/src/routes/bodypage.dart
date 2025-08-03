@@ -68,6 +68,7 @@ class _BodyPageState extends State<BodyPage> {
                           'assets/explore_new/images/image3.png',];
   List<String> linkIcon=["globe","whatsapp","instagram"];
   List<String> linkLabel=["Website","Whatsapp Group","Instagram"];
+  List<String> link=["bodyWebsiteURL","bodyWhatsappGroupURL",];
   Widget clubQuickLinkContainer(String icon, String label){
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -92,7 +93,17 @@ class _BodyPageState extends State<BodyPage> {
         ),
         GestureDetector(
           onTap: () async {
-            final url = body?.bodyWebsiteURL;
+            final url;
+            if(label=="Instagram"){
+              url=body?.bodyInstagramURL;
+            }
+            else if(label=="Whatsapp Group"){
+              url=body?.bodyWhatsappGroupURL;
+            }
+            else{
+              url=body?.bodyWebsiteURL;
+            }
+            // final url = body?.bodyWebsiteURL;
             if (url != null && url.isNotEmpty) {
               final uri = Uri.parse(url);
               if (await canLaunchUrl(uri)) {
@@ -909,7 +920,7 @@ class _BodyPageState extends State<BodyPage> {
                     child: Container(
                       padding: showLinks?EdgeInsets.only(bottom: 6):EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Color(0xFFF6F6F6),
                         borderRadius: BorderRadius.circular(50),
                       ),
                       
