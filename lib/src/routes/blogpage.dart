@@ -2,6 +2,7 @@
 import 'dart:core';
 import 'dart:collection';
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/routes/blogslogin.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/post.dart';
@@ -617,31 +618,32 @@ class _BlogPageState extends State<BlogPage> {
                     ),
                   );
                 } else {
-                  return ListView(
-                    children: <Widget>[
-                      TitleWithBackButton(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              "Blogs",
-                              style: theme.textTheme.displaySmall,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(28.0),
-                          child: Text(
-                            "You must be logged in to view Blogs",
-                            style: theme.textTheme.titleLarge,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
+                  return BlogsLogin();
+                  // return ListView(
+                  //   children: <Widget>[
+                  //     TitleWithBackButton(
+                  //       child: Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: <Widget>[
+                  //           Text(
+                  //             "Blogs",
+                  //             style: theme.textTheme.displaySmall,
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //     Center(
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.all(28.0),
+                  //         child: Text(
+                  //           "You must be logged in to view Blogs",
+                  //           style: theme.textTheme.titleLarge,
+                  //           textAlign: TextAlign.center,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // );
                 }
               },
             )),

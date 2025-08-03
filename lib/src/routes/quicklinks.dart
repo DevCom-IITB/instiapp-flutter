@@ -251,6 +251,7 @@ Widget LinkSection(String title,Map<String,String> links){
                   //padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
+                    color: myConstants.instiappGrey,
                     border: Border.all(
                       color: Color(0xFFED0033),
                       width: 1
