@@ -55,6 +55,9 @@ class Body {
   @JsonKey(name: "roles")
   List<Role>? bodyRoles;
 
+  @JsonKey(name: "photoalbum_urls")
+  List<String>? bodyPhotoalbumURLs;
+
   @override
   String toString() {
     return bodyName ?? "";
@@ -76,7 +79,9 @@ class Body {
       this.bodyUserFollows,
       this.bodyWebsiteURL,
       this.bodyWhatsappGroupURL,
-      this.bodyInstagramURL});
+      this.bodyInstagramURL,
+      this.bodyPhotoalbumURLs,
+      });
 
   factory Body.fromJson(Map<String, dynamic> json) => _$BodyFromJson(json);
 

@@ -54,38 +54,57 @@ class _BodyPageState extends State<BodyPage> {
   Constants myConstants = Constants();
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   Body? body;
-  bool showLinks=false;
+  bool showLinks = false;
   bool loadingFollow = false;
-  List<String> linkIcon=["globe","whatsapp","instagram"];
-  List<String> linkLabel=["Website","Whatsapp Group","Instagram"];
-  Widget clubQuickLinkContainer(String icon, String label){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Container(
-              height: 24,
-              width: 24,
-              child: SvgPicture.asset('assets/explore_new/${icon}.svg'),
-            ),
-            SizedBox(width: 9),
-            Text(
-              label,
-              style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+  List<String> linkIcon = ["globe", "whatsapp", "instagram"];
+  List<String> linkLabel = ["Website", "Whatsapp Group", "Instagram"];
+  Widget clubQuickLinkContainer(String icon, String label) {
+    String url = "";
+    if (icon == "globe") {
+      url = body?.bodyWebsiteURL ?? "";
+    } else if (icon == "whatsapp") {
+      url = body!.bodyWhatsappGroupURL ?? "";
+    } else if (icon == "instagram") {
+      url = body?.bodyInstagramURL ?? "";
+    }
+    return InkWell(
+      onTap: () async {
+        if (await canLaunchUrl(Uri.parse(url))) {
+          await launchUrl(
+            Uri.parse(url),
+            mode: LaunchMode.externalApplication,
+          );
+        }
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Container(
+                height: 24,
+                width: 24,
+                child: SvgPicture.asset('assets/explore_new/${icon}.svg'),
+              ),
+              SizedBox(width: 9),
+              Text(
+                label,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
-          ],
-        ),
-        Container(
-          height: 24,
-          width: 24,
-          child: SvgPicture.asset('assets/quicklinks/icons/external_link.svg'),
-        ),
-      ],
+          Container(
+            height: 24,
+            width: 24,
+            child:
+                SvgPicture.asset('assets/quicklinks/icons/external_link.svg'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -115,10 +134,12 @@ class _BodyPageState extends State<BodyPage> {
 
   @override
   Widget build(BuildContext context) {
-    final parent = body?.bodyParents?.first;
+    final parent = (body?.bodyParents != null && body!.bodyParents!.isNotEmpty)
+        ? body!.bodyParents!.first
+        : null;
     final imageUrl = parent?.bodyImageURL;
-    final title=parent?.bodyName;
-    Map<String,String> parentBody = {
+    final title = parent?.bodyName;
+    Map<String, String> parentBody = {
       "Culturals@IITB": "ICC",
       "IITB Sports": "ISC",
       "Tech@IITB": "ITC",
@@ -216,38 +237,41 @@ class _BodyPageState extends State<BodyPage> {
                                     color: Colors.grey.shade300,
                                     //borderRadius: BorderRadius.circular(40),
                                     image: body?.bodyImageURL != null
-                                    ? DecorationImage(
-                                        image:
-                                            // NetworkImage(body!.bodyImageURL!),
-                                            AssetImage(
-                                              'assets/explore/symphony.png'
-                                            ),
-                                        fit: BoxFit.cover,
-                                      )
-                                    : const DecorationImage(
-                                        image: AssetImage('assets/photo.png'),
-                                        fit: BoxFit.cover,
-                                      ),
+                                        ? DecorationImage(
+                                            image:
+                                                // NetworkImage(body!.bodyImageURL!),
+                                                AssetImage(
+                                                    'assets/explore/symphony.png'),
+                                            fit: BoxFit.cover,
+                                          )
+                                        : const DecorationImage(
+                                            image:
+                                                AssetImage('assets/photo.png'),
+                                            fit: BoxFit.cover,
+                                          ),
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 16,),
+                                  padding: const EdgeInsets.only(
+                                    left: 16,
+                                  ),
                                   child: GestureDetector(
-                                    onTap: (){
+                                    onTap: () {
                                       Navigator.of(context).pop();
                                     },
                                     child: Container(
                                       height: 52,
                                       width: 52,
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.60),
-                                        borderRadius: BorderRadius.circular(25)
-                                      ),
+                                          color: Colors.white.withOpacity(0.60),
+                                          borderRadius:
+                                              BorderRadius.circular(25)),
                                       child: Center(
                                         child: Container(
                                           height: 24,
                                           width: 24,
-                                          child: SvgPicture.asset('assets/quicklinks/icons/arrow_left.svg'),
+                                          child: SvgPicture.asset(
+                                              'assets/quicklinks/icons/arrow_left.svg'),
                                         ),
                                       ),
                                     ),
@@ -255,7 +279,7 @@ class _BodyPageState extends State<BodyPage> {
                                 )
                               ],
                             ),
-                            
+
                             // Profile Card Section
                             Container(
                               width: double.infinity,
@@ -263,11 +287,9 @@ class _BodyPageState extends State<BodyPage> {
                               padding: EdgeInsets.fromLTRB(16, 22, 16, 20),
                               // padding: const EdgeInsets.all(20),
                               decoration: const BoxDecoration(
-                                color: Color(0xFF0F1620),
-                                borderRadius: BorderRadius.vertical(
-                                  bottom: Radius.circular(24)
-                                )
-                              ),
+                                  color: Color(0xFF0F1620),
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(24))),
                               child: Stack(
                                 children: [
                                   // Rotated background image
@@ -286,9 +308,10 @@ class _BodyPageState extends State<BodyPage> {
                                       ),
                                     ),
                                   ),
-                        
+
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Container(
                                         decoration: BoxDecoration(
@@ -309,7 +332,7 @@ class _BodyPageState extends State<BodyPage> {
                                         ),
                                       ),
                                       const SizedBox(width: 20),
-                        
+
                                       // Profile Info
                                       Expanded(
                                         child: Column(
@@ -368,11 +391,12 @@ class _BodyPageState extends State<BodyPage> {
                                       ),
                                       Container(
                                         height: 35,
-                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 6),
                                         decoration: BoxDecoration(
-                                          color: Color(0xFF15263C),
-                                          borderRadius: BorderRadius.circular(8)
-                                        ),
+                                            color: Color(0xFF15263C),
+                                            borderRadius:
+                                                BorderRadius.circular(8)),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -380,27 +404,33 @@ class _BodyPageState extends State<BodyPage> {
                                               height: 20,
                                               width: 20,
                                               decoration: BoxDecoration(
-                                                // color: Colors.amber[100],
-                                                borderRadius: BorderRadius.circular(10),
-                                                image: DecorationImage(
-                                                  image: imageUrl != null && imageUrl.isNotEmpty
-                                                    ? NetworkImage(imageUrl)
-                                                    : const AssetImage('assets/explore_new/images/org.png') as ImageProvider,
-                                                  // image: AssetImage(
-                                                  //   'assets/explore_new/images/org.png',
-                                                  // ),
-                                                  fit: BoxFit.cover
-                                                  )
-                                              ),
+                                                  // color: Colors.amber[100],
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  image: DecorationImage(
+                                                      image: imageUrl != null &&
+                                                              imageUrl
+                                                                  .isNotEmpty
+                                                          ? NetworkImage(
+                                                              imageUrl)
+                                                          : const AssetImage(
+                                                                  'assets/explore_new/images/org.png')
+                                                              as ImageProvider,
+                                                      // image: AssetImage(
+                                                      //   'assets/explore_new/images/org.png',
+                                                      // ),
+                                                      fit: BoxFit.cover)),
                                             ),
-                                            SizedBox(width: 8,),
+                                            SizedBox(
+                                              width: 8,
+                                            ),
                                             Text(
                                               parentBody[title ?? ""] ?? "",
                                               style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w700,
-                                                color: const Color(0xFFF6F6F6)
-                                              ),
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w700,
+                                                  color:
+                                                      const Color(0xFFF6F6F6)),
                                             )
                                           ],
                                         ),
@@ -510,7 +540,7 @@ class _BodyPageState extends State<BodyPage> {
                                                           ),
                                                     Divider(),
                                                     const SizedBox(height: 20),
-                        
+
                                                     // Photo Album Section
                                                     const Text(
                                                       'Photo Album',
@@ -527,13 +557,19 @@ class _BodyPageState extends State<BodyPage> {
                                                       child: ListView.separated(
                                                         scrollDirection:
                                                             Axis.horizontal,
-                                                        itemCount: 5,
+                                                        itemCount: body
+                                                                ?.bodyPhotoalbumURLs
+                                                                ?.length ??
+                                                            0,
                                                         separatorBuilder: (_,
                                                                 __) =>
                                                             const SizedBox(
                                                                 width: 8),
                                                         itemBuilder:
                                                             (context, index) {
+                                                          final imageUrl = body!
+                                                                  .bodyPhotoalbumURLs![
+                                                              index];
                                                           return Container(
                                                             width: 100,
                                                             decoration:
@@ -545,13 +581,22 @@ class _BodyPageState extends State<BodyPage> {
                                                                       .circular(
                                                                           8),
                                                             ),
+                                                            clipBehavior: Clip.antiAlias,
+                                                            child: Image.network(
+                                                              imageUrl,
+                                                              fit: BoxFit.cover,
+                                                              errorBuilder: (context, error, stackTrace) => Container(
+                                                                color: Colors.grey.shade300,
+                                                                child: Icon(Icons.broken_image, color: Colors.grey),
+                                                              ),
+                                                            ),
                                                           );
                                                         },
                                                       ),
                                                     ),
-                        
+
                                                     const SizedBox(height: 24),
-                        
+
                                                     // Part Of Section
                                                     const Text(
                                                       'Part of',
@@ -575,7 +620,7 @@ class _BodyPageState extends State<BodyPage> {
                                                   ],
                                                 ),
                                               ),
-                        
+
                                               // Events Tab
                                               body?.bodyEvents == null ||
                                                       body!.bodyEvents!.isEmpty
@@ -610,7 +655,7 @@ class _BodyPageState extends State<BodyPage> {
                                                                     e))
                                                       ],
                                                     ),
-                        
+
                                               // People Tab
                                               people.isEmpty
                                                   ? const Center(
@@ -752,75 +797,72 @@ class _BodyPageState extends State<BodyPage> {
                       //   SizedBox(
                       //     height: 64.0,
                       //   )
-                        
+
                       // ]),
                       ),
                 ),
-              if(showLinks)
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      padding: EdgeInsets.fromLTRB(20, 16, 20, 24),
-                      height: 292,
-                      width: 380,
-                      decoration: BoxDecoration(
-                        color: myConstants.instiappDark,
-                        borderRadius: BorderRadius.vertical(
-                          bottom: Radius.circular(40),
-                          top: Radius.circular(20)
-                        )
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Quick Links",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700
+                if (showLinks)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(20, 16, 20, 24),
+                        height: 292,
+                        width: 380,
+                        decoration: BoxDecoration(
+                            color: myConstants.instiappDark,
+                            borderRadius: BorderRadius.vertical(
+                                bottom: Radius.circular(40),
+                                top: Radius.circular(20))),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Quick Links",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700),
                                 ),
-                              ),
-                              GestureDetector(
-                                onTap: (){
-                                  setState(() {
-                                    showLinks=false;
-                                  });
-                                },
-                                child: Container(
-                                  height: 21,
-                                  width: 21,
-                                  child: SvgPicture.asset('assets/explore_new/x.svg'),
-                                ),
-                              )
-                            ],
-                          ),
-                          SizedBox(height: 16),
-                          Dash(
-                            direction: Axis.horizontal,
-                            length: 339,
-                            dashLength: 6,
-                            dashGap: 7,
-                            dashColor: Colors.white.withOpacity(0.10),
-                          ),
-                          SizedBox(height: 16),
-                          for(int i=0;i<=2;i++)...[
-                            clubQuickLinkContainer(linkIcon[i],linkLabel[i]),
-                            if(i!=3)
-                              SizedBox(height: 12)
-                          ] 
-                        ],
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      showLinks = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    height: 21,
+                                    width: 21,
+                                    child: SvgPicture.asset(
+                                        'assets/explore_new/x.svg'),
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(height: 16),
+                            Dash(
+                              direction: Axis.horizontal,
+                              length: 339,
+                              dashLength: 6,
+                              dashGap: 7,
+                              dashColor: Colors.white.withOpacity(0.10),
+                            ),
+                            SizedBox(height: 16),
+                            for (int i = 0; i <= 2; i++) ...[
+                              clubQuickLinkContainer(linkIcon[i], linkLabel[i]),
+                              if (i != 3) SizedBox(height: 12)
+                            ]
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     // color: Colors.transparent,
                     // decoration: const BoxDecoration(
@@ -838,9 +880,8 @@ class _BodyPageState extends State<BodyPage> {
                       height: 64,
                       width: 380,
                       decoration: BoxDecoration(
-                        color: myConstants.instiappDark,
-                        borderRadius: BorderRadius.circular(50)
-                      ),
+                          color: myConstants.instiappDark,
+                          borderRadius: BorderRadius.circular(50)),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -848,16 +889,15 @@ class _BodyPageState extends State<BodyPage> {
                           GestureDetector(
                             onTap: () {
                               setState(() {
-                                showLinks=true;
+                                showLinks = true;
                               });
                             },
                             child: Container(
                               height: 52,
                               width: 52,
                               decoration: BoxDecoration(
-                                color: Color(0xFF2B4E83),
-                                borderRadius: BorderRadius.circular(50)
-                              ),
+                                  color: Color(0xFF2B4E83),
+                                  borderRadius: BorderRadius.circular(50)),
                               child: Container(
                                 height: 24,
                                 width: 24,
@@ -866,42 +906,43 @@ class _BodyPageState extends State<BodyPage> {
                                     'assets/explore_new/link.svg',
                                     height: 24,
                                     width: 24,
-                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                          SizedBox(width: 8,),
+                          SizedBox(
+                            width: 8,
+                          ),
                           Container(
                             width: 308,
                             height: 52,
                             child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: myConstants.instiappBlue,
-                                padding: const EdgeInsets.symmetric(vertical: 14),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: myConstants.instiappBlue,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 14),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
                                 ),
-                              ),
-                              onPressed: () async {
-                                if(body!=null){
-                                  
+                                onPressed: () async {
+                                  if (body != null) {
                                     await bloc.updateFollowBody(body!);
-                                    setState((){});
-                                  
-                                }  
-                              },
-                              child: Text(
-                                (body!.bodyUserFollows ?? false) ? 'Joined' : 'Join',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'DM Sans',
-                                  color: Colors.white,
-                                ),
-                              )
-                              
-                            ),
+                                    setState(() {});
+                                  }
+                                },
+                                child: Text(
+                                  (body!.bodyUserFollows ?? false)
+                                      ? 'Joined'
+                                      : 'Join',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'DM Sans',
+                                    color: Colors.white,
+                                  ),
+                                )),
                           ),
                         ],
                       ),
