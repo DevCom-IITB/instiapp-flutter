@@ -572,6 +572,15 @@ class _CommentState extends State<Comment> {
     }
   }
 
+  List<String> emojis = [
+    "assets/communities/emojis/like.png",
+    "assets/communities/emojis/love.png",
+    "assets/communities/emojis/laugh.png",
+    "assets/communities/emojis/surprise.png",
+    "assets/communities/emojis/cry.png",
+    "assets/communities/emojis/angry.png",
+  ];
+
   Widget _buildFooter(
       ThemeData theme, InstiAppBloc bloc, CommunityPost communityPost) {
     int numReactions = communityPost.reactionCount?.values
