@@ -4,6 +4,18 @@ import 'package:flutter_dash/flutter_dash.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+class Responsive {
+  final BuildContext context;
+  final double baseWidth;  
+  final double baseHeight;
+
+  Responsive(this.context, {this.baseWidth = 411, this.baseHeight = 914});
+
+  double w(double px) => MediaQuery.of(context).size.width * (px / baseWidth);
+  double h(double px) => MediaQuery.of(context).size.height * (px / baseHeight);
+  double sp(double px) => w(px); // scale text with width
+}
+
 class Quicklinks extends StatefulWidget {
   const Quicklinks({super.key});
 
@@ -12,10 +24,12 @@ class Quicklinks extends StatefulWidget {
 }
 
 class _QuicklinksState extends State<Quicklinks> {
+  
   Constants myConstants=Constants();
   bool isTop=false;
   bool isBottom=false;
   Widget LinkContainer(String label,String link,bool isTop,bool isBottom){
+    final responsive = Responsive(context);
     return GestureDetector(
       onTap: () async{
         final url=Uri.parse(link);
@@ -26,8 +40,8 @@ class _QuicklinksState extends State<Quicklinks> {
         }
       },
       child: Container(
-                height: 63,
-                width: 380,
+                height: responsive.h(63),
+                width: responsive.w(380),
                 decoration: BoxDecoration(
                   color: myConstants.instiappGrey,
                   borderRadius: BorderRadius.vertical(
@@ -36,13 +50,13 @@ class _QuicklinksState extends State<Quicklinks> {
                   ),
                   border: isBottom?null:Border(
                     bottom: BorderSide(
-                      width: 1,
+                      width: responsive.h(1),
                       color: Color(0x80D2D5DA)
                     )
                   )
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.symmetric(horizontal: responsive.w(16), vertical: responsive.h(16)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -52,13 +66,13 @@ class _QuicklinksState extends State<Quicklinks> {
                         style: TextStyle(
                           fontFamily: 'DM Sans',
                           color: const Color(0xFF0F1620),
-                          fontSize: 16,
+                          fontSize: responsive.sp(16),
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       Container(
-                        height: 24,
-                        width: 24,
+                        height: responsive.h(24),
+                        width: responsive.w(24),
                         child: SvgPicture.asset('assets/quicklinks/icons/external_link.svg'),
                       )
                     ],
@@ -69,18 +83,19 @@ class _QuicklinksState extends State<Quicklinks> {
   }
 
 Widget LinkSection(String title,Map<String,String> links){
+  final responsive = Responsive(context);
   List<String> keys=links.keys.toList();
   List<String> values=links.values.toList();
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: EdgeInsets.symmetric(vertical: responsive.h(12)),
         child: Text(
           title,
           style: TextStyle(
             color: const Color(0xFF1B3252),
-            fontSize: 20,
+            fontSize: responsive.sp(20),
             fontFamily: 'DM Sans',
             fontWeight: FontWeight.w700,
           ),
@@ -95,6 +110,10 @@ Widget LinkSection(String title,Map<String,String> links){
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
+    final size = MediaQuery.of(context).size;
+    print("Emulator screen size → width: ${size.width}, height: ${size.height}");
+
     Map<String,Map<String,String>> quickLinks={
       "Devcom": {
         "Leave Portal": "https://google.com",
@@ -131,11 +150,11 @@ Widget LinkSection(String title,Map<String,String> links){
     List<Map<String,String>> links=quickLinks.values.toList();
     Widget emergencyContainer(String label){
       return Container(
-              padding: EdgeInsets.symmetric(horizontal: 8,vertical: 4),
+              padding: EdgeInsets.symmetric(horizontal: responsive.w(8),vertical: responsive.h(4)),
               decoration: BoxDecoration(
                 border: Border.all(
                   color: const Color(0xFFD2D5DA),
-                  width: 1
+                  width: responsive.w(1)
                 ),
                 borderRadius: BorderRadius.circular(4)
               ),
@@ -143,7 +162,7 @@ Widget LinkSection(String title,Map<String,String> links){
                 label,
                 style: TextStyle(
                 color: const Color(0xFF7E8287),
-                fontSize: 12,
+                fontSize: responsive.sp(12),
                 fontFamily: 'DM Sans',
                 fontWeight: FontWeight.w700,
                 ),
@@ -154,7 +173,7 @@ Widget LinkSection(String title,Map<String,String> links){
     return Scaffold(
       backgroundColor: Color(0xFFF6F6F6),
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(52),
+        preferredSize: Size.fromHeight(responsive.h(52)),
         child: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Color(0xFFF6F6F6),
@@ -162,21 +181,21 @@ Widget LinkSection(String title,Map<String,String> links){
           elevation: 0,
           flexibleSpace: SafeArea(
           child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                  padding: EdgeInsets.symmetric(horizontal: responsive.w(16), vertical: responsive.h(0)),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          width: 52,
-                          height: 52,
+                          width: responsive.w(52),
+                          height: responsive.h(52),
                           child: Stack(
                             children: [
                               Positioned(
-                                left: 4,
-                                right: 4,
-                                top: 4,
-                                bottom: 4,
+                                left: responsive.w(4),
+                                right: responsive.w(4),
+                                top: responsive.h(4),
+                                bottom: responsive.h(4),
                                 child: Container(
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(22),
@@ -189,8 +208,8 @@ Widget LinkSection(String title,Map<String,String> links){
                                 },
                                 child: Center(
                                   child: Container(
-                                    width: 24,
-                                    height: 24,
+                                    width: responsive.w(24),
+                                    height: responsive.h(24),
                                     child: SvgPicture.asset(
                                       'assets/quicklinks/icons/arrow_left.svg',
                                     ),
@@ -207,14 +226,14 @@ Widget LinkSection(String title,Map<String,String> links){
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.black,
-                fontSize: 24,
+                fontSize: responsive.sp(24),
                 fontFamily: 'DM Sans',
                 fontWeight: FontWeight.w700
               ),
             ),
             Container(
-              width: 52,
-              height: 52,
+              width: responsive.w(52),
+              height: responsive.h(52),
             ),
           ],
         ),
@@ -227,7 +246,7 @@ Widget LinkSection(String title,Map<String,String> links){
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 12),
+              SizedBox(height: responsive.h(12)),
               Dash(
                 direction: Axis.horizontal,
                 dashLength: 6,
@@ -235,7 +254,7 @@ Widget LinkSection(String title,Map<String,String> links){
                 dashGap: 7,
                 dashColor: Color(0xFFDADADA),
               ),
-              SizedBox(height: 24),
+              SizedBox(height: responsive.h(24)),
               GestureDetector(
                 onTap: () async {
                   final url=Uri.parse("https://www.iitb.ac.in/safety/en/emergency-contact-number");
@@ -246,8 +265,8 @@ Widget LinkSection(String title,Map<String,String> links){
                   }
                 },
                 child: Container(
-                  height: 96,
-                  width: 380,
+                  height: responsive.h(96),
+                  width: responsive.w(380),
                   //padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
@@ -260,10 +279,10 @@ Widget LinkSection(String title,Map<String,String> links){
                   child: Stack(
                     children: [
                       Positioned(
-                        left: 16,
-                        bottom: 16,
-                        right: 126,
-                        top: 16,
+                        left: responsive.w(16),
+                        bottom: responsive.h(16),
+                        right: responsive.w(126),
+                        top: responsive.h(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           //mainAxisAlignment: MainAxisAlignment.spaceBe,
@@ -272,25 +291,25 @@ Widget LinkSection(String title,Map<String,String> links){
                               "Emergency Contact",
                               style: TextStyle(
                                 color: const Color(0xFF0F1620),
-                                fontSize: 20,
+                                fontSize: responsive.sp(20),
                                 fontFamily: 'DM Sans',
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            SizedBox(height: 10,),
+                            SizedBox(height: responsive.h(10),),
                             Row(
                               children: [
                                 emergencyContainer("QRT"),
-                                SizedBox(width: 4),
+                                SizedBox(width: responsive.w(4)),
                                 emergencyContainer("Ambulance"),
-                                SizedBox(width: 4),
+                                SizedBox(width: responsive.w(4)),
                                 emergencyContainer("Main Gate"),
-                                SizedBox(width: 4),
+                                SizedBox(width: responsive.w(4)),
                                 Text(
                                   "...",
                                   style: TextStyle(
                                     color: const Color(0xFFD2D5DA),
-                                    fontSize: 20,
+                                    fontSize: responsive.sp(20),
                                     fontFamily: 'DM Sans',
                                     fontWeight: FontWeight.w400
                                   ),
@@ -301,20 +320,20 @@ Widget LinkSection(String title,Map<String,String> links){
                         )
                         ),
                       Positioned(
-                        bottom: 0,
-                        right: 0,
-                        left: 292,
-                        top: 12,
+                        bottom: responsive.h(0),
+                        right: responsive.w(0),
+                        left: responsive.w(292),
+                        top: responsive.h(12),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
                           child: SvgPicture.asset('assets/quicklinks/icons/star.svg'),
                         )
                       ),
                       Positioned(
-                        bottom: 16,
-                        right: 13.29,
-                        top: 45,
-                        left: 324,
+                        bottom: responsive.h(16),
+                        right: responsive.w(13.29),
+                        top: responsive.h(45),
+                        left: responsive.w(324),
                         child: SvgPicture.asset('assets/quicklinks/icons/bell.svg')
                         )
                     ],
@@ -322,10 +341,10 @@ Widget LinkSection(String title,Map<String,String> links){
                 ),
               ),
               for(int i=0;i<linkLabel.length;i++) ...[
-                SizedBox(height: 24),
+                SizedBox(height: responsive.h(24)),
                 LinkSection(linkLabel[i], links[i]),
               ],
-              SizedBox(height: 24)
+              SizedBox(height: responsive.h(24))
             ],
           ),
         ),

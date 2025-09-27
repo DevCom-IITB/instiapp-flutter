@@ -22,6 +22,18 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
 import 'package:markdown/markdown.dart' as markdown;
 
+class Responsive {
+  final BuildContext context;
+  final double baseWidth;  
+  final double baseHeight;
+
+  Responsive(this.context, {this.baseWidth = 411, this.baseHeight = 914});
+
+  double w(double px) => MediaQuery.of(context).size.width * (px / baseWidth);
+  double h(double px) => MediaQuery.of(context).size.height * (px / baseHeight);
+  double sp(double px) => w(px); // scale text with width
+}
+
 class BodyPage extends StatefulWidget {
   final Body? initialBody;
   final Future<Body>? bodyFuture;
@@ -57,55 +69,69 @@ class _BodyPageState extends State<BodyPage> {
   Body? body;
   bool showLinks = false;
   bool loadingFollow = false;
-  List<String> linkIcon = ["globe", "whatsapp", "instagram"];
-  List<String> linkLabel = ["Website", "Whatsapp Group", "Instagram"];
-  Widget clubQuickLinkContainer(String icon, String label) {
-    String url = "";
-    if (icon == "globe") {
-      url = body?.bodyWebsiteURL ?? "";
-    } else if (icon == "whatsapp") {
-      url = body!.bodyWhatsappGroupURL ?? "";
-    } else if (icon == "instagram") {
-      url = body?.bodyInstagramURL ?? "";
-    }
-    return InkWell(
-      onTap: () async {
-        if (await canLaunchUrl(Uri.parse(url))) {
-          await launchUrl(
-            Uri.parse(url),
-            mode: LaunchMode.externalApplication,
-          );
-        }
-      },
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Container(
-                height: 24,
-                width: 24,
-                child: SvgPicture.asset('assets/explore_new/${icon}.svg'),
-              ),
-              SizedBox(width: 9),
-              Text(
-                label,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+  List<String> imageUrls=['assets/explore_new/images/image1.png',
+                          'assets/explore_new/images/image2.png',
+                          'assets/explore_new/images/image2.png',
+                          'assets/explore_new/images/image2.png',
+                          'assets/explore_new/images/image2.png',
+                          'assets/explore_new/images/image3.png',
+                          'assets/explore_new/images/image3.png',];
+  List<String> linkIcon=["globe","whatsapp","instagram"];
+  List<String> linkLabel=["Website","Whatsapp Group","Instagram"];
+  List<String> link=["bodyWebsiteURL","bodyWhatsappGroupURL",];
+  Widget clubQuickLinkContainer(String icon, String label){
+    final responsive = Responsive(context);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Container(
+              height: responsive.h(24),
+              width: responsive.w(24),
+              child: SvgPicture.asset('assets/explore_new/${icon}.svg'),
+            ),
+            SizedBox(width: responsive.w(9)),
+            Text(
+              label,
+              style: TextStyle(
+              color: Colors.white,
+              fontSize: responsive.sp(16),
+              fontWeight: FontWeight.w500,
+            ),
           ),
-          Container(
-            height: 24,
-            width: 24,
-            child:
-                SvgPicture.asset('assets/quicklinks/icons/external_link.svg'),
+          ],
+        ),
+        GestureDetector(
+          onTap: () async {
+            final url;
+            if(label=="Instagram"){
+              url=body?.bodyInstagramURL;
+            }
+            else if(label=="Whatsapp Group"){
+              url=body?.bodyWhatsappGroupURL;
+            }
+            else{
+              url=body?.bodyWebsiteURL;
+            }
+            // final url = body?.bodyWebsiteURL;
+            if (url != null && url.isNotEmpty) {
+              final uri = Uri.parse(url);
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(
+                  uri,
+                  mode: LaunchMode.externalApplication,
+                );
+              }
+            }
+          },
+          child: Container(
+            height: responsive.h(24),
+            width: responsive.w(24),
+            child: SvgPicture.asset('assets/quicklinks/icons/external_link.svg'),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -135,9 +161,8 @@ class _BodyPageState extends State<BodyPage> {
 
   @override
   Widget build(BuildContext context) {
-    final parent = (body?.bodyParents != null && body!.bodyParents!.isNotEmpty)
-        ? body!.bodyParents!.first
-        : null;
+    final responsive = Responsive(context);
+    final parent = body?.bodyParents?.first;
     final imageUrl = parent?.bodyImageURL;
     final title = parent?.bodyName;
     Map<String, String> parentBody = {
@@ -220,24 +245,38 @@ class _BodyPageState extends State<BodyPage> {
             ))
           : Stack(
               children: [
-                SafeArea(
-                  child: ListView(
-                      padding: EdgeInsets.only(
-                          bottom: 20), // Add padding for the button
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Cover Image
-                            Stack(
-                              children: [
-                                Container(
-                                  width: double.infinity,
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade300,
-                                    //borderRadius: BorderRadius.circular(40),
-                                    image: body?.bodyImageURL != null
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      showLinks=false;
+                    });
+                  },
+                  child: SafeArea(
+                    child: ListView(
+                        //padding: EdgeInsets.only(bottom: 100), // Add padding for the button
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Cover Image
+                              Stack(
+                                children: [
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(
+                                        context, 
+                                        MaterialPageRoute(
+                                          builder: (context)=>ExploreImagePreview(imageUrls: ["assets/explore/symphony.png"])
+                                          )
+                                      );
+                                    },
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: responsive.h(200),
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade300,
+                                        //borderRadius: BorderRadius.circular(40),
+                                        image: body?.bodyImageURL != null
                                         ? DecorationImage(
                                             image:
                                                 // NetworkImage(body!.bodyImageURL!),
@@ -250,621 +289,638 @@ class _BodyPageState extends State<BodyPage> {
                                                 AssetImage('assets/photo.png'),
                                             fit: BoxFit.cover,
                                           ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 16,
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Container(
-                                      height: 52,
-                                      width: 52,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.60),
-                                          borderRadius:
-                                              BorderRadius.circular(25)),
-                                      child: Center(
-                                        child: Container(
-                                          height: 24,
-                                          width: 24,
-                                          child: SvgPicture.asset(
-                                              'assets/quicklinks/icons/arrow_left.svg'),
-                                        ),
                                       ),
                                     ),
                                   ),
-                                )
-                              ],
-                            ),
-
-                            // Profile Card Section
-                            Container(
-                              width: double.infinity,
-                              // height: 125,
-                              padding: EdgeInsets.fromLTRB(16, 22, 16, 20),
-                              // padding: const EdgeInsets.all(20),
-                              decoration: const BoxDecoration(
+                                  Padding(
+                                    padding: EdgeInsets.only(left: responsive.w(12)),
+                                    child: GestureDetector(
+                                      onTap: (){
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Container(
+                                        height: 52,
+                                        width: 52,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.6),
+                                          borderRadius: BorderRadius.circular(25)
+                                        ),
+                                        child: Center(
+                                          child: Container(
+                                            height: responsive.h(24),
+                                            width: responsive.w(24),
+                                            child: SvgPicture.asset('assets/quicklinks/icons/arrow_left.svg'),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              
+                              // Profile Card Section
+                              Container(
+                                width: double.infinity,
+                                // height: 125,
+                                //padding: EdgeInsets.fromLTRB(16, 22, 16, 20),
+                                // padding: const EdgeInsets.all(20),
+                                decoration: const BoxDecoration(
                                   color: Color(0xFF0F1620),
                                   borderRadius: BorderRadius.vertical(
-                                      bottom: Radius.circular(24))),
-                              child: Stack(
-                                children: [
-                                  // Rotated background image
-                                  Positioned(
-                                    left: 0,
-                                    child: SizedBox(
-                                      width: 105,
-                                      height: 199,
-                                      child: Transform.rotate(
-                                        angle:
-                                            3.1416, // -180 degrees in radians
-                                        child: Image.asset(
-                                          'assets/explore/background.png',
-                                          fit: BoxFit.cover,
+                                    bottom: Radius.circular(24)
+                                  )
+                                ),
+                                child: Stack(
+                                  children: [
+                                    // Rotated background image
+                                    Positioned(
+                                      left: responsive.w(-16),
+                                      child: SizedBox(
+                                        width: responsive.w(105),
+                                        height: responsive.h(199),
+                                        child: Transform.rotate(
+                                          angle:
+                                              0, // -180 degrees in radians
+                                          child: Image.asset(
+                                            'assets/explore/background.png',
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                              color: Colors.white, width: 2),
-                                        ),
-                                        child: CircleAvatar(
-                                          radius: 35,
-                                          backgroundColor: Colors.black,
-                                          backgroundImage:
-                                              body?.bodyImageURL != null
-                                                  ? NetworkImage(
-                                                      body!.bodyImageURL!)
-                                                  : const AssetImage(
-                                                          'assets/symphony.png')
-                                                      as ImageProvider,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 20),
-
-                                      // Profile Info
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              body?.bodyName ?? 'Symphony',
-                                              style: const TextStyle(
-                                                fontSize: 24,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-                                            Text(
-                                              body?.bodyShortDescription ??
-                                                  'Music Club of IITB',
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.white70,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-                                            RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                    text: (body
-                                                            ?.bodyFollowersCount
-                                                            ?.toString() ??
-                                                        '422'),
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                  const TextSpan(
-                                                    text: ' Senti',
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        height: 35,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 6),
-                                        decoration: BoxDecoration(
-                                            color: Color(0xFF15263C),
-                                            borderRadius:
-                                                BorderRadius.circular(8)),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Container(
-                                              height: 20,
-                                              width: 20,
+                          
+                                    Padding(
+                                      padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(22), responsive.w(16), responsive.h(22)),
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          GestureDetector(
+                                            // onTap: (){
+                                            //   setState(() {
+                                            //     isProfileClicked=true;
+                                            //     //showLinks=false;
+                                            //   });
+                                            // },
+                                            child: Container(
                                               decoration: BoxDecoration(
-                                                  // color: Colors.amber[100],
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  image: DecorationImage(
-                                                      image: imageUrl != null &&
-                                                              imageUrl
-                                                                  .isNotEmpty
-                                                          ? NetworkImage(
-                                                              imageUrl)
-                                                          : const AssetImage(
-                                                                  'assets/explore_new/images/org.png')
-                                                              as ImageProvider,
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                    color: Colors.white, width: 2),
+                                              ),
+                                              child: CircleAvatar(
+                                                radius: 40,
+                                                backgroundColor: Colors.black,
+                                                backgroundImage:
+                                                    body?.bodyImageURL != null
+                                                        ? NetworkImage(
+                                                            body!.bodyImageURL!)
+                                                        : const AssetImage(
+                                                                'assets/symphony.png')
+                                                            as ImageProvider,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(width: responsive.w(20)),
+                                                              
+                                          // Profile Info
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  body?.bodyName ?? 'Symphony',
+                                                  style: TextStyle(
+                                                    fontSize: responsive.sp(24),
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                SizedBox(height: responsive.h(6)),
+                                                Text(
+                                                  body?.bodyShortDescription ??
+                                                      'Music Club of IITB',
+                                                  style:TextStyle(
+                                                    fontSize: responsive.sp(16),
+                                                    color: myConstants.instiappGrey,
+                                                  ),
+                                                ),
+                                                SizedBox(height: responsive.h(6)),
+                                                RichText(
+                                                  text: TextSpan(
+                                                    children: [
+                                                      TextSpan(
+                                                        text: (body
+                                                                ?.bodyFollowersCount
+                                                                ?.toString() ??
+                                                            '422'),
+                                                        style: TextStyle(
+                                                          fontSize: responsive.sp(16),
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                      TextSpan(
+                                                        text: ' Senti',
+                                                        style: TextStyle(
+                                                          fontSize: responsive.sp(16),
+                                                          color: myConstants.instiappGrey,
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Container(
+                                            height: responsive.h(35),
+                                            padding: EdgeInsets.symmetric(horizontal: responsive.w(8), vertical: responsive.h(6)),
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFF15263C),
+                                              borderRadius: BorderRadius.circular(8)
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Container(
+                                                  height: responsive.h(20),
+                                                  width: responsive.w(20),
+                                                  decoration: BoxDecoration(
+                                                    // color: Colors.amber[100],
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    image: DecorationImage(
+                                                      image: imageUrl != null && imageUrl.isNotEmpty
+                                                        ? NetworkImage(imageUrl)
+                                                        : const AssetImage('assets/explore_new/images/org.png') as ImageProvider,
                                                       // image: AssetImage(
                                                       //   'assets/explore_new/images/org.png',
                                                       // ),
-                                                      fit: BoxFit.cover)),
-                                            ),
-                                            SizedBox(
-                                              width: 8,
-                                            ),
-                                            Text(
-                                              parentBody[title ?? ""] ?? "",
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w700,
-                                                  color:
-                                                      const Color(0xFFF6F6F6)),
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // const SizedBox(height: 30),
-                              // Row(
-                              //   crossAxisAlignment: CrossAxisAlignment.start,
-                              //   children: [
-                              //     Expanded(
-                              //       child: Column(
-                              //         crossAxisAlignment:
-                              //             CrossAxisAlignment.start,
-                              //         children: [
-                              //           Text(
-                              //             body?.bodyName ?? "",
-                              //             style: const TextStyle(
-                              //               fontSize: 24,
-                              //               fontWeight: FontWeight.bold,
-                              //               fontFamily: 'DM Sans',
-                              //             ),
-                              //           ),
-                              //           const SizedBox(height: 6),
-                              //           Text(
-                              //             body?.bodyShortDescription ?? "",
-                              //             style: const TextStyle(
-                              //               fontSize: 18,
-                              //               color: Colors.black54,
-                              //             ),
-                              //           ),
-                              //         ],
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
-                              const SizedBox(height: 24),
-                              DefaultTabController(
-                                length: 3,
-                                child: Column(
-                                  children: [
-                                    const TabBar(
-                                      indicatorColor: Colors.blueAccent,
-                                      labelColor: Colors.blueAccent,
-                                      unselectedLabelColor: Colors.black54,
-                                      labelStyle: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        fontFamily: 'DM Sans',
-                                      ),
-                                      tabs: [
-                                        Tab(text: 'About'),
-                                        Tab(text: 'Events'),
-                                        Tab(text: 'People'),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 300,
-                                      child: Builder(
-                                        builder: (context) {
-                                          final people = body?.bodyRoles
-                                                  ?.expand((r) =>
-                                                      (r.roleUsersDetail ?? [])
-                                                          .map((u) => u
-                                                            ..currentRole =
-                                                                r.roleName))
-                                                  .toList() ??
-                                              [];
-                                          return TabBarView(
-                                            children: [
-                                              // About Tab
-                                              SingleChildScrollView(
-                                                padding:
-                                                    const EdgeInsets.all(16),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    CommonHtml(
-                                                      data:
-                                                          body?.bodyDescription ??
-                                                              "",
-                                                      defaultTextStyle: (theme
-                                                                  .textTheme
-                                                                  .titleMedium ??
-                                                              const TextStyle())
-                                                          .copyWith(
-                                                              fontSize: 24),
-                                                    ),
-                                                    body?.bodyDescription !=
-                                                            null
-                                                        ? SizedBox(
-                                                            height: 20.0,
-                                                          )
-                                                        : SizedBox(
-                                                            height: 0.0,
-                                                          ),
-                                                    Divider(),
-                                                    const SizedBox(height: 20),
-
-                                                    // Photo Album Section
-                                                    const Text(
-                                                      'Photo Album',
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontFamily: 'DM Sans',
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 12),
-                                                    SizedBox(
-                                                      height: 100,
-                                                      child: ListView.separated(
-                                                        scrollDirection:
-                                                            Axis.horizontal,
-                                                        itemCount: body
-                                                                ?.bodyPhotoalbumURLs
-                                                                ?.length ??
-                                                            0,
-                                                        separatorBuilder: (_,
-                                                                __) =>
-                                                            const SizedBox(
-                                                                width: 8),
-                                                        itemBuilder:
-                                                            (context, index) {
-                                                          final imageUrl = body!
-                                                                  .bodyPhotoalbumURLs![
-                                                              index];
-                                                          return Container(
-                                                            width: 100,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: Colors.grey
-                                                                  .shade300,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
-                                                            ),
-                                                            clipBehavior: Clip.antiAlias,
-                                                            child: Image.network(
-                                                              imageUrl,
-                                                              fit: BoxFit.cover,
-                                                              errorBuilder: (context, error, stackTrace) => Container(
-                                                                color: Colors.grey.shade300,
-                                                                child: Icon(Icons.broken_image, color: Colors.grey),
-                                                              ),
-                                                            ),
-                                                          );
-                                                        },
-                                                      ),
-                                                    ),
-
-                                                    const SizedBox(height: 24),
-
-                                                    // Part Of Section
-                                                    const Text(
-                                                      'Part of',
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontFamily: 'DM Sans',
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 12),
-                                                    ...(body?.bodyParents
-                                                            ?.map((b) =>
-                                                                _buildBodyTile(
-                                                                    bloc,
-                                                                    theme
-                                                                        .textTheme,
-                                                                    b))
-                                                            .toList() ??
-                                                        [])
-                                                  ],
+                                                      fit: BoxFit.cover
+                                                      )
+                                                  ),
                                                 ),
-                                              ),
-
-                                              // Events Tab
-                                              body?.bodyEvents == null ||
-                                                      body!.bodyEvents!.isEmpty
-                                                  ? const Center(
-                                                      child: Text(
-                                                          "No events yet."))
-                                                  : ListView(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 16),
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal:
-                                                                      28.0,
-                                                                  vertical:
-                                                                      8.0),
-                                                          child: Text(
-                                                            "Events",
-                                                            style: theme
-                                                                .textTheme
-                                                                .headlineSmall,
-                                                          ),
-                                                        ),
-                                                        ...body!.bodyEvents!
-                                                            .map((e) =>
-                                                                _buildEventTile(
-                                                                    bloc,
-                                                                    theme,
-                                                                    e))
-                                                      ],
-                                                    ),
-
-                                              // People Tab
-                                              people.isEmpty
-                                                  ? const Center(
-                                                      child: Text(
-                                                          "No people listed."))
-                                                  : ListView(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 16),
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal:
-                                                                      28.0,
-                                                                  vertical:
-                                                                      8.0),
-                                                          child: Text(
-                                                            "People",
-                                                            style: theme
-                                                                .textTheme
-                                                                .headlineSmall,
-                                                          ),
-                                                        ),
-                                                        ...people
-                                                            .map((u) =>
-                                                                _buildUserTile(
-                                                                    bloc,
-                                                                    theme,
-                                                                    u))
-                                                            .toList(),
-                                                      ],
-                                                    )
-                                            ],
-                                          );
-                                        },
+                                                SizedBox(width: responsive.w(8)),
+                                                Text(
+                                                  parentBody[title ?? ""] ?? "",
+                                                  style: TextStyle(
+                                                    fontSize: responsive.sp(14),
+                                                    fontWeight: FontWeight.w700,
+                                                    color: const Color(0xFFF6F6F6)
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
-                              ),
-                              // const SizedBox(height: 10),
-                              // const Text(
-                              //   'Photo Album',
-                              //   style: TextStyle(
-                              //     fontSize: 20,
-                              //     fontWeight: FontWeight.w600,
-                              //     fontFamily: 'DM Sans',
-                              //   ),
-                              // ),
-                              // const SizedBox(height: 12),
-                              // SizedBox(
-                              //   height: 100,
-                              //   child: ListView.separated(
-                              //     scrollDirection: Axis.horizontal,
-                              //     itemCount: 5,
-                              //     separatorBuilder: (_, __) =>
-                              //         const SizedBox(width: 8),
-                              //     itemBuilder: (context, index) {
-                              //       return Container(
-                              //         width: 100,
-                              //         decoration: BoxDecoration(
-                              //           color: Colors.grey.shade300,
-                              //           borderRadius: BorderRadius.circular(8),
-                              //         ),
-                              //       );
-                              //     },
-                              //   ),
-                              // ),
+                              )
                             ],
                           ),
-                        )
-                      ]
-                      // Events
-                      // ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                      //     body?.bodyEvents
-                      //         ?.map((e) => _buildEventTile(bloc, theme, e))
-                      //         .toList(),
-                      //     Padding(
-                      //       padding: const EdgeInsets.symmetric(
-                      //           horizontal: 28.0, vertical: 16.0),
-                      //       child: Text(
-                      //         "Events",
-                      //         style: theme.textTheme.headlineSmall,
-                      //       ),
-                      //     )))
-                      // Children
-                      // ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                      //     body?.bodyChildren
-                      //         ?.map((b) =>
-                      //             _buildBodyTile(bloc, theme.textTheme, b))
-                      //         .toList(),
-                      //     Padding(
-                      //       padding: const EdgeInsets.symmetric(
-                      //           horizontal: 28.0, vertical: 16.0),
-                      //       child: Text(
-                      //         "Organizations",
-                      //         style: theme.textTheme.headlineSmall,
-                      //       ),
-                      //     )))
-                      // People
-                      // ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                      //     body?.bodyRoles
-                      //         ?.expand((r) {
-                      //           if (r.roleUsersDetail != null) {
-                      //             return r.roleUsersDetail!
-                      //                 .map((u) => u..currentRole = r.roleName)
-                      //                 .toList();
-                      //           }
-                      //           return [];
-                      //         })
-                      //         .map((u) => _buildUserTile(bloc, theme, u))
-                      //         .toList(),
-                      //     Padding(
-                      //       padding: const EdgeInsets.symmetric(
-                      //           horizontal: 28.0, vertical: 16.0),
-                      //       child: Text(
-                      //         "People",
-                      //         style: theme.textTheme.headlineSmall,
-                      //       ),
-                      //     )))
-                      // Parents
-                      // ..addAll(_nonEmptyListWithHeaderOrEmpty(
-                      //     body?.bodyParents
-                      //         ?.map((b) =>
-                      //             _buildBodyTile(bloc, theme.textTheme, b))
-                      //         .toList(),
-                      //     Padding(
-                      //       padding: const EdgeInsets.symmetric(
-                      //           horizontal: 28.0, vertical: 16.0),
-                      //       child: Text(
-                      //         "Part of",
-                      //         style: theme.textTheme.headlineSmall,
-                      //       ),
-                      //     )))
-                      // ..addAll([
-                      //   Divider(),
-                      //   SizedBox(
-                      //     height: 64.0,
-                      //   )
-
-                      // ]),
-                      ),
-                ),
-                if (showLinks)
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        padding: EdgeInsets.fromLTRB(20, 16, 20, 24),
-                        height: 292,
-                        width: 380,
-                        decoration: BoxDecoration(
-                            color: myConstants.instiappDark,
-                            borderRadius: BorderRadius.vertical(
-                                bottom: Radius.circular(40),
-                                top: Radius.circular(20))),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: responsive.h(16),horizontal: responsive.w(16)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  "Quick Links",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      showLinks = false;
-                                    });
-                                  },
-                                  child: Container(
-                                    height: 21,
-                                    width: 21,
-                                    child: SvgPicture.asset(
-                                        'assets/explore_new/x.svg'),
+                                // const SizedBox(height: 30),
+                                // Row(
+                                //   crossAxisAlignment: CrossAxisAlignment.start,
+                                //   children: [
+                                //     Expanded(
+                                //       child: Column(
+                                //         crossAxisAlignment:
+                                //             CrossAxisAlignment.start,
+                                //         children: [
+                                //           Text(
+                                //             body?.bodyName ?? "",
+                                //             style: const TextStyle(
+                                //               fontSize: 24,
+                                //               fontWeight: FontWeight.bold,
+                                //               fontFamily: 'DM Sans',
+                                //             ),
+                                //           ),
+                                //           const SizedBox(height: 6),
+                                //           Text(
+                                //             body?.bodyShortDescription ?? "",
+                                //             style: const TextStyle(
+                                //               fontSize: 18,
+                                //               color: Colors.black54,
+                                //             ),
+                                //           ),
+                                //         ],
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
+                                SizedBox(height: responsive.h(24)),
+                                DefaultTabController(
+                                  length: 3,
+                                  child: Column(
+                                    children: [
+                                      Stack(
+                                        children: [
+                                          Positioned(
+                                            bottom: 0,
+                                            left: 0,
+                                            right: 0,
+                                            child: Container(
+                                              height: responsive.h(1.5),
+                                              color: Color(0xFFD0D5DD), // light grey line
+                                            ),
+                                          ),
+                                          TabBar(
+                                          indicatorColor: myConstants.instiappBlue,
+                                          labelColor: myConstants.instiappBlue,
+                                          unselectedLabelColor: Colors.black54,
+                                          labelStyle: TextStyle(
+                                            fontSize: responsive.sp(16),
+                                            fontWeight: FontWeight.w600,
+                                            fontFamily: 'DM Sans',
+                                          ),
+                                          tabs: [
+                                            Tab(text: 'About'),
+                                            Tab(text: 'Events'),
+                                            Tab(text: 'People'),
+                                          ],
+                                          onTap: (index){
+                                            setState(() {
+                                              showLinks=false;
+                                            });
+                                          }
+                                        ),
+                                        ],
+                                        
+                                      ),
+                                      SizedBox(
+                                        height: responsive.h(410),
+                                        child: Builder(
+                                          builder: (context) {
+                                            final people = body?.bodyRoles
+                                                    ?.expand((r) =>
+                                                        (r.roleUsersDetail ?? [])
+                                                            .map((u) => u
+                                                              ..currentRole =
+                                                                  r.roleName))
+                                                    .toList() ??
+                                                [];
+                                            return TabBarView(
+                                              children: [
+                                                // About Tab
+                                                SingleChildScrollView(
+                                                  padding: EdgeInsets.only(top: responsive.h(24)),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.start,
+                                                    children: [
+                                                      CommonHtml(
+                                                        data:
+                                                            body?.bodyDescription ??
+                                                                "",
+                                                        defaultTextStyle: (theme
+                                                                    .textTheme
+                                                                    .titleMedium ??
+                                                                TextStyle())
+                                                            .copyWith(
+                                                                fontSize: responsive.sp(24)),
+                                                      ),
+                                                      body?.bodyDescription !=
+                                                              null
+                                                          ? SizedBox(
+                                                              height: responsive.h(20.0),
+                                                            )
+                                                          : SizedBox(
+                                                              height: 0.0,
+                                                            ),
+                                                      //Divider(),
+                                                      SizedBox(height: responsive.h(20)),
+                          
+                                                      // Photo Album Section
+                                                      Text(
+                                                        'Photo Album',
+                                                        style: TextStyle(
+                                                          fontSize: responsive.sp(16),
+                                                          fontWeight:FontWeight.w700,
+                                                          fontFamily: 'DM Sans',
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: responsive.h(12)),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          // setState(() {
+                                                          //   isAlbumClicked=true;
+                                                          // });
+                                                          Navigator.push(
+                                                            context, 
+                                                            MaterialPageRoute(
+                                                              builder: (context)=>ExploreImagePreview(
+                                                                imageUrls: imageUrls
+                                                                )
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: PhotoAlbumGrid(
+                                                          imageUrls: imageUrls,
+                                                          // initialIndex: index,
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: responsive.h(40)),
+                                                      // Container(
+                                                      //   height: 190,
+                                                      //   width: 380,
+                                                        // child: ListView.separated(
+                                                        //   scrollDirection:
+                                                        //       Axis.horizontal,
+                                                        //   itemCount: 5,
+                                                        //   separatorBuilder: (_,
+                                                        //           __) =>
+                                                        //       const SizedBox(
+                                                        //           width: 8),
+                                                        //   itemBuilder:
+                                                        //       (context, index) {
+                                                        //     return Container(
+                                                        //       width: 100,
+                                                        //       decoration:
+                                                        //           BoxDecoration(
+                                                        //         color: Colors.grey
+                                                        //             .shade300,
+                                                        //         borderRadius:
+                                                        //             BorderRadius
+                                                        //                 .circular(
+                                                        //                     8),
+                                                        //       ),
+                                                        //     );
+                                                        //   },
+                                                        // ),
+                                                      // ),
+                          
+                                                      SizedBox(height: responsive.h(24)),
+                          
+                                                      // Part Of Section
+                                                      // const Text(
+                                                      //   'Part of',
+                                                      //   style: TextStyle(
+                                                      //     fontSize: 20,
+                                                      //     fontWeight:
+                                                      //         FontWeight.w600,
+                                                      //     fontFamily: 'DM Sans',
+                                                      //   ),
+                                                      // ),
+                                                      // const SizedBox(height: 12),
+                                                      // ...(body?.bodyParents
+                                                      //         ?.map((b) =>
+                                                      //             _buildBodyTile(
+                                                      //                 bloc,
+                                                      //                 theme
+                                                      //                     .textTheme,
+                                                      //                 b))
+                                                      //         .toList() ??
+                                                      //     [])
+                                                    ],
+                                                  ),
+                                                ),
+                          
+                                                // Events Tab
+                                                body?.bodyEvents == null ||
+                                                        body!.bodyEvents!.isEmpty
+                                                    ? const Center(
+                                                        child: Text(
+                                                            "No events yet."))
+                                                    : ListView(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                            vertical: responsive.h(16)),
+                                                        children: [
+                                                          // Padding(
+                                                          //   padding:
+                                                          //       const EdgeInsets
+                                                          //           .symmetric(
+                                                          //           horizontal:
+                                                          //               28.0,
+                                                          //           vertical:
+                                                          //               8.0),
+                                                          //   child: Text(
+                                                          //     "Events",
+                                                          //     style: theme
+                                                          //         .textTheme
+                                                          //         .headlineSmall,
+                                                          //   ),
+                                                          // ),
+                                                          ...body!.bodyEvents!
+                                                              .map((e) =>
+                                                                  _buildEventTile(
+                                                                      bloc,
+                                                                      theme,
+                                                                      e))
+                                                        ],
+                                                      ),
+                          
+                                                // People Tab
+                                                people.isEmpty
+                                                    ? const Center(
+                                                        child: Text(
+                                                            "No people listed."))
+                                                    : ListView(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                            vertical: responsive.h(16)),
+                                                        children: [
+                                                          ...people
+                                                              .map((u) =>
+                                                                  _buildUserTile(
+                                                                      bloc,
+                                                                      theme,
+                                                                      u))
+                                                              .toList(),
+                                                        ],
+                                                      )
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                )
+                                ),
+                                // const SizedBox(height: 10),
+                                // const Text(
+                                //   'Photo Album',
+                                //   style: TextStyle(
+                                //     fontSize: 20,
+                                //     fontWeight: FontWeight.w600,
+                                //     fontFamily: 'DM Sans',
+                                //   ),
+                                // ),
+                                // const SizedBox(height: 12),
+                                // SizedBox(
+                                //   height: 100,
+                                //   child: ListView.separated(
+                                //     scrollDirection: Axis.horizontal,
+                                //     itemCount: 5,
+                                //     separatorBuilder: (_, __) =>
+                                //         const SizedBox(width: 8),
+                                //     itemBuilder: (context, index) {
+                                //       return Container(
+                                //         width: 100,
+                                //         decoration: BoxDecoration(
+                                //           color: Colors.grey.shade300,
+                                //           borderRadius: BorderRadius.circular(8),
+                                //         ),
+                                //       );
+                                //     },
+                                //   ),
+                                // ),
                               ],
                             ),
-                            SizedBox(height: 16),
-                            Dash(
-                              direction: Axis.horizontal,
-                              length: 339,
-                              dashLength: 6,
-                              dashGap: 7,
-                              dashColor: Colors.white.withOpacity(0.10),
-                            ),
-                            SizedBox(height: 16),
-                            for (int i = 0; i <= 2; i++) ...[
-                              clubQuickLinkContainer(linkIcon[i], linkLabel[i]),
-                              if (i != 3) SizedBox(height: 12)
-                            ]
-                          ],
+                          )
+                        ]
+                        // Events
+                        // ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                        //     body?.bodyEvents
+                        //         ?.map((e) => _buildEventTile(bloc, theme, e))
+                        //         .toList(),
+                        //     Padding(
+                        //       padding: const EdgeInsets.symmetric(
+                        //           horizontal: 28.0, vertical: 16.0),
+                        //       child: Text(
+                        //         "Events",
+                        //         style: theme.textTheme.headlineSmall,
+                        //       ),
+                        //     )))
+                        // Children
+                        // ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                        //     body?.bodyChildren
+                        //         ?.map((b) =>
+                        //             _buildBodyTile(bloc, theme.textTheme, b))
+                        //         .toList(),
+                        //     Padding(
+                        //       padding: const EdgeInsets.symmetric(
+                        //           horizontal: 28.0, vertical: 16.0),
+                        //       child: Text(
+                        //         "Organizations",
+                        //         style: theme.textTheme.headlineSmall,
+                        //       ),
+                        //     )))
+                        // People
+                        // ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                        //     body?.bodyRoles
+                        //         ?.expand((r) {
+                        //           if (r.roleUsersDetail != null) {
+                        //             return r.roleUsersDetail!
+                        //                 .map((u) => u..currentRole = r.roleName)
+                        //                 .toList();
+                        //           }
+                        //           return [];
+                        //         })
+                        //         .map((u) => _buildUserTile(bloc, theme, u))
+                        //         .toList(),
+                        //     Padding(
+                        //       padding: const EdgeInsets.symmetric(
+                        //           horizontal: 28.0, vertical: 16.0),
+                        //       child: Text(
+                        //         "People",
+                        //         style: theme.textTheme.headlineSmall,
+                        //       ),
+                        //     )))
+                        // Parents
+                        // ..addAll(_nonEmptyListWithHeaderOrEmpty(
+                        //     body?.bodyParents
+                        //         ?.map((b) =>
+                        //             _buildBodyTile(bloc, theme.textTheme, b))
+                        //         .toList(),
+                        //     Padding(
+                        //       padding: const EdgeInsets.symmetric(
+                        //           horizontal: 28.0, vertical: 16.0),
+                        //       child: Text(
+                        //         "Part of",
+                        //         style: theme.textTheme.headlineSmall,
+                        //       ),
+                        //     )))
+                        // ..addAll([
+                        //   Divider(),
+                        //   SizedBox(
+                        //     height: 64.0,
+                        //   )
+                          
+                        // ]),
                         ),
+                  ),
+                ),
+              if(showLinks)
+                Padding(
+                  //padding: const EdgeInsets.all(16.0),
+                  padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(0), responsive.w(16), responsive.h(16)),
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(responsive.w(20), responsive.h(16), responsive.w(20), responsive.h(24)),
+                      height: responsive.h(256),
+                      width: responsive.w(380),
+                      decoration: BoxDecoration(
+                        color: myConstants.instiappDark,
+                        borderRadius: BorderRadius.vertical(
+                          bottom: Radius.circular(40),
+                          top: Radius.circular(20)
+                        )
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Quick Links",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: responsive.sp(18),
+                                  fontWeight: FontWeight.w700
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  setState(() {
+                                    showLinks=false;
+                                  });
+                                },
+                                child: Container(
+                                  height: responsive.h(21),
+                                  width: responsive.w(21),
+                                  child: SvgPicture.asset('assets/explore_new/x.svg'),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(height: responsive.h(16)),
+                          Dash(
+                            direction: Axis.horizontal,
+                            length: responsive.w(339),
+                            dashLength: 6,
+                            dashGap: 7,
+                            dashColor: Colors.white.withOpacity(0.10),
+                          ),
+                          SizedBox(height: responsive.h(16)),
+                          for(int i=0;i<=2;i++)...[
+                            clubQuickLinkContainer(linkIcon[i],linkLabel[i]),
+                            if(i!=3)
+                              SizedBox(height: responsive.h(12))
+                          ] 
+                        ],
                       ),
                     ),
                   ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  //color: Colors.amber,
+                    padding: EdgeInsets.fromLTRB(responsive.w(10), responsive.h(10), responsive.w(10), responsive.h(16)),
                     // color: Colors.transparent,
                     // decoration: const BoxDecoration(
                     //   color: Colors.white,
@@ -878,51 +934,60 @@ class _BodyPageState extends State<BodyPage> {
                     //   ],
                     // ),
                     child: Container(
-                      height: 64,
-                      width: 380,
+                      padding: showLinks?EdgeInsets.only(bottom: responsive.h(6)):EdgeInsets.symmetric(vertical: responsive.h(6),horizontal: responsive.w(6)),
                       decoration: BoxDecoration(
-                          color: myConstants.instiappDark,
-                          borderRadius: BorderRadius.circular(50)),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        color: Color(0xFFF6F6F6),
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      
+                      child: Stack(
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                showLinks = true;
-                              });
-                            },
-                            child: Container(
-                              height: 52,
-                              width: 52,
-                              decoration: BoxDecoration(
-                                  color: Color(0xFF2B4E83),
-                                  borderRadius: BorderRadius.circular(50)),
+                          Container(
+                        padding: EdgeInsets.symmetric(horizontal: responsive.w(6)),
+                        height: responsive.h(64),
+                        width: responsive.w(380),
+                        decoration: BoxDecoration(
+                          color: myConstants.instiappDark,
+                          borderRadius: BorderRadius.circular(50)
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          //mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  showLinks=true;
+                                });
+                              },
                               child: Container(
-                                height: 24,
-                                width: 24,
-                                child: Center(
-                                  child: SvgPicture.asset(
-                                    'assets/explore_new/link.svg',
-                                    height: 24,
-                                    width: 24,
+                                height: responsive.h(52),
+                                width: responsive.w(52),
+                                decoration: BoxDecoration(
+                                  color: Color(0xFF2B4E83),
+                                  borderRadius: BorderRadius.circular(50)
+                                ),
+                                child: Container(
+                                  height: responsive.h(24),
+                                  width: responsive.w(24),
+                                  child: Center(
+                                    child: SvgPicture.asset(
+                                      'assets/explore_new/link.svg',
+                                      height: responsive.h(24),
+                                      width: responsive.w(24),
+                                      ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Container(
-                            width: 308,
-                            height: 52,
-                            child: ElevatedButton(
+                            SizedBox(width: responsive.w(8)),
+                            Expanded(
+                              child: SizedBox(
+                                height: responsive.h(52),
+                                child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: myConstants.instiappBlue,
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 14),
+                                  padding: EdgeInsets.symmetric(vertical: responsive.h(14)),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(50),
                                   ),
@@ -938,7 +1003,7 @@ class _BodyPageState extends State<BodyPage> {
                                       ? 'Joined'
                                       : 'Join',
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: responsive.h(16),
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'DM Sans',
                                     color: Colors.white,
@@ -1059,8 +1124,8 @@ class _BodyPageState extends State<BodyPage> {
                             duration: Duration(milliseconds: 300),
                             curve: Curves.easeOutBack,
                             child: Container(
-                              height: 350,
-                              width: 350,
+                              height: responsive.h(350),
+                              width: responsive.w(350),
                               // color: Colors.amber[300],
                               // child: Image.asset('assets/explore_new/images/image1.png')
                               child: PageView.builder(
@@ -1126,6 +1191,7 @@ class _BodyPageState extends State<BodyPage> {
   }
 
   ElevatedButton _buildFollowBody(ThemeData theme, InstiAppBloc bloc) {
+    final responsive = Responsive(context);
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         foregroundColor: body?.bodyUserFollows ?? false
@@ -1158,13 +1224,13 @@ class _BodyPageState extends State<BodyPage> {
             // style: TextStyle(color: Colors.black),
           ),
           SizedBox(
-            width: 8.0,
+            width: responsive.w(8),
           ),
           body?.bodyFollowersCount != null
               ? Text("${body?.bodyFollowersCount}")
               : SizedBox(
-                  height: 18,
-                  width: 18,
+                  height: responsive.h(18),
+                  width: responsive.w(18),
                   child: CircularProgressIndicator(
                     valueColor: new AlwaysStoppedAnimation<Color>(
                       body?.bodyUserFollows ?? false
@@ -1177,8 +1243,8 @@ class _BodyPageState extends State<BodyPage> {
         if (loadingFollow) {
           rowChildren.insertAll(0, [
             SizedBox(
-                height: 18,
-                width: 18,
+                height: responsive.h(18),
+                width: responsive.w(18),
                 child: CircularProgressIndicator(
                   valueColor: new AlwaysStoppedAnimation<Color>(
                       body?.bodyUserFollows ?? false
@@ -1187,7 +1253,7 @@ class _BodyPageState extends State<BodyPage> {
                   strokeWidth: 2,
                 )),
             SizedBox(
-              width: 8.0,
+              width: responsive.w(8),
             )
           ]);
         }
@@ -1225,6 +1291,7 @@ class _BodyPageState extends State<BodyPage> {
   }
 
   Widget _buildEventTile(InstiAppBloc bloc, ThemeData theme, Event event) {
+    final responsive = Responsive(context);
     // return ListTile(
     //   title: Text(
     //     event.eventName ?? "",
@@ -1258,17 +1325,17 @@ class _BodyPageState extends State<BodyPage> {
         EventPage.navigateWith(context, bloc, event);
       },
       child: Padding(
-        padding: const EdgeInsets.only(left: 16),
+        padding: EdgeInsets.only(left: responsive.w(16)),
         child: Column(
           children: [
             Container(
               // height: 72,
-              width: 364,
+              width: responsive.w(364),
               child: Row(
                 children: [
                   Container(
-                    height: 71,
-                    width: 71,
+                    height: responsive.h(71),
+                    width: responsive.w(71),
                     decoration: BoxDecoration(
                       color: Colors.pink[100],
                       borderRadius: BorderRadius.circular(35.5)
@@ -1280,9 +1347,9 @@ class _BodyPageState extends State<BodyPage> {
                       heroTag: event.eventID ?? "",
                     ),
                   ),
-                  SizedBox(width: 16),
+                  SizedBox(width: responsive.w(16)),
                   Container(
-                    width: 242,
+                    width: responsive.w(242),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1292,10 +1359,10 @@ class _BodyPageState extends State<BodyPage> {
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
-                            fontSize: 20
+                            fontSize: responsive.sp(20)
                           ),
                         ),
-                        SizedBox(height: 4),
+                        SizedBox(height: responsive.h(4)),
                         Text(
                           event.getSubTitle(),
                           style: TextStyle(
@@ -1309,7 +1376,7 @@ class _BodyPageState extends State<BodyPage> {
                 ],
               ),
             ),
-            SizedBox(height: 16)
+            SizedBox(height: responsive.h(16))
           ],
         ),
       ),
@@ -1317,6 +1384,7 @@ class _BodyPageState extends State<BodyPage> {
   }
 
   Widget _buildUserTile(InstiAppBloc bloc, ThemeData theme, User u) {
+    final responsive = Responsive(context);
     // return ListTile(
     //   leading: NullableCircleAvatar(
     //     u.userProfilePictureUrl ?? "",
@@ -1337,17 +1405,17 @@ class _BodyPageState extends State<BodyPage> {
         UserPage.navigateWith(context, bloc, u);
       },
       child: Padding(
-        padding: const EdgeInsets.only(left: 16),
+        padding: EdgeInsets.only(left: responsive.w(16)),
         child: Column(
           children: [
             Container(
               // height: 72,
-              width: 364,
+              width: responsive.w(364),
               child: Row(
                 children: [
                   Container(
-                    height: 71,
-                    width: 71,
+                    height: responsive.h(71),
+                    width: responsive.w(71),
                     decoration: BoxDecoration(
                       color: Colors.pink[100],
                       borderRadius: BorderRadius.circular(35.5)
@@ -1359,9 +1427,9 @@ class _BodyPageState extends State<BodyPage> {
                       heroTag: u.userID ?? "",
                     ),
                   ),
-                  SizedBox(width: 16),
+                  SizedBox(width: responsive.w(16)),
                   Container(
-                    width: 242,
+                    width: responsive.w(242),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1371,10 +1439,10 @@ class _BodyPageState extends State<BodyPage> {
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
-                            fontSize: 20
+                            fontSize: responsive.sp(20)
                           ),
                         ),
-                        SizedBox(height: 4),
+                        SizedBox(height: responsive.h(4)),
                         Text(
                           u.getSubTitle() ?? "",
                           style: TextStyle(
@@ -1388,7 +1456,7 @@ class _BodyPageState extends State<BodyPage> {
                 ],
               ),
             ),
-            SizedBox(height: 16)
+            SizedBox(height: responsive.h(16))
           ],
         ),
       ),
@@ -1401,12 +1469,13 @@ class PhotoAlbumGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
+    final responsive = Responsive(context);
     int col,row;
     final displayImages=imageUrls.take(5).toList();
     final extraCount=imageUrls.length-5;
     return Container(
-      height: 190,
-      width: 380,
+      height: responsive.h(190),
+      width: responsive.w(380),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         //color: Colors.amber[200]
@@ -1422,7 +1491,7 @@ class PhotoAlbumGrid extends StatelessWidget {
                 fit: BoxFit.cover,
               )
             ),
-            SizedBox(width: 2),
+            SizedBox(width: responsive.w(2)),
             Expanded(
               flex: 2,
               child: Row(
@@ -1439,7 +1508,7 @@ class PhotoAlbumGrid extends StatelessWidget {
                                   Image.asset(
                                     displayImages[row*2 + col*1 +1],
                                     fit: BoxFit.cover,
-                                    height: 94.25,
+                                    height: responsive.h(94.25),
                                   ),
                                   if(col==1 && row==1)
                                     Positioned.fill(
@@ -1450,7 +1519,7 @@ class PhotoAlbumGrid extends StatelessWidget {
                                             "+${extraCount}",
                                             style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: 16,
+                                              fontSize: responsive.sp(16),
                                               fontWeight: FontWeight.w600
                                             ),
                                             ),
@@ -1463,14 +1532,14 @@ class PhotoAlbumGrid extends StatelessWidget {
                               
                             ),
                             if(col==0)
-                              SizedBox(height: 1.5)
+                              SizedBox(height: responsive.h(1.5))
                           ]
                         ],
                       )
                     ),
                     if(row==0)
                       SizedBox(
-                        width: 1.5,
+                        width: responsive.h(1.5),
                       )
                   ]
                 ],
