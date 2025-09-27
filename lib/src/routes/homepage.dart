@@ -1,6 +1,8 @@
 import 'dart:collection';
 
 import 'package:InstiApp/constants.dart';
+import 'package:InstiApp/src/routes/community.dart';
+import 'package:InstiApp/src/routes/communitypage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
@@ -16,6 +18,18 @@ import 'feedpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+
+class Responsive {
+  final BuildContext context;
+  final double baseWidth;  
+  final double baseHeight;
+
+  Responsive(this.context, {this.baseWidth = 411, this.baseHeight = 914});
+
+  double w(double px) => MediaQuery.of(context).size.width * (px / baseWidth);
+  double h(double px) => MediaQuery.of(context).size.height * (px / baseHeight);
+  double sp(double px) => w(px); // scale text with width
+}
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -56,7 +70,7 @@ class _HomepageState extends State<Homepage> {
   // String _dropdownDay='Mon';
   bool showQR=false;
   String selectedNavIcon='assets//homepage/icons/home.svg';
-  bool selectedIcon=false;
+  bool selectedIcon=true;
   bool firstBuild = true;
   bool error=false;
   bool loading=true;
@@ -116,6 +130,7 @@ class _HomepageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
     var bloc = BlocProvider.of(context)!.bloc;
     if (firstBuild) {
       bloc.updateHostels();
@@ -132,10 +147,12 @@ class _HomepageState extends State<Homepage> {
           ExplorePage(),
           if (currentpage == 'Feed')
             FeedPage(),
+          if(currentpage=='Community')
+            Communities(),
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 20),
+              padding: EdgeInsets.only(bottom: responsive.h(20)),
               child: navBar(),
             ),
           ),
@@ -146,6 +163,7 @@ class _HomepageState extends State<Homepage> {
   List<String> daysList=HostelMess.dayToName.values.map((d) => d.substring(0, 1)).toList();
   List<String> daysKeys=HostelMess.dayToName.values.map((d) => d.substring(0 )).toList();
   void _openFilterBottomSheet(List<Hostel> hostels){
+    final responsive = Responsive(context);
     String tempSelectedDay=_selectedDay;
     String tempSelectedHostel=_selectedHostel;
     showModalBottomSheet(
@@ -155,290 +173,294 @@ class _HomepageState extends State<Homepage> {
       builder: (BuildContext context){
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setModalState) {
-            return Container(
-              decoration: BoxDecoration(
-                color: Color(0xFFF6F6F6),
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(16)
-                )
-              ),
-              height: MediaQuery.of(context).size.height * 0.6632,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 24),
-                    child: Text(
-                      "Mess Menu for...",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700
+            return FractionallySizedBox(
+              heightFactor: 0.6632,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Color(0xFFF6F6F6),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(16)
+                  )
+                ),
+                // height: MediaQuery.of(context).size.height * responsive.h(0.6632),
+                // height: responsive.h(0.6632),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: responsive.w(16),vertical: responsive.h(24)),
+                      child: Text(
+                        "Mess Menu for...",
+                        style: TextStyle(
+                          fontSize: responsive.sp(20),
+                          fontWeight: FontWeight.w700
+                        ),
                       ),
                     ),
-                  ),
-                  Container(
-                    width: 412,
-                    height: 52,
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 129,
-                          height: 52,
-                          color: myConstants.instiappGrey,
-                          child: Stack(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(16, 16, 84, 15),
-                                child: Text(
-                                  "Day",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500
+                    Container(
+                      width: responsive.w(412),
+                      height: responsive.h(52),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: responsive.w(129),
+                            height: responsive.h(52),
+                            color: myConstants.instiappGrey,
+                            child: Stack(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(16), responsive.w(84), responsive.h(15)),
+                                  child: Text(
+                                    "Day",
+                                    style: TextStyle(
+                                      fontSize: responsive.sp(16),
+                                      fontWeight: FontWeight.w500
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Positioned(
-                                left: 0,
-                                right: 124,
-                                child: Container(
-                                  width: 4,
-                                  height: 52,
-                                  decoration: BoxDecoration(
-                                    color: myConstants.instiappBlue,
-                                    borderRadius: BorderRadius.horizontal(
-                                      right: Radius.circular(5)
-                                    )
-                                  ),
-                                )
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          width: 282,
-                          height: 52,
-                          color: myConstants.instiappGrey,
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(11,12,5,10),
-                            child: Row(
-                              children: [
-                                for(int i=0;i<daysList.length;i++) ...[
-                                  dayContainer(
-                                    daysList[i],
-                                    tempSelectedDay == daysKeys[i],
-                                    (){
-                                      setModalState((){
-                                        tempSelectedDay=daysKeys[i];
-                                      });
-                                    }
+                                Positioned(
+                                  left: responsive.w(0),
+                                  right: responsive.w(124),
+                                  child: Container(
+                                    width: responsive.w(4),
+                                    height: responsive.h(52),
+                                    decoration: BoxDecoration(
+                                      color: myConstants.instiappBlue,
+                                      borderRadius: BorderRadius.horizontal(
+                                        right: Radius.circular(5)
+                                      )
                                     ),
-                                  SizedBox(width: 8,)
-                                ]
-                                  
+                                  )
+                                )
                               ],
                             ),
                           ),
-                        )
-                      ],
+                          Container(
+                            width: responsive.w(282),
+                            height: responsive.h(52),
+                            color: myConstants.instiappGrey,
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(responsive.w(11), responsive.h(12), responsive.w(5), responsive.h(10)),
+                              child: Row(
+                                children: [
+                                  for(int i=0;i<daysList.length;i++) ...[
+                                    dayContainer(
+                                      daysList[i],
+                                      tempSelectedDay == daysKeys[i],
+                                      (){
+                                        setModalState((){
+                                          tempSelectedDay=daysKeys[i];
+                                        });
+                                      }
+                                      ),
+                                    SizedBox(width: responsive.w(8),)
+                                  ]
+                                    
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 16,),
-                  Container(
-                    width: 412,
-                    height: 348,
-                    child: Row(
-                      children: [
-                        Column(
-                          children: [
-                            Container(
-                              width: 125,
-                              height: 52,
-                              color: myConstants.instiappGrey,
-                              child: Stack(
+                    SizedBox(height: responsive.h(8),),
+                    Container(
+                      width: responsive.w(412),
+                      height: responsive.h(348),
+                      child: Row(
+                        children: [
+                          Column(
                             children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(16, 16, 61, 15),
-                                child: Text(
-                                  "Hostel",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500
+                              Container(
+                                width: responsive.w(125),
+                                height: responsive.h(52),
+                                color: myConstants.instiappGrey,
+                                child: Stack(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(16), responsive.w(51), responsive.h(15)),
+                                  child: Text(
+                                    "Hostel",
+                                    style: TextStyle(
+                                      fontSize: responsive.sp(16),
+                                      fontWeight: FontWeight.w500
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Positioned(
-                                left: 0,
-                                right: 120,
-                                child: Container(
-                                  width: 4,
-                                  height: 52,
-                                  decoration: BoxDecoration(
-                                    color: myConstants.instiappBlue,
-                                    borderRadius: BorderRadius.horizontal(
-                                      right: Radius.circular(5)
-                                    )
-                                  ),
+                                Positioned(
+                                  left: responsive.w(0),
+                                  right: responsive.w(120),
+                                  child: Container(
+                                    width: responsive.w(4),
+                                    height: responsive.h(52),
+                                    decoration: BoxDecoration(
+                                      color: myConstants.instiappBlue,
+                                      borderRadius: BorderRadius.horizontal(
+                                        right: Radius.circular(5)
+                                      )
+                                    ),
+                                  )
                                 )
+                              ],
+                            ),
+                              ),
+                              Container(
+                                width: responsive.w(125),
+                                height: responsive.h(296),
+                                
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFF6F6F6),
+                                  borderRadius: BorderRadius.horizontal(
+                                    right: Radius.circular(16)
+                                  )
+                                ),
+                                //child: Text("data"),
                               )
                             ],
                           ),
-                            ),
-                            Container(
-                              width: 125,
-                              height: 296,
-                              
-                              decoration: BoxDecoration(
-                                color: Color(0xFFF6F6F6),
-                                borderRadius: BorderRadius.horizontal(
-                                  right: Radius.circular(16)
-                                )
-                              ),
-                              //child: Text("data"),
-                            )
-                          ],
-                        ),
-                        Container(
-                          width: 286,
-                          height: 348,
-                          padding: EdgeInsets.only(top: 16,left: 20),
-                          color: myConstants.instiappGrey,
-                          child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ...hostels.map((h){
-                                  final value = h.shortName!;
-                                  final name=(value =='tansa'||value =='qip')
-                                  ? value
-                                  : 'Hostel ${value}';
-                                  final isSelected = tempSelectedHostel == h.shortName;
-                                  // return RadioListTile(
-                                  //   value: value, 
-                                  //   groupValue: _selectedHostel, 
-                                  //   onChanged: (newValue){
-                                  //     setModalState((){
-                                  //       _selectedHostel=newValue as String;
-                                  //     });
-                                  //   },
-                                  //   title: Text(
-                                  //     name,
-                                  //     style: TextStyle(
-                                  //       fontWeight: FontWeight.w500
-                                  //     ),
-                                  //   ),
-                                  //   activeColor: myConstants.instiappBlue,
-                                  //   contentPadding: EdgeInsets.zero,
-                                  //   dense: true,
-                                  //   visualDensity: VisualDensity(vertical: -3),
-                                  //   );
-                                  return Column(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: (){
-                                          setModalState((){
-                                             tempSelectedHostel = h.shortName!;
-                                          });
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              width: 16,
-                                              height: 16,
-                                              
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                  color: Color(0xFFD2D5DA),
-                                                  width: 1.5
-                                                )
-                                              ),
-                                              child: isSelected
-                                              ? Center(
-                                                child: Container(
-                                                  height: 14,
-                                                  width: 14,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: isSelected ? myConstants.instiappBlue: Colors.transparent,
-                                                  ),
-                                                  child: Center(
-                                                    child: Container(
-                                                      height: 6,
-                                                      width: 6,
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color: isSelected ? Colors.white: Colors.transparent,
+                          Container(
+                            width: responsive.w(286),
+                            height: responsive.h(348),
+                            padding: EdgeInsets.only(top: responsive.h(16),left: responsive.w(20)),
+                            color: myConstants.instiappGrey,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ...hostels.map((h){
+                                    final value = h.shortName!;
+                                    final name=(value =='tansa'||value =='qip')
+                                    ? value
+                                    : 'Hostel ${value}';
+                                    final isSelected = tempSelectedHostel == h.shortName;
+                                    // return RadioListTile(
+                                    //   value: value, 
+                                    //   groupValue: _selectedHostel, 
+                                    //   onChanged: (newValue){
+                                    //     setModalState((){
+                                    //       _selectedHostel=newValue as String;
+                                    //     });
+                                    //   },
+                                    //   title: Text(
+                                    //     name,
+                                    //     style: TextStyle(
+                                    //       fontWeight: FontWeight.w500
+                                    //     ),
+                                    //   ),
+                                    //   activeColor: myConstants.instiappBlue,
+                                    //   contentPadding: EdgeInsets.zero,
+                                    //   dense: true,
+                                    //   visualDensity: VisualDensity(vertical: -3),
+                                    //   );
+                                    return Column(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: (){
+                                            setModalState((){
+                                               tempSelectedHostel = h.shortName!;
+                                            });
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                width: responsive.w(16),
+                                                height: responsive.h(16),
+                                                
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(
+                                                    color: Color(0xFFD2D5DA),
+                                                    width: responsive.w(1.5)
+                                                  )
+                                                ),
+                                                child: isSelected
+                                                ? Center(
+                                                  child: Container(
+                                                    height: responsive.h(14),
+                                                    width: responsive.w(14),
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: isSelected ? myConstants.instiappBlue: Colors.transparent,
+                                                    ),
+                                                    child: Center(
+                                                      child: Container(
+                                                        height: responsive.h(6),
+                                                        width: responsive.w(6),
+                                                        decoration: BoxDecoration(
+                                                          shape: BoxShape.circle,
+                                                          color: isSelected ? Colors.white: Colors.transparent,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                              )
-                                              : null
-                                            ),
-                                            SizedBox(width: 12,),
-                                            Text(
-                                              name,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w500
+                                                )
+                                                : null
                                               ),
-                                            ),
-                                          ],
+                                              SizedBox(width: responsive.w(12),),
+                                              Text(
+                                                name,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      
-                                      SizedBox(height: 16,)
-                                    ],
-                                  );
-                                }).toList()
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 27),
-                  Container(
-                    padding: EdgeInsets.only(right: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        GestureDetector(
-                          onTap: (){
-                            Navigator.pop(context);
-                            setState(() {
-                              _selectedDay=tempSelectedDay;
-                              _selectedHostel=tempSelectedHostel;
-                            });
-                          },
-                          child: Container(
-                            height: 60,
-                            width: 165,
-                            decoration: BoxDecoration(
-                              image: const DecorationImage(
-                                  image: AssetImage(
-                                    "assets/buynsell/filterbutton.png"),
-                                    fit: BoxFit.cover,
+                                        
+                                        SizedBox(height: responsive.h(16),)
+                                      ],
+                                    );
+                                  }).toList()
+                                ],
                               ),
-                              color: myConstants.instiappDark,
-                              borderRadius: BorderRadius.circular(50)
                             ),
-                            child: Center(
-                              child: Text(
-                                "Apply",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: responsive.h(27)),
+                    Container(
+                      padding: EdgeInsets.only(right: responsive.w(16)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.pop(context);
+                              setState(() {
+                                _selectedDay=tempSelectedDay;
+                                _selectedHostel=tempSelectedHostel;
+                              });
+                            },
+                            child: Container(
+                              height: responsive.h(60),
+                              width: responsive.w(165),
+                              decoration: BoxDecoration(
+                                image: const DecorationImage(
+                                    image: AssetImage(
+                                      "assets/buynsell/filterbutton.png"),
+                                      fit: BoxFit.cover,
+                                ),
+                                color: myConstants.instiappDark,
+                                borderRadius: BorderRadius.circular(50)
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Apply",
+                                  style: TextStyle(
+                                    fontSize: responsive.sp(18),
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             );
           }
@@ -447,12 +469,13 @@ class _HomepageState extends State<Homepage> {
       );
   }
   Widget dayContainer(String day,bool isSelected, VoidCallback onTap){
+    final responsive = Responsive(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 30,
-        width: 30,
-        padding: EdgeInsets.symmetric(vertical: 3,horizontal: 7),
+        height: responsive.h(30),
+        width: responsive.w(30),
+        padding: EdgeInsets.symmetric(vertical: responsive.h(3),horizontal: responsive.w(7)),
         decoration: BoxDecoration(
           color: isSelected? myConstants.instiappBlue:Colors.white,
           borderRadius: BorderRadius.circular(8)
@@ -461,7 +484,7 @@ class _HomepageState extends State<Homepage> {
           child: Text(
             day,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: responsive.w(18),
               fontWeight: FontWeight.w600,
               color: isSelected? Colors.white:Colors.black
             ),
@@ -471,6 +494,7 @@ class _HomepageState extends State<Homepage> {
     );
   }
   Widget services(String name, String path, Map<String,dynamic> services_icon) {
+    final responsive = Responsive(context);
     return InkWell(
       onTap: () {
         if (name == "Buy & Sell") {
@@ -484,16 +508,16 @@ class _HomepageState extends State<Homepage> {
         }
       },
       child: Container(
-        height: 94,
-        width: 180,
+        height: responsive.h(94),
+        width: responsive.w(180),
         decoration: BoxDecoration(
             color: myConstants.instiappGrey,
             borderRadius: BorderRadius.circular(12)),
         child: Stack(
           children: [
             Positioned(
-                left: 12,
-                top: 12,
+                left: responsive.w(12),
+                top: responsive.h(12),
                 //right: 72,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -502,7 +526,7 @@ class _HomepageState extends State<Homepage> {
                       services_icon["Title"],
                       style: TextStyle(
                         color: const Color(0xFF0F1620),
-                        fontSize: 16,
+                        fontSize: responsive.sp(16),
                         fontFamily: 'DM Sans',
                         fontWeight: FontWeight.w700,
                       ),
@@ -511,18 +535,18 @@ class _HomepageState extends State<Homepage> {
                       services_icon["Subtitle"],
                       style: TextStyle(
                         color: Colors.grey[700],
-                        fontSize: 11,
+                        fontSize: responsive.sp(11),
                         fontWeight: FontWeight.w500
                       ),
                     )
                   ],
                 )),
             services_icon["Title"]=="Buy & Sell"? Positioned(
-              bottom: 12,
-              left: 12,
+              bottom: responsive.h(12),
+              left: responsive.w(12),
               child: Container(
-                width: 37,
-                height: 16,
+                width: responsive.w(37), 
+                height: responsive.h(16),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   color: myConstants.instiappBlue
@@ -532,7 +556,7 @@ class _HomepageState extends State<Homepage> {
                     "New!",
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 10,
+                      fontSize: responsive.sp(10),
                     ),
                   ),
                 ),
@@ -576,6 +600,7 @@ class _HomepageState extends State<Homepage> {
   }
 
   PreferredSizeWidget customAppBar() {
+    final responsive = Responsive(context);
     final bloc = BlocProvider.of(context)!.bloc;
 
     return AppBar(
@@ -584,7 +609,7 @@ class _HomepageState extends State<Homepage> {
       elevation: 0,
       flexibleSpace: SafeArea(
           child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+        padding: EdgeInsets.symmetric(horizontal: responsive.w(16), vertical: responsive.h(0)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -605,12 +630,12 @@ class _HomepageState extends State<Homepage> {
                     borderRadius: BorderRadius.circular(22),
                     child: Image.network(
                       user!.userProfilePictureUrl ?? '',
-                      width: 44,
-                      height: 44,
+                      width: responsive.w(44),
+                      height: responsive.h(44),
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => Icon(
                         Icons.person,
-                        size: 28,
+                        size: responsive.sp(28),
                         color: Colors.grey,
                       ),
                     ),
@@ -618,7 +643,7 @@ class _HomepageState extends State<Homepage> {
                 } else {
                   avatarContent = Icon(
                     Icons.person_outline,
-                    size: 28,
+                    size: responsive.sp(28),
                     color: Colors.red,
                   );
                 }
@@ -633,8 +658,8 @@ class _HomepageState extends State<Homepage> {
                     }
                   },
                   child: Container(
-                    width: 52,
-                    height: 52,
+                    width: responsive.w(52),
+                    height: responsive.h(52),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(22),
                       color: Colors.white,
@@ -652,60 +677,54 @@ class _HomepageState extends State<Homepage> {
               },
             ),
             Container(
-              width: 52,
-              height: 52,
+              width: responsive.w(52),
+              height: responsive.h(52),
               child: Stack(
                 children: [
-                  Positioned(
-                      left: 4,
-                      right: 4,
-                      top: 4,
-                      bottom: 4,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(22),
-                            image: DecorationImage(
-                                image: AssetImage(
-                                    'assets/homepage/images/instiappnew.png'),
-                                fit: BoxFit.cover)),
-                      ))
+                  Container(
+                    height: responsive.h(52),
+                    width: responsive.w(52),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(22),
+                        image: DecorationImage(
+                            image: AssetImage(
+                                'assets/homepage/images/instiappnew.png'),
+                            fit: BoxFit.cover)),
+                  )
                 ],
               ),
             ),
             Container(
-              width: 52,
-              height: 52,
+              width: responsive.w(52),
+              height: responsive.h(52),
               child: Stack(
                 children: [
-                  Positioned(
-                      left: 4,
-                      right: 4,
-                      top: 4,
-                      bottom: 4,
-                      child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(22),
-                              color: myConstants.instiappGrey),
-                          child: Stack(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          NotificationsPage()));
-                                },
-                                child: Center(
-                                  child: Container(
-                                    width: 24,
-                                    height: 24,
-                                    child: SvgPicture.asset(
-                                      'assets/homepage/icons/bell.svg',
-                                    ),
-                                  ),
+                  Container(
+                    height: responsive.h(52),
+                    width: responsive.w(52),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(22),
+                          color: myConstants.instiappGrey),
+                      child: Stack(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) =>
+                                      NotificationsPage()));
+                            },
+                            child: Center(
+                              child: Container(
+                                width: responsive.w(24),
+                                height: responsive.h(24),
+                                child: SvgPicture.asset(
+                                  'assets/homepage/icons/bell.svg',
                                 ),
-                              )
-                            ],
-                          )))
+                              ),
+                            ),
+                          )
+                        ],
+                      ))
                 ],
               ),
             ),
@@ -716,6 +735,7 @@ class _HomepageState extends State<Homepage> {
   }
 
   Widget Homepagewidget() {
+    final responsive = Responsive(context);
     var bloc = BlocProvider.of(context)!.bloc;
     return Scaffold(
       backgroundColor: myConstants.instiappWhite,
@@ -727,19 +747,19 @@ class _HomepageState extends State<Homepage> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            padding: EdgeInsets.only(bottom: 100),
+            padding: EdgeInsets.only(bottom: responsive.h(100)),
             //margin: EdgeInsets.only(left: 10,right: 0),
             child: Column(
               children: [
-                SizedBox(height: 20),
+                SizedBox(height: responsive.h(20)),
                 Dash(
                   direction: Axis.horizontal,
-                  length: 368,
+                  length: responsive.w(368),
                   dashLength: 6,
                   dashGap: 7,
                   dashColor: Color(0xFFDADADA),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: responsive.h(20)),
                 Stack(
                   children: [
                     StreamBuilder<UnmodifiableListView<Hostel>>(
@@ -750,7 +770,7 @@ class _HomepageState extends State<Homepage> {
                       }
                     final hostels = snapshot.data!;
                     return Padding(
-                      padding: const EdgeInsets.only(left: 21,right: 22),
+                      padding: EdgeInsets.only(left: responsive.w(21),right: responsive.w(22)),
                       child: qrClosed(hostels),
                     );
                     },
@@ -771,7 +791,7 @@ class _HomepageState extends State<Homepage> {
                       child: showQR
                       ? Padding(
                         key: ValueKey('qrOpen'),
-                        padding: const EdgeInsets.only(left: 14,right: 13),
+                        padding: EdgeInsets.only(left: responsive.w(14),right: responsive.w(13)),
                         child: qrOpen(
                           loading: loading,
                           error: error,
@@ -783,7 +803,7 @@ class _HomepageState extends State<Homepage> {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 21,right: 22),
+                  padding: EdgeInsets.only(left: responsive.w(21),right: responsive.w(22)),
                   child: servicesWidget(),
                 ),
               ], 
@@ -795,6 +815,7 @@ class _HomepageState extends State<Homepage> {
   }
 
   Widget servicesWidget() {
+    final responsive = Responsive(context);
     return Column(
       children: [
                 Row(
@@ -803,14 +824,14 @@ class _HomepageState extends State<Homepage> {
                       Text(
                         'Services',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: responsive.sp(20),
                           fontFamily: 'DM Sans',
                           fontWeight: FontWeight.w700
                         ),
                         ),
                     ],
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: responsive.h(16)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -824,7 +845,7 @@ class _HomepageState extends State<Homepage> {
                       "Positions": [97.0,14.5,-11.0,-7.8,-7.81]
                     }
                     ),
-                    SizedBox(width: 8),
+                    SizedBox(width: responsive.w(8)),
                     services("Maps","maps_new",
                     {
                       "Title": "Maps",
@@ -837,7 +858,7 @@ class _HomepageState extends State<Homepage> {
                     )
                   ],
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: responsive.h(8)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -851,7 +872,7 @@ class _HomepageState extends State<Homepage> {
                       "Positions": [107.46,23.0,-1.0,-1.0,0.0]
                     }
                     ),
-                    SizedBox(width: 8),
+                    SizedBox(width: responsive.w(8)),
                     services("Quick Links","blogs_new",
                     {
                       "Title": "Quick Links",
@@ -869,9 +890,10 @@ class _HomepageState extends State<Homepage> {
   }
 
   Widget navBar() {
+    final responsive = Responsive(context);
     return Container(
-      height: 80,
-      width: 396,
+      height: responsive.h(80),
+      width: responsive.w(396),
       decoration: BoxDecoration(
           color: myConstants.instiappDark,
           borderRadius: BorderRadius.circular(50)),
@@ -883,7 +905,7 @@ class _HomepageState extends State<Homepage> {
           String path = entry.value;
           selectedIcon = path == selectedNavIcon;
           return SizedBox(
-            width: 87,
+            width: responsive.w(87),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -924,16 +946,16 @@ class _HomepageState extends State<Homepage> {
                   child: Column(
                     children: [
                       Container(
-                        width: 63,
-                        height: 33,
+                        width: responsive.w(63),
+                        height: responsive.h(33),
                         decoration: BoxDecoration(
                           color: selectedIcon ? myConstants.instiappBlue : Colors.transparent,
                           borderRadius: BorderRadius.circular(79.67)
                         ),
                         child: Center(
                           child: Container(
-                            width: 24,
-                            height: 24,
+                            width: responsive.w(24),
+                            height: responsive.w(24),
                             child: SvgPicture.asset(
                               path,
                               colorFilter: ColorFilter.mode(
@@ -943,7 +965,7 @@ class _HomepageState extends State<Homepage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 2),
+                      SizedBox(height: responsive.h(2)),
                       Text(
                         label,
                         style: TextStyle(
@@ -967,21 +989,22 @@ class _HomepageState extends State<Homepage> {
     required bool error,
     required String qrString,
   }) {
+    final responsive = Responsive(context);
     return Stack(
       children: [
         Center(
           child: SvgPicture.asset(
             'assets/homepage/icons/bigborder.svg',
-            height: 380,
-            width: 382,
+            height: responsive.h(380),
+            width: responsive.w(382),
             fit: BoxFit.fill
             ),
         ),
         Container(
-        width: 380,
-        height: 380,
+        width: responsive.w(380),
+        height: responsive.h(380),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(16), responsive.w(16), responsive.h(0)),
           child: Column(
             //mainAxisAlignment: MainAxisAlignment.start,            
             children: [
@@ -994,16 +1017,16 @@ class _HomepageState extends State<Homepage> {
                       generateQR();
                     },
                     child: Container(
-                      width: 50,
-                      height: 50,
+                      width: responsive.w(50),
+                      height: responsive.h(50),
                       decoration: BoxDecoration(
                         color: const Color(0xFFEBEBEB),
                         borderRadius: BorderRadius.circular(25),
                       ),
                       child: Center(
                         child: SizedBox(
-                          width: 24,
-                          height: 24,
+                          width: responsive.w(24),
+                          height: responsive.h(24),
                           child: SvgPicture.asset(
                               'assets/homepage/icons/refresh.svg'),
                         ),
@@ -1014,7 +1037,7 @@ class _HomepageState extends State<Homepage> {
                     'My QR',
                     style: TextStyle(
                       color: myConstants.instiappBlue,
-                      fontSize: 20,
+                      fontSize: responsive.sp(20),
                       fontFamily: 'DM Sans',
                       fontWeight: FontWeight.w900,
                     ),
@@ -1026,16 +1049,16 @@ class _HomepageState extends State<Homepage> {
                       });
                     },
                     child: Container(
-                      width: 50,
-                      height: 50,
+                      width: responsive.w(50),
+                      height: responsive.h(50),
                       decoration: BoxDecoration(
                         color: const Color(0xFFEBEBEB),
                         borderRadius: BorderRadius.circular(25),
                       ),
                       child: Center(
                         child: SizedBox(
-                          width: 29,
-                          height: 29,
+                          width: responsive.w(29),
+                          height: responsive.h(29),
                           child: SvgPicture.asset(
                               'assets/homepage/icons/arrow_down.svg'),
                         ),
@@ -1046,28 +1069,32 @@ class _HomepageState extends State<Homepage> {
               ),
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 26, bottom: 28),
+                  padding: EdgeInsets.only(top: responsive.h(26), bottom: responsive.h(28)),
                   child: SizedBox(
-                    width: 197,
-                    height: 197,
+                    width: responsive.w(197),
+                    height: responsive.h(197),
                     child: loading
                       ? CircularProgressIndicator()
                       :error
-                        ?Text("Please log in to view QR")
+                        ?Center(child: Text("Please log in to view QR"))
                         : QrImageView(
                           data: '${qrString}',
-                          size: 197,
+                          size: responsive.sp(197),
                           embeddedImage: AssetImage('assets/buynsell/DevcomLogo.png'),
                           ),
                   ),
                 ),
               ),
               Center(
-                child: Text(
+                child: loading
+                ? CircularProgressIndicator()
+                : error
+                ? SizedBox()
+                : Text(
                   'Mess • Gym • Swimming & more...',
                   style: TextStyle(
                     color: const Color(0xFF15202D),
-                    fontSize: 14,
+                    fontSize: responsive.sp(14),
                     fontFamily: 'DM Sans',
                     fontWeight: FontWeight.w500,
                   ),
@@ -1082,6 +1109,7 @@ class _HomepageState extends State<Homepage> {
   }
 
   Widget qrClosed(List<Hostel> hostels) {
+  final responsive = Responsive(context);
   return Column(
     children: [
       Row(
@@ -1091,7 +1119,7 @@ class _HomepageState extends State<Homepage> {
             'Mess Menu',
             style: TextStyle(
               color: const Color(0xFF15202D),
-              fontSize: 20,
+              fontSize: responsive.sp(20),
               fontFamily: 'DM Sans',
               fontWeight: FontWeight.w700,
             ),
@@ -1101,17 +1129,17 @@ class _HomepageState extends State<Homepage> {
               _openFilterBottomSheet(hostels);
             },
             child: Container(
-              width: 94,
-              height: 40,
+              width: responsive.w(94),
+              height: responsive.h(40),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(100),
                 color: myConstants.instiappGrey,
                 border: Border.all(
                   color: Color(0xFF7E8287),
-                  width: 1
+                  width: responsive.w(1)
                 )
               ),
-              padding: EdgeInsets.fromLTRB(16, 11, 4, 10),
+              padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(11), responsive.w(4), responsive.h(10)),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -1202,13 +1230,13 @@ class _HomepageState extends State<Homepage> {
           // )
         ],
       ),
-      SizedBox(height: 20),
+      SizedBox(height: responsive.h(20)),
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: 110,
-            height: 184,
+            width: responsive.w(110),
+            height: responsive.h(184),
             child: Column(
               children: [
                 for (int i = 0; i < meals.length; i++) ...[
@@ -1219,8 +1247,8 @@ class _HomepageState extends State<Homepage> {
                       });
                     },
                     child: Container(
-                      height: 40,
-                      width: 120,
+                      height: responsive.h(40),
+                      width: responsive.w(120),
                       decoration: BoxDecoration(
                         color: selectedMeal == i
                             ? myConstants.instiappBlue
@@ -1236,21 +1264,21 @@ class _HomepageState extends State<Homepage> {
                                 : Color(0xCC0F1620),
                             fontFamily: 'DM Sans',
                             fontWeight: FontWeight.w500,
-                            fontSize: 14,
+                            fontSize: responsive.sp(14),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  if (i != meals.length - 1) SizedBox(height: 8),
+                  if (i != meals.length - 1) SizedBox(height: responsive.h(8)),
                 ],
               ],
             ),
           ),
-          SizedBox(width: 8),
+          SizedBox(width: responsive.w(8)),
           SizedBox(
-            width: 250,
-            height: 184,
+            width: responsive.w(250),
+            height: responsive.h(184),
             child: Container(
               padding: EdgeInsets.all(4),
               decoration: BoxDecoration(
@@ -1263,8 +1291,8 @@ class _HomepageState extends State<Homepage> {
                 children: [
                   Container(
                     padding: EdgeInsets.all(16),
-                    width: 242,
-                    height: 129,
+                    width: responsive.w(242),
+                    height: responsive.h(129),
                     decoration: BoxDecoration(
                       color: myConstants.instiappWhite,
                       borderRadius: BorderRadius.circular(12),
@@ -1274,17 +1302,17 @@ class _HomepageState extends State<Homepage> {
                         _mealString(hostels),
                         style: TextStyle(
                           color: const Color(0xFF1B3252),
-                          fontSize: 14,
+                          fontSize: responsive.sp(14),
                           fontFamily: 'DM Sans',
                           fontWeight: FontWeight.w500,
-                          height: 1.31,
+                          height: responsive.h(1.31),
                         ),
                       ),
                     ),
                   ),
                   Container(
                     padding:
-                        EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        EdgeInsets.symmetric(vertical: responsive.h(8), horizontal: responsive.w(18)),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -1292,19 +1320,19 @@ class _HomepageState extends State<Homepage> {
                           mealTime[selectedMeal],
                           style: TextStyle(
                             color: myConstants.instiappWhite,
-                            fontSize: 14,
+                            fontSize: responsive.sp(14),
                             fontFamily: 'DM Sans',
                             fontWeight: FontWeight.w700,
                           ),
                         ),
                         Container(
-                          width: 40,
-                          height: 30,
+                          width: responsive.w(40),
+                          height: responsive.h(30),
                           decoration: ShapeDecoration(
                             color: Colors.white,
                             shape: RoundedRectangleBorder(
                               side: BorderSide(
-                                  width: 1, color: Colors.white),
+                                  width: responsive.w(1), color: Colors.white),
                               borderRadius: BorderRadius.circular(80),
                             ),
                           ),
@@ -1318,15 +1346,15 @@ class _HomepageState extends State<Homepage> {
           ),
         ],
       ),
-      SizedBox(height: 20),
+      SizedBox(height: responsive.h(20)),
       Dash(
         direction: Axis.horizontal,
-        length: 368,
+        length: responsive.w(368),
         dashLength: 6,
         dashGap: 7,
         dashColor: Color(0xFFDADADA),
       ),
-      SizedBox(height: 20),
+      SizedBox(height: responsive.h(20)),
       GestureDetector(
         onTap: () {
           setState(() {
@@ -1334,19 +1362,19 @@ class _HomepageState extends State<Homepage> {
           });
         },
         child: Container(
-          height: 96,
-          width: 380,
+          height: responsive.h(96),
+          width: responsive.w(380),
           child: Stack(
             children: [
               SvgPicture.asset(
                 'assets/homepage/icons/border.svg',
-                width: 368,
+                width: responsive.w(368),
                 fit: BoxFit.fill,
                 ),
               Container(
-              height: 96,
-              width: 368,
-              padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+              height: responsive.h(96),
+              width: responsive.w(368),
+              padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(8), responsive.w(16), responsive.h(8)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -1358,7 +1386,7 @@ class _HomepageState extends State<Homepage> {
                         'My QR',
                         style: TextStyle(
                           color: Color(0xFF275489),
-                          fontSize: 20,
+                          fontSize: responsive.sp(20),
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -1366,7 +1394,7 @@ class _HomepageState extends State<Homepage> {
                         'Mess • Gym • Swimming & more...',
                         style: TextStyle(
                           color: const Color(0xFF15202D),
-                          fontSize: 14,
+                          fontSize: responsive.sp(14),
                           fontFamily: 'DM Sans',
                           fontWeight: FontWeight.w500,
                         ),
@@ -1374,8 +1402,8 @@ class _HomepageState extends State<Homepage> {
                     ],
                   ),
                   Container(
-                    height: 75,
-                    width: 75,
+                    height: responsive.h(75),
+                    width: responsive.w(75),
                     child: SvgPicture.asset('assets/homepage/icons/qr.svg'),
                   ),
                 ],
@@ -1385,15 +1413,15 @@ class _HomepageState extends State<Homepage> {
           ),
         ),
       ),
-      SizedBox(height: 20),
+      SizedBox(height: responsive.h(20)),
       Dash(
         direction: Axis.horizontal,
-        length: 368,
+        length: responsive.w(368),
         dashLength: 6,
         dashGap: 7,
         dashColor: Color(0xFFDADADA),
       ),
-      SizedBox(height: 20),
+      SizedBox(height: responsive.h(20)),
     ],
   );
 } 
