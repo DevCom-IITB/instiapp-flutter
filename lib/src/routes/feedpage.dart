@@ -39,6 +39,7 @@ class _FeedPageState extends State<FeedPage> {
     _searchController.dispose();
     super.dispose();
   }
+
   FocusNode _focusNode = FocusNode();
 
   @override
@@ -58,7 +59,7 @@ class _FeedPageState extends State<FeedPage> {
       body: SafeArea(
         child: GestureDetector(
           onTap: () {
-              _focusNode.unfocus();
+            _focusNode.unfocus();
           },
           child: RefreshIndicator(
             onRefresh: () => bloc.updateEvents(),
@@ -68,7 +69,9 @@ class _FeedPageState extends State<FeedPage> {
                   child: Column(children: [
                     Center(
                       child: Container(
-                          padding: EdgeInsets.only(top: Responsive.height(10.5, context), bottom: Responsive.height(10.5, context)),
+                          padding: EdgeInsets.only(
+                              top: Responsive.height(10.5, context),
+                              bottom: Responsive.height(10.5, context)),
                           child: Text.rich(
                             TextSpan(
                               children: [
@@ -104,60 +107,60 @@ class _FeedPageState extends State<FeedPage> {
                       dashColor: Color(0xFFDADADA),
                     ),
                     SizedBox(height: Responsive.height(20, context)),
-                    Container(
-                      margin: EdgeInsets.only(left: Responsive.width(16, context), right: Responsive.width(16, context)),
-                      height: Responsive.height(53, context),
-                      padding: EdgeInsets.only(
-                          left: Responsive.width(14, context), right: Responsive.width(14, context), top: Responsive.height(13, context), bottom: Responsive.height(13, context)),
-                      decoration: BoxDecoration(
-                        image: const DecorationImage(
-                          image: AssetImage('assets/blogs/searchbar.png'),
-                          fit: BoxFit.cover,
-                        ),
-                        borderRadius: BorderRadius.circular(Responsive.height(25, context)),
-                      ),
-                      child: Row(
-                        children: [
-                          Image(
-                            image: AssetImage('assets/blogs/search.png'),
-                            height: Responsive.height(24, context),
-                            width: Responsive.width(24, context),
-                          ),
-                          SizedBox(width: Responsive.height(20,context)),
-                          Expanded(
-                            child: TextField(
-                              focusNode: _focusNode,
-                              controller: _searchController,
-                              style: TextStyle(
-                                fontSize: Responsive.text(16, context),
-                                color: Color.fromRGBO(0, 0, 0, 0.8),
-                                fontFamily: 'DM Sans',
-                              ),
-                              decoration: InputDecoration(
-                                hintText: 'Search events...',
-                                hintStyle: TextStyle(
-                                  fontSize: Responsive.text(16, context),
-                                  color: Color.fromRGBO(0, 0, 0, 0.4),
-                                  fontFamily: 'DM Sans',
-                                ),
-                                border: InputBorder.none,
-                                isDense: true,
-                                contentPadding: EdgeInsets.zero,
-                              ),
-                              onChanged: (value) {
-                                setState(() {
-                                  _searchQuery = value.trim().toLowerCase();
-                                });
-                              },
-                              // autofocus: true,
-                              maxLines: 1,
-                            ),
-                          ),
-                          SizedBox(width: Responsive.width(20, context)),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: Responsive.height(20, context)),
+                    // Container(
+                    //   margin: EdgeInsets.only(left: Responsive.width(16, context), right: Responsive.width(16, context)),
+                    //   height: Responsive.height(53, context),
+                    //   padding: EdgeInsets.only(
+                    //       left: Responsive.width(14, context), right: Responsive.width(14, context), top: Responsive.height(13, context), bottom: Responsive.height(13, context)),
+                    //   decoration: BoxDecoration(
+                    //     image: const DecorationImage(
+                    //       image: AssetImage('assets/blogs/searchbar.png'),
+                    //       fit: BoxFit.cover,
+                    //     ),
+                    //     borderRadius: BorderRadius.circular(Responsive.height(25, context)),
+                    //   ),
+                    //   child: Row(
+                    //     children: [
+                    //       Image(
+                    //         image: AssetImage('assets/blogs/search.png'),
+                    //         height: Responsive.height(24, context),
+                    //         width: Responsive.width(24, context),
+                    //       ),
+                    //       SizedBox(width: Responsive.height(20,context)),
+                    //       Expanded(
+                    //         child: TextField(
+                    //           focusNode: _focusNode,
+                    //           controller: _searchController,
+                    //           style: TextStyle(
+                    //             fontSize: Responsive.text(16, context),
+                    //             color: Color.fromRGBO(0, 0, 0, 0.8),
+                    //             fontFamily: 'DM Sans',
+                    //           ),
+                    //           decoration: InputDecoration(
+                    //             hintText: 'Search events...',
+                    //             hintStyle: TextStyle(
+                    //               fontSize: Responsive.text(16, context),
+                    //               color: Color.fromRGBO(0, 0, 0, 0.4),
+                    //               fontFamily: 'DM Sans',
+                    //             ),
+                    //             border: InputBorder.none,
+                    //             isDense: true,
+                    //             contentPadding: EdgeInsets.zero,
+                    //           ),
+                    //           onChanged: (value) {
+                    //             setState(() {
+                    //               _searchQuery = value.trim().toLowerCase();
+                    //             });
+                    //           },
+                    //           // autofocus: true,
+                    //           maxLines: 1,
+                    //         ),
+                    //       ),
+                    //       SizedBox(width: Responsive.width(20, context)),
+                    //     ],
+                    //   ),
+                    // ),
+                    // SizedBox(height: Responsive.height(20, context)),
                     // Container(
                     //     margin: EdgeInsets.symmetric(horizontal: 16),
                     //     child: Row(
@@ -249,8 +252,8 @@ class _FeedPageState extends State<FeedPage> {
                       if (filteredEvents.length > 0) {
                         return SliverList(
                           delegate: SliverChildBuilderDelegate(
-                              (context, index) =>
-                                  Feedpost(context, bloc, filteredEvents[index]),
+                              (context, index) => Feedpost(
+                                  context, bloc, filteredEvents[index]),
                               childCount: filteredEvents.length),
                         );
                       } else {
@@ -296,6 +299,7 @@ String formatTime(String timeStr) {
 }
 
 Widget Feedpost(BuildContext context, InstiAppBloc bloc, Event event) {
+  DateTime now = DateTime.now();
   return InkWell(
     onTap: () {
       EventPage.navigateWith(
@@ -305,7 +309,10 @@ Widget Feedpost(BuildContext context, InstiAppBloc bloc, Event event) {
       );
     },
     child: Container(
-        margin: EdgeInsets.only(left: Responsive.width(16, context), right: Responsive.width(16, context), bottom: Responsive.height(12, context)),
+        margin: EdgeInsets.only(
+            left: Responsive.width(16, context),
+            right: Responsive.width(16, context),
+            bottom: Responsive.height(12, context)),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Responsive.height(16, context)),
             color: Color.fromRGBO(239, 239, 239, 1)),
@@ -323,7 +330,7 @@ Widget Feedpost(BuildContext context, InstiAppBloc bloc, Event event) {
                     "",
                 width: double.infinity,
                 height: Responsive.height(475, context),
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
                 placeholder: (context, url) =>
                     Center(child: CircularProgressIndicator()),
                 errorWidget: (context, url, error) => Icon(Icons.error),
@@ -343,14 +350,16 @@ Widget Feedpost(BuildContext context, InstiAppBloc bloc, Event event) {
                 children: [
                   SizedBox(width: Responsive.width(16, context)),
                   ClipRRect(
-                      borderRadius: BorderRadius.circular(Responsive.height(50, context)),
+                      borderRadius:
+                          BorderRadius.circular(Responsive.height(50, context)),
                       child: CachedNetworkImage(
                         imageUrl: event.eventBodies?[0].bodyImageURL ?? "",
                         width: Responsive.width(28, context),
                         height: Responsive.height(28, context),
                         fit: BoxFit.cover,
-                        errorWidget: (context, error, stackTrace) =>
-                            Icon(Icons.groups_2_outlined, size: Responsive.height(24, context)),
+                        errorWidget: (context, error, stackTrace) => Icon(
+                            Icons.groups_2_outlined,
+                            size: Responsive.height(24, context)),
                       )),
                   SizedBox(width: Responsive.width(16, context)),
                   Text(
@@ -367,7 +376,10 @@ Widget Feedpost(BuildContext context, InstiAppBloc bloc, Event event) {
               )),
           Container(
             width: double.infinity,
-            margin: EdgeInsets.only(left: Responsive.width(16, context), top: Responsive.height(16, context), right: Responsive.width(16, context)),
+            margin: EdgeInsets.only(
+                left: Responsive.width(16, context),
+                top: Responsive.height(16, context),
+                right: Responsive.width(16, context)),
             child: Text(
               (event.eventStartTime != null
                       ? formatDate(event.eventStartTime ?? "") +
@@ -377,7 +389,17 @@ Widget Feedpost(BuildContext context, InstiAppBloc bloc, Event event) {
                               : '')
                       : 'Unknown Date') +
                   ', ' +
-                  formatTime(event.eventStartTime ?? ''),
+                  formatTime(event.eventStartTime ?? '') +
+                  (event.eventStartTime != null
+                      ? (now.isBefore(DateTime.parse(event.eventStartTime!))
+                          ? ' | Upcoming'
+                          : (event.eventEndTime != null
+                              ? (now.isAfter(
+                                      DateTime.parse(event.eventEndTime!))
+                                  ? ' | Ended'
+                                  : ' | Ongoing')
+                              : ' | Ended'))
+                      : ''),
               style: TextStyle(
                 fontSize: Responsive.text(12, context),
                 fontWeight: FontWeight.w700,
@@ -388,7 +410,10 @@ Widget Feedpost(BuildContext context, InstiAppBloc bloc, Event event) {
           ),
           Container(
             width: double.infinity,
-            margin: EdgeInsets.only(left: Responsive.width(16, context), top: Responsive.height(8, context), right: Responsive.width(16, context)),
+            margin: EdgeInsets.only(
+                left: Responsive.width(16, context),
+                top: Responsive.height(8, context),
+                right: Responsive.width(16, context)),
             child: Text(
               event.eventName ?? "",
               style: TextStyle(
