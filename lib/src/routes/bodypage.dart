@@ -67,7 +67,9 @@ class _BodyPageState extends State<BodyPage> {
   Constants myConstants = Constants();
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   Body? body;
-  bool showLinks = false;
+  bool isProfileClicked=false;
+  bool isAlbumClicked=false;
+  bool showLinks=false;
   bool loadingFollow = false;
   List<String> imageUrls=['assets/explore_new/images/image1.png',
                           'assets/explore_new/images/image2.png',
@@ -80,23 +82,22 @@ class _BodyPageState extends State<BodyPage> {
   List<String> linkLabel=["Website","Whatsapp Group","Instagram"];
   List<String> link=["bodyWebsiteURL","bodyWhatsappGroupURL",];
   Widget clubQuickLinkContainer(String icon, String label){
-    final responsive = Responsive(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
           children: [
             Container(
-              height: responsive.h(24),
-              width: responsive.w(24),
+              height: 24,
+              width: 24,
               child: SvgPicture.asset('assets/explore_new/${icon}.svg'),
             ),
-            SizedBox(width: responsive.w(9)),
+            SizedBox(width: 9),
             Text(
               label,
               style: TextStyle(
               color: Colors.white,
-              fontSize: responsive.sp(16),
+              fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -126,8 +127,8 @@ class _BodyPageState extends State<BodyPage> {
             }
           },
           child: Container(
-            height: responsive.h(24),
-            width: responsive.w(24),
+            height: 24,
+            width: 24,
             child: SvgPicture.asset('assets/quicklinks/icons/external_link.svg'),
           ),
         ),
@@ -164,8 +165,9 @@ class _BodyPageState extends State<BodyPage> {
     final responsive = Responsive(context);
     final parent = body?.bodyParents?.first;
     final imageUrl = parent?.bodyImageURL;
-    final title = parent?.bodyName;
-    Map<String, String> parentBody = {
+    final title=parent?.bodyName;
+    Constants myConstants=Constants();
+    Map<String,String> parentBody = {
       "Culturals@IITB": "ICC",
       "IITB Sports": "ISC",
       "Tech@IITB": "ITC",
@@ -272,7 +274,7 @@ class _BodyPageState extends State<BodyPage> {
                                     },
                                     child: Container(
                                       width: double.infinity,
-                                      height: responsive.h(200),
+                                      height: 200,
                                       decoration: BoxDecoration(
                                         color: Colors.grey.shade300,
                                         //borderRadius: BorderRadius.circular(40),
@@ -281,19 +283,19 @@ class _BodyPageState extends State<BodyPage> {
                                             image:
                                                 // NetworkImage(body!.bodyImageURL!),
                                                 AssetImage(
-                                                    'assets/explore/symphony.png'),
+                                                  'assets/explore/symphony.png'
+                                                ),
                                             fit: BoxFit.cover,
                                           )
                                         : const DecorationImage(
-                                            image:
-                                                AssetImage('assets/photo.png'),
+                                            image: AssetImage('assets/photo.png'),
                                             fit: BoxFit.cover,
                                           ),
                                       ),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(left: responsive.w(12)),
+                                    padding: const EdgeInsets.only(left: 16,),
                                     child: GestureDetector(
                                       onTap: (){
                                         Navigator.of(context).pop();
@@ -307,8 +309,8 @@ class _BodyPageState extends State<BodyPage> {
                                         ),
                                         child: Center(
                                           child: Container(
-                                            height: responsive.h(24),
-                                            width: responsive.w(24),
+                                            height: 24,
+                                            width: 24,
                                             child: SvgPicture.asset('assets/quicklinks/icons/arrow_left.svg'),
                                           ),
                                         ),
@@ -334,10 +336,10 @@ class _BodyPageState extends State<BodyPage> {
                                   children: [
                                     // Rotated background image
                                     Positioned(
-                                      left: responsive.w(-16),
+                                      left: -16,
                                       child: SizedBox(
-                                        width: responsive.w(105),
-                                        height: responsive.h(199),
+                                        width: 105,
+                                        height: 199,
                                         child: Transform.rotate(
                                           angle:
                                               0, // -180 degrees in radians
@@ -350,7 +352,7 @@ class _BodyPageState extends State<BodyPage> {
                                     ),
                           
                                     Padding(
-                                      padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(22), responsive.w(16), responsive.h(22)),
+                                      padding: EdgeInsets.fromLTRB(16, 22, 16, 22),
                                       child: Row(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
@@ -380,7 +382,7 @@ class _BodyPageState extends State<BodyPage> {
                                               ),
                                             ),
                                           ),
-                                          SizedBox(width: responsive.w(20)),
+                                          const SizedBox(width: 20),
                                                               
                                           // Profile Info
                                           Expanded(
@@ -392,22 +394,22 @@ class _BodyPageState extends State<BodyPage> {
                                               children: [
                                                 Text(
                                                   body?.bodyName ?? 'Symphony',
-                                                  style: TextStyle(
-                                                    fontSize: responsive.sp(24),
+                                                  style: const TextStyle(
+                                                    fontSize: 24,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.white,
                                                   ),
                                                 ),
-                                                SizedBox(height: responsive.h(6)),
+                                                const SizedBox(height: 6),
                                                 Text(
                                                   body?.bodyShortDescription ??
                                                       'Music Club of IITB',
                                                   style:TextStyle(
-                                                    fontSize: responsive.sp(16),
+                                                    fontSize: 16,
                                                     color: myConstants.instiappGrey,
                                                   ),
                                                 ),
-                                                SizedBox(height: responsive.h(6)),
+                                                const SizedBox(height: 6),
                                                 RichText(
                                                   text: TextSpan(
                                                     children: [
@@ -416,8 +418,8 @@ class _BodyPageState extends State<BodyPage> {
                                                                 ?.bodyFollowersCount
                                                                 ?.toString() ??
                                                             '422'),
-                                                        style: TextStyle(
-                                                          fontSize: responsive.sp(16),
+                                                        style: const TextStyle(
+                                                          fontSize: 16,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color: Colors.white,
@@ -426,7 +428,7 @@ class _BodyPageState extends State<BodyPage> {
                                                       TextSpan(
                                                         text: ' Senti',
                                                         style: TextStyle(
-                                                          fontSize: responsive.sp(16),
+                                                          fontSize: 16,
                                                           color: myConstants.instiappGrey,
                                                           fontWeight:
                                                               FontWeight.normal,
@@ -439,8 +441,8 @@ class _BodyPageState extends State<BodyPage> {
                                             ),
                                           ),
                                           Container(
-                                            height: responsive.h(35),
-                                            padding: EdgeInsets.symmetric(horizontal: responsive.w(8), vertical: responsive.h(6)),
+                                            height: 35,
+                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                             decoration: BoxDecoration(
                                               color: Color(0xFF15263C),
                                               borderRadius: BorderRadius.circular(8)
@@ -449,8 +451,8 @@ class _BodyPageState extends State<BodyPage> {
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Container(
-                                                  height: responsive.h(20),
-                                                  width: responsive.w(20),
+                                                  height: 20,
+                                                  width: 20,
                                                   decoration: BoxDecoration(
                                                     // color: Colors.amber[100],
                                                     borderRadius: BorderRadius.circular(10),
@@ -465,11 +467,11 @@ class _BodyPageState extends State<BodyPage> {
                                                       )
                                                   ),
                                                 ),
-                                                SizedBox(width: responsive.w(8)),
+                                                SizedBox(width: 8,),
                                                 Text(
                                                   parentBody[title ?? ""] ?? "",
                                                   style: TextStyle(
-                                                    fontSize: responsive.sp(14),
+                                                    fontSize: 14,
                                                     fontWeight: FontWeight.w700,
                                                     color: const Color(0xFFF6F6F6)
                                                   ),
@@ -486,7 +488,7 @@ class _BodyPageState extends State<BodyPage> {
                             ],
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(vertical: responsive.h(16),horizontal: responsive.w(16)),
+                            padding: const EdgeInsets.all(16),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -520,7 +522,7 @@ class _BodyPageState extends State<BodyPage> {
                                 //     ),
                                 //   ],
                                 // ),
-                                SizedBox(height: responsive.h(24)),
+                                const SizedBox(height: 24),
                                 DefaultTabController(
                                   length: 3,
                                   child: Column(
@@ -532,7 +534,7 @@ class _BodyPageState extends State<BodyPage> {
                                             left: 0,
                                             right: 0,
                                             child: Container(
-                                              height: responsive.h(1.5),
+                                              height: 1.5,
                                               color: Color(0xFFD0D5DD), // light grey line
                                             ),
                                           ),
@@ -541,7 +543,7 @@ class _BodyPageState extends State<BodyPage> {
                                           labelColor: myConstants.instiappBlue,
                                           unselectedLabelColor: Colors.black54,
                                           labelStyle: TextStyle(
-                                            fontSize: responsive.sp(16),
+                                            fontSize: 16,
                                             fontWeight: FontWeight.w600,
                                             fontFamily: 'DM Sans',
                                           ),
@@ -550,17 +552,12 @@ class _BodyPageState extends State<BodyPage> {
                                             Tab(text: 'Events'),
                                             Tab(text: 'People'),
                                           ],
-                                          onTap: (index){
-                                            setState(() {
-                                              showLinks=false;
-                                            });
-                                          }
                                         ),
                                         ],
                                         
                                       ),
                                       SizedBox(
-                                        height: responsive.h(410),
+                                        height: 410,
                                         child: Builder(
                                           builder: (context) {
                                             final people = body?.bodyRoles
@@ -575,7 +572,7 @@ class _BodyPageState extends State<BodyPage> {
                                               children: [
                                                 // About Tab
                                                 SingleChildScrollView(
-                                                  padding: EdgeInsets.only(top: responsive.h(24)),
+                                                  padding: const EdgeInsets.only(top: 24),
                                                   child: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment.start,
@@ -587,31 +584,31 @@ class _BodyPageState extends State<BodyPage> {
                                                         defaultTextStyle: (theme
                                                                     .textTheme
                                                                     .titleMedium ??
-                                                                TextStyle())
+                                                                const TextStyle())
                                                             .copyWith(
-                                                                fontSize: responsive.sp(24)),
+                                                                fontSize: 24),
                                                       ),
                                                       body?.bodyDescription !=
                                                               null
                                                           ? SizedBox(
-                                                              height: responsive.h(20.0),
+                                                              height: 20.0,
                                                             )
                                                           : SizedBox(
                                                               height: 0.0,
                                                             ),
                                                       //Divider(),
-                                                      SizedBox(height: responsive.h(20)),
+                                                      const SizedBox(height: 20),
                           
                                                       // Photo Album Section
-                                                      Text(
+                                                      const Text(
                                                         'Photo Album',
                                                         style: TextStyle(
-                                                          fontSize: responsive.sp(16),
+                                                          fontSize: 16,
                                                           fontWeight:FontWeight.w700,
                                                           fontFamily: 'DM Sans',
                                                         ),
                                                       ),
-                                                      SizedBox(height: responsive.h(12)),
+                                                      const SizedBox(height: 12),
                                                       GestureDetector(
                                                         onTap: () {
                                                           // setState(() {
@@ -631,7 +628,7 @@ class _BodyPageState extends State<BodyPage> {
                                                           // initialIndex: index,
                                                         ),
                                                       ),
-                                                      SizedBox(height: responsive.h(40)),
+                                                      SizedBox(height: 40),
                                                       // Container(
                                                       //   height: 190,
                                                       //   width: 380,
@@ -661,7 +658,7 @@ class _BodyPageState extends State<BodyPage> {
                                                         // ),
                                                       // ),
                           
-                                                      SizedBox(height: responsive.h(24)),
+                                                      const SizedBox(height: 24),
                           
                                                       // Part Of Section
                                                       // const Text(
@@ -694,9 +691,9 @@ class _BodyPageState extends State<BodyPage> {
                                                         child: Text(
                                                             "No events yet."))
                                                     : ListView(
-                                                        padding: EdgeInsets
+                                                        padding: const EdgeInsets
                                                             .symmetric(
-                                                            vertical: responsive.h(16)),
+                                                            vertical: 16),
                                                         children: [
                                                           // Padding(
                                                           //   padding:
@@ -728,9 +725,9 @@ class _BodyPageState extends State<BodyPage> {
                                                         child: Text(
                                                             "No people listed."))
                                                     : ListView(
-                                                        padding: EdgeInsets
+                                                        padding: const EdgeInsets
                                                             .symmetric(
-                                                            vertical: responsive.h(16)),
+                                                            vertical: 16),
                                                         children: [
                                                           ...people
                                                               .map((u) =>
@@ -856,13 +853,13 @@ class _BodyPageState extends State<BodyPage> {
               if(showLinks)
                 Padding(
                   //padding: const EdgeInsets.all(16.0),
-                  padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(0), responsive.w(16), responsive.h(16)),
+                  padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
                   child: Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
-                      padding: EdgeInsets.fromLTRB(responsive.w(20), responsive.h(16), responsive.w(20), responsive.h(24)),
-                      height: responsive.h(256),
-                      width: responsive.w(380),
+                      padding: EdgeInsets.fromLTRB(20, 16, 20, 24),
+                      height: 256,
+                      width: 380,
                       decoration: BoxDecoration(
                         color: myConstants.instiappDark,
                         borderRadius: BorderRadius.vertical(
@@ -879,7 +876,7 @@ class _BodyPageState extends State<BodyPage> {
                                 "Quick Links",
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: responsive.sp(18),
+                                  fontSize: 18,
                                   fontWeight: FontWeight.w700
                                 ),
                               ),
@@ -890,26 +887,26 @@ class _BodyPageState extends State<BodyPage> {
                                   });
                                 },
                                 child: Container(
-                                  height: responsive.h(21),
-                                  width: responsive.w(21),
+                                  height: 21,
+                                  width: 21,
                                   child: SvgPicture.asset('assets/explore_new/x.svg'),
                                 ),
                               )
                             ],
                           ),
-                          SizedBox(height: responsive.h(16)),
+                          SizedBox(height: 16),
                           Dash(
                             direction: Axis.horizontal,
-                            length: responsive.w(339),
+                            length: 339,
                             dashLength: 6,
                             dashGap: 7,
                             dashColor: Colors.white.withOpacity(0.10),
                           ),
-                          SizedBox(height: responsive.h(16)),
+                          SizedBox(height: 16),
                           for(int i=0;i<=2;i++)...[
                             clubQuickLinkContainer(linkIcon[i],linkLabel[i]),
                             if(i!=3)
-                              SizedBox(height: responsive.h(12))
+                              SizedBox(height: 12)
                           ] 
                         ],
                       ),
@@ -920,7 +917,7 @@ class _BodyPageState extends State<BodyPage> {
                 alignment: Alignment.bottomCenter,
                 child: Container(
                   //color: Colors.amber,
-                    padding: EdgeInsets.fromLTRB(responsive.w(10), responsive.h(10), responsive.w(10), responsive.h(16)),
+                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 16),
                     // color: Colors.transparent,
                     // decoration: const BoxDecoration(
                     //   color: Colors.white,
@@ -934,7 +931,7 @@ class _BodyPageState extends State<BodyPage> {
                     //   ],
                     // ),
                     child: Container(
-                      padding: showLinks?EdgeInsets.only(bottom: responsive.h(6)):EdgeInsets.symmetric(vertical: responsive.h(6),horizontal: responsive.w(6)),
+                      padding: showLinks?EdgeInsets.only(bottom: 6):EdgeInsets.all(6),
                       decoration: BoxDecoration(
                         color: Color(0xFFF6F6F6),
                         borderRadius: BorderRadius.circular(50),
@@ -943,9 +940,9 @@ class _BodyPageState extends State<BodyPage> {
                       child: Stack(
                         children: [
                           Container(
-                        padding: EdgeInsets.symmetric(horizontal: responsive.w(6)),
-                        height: responsive.h(64),
-                        width: responsive.w(380),
+                        padding: EdgeInsets.symmetric(horizontal: 6),
+                        height: 64,
+                        width: 380,
                         decoration: BoxDecoration(
                           color: myConstants.instiappDark,
                           borderRadius: BorderRadius.circular(50)
@@ -961,57 +958,63 @@ class _BodyPageState extends State<BodyPage> {
                                 });
                               },
                               child: Container(
-                                height: responsive.h(52),
-                                width: responsive.w(52),
+                                height: 52,
+                                width: 52,
                                 decoration: BoxDecoration(
                                   color: Color(0xFF2B4E83),
                                   borderRadius: BorderRadius.circular(50)
                                 ),
                                 child: Container(
-                                  height: responsive.h(24),
-                                  width: responsive.w(24),
+                                  height: 24,
+                                  width: 24,
                                   child: Center(
                                     child: SvgPicture.asset(
                                       'assets/explore_new/link.svg',
-                                      height: responsive.h(24),
-                                      width: responsive.w(24),
+                                      height: 24,
+                                      width: 24,
                                       ),
                                   ),
                                 ),
                               ),
                             ),
-                            SizedBox(width: responsive.w(8)),
+                            SizedBox(width: 8,),
                             Expanded(
                               child: SizedBox(
-                                height: responsive.h(52),
+                                height: 52,
                                 child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: myConstants.instiappBlue,
-                                  padding: EdgeInsets.symmetric(vertical: responsive.h(14)),
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(50),
                                   ),
                                 ),
                                 onPressed: () async {
-                                  if (body != null) {
-                                    await bloc.updateFollowBody(body!);
-                                    setState(() {});
-                                  }
+                                  if(body!=null){
+                                    
+                                      await bloc.updateFollowBody(body!);
+                                      setState((){});
+                                    
+                                  }  
                                 },
                                 child: Text(
-                                  (body!.bodyUserFollows ?? false)
-                                      ? 'Joined'
-                                      : 'Join',
+                                  (body!.bodyUserFollows ?? false) ? 'Joined' : 'Join',
                                   style: TextStyle(
                                     fontSize: responsive.h(16),
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'DM Sans',
                                     color: Colors.white,
                                   ),
-                                )),
-                          ),
-                        ],
+                                )
+                                
+                              ),
+                              )
+                            ),
+                          ],
+                        ),
                       ),
+                        ],
+                      )
                     ),
                   ),
                 ),
@@ -1124,8 +1127,8 @@ class _BodyPageState extends State<BodyPage> {
                             duration: Duration(milliseconds: 300),
                             curve: Curves.easeOutBack,
                             child: Container(
-                              height: responsive.h(350),
-                              width: responsive.w(350),
+                              height: 350,
+                              width: 350,
                               // color: Colors.amber[300],
                               // child: Image.asset('assets/explore_new/images/image1.png')
                               child: PageView.builder(
@@ -1291,7 +1294,6 @@ class _BodyPageState extends State<BodyPage> {
   }
 
   Widget _buildEventTile(InstiAppBloc bloc, ThemeData theme, Event event) {
-    final responsive = Responsive(context);
     // return ListTile(
     //   title: Text(
     //     event.eventName ?? "",
@@ -1325,17 +1327,17 @@ class _BodyPageState extends State<BodyPage> {
         EventPage.navigateWith(context, bloc, event);
       },
       child: Padding(
-        padding: EdgeInsets.only(left: responsive.w(16)),
+        padding: const EdgeInsets.only(left: 16),
         child: Column(
           children: [
             Container(
               // height: 72,
-              width: responsive.w(364),
+              width: 364,
               child: Row(
                 children: [
                   Container(
-                    height: responsive.h(71),
-                    width: responsive.w(71),
+                    height: 71,
+                    width: 71,
                     decoration: BoxDecoration(
                       color: Colors.pink[100],
                       borderRadius: BorderRadius.circular(35.5)
@@ -1347,9 +1349,9 @@ class _BodyPageState extends State<BodyPage> {
                       heroTag: event.eventID ?? "",
                     ),
                   ),
-                  SizedBox(width: responsive.w(16)),
+                  SizedBox(width: 16),
                   Container(
-                    width: responsive.w(242),
+                    width: 242,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1359,10 +1361,10 @@ class _BodyPageState extends State<BodyPage> {
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
-                            fontSize: responsive.sp(20)
+                            fontSize: 20
                           ),
                         ),
-                        SizedBox(height: responsive.h(4)),
+                        SizedBox(height: 4),
                         Text(
                           event.getSubTitle(),
                           style: TextStyle(
@@ -1376,7 +1378,7 @@ class _BodyPageState extends State<BodyPage> {
                 ],
               ),
             ),
-            SizedBox(height: responsive.h(16))
+            SizedBox(height: 16)
           ],
         ),
       ),
@@ -1384,7 +1386,6 @@ class _BodyPageState extends State<BodyPage> {
   }
 
   Widget _buildUserTile(InstiAppBloc bloc, ThemeData theme, User u) {
-    final responsive = Responsive(context);
     // return ListTile(
     //   leading: NullableCircleAvatar(
     //     u.userProfilePictureUrl ?? "",
@@ -1405,17 +1406,17 @@ class _BodyPageState extends State<BodyPage> {
         UserPage.navigateWith(context, bloc, u);
       },
       child: Padding(
-        padding: EdgeInsets.only(left: responsive.w(16)),
+        padding: const EdgeInsets.only(left: 16),
         child: Column(
           children: [
             Container(
               // height: 72,
-              width: responsive.w(364),
+              width: 364,
               child: Row(
                 children: [
                   Container(
-                    height: responsive.h(71),
-                    width: responsive.w(71),
+                    height: 71,
+                    width: 71,
                     decoration: BoxDecoration(
                       color: Colors.pink[100],
                       borderRadius: BorderRadius.circular(35.5)
@@ -1427,9 +1428,9 @@ class _BodyPageState extends State<BodyPage> {
                       heroTag: u.userID ?? "",
                     ),
                   ),
-                  SizedBox(width: responsive.w(16)),
+                  SizedBox(width: 16),
                   Container(
-                    width: responsive.w(242),
+                    width: 242,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1439,10 +1440,10 @@ class _BodyPageState extends State<BodyPage> {
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
-                            fontSize: responsive.sp(20)
+                            fontSize: 20
                           ),
                         ),
-                        SizedBox(height: responsive.h(4)),
+                        SizedBox(height: 4),
                         Text(
                           u.getSubTitle() ?? "",
                           style: TextStyle(
@@ -1456,7 +1457,7 @@ class _BodyPageState extends State<BodyPage> {
                 ],
               ),
             ),
-            SizedBox(height: responsive.h(16))
+            SizedBox(height: 16)
           ],
         ),
       ),
@@ -1469,13 +1470,12 @@ class PhotoAlbumGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
-    final responsive = Responsive(context);
     int col,row;
     final displayImages=imageUrls.take(5).toList();
     final extraCount=imageUrls.length-5;
     return Container(
-      height: responsive.h(190),
-      width: responsive.w(380),
+      height: 190,
+      width: 380,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         //color: Colors.amber[200]
@@ -1491,7 +1491,7 @@ class PhotoAlbumGrid extends StatelessWidget {
                 fit: BoxFit.cover,
               )
             ),
-            SizedBox(width: responsive.w(2)),
+            SizedBox(width: 2),
             Expanded(
               flex: 2,
               child: Row(
@@ -1508,7 +1508,7 @@ class PhotoAlbumGrid extends StatelessWidget {
                                   Image.asset(
                                     displayImages[row*2 + col*1 +1],
                                     fit: BoxFit.cover,
-                                    height: responsive.h(94.25),
+                                    height: 94.25,
                                   ),
                                   if(col==1 && row==1)
                                     Positioned.fill(
@@ -1519,7 +1519,7 @@ class PhotoAlbumGrid extends StatelessWidget {
                                             "+${extraCount}",
                                             style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: responsive.sp(16),
+                                              fontSize: 16,
                                               fontWeight: FontWeight.w600
                                             ),
                                             ),
@@ -1532,14 +1532,14 @@ class PhotoAlbumGrid extends StatelessWidget {
                               
                             ),
                             if(col==0)
-                              SizedBox(height: responsive.h(1.5))
+                              SizedBox(height: 1.5)
                           ]
                         ],
                       )
                     ),
                     if(row==0)
                       SizedBox(
-                        width: responsive.h(1.5),
+                        width: 1.5,
                       )
                   ]
                 ],

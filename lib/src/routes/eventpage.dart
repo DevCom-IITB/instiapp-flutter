@@ -93,7 +93,7 @@ class _EventPageState extends State<EventPage> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Color.fromRGBO(246, 246, 246, 1),
     ));
-    Color colour = currentUes == UES.Going
+    Color colour = currentUes == UES.NotGoing
         ? Color.fromRGBO(255, 255, 255, 1)
         : Color.fromRGBO(48, 111, 220, 1);
     return Scaffold(
@@ -588,11 +588,11 @@ class _EventPageState extends State<EventPage> {
                             child: Container(
                                 padding: EdgeInsets.only(
                                     left: Responsive.width(16, context),
-                                    right: Responsive.width(24, context),
+                                    right: Responsive.width(16, context),
                                     top: Responsive.height(13, context),
                                     bottom: Responsive.height(13, context)),
                                 decoration: BoxDecoration(
-                                  color: currentUes == UES.Going
+                                  color: currentUes == UES.NotGoing
                                       ? Color.fromRGBO(48, 111, 220, 1)
                                       : Color.fromRGBO(15, 22, 32, 1),
                                   borderRadius: BorderRadius.circular(50),
@@ -611,7 +611,9 @@ class _EventPageState extends State<EventPage> {
                                         width: Responsive.width(15, context),
                                         fit: BoxFit.cover,
                                       ),
+                                      if(UES.NotGoing == currentUes)
                                       SizedBox(width: Responsive.width(11, context)),
+                                      if(UES.NotGoing == currentUes)                                      
                                       Text(
                                         'Show enthu',
                                         style: TextStyle(
@@ -620,6 +622,14 @@ class _EventPageState extends State<EventPage> {
                                           fontFamily: 'DM Sans',
                                           color: colour,
                                         ),
+                                      ),
+                                      if(UES.Going == currentUes)
+                                      SvgPicture.asset(
+                                        'assets/feed/light.svg',
+                                        color: colour,
+                                        height: Responsive.height(18.3, context),
+                                        width: Responsive.width(15, context),
+                                        fit: BoxFit.cover,
                                       ),
                                     ])),
                           )),
