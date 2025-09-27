@@ -312,7 +312,7 @@ Widget Bodycard(BuildContext context, String title, String imagePath) {
                 gradient: LinearGradient(
                   begin: Alignment(0, 0),
                   end: Alignment(0, 1.0),
-                  colors: [Colors.black.withValues(alpha: 0), Colors.black],
+                  colors: [Colors.black.withOpacity(0), Colors.black],
                 ),
               )),
         ),
@@ -719,7 +719,7 @@ Widget SearchBodycard(BuildContext context, String title, String imagePath) {
           gradient: LinearGradient(
             begin: Alignment(0.0, 0.0),
             end: Alignment(0.0, 1.00),
-            colors: [Colors.black.withValues(alpha: 0), Colors.black],
+            colors: [Colors.black.withOpacity(0), Colors.black],
           ),
         ),
       ),

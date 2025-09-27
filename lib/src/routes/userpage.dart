@@ -1,21 +1,9 @@
 import 'dart:async';
-// import 'dart:math';
-// import 'package:InstiApp/src/components/dropdowns.dart';
-// import 'package:InstiApp/src/api/model/body.dart';
-// import 'package:InstiApp/src/api/model/event.dart';
-// import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
-// import 'package:InstiApp/src/drawer.dart';
-// import 'package:InstiApp/src/routes/bodypage.dart';
-// import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
-// import 'package:InstiApp/src/utils/share_url_maker.dart';
-// import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
-// import 'package:share/share.dart';
-// import 'package:url_launcher/url_launcher.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:InstiApp/src/widgets/appbar.dart';
 import 'package:InstiApp/src/widgets/buttons.dart';
@@ -156,6 +144,7 @@ class _UserPageState extends State<UserPage>
     final tabCount = _tabController!.length;
 
     return Scaffold(
+      backgroundColor: Color.fromRGBO(246, 246, 246, 1),
       body: SafeArea(
         child: user == null
             ? Center(
@@ -182,20 +171,20 @@ class _UserPageState extends State<UserPage>
                       children: [
                         TabBar(
                           controller: _tabController,
-                          labelColor: Colors.blue,
+                          labelColor: Color.fromRGBO(15, 22, 32, 0.8),
                           labelStyle: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                               fontFamily: 'DM Sans'),
                           labelPadding: EdgeInsets.all(0),
-                          unselectedLabelColor: Colors.black,
+                          unselectedLabelColor: Color.fromRGBO(15, 22, 32, 0.8),
                           unselectedLabelStyle: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w400,
                               fontFamily: 'DM Sans'),
                           indicatorSize: TabBarIndicatorSize.tab,
                           indicatorWeight: 3,
-                          indicatorColor: Colors.blue,
+                          indicatorColor: Color.fromRGBO(48, 111, 220, 1),
                           tabs: _buildTabs(tabCount)
                         ),
                       ],
@@ -304,8 +293,8 @@ class _UserPageState extends State<UserPage>
                         applyHeightToLastDescent: false,
                       ),
                       style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 16,
+                        color: Color.fromRGBO(239, 239, 239, 1),
+                        fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -402,12 +391,11 @@ class _UserPageState extends State<UserPage>
                                   applyHeightToLastDescent: false,
                                 ),
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Color.fromRGBO(255, 255, 255, 0.9),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              SizedBox(height: 2),
                               Text(
                                 user?.userRollNumber ?? 'Loading...',
                                 textHeightBehavior: TextHeightBehavior(
@@ -415,9 +403,9 @@ class _UserPageState extends State<UserPage>
                                   applyHeightToLastDescent: false,
                                 ),
                                 style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
+                                  color: Color.fromRGBO(255, 255, 255, 0.9),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                             ],
@@ -511,10 +499,10 @@ class _UserPageState extends State<UserPage>
                         _buildProfileInfoItem(
                             'Name', user?.userName ?? 'Loading...', 16),
                         _buildProfileInfoItem(
-                            'Programme', 'Loading...', 14),
+                            'Programme', user?.degree ?? '-', 14),
                         _buildProfileInfoItem(
                           'Department',
-                          'Loading...',
+                          user?.department ?? '-',
                           14,
                         ),
                       ],
@@ -553,7 +541,7 @@ class _UserPageState extends State<UserPage>
                           ),
                         ],
                       ),
-                      _buildProfileInfoItem('Validity', '31/07/2027', 14),
+                      _buildProfileInfoItem('Validity', user?.graduationYear ?? '-', 14),
                     ],
                   ),
                 ],
@@ -611,11 +599,12 @@ class _UserPageState extends State<UserPage>
         Text(
           label,
           style: TextStyle(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withOpacity(0.3),
             fontSize: 10,
             fontWeight: FontWeight.w400,
           ),
         ),
+        const SizedBox(height: 2,),
         Text(
           value,
           style: TextStyle(
@@ -728,7 +717,7 @@ class _UserPageState extends State<UserPage>
             icon: Icons.logout,
             top: true,
             bottom: true,
-            color: loggingOutLoading ? Colors.grey : const Color(0xFFFF272A),
+            color: loggingOutLoading ? Colors.grey : Color.fromRGBO(237, 0, 51, 1),
             onTap: () async {
               if (bloc == null) return;
               
@@ -771,10 +760,10 @@ class _UserPageState extends State<UserPage>
                     separatorBuilder: (context, index) => const Padding(
                       padding: EdgeInsets.only(
                           left: 88, right: 16), // 56 avatar + 16 + 16 padding
-                      child: Divider(
-                        height: 0, // Makes divider flush with content
-                        thickness: 0.5,
-                      ),
+                      // child: Divider(
+                      //   height: 0, // Makes divider flush with content
+                      //   thickness: 0.5,
+                      // ),
                     ),
                   ),
                 ),
@@ -804,10 +793,10 @@ class _UserPageState extends State<UserPage>
                     separatorBuilder: (context, index) => const Padding(
                       padding: EdgeInsets.only(
                           left: 88, right: 16), // 56 avatar + 16 + 16 padding
-                      child: Divider(
-                        height: 0, // Makes divider flush with content
-                        thickness: 0.5,
-                      ),
+                      // child: Divider(
+                      //   height: 0, // Makes divider flush with content
+                      //   thickness: 0.5,
+                      // ),
                     ),
                   ),
                 ),
@@ -828,14 +817,15 @@ class _UserPageState extends State<UserPage>
           children: [
             // Group photo
             Container(
-              width: 56,
-              height: 56,
+              width: 64,
+              height: 64,
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Color.fromRGBO(210, 213, 218, 1), width: 1),
                 image: group.photoUrl != null
                     ? DecorationImage(
                         image: NetworkImage(group.photoUrl!),
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                       )
                     : null,
               ),
@@ -847,7 +837,7 @@ class _UserPageState extends State<UserPage>
             // Group info
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Row(
                     children: [
@@ -857,6 +847,7 @@ class _UserPageState extends State<UserPage>
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
+                            color: Color.fromRGBO(15, 22, 32, 1)
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -872,7 +863,8 @@ class _UserPageState extends State<UserPage>
                           group.about,
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[600],
+                            color: Color.fromRGBO(15, 22, 32, 1),
+                            fontWeight: FontWeight.w400
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

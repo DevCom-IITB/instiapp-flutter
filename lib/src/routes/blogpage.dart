@@ -2,6 +2,7 @@
 import 'dart:core';
 import 'dart:collection';
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/routes/blogslogin.dart';
 import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/post.dart';
@@ -448,115 +449,115 @@ class _BlogPageState extends State<BlogPage> {
                             ),
                           ),
                           SizedBox(height: Responsive.height(16.0, context)),
-                          Container(
-                              margin:
-                                  EdgeInsets.only(left: Responsive.width(16.0, context), right: Responsive.width(16.0, context)),
-                              child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              255, 239, 239, 239),
-                                          borderRadius:
-                                              BorderRadius.circular(Responsive.height(50.0, context)),
-                                          border: Border.all(
-                                            color: Color.fromRGBO(
-                                                210, 213, 218, 1),
-                                            width: Responsive.height(1.0, context),
-                                          ),
-                                        ),
-                                        padding: EdgeInsets.only(
-                                            left: Responsive.width(16.0, context),
-                                            right: Responsive.width(16.0, context),
-                                            top: Responsive.height(8.0, context),
-                                            bottom: Responsive.height(8.0, context)),
-                                        child: Row(
-                                          children: [
-                                            SvgPicture.asset(
-                                                'assets/blogs/box.svg'),
-                                            SizedBox(width: Responsive.width(8.0, context)),
-                                            Text(
-                                              'Filters',
-                                              style: TextStyle(
-                                                fontSize: Responsive.text(14.0, context),
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.black,
-                                                fontFamily: "DM Sans",
-                                                fontStyle: FontStyle.normal,
-                                              ),
-                                            ),
-                                            SizedBox(width: Responsive.width(8.0, context)),
-                                            SvgPicture.asset(
-                                                'assets/blogs/chevron-right.svg'),
-                                          ],
-                                        )),
-                                    Container(
-                                        child: Row(
-                                      children: [
-                                        Container(
-                                          height: Responsive.height(36.0, context),
-                                          width: Responsive.width(36.0, context),
-                                          decoration: BoxDecoration(
-                                            color: view == 'normal'
-                                                ? const Color.fromRGBO(
-                                                    48, 111, 220, 1)
-                                                : const Color.fromRGBO(
-                                                    239, 239, 239, 1),
-                                            borderRadius:
-                                                BorderRadius.circular(Responsive.height(18.0, context)),
-                                          ),
-                                          child: IconButton(
-                                              icon: SvgPicture.asset(
-                                                'assets/blogs/list.svg',
-                                                color: view == 'normal'
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                                fit: BoxFit.none,
-                                              ),
-                                              onPressed: () {
-                                                setState(() {
-                                                  view = 'normal';
-                                                });
-                                              }),
-                                        ),
-                                        SizedBox(width: Responsive.width(8.0, context)),
-                                        Container(
-                                          height: Responsive.height(36.0, context),
-                                          width: Responsive.width(36.0, context),
-                                          decoration: BoxDecoration(
-                                            color: view == 'company wise'
-                                                ? const Color.fromRGBO(
-                                                    48, 111, 220, 1)
-                                                : const Color.fromRGBO(
-                                                    239, 239, 239, 1),
-                                            borderRadius:
-                                                BorderRadius.circular(18),
-                                            border: Border.all(
-                                              color: Color.fromRGBO(
-                                                  210, 213, 218, 1),
-                                              width: Responsive.width(1.0, context),
-                                            ),
-                                          ),
-                                          child: IconButton(
-                                              icon: SvgPicture.asset(
-                                                'assets/blogs/list2.svg',
-                                                color: view == 'company wise'
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                                fit: BoxFit.none,
-                                              ),
-                                              onPressed: () {
-                                                setState(() {
-                                                  view = 'company wise';
-                                                });
-                                              }),
-                                        ),
-                                      ],
-                                    ))
-                                  ])),
-                          SizedBox(height: Responsive.height(24.0, context)),
+                          // Container(
+                          //     margin:
+                          //         EdgeInsets.only(left: Responsive.width(16.0, context), right: Responsive.width(16.0, context)),
+                          //     child: Row(
+                          //         mainAxisAlignment:
+                          //             MainAxisAlignment.spaceBetween,
+                          //         children: [
+                          //           Container(
+                          //               decoration: BoxDecoration(
+                          //                 color: const Color.fromARGB(
+                          //                     255, 239, 239, 239),
+                          //                 borderRadius:
+                          //                     BorderRadius.circular(Responsive.height(50.0, context)),
+                          //                 border: Border.all(
+                          //                   color: Color.fromRGBO(
+                          //                       210, 213, 218, 1),
+                          //                   width: Responsive.height(1.0, context),
+                          //                 ),
+                          //               ),
+                          //               padding: EdgeInsets.only(
+                          //                   left: Responsive.width(16.0, context),
+                          //                   right: Responsive.width(16.0, context),
+                          //                   top: Responsive.height(8.0, context),
+                          //                   bottom: Responsive.height(8.0, context)),
+                          //               child: Row(
+                          //                 children: [
+                          //                   SvgPicture.asset(
+                          //                       'assets/blogs/box.svg'),
+                          //                   SizedBox(width: Responsive.width(8.0, context)),
+                          //                   Text(
+                          //                     'Filters',
+                          //                     style: TextStyle(
+                          //                       fontSize: Responsive.text(14.0, context),
+                          //                       fontWeight: FontWeight.w500,
+                          //                       color: Colors.black,
+                          //                       fontFamily: "DM Sans",
+                          //                       fontStyle: FontStyle.normal,
+                          //                     ),
+                          //                   ),
+                          //                   SizedBox(width: Responsive.width(8.0, context)),
+                          //                   SvgPicture.asset(
+                          //                       'assets/blogs/chevron-right.svg'),
+                          //                 ],
+                          //               )),
+                          //           Container(
+                          //               child: Row(
+                          //             children: [
+                          //               Container(
+                          //                 height: Responsive.height(36.0, context),
+                          //                 width: Responsive.width(36.0, context),
+                          //                 decoration: BoxDecoration(
+                          //                   color: view == 'normal'
+                          //                       ? const Color.fromRGBO(
+                          //                           48, 111, 220, 1)
+                          //                       : const Color.fromRGBO(
+                          //                           239, 239, 239, 1),
+                          //                   borderRadius:
+                          //                       BorderRadius.circular(Responsive.height(18.0, context)),
+                          //                 ),
+                          //                 child: IconButton(
+                          //                     icon: SvgPicture.asset(
+                          //                       'assets/blogs/list.svg',
+                          //                       color: view == 'normal'
+                          //                           ? Colors.white
+                          //                           : Colors.black,
+                          //                       fit: BoxFit.none,
+                          //                     ),
+                          //                     onPressed: () {
+                          //                       setState(() {
+                          //                         view = 'normal';
+                          //                       });
+                          //                     }),
+                          //               ),
+                          //               SizedBox(width: Responsive.width(8.0, context)),
+                          //               Container(
+                          //                 height: Responsive.height(36.0, context),
+                          //                 width: Responsive.width(36.0, context),
+                          //                 decoration: BoxDecoration(
+                          //                   color: view == 'company wise'
+                          //                       ? const Color.fromRGBO(
+                          //                           48, 111, 220, 1)
+                          //                       : const Color.fromRGBO(
+                          //                           239, 239, 239, 1),
+                          //                   borderRadius:
+                          //                       BorderRadius.circular(18),
+                          //                   border: Border.all(
+                          //                     color: Color.fromRGBO(
+                          //                         210, 213, 218, 1),
+                          //                     width: Responsive.width(1.0, context),
+                          //                   ),
+                          //                 ),
+                          //                 child: IconButton(
+                          //                     icon: SvgPicture.asset(
+                          //                       'assets/blogs/list2.svg',
+                          //                       color: view == 'company wise'
+                          //                           ? Colors.white
+                          //                           : Colors.black,
+                          //                       fit: BoxFit.none,
+                          //                     ),
+                          //                     onPressed: () {
+                          //                       setState(() {
+                          //                         view = 'company wise';
+                          //                       });
+                          //                     }),
+                          //               ),
+                          //             ],
+                          //           ))
+                          //         ])),
+                          // SizedBox(height: Responsive.height(24.0, context)),
                           if (view == 'normal')
                             isLoading
                                 ? CircularProgressIndicator()
@@ -623,31 +624,32 @@ class _BlogPageState extends State<BlogPage> {
                     ),
                   );
                 } else {
-                  return ListView(
-                    children: <Widget>[
-                      TitleWithBackButton(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              "Blogs",
-                              style: theme.textTheme.displaySmall,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: Responsive.height(28, context), horizontal: Responsive.width(28, context)),
-                          child: Text(
-                            "You must be logged in to view Blogs",
-                            style: theme.textTheme.titleLarge,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
+                  return BlogsLogin();
+                  // return ListView(
+                  //   children: <Widget>[
+                  //     TitleWithBackButton(
+                  //       child: Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: <Widget>[
+                  //           Text(
+                  //             "Blogs",
+                  //             style: theme.textTheme.displaySmall,
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //     Center(
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.all(28.0),
+                  //         child: Text(
+                  //           "You must be logged in to view Blogs",
+                  //           style: theme.textTheme.titleLarge,
+                  //           textAlign: TextAlign.center,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // );
                 }
               },
             )),

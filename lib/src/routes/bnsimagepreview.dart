@@ -52,14 +52,14 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
                 shape: BoxShape.circle,
               ),
               child: const Center(
-                child: Icon(Icons.arrow_back, color: Colors.black, size: 28),
+                child: Icon(Icons.arrow_back, color: Colors.black, size: 24),
               ),
             ),
           ),
         ),
         title: Text(
-          '${_currentIndex + 1}/${widget.imageUrls.length}',
-          style: const TextStyle(fontSize: 16, color: Colors.white),
+          '${_currentIndex + 1} / ${widget.imageUrls.length}',
+          style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w400),
         ),
         centerTitle: true,
       ),
@@ -137,7 +137,7 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
         shape: BoxShape.circle,
       ),
       child: IconButton(
-        icon: Icon(Icons.share, color: Colors.white),
+        icon: Icon(Icons.share_outlined, color: Colors.white),
         onPressed: () async {
           final deepLink = 'https://www.insti.app/buynsell/${post.id}';
 
@@ -166,13 +166,14 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
               borderRadius: BorderRadius.circular(48),
             ),
           ),
-          icon: Icon(Icons.copy, size: 28, color: Colors.white),
+          icon: Icon(Icons.copy_outlined, size: 28, color: Colors.white),
           label: Text(
             _formatPhoneNumber(phoneNumber),
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               color: Colors.white,
               letterSpacing: 1.1,
+              fontWeight: FontWeight.w700,
             ),
           ),
           onPressed: () {
@@ -204,10 +205,10 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
       ),
       clipBehavior: Clip.hardEdge,
       child: IconButton(
-        iconSize: 24,
+        iconSize: 28,
         icon: SizedBox(
-          width: 24,
-          height: 24,
+          width: 28,
+          height: 28,
           child: Image.asset('assets/buynsell/whatsapplogo.png'),
         ),
         onPressed: () async {

@@ -1,44 +1,3 @@
-// class BuyAndSellInfoPage extends StatefulWidget {
-//   final Future<BuynSellPost?> post;
-
-//   BuyAndSellInfoPage({required this.post});
-
-//   static void navigateWith(
-//       BuildContext context, BuynSellPost bloc, BuynSellPost post) {
-//     Navigator.push(
-//       context,
-//       MaterialPageRoute(
-//         settings: RouteSettings(
-//           name: "/${post.id ?? ""}",
-//         ),
-//         builder: (context) => BuyAndSellInfoPage(
-//           post: bloc.getBuynSellPost(post.id ?? ""),
-//         ),
-//       ),
-//     );
-//   }
-
-//   @override
-//   State<BuyAndSellInfoPage> createState() => _BuyAndSellInfoPageState();
-// }
-
-// class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
-//   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-
-//   BuynSellPost? bnsPost;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     widget.post.then((bnsPost) {
-//       if (this.mounted) {
-//         setState(() {
-//           this.bnsPost = bnsPost;
-//         });
-//       }
-//     });
-//   }
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -51,6 +10,7 @@ import 'package:InstiApp/src/blocs/buynsell_post_bloc.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'bnscreatepost.dart';
+import 'package:intl/intl.dart';
 
 class BuyAndSellInfoPage extends StatefulWidget {
   final String postId;
@@ -221,10 +181,10 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                 IconButton(
                   padding: EdgeInsets.all(8),
                   constraints: BoxConstraints(),
-                  iconSize: 32,
+                  iconSize: 28,
                   icon: const Icon(
                     Icons.delete_outline_outlined,
-                    size: 32,
+                    size: 28,
                     color: Colors.red,
                   ),
                   onPressed: () => {_confirmDelete(post.id)},
@@ -232,10 +192,10 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                 IconButton(
                   padding: EdgeInsets.all(8),
                   constraints: BoxConstraints(),
-                  iconSize: 32,
+                  iconSize: 28,
                   icon: const Icon(
                     Icons.edit_outlined,
-                    size: 32,
+                    size: 28,
                     color: Colors.black,
                   ),
                   onPressed: () {
@@ -248,26 +208,41 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
   }
 
   void _confirmDelete(String? id) {
+    bool isDeleting = false;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirm Delete'),
-        content: const Text('Are you sure you want to delete this post?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () async {
-              await _bloc.deleteBuynSellPost(id!);
-              Navigator.pop(context);
-              Navigator.pop(context);
-              await _bloc.refresh();
-            },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-          ),
-        ],
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Confirm Delete'),
+            content: const Text('Are you sure you want to delete this post?'),
+            actions: [
+              TextButton(
+                onPressed: isDeleting ? null : () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: isDeleting
+                    ? null
+                    : () async {
+                        setState(() => isDeleting = true);
+
+                        try {
+                          await _bloc.deleteBuynSellPost(id!);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                          await _bloc.refresh();
+                        } finally {
+                          _bloc.refresh();
+                        }
+                      },
+                child: Text(isDeleting ? 'Deleting...' : 'Delete',
+                    style: TextStyle(color: Colors.red)),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -300,11 +275,11 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.5),
+          color: Color.fromRGBO(235, 235, 235, 0.5),
           shape: BoxShape.circle,
         ),
         child: const Center(
-          child: Icon(Icons.arrow_back, color: Colors.white, size: 32),
+          child: Icon(Icons.arrow_back, color: Colors.black, size: 24),
         ),
       ),
     );
@@ -428,7 +403,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        '${_currentImageIndex + 1}/$imageCount',
+        '${_currentImageIndex + 1} / $imageCount',
         style: const TextStyle(color: Colors.white, fontSize: 12),
       ),
     );
@@ -447,7 +422,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
           const SizedBox(height: 16),
           _buildTitle(post),
           const SizedBox(height: 16),
-          _buildSellerInfo(userName, rollNumber, post.timeBefore),
+          _buildSellerInfo(userName, rollNumber, post.timeOfCreation),
           const DottedDivider(padding: EdgeInsets.fromLTRB(0, 8, 8, 24)),
           _buildDescriptionSection(post),
         ],
@@ -466,7 +441,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
             'Giveaway',
             style: TextStyle(
               fontSize: 24,
-              color: Colors.green,
+              color: Color.fromRGBO(48, 111, 220, 1),
               fontWeight: FontWeight.bold,
             ),
           )
@@ -478,7 +453,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                 '₹${post.price ?? 0}',
                 style: TextStyle(
                   fontSize: 24,
-                  color: Colors.blue,
+                  color: Color.fromRGBO(48, 111, 220, 1),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -487,7 +462,8 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                   'Bought at ₹${post.originalPrice}',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey[600],
+                    color: Color.fromRGBO(126, 130, 135, 1),
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
             ],
@@ -520,6 +496,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
       style: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold,
+        color: Color.fromRGBO(41, 41, 41, 1),
       ),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
@@ -527,19 +504,23 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
   }
 
   Widget _buildSellerInfo(
-      String userName, String rollNumber, String? timeBefore) {
+      String userName, String rollNumber, String? timeOfCreation) {
+    String? timeBefore;
+    if (timeOfCreation != null) {
+      timeBefore = DateFormat('d MMMM yy').format(DateTime.parse(timeOfCreation));
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
           children: [
-            Text(userName, style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(width: 6),
+            Text(userName, style: TextStyle(color: Color.fromRGBO(126, 130, 135, 1))),
+            const SizedBox(width: 4),
             Text(
               '($rollNumber)',
               style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 12,
+                color: Color.fromRGBO(126, 130, 135, 1),
               ),
             ),
           ],
@@ -547,8 +528,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
         Text(
           timeBefore ?? 'Recently',
           style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 12,
+            color: Color.fromRGBO(126, 130, 135, 1),
           ),
         ),
       ],
@@ -562,11 +542,11 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Description',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color.fromRGBO(21, 32, 45, 1))),
         const SizedBox(height: 8),
         Text(
           description,
-          style: TextStyle(fontSize: 16),
+          style: TextStyle(fontSize: 14, color: Color.fromRGBO(15, 22, 32, 0.8)),
         ),
       ],
     );
@@ -701,31 +681,29 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
       child: Container(
         height: 50,
         child: Container(
-          decoration: BoxDecoration(
-            color: Color.fromRGBO(21, 32, 46, 1),
-            borderRadius: BorderRadius.circular(48),
-            border: Border.all(color: Color.fromRGBO(126, 130, 135, 1), width: 2)
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Icon(Icons.check_circle_outline,
-                color: Color.fromRGBO(126, 130, 135, 1),
-                size: 16
-              ),
-              SizedBox(width: 6),
-              Text(
-                'Sold',
-                style: TextStyle(
-                  color: Color.fromRGBO(126, 130, 135, 1),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
+            decoration: BoxDecoration(
+                color: Color.fromRGBO(21, 32, 46, 1),
+                borderRadius: BorderRadius.circular(48),
+                border: Border.all(
+                    color: Color.fromRGBO(126, 130, 135, 1), width: 2)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(Icons.check_circle_outline,
+                    color: Color.fromRGBO(126, 130, 135, 1), size: 16),
+                SizedBox(width: 6),
+                Text(
+                  'Sold',
+                  style: TextStyle(
+                    color: Color.fromRGBO(126, 130, 135, 1),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.1,
+                  ),
                 ),
-              ),
-            ],
-          )
-        ),
+              ],
+            )),
       ),
     );
   }
@@ -749,9 +727,10 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
           label: Text(
             "Mark as Sold",
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               color: Colors.white,
               letterSpacing: 1.1,
+              fontWeight: FontWeight.w700
             ),
           ),
         ),
@@ -760,26 +739,39 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
   }
 
   void _confirmMarkAsSold(BuynSellPost post) {
+    bool isProcessing = false;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Mark as Sold'),
-        content: const Text('Are you sure you want to mark this item as sold?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () async {
-              await _bloc.markAsSold(post.id!);
-              Navigator.pop(context);
-              Navigator.pop(context);
-              await _bloc.refresh();
-            },
-            child: const Text('Confirm'),
-          ),
-        ],
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Mark as Sold'),
+            content:
+                const Text('Are you sure you want to mark this item as sold?'),
+            actions: [
+              TextButton(
+                onPressed: isProcessing ? null : () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: isProcessing ? null : () async {
+                  setState(() => isProcessing = true);
+                  
+                  try {
+                    await _bloc.markAsSold(post.id!);
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    await _bloc.refresh();
+                  } finally {
+                    _bloc.refresh();
+                  }
+                },
+                child: Text(isProcessing ? 'Updating...' : 'Confirm'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -794,7 +786,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
         shape: BoxShape.circle,
       ),
       child: IconButton(
-        icon: Icon(Icons.share, color: Colors.white),
+        icon: Icon(Icons.share_outlined, color: Colors.white),
         onPressed: () async {
           final deepLink = 'https://www.insti.app/buynsell/${post.id}';
 
@@ -823,13 +815,14 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
               borderRadius: BorderRadius.circular(48),
             ),
           ),
-          icon: Icon(Icons.copy, size: 28, color: Colors.white),
+          icon: Icon(Icons.copy_outlined, size: 28, color: Colors.white),
           label: Text(
             _formatPhoneNumber(phoneNumber),
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               color: Colors.white,
               letterSpacing: 1.1,
+              fontWeight: FontWeight.w700,
             ),
           ),
           onPressed: () {
@@ -861,10 +854,10 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
       ),
       clipBehavior: Clip.hardEdge,
       child: IconButton(
-        iconSize: 24,
+        iconSize: 28,
         icon: SizedBox(
-          width: 24,
-          height: 24,
+          width: 28,
+          height: 28,
           child: Image.asset('assets/buynsell/whatsapplogo.png'),
         ),
         onPressed: () async {
@@ -941,412 +934,3 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
     });
   }
 }
-
-// import 'package:InstiApp/src/utils/common_widgets.dart';
-// import 'package:cached_network_image/cached_network_image.dart';
-// import 'package:flutter/material.dart';
-// import '../api/model/buynsellPost.dart';
-
-// class BuyAndSellInfoPage extends StatefulWidget {
-//   final Future<BuynSellPost?> post;
-
-//   BuyAndSellInfoPage({required this.post});
-
-//   static void navigateWith(
-//       BuildContext context, BuynSellPost bloc, BuynSellPost post) {
-//     Navigator.push(
-//       context,
-//       MaterialPageRoute(
-//         settings: RouteSettings(
-//           name: "/${post.id ?? ""}",
-//         ),
-//         builder: (context) => BuyAndSellInfoPage(
-//           post: bloc.getBuynSellPost(post.id ?? ""),
-//         ),
-//       ),
-//     );
-//   }
-
-//   @override
-//   State<BuyAndSellInfoPage> createState() => _BuyAndSellInfoPageState();
-// }
-
-// class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
-//   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-
-//   BuynSellPost? bnsPost;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     widget.post.then((bnsPost) {
-//       if (this.mounted) {
-//         setState(() {
-//           this.bnsPost = bnsPost;
-//         });
-//       }
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     List<String>? imageList = bnsPost?.imageUrl;
-//     double screen_wr = MediaQuery.of(context).size.width;
-//     double screen_hr = MediaQuery.of(context).size.height;
-//     double x, y;
-
-//     var theme = Theme.of(context);
-
-//     screen_hr >= screen_wr ? x = 0.35 : x = 1;
-//     screen_hr >= screen_wr ? y = 0.9 : y = 0.8;
-//     var screen_w = screen_wr * y;
-//     var screen_h = screen_hr * x;
-
-//     return Scaffold(
-//       bottomNavigationBar: MyBottomAppBar(
-//         shape: RoundedNotchedRectangle(),
-//         child: new Row(
-//           mainAxisSize: MainAxisSize.max,
-//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//           children: <Widget>[
-//             IconButton(
-//               icon: Icon(
-//                 Icons.menu_outlined,
-//                 color: Colors.blue.withOpacity(0),
-//                 semanticLabel: "Show navigation drawer",
-//               ),
-//               onPressed: () {
-//                 _scaffoldKey.currentState?.openDrawer();
-//               },
-//             ),
-//           ],
-//         ),
-//       ),
-//       body: SingleChildScrollView(
-//         child: Column(children: [
-//           Container(
-//             padding: EdgeInsets.only(top: 32, left: 16),
-//             alignment: Alignment.topLeft,
-//             child: Container(
-//               padding: EdgeInsets.only(top: 32, left: 16),
-//               alignment: Alignment.topLeft,
-//               child: DecoratedBox(
-//                 decoration: BoxDecoration(
-//                   shape: BoxShape.circle,
-//                   border: Border.all(
-//                     color: Colors.blueAccent,
-//                     width: 2.0,
-//                   ),
-//                 ),
-//                 child: IconButton(
-//                   icon: Icon(Icons.arrow_back_ios_outlined,
-//                       color: Colors.blueAccent),
-//                   onPressed: () {
-//                     Navigator.pop(context);
-//                   },
-//                 ),
-//               ),
-//             ),
-//           ),
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.start,
-//             children: [
-//               Container(
-//                 margin: EdgeInsets.fromLTRB(screen_w * 0.1, 15, 0, 0),
-//                 child: SizedBox(
-//                   height: screen_h / 1.2,
-//                   width: screen_w / 1,
-//                   child: ImageCarousel(imageList),
-//                 ),
-//               ),
-//               Spacer(),
-//             ],
-//           ),
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.start,
-//             children: [
-//               Container(
-//                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 11, 0, 0),
-//                   child: Container(
-//                     width: screen_w,
-//                     child: Text(bnsPost?.brand ?? "",
-//                         maxLines: 3,
-//                         overflow: TextOverflow.ellipsis,
-//                         style: theme.textTheme.titleLarge?.copyWith(
-//                             fontWeight: FontWeight.w100, fontSize: 20)),
-//                   )
-//                   // style: TextStyle(
-//                   //     fontSize: myfont / 1.3, fontWeight: FontWeight.w100),
-//                   ),
-//             ],
-//           ),
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.start,
-//             children: [
-//               Container(
-//                 margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
-//                 child: Text(
-//                   '${bnsPost?.user?.userName ?? ""} (${bnsPost?.user?.userLDAPId ?? ""})',
-//                 ),
-//               ),
-//             ],
-//           ),
-
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.start,
-//             children: [
-//               Container(
-//                   width: screen_w * 0.9,
-//                   margin: EdgeInsets.fromLTRB(screen_w * 0.1, 3, 0, 0),
-//                   child: Text(bnsPost?.name ?? "",
-//                       maxLines: 3,
-//                       overflow: TextOverflow.ellipsis,
-//                       style: theme.textTheme.headlineSmall?.copyWith(
-//                         fontWeight: FontWeight.bold,
-//                         // fontSize: 30,
-//                         fontSize: 30,
-//                       )
-//                       // style: TextStyle(
-//                       //     fontSize: myfont * 1.5, fontWeight: FontWeight.w700),
-//                       )),
-//             ],
-//           ),
-//           Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-//             Container(
-//               margin: EdgeInsets.fromLTRB(screen_w * 0.1, 5, 0, 0),
-//               child: Text("Condition - " + (bnsPost?.condition ?? '0') + '/10',
-//                   style: theme.textTheme.titleLarge
-//                       ?.copyWith(fontSize: 15, fontWeight: FontWeight.w500)
-//                   // style: TextStyle(fontSize: myfont, fontWeight: FontWeight.w100),
-//                   ),
-//             )
-//           ]),
-//           Column(children: [
-//             Container(
-//               width: screen_w * 0.9,
-//               height: screen_h * 0.5,
-//               margin: EdgeInsets.fromLTRB(0, 8, 0, 0),
-//               child: Text(bnsPost?.description ?? "",
-//                   maxLines: 10,
-//                   overflow: TextOverflow.ellipsis,
-//                   softWrap: false,
-//                   style: theme.textTheme.bodySmall?.copyWith(fontSize: 13)
-//                   // style: TextStyle(
-//                   //     fontSize: myfont * 0.75, fontWeight: FontWeight.w100),
-//                   ),
-//             ),
-//             SizedBox(
-//               height: screen_h * 0.07,
-//             ),
-//             SizedBox(
-//               width: screen_w,
-//               child: Row(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Container(
-//                     child: Column(
-//                       mainAxisAlignment: MainAxisAlignment.start,
-//                       crossAxisAlignment: CrossAxisAlignment.start,
-//                       children: [
-//                         Row(
-//                           children: [
-//                             Text(
-//                               'Phone number - ' +
-//                                   (bnsPost?.contactDetails ?? ""),
-//                               style: theme.textTheme.headlineMedium?.copyWith(
-//                                   fontSize: 20, fontWeight: FontWeight.w400),
-//                             ),
-//                           ],
-//                         ),
-//                         Container(
-//                           child: Row(
-//                             children: [
-//                               Text(
-//                                 "Negotiable - " +
-//                                     ((bnsPost?.negotiable ?? false)
-//                                         ? "Yes"
-//                                         : "No"),
-//                                 style: theme.textTheme.headlineMedium?.copyWith(
-//                                     fontSize: 20, fontWeight: FontWeight.w400),
-//                               ),
-//                             ],
-//                           ),
-//                         ),
-//                         Container(
-//                           child: Text(
-//                             (bnsPost?.action == 'giveaway'
-//                                 ? "GiveAway"
-//                                 : "Price - ₹" +
-//                                     (bnsPost?.price ?? 0).toString()),
-//                             style: theme.textTheme.headlineMedium?.copyWith(
-//                                 fontSize: 20, fontWeight: FontWeight.w400),
-//                             textAlign: TextAlign.left,
-//                           ),
-//                         )
-//                       ],
-//                     ),
-//                   ),
-//                   Spacer(),
-//                 ],
-//               ),
-//             ),
-//           ]),
-
-//           // Add more widgets below the image card
-//         ]),
-//       ),
-//     );
-//   }
-// }
-
-// class ImageCarousel extends StatefulWidget {
-//   final List<String>? imageList;
-
-//   ImageCarousel(this.imageList);
-
-//   @override
-//   _ImageCarouselState createState() => _ImageCarouselState();
-// }
-
-// class _ImageCarouselState extends State<ImageCarousel> {
-//   int _currentIndex = 0;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     double screen_wr = MediaQuery.of(context).size.width;
-//     double screen_hr = MediaQuery.of(context).size.height;
-//     double x, y;
-
-//     screen_hr >= screen_wr ? x = 0.35 : x = 1;
-//     if (0.5 <= screen_hr / screen_wr && screen_hr / screen_wr <= 1) {
-//       x = 0.8;
-//     }
-//     screen_hr >= screen_wr ? y = 0.9 : y = 0.8;
-//     var screen_w = screen_wr * y;
-//     var screen_h = screen_hr * x;
-
-//     if (widget.imageList == null || widget.imageList!.isEmpty) {
-//       return Container(
-//         child: Center(child: Image.asset('assets/buynsell/DevcomLogo.png')),
-//       );
-//     }
-
-//     return Row(
-//       children: [
-//         Expanded(
-//           flex: 3,
-//           child: Row(
-//             children: [
-//               Container(
-//                 child: SizedBox(
-//                   height: screen_h * 0.7,
-//                   width: screen_w * 0.6,
-//                   child: PageView.builder(
-//                     itemCount: widget.imageList?.length,
-//                     onPageChanged: (index) {
-//                       setState(() {
-//                         _currentIndex = index;
-//                       });
-//                     },
-//                     itemBuilder: (context, index) {
-//                       return GestureDetector(
-//                         onTap: () {
-//                           setState(() {
-//                             _currentIndex = index;
-//                           });
-//                         },
-//                         child: ClipRRect(
-//                           borderRadius: BorderRadius.circular(15.0),
-//                           child: CachedNetworkImage(
-//                             imageUrl: widget.imageList?[index] ?? "",
-//                             fit: BoxFit.fitHeight,
-//                           ),
-//                         ),
-//                       );
-//                     },
-//                   ),
-//                 ),
-//               ),
-//               SizedBox(height: 10),
-//               SizedBox(height: 10),
-//             ],
-//           ),
-//         ),
-//         Expanded(
-//           child: ListView.builder(
-//             itemCount: widget.imageList?.length,
-//             itemBuilder: (context, index) {
-//               return GestureDetector(
-//                 onTap: () {
-//                   setState(() {
-//                     _currentIndex = index;
-//                   });
-//                 },
-//                 child: Container(
-//                   margin: EdgeInsets.fromLTRB(0, 10, 10, screen_h * 0.005),
-//                   child: Container(
-//                     margin: EdgeInsets.symmetric(vertical: 5),
-//                     decoration: BoxDecoration(
-//                       border: Border.all(
-//                         color: _currentIndex == index
-//                             ? Colors.blue
-//                             : Colors.transparent,
-//                         width: 1.75,
-//                         style: BorderStyle.solid,
-//                       ),
-//                       borderRadius: BorderRadius.circular(10),
-//                     ),
-//                     child: SizedBox(
-//                       height: screen_h * 0.25,
-//                       width: screen_w * 0.1,
-//                       child: ClipRRect(
-//                         borderRadius: BorderRadius.circular(10),
-//                         child: CachedNetworkImage(
-//                           imageUrl: widget.imageList?[index] ?? "",
-//                           width: 80,
-//                           height: 80,
-//                           fit: BoxFit.cover,
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               );
-//             },
-//           ),
-//         ),
-//         Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: _buildDotIndicator(),
-//         ),
-//       ],
-//     );
-//   }
-
-//   List<Widget> _buildDotIndicator() {
-//     List<Widget> dots = [];
-//     for (int i = 0; i < (widget.imageList?.length ?? 0); i++) {
-//       dots.add(
-//         Padding(
-//           padding: const EdgeInsets.all(5.0),
-//           child: GestureDetector(
-//             onTap: () {
-//               setState(() {
-//                 _currentIndex = i;
-//               });
-//             },
-//             child: Container(
-//               width: 6,
-//               height: 6,
-//               decoration: BoxDecoration(
-//                 shape: BoxShape.circle,
-//                 color: _currentIndex == i ? Colors.blueGrey : Colors.grey,
-//               ),
-//             ),
-//           ),
-//         ),
-//       );
-//     }
-//     return dots;
-//   }
-// }

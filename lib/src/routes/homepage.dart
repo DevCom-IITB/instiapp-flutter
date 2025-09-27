@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:InstiApp/constants.dart';
+import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
@@ -16,6 +17,7 @@ import 'feedpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/routes/communitypage.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -32,15 +34,28 @@ class _HomepageState extends State<Homepage> {
     'assets/homepage/icons/loader.svg',
     'assets/homepage/icons/search.svg',
     'assets/homepage/icons/message-square.svg',
-    'assets/homepage/icons/map.svg'
+    //'assets/homepage/icons/map.svg'
   ];
+  Map<String,String> navIcons= {
+    "Home": 'assets/homepage/icons/home.svg',
+    "Feed": 'assets/homepage/icons/loader.svg',
+    "Explore": 'assets/homepage/icons/search.svg',
+    "Communities": 'assets/homepage/icons/message-square.svg',
+  };
+  
+  List<String> get navIconLabels => navIcons.keys.toList();
+
   List<String> days = ['Mon', 'Tue'];
   List<String> hostel = ['H-1', 'H-2'];
   List<String> meals = ['Breakfast', 'Lunch', 'Snacks', 'Dinner'];
   List<String> mealTime = ['7:30 AM -10:00 AM','12:30 PM - 2:00 PM','4:30 PM - 6:00 PM','7:30 PM - 10:00 PM'];
-  String _dropdownHostel='1';
+  List<String> navLabels = ["Home","Feed","Explore","Communities"];
+  // String _dropdownHostel='1';
+  String _selectedHostel='1';
+  String _selectedDay='Monday';
   int selectedMeal=0;
-  String _dropdownDay='Mon';
+  String label="Home";
+  // String _dropdownDay='Mon';
   bool showQR=false;
   String selectedNavIcon='assets//homepage/icons/home.svg';
   bool selectedIcon=false;
@@ -56,13 +71,13 @@ class _HomepageState extends State<Homepage> {
       .join(' • ');
 }
   String _mealString(List<Hostel> hostels) {
-      if (_dropdownHostel.isEmpty) return 'No menu';
+      if (_selectedHostel.isEmpty) return 'No menu';
       // 1. pick hostel
       final hostel = hostels
-          .firstWhere((h) => h.shortName == _dropdownHostel, orElse: () => Hostel());
+          .firstWhere((h) => h.shortName == _selectedHostel, orElse: () => Hostel());
       // 2. pick day (Mon=1 … Sun=7)
       final dayIndex = HostelMess.dayToName.entries
-          .firstWhere((e) => e.value.startsWith(_dropdownDay), orElse: () => const MapEntry(1,'Monday'))
+          .firstWhere((e) => e.value.startsWith(_selectedDay), orElse: () => const MapEntry(1,'Monday'))
           .key;
       final mess = hostel.mess?.firstWhere((m) => m.day == dayIndex, orElse: () => HostelMess());
       // 3. pick meal
@@ -119,16 +134,347 @@ class _HomepageState extends State<Homepage> {
           ExplorePage(),
           if (currentpage == 'Feed')
             FeedPage(),
+          if (currentpage == 'Communities')
+            CommunityPage(),
           Align(
             alignment: Alignment.bottomCenter,
-            child: navBar(),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: navBar(),
+            ),
           ),
         ],
       ),
     );
   }
-
-  Widget services(String name, String path) {
+  List<String> daysList=HostelMess.dayToName.values.map((d) => d.substring(0, 1)).toList();
+  List<String> daysKeys=HostelMess.dayToName.values.map((d) => d.substring(0 )).toList();
+  void _openFilterBottomSheet(List<Hostel> hostels){
+    String tempSelectedDay=_selectedDay;
+    String tempSelectedHostel=_selectedHostel;
+    showModalBottomSheet(
+      context: context, 
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context){
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFF6F6F6),
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(16)
+                )
+              ),
+              height: MediaQuery.of(context).size.height * 0.6632,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 24),
+                    child: Text(
+                      "Mess Menu for...",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 412,
+                    height: 52,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 129,
+                          height: 52,
+                          color: myConstants.instiappGrey,
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(16, 16, 84, 15),
+                                child: Text(
+                                  "Day",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 0,
+                                right: 124,
+                                child: Container(
+                                  width: 4,
+                                  height: 52,
+                                  decoration: BoxDecoration(
+                                    color: myConstants.instiappBlue,
+                                    borderRadius: BorderRadius.horizontal(
+                                      right: Radius.circular(5)
+                                    )
+                                  ),
+                                )
+                              )
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width: 282,
+                          height: 52,
+                          color: myConstants.instiappGrey,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(11,12,5,10),
+                            child: Row(
+                              children: [
+                                for(int i=0;i<daysList.length;i++) ...[
+                                  dayContainer(
+                                    daysList[i],
+                                    tempSelectedDay == daysKeys[i],
+                                    (){
+                                      setModalState((){
+                                        tempSelectedDay=daysKeys[i];
+                                      });
+                                    }
+                                    ),
+                                  SizedBox(width: 8,)
+                                ]
+                                  
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 16,),
+                  Container(
+                    width: 412,
+                    height: 348,
+                    child: Row(
+                      children: [
+                        Column(
+                          children: [
+                            Container(
+                              width: 125,
+                              height: 52,
+                              color: myConstants.instiappGrey,
+                              child: Stack(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(16, 16, 61, 15),
+                                child: Text(
+                                  "Hostel",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 0,
+                                right: 120,
+                                child: Container(
+                                  width: 4,
+                                  height: 52,
+                                  decoration: BoxDecoration(
+                                    color: myConstants.instiappBlue,
+                                    borderRadius: BorderRadius.horizontal(
+                                      right: Radius.circular(5)
+                                    )
+                                  ),
+                                )
+                              )
+                            ],
+                          ),
+                            ),
+                            Container(
+                              width: 125,
+                              height: 296,
+                              
+                              decoration: BoxDecoration(
+                                color: Color(0xFFF6F6F6),
+                                borderRadius: BorderRadius.horizontal(
+                                  right: Radius.circular(16)
+                                )
+                              ),
+                              //child: Text("data"),
+                            )
+                          ],
+                        ),
+                        Container(
+                          width: 286,
+                          height: 348,
+                          padding: EdgeInsets.only(top: 16,left: 20),
+                          color: myConstants.instiappGrey,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ...hostels.map((h){
+                                  final value = h.shortName!;
+                                  final name=(value =='tansa'||value =='qip')
+                                  ? value
+                                  : 'Hostel ${value}';
+                                  final isSelected = tempSelectedHostel == h.shortName;
+                                  // return RadioListTile(
+                                  //   value: value, 
+                                  //   groupValue: _selectedHostel, 
+                                  //   onChanged: (newValue){
+                                  //     setModalState((){
+                                  //       _selectedHostel=newValue as String;
+                                  //     });
+                                  //   },
+                                  //   title: Text(
+                                  //     name,
+                                  //     style: TextStyle(
+                                  //       fontWeight: FontWeight.w500
+                                  //     ),
+                                  //   ),
+                                  //   activeColor: myConstants.instiappBlue,
+                                  //   contentPadding: EdgeInsets.zero,
+                                  //   dense: true,
+                                  //   visualDensity: VisualDensity(vertical: -3),
+                                  //   );
+                                  return Column(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: (){
+                                          setModalState((){
+                                             tempSelectedHostel = h.shortName!;
+                                          });
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              width: 16,
+                                              height: 16,
+                                              
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: Color(0xFFD2D5DA),
+                                                  width: 1.5
+                                                )
+                                              ),
+                                              child: isSelected
+                                              ? Center(
+                                                child: Container(
+                                                  height: 14,
+                                                  width: 14,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: isSelected ? myConstants.instiappBlue: Colors.transparent,
+                                                  ),
+                                                  child: Center(
+                                                    child: Container(
+                                                      height: 6,
+                                                      width: 6,
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color: isSelected ? Colors.white: Colors.transparent,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                              : null
+                                            ),
+                                            SizedBox(width: 12,),
+                                            Text(
+                                              name,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w500
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      
+                                      SizedBox(height: 16,)
+                                    ],
+                                  );
+                                }).toList()
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 27),
+                  Container(
+                    padding: EdgeInsets.only(right: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.pop(context);
+                            setState(() {
+                              _selectedDay=tempSelectedDay;
+                              _selectedHostel=tempSelectedHostel;
+                            });
+                          },
+                          child: Container(
+                            height: 60,
+                            width: 165,
+                            decoration: BoxDecoration(
+                              image: const DecorationImage(
+                                  image: AssetImage(
+                                    "assets/buynsell/filterbutton.png"),
+                                    fit: BoxFit.cover,
+                              ),
+                              color: myConstants.instiappDark,
+                              borderRadius: BorderRadius.circular(50)
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Apply",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
+        );
+      }
+      );
+  }
+  Widget dayContainer(String day,bool isSelected, VoidCallback onTap){
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 30,
+        width: 30,
+        padding: EdgeInsets.symmetric(vertical: 3,horizontal: 7),
+        decoration: BoxDecoration(
+          color: isSelected? myConstants.instiappBlue:Colors.white,
+          borderRadius: BorderRadius.circular(8)
+        ),
+        child: Center(
+          child: Text(
+            day,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: isSelected? Colors.white:Colors.black
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  Widget services(String name, String path, Map<String,dynamic> services_icon) {
     return InkWell(
       onTap: () {
         if (name == "Buy & Sell") {
@@ -150,35 +496,83 @@ class _HomepageState extends State<Homepage> {
         child: Stack(
           children: [
             Positioned(
-                left: 17,
-                top: 14,
-                right: 72,
-                child: Text(
-                  name,
-                  style: TextStyle(
-                    color: const Color(0xFF0F1620),
-                    fontSize: 16,
-                    fontFamily: 'DM Sans',
-                    fontWeight: FontWeight.w700,
-                  ),
-                )),
-            Positioned(
-                left: 95,
+                left: 12,
                 top: 12,
-                right: 0,
-                bottom: 0,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: SvgPicture.asset(
-                    'assets/homepage/icons/star.svg',
-                  ),
+                //right: 72,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      services_icon["Title"],
+                      style: TextStyle(
+                        color: const Color(0xFF0F1620),
+                        fontSize: 16,
+                        fontFamily: 'DM Sans',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      services_icon["Subtitle"],
+                      style: TextStyle(
+                        color: Colors.grey[700],
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500
+                      ),
+                    )
+                  ],
                 )),
+            services_icon["Title"]=="Buy & Sell"? Positioned(
+              bottom: 12,
+              left: 12,
+              child: Container(
+                width: 37,
+                height: 16,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: myConstants.instiappBlue
+                ),
+                child: Center(
+                  child: Text(
+                    "New!",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                    ),
+                  ),
+                ),
+              )
+            )
+            : SizedBox(),
             Positioned(
-                left: 122,
-                top: 31,
-                right: 0,
-                bottom: 0,
-                child: SvgPicture.asset('assets/homepage/icons/${path}.svg'))
+              right: services_icon["Positions"][2],
+              left:services_icon["Positions"][0],
+              bottom: services_icon["Positions"][3],
+              top: services_icon["Positions"][1],
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: services_icon["Title"]=="Quick Links"? Image.asset(services_icon["Path"]):SvgPicture.asset(
+                    services_icon["Path"],
+                    
+                  ),
+              )
+              ),
+            // Positioned(
+            //     left: 95,
+            //     top: 12,
+            //     right: 0,
+            //     bottom: 0,
+            //     child: ClipRRect(
+            //       borderRadius: BorderRadius.circular(12),
+            //       child: SvgPicture.asset(
+            //         'assets/homepage/icons/star.svg',
+            //       ),
+            //     )),
+            // Positioned(
+            //     left: 122,
+            //     top: 31,
+            //     right: 0,
+            //     bottom: 0,
+            //     child: SvgPicture.asset('assets/homepage/icons/${path}.svg'))
           ],
         ),
       ),
@@ -329,6 +723,7 @@ class _HomepageState extends State<Homepage> {
     var bloc = BlocProvider.of(context)!.bloc;
     return Scaffold(
       backgroundColor: myConstants.instiappWhite,
+      
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(52),
         child: customAppBar()
@@ -423,18 +818,54 @@ class _HomepageState extends State<Homepage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    services("Buy & Sell","buy_and_sell"),
+                    services("Buy & Sell","bns_new",
+                    {
+                      "Title": "Buy & Sell",
+                      "Path": 'assets/homepage/icons/bns_new.svg',
+                      "Subtitle": "Deals made easy",
+                      // "Icon Height": 75.67,
+                      // "Icon Width": 90.8,
+                      "Positions": [97.0,14.5,-11.0,-7.8,-7.81]
+                    }
+                    ),
                     SizedBox(width: 8),
-                    services("Lost & Found","lost_and_found")
+                    services("Maps","maps_new",
+                    {
+                      "Title": "Maps",
+                      "Path": 'assets/homepage/icons/maps_new.svg',
+                      "Subtitle": "Navigate Insti",
+                      // "Icon Height": 72.0,
+                      // "Icon Width": 76.0,
+                      "Positions": [111.0,28.0,-1.0,-6.0,0.0]
+                    }
+                    )
                   ],
                 ),
                 SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    services("Blogs","blogs"),
+                    services("Blogs","blogs_new",
+                    {
+                      "Title": "Blogs",
+                      "Path": 'assets/homepage/icons/blogs_new.svg',
+                      "Subtitle": "",
+                      // "Icon Height": 77.54,
+                      // "Icon Width": 72.0,
+                      "Positions": [107.46,23.0,-1.0,-1.0,0.0]
+                    }
+                    ),
                     SizedBox(width: 8),
-                    services("Quick Links","quick_links")
+                    services("Quick Links","blogs_new",
+                    {
+                      "Title": "Quick Links",
+                      "Path": 'assets/homepage/images/quicklinks_new.png',
+                      "Subtitle": "Useful Insti Links",
+                      // "Icon Height": 77.7,
+                      // "Icon Width": 80.18,
+                      "Positions": [107.72,16.52,-6.0,-6.5,4.71]
+                    }
+                    )
                   ],
                 ),
       ],
@@ -449,51 +880,83 @@ class _HomepageState extends State<Homepage> {
           color: myConstants.instiappDark,
           borderRadius: BorderRadius.circular(50)),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: navIconPaths.map((path) {
+        children: navIcons.entries.map((entry) {
+          String label = entry.key;
+          String path = entry.value;
           selectedIcon = path == selectedNavIcon;
           return SizedBox(
-            width: 70,
+            width: 87,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (selectedIcon)
-                  SvgPicture.asset(
-                    'assets/homepage/icons/icon1.svg',
-                    width: 69,
-                    height: 10,
-                    colorFilter:
-                        ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                  )
-                else
-                  SizedBox(height: 10),
-                IconButton(
-                  onPressed: () {
+                // if (selectedIcon)
+                  
+                //   SvgPicture.asset(
+                //     'assets/homepage/icons/icon1.svg',
+                //     width: 69,
+                //     height: 10,
+                //     colorFilter:
+                //         ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                //   )
+                // else
+                //   SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () {
                     setState(() {
                       selectedNavIcon = path;
                     });
                     if (path == 'assets/homepage/icons/search.svg') {
                         currentpage = 'explore';
+                        
                     } else if (path ==
                         'assets/homepage/icons/message-square.svg') {
-                        currentpage = 'Community';
-                    } else if (path == 'assets/homepage/icons/map.svg') {
-                        currentpage = 'Map';
+                        currentpage = 'Communities';
+                        
+                    // } else if (path == 'assets/homepage/icons/map.svg') {
+                    //     currentpage = 'Map';  
                     } else if (path == 'assets/homepage/icons/loader.svg') {
                         currentpage = 'Feed';
+                        
                     } else if (path == 'assets/homepage/icons/home.svg') {
                         currentpage = 'homepage';
+                        
                     }
                   },
-                  icon: SvgPicture.asset(
-                    path,
-                    width: 24,
-                    height: 24,
-                    colorFilter: ColorFilter.mode(
-                        selectedIcon ? myConstants.instiappBlue : Colors.white,
-                        BlendMode.srcIn),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 63,
+                        height: 33,
+                        decoration: BoxDecoration(
+                          color: selectedIcon ? myConstants.instiappBlue : Colors.transparent,
+                          borderRadius: BorderRadius.circular(79.67)
+                        ),
+                        child: Center(
+                          child: Container(
+                            width: 24,
+                            height: 24,
+                            child: SvgPicture.asset(
+                              path,
+                              colorFilter: ColorFilter.mode(
+                                Colors.white,
+                                BlendMode.srcIn),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        label,
+                        style: TextStyle(
+                          color: selectedIcon ? myConstants.instiappBlue : Colors.white,
+                        ),
+                      )
+                    ],
                   ),
+                  
                 ),
               ],
             ),
@@ -625,91 +1088,123 @@ class _HomepageState extends State<Homepage> {
   Widget qrClosed(List<Hostel> hostels) {
   return Column(
     children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 7),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          
-          children: [
-            Text(
-              'Mess Menu',
-              style: TextStyle(
-                color: const Color(0xFF15202D),
-                fontSize: 20,
-                fontFamily: 'DM Sans',
-                fontWeight: FontWeight.w700,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Mess Menu',
+            style: TextStyle(
+              color: const Color(0xFF15202D),
+              fontSize: 20,
+              fontFamily: 'DM Sans',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          GestureDetector(
+            onTap: (){
+              _openFilterBottomSheet(hostels);
+            },
+            child: Container(
+              width: 94,
+              height: 40,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                color: myConstants.instiappGrey,
+                border: Border.all(
+                  color: Color(0xFF7E8287),
+                  width: 1
+                )
+              ),
+              padding: EdgeInsets.fromLTRB(16, 11, 4, 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "${_selectedDay.substring(0,3)}, H-${_selectedHostel}",
+                    style: TextStyle(
+                      color: Color(0xCC0F1620),
+                      fontWeight: FontWeight.w500
+                    ),
+                  ),
+                  // SizedBox(width: 8),
+                  // Container(
+                  //   height: 20,
+                  //   width: 20,
+                  //   child: Icon(Icons.keyboard_arrow_down),
+                  // )
+                ],
               ),
             ),
-            Row(
-              children: [
-                Container(
-                  height: 40,
-                  width: 78.5,
-                  decoration: BoxDecoration(
-                    color: myConstants.instiappGrey,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Center(
-                    child: DropdownButton(
-                      items: HostelMess.dayToName.values
-                              .map((d) => DropdownMenuItem(value: d.substring(0,3), child: Text(d.substring(0,3))))
-                              .toList(),
-                      onChanged: (String? newDay) {
-                        setState(() {
-                          _dropdownDay = newDay!;
-                        });
-                      },
-                      value: _dropdownDay,
-                      icon: Icon(Icons.keyboard_arrow_down),
-                      style: TextStyle(
-                        color: Colors.grey[800],
-                        fontWeight: FontWeight.w400,
-                      ),
-                      underline: SizedBox(),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Container(
-                  height: 40,
-                  width: 78.5,
-                  decoration: BoxDecoration(
-                    color: myConstants.instiappGrey,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  padding: EdgeInsets.only(left: 10),
-                  child: DropdownButton(
-                    items: hostels.map((h){
-                      final name=(h.shortName! =='tansa'||h.shortName! =='qip')
-                      ? h.shortName!
-                      : 'H-${h.shortName!}';
-                      return DropdownMenuItem(
-                        value: h.shortName!,
-                        child: Text(name)
-                        );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _dropdownHostel = newValue!;
-                      });
-                    },
-                    value: _dropdownHostel,
-                    icon: Padding(
-                      padding: const EdgeInsets.only(left: 7),
-                      child: Icon(Icons.keyboard_arrow_down),
-                    ),
-                    style: TextStyle(
-                      color: Colors.grey[800],
-                      fontWeight: FontWeight.w400,
-                    ),
-                    underline: SizedBox(),
-                    
-                  ),
-                ),
-              ],
-            )
-          ],
-        ),
+          )
+          // Row(
+          //   children: [
+          //     Container(
+          //       height: 40,
+          //       width: 78.5,
+          //       decoration: BoxDecoration(
+          //         color: myConstants.instiappGrey,
+          //         borderRadius: BorderRadius.circular(20),
+          //       ),
+          //       child: Center(
+          //         child: DropdownButton(
+          //           items: HostelMess.dayToName.values
+          //                   .map((d) => DropdownMenuItem(value: d.substring(0,3), child: Text(d.substring(0,3))))
+          //                   .toList(),
+          //           onChanged: (String? newDay) {
+          //             setState(() {
+          //               _dropdownDay = newDay!;
+          //             });
+          //           },
+          //           value: _dropdownDay,
+          //           icon: Icon(Icons.keyboard_arrow_down),
+          //           style: TextStyle(
+          //             color: Colors.grey[800],
+          //             fontWeight: FontWeight.w400,
+          //           ),
+          //           underline: SizedBox(),
+          //         ),
+          //       ),
+          //     ),
+          //     SizedBox(width: 8),
+          //     Container(
+          //       height: 40,
+          //       width: 78.5,
+          //       decoration: BoxDecoration(
+          //         color: myConstants.instiappGrey,
+          //         borderRadius: BorderRadius.circular(20),
+          //       ),
+          //       padding: EdgeInsets.only(left: 10),
+          //       child: DropdownButton(
+          //         items: hostels.map((h){
+          //           final name=(h.shortName! =='tansa'||h.shortName! =='qip')
+          //           ? h.shortName!
+          //           : 'H-${h.shortName!}';
+          //           return DropdownMenuItem(
+          //             value: h.shortName!,
+          //             child: Text(name)
+          //             );
+          //         }).toList(),
+          //         onChanged: (String? newValue) {
+          //           setState(() {
+          //             _dropdownHostel = newValue!;
+          //           });
+          //         },
+          //         value: _dropdownHostel,
+          //         icon: Padding(
+          //           padding: const EdgeInsets.only(left: 7),
+          //           child: Icon(Icons.keyboard_arrow_down),
+          //         ),
+          //         style: TextStyle(
+          //           color: Colors.grey[800],
+          //           fontWeight: FontWeight.w400,
+          //         ),
+          //         underline: SizedBox(),
+                  
+          //       ),
+          //     ),
+          //   ],
+          // )
+        ],
       ),
       SizedBox(height: 20),
       Row(

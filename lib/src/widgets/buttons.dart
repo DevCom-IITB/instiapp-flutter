@@ -23,25 +23,29 @@ class SettingsItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 1),
+      height: 64,
       decoration: BoxDecoration(
-        color: const Color(0xFFEFEFEF),
+        color: const Color.fromRGBO(239, 239, 239, 1),
         borderRadius: BorderRadius.vertical(
           top: top ? const Radius.circular(14) : Radius.zero,
           bottom: bottom ? const Radius.circular(14) : Radius.zero,
         ),
+        border: bottom ? null :
+          const Border(bottom: BorderSide(color: Color.fromRGBO(210, 213, 218, 0.5), width: 1)),
       ),
-      child: ListTile(
-        leading: Icon(icon, color: color ?? const Color(0xFF1E293B)),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: color ?? const Color(0xFF1E293B),
-            fontWeight: FontWeight.w600,
+      child: Center(
+        child: ListTile(
+          leading: Icon(icon, color: color ?? const Color(0xFF1E293B)),
+          title: Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              color: color ?? const Color(0xFF1E293B),
+              fontWeight: FontWeight.w600,
+            ),
           ),
+          onTap: onTap,
         ),
-        trailing: title == 'Logout' ? null : const Icon(Icons.chevron_right),
-        onTap: onTap,
       ),
     );
   }
@@ -68,33 +72,42 @@ class ToggleItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 1),
+      height: 64,
       decoration: BoxDecoration(
-        color: const Color(0xFFEFEFEF),
+        color: const Color.fromRGBO(239, 239, 239, 1),
         borderRadius: BorderRadius.vertical(
           top: top ? const Radius.circular(14) : Radius.zero,
           bottom: bottom ? const Radius.circular(14) : Radius.zero,
         ),
+        border: bottom ? null :
+          const Border(bottom: BorderSide(color: Color.fromRGBO(210, 213, 218, 0.5), width: 1)),
       ),
-      child: Theme(
-        data: ThemeData.light().copyWith(
-          switchTheme: SwitchThemeData(
-            thumbColor: WidgetStateProperty.resolveWith((states) {
-              return Colors.white;
-            }),
-            trackColor: WidgetStateProperty.resolveWith((states) {
-              return states.contains(WidgetState.selected)
-                  ? Color.fromRGBO(48, 111, 220, 1)
-                  : Color.fromRGBO(210, 213, 218, 1);
-            }),
-            trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+      child: Center(
+        child: Theme(
+          data: ThemeData.light().copyWith(
+            switchTheme: SwitchThemeData(
+              thumbColor: WidgetStateProperty.resolveWith((states) {
+                return Colors.white;
+              }),
+              trackColor: WidgetStateProperty.resolveWith((states) {
+                return states.contains(WidgetState.selected)
+                    ? Color.fromRGBO(48, 111, 220, 1)
+                    : Color.fromRGBO(210, 213, 218, 1);
+              }),
+              trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+            ),
           ),
-        ),
-        child: SwitchListTile(
-          secondary: icon != null ? Icon(icon, color: const Color(0xFF1E293B)) : null,
-          title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-          value: value,
-          onChanged: onChanged,
+          child: Center(
+            child: SwitchListTile(
+              secondary: icon != null ? Icon(icon, color: const Color(0xFF1E293B)) : null,
+              title: Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Text(title, style: const TextStyle(fontFamily: "DM Sans", fontWeight: FontWeight.w600, fontSize: 16)),
+              ),
+              value: value,
+              onChanged: onChanged,
+            ),
+          ),
         ),
       ),
     );
