@@ -2,7 +2,7 @@ import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
-import 'package:InstiApp/src/routes/bodypage.dart';
+import 'package:InstiApp/src/routes/bodypage.dart' as bodypage;
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/routes/explore_club.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
@@ -813,7 +813,7 @@ List<Widget> _buildContent(
                     b.bodyShortDescription ?? "",
                     b.bodyImageURL ?? "",
                     Icons.people_outline_outlined,
-                    () => BodyPage.navigateWith(context, exploreBloc.bloc,
+                    () => bodypage.BodyPage.navigateWith(context, exploreBloc.bloc,
                         body: b,), context))
                 .toList() ??
             []) +

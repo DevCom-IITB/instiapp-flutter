@@ -1,6 +1,8 @@
 import 'dart:collection';
 
 import 'package:InstiApp/constants.dart';
+import 'package:InstiApp/src/routes/community.dart';
+import 'package:InstiApp/src/routes/communitypage.dart';
 import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
@@ -17,7 +19,18 @@ import 'feedpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
-import 'package:InstiApp/src/routes/communitypage.dart';
+
+class Responsive {
+  final BuildContext context;
+  final double baseWidth;  
+  final double baseHeight;
+
+  Responsive(this.context, {this.baseWidth = 411, this.baseHeight = 914});
+
+  double w(double px) => MediaQuery.of(context).size.width * (px / baseWidth);
+  double h(double px) => MediaQuery.of(context).size.height * (px / baseHeight);
+  double sp(double px) => w(px); // scale text with width
+}
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -135,12 +148,12 @@ class _HomepageState extends State<Homepage> {
           ExplorePage(),
           if (currentpage == 'Feed')
             FeedPage(),
-          if (currentpage == 'Communities')
-            CommunityPage(),
+          if(currentpage=='Community')
+            Communities(),
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 20),
+              padding: EdgeInsets.only(bottom: responsive.h(20)),
               child: navBar(),
             ),
           ),
@@ -151,6 +164,7 @@ class _HomepageState extends State<Homepage> {
   List<String> daysList=HostelMess.dayToName.values.map((d) => d.substring(0, 1)).toList();
   List<String> daysKeys=HostelMess.dayToName.values.map((d) => d.substring(0 )).toList();
   void _openFilterBottomSheet(List<Hostel> hostels){
+    final responsive = Responsive(context);
     String tempSelectedDay=_selectedDay;
     String tempSelectedHostel=_selectedHostel;
     showModalBottomSheet(
@@ -160,290 +174,294 @@ class _HomepageState extends State<Homepage> {
       builder: (BuildContext context){
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setModalState) {
-            return Container(
-              decoration: BoxDecoration(
-                color: Color(0xFFF6F6F6),
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(16)
-                )
-              ),
-              height: MediaQuery.of(context).size.height * 0.6632,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 24),
-                    child: Text(
-                      "Mess Menu for...",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700
+            return FractionallySizedBox(
+              heightFactor: 0.6632,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Color(0xFFF6F6F6),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(16)
+                  )
+                ),
+                // height: MediaQuery.of(context).size.height * responsive.h(0.6632),
+                // height: responsive.h(0.6632),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: responsive.w(16),vertical: responsive.h(24)),
+                      child: Text(
+                        "Mess Menu for...",
+                        style: TextStyle(
+                          fontSize: responsive.sp(20),
+                          fontWeight: FontWeight.w700
+                        ),
                       ),
                     ),
-                  ),
-                  Container(
-                    width: 412,
-                    height: 52,
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 129,
-                          height: 52,
-                          color: myConstants.instiappGrey,
-                          child: Stack(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(16, 16, 84, 15),
-                                child: Text(
-                                  "Day",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500
+                    Container(
+                      width: responsive.w(412),
+                      height: responsive.h(52),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: responsive.w(129),
+                            height: responsive.h(52),
+                            color: myConstants.instiappGrey,
+                            child: Stack(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(16), responsive.w(84), responsive.h(15)),
+                                  child: Text(
+                                    "Day",
+                                    style: TextStyle(
+                                      fontSize: responsive.sp(16),
+                                      fontWeight: FontWeight.w500
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Positioned(
-                                left: 0,
-                                right: 124,
-                                child: Container(
-                                  width: 4,
-                                  height: 52,
-                                  decoration: BoxDecoration(
-                                    color: myConstants.instiappBlue,
-                                    borderRadius: BorderRadius.horizontal(
-                                      right: Radius.circular(5)
-                                    )
-                                  ),
-                                )
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          width: 282,
-                          height: 52,
-                          color: myConstants.instiappGrey,
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(11,12,5,10),
-                            child: Row(
-                              children: [
-                                for(int i=0;i<daysList.length;i++) ...[
-                                  dayContainer(
-                                    daysList[i],
-                                    tempSelectedDay == daysKeys[i],
-                                    (){
-                                      setModalState((){
-                                        tempSelectedDay=daysKeys[i];
-                                      });
-                                    }
+                                Positioned(
+                                  left: responsive.w(0),
+                                  right: responsive.w(124),
+                                  child: Container(
+                                    width: responsive.w(4),
+                                    height: responsive.h(52),
+                                    decoration: BoxDecoration(
+                                      color: myConstants.instiappBlue,
+                                      borderRadius: BorderRadius.horizontal(
+                                        right: Radius.circular(5)
+                                      )
                                     ),
-                                  SizedBox(width: 8,)
-                                ]
-                                  
+                                  )
+                                )
                               ],
                             ),
                           ),
-                        )
-                      ],
+                          Container(
+                            width: responsive.w(282),
+                            height: responsive.h(52),
+                            color: myConstants.instiappGrey,
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(responsive.w(11), responsive.h(12), responsive.w(5), responsive.h(10)),
+                              child: Row(
+                                children: [
+                                  for(int i=0;i<daysList.length;i++) ...[
+                                    dayContainer(
+                                      daysList[i],
+                                      tempSelectedDay == daysKeys[i],
+                                      (){
+                                        setModalState((){
+                                          tempSelectedDay=daysKeys[i];
+                                        });
+                                      }
+                                      ),
+                                    SizedBox(width: responsive.w(8),)
+                                  ]
+                                    
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 16,),
-                  Container(
-                    width: 412,
-                    height: 348,
-                    child: Row(
-                      children: [
-                        Column(
-                          children: [
-                            Container(
-                              width: 125,
-                              height: 52,
-                              color: myConstants.instiappGrey,
-                              child: Stack(
+                    SizedBox(height: responsive.h(8),),
+                    Container(
+                      width: responsive.w(412),
+                      height: responsive.h(348),
+                      child: Row(
+                        children: [
+                          Column(
                             children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(16, 16, 61, 15),
-                                child: Text(
-                                  "Hostel",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500
+                              Container(
+                                width: responsive.w(125),
+                                height: responsive.h(52),
+                                color: myConstants.instiappGrey,
+                                child: Stack(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(16), responsive.w(51), responsive.h(15)),
+                                  child: Text(
+                                    "Hostel",
+                                    style: TextStyle(
+                                      fontSize: responsive.sp(16),
+                                      fontWeight: FontWeight.w500
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Positioned(
-                                left: 0,
-                                right: 120,
-                                child: Container(
-                                  width: 4,
-                                  height: 52,
-                                  decoration: BoxDecoration(
-                                    color: myConstants.instiappBlue,
-                                    borderRadius: BorderRadius.horizontal(
-                                      right: Radius.circular(5)
-                                    )
-                                  ),
+                                Positioned(
+                                  left: responsive.w(0),
+                                  right: responsive.w(120),
+                                  child: Container(
+                                    width: responsive.w(4),
+                                    height: responsive.h(52),
+                                    decoration: BoxDecoration(
+                                      color: myConstants.instiappBlue,
+                                      borderRadius: BorderRadius.horizontal(
+                                        right: Radius.circular(5)
+                                      )
+                                    ),
+                                  )
                                 )
+                              ],
+                            ),
+                              ),
+                              Container(
+                                width: responsive.w(125),
+                                height: responsive.h(296),
+                                
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFF6F6F6),
+                                  borderRadius: BorderRadius.horizontal(
+                                    right: Radius.circular(16)
+                                  )
+                                ),
+                                //child: Text("data"),
                               )
                             ],
                           ),
-                            ),
-                            Container(
-                              width: 125,
-                              height: 296,
-                              
-                              decoration: BoxDecoration(
-                                color: Color(0xFFF6F6F6),
-                                borderRadius: BorderRadius.horizontal(
-                                  right: Radius.circular(16)
-                                )
-                              ),
-                              //child: Text("data"),
-                            )
-                          ],
-                        ),
-                        Container(
-                          width: 286,
-                          height: 348,
-                          padding: EdgeInsets.only(top: 16,left: 20),
-                          color: myConstants.instiappGrey,
-                          child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ...hostels.map((h){
-                                  final value = h.shortName!;
-                                  final name=(value =='tansa'||value =='qip')
-                                  ? value
-                                  : 'Hostel ${value}';
-                                  final isSelected = tempSelectedHostel == h.shortName;
-                                  // return RadioListTile(
-                                  //   value: value, 
-                                  //   groupValue: _selectedHostel, 
-                                  //   onChanged: (newValue){
-                                  //     setModalState((){
-                                  //       _selectedHostel=newValue as String;
-                                  //     });
-                                  //   },
-                                  //   title: Text(
-                                  //     name,
-                                  //     style: TextStyle(
-                                  //       fontWeight: FontWeight.w500
-                                  //     ),
-                                  //   ),
-                                  //   activeColor: myConstants.instiappBlue,
-                                  //   contentPadding: EdgeInsets.zero,
-                                  //   dense: true,
-                                  //   visualDensity: VisualDensity(vertical: -3),
-                                  //   );
-                                  return Column(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: (){
-                                          setModalState((){
-                                             tempSelectedHostel = h.shortName!;
-                                          });
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              width: 16,
-                                              height: 16,
-                                              
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                  color: Color(0xFFD2D5DA),
-                                                  width: 1.5
-                                                )
-                                              ),
-                                              child: isSelected
-                                              ? Center(
-                                                child: Container(
-                                                  height: 14,
-                                                  width: 14,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: isSelected ? myConstants.instiappBlue: Colors.transparent,
-                                                  ),
-                                                  child: Center(
-                                                    child: Container(
-                                                      height: 6,
-                                                      width: 6,
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color: isSelected ? Colors.white: Colors.transparent,
+                          Container(
+                            width: responsive.w(286),
+                            height: responsive.h(348),
+                            padding: EdgeInsets.only(top: responsive.h(16),left: responsive.w(20)),
+                            color: myConstants.instiappGrey,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ...hostels.map((h){
+                                    final value = h.shortName!;
+                                    final name=(value =='tansa'||value =='qip')
+                                    ? value
+                                    : 'Hostel ${value}';
+                                    final isSelected = tempSelectedHostel == h.shortName;
+                                    // return RadioListTile(
+                                    //   value: value, 
+                                    //   groupValue: _selectedHostel, 
+                                    //   onChanged: (newValue){
+                                    //     setModalState((){
+                                    //       _selectedHostel=newValue as String;
+                                    //     });
+                                    //   },
+                                    //   title: Text(
+                                    //     name,
+                                    //     style: TextStyle(
+                                    //       fontWeight: FontWeight.w500
+                                    //     ),
+                                    //   ),
+                                    //   activeColor: myConstants.instiappBlue,
+                                    //   contentPadding: EdgeInsets.zero,
+                                    //   dense: true,
+                                    //   visualDensity: VisualDensity(vertical: -3),
+                                    //   );
+                                    return Column(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: (){
+                                            setModalState((){
+                                               tempSelectedHostel = h.shortName!;
+                                            });
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                width: responsive.w(16),
+                                                height: responsive.h(16),
+                                                
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(
+                                                    color: Color(0xFFD2D5DA),
+                                                    width: responsive.w(1.5)
+                                                  )
+                                                ),
+                                                child: isSelected
+                                                ? Center(
+                                                  child: Container(
+                                                    height: responsive.h(14),
+                                                    width: responsive.w(14),
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: isSelected ? myConstants.instiappBlue: Colors.transparent,
+                                                    ),
+                                                    child: Center(
+                                                      child: Container(
+                                                        height: responsive.h(6),
+                                                        width: responsive.w(6),
+                                                        decoration: BoxDecoration(
+                                                          shape: BoxShape.circle,
+                                                          color: isSelected ? Colors.white: Colors.transparent,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                              )
-                                              : null
-                                            ),
-                                            SizedBox(width: 12,),
-                                            Text(
-                                              name,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w500
+                                                )
+                                                : null
                                               ),
-                                            ),
-                                          ],
+                                              SizedBox(width: responsive.w(12),),
+                                              Text(
+                                                name,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      
-                                      SizedBox(height: 16,)
-                                    ],
-                                  );
-                                }).toList()
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 27),
-                  Container(
-                    padding: EdgeInsets.only(right: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        GestureDetector(
-                          onTap: (){
-                            Navigator.pop(context);
-                            setState(() {
-                              _selectedDay=tempSelectedDay;
-                              _selectedHostel=tempSelectedHostel;
-                            });
-                          },
-                          child: Container(
-                            height: 60,
-                            width: 165,
-                            decoration: BoxDecoration(
-                              image: const DecorationImage(
-                                  image: AssetImage(
-                                    "assets/buynsell/filterbutton.png"),
-                                    fit: BoxFit.cover,
+                                        
+                                        SizedBox(height: responsive.h(16),)
+                                      ],
+                                    );
+                                  }).toList()
+                                ],
                               ),
-                              color: myConstants.instiappDark,
-                              borderRadius: BorderRadius.circular(50)
                             ),
-                            child: Center(
-                              child: Text(
-                                "Apply",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: responsive.h(27)),
+                    Container(
+                      padding: EdgeInsets.only(right: responsive.w(16)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.pop(context);
+                              setState(() {
+                                _selectedDay=tempSelectedDay;
+                                _selectedHostel=tempSelectedHostel;
+                              });
+                            },
+                            child: Container(
+                              height: responsive.h(60),
+                              width: responsive.w(165),
+                              decoration: BoxDecoration(
+                                image: const DecorationImage(
+                                    image: AssetImage(
+                                      "assets/buynsell/filterbutton.png"),
+                                      fit: BoxFit.cover,
+                                ),
+                                color: myConstants.instiappDark,
+                                borderRadius: BorderRadius.circular(50)
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Apply",
+                                  style: TextStyle(
+                                    fontSize: responsive.sp(18),
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             );
           }
@@ -452,12 +470,13 @@ class _HomepageState extends State<Homepage> {
       );
   }
   Widget dayContainer(String day,bool isSelected, VoidCallback onTap){
+    final responsive = Responsive(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 30,
-        width: 30,
-        padding: EdgeInsets.symmetric(vertical: 3,horizontal: 7),
+        height: responsive.h(30),
+        width: responsive.w(30),
+        padding: EdgeInsets.symmetric(vertical: responsive.h(3),horizontal: responsive.w(7)),
         decoration: BoxDecoration(
           color: isSelected? myConstants.instiappBlue:Colors.white,
           borderRadius: BorderRadius.circular(8)
@@ -466,7 +485,7 @@ class _HomepageState extends State<Homepage> {
           child: Text(
             day,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: responsive.w(18),
               fontWeight: FontWeight.w600,
               color: isSelected? Colors.white:Colors.black
             ),
@@ -476,6 +495,7 @@ class _HomepageState extends State<Homepage> {
     );
   }
   Widget services(String name, String path, Map<String,dynamic> services_icon) {
+    final responsive = Responsive(context);
     return InkWell(
       onTap: () {
         if (name == "Buy & Sell") {
@@ -497,8 +517,8 @@ class _HomepageState extends State<Homepage> {
         child: Stack(
           children: [
             Positioned(
-                left: 12,
-                top: 12,
+                left: responsive.w(12),
+                top: responsive.h(12),
                 //right: 72,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -507,7 +527,7 @@ class _HomepageState extends State<Homepage> {
                       services_icon["Title"],
                       style: TextStyle(
                         color: const Color(0xFF0F1620),
-                        fontSize: 16,
+                        fontSize: responsive.sp(16),
                         fontFamily: 'DM Sans',
                         fontWeight: FontWeight.w700,
                       ),
@@ -516,18 +536,18 @@ class _HomepageState extends State<Homepage> {
                       services_icon["Subtitle"],
                       style: TextStyle(
                         color: Colors.grey[700],
-                        fontSize: 11,
+                        fontSize: responsive.sp(11),
                         fontWeight: FontWeight.w500
                       ),
                     )
                   ],
                 )),
             services_icon["Title"]=="Buy & Sell"? Positioned(
-              bottom: 12,
-              left: 12,
+              bottom: responsive.h(12),
+              left: responsive.w(12),
               child: Container(
-                width: 37,
-                height: 16,
+                width: responsive.w(37), 
+                height: responsive.h(16),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   color: myConstants.instiappBlue
@@ -537,7 +557,7 @@ class _HomepageState extends State<Homepage> {
                     "New!",
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 10,
+                      fontSize: responsive.sp(10),
                     ),
                   ),
                 ),
@@ -826,7 +846,7 @@ class _HomepageState extends State<Homepage> {
                       "Positions": [97.0,14.5,-11.0,-7.8,-7.81]
                     }
                     ),
-                    SizedBox(width: 8),
+                    SizedBox(width: responsive.w(8)),
                     services("Maps","maps_new",
                     {
                       "Title": "Maps",
@@ -853,7 +873,7 @@ class _HomepageState extends State<Homepage> {
                       "Positions": [107.46,23.0,-1.0,-1.0,0.0]
                     }
                     ),
-                    SizedBox(width: 8),
+                    SizedBox(width: responsive.w(8)),
                     services("Quick Links","blogs_new",
                     {
                       "Title": "Quick Links",
@@ -886,7 +906,7 @@ class _HomepageState extends State<Homepage> {
           String path = entry.value;
           selectedIcon = path == selectedNavIcon;
           return SizedBox(
-            width: 87,
+            width: responsive.w(87),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -927,16 +947,16 @@ class _HomepageState extends State<Homepage> {
                   child: Column(
                     children: [
                       Container(
-                        width: 63,
-                        height: 33,
+                        width: responsive.w(63),
+                        height: responsive.h(33),
                         decoration: BoxDecoration(
                           color: selectedIcon ? myConstants.instiappBlue : Colors.transparent,
                           borderRadius: BorderRadius.circular(79.67)
                         ),
                         child: Center(
                           child: Container(
-                            width: 24,
-                            height: 24,
+                            width: responsive.w(24),
+                            height: responsive.w(24),
                             child: SvgPicture.asset(
                               path,
                               colorFilter: ColorFilter.mode(
@@ -946,7 +966,7 @@ class _HomepageState extends State<Homepage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 2),
+                      SizedBox(height: responsive.h(2)),
                       Text(
                         label,
                         style: TextStyle(
@@ -1100,7 +1120,7 @@ class _HomepageState extends State<Homepage> {
             'Mess Menu',
             style: TextStyle(
               color: const Color(0xFF15202D),
-              fontSize: 20,
+              fontSize: responsive.sp(20),
               fontFamily: 'DM Sans',
               fontWeight: FontWeight.w700,
             ),
@@ -1110,17 +1130,17 @@ class _HomepageState extends State<Homepage> {
               _openFilterBottomSheet(hostels);
             },
             child: Container(
-              width: 94,
-              height: 40,
+              width: responsive.w(94),
+              height: responsive.h(40),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(100),
                 color: myConstants.instiappGrey,
                 border: Border.all(
                   color: Color(0xFF7E8287),
-                  width: 1
+                  width: responsive.w(1)
                 )
               ),
-              padding: EdgeInsets.fromLTRB(16, 11, 4, 10),
+              padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(11), responsive.w(4), responsive.h(10)),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
