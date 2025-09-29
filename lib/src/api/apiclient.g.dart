@@ -13,7 +13,7 @@ class _InstiAppApi implements InstiAppApi {
     this._dio, {
     this.baseUrl,
   }) {
-    // baseUrl ??= 'https://09b5f0e9f42c.ngrok-free.app/api';
+    //baseUrl ??= 'https://09b5f0e9f42c.ngrok-free.app/api';
     // baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
     // baseUrl ??= 'https://a6c715a9e425.ngrok-free.app/api';
     // baseUrl ??= 'http://10.198.49.150/api';

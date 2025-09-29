@@ -1242,8 +1242,635 @@ class _ImageGalleryState extends State<ImageGallery>
   }
 }
 
+// class CommunityPostWidget extends StatefulWidget {
+//   // const CommunityPostWidget({Key? key}) : super(key: key);
+//   final CommunityPost communityPost;
+//   final void Function()? onPressedComment;
+//   final bool shouldTap;
+//   final CPType postType;
+
+//   CommunityPostWidget({
+//     required this.communityPost,
+//     this.onPressedComment,
+//     this.shouldTap = true,
+//     this.postType = CPType.All,
+//   });
+//   @override
+//   State<CommunityPostWidget> createState() =>
+//       _CommunityPostWidgetState(communityPost: communityPost);
+// }
+
+// class _CommunityPostWidgetState extends State<CommunityPostWidget> {
+//   CommunityPost communityPost;
+//   bool contentExpanded = false;
+//   bool isAnon = false;
+//   _CommunityPostWidgetState({required this.communityPost});
+
+//   bool showSelf() {
+//     if (widget.postType == CPType.YourPosts) return true;
+//     return !(communityPost.deleted == true);
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     if (!showSelf()) {
+//       return Container();
+//     }
+
+//     ThemeData theme = Theme.of(context);
+//     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
+//     CommunityPostBloc communityPostBloc = bloc.communityPostBloc;
+//     String content = communityPost.content ?? "";
+//     int contentChars = widget.postType == CPType.Featured
+//         ? communityPost.imageUrl == null || communityPost.imageUrl!.length == 0
+//             ? 310
+//             : 30
+//         : 310;
+//     if (widget.postType == CPType.All) {
+//       if (communityPost.anonymous == true) {
+//         isAnon = true;
+//       } else {
+//         isAnon = false;
+//       }
+//     } else {
+//       isAnon = false;
+//     }
+
+//     void Function()? postOnTap = contentExpanded ||
+//             content.length <= contentChars ||
+//             widget.postType == CPType.Featured
+//         ? widget.shouldTap && (communityPost.status == 1)
+//             ? () => CommunityPostPage.navigateWith(
+//                 context, bloc.communityPostBloc, communityPost)
+//             : null
+//         : () => setState(() {
+//               contentExpanded = true;
+//             });
+
+//     return Container(
+//       width: CPType.Featured == widget.postType ? 300 : null,
+//       margin: widget.shouldTap
+//           ? EdgeInsets.all(10)
+//           : EdgeInsets.symmetric(horizontal: 10),
+//       decoration: BoxDecoration(
+//         borderRadius: BorderRadius.circular(10),
+//         color: theme.colorScheme.surface,
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Container(
+//             decoration: BoxDecoration(
+//                 border: Border(
+//                     bottom: BorderSide(
+//                         width: 1,
+//                         color: theme.colorScheme.surfaceContainerHighest))),
+//             child: ListTile(
+//               leading: NullableCircleAvatar(
+//                 isAnon
+//                     ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSM9q9XJKxlskry5gXTz1OXUyem5Ap59lcEGg&usqp=CAU"
+//                     : communityPost.postedBy?.userProfilePictureUrl ?? "",
+//                 Icons.person,
+//                 radius: 18,
+//               ),
+//               title: Text(
+//                 isAnon
+//                     ? "Anonymous User"
+//                     : (communityPost.postedBy?.userName ?? "Anonymous user") +
+//                         ((communityPost.anonymous ?? false) ? " (Anon)" : ""),
+//                 style: theme.textTheme.bodyMedium,
+//               ),
+//               subtitle: Text(
+//                 DateFormat("dd MMM, yyyy")
+//                     .format(DateTime.parse(communityPost.timeOfCreation!)),
+//                 style: theme.textTheme.bodySmall,
+//               ),
+//               trailing: Container(
+//                 width: widget.postType == CPType.Featured
+//                     ? 100
+//                     : MediaQuery.of(context).size.width / 3,
+//                 child: Row(
+//                   mainAxisAlignment: MainAxisAlignment.end,
+//                   children: [
+//                     communityPost.status != 1 || communityPost.deleted == true
+//                         ? Container(
+//                             decoration: BoxDecoration(
+//                               border: Border.all(
+//                                 width: 1,
+//                                 color: communityPost.deleted == true
+//                                     ? Color(0xFFF24822)
+//                                     : communityPost.status == 0
+//                                         ? Color(0xFFFFCD29)
+//                                         : Color(0xFFF24822),
+//                               ),
+//                               borderRadius: BorderRadius.circular(100),
+//                             ),
+//                             padding: EdgeInsets.symmetric(
+//                                 horizontal: 10, vertical: 5),
+//                             child: Text(
+//                               communityPost.deleted == true
+//                                   ? "Deleted"
+//                                   : communityPost.status == 0
+//                                       ? "Pending"
+//                                       : communityPost.status == 2
+//                                           ? "Rejected"
+//                                           : "Reported",
+//                               style: theme.textTheme.bodySmall?.copyWith(
+//                                 color: communityPost.deleted == true
+//                                     ? Color(0xFFF24822)
+//                                     : communityPost.status == 0
+//                                         ? Color(0xFFFFCD29)
+//                                         : Color(0xFFF24822),
+//                               ),
+//                             ),
+//                           )
+//                         : Container(),
+//                     PopupMenuButton<int>(
+//                       itemBuilder: (context) {
+//                         List<PopupMenuItem<int>> items = [];
+
+//                         bool isAuthor = communityPost.postedBy?.userID ==
+//                             bloc.currSession!.profile!.userID;
+
+//                         bool isAdmin = bloc.hasPermission(
+//                             communityPost.community?.body ?? "", "AppP");
+
+//                         if (isAuthor) {
+//                           items.add(
+//                             PopupMenuItem(
+//                               value: 1,
+//                               // row has two child icon and text.
+//                               child: Row(
+//                                 children: [
+//                                   Icon(Icons.edit),
+//                                   SizedBox(
+//                                     // sized box with width 10
+//                                     width: 10,
+//                                   ),
+//                                   Text("Edit")
+//                                 ],
+//                               ),
+//                               onTap: () => Future(() async {
+//                                 CommunityPost? post =
+//                                     (await Navigator.of(context).pushNamed(
+//                                   "/posts/add",
+//                                   arguments:
+//                                       NavigateArguments(post: communityPost),
+//                                 )) as CommunityPost?;
+//                                 if (post != null) {
+//                                   setState(() {
+//                                     communityPost = post;
+//                                   });
+//                                 }
+//                               }),
+//                             ),
+//                           );
+//                         }
+
+//                         if ((isAuthor || isAdmin) &&
+//                             !(communityPost.deleted == true)) {
+//                           items.add(
+//                             PopupMenuItem(
+//                               value: 2,
+//                               // row has two child icon and text
+//                               child: Row(
+//                                 children: [
+//                                   Icon(Icons.delete),
+//                                   SizedBox(
+//                                     // sized box with width 10
+//                                     width: 10,
+//                                   ),
+//                                   Text("Delete")
+//                                 ],
+//                               ),
+//                               onTap: () async {
+//                                 await communityPostBloc.deleteCommunityPost(
+//                                     communityPost.id ?? "");
+//                                 setState(() {
+//                                   communityPost.deleted = true;
+//                                 });
+//                               },
+//                             ),
+//                           );
+//                         }
+//                         if (isAdmin) {
+//                           items.add(
+//                             PopupMenuItem(
+//                               value: 3,
+//                               // row has two child icon and text
+//                               child: Row(
+//                                 children: [
+//                                   Icon((communityPost.featured ?? false)
+//                                       ? Icons.published_with_changes_sharp
+//                                       : Icons.push_pin_outlined),
+//                                   SizedBox(
+//                                     // sized box with width 10
+//                                     width: 10,
+//                                   ),
+//                                   Text((communityPost.featured ?? false)
+//                                       ? "Unpin from featured"
+//                                       : "Pin to featured")
+//                                 ],
+//                               ),
+//                               onTap: () async {
+//                                 bool isFeatured =
+//                                     !(communityPost.featured ?? false);
+
+//                                 await bloc.communityPostBloc
+//                                     .featureCommunityPost(
+//                                         communityPost.id!, isFeatured);
+
+//                                 setState(() {
+//                                   communityPost.featured = isFeatured;
+//                                 });
+//                               },
+//                             ),
+//                           );
+//                         }
+
+//                         items.add(
+//                           PopupMenuItem(
+//                             value: 4,
+//                             // row has two child icon and text
+//                             child: Row(
+//                               children: [
+//                                 Icon(Icons.share),
+//                                 SizedBox(
+//                                   // sized box with width 10
+//                                   width: 10,
+//                                 ),
+//                                 Text("Share")
+//                               ],
+//                             ),
+//                             onTap: () async {
+//                               await Share.share(
+//                                   "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}");
+//                             },
+//                           ),
+//                         );
+//                         return items;
+//                       },
+//                       // offset: Offset(0, 100),
+//                       elevation: 2,
+//                       tooltip: "More",
+//                       icon: Icon(
+//                         Icons.more_vert,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+//               minVerticalPadding: 0,
+//               dense: true,
+//               horizontalTitleGap: 4,
+//               onTap: communityPost.postedBy != null &&
+//                       !(communityPost.anonymous ?? false)
+//                   ? () => UserPage.navigateWith(
+//                       context, bloc, communityPost.postedBy)
+//                   : null,
+//             ),
+//           ),
+//           GestureDetector(
+//             onTap: contentExpanded ||
+//                     content.length <= contentChars ||
+//                     widget.postType == CPType.Featured
+//                 ? widget.shouldTap && (communityPost.status == 1)
+//                     ? () => CommunityPostPage.navigateWith(
+//                         context, bloc.communityPostBloc, communityPost)
+//                     : null
+//                 : () => setState(() {
+//                       contentExpanded = true;
+//                     }),
+//             child: Container(
+//                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     SelectableLinkify(
+//                       text: content.length > contentChars && !contentExpanded
+//                           ? content.substring(0, contentChars - 10) +
+//                               (contentExpanded ? "" : "...")
+//                           : content,
+//                       onOpen: (link) async {
+//                         if (await canLaunchUrl(Uri.parse(link.url))) {
+//                           await launchUrl(
+//                             Uri.parse(link.url),
+//                             mode: LaunchMode.externalApplication,
+//                           );
+//                         }
+//                       },
+//                       onTap: postOnTap,
+//                     ),
+//                     Text.rich(
+//                       new TextSpan(
+//                         children: !contentExpanded &&
+//                                 content.length > contentChars
+//                             ? [
+//                                 new TextSpan(
+//                                   text: 'Read More.',
+//                                   style: theme.textTheme.titleSmall?.copyWith(
+//                                       color: theme.colorScheme.primary),
+//                                   // recognizer: new TapGestureRecognizer()
+//                                   //   ..onTap = () => setState(() {
+//                                   //         contentExpanded = true;
+//                                   //       }),
+//                                 )
+//                               ]
+//                             : [],
+//                       ),
+//                     ),
+//                   ],
+//                 )
+//                 // child: Text(
+//                 //   communityPost.content ?? '''post''',
+//                 // ),
+//                 ),
+//           ),
+//           communityPost.imageUrl != null
+//               ? GestureDetector(
+//                   onTap: widget.postType == CPType.Featured
+//                       ? () => CommunityPostPage.navigateWith(
+//                           context, bloc.communityPostBloc, communityPost)
+//                       : null,
+//                   child: Container(
+//                     padding: EdgeInsets.symmetric(horizontal: 10),
+//                     child: ImageGallery(
+//                       images: (widget.postType == CPType.Featured
+//                           ? [communityPost.imageUrl![0]]
+//                           : communityPost.imageUrl)!,
+//                     ),
+//                   ),
+//                 )
+//               : Container(),
+//           _buildFooter(theme, bloc, communityPost),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Widget _buildFooter(
+//       ThemeData theme, InstiAppBloc bloc, CommunityPost communityPost) {
+//     switch (widget.postType) {
+//       case CPType.All:
+//       case CPType.YourPosts:
+//         int numReactions = communityPost.reactionCount?.values
+//                 .reduce((sum, element) => sum + element) ??
+//             0;
+//         return Container(
+//           decoration: BoxDecoration(
+//             borderRadius: BorderRadius.circular(10),
+//             color: theme.colorScheme.surface,
+//           ),
+//           child: Container(
+//             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+//             decoration: BoxDecoration(
+//               // border:
+//               //     Border(top: BorderSide(color: theme.colorScheme.surfaceVariant)),
+//               color: theme.colorScheme.surface,
+//               boxShadow: [
+//                 BoxShadow(
+//                   offset: Offset(0, 3),
+//                   blurRadius: 30,
+//                   spreadRadius: -18,
+//                   color: theme.colorScheme.onSurface,
+//                 ),
+//               ],
+//               borderRadius: BorderRadius.circular(10),
+//             ),
+//             child: Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 Row(
+//                   children: [
+//                     PopupMenuButton<int>(
+//                       onSelected: (val) async {
+//                         await bloc.communityPostBloc
+//                             .updateUserCommunityPostReaction(
+//                                 communityPost, val);
+
+//                         setState(() {
+//                           if ((communityPost.userReaction ?? -1) != -1) {
+//                             communityPost.reactionCount![
+//                                     communityPost.userReaction!.toString()] =
+//                                 (communityPost.reactionCount![communityPost
+//                                             .userReaction!
+//                                             .toString()] ??
+//                                         1) -
+//                                     1;
+//                           }
+//                           communityPost.reactionCount![val.toString()] =
+//                               (communityPost.reactionCount![val.toString()] ??
+//                                               0) +
+//                                           (communityPost.userReaction ?? -1) ==
+//                                       val
+//                                   ? 0
+//                                   : 1;
+//                           communityPost.userReaction =
+//                               communityPost.userReaction == val ? -1 : val;
+//                         });
+//                       },
+//                       itemBuilder: (BuildContext context) {
+//                         return [
+//                           new PopupMenuWidget(
+//                             height: 20,
+//                             child: Container(
+//                               padding: EdgeInsets.symmetric(horizontal: 5),
+//                               child: new Row(
+//                                 mainAxisAlignment:
+//                                     MainAxisAlignment.spaceBetween,
+//                                 children: emojis
+//                                     .asMap()
+//                                     .entries
+//                                     .map(
+//                                       (e) => Container(
+//                                         color:
+//                                             e.key == communityPost.userReaction
+//                                                 ? Colors.blue
+//                                                 : Colors.transparent,
+//                                         child: InkWell(
+//                                           onTap: () =>
+//                                               Navigator.of(context).pop(e.key),
+//                                           child:
+//                                               Image.asset(e.value, width: 30),
+//                                         ),
+//                                       ),
+//                                     )
+//                                     .toList(),
+//                               ),
+//                             ),
+//                           ),
+//                         ];
+//                       },
+//                       child: Row(children: [
+//                         communityPost.userReaction == -1
+//                             ? Icon(
+//                                 Icons.add_reaction_outlined,
+//                                 size: 20,
+//                               )
+//                             : Image.asset(emojis[communityPost.userReaction!],
+//                                 width: 20),
+//                         numReactions > 0
+//                             ? Container(
+//                                 margin: EdgeInsets.symmetric(horizontal: 5),
+//                                 padding: EdgeInsets.all(5),
+//                                 decoration: BoxDecoration(
+//                                   borderRadius: BorderRadius.circular(100),
+//                                   color:
+//                                       theme.colorScheme.surfaceContainerHighest,
+//                                 ),
+//                                 child: Row(
+//                                   children: emojis
+//                                       .asMap()
+//                                       .entries
+//                                       .map(
+//                                         (e) => (communityPost.reactionCount?[
+//                                                         e.key.toString()] ??
+//                                                     0) >
+//                                                 0
+//                                             ? Image.asset(e.value, width: 20)
+//                                             : Container(),
+//                                       )
+//                                       .toList(),
+//                                 ),
+//                               )
+//                             : Container(),
+//                         numReactions > 0
+//                             ? Text(
+//                                 numReactions.toString(),
+//                                 style: theme.textTheme.bodySmall,
+//                               )
+//                             : Container(),
+//                       ]),
+//                     ),
+//                     Container(
+//                       margin: EdgeInsets.only(left: 15),
+//                       child: Row(
+//                         children: [
+//                           IconButton(
+//                             padding: EdgeInsets.zero,
+//                             constraints: BoxConstraints(),
+//                             icon: Icon(
+//                               Icons.mode_comment_outlined,
+//                               color: theme.colorScheme.onSurfaceVariant,
+//                               size: 20,
+//                             ),
+//                             onPressed: widget.onPressedComment ??
+//                                 (widget.shouldTap && (communityPost.status == 1)
+//                                     ? () => CommunityPostPage.navigateWith(
+//                                         context,
+//                                         bloc.communityPostBloc,
+//                                         communityPost)
+//                                     : null),
+//                           ),
+//                           SizedBox(width: 3),
+//                           Text((communityPost.commentsCount ?? 0).toString(),
+//                               style: theme.textTheme.bodySmall),
+//                         ],
+//                       ),
+//                     )
+//                   ],
+//                 ),
+//                 IconButton(
+//                     onPressed: () async {
+//                       await Share.share(
+//                           "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}");
+//                     },
+//                     padding: EdgeInsets.zero,
+//                     constraints: BoxConstraints(),
+//                     icon: Icon(
+//                       Icons.share_outlined,
+//                       color: theme.colorScheme.onSurfaceVariant,
+//                       size: 20,
+//                     ))
+//               ],
+//             ),
+//           ),
+//         );
+//       case CPType.PendingPosts:
+//         return Padding(
+//           padding: const EdgeInsets.symmetric(horizontal: 8),
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//             children: [
+//               Expanded(
+//                 flex: 1,
+//                 child: TextButton(
+//                   style: TextButton.styleFrom(
+//                     foregroundColor: theme.colorScheme.onSurfaceVariant,
+//                     backgroundColor: theme.colorScheme.surfaceContainerHighest,
+//                   ),
+//                   child: Text("Disapprove"),
+//                   onPressed: () {
+//                     bloc.communityPostBloc
+//                         .updateCommunityPostStatus(communityPost.id!, 2);
+//                   },
+//                 ),
+//               ),
+//               SizedBox(width: 5),
+//               Expanded(
+//                 flex: 1,
+//                 child: TextButton(
+//                   style: TextButton.styleFrom(
+//                     foregroundColor: theme.colorScheme.primary,
+//                     backgroundColor: theme.colorScheme.primaryContainer,
+//                   ),
+//                   child: Text("Approve"),
+//                   onPressed: () {
+//                     bloc.communityPostBloc
+//                         .updateCommunityPostStatus(communityPost.id!, 1);
+//                   },
+//                 ),
+//               ),
+//             ],
+//           ),
+//         );
+//       case CPType.ReportedContent:
+//         return Padding(
+//           padding: const EdgeInsets.symmetric(horizontal: 8),
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//             children: [
+//               Expanded(
+//                 flex: 1,
+//                 child: TextButton(
+//                   style: TextButton.styleFrom(
+//                     foregroundColor: theme.colorScheme.onSurfaceVariant,
+//                     backgroundColor: theme.colorScheme.surfaceContainerHighest,
+//                   ),
+//                   child: Text("Ignore"),
+//                   onPressed: () {
+//                     bloc.communityPostBloc
+//                         .updateCommunityPostStatus(communityPost.id!, 1);
+//                   },
+//                 ),
+//               ),
+//               SizedBox(width: 5),
+//               Expanded(
+//                 flex: 1,
+//                 child: TextButton(
+//                   style: TextButton.styleFrom(
+//                     foregroundColor: theme.colorScheme.primary,
+//                     backgroundColor: theme.colorScheme.primaryContainer,
+//                   ),
+//                   child: Text("Delete"),
+//                   onPressed: () {
+//                     bloc.communityPostBloc
+//                         .updateCommunityPostStatus(communityPost.id!, 2);
+//                   },
+//                 ),
+//               ),
+//             ],
+//           ),
+//         );
+
+//       default:
+//         return Container();
+//     }
+//   }
+// }
+
 class CommunityPostWidget extends StatefulWidget {
-  // const CommunityPostWidget({Key? key}) : super(key: key);
   final CommunityPost communityPost;
   final void Function()? onPressedComment;
   final bool shouldTap;
@@ -1255,629 +1882,1195 @@ class CommunityPostWidget extends StatefulWidget {
     this.shouldTap = true,
     this.postType = CPType.All,
   });
+
   @override
-  State<CommunityPostWidget> createState() =>
-      _CommunityPostWidgetState(communityPost: communityPost);
+  State<CommunityPostWidget> createState() => _CommunityPostWidgetState();
 }
 
 class _CommunityPostWidgetState extends State<CommunityPostWidget> {
-  CommunityPost communityPost;
   bool contentExpanded = false;
   bool isAnon = false;
-  _CommunityPostWidgetState({required this.communityPost});
+  late CommunityPost communityPost;
+
+  @override
+  void initState() {
+    super.initState();
+    communityPost = widget.communityPost;
+    isAnon = widget.postType == CPType.All
+        ? (communityPost.anonymous == true)
+        : false;
+  }
 
   bool showSelf() {
     if (widget.postType == CPType.YourPosts) return true;
     return !(communityPost.deleted == true);
   }
 
+  int _calculateContentChars() {
+    return widget.postType == CPType.Featured
+        ? communityPost.imageUrl == null || communityPost.imageUrl!.isEmpty
+            ? 300
+            : 50
+        : 300;
+  }
+
+  int _calculateTotalReactions() {
+    if (communityPost.reactionCount == null) return 0;
+
+    int total = 0;
+    communityPost.reactionCount!.forEach((key, value) {
+      total += value;
+    });
+    return total;
+  }
+
+  void Function()? _getContentTapHandler() {
+    final contentChars = _calculateContentChars();
+    final content = communityPost.content ?? "";
+
+    if (contentExpanded ||
+        content.length <= contentChars ||
+        widget.postType == CPType.Featured) {
+      return widget.shouldTap && (communityPost.status == 1)
+          ? () => CommunityPostPage.navigateWith(context,
+              BlocProvider.of(context)!.bloc.communityPostBloc, communityPost)
+          : null;
+    } else {
+      return () => setState(() {
+            contentExpanded = true;
+          });
+    }
+  }
+
+  void Function()? _getCommentHandler() {
+    return widget.shouldTap && (communityPost.status == 1)
+        ? () => CommunityPostPage.navigateWith(context,
+            BlocProvider.of(context)!.bloc.communityPostBloc, communityPost)
+        : null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (!showSelf()) {
-      return Container();
+    if (!showSelf()) return Container();
+
+    final content = communityPost.content ?? "";
+    final contentChars = _calculateContentChars();
+    final numReactions = _calculateTotalReactions();
+
+    // For non-featured posts, use full width with new layout
+    if (widget.postType != CPType.Featured) {
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(color: Colors.white),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Main content row - avatar and content
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Avatar container (60px wide with 6px padding on each side)
+                Container(
+                  width: 60,
+                  padding: EdgeInsets.only(right: 12),
+                  child: GestureDetector(
+                    onTap: communityPost.postedBy != null &&
+                            !(communityPost.anonymous ?? false)
+                        ? () => UserPage.navigateWith(
+                            context,
+                            BlocProvider.of(context)!.bloc,
+                            communityPost.postedBy)
+                        : null,
+                    child: NullableCircleAvatar(
+                      isAnon
+                          ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSM9q9XJKxlskry5gXTz1OXUyem5Ap59lcEGg&usqp=CAU"
+                          : communityPost.postedBy?.userProfilePictureUrl ?? "",
+                      Icons.person,
+                      radius: 24, // 48px diameter
+                    ),
+                  ),
+                ),
+
+                // Content area (takes remaining space)
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      _buildHeader(),
+
+                      SizedBox(
+                        height: 6,
+                      ),
+
+                      // Main content
+                      _buildContent(content, contentChars),
+
+                      // Images
+                      if (communityPost.imageUrl != null &&
+                          communityPost.imageUrl!.isNotEmpty)
+                        _buildImages(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(
+              height: 12,
+            ),
+
+            // Footer with actions - outside the row, full width
+            _buildFooter(numReactions),
+          ],
+        ),
+      );
     }
 
-    ThemeData theme = Theme.of(context);
-    InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
-    CommunityPostBloc communityPostBloc = bloc.communityPostBloc;
-    String content = communityPost.content ?? "";
-    int contentChars = widget.postType == CPType.Featured
-        ? communityPost.imageUrl == null || communityPost.imageUrl!.length == 0
-            ? 310
-            : 30
-        : 310;
-    if (widget.postType == CPType.All) {
-      if (communityPost.anonymous == true) {
-        isAnon = true;
-      } else {
-        isAnon = false;
-      }
-    } else {
-      isAnon = false;
-    }
-
-    void Function()? postOnTap = contentExpanded ||
-            content.length <= contentChars ||
-            widget.postType == CPType.Featured
-        ? widget.shouldTap && (communityPost.status == 1)
-            ? () => CommunityPostPage.navigateWith(
-                context, bloc.communityPostBloc, communityPost)
-            : null
-        : () => setState(() {
-              contentExpanded = true;
-            });
-
+    // For featured posts, keep the original card-style layout
     return Container(
-      width: CPType.Featured == widget.postType ? 300 : null,
-      margin: widget.shouldTap
-          ? EdgeInsets.all(10)
-          : EdgeInsets.symmetric(horizontal: 10),
+      width: 300,
+      margin: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        color: Color(0xFFF8F9FA),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            decoration: BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(
-                        width: 1,
-                        color: theme.colorScheme.surfaceContainerHighest))),
-            child: ListTile(
-              leading: NullableCircleAvatar(
-                isAnon
-                    ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSM9q9XJKxlskry5gXTz1OXUyem5Ap59lcEGg&usqp=CAU"
-                    : communityPost.postedBy?.userProfilePictureUrl ?? "",
-                Icons.person,
-                radius: 18,
-              ),
-              title: Text(
-                isAnon
-                    ? "Anonymous User"
-                    : (communityPost.postedBy?.userName ?? "Anonymous user") +
-                        ((communityPost.anonymous ?? false) ? " (Anon)" : ""),
-                style: theme.textTheme.bodyMedium,
-              ),
-              subtitle: Text(
-                DateFormat("dd MMM, yyyy")
-                    .format(DateTime.parse(communityPost.timeOfCreation!)),
-                style: theme.textTheme.bodySmall,
-              ),
-              trailing: Container(
-                width: widget.postType == CPType.Featured
-                    ? 100
-                    : MediaQuery.of(context).size.width / 3,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    communityPost.status != 1 || communityPost.deleted == true
-                        ? Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                width: 1,
-                                color: communityPost.deleted == true
-                                    ? Color(0xFFF24822)
-                                    : communityPost.status == 0
-                                        ? Color(0xFFFFCD29)
-                                        : Color(0xFFF24822),
-                              ),
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            child: Text(
-                              communityPost.deleted == true
-                                  ? "Deleted"
-                                  : communityPost.status == 0
-                                      ? "Pending"
-                                      : communityPost.status == 2
-                                          ? "Rejected"
-                                          : "Reported",
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: communityPost.deleted == true
-                                    ? Color(0xFFF24822)
-                                    : communityPost.status == 0
-                                        ? Color(0xFFFFCD29)
-                                        : Color(0xFFF24822),
-                              ),
-                            ),
-                          )
-                        : Container(),
-                    PopupMenuButton<int>(
-                      itemBuilder: (context) {
-                        List<PopupMenuItem<int>> items = [];
-
-                        bool isAuthor = communityPost.postedBy?.userID ==
-                            bloc.currSession!.profile!.userID;
-
-                        bool isAdmin = bloc.hasPermission(
-                            communityPost.community?.body ?? "", "AppP");
-
-                        if (isAuthor) {
-                          items.add(
-                            PopupMenuItem(
-                              value: 1,
-                              // row has two child icon and text.
-                              child: Row(
-                                children: [
-                                  Icon(Icons.edit),
-                                  SizedBox(
-                                    // sized box with width 10
-                                    width: 10,
-                                  ),
-                                  Text("Edit")
-                                ],
-                              ),
-                              onTap: () => Future(() async {
-                                CommunityPost? post =
-                                    (await Navigator.of(context).pushNamed(
-                                  "/posts/add",
-                                  arguments:
-                                      NavigateArguments(post: communityPost),
-                                )) as CommunityPost?;
-                                if (post != null) {
-                                  setState(() {
-                                    communityPost = post;
-                                  });
-                                }
-                              }),
-                            ),
-                          );
-                        }
-
-                        if ((isAuthor || isAdmin) &&
-                            !(communityPost.deleted == true)) {
-                          items.add(
-                            PopupMenuItem(
-                              value: 2,
-                              // row has two child icon and text
-                              child: Row(
-                                children: [
-                                  Icon(Icons.delete),
-                                  SizedBox(
-                                    // sized box with width 10
-                                    width: 10,
-                                  ),
-                                  Text("Delete")
-                                ],
-                              ),
-                              onTap: () async {
-                                await communityPostBloc.deleteCommunityPost(
-                                    communityPost.id ?? "");
-                                setState(() {
-                                  communityPost.deleted = true;
-                                });
-                              },
-                            ),
-                          );
-                        }
-                        if (isAdmin) {
-                          items.add(
-                            PopupMenuItem(
-                              value: 3,
-                              // row has two child icon and text
-                              child: Row(
-                                children: [
-                                  Icon((communityPost.featured ?? false)
-                                      ? Icons.published_with_changes_sharp
-                                      : Icons.push_pin_outlined),
-                                  SizedBox(
-                                    // sized box with width 10
-                                    width: 10,
-                                  ),
-                                  Text((communityPost.featured ?? false)
-                                      ? "Unpin from featured"
-                                      : "Pin to featured")
-                                ],
-                              ),
-                              onTap: () async {
-                                bool isFeatured =
-                                    !(communityPost.featured ?? false);
-
-                                await bloc.communityPostBloc
-                                    .featureCommunityPost(
-                                        communityPost.id!, isFeatured);
-
-                                setState(() {
-                                  communityPost.featured = isFeatured;
-                                });
-                              },
-                            ),
-                          );
-                        }
-
-                        items.add(
-                          PopupMenuItem(
-                            value: 4,
-                            // row has two child icon and text
-                            child: Row(
-                              children: [
-                                Icon(Icons.share),
-                                SizedBox(
-                                  // sized box with width 10
-                                  width: 10,
-                                ),
-                                Text("Share")
-                              ],
-                            ),
-                            onTap: () async {
-                              await Share.share(
-                                  "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}");
-                            },
-                          ),
-                        );
-                        return items;
-                      },
-                      // offset: Offset(0, 100),
-                      elevation: 2,
-                      tooltip: "More",
-                      icon: Icon(
-                        Icons.more_vert,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-              minVerticalPadding: 0,
-              dense: true,
-              horizontalTitleGap: 4,
-              onTap: communityPost.postedBy != null &&
-                      !(communityPost.anonymous ?? false)
-                  ? () => UserPage.navigateWith(
-                      context, bloc, communityPost.postedBy)
-                  : null,
-            ),
-          ),
-          GestureDetector(
-            onTap: contentExpanded ||
-                    content.length <= contentChars ||
-                    widget.postType == CPType.Featured
-                ? widget.shouldTap && (communityPost.status == 1)
-                    ? () => CommunityPostPage.navigateWith(
-                        context, bloc.communityPostBloc, communityPost)
-                    : null
-                : () => setState(() {
-                      contentExpanded = true;
-                    }),
-            child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SelectableLinkify(
-                      text: content.length > contentChars && !contentExpanded
-                          ? content.substring(0, contentChars - 10) +
-                              (contentExpanded ? "" : "...")
-                          : content,
-                      onOpen: (link) async {
-                        if (await canLaunchUrl(Uri.parse(link.url))) {
-                          await launchUrl(
-                            Uri.parse(link.url),
-                            mode: LaunchMode.externalApplication,
-                          );
-                        }
-                      },
-                      onTap: postOnTap,
-                    ),
-                    Text.rich(
-                      new TextSpan(
-                        children: !contentExpanded &&
-                                content.length > contentChars
-                            ? [
-                                new TextSpan(
-                                  text: 'Read More.',
-                                  style: theme.textTheme.titleSmall?.copyWith(
-                                      color: theme.colorScheme.primary),
-                                  // recognizer: new TapGestureRecognizer()
-                                  //   ..onTap = () => setState(() {
-                                  //         contentExpanded = true;
-                                  //       }),
-                                )
-                              ]
-                            : [],
-                      ),
-                    ),
-                  ],
-                )
-                // child: Text(
-                //   communityPost.content ?? '''post''',
-                // ),
-                ),
-          ),
-          communityPost.imageUrl != null
-              ? GestureDetector(
-                  onTap: widget.postType == CPType.Featured
-                      ? () => CommunityPostPage.navigateWith(
-                          context, bloc.communityPostBloc, communityPost)
-                      : null,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: ImageGallery(
-                      images: (widget.postType == CPType.Featured
-                          ? [communityPost.imageUrl![0]]
-                          : communityPost.imageUrl)!,
-                    ),
-                  ),
-                )
-              : Container(),
-          _buildFooter(theme, bloc, communityPost),
+          _buildFeaturedHeader(),
+          _buildContent(content, contentChars),
+          if (communityPost.imageUrl != null &&
+              communityPost.imageUrl!.isNotEmpty)
+            _buildFeaturedImages(),
+          _buildFeaturedFooter(numReactions),
         ],
       ),
     );
   }
 
-  Widget _buildFooter(
-      ThemeData theme, InstiAppBloc bloc, CommunityPost communityPost) {
-    switch (widget.postType) {
-      case CPType.All:
-      case CPType.YourPosts:
-        int numReactions = communityPost.reactionCount?.values
-                .reduce((sum, element) => sum + element) ??
-            0;
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: theme.colorScheme.surface,
+  Widget _buildHeader() {
+    return Container(
+      height: 24,
+      width: double.infinity,
+      child: Row(
+        children: [
+          // User name with overflow handling
+          GestureDetector(
+            onTap: communityPost.postedBy != null &&
+                    !(communityPost.anonymous ?? false)
+                ? () => UserPage.navigateWith(context,
+                    BlocProvider.of(context)!.bloc, communityPost.postedBy)
+                : null,
+            child: Text(
+              isAnon
+                  ? "Anonymous User"
+                  : communityPost.postedBy?.userName ?? "Anonymous user",
+              style: TextStyle(
+                fontFamily: 'DM Sans',
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
           ),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-            decoration: BoxDecoration(
-              // border:
-              //     Border(top: BorderSide(color: theme.colorScheme.surfaceVariant)),
-              color: theme.colorScheme.surface,
-              boxShadow: [
-                BoxShadow(
-                  offset: Offset(0, 3),
-                  blurRadius: 30,
-                  spreadRadius: -18,
-                  color: theme.colorScheme.onSurface,
+
+          SizedBox(width: 12),
+
+          // Date
+          Text(
+            DateFormat("dd MMM, yyyy")
+                .format(DateTime.parse(communityPost.timeOfCreation!)),
+            style: TextStyle(
+              fontFamily: 'DM Sans',
+              fontSize: 13,
+              color: Color.fromRGBO(68, 68, 68, 1),
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+
+          Spacer(),
+
+          // Three-dot menu
+          _buildMenuButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeaturedHeader() {
+    final bloc = BlocProvider.of(context)!.bloc;
+
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: Color(0xFFE5E5E5), width: 1)),
+      ),
+      child: Row(
+        children: [
+          NullableCircleAvatar(
+            isAnon
+                ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSM9q9XJKxlskry5gXTz1OXUyem5Ap59lcEGg&usqp=CAU"
+                : communityPost.postedBy?.userProfilePictureUrl ?? "",
+            Icons.person,
+            radius: 16,
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isAnon
+                      ? "Anonymous User"
+                      : communityPost.postedBy?.userName ?? "Anonymous user",
+                  style: TextStyle(
+                    fontFamily: 'DM Sans',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1D1D1D),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  DateFormat("MMM dd, yyyy")
+                      .format(DateTime.parse(communityPost.timeOfCreation!)),
+                  style: TextStyle(
+                    fontFamily: 'DM Sans',
+                    fontSize: 12,
+                    color: Color.fromRGBO(68, 68, 68, 1),
+                  ),
                 ),
               ],
-              borderRadius: BorderRadius.circular(10),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ),
+          _buildMenuButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent(String content, int contentChars) {
+    return GestureDetector(
+      onTap: _getContentTapHandler(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SelectableLinkify(
+            text: content.length > contentChars && !contentExpanded
+                ? content.substring(0, contentChars) +
+                    (contentExpanded ? "" : "...")
+                : content,
+            onOpen: (link) async {
+              if (await canLaunchUrl(Uri.parse(link.url))) {
+                await launchUrl(Uri.parse(link.url),
+                    mode: LaunchMode.externalApplication);
+              }
+            },
+            style: TextStyle(
+              fontFamily: 'DM Sans',
+              fontSize: 16,
+              color: Colors.black,
+              height: 1.25,
+            ),
+          ),
+          if (!contentExpanded && content.length > contentChars)
+            GestureDetector(
+              onTap: () => setState(() {
+                contentExpanded = true;
+              }),
+              child: Text(
+                'Read More',
+                style: TextStyle(
+                  fontFamily: 'DM Sans',
+                  fontSize: 16,
+                  color: Color.fromRGBO(48, 111, 220, 1),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImages() {
+    final images = communityPost.imageUrl!;
+    final imageCount = images.length;
+
+    if (imageCount == 0) return Container();
+
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.only(top: 12, bottom: 8),
+      child: _buildImageGrid(images, imageCount),
+    );
+  }
+
+  Widget _buildFeaturedImages() {
+    final images = communityPost.imageUrl!;
+    if (images.isEmpty) return Container();
+
+    // For featured posts, show only first image
+    return Container(
+      width: double.infinity,
+      height: 180,
+      margin: EdgeInsets.only(bottom: 12),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image.network(
+          images[0],
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              color: Color(0xFFF0F0F0),
+              child: Icon(Icons.error_outline, color: Color(0xFF666666)),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageGrid(List<String> images, int imageCount) {
+    switch (imageCount) {
+      case 1:
+        return FutureBuilder<ImageInfo>(
+          future: _getImageInfo(images[0]),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Container(
+                  color: Color(0xFFF0F0F0),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              );
+            }
+
+            final imageInfo = snapshot.data;
+            final aspectRatio = imageInfo != null
+                ? imageInfo.image.width / imageInfo.image.height
+                : 16 / 9;
+
+            return AspectRatio(
+              aspectRatio: aspectRatio,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  images[0],
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Color(0xFFF0F0F0),
+                      child:
+                          Icon(Icons.error_outline, color: Color(0xFF666666)),
+                    );
+                  },
+                ),
+              ),
+            );
+          },
+        );
+
+      case 2:
+        return FutureBuilder<List<ImageInfo?>>(
+          future: Future.wait([
+            _getImageInfo(images[0]),
+            _getImageInfo(images[1]),
+          ]),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return Container(
+                height: 200,
+                child: Row(
+                  children: [
+                    Expanded(child: _buildImagePlaceholder()),
+                    SizedBox(width: 4),
+                    Expanded(child: _buildImagePlaceholder()),
+                  ],
+                ),
+              );
+            }
+
+            final imageInfos = snapshot.data!;
+            final aspectRatio1 = imageInfos[0] != null
+                ? imageInfos[0]!.image.width / imageInfos[0]!.image.height
+                : 1.0;
+            final aspectRatio2 = imageInfos[1] != null
+                ? imageInfos[1]!.image.width / imageInfos[1]!.image.height
+                : 1.0;
+
+            // Calculate height that maintains both aspect ratios
+            final availableWidth = MediaQuery.of(context).size.width -
+                92; // 60px avatar + 32px padding
+            final gapWidth = 4.0;
+            final totalWidth = availableWidth - gapWidth;
+
+            final width1 =
+                totalWidth * (aspectRatio1 / (aspectRatio1 + aspectRatio2));
+            final width2 = totalWidth - width1;
+            final height1 = width1 / aspectRatio1;
+            final height2 = width2 / aspectRatio2;
+
+            final containerHeight = height1 > height2 ? height1 : height2;
+
+            return Container(
+              height: containerHeight,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        images[0],
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return _buildImagePlaceholder();
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: gapWidth),
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        images[1],
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return _buildImagePlaceholder();
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+
+      case 3:
+        return Container(
+          height: 200,
+          child: Row(
+            children: [
+              // Big image on left (50% width)
+              Expanded(
+                flex: 2,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    bottomLeft: Radius.circular(8),
+                  ),
+                  child: Image.network(
+                    images[0],
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return _buildImagePlaceholder();
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(width: 4),
+              // Two small images on right (50% width total)
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(8),
+                        ),
+                        child: Image.network(
+                          images[1],
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildImagePlaceholder();
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(8),
+                        ),
+                        child: Image.network(
+                          images[2],
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildImagePlaceholder();
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+
+      case 4:
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final totalWidth = constraints.maxWidth;
+            final spacing = 4.0;
+            final itemSize = (totalWidth - spacing) / 2; // each square
+
+            return Column(
               children: [
                 Row(
                   children: [
-                    PopupMenuButton<int>(
-                      onSelected: (val) async {
-                        await bloc.communityPostBloc
-                            .updateUserCommunityPostReaction(
-                                communityPost, val);
-
-                        setState(() {
-                          if ((communityPost.userReaction ?? -1) != -1) {
-                            communityPost.reactionCount![
-                                    communityPost.userReaction!.toString()] =
-                                (communityPost.reactionCount![communityPost
-                                            .userReaction!
-                                            .toString()] ??
-                                        1) -
-                                    1;
-                          }
-                          communityPost.reactionCount![val.toString()] =
-                              (communityPost.reactionCount![val.toString()] ??
-                                              0) +
-                                          (communityPost.userReaction ?? -1) ==
-                                      val
-                                  ? 0
-                                  : 1;
-                          communityPost.userReaction =
-                              communityPost.userReaction == val ? -1 : val;
-                        });
-                      },
-                      itemBuilder: (BuildContext context) {
-                        return [
-                          new PopupMenuWidget(
-                            height: 20,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 5),
-                              child: new Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: emojis
-                                    .asMap()
-                                    .entries
-                                    .map(
-                                      (e) => Container(
-                                        color:
-                                            e.key == communityPost.userReaction
-                                                ? Colors.blue
-                                                : Colors.transparent,
-                                        child: InkWell(
-                                          onTap: () =>
-                                              Navigator.of(context).pop(e.key),
-                                          child:
-                                              Image.asset(e.value, width: 30),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                              ),
-                            ),
-                          ),
-                        ];
-                      },
-                      child: Row(children: [
-                        communityPost.userReaction == -1
-                            ? Icon(
-                                Icons.add_reaction_outlined,
-                                size: 20,
-                              )
-                            : Image.asset(emojis[communityPost.userReaction!],
-                                width: 20),
-                        numReactions > 0
-                            ? Container(
-                                margin: EdgeInsets.symmetric(horizontal: 5),
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  color:
-                                      theme.colorScheme.surfaceContainerHighest,
-                                ),
-                                child: Row(
-                                  children: emojis
-                                      .asMap()
-                                      .entries
-                                      .map(
-                                        (e) => (communityPost.reactionCount?[
-                                                        e.key.toString()] ??
-                                                    0) >
-                                                0
-                                            ? Image.asset(e.value, width: 20)
-                                            : Container(),
-                                      )
-                                      .toList(),
-                                ),
-                              )
-                            : Container(),
-                        numReactions > 0
-                            ? Text(
-                                numReactions.toString(),
-                                style: theme.textTheme.bodySmall,
-                              )
-                            : Container(),
-                      ]),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left: 15),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            padding: EdgeInsets.zero,
-                            constraints: BoxConstraints(),
-                            icon: Icon(
-                              Icons.mode_comment_outlined,
-                              color: theme.colorScheme.onSurfaceVariant,
-                              size: 20,
-                            ),
-                            onPressed: widget.onPressedComment ??
-                                (widget.shouldTap && (communityPost.status == 1)
-                                    ? () => CommunityPostPage.navigateWith(
-                                        context,
-                                        bloc.communityPostBloc,
-                                        communityPost)
-                                    : null),
-                          ),
-                          SizedBox(width: 3),
-                          Text((communityPost.commentsCount ?? 0).toString(),
-                              style: theme.textTheme.bodySmall),
-                        ],
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        images[0],
+                        width: itemSize,
+                        height: itemSize,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            _buildImagePlaceholder(),
                       ),
-                    )
+                    ),
+                    SizedBox(width: spacing),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        images[1],
+                        width: itemSize,
+                        height: itemSize,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            _buildImagePlaceholder(),
+                      ),
+                    ),
                   ],
                 ),
-                IconButton(
-                    onPressed: () async {
-                      await Share.share(
-                          "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}");
-                    },
-                    padding: EdgeInsets.zero,
-                    constraints: BoxConstraints(),
-                    icon: Icon(
-                      Icons.share_outlined,
-                      color: theme.colorScheme.onSurfaceVariant,
-                      size: 20,
-                    ))
+                SizedBox(height: spacing),
+                Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        images[2],
+                        width: itemSize,
+                        height: itemSize,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            _buildImagePlaceholder(),
+                      ),
+                    ),
+                    SizedBox(width: spacing),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        images[3],
+                        width: itemSize,
+                        height: itemSize,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            _buildImagePlaceholder(),
+                      ),
+                    ),
+                  ],
+                ),
               ],
-            ),
+            );
+          },
+        );
+
+      default: // 5 or more
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final totalWidth = constraints.maxWidth;
+            final spacing = 4.0;
+
+            // Calculate widths
+            final leftWidth = (totalWidth - spacing) / 2;
+            final rightWidth = (totalWidth - spacing) / 2;
+            final gridItemSize = (rightWidth - spacing) / 2;
+
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Big left image
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    images[0],
+                    width: leftWidth,
+                    height: leftWidth, // square
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        _buildImagePlaceholder(),
+                  ),
+                ),
+                SizedBox(width: spacing),
+                // Right 2x2 grid
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            images[1],
+                            width: gridItemSize,
+                            height: gridItemSize,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                _buildImagePlaceholder(),
+                          ),
+                        ),
+                        SizedBox(width: spacing),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            images[2],
+                            width: gridItemSize,
+                            height: gridItemSize,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                _buildImagePlaceholder(),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: spacing),
+                    Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            images[3],
+                            width: gridItemSize,
+                            height: gridItemSize,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                _buildImagePlaceholder(),
+                          ),
+                        ),
+                        SizedBox(width: spacing),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Stack(
+                            children: [
+                              Image.network(
+                                images[4],
+                                width: gridItemSize,
+                                height: gridItemSize,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    _buildImagePlaceholder(),
+                              ),
+                              if (images.length > 5)
+                                Positioned.fill(
+                                  child: Container(
+                                    color: Color(0xB3000000),
+                                    child: Center(
+                                      child: Text(
+                                        "+${images.length - 5}",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            );
+          },
+        );
+    }
+  }
+
+  Widget _buildImagePlaceholder() {
+    return Container(
+      color: Color(0xFFF0F0F0),
+      child: Icon(Icons.error_outline, color: Color(0xFF666666)),
+    );
+  }
+
+  Future<ImageInfo> _getImageInfo(String imageUrl) async {
+    final completer = Completer<ImageInfo>();
+    final imageStream =
+        NetworkImage(imageUrl).resolve(ImageConfiguration.empty);
+
+    final listener =
+        ImageStreamListener((ImageInfo info, bool synchronousCall) {
+      completer.complete(info);
+    });
+
+    imageStream.addListener(listener);
+    return completer.future;
+  }
+
+  BorderRadius _getGridImageBorderRadius(int index, int total) {
+    switch (total) {
+      case 4:
+        switch (index) {
+          case 0:
+            return BorderRadius.only(topLeft: Radius.circular(8));
+          case 1:
+            return BorderRadius.only(topRight: Radius.circular(8));
+          case 2:
+            return BorderRadius.only(bottomLeft: Radius.circular(8));
+          case 3:
+            return BorderRadius.only(bottomRight: Radius.circular(8));
+          default:
+            return BorderRadius.circular(8);
+        }
+      default:
+        return BorderRadius.circular(6);
+    }
+  }
+
+  Widget _buildFooter(int numReactions) {
+    final commentsCount = communityPost.commentsCount ?? 0;
+
+    switch (widget.postType) {
+      case CPType.All:
+      case CPType.YourPosts:
+        return Container(
+          width: double.infinity,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // Reactions
+              _buildReactionButton(numReactions),
+              Container(
+                height: 24,
+                width: 1,
+                color: Color.fromRGBO(217, 217, 217, 1),
+              ),
+              // Comments
+              _buildCommentButton(commentsCount),
+              Container(
+                height: 24,
+                width: 1,
+                color: Color.fromRGBO(217, 217, 217, 1),
+              ),
+              // Share
+              _buildShareButton(),
+            ],
           ),
         );
+
       case CPType.PendingPosts:
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Expanded(
-                flex: 1,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: theme.colorScheme.onSurfaceVariant,
-                    backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                  ),
-                  child: Text("Disapprove"),
-                  onPressed: () {
-                    bloc.communityPostBloc
-                        .updateCommunityPostStatus(communityPost.id!, 2);
-                  },
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Expanded(
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Color(0xFFF0F0F0),
                 ),
-              ),
-              SizedBox(width: 5),
-              Expanded(
-                flex: 1,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: theme.colorScheme.primary,
-                    backgroundColor: theme.colorScheme.primaryContainer,
+                child: Text(
+                  "Disapprove",
+                  style: TextStyle(
+                    fontFamily: 'DM Sans',
+                    color: Color(0xFF666666),
                   ),
-                  child: Text("Approve"),
-                  onPressed: () {
-                    bloc.communityPostBloc
-                        .updateCommunityPostStatus(communityPost.id!, 1);
-                  },
                 ),
+                onPressed: () {
+                  BlocProvider.of(context)!
+                      .bloc
+                      .communityPostBloc
+                      .updateCommunityPostStatus(communityPost.id!, 2);
+                },
               ),
-            ],
-          ),
+            ),
+            SizedBox(width: 12),
+            Expanded(
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Color(0xFF1DA1F2),
+                ),
+                child: Text(
+                  "Approve",
+                  style: TextStyle(
+                    fontFamily: 'DM Sans',
+                    color: Colors.white,
+                  ),
+                ),
+                onPressed: () {
+                  BlocProvider.of(context)!
+                      .bloc
+                      .communityPostBloc
+                      .updateCommunityPostStatus(communityPost.id!, 1);
+                },
+              ),
+            ),
+          ],
         );
+
       case CPType.ReportedContent:
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Expanded(
-                flex: 1,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: theme.colorScheme.onSurfaceVariant,
-                    backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                  ),
-                  child: Text("Ignore"),
-                  onPressed: () {
-                    bloc.communityPostBloc
-                        .updateCommunityPostStatus(communityPost.id!, 1);
-                  },
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Expanded(
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Color(0xFFF0F0F0),
                 ),
-              ),
-              SizedBox(width: 5),
-              Expanded(
-                flex: 1,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: theme.colorScheme.primary,
-                    backgroundColor: theme.colorScheme.primaryContainer,
+                child: Text(
+                  "Ignore",
+                  style: TextStyle(
+                    fontFamily: 'DM Sans',
+                    color: Color(0xFF666666),
                   ),
-                  child: Text("Delete"),
-                  onPressed: () {
-                    bloc.communityPostBloc
-                        .updateCommunityPostStatus(communityPost.id!, 2);
-                  },
                 ),
+                onPressed: () {
+                  BlocProvider.of(context)!
+                      .bloc
+                      .communityPostBloc
+                      .updateCommunityPostStatus(communityPost.id!, 1);
+                },
               ),
-            ],
-          ),
+            ),
+            SizedBox(width: 12),
+            Expanded(
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Color(0xFFF24822),
+                ),
+                child: Text(
+                  "Delete",
+                  style: TextStyle(
+                    fontFamily: 'DM Sans',
+                    color: Colors.white,
+                  ),
+                ),
+                onPressed: () {
+                  BlocProvider.of(context)!
+                      .bloc
+                      .communityPostBloc
+                      .updateCommunityPostStatus(communityPost.id!, 2);
+                },
+              ),
+            ),
+          ],
         );
 
       default:
         return Container();
     }
   }
-}
 
-List<String> emojis = [
-  "assets/communities/emojis/like.png",
-  "assets/communities/emojis/love.png",
-  "assets/communities/emojis/laugh.png",
-  "assets/communities/emojis/surprise.png",
-  "assets/communities/emojis/cry.png",
-  "assets/communities/emojis/angry.png",
-];
+  Widget _buildFeaturedFooter(int numReactions) {
+    final commentsCount = communityPost.commentsCount ?? 0;
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildReactionButton(numReactions),
+          _buildCommentButton(commentsCount),
+          _buildShareButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReactionButton(int numReactions) {
+    final bloc = BlocProvider.of(context)!.bloc;
+
+    return PopupMenuButton<int>(
+      onSelected: (val) => _handleReactionSelection(val, bloc),
+      itemBuilder: (BuildContext context) {
+        return <PopupMenuEntry<int>>[
+          _buildReactionMenu(),
+        ];
+      },
+      child: Row(
+        children: [
+          communityPost.userReaction == -1
+              ? Icon(Icons.emoji_emotions_outlined,
+                  size: 20, color: Color.fromRGBO(68, 68, 68, 1))
+              : Image.asset(_getEmojiPath(communityPost.userReaction!),
+                  width: 20),
+          SizedBox(width: 6),
+          Text(
+            '$numReactions reactions',
+            style: TextStyle(
+              fontFamily: 'DM Sans',
+              fontSize: 12,
+              color: Color.fromRGBO(68, 68, 68, 1),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCommentButton(int commentsCount) {
+    return GestureDetector(
+      onTap: widget.onPressedComment ?? _getCommentHandler(),
+      child: Row(
+        children: [
+          Icon(Icons.chat_bubble_outline,
+              size: 20, color: Color.fromRGBO(68, 68, 68, 1)),
+          SizedBox(width: 6),
+          Text(
+            '$commentsCount comments',
+            style: TextStyle(
+              fontFamily: 'DM Sans',
+              fontSize: 12,
+              color: Color.fromRGBO(68, 68, 68, 1),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShareButton() {
+    return GestureDetector(
+      onTap: () => Share.share(
+          "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}"),
+      child: Row(
+        children: [
+          Icon(Icons.share_outlined, size: 20, color: Color(0xFF666666)),
+          SizedBox(
+            width: 6,
+          ),
+          Text(
+            'Share',
+            style: TextStyle(
+              fontFamily: 'DM Sans',
+              fontSize: 12,
+              color: Color.fromRGBO(68, 68, 68, 1),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuButton() {
+    return Container(
+      width: 22,
+      height: 22,
+      decoration: BoxDecoration(
+        color: Color.fromRGBO(242, 242, 242, 1), // light gray background
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: PopupMenuButton<int>(
+          padding: EdgeInsets.zero, // removes default icon padding
+          constraints: BoxConstraints(), // removes default min constraints
+          icon: Icon(Icons.more_vert, size: 18, color: Colors.black),
+          itemBuilder: (context) => _buildMenuItems(
+              BlocProvider.of(context)!.bloc), // your menu items
+        ),
+      ),
+    );
+  }
+
+  List<PopupMenuItem<int>> _buildMenuItems(InstiAppBloc bloc) {
+    final communityPostBloc = bloc.communityPostBloc;
+    List<PopupMenuItem<int>> items = [];
+
+    bool isAuthor =
+        communityPost.postedBy?.userID == bloc.currSession!.profile!.userID;
+    bool isAdmin =
+        bloc.hasPermission(communityPost.community?.body ?? "", "AppP");
+
+    if (isAuthor) {
+      items.add(
+        PopupMenuItem(
+          value: 1,
+          child: Row(
+            children: [
+              Icon(Icons.edit, size: 20, color: Color(0xFF666666)),
+              SizedBox(width: 8),
+              Text(
+                "Edit",
+                style: TextStyle(fontFamily: 'DM Sans'),
+              )
+            ],
+          ),
+          onTap: () => Future(() async {
+            CommunityPost? post = (await Navigator.of(context).pushNamed(
+              "/posts/add",
+              arguments: NavigateArguments(post: communityPost),
+            )) as CommunityPost?;
+            if (post != null) {
+              setState(() {
+                communityPost = post;
+              });
+            }
+          }),
+        ),
+      );
+    }
+
+    if ((isAuthor || isAdmin) && !(communityPost.deleted == true)) {
+      items.add(
+        PopupMenuItem(
+          value: 2,
+          child: Row(
+            children: [
+              Icon(Icons.delete, size: 20, color: Color(0xFF666666)),
+              SizedBox(width: 8),
+              Text(
+                "Delete",
+                style: TextStyle(fontFamily: 'DM Sans'),
+              )
+            ],
+          ),
+          onTap: () async {
+            await communityPostBloc.deleteCommunityPost(communityPost.id ?? "");
+            setState(() {
+              communityPost.deleted = true;
+            });
+          },
+        ),
+      );
+    }
+
+    if (isAdmin) {
+      items.add(
+        PopupMenuItem(
+          value: 3,
+          child: Row(
+            children: [
+              Icon(
+                  (communityPost.featured ?? false)
+                      ? Icons.published_with_changes_sharp
+                      : Icons.push_pin_outlined,
+                  size: 20,
+                  color: Color(0xFF666666)),
+              SizedBox(width: 8),
+              Text(
+                (communityPost.featured ?? false)
+                    ? "Unpin from featured"
+                    : "Pin to featured",
+                style: TextStyle(fontFamily: 'DM Sans'),
+              )
+            ],
+          ),
+          onTap: () async {
+            bool isFeatured = !(communityPost.featured ?? false);
+            await bloc.communityPostBloc
+                .featureCommunityPost(communityPost.id!, isFeatured);
+            setState(() {
+              communityPost.featured = isFeatured;
+            });
+          },
+        ),
+      );
+    }
+
+    items.add(
+      PopupMenuItem(
+        value: 4,
+        child: Row(
+          children: [
+            Icon(Icons.share, size: 20, color: Color(0xFF666666)),
+            SizedBox(width: 8),
+            Text(
+              "Share",
+              style: TextStyle(fontFamily: 'DM Sans'),
+            )
+          ],
+        ),
+        onTap: () async {
+          await Share.share(
+              "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}");
+        },
+      ),
+    );
+
+    return items;
+  }
+
+  PopupMenuWidget<int> _buildReactionMenu() {
+    return PopupMenuWidget<int>(
+      height: 20,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 5),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: _getEmojis()
+              .asMap()
+              .entries
+              .map(
+                (e) => Container(
+                  color: e.key == communityPost.userReaction
+                      ? Color(0xFF1DA1F2).withOpacity(0.2)
+                      : Colors.transparent,
+                  child: InkWell(
+                    onTap: () => Navigator.of(context).pop(e.key),
+                    child: Image.asset(e.value, width: 30),
+                  ),
+                ),
+              )
+              .toList(),
+        ),
+      ),
+    );
+  }
+
+  void _handleReactionSelection(int val, InstiAppBloc bloc) async {
+    await bloc.communityPostBloc
+        .updateUserCommunityPostReaction(communityPost, val);
+
+    setState(() {
+      if ((communityPost.userReaction ?? -1) != -1) {
+        communityPost.reactionCount![communityPost.userReaction!.toString()] =
+            (communityPost.reactionCount![
+                        communityPost.userReaction!.toString()] ??
+                    1) -
+                1;
+      }
+      communityPost.reactionCount![val.toString()] =
+          (communityPost.reactionCount![val.toString()] ?? 0) +
+              ((communityPost.userReaction ?? -1) == val ? 0 : 1);
+      communityPost.userReaction = communityPost.userReaction == val ? -1 : val;
+    });
+  }
+
+  List<String> _getEmojis() {
+    return [
+      "assets/communities/emojis/like.png",
+      "assets/communities/emojis/love.png",
+      "assets/communities/emojis/laugh.png",
+      "assets/communities/emojis/surprise.png",
+      "assets/communities/emojis/cry.png",
+      "assets/communities/emojis/angry.png",
+    ];
+  }
+
+  String _getEmojiPath(int index) {
+    final emojis = _getEmojis();
+    return index >= 0 && index < emojis.length ? emojis[index] : emojis[0];
+  }
+}
 
 /// An arbitrary widget that lives in a popup menu
 class PopupMenuWidget<T> extends PopupMenuEntry<T> {
