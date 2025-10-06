@@ -53,6 +53,7 @@ class _CommunitiesState extends State<Communities> {
   Community? community;
   bool loadingFollow = false;
   Constants myConstants = Constants();
+   final List<String> _filterTabs = ['Sort', 'Filter'];
   List<String> subContLabels = ["Hostel Affairs", "Interns", "Tech"];
   // Widget _buildUserTile(User u) {
   // return ListTile(
@@ -900,6 +901,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
   CPType cpType = CPType.All;
   Constants myConstants = Constants();
   _CommunityPostSectionState();
+  final List<String> _filterTabs = ['Sort', 'Filter'];
+  int _selectedFilterTabIndex = 0;
 
   bool loading = false;
   Widget sort() {
@@ -941,11 +944,12 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
 void _openSortBottomSheet(){
   showModalBottomSheet(
     context: context, 
+    backgroundColor: Colors.transparent,
     builder: (BuildContext context){
       return StatefulBuilder(
         builder:(BuildContext context, StateSetter setModalState){
           return FractionallySizedBox(
-            heightFactor: 1.35,
+            heightFactor: 0.99,
             child: Container(
               decoration: BoxDecoration(
                   color: Color(0xFFF6F6F6),
@@ -978,6 +982,185 @@ void _openSortBottomSheet(){
                       ],
                     ),
                   ),
+                  //Main Content
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Navigation Rail
+                        Container(
+                          width: 100,
+                          decoration: const BoxDecoration(
+                            color: Color.fromRGBO(246, 246, 246, 1),
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(24)),
+                          ),
+                          child: Column(
+                            children: [
+                              ..._filterTabs.asMap().entries.map((entry) {
+                                final index = entry.key;
+                                final label = entry.value;
+                                final isSelected =
+                                    index == _selectedFilterTabIndex;
+
+                                return GestureDetector(
+                                  onTap: () {
+                                    setModalState(() {
+                                      _selectedFilterTabIndex = index;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 14, horizontal: 0),
+                                    decoration: BoxDecoration(
+                                      // 1. base color: white if not selected, grey if selected
+                                      color: isSelected
+                                          ? Color.fromRGBO(239, 239, 239, 1)
+                                          : Color.fromRGBO(246, 246, 246, 1),
+                                      // 2. gradient only on selected: blue line → grey
+                                      gradient: isSelected
+                                          ? const LinearGradient(
+                                              begin: Alignment.centerLeft,
+                                              end: Alignment.centerRight,
+                                              stops: [
+                                                0.0,
+                                                0.05,
+                                                0.06,
+                                                0.7,
+                                                0.99
+                                              ],
+                                              colors: [
+                                                Color.fromRGBO(48, 111, 220, 1),
+                                                Color.fromRGBO(48, 111, 220, 1),
+                                                Color.fromRGBO(
+                                                    48, 111, 220, 0.2),
+                                                Color.fromRGBO(
+                                                    239, 239, 239, 0.4),
+                                                Color.fromRGBO(
+                                                    239, 239, 239, 0.8)
+                                              ],
+                                            )
+                                          : null,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        label,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ],
+                          ),
+                        ),
+
+                        // Content area
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
+                            decoration: BoxDecoration(
+                              color: Color.fromRGBO(239, 239, 239, 1),
+                              borderRadius: BorderRadius.only(
+                                topLeft: _selectedFilterTabIndex == 0
+                                    ? Radius.circular(0)
+                                    : Radius.circular(24),
+                                bottomLeft: Radius.circular(24),
+                              ),
+                            ),
+                            child: _buildFilterTabPanel(setModalState),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  //Footer
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Color.fromRGBO(246, 246, 246, 1),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Clear Filters Button
+                        SizedBox(
+                          width: 165,
+                          height: 60,
+                          child: OutlinedButton(
+                            onPressed: () {
+                              setModalState(() {
+                                // _sortBy = 'Recently Added';
+                                // _selectedCategories = null;
+                                // _isNegotiable = null;
+                              });
+                              setState(() {});
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Colors.grey),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              padding: EdgeInsets.zero, // ensure height fits
+                            ),
+                            child: const Text(
+                              "Clear All",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Apply Filters Button
+                        SizedBox(
+                          width: 165,
+                          height: 60,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {});
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                            ),
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                image: const DecorationImage(
+                                  image: AssetImage(
+                                      "assets/buynsell/filterbutton.png"),
+                                  fit: BoxFit.cover,
+                                ),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Center(
+                                child: const Text(
+                                  "Apply",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   ],
                 ),
             ),
@@ -987,6 +1170,18 @@ void _openSortBottomSheet(){
     }
     );
 }
+  Widget _buildFilterTabPanel(StateSetter setModalState) {
+    switch (_filterTabs[_selectedFilterTabIndex]) {
+      case 'Sort':
+        //return _buildSortPanel(setModalState);
+        return const SizedBox();
+      case 'Filter':
+        //return _buildFilterPanel(setModalState);
+        return const SizedBox();
+      default:
+        return const SizedBox();
+    }
+  }
 Widget postTypeContainer(CPType cp, CommunityPostBloc communityPostBloc, String label){
   final bool isSelected = cpType == cp;
   return GestureDetector(
