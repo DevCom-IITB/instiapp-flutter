@@ -112,6 +112,7 @@ flutter:
     - assets/feed/
     - assets/quicklinks/icons/
     - assets/explore_new/
+    - assets/quicklinks/
     - assets/explore_new/images/
     - assets/blogslogin/
   fonts:
