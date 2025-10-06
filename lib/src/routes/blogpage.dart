@@ -16,6 +16,7 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:fwfh_selectable_text/fwfh_selectable_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:html/parser.dart' as html_parser;
+import 'package:InstiApp/src/utils/responsivenew.dart';
 
 TextSpan highlight(String result, String query, BuildContext context) {
   TextStyle posRes = TextStyle(
@@ -134,6 +135,7 @@ class _BlogPageState extends State<BlogPage> {
       url = '8e303dca-9b2d-4501-bf7e-addca5e0c798';
     }
   }
+ 
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
@@ -151,6 +153,7 @@ class _BlogPageState extends State<BlogPage> {
 
   @override
   Widget build(BuildContext context) {
+     print(MediaQuery.of(context).size);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Color.fromRGBO(246, 246, 246, 1),
     ));
@@ -186,17 +189,17 @@ class _BlogPageState extends State<BlogPage> {
                       child: Column(
                         children: <Widget>[
                           Container(
-                            height: 52,
+                            height: Responsive.height(52.0, context),
                             width: MediaQuery.of(context).size.width,
                             child: Row(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 16.0,
+                                  padding: EdgeInsets.only(
+                                    left: Responsive.width(16.0, context),
                                   ),
                                   child: Container(
-                                      height: 52,
-                                      width: 52,
+                                      height: Responsive.height(52.0, context),
+                                      width: Responsive.width(52.0, context),
                                       decoration: BoxDecoration(
                                         color: const Color.fromRGBO(
                                             235, 235, 235, 0.8),
@@ -205,20 +208,20 @@ class _BlogPageState extends State<BlogPage> {
                                       child: IconButton(
                                           icon: SvgPicture.asset(
                                             'assets/blogs/arrow-left.svg',
-                                            height: 24,
-                                            width: 24,
+                                            height: Responsive.height(24.0, context),
+                                            width: Responsive.width(24.0, context),
                                             fit: BoxFit.none,
                                           ),
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           })),
                                 ),
-                                const Expanded(
+                                Expanded(
                                   child: Center(
                                     child: Text(
                                       'Blogs',
                                       style: TextStyle(
-                                        fontSize: 24,
+                                        fontSize: Responsive.text(24.0, context),
                                         fontWeight: FontWeight.w700,
                                         color: Colors.black,
                                         fontFamily: "DM Sans",
@@ -227,22 +230,22 @@ class _BlogPageState extends State<BlogPage> {
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 52),
+                                SizedBox(width: Responsive.width(52.0, context)),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          SizedBox(height: Responsive.height(20.0, context)),
                           Container(
-                            height: 60,
-                            margin: const EdgeInsets.only(left: 16, right: 16),
-                            padding: const EdgeInsets.all(6),
+                            height: Responsive.height(60.0, context),
+                            margin: EdgeInsets.only(left: Responsive.width(16.0, context), right: Responsive.width(16.0, context)),
+                            padding: EdgeInsets.all(Responsive.height(6.0, context)),
                             decoration: BoxDecoration(
                               image: const DecorationImage(
                                 image:
                                     AssetImage('assets/blogs/background.png'),
                                 fit: BoxFit.cover,
                               ),
-                              borderRadius: BorderRadius.circular(30),
+                              borderRadius: BorderRadius.circular(Responsive.height(30.0, context)),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -250,9 +253,9 @@ class _BlogPageState extends State<BlogPage> {
                                 Material(
                                   color:
                                       Color.fromRGBO(48, 111, 220, placement),
-                                  borderRadius: BorderRadius.circular(30),
+                                  borderRadius: BorderRadius.circular(Responsive.height(30.0, context)),
                                   child: InkWell(
-                                    borderRadius: BorderRadius.circular(30),
+                                    borderRadius: BorderRadius.circular(Responsive.height(30.0, context)),
                                     splashColor:
                                         Color.fromRGBO(48, 111, 220, 1),
                                     onTap: () {
@@ -268,23 +271,23 @@ class _BlogPageState extends State<BlogPage> {
                                       });
                                     },
                                     child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 20,
-                                          right: 24,
-                                          top: 14,
-                                          bottom: 13),
+                                      padding: EdgeInsets.only(
+                                          left: Responsive.width(20.0, context),
+                                          right: Responsive.width(24.0, context),
+                                          top: Responsive.height(14.0, context),
+                                          bottom: Responsive.height(13.0, context)),
                                       child: Center(
                                         child: Text(
                                           'Placement',
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontFamily: 'DM Sans',
-                                            fontSize: 16,
+                                            fontSize: Responsive.text(16.0, context),
                                             fontWeight: placement == 1
                                                 ? FontWeight.w900
                                                 : FontWeight.w400,
                                             fontStyle: FontStyle.normal,
-                                            height: 1.0,
+                                            height: Responsive.height(1.0, context),
                                           ),
                                         ),
                                       ),
@@ -294,9 +297,9 @@ class _BlogPageState extends State<BlogPage> {
                                 Material(
                                   color:
                                       Color.fromRGBO(48, 111, 220, internship),
-                                  borderRadius: BorderRadius.circular(30),
+                                  borderRadius: BorderRadius.circular(Responsive.height(30.0, context)),
                                   child: InkWell(
-                                    borderRadius: BorderRadius.circular(30),
+                                    borderRadius: BorderRadius.circular(Responsive.height(30.0, context)),
                                     splashColor:
                                         Color.fromRGBO(48, 111, 220, 1),
                                     onTap: () {
@@ -312,23 +315,23 @@ class _BlogPageState extends State<BlogPage> {
                                       });
                                     },
                                     child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 20,
-                                          right: 24,
-                                          top: 14,
-                                          bottom: 13),
+                                      padding: EdgeInsets.only(
+                                          left: Responsive.width(20.0, context),
+                                          right: Responsive.width(24.0, context),
+                                          top: Responsive.height(14.0, context),
+                                          bottom: Responsive.height(13.0, context)),
                                       child: Center(
                                         child: Text(
                                           'Internship',
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontFamily: 'DM Sans',
-                                            fontSize: 16,
+                                            fontSize: Responsive.text(16.0, context),
                                             fontWeight: internship == 1
                                                 ? FontWeight.w900
                                                 : FontWeight.w400,
                                             fontStyle: FontStyle.normal,
-                                            height: 1.0,
+                                            height: Responsive.height(1.0, context),
                                           ),
                                         ),
                                       ),
@@ -337,9 +340,9 @@ class _BlogPageState extends State<BlogPage> {
                                 ),
                                 Material(
                                   color: Color.fromRGBO(48, 111, 220, external),
-                                  borderRadius: BorderRadius.circular(30),
+                                  borderRadius: BorderRadius.circular(Responsive.height(30.0, context)),
                                   child: InkWell(
-                                    borderRadius: BorderRadius.circular(30),
+                                    borderRadius: BorderRadius.circular(Responsive.height(30.0, context)),
                                     splashColor:
                                         Color.fromRGBO(48, 111, 220, 1),
                                     onTap: () {
@@ -355,23 +358,23 @@ class _BlogPageState extends State<BlogPage> {
                                       });
                                     },
                                     child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 20,
-                                          right: 24,
-                                          top: 14,
-                                          bottom: 13),
+                                      padding: EdgeInsets.only(
+                                          left: Responsive.width(20.0, context),
+                                          right: Responsive.width(24.0, context),
+                                          top: Responsive.height(14.0, context),
+                                          bottom: Responsive.height(13.0, context)),
                                       child: Center(
                                         child: Text(
                                           'External',
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontFamily: 'DM Sans',
-                                            fontSize: 16,
+                                            fontSize: Responsive.text(16.0, context),
                                             fontWeight: external == 1
                                                 ? FontWeight.w900
                                                 : FontWeight.w400,
                                             fontStyle: FontStyle.normal,
-                                            height: 1.0,
+                                            height: Responsive.height(1.0, context),
                                           ),
                                         ),
                                       ),
@@ -384,38 +387,40 @@ class _BlogPageState extends State<BlogPage> {
                           Container(
                             margin: const EdgeInsets.only(
                                 left: 16, right: 16, top: 16),
-                            height: 53,
-                            padding: const EdgeInsets.only(
-                                left: 14, right: 14, top: 13, bottom: 13),
+                            height: Responsive.height(53.0, context),
+                            padding: EdgeInsets.only(
+                                left: Responsive.width(14.0, context),
+                                right: Responsive.width(14.0, context),
+                                top: Responsive.height(13.0, context),
+                                bottom: Responsive.height(13.0, context)),
                             decoration: BoxDecoration(
                               image: const DecorationImage(
                                 image: AssetImage('assets/blogs/searchbar.png'),
                                 fit: BoxFit.cover,
                               ),
-                              borderRadius: BorderRadius.circular(25),
+                              borderRadius: BorderRadius.circular(Responsive.height(2.0, context)),
                             ),
                             child: Row(
                               children: [
                                 Image(
                                   image: AssetImage('assets/blogs/search.png'),
-                                  height: 24,
-                                  width: 24,
+                                  height: Responsive.height(24.0, context),
+                                  width: Responsive.width(24.0, context),
                                 ),
-                                const SizedBox(width: 20),
-                                Container(
-                                  width: 205,
+                                SizedBox(width: Responsive.width(8.0, context)),
+                                Expanded(
                                   child: TextField(
                                     controller: _searchFieldController,
                                     focusNode: _focusNode,
                                     style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: Responsive.text(16.0, context),
                                       color: Color.fromRGBO(0, 0, 0, 0.8),
                                       fontFamily: 'DM Sans',
                                     ),
                                     decoration: InputDecoration(
                                       hintText: 'Search blogs',
                                       hintStyle: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: Responsive.text(16.0, context),
                                         color: Color.fromRGBO(0, 0, 0, 0.4),
                                         fontFamily: 'DM Sans',
                                       ),
@@ -438,120 +443,121 @@ class _BlogPageState extends State<BlogPage> {
                                     // autofocus: true,
                                     maxLines: 1,
                                   ),
-                                )
+                                ),
+                                SizedBox(width: Responsive.width(20.0, context)),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          Container(
-                              margin:
-                                  const EdgeInsets.only(left: 16, right: 16),
-                              child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              255, 239, 239, 239),
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          border: Border.all(
-                                            color: Color.fromRGBO(
-                                                210, 213, 218, 1),
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                        padding: const EdgeInsets.only(
-                                            left: 16.0,
-                                            right: 16.0,
-                                            top: 8.0,
-                                            bottom: 8.0),
-                                        child: Row(
-                                          children: [
-                                            SvgPicture.asset(
-                                                'assets/blogs/box.svg'),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              'Filters',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.black,
-                                                fontFamily: "DM Sans",
-                                                fontStyle: FontStyle.normal,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            SvgPicture.asset(
-                                                'assets/blogs/chevron-right.svg'),
-                                          ],
-                                        )),
-                                    Container(
-                                        child: Row(
-                                      children: [
-                                        Container(
-                                          height: 36,
-                                          width: 36,
-                                          decoration: BoxDecoration(
-                                            color: view == 'normal'
-                                                ? const Color.fromRGBO(
-                                                    48, 111, 220, 1)
-                                                : const Color.fromRGBO(
-                                                    239, 239, 239, 1),
-                                            borderRadius:
-                                                BorderRadius.circular(18),
-                                          ),
-                                          child: IconButton(
-                                              icon: SvgPicture.asset(
-                                                'assets/blogs/list.svg',
-                                                color: view == 'normal'
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                                fit: BoxFit.none,
-                                              ),
-                                              onPressed: () {
-                                                setState(() {
-                                                  view = 'normal';
-                                                });
-                                              }),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Container(
-                                          height: 36,
-                                          width: 36,
-                                          decoration: BoxDecoration(
-                                            color: view == 'company wise'
-                                                ? const Color.fromRGBO(
-                                                    48, 111, 220, 1)
-                                                : const Color.fromRGBO(
-                                                    239, 239, 239, 1),
-                                            borderRadius:
-                                                BorderRadius.circular(18),
-                                            border: Border.all(
-                                              color: Color.fromRGBO(
-                                                  210, 213, 218, 1),
-                                              width: 1.0,
-                                            ),
-                                          ),
-                                          child: IconButton(
-                                              icon: SvgPicture.asset(
-                                                'assets/blogs/list2.svg',
-                                                color: view == 'company wise'
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                                fit: BoxFit.none,
-                                              ),
-                                              onPressed: () {
-                                                setState(() {
-                                                  view = 'company wise';
-                                                });
-                                              }),
-                                        ),
-                                      ],
-                                    ))
-                                  ])),
-                          const SizedBox(height: 24),
+                          SizedBox(height: Responsive.height(16.0, context)),
+                          // Container(
+                          //     margin:
+                          //         EdgeInsets.only(left: Responsive.width(16.0, context), right: Responsive.width(16.0, context)),
+                          //     child: Row(
+                          //         mainAxisAlignment:
+                          //             MainAxisAlignment.spaceBetween,
+                          //         children: [
+                          //           Container(
+                          //               decoration: BoxDecoration(
+                          //                 color: const Color.fromARGB(
+                          //                     255, 239, 239, 239),
+                          //                 borderRadius:
+                          //                     BorderRadius.circular(Responsive.height(50.0, context)),
+                          //                 border: Border.all(
+                          //                   color: Color.fromRGBO(
+                          //                       210, 213, 218, 1),
+                          //                   width: Responsive.height(1.0, context),
+                          //                 ),
+                          //               ),
+                          //               padding: EdgeInsets.only(
+                          //                   left: Responsive.width(16.0, context),
+                          //                   right: Responsive.width(16.0, context),
+                          //                   top: Responsive.height(8.0, context),
+                          //                   bottom: Responsive.height(8.0, context)),
+                          //               child: Row(
+                          //                 children: [
+                          //                   SvgPicture.asset(
+                          //                       'assets/blogs/box.svg'),
+                          //                   SizedBox(width: Responsive.width(8.0, context)),
+                          //                   Text(
+                          //                     'Filters',
+                          //                     style: TextStyle(
+                          //                       fontSize: Responsive.text(14.0, context),
+                          //                       fontWeight: FontWeight.w500,
+                          //                       color: Colors.black,
+                          //                       fontFamily: "DM Sans",
+                          //                       fontStyle: FontStyle.normal,
+                          //                     ),
+                          //                   ),
+                          //                   SizedBox(width: Responsive.width(8.0, context)),
+                          //                   SvgPicture.asset(
+                          //                       'assets/blogs/chevron-right.svg'),
+                          //                 ],
+                          //               )),
+                          //           Container(
+                          //               child: Row(
+                          //             children: [
+                          //               Container(
+                          //                 height: Responsive.height(36.0, context),
+                          //                 width: Responsive.width(36.0, context),
+                          //                 decoration: BoxDecoration(
+                          //                   color: view == 'normal'
+                          //                       ? const Color.fromRGBO(
+                          //                           48, 111, 220, 1)
+                          //                       : const Color.fromRGBO(
+                          //                           239, 239, 239, 1),
+                          //                   borderRadius:
+                          //                       BorderRadius.circular(Responsive.height(18.0, context)),
+                          //                 ),
+                          //                 child: IconButton(
+                          //                     icon: SvgPicture.asset(
+                          //                       'assets/blogs/list.svg',
+                          //                       color: view == 'normal'
+                          //                           ? Colors.white
+                          //                           : Colors.black,
+                          //                       fit: BoxFit.none,
+                          //                     ),
+                          //                     onPressed: () {
+                          //                       setState(() {
+                          //                         view = 'normal';
+                          //                       });
+                          //                     }),
+                          //               ),
+                          //               SizedBox(width: Responsive.width(8.0, context)),
+                          //               Container(
+                          //                 height: Responsive.height(36.0, context),
+                          //                 width: Responsive.width(36.0, context),
+                          //                 decoration: BoxDecoration(
+                          //                   color: view == 'company wise'
+                          //                       ? const Color.fromRGBO(
+                          //                           48, 111, 220, 1)
+                          //                       : const Color.fromRGBO(
+                          //                           239, 239, 239, 1),
+                          //                   borderRadius:
+                          //                       BorderRadius.circular(18),
+                          //                   border: Border.all(
+                          //                     color: Color.fromRGBO(
+                          //                         210, 213, 218, 1),
+                          //                     width: Responsive.width(1.0, context),
+                          //                   ),
+                          //                 ),
+                          //                 child: IconButton(
+                          //                     icon: SvgPicture.asset(
+                          //                       'assets/blogs/list2.svg',
+                          //                       color: view == 'company wise'
+                          //                           ? Colors.white
+                          //                           : Colors.black,
+                          //                       fit: BoxFit.none,
+                          //                     ),
+                          //                     onPressed: () {
+                          //                       setState(() {
+                          //                         view = 'company wise';
+                          //                       });
+                          //                     }),
+                          //               ),
+                          //             ],
+                          //           ))
+                          //         ])),
+                          // SizedBox(height: Responsive.height(24.0, context)),
                           if (view == 'normal')
                             isLoading
                                 ? CircularProgressIndicator()
@@ -610,7 +616,7 @@ class _BlogPageState extends State<BlogPage> {
                                         entry.key,
                                       ),
                                   ],
-                                ); 
+                                );
                               },
                             ))
                         ],
@@ -682,7 +688,7 @@ class _BlogPageState extends State<BlogPage> {
     if (post?.content == null) {
       return Container(
           child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.symmetric(vertical: Responsive.height(8.0, context), horizontal: Responsive.width(8.0, context)),
         child: Center(
           child: Text(""),
         ),
@@ -695,18 +701,18 @@ class _BlogPageState extends State<BlogPage> {
     return Container(
       key: ValueKey(post.id),
       child: Container(
-        margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+        margin: EdgeInsets.only(left: Responsive.width(16.0, context), right: Responsive.width(16.0, context), bottom: Responsive.height(16.0, context)),
         decoration: BoxDecoration(
           color: const Color.fromRGBO(48, 111, 220, 1),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(Responsive.height(14.0, context)),
         ),
         child: ClipRRect(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(Responsive.height(14.0, context)),
             child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.only(
-                    left: 18, right: 16, top: 16, bottom: 16),
-                margin: const EdgeInsets.only(left: 6),
+                padding: EdgeInsets.only(
+                    left: Responsive.width(18.0, context), right: Responsive.width(16.0, context), top: Responsive.height(16.0, context), bottom: Responsive.height(16.0, context)),
+                margin: EdgeInsets.only(left: Responsive.width(6.0, context)),
                 decoration: BoxDecoration(
                   color: const Color.fromRGBO(239, 239, 239, 1),
                 ),
@@ -716,7 +722,7 @@ class _BlogPageState extends State<BlogPage> {
                     Material(
                       color: const Color.fromRGBO(239, 239, 239, 1),
                       child: InkWell(
-                        borderRadius: BorderRadius.circular(2),
+                        borderRadius: BorderRadius.circular(Responsive.height(2.0, context)),
                         onTap: () async {
                           if (await canLaunchUrl(Uri.parse(post.link))) {
                             await launchUrl(
@@ -728,16 +734,16 @@ class _BlogPageState extends State<BlogPage> {
                         child: Row(
                           children: [
                             Container(
-                              height: 48,
-                              width: 48,
+                              height: Responsive.height(48.0, context),
+                              width: Responsive.width(48.0, context),
                               decoration: BoxDecoration(
                                 color: const Color.fromRGBO(48, 111, 220, 1),
-                                borderRadius: BorderRadius.circular(24),
+                                borderRadius: BorderRadius.circular(Responsive.height(24.0, context)),
                               ),
                               child: SvgPicture.asset(
                                 'assets/blogs/briefcase.svg',
-                                height: 24,
-                                width: 24,
+                                height: Responsive.height(24.0, context),
+                                width: Responsive.width(24.0, context),
                                 fit: BoxFit.none,
                               ),
                             ),
@@ -746,19 +752,19 @@ class _BlogPageState extends State<BlogPage> {
                             ),
                             Expanded(
                               child: Container(
-                                margin: const EdgeInsets.only(
-                                    top: 3, bottom: 3, right: 16),
+                                margin: EdgeInsets.only(
+                                    top: Responsive.height(3.0, context), bottom: Responsive.height(3.0, context), right: Responsive.width(16.0, context)),
                                 child: Container(
                                   child: RichText(
                                     text: highlight(
                                         post.title, bloc.query, context),
                                     strutStyle: StrutStyle.fromTextStyle(
                                       TextStyle(
-                                        fontSize: 16,
+                                        fontSize: Responsive.text(14.0, context),
                                         fontFamily: 'DM Sans',
                                         fontWeight: FontWeight.w700,
                                       ),
-                                      height: 1.0,
+                                      height: Responsive.height(1.0, context),
                                       fontWeight: FontWeight.w700,
                                     ),
                                     // style: TextStyle(
@@ -771,15 +777,15 @@ class _BlogPageState extends State<BlogPage> {
                               ),
                             ),
                             SizedBox(
-                              width: 40,
-                              height: 48,
+                              width: Responsive.width(40.0, context),
+                              height: Responsive.height(48.0, context),
                               child: Material(
                                 color: Colors.transparent,
                                 child: Center(
                                   child: SvgPicture.asset(
                                     'assets/blogs/external-link.svg',
-                                    height: 24,
-                                    width: 24,
+                                    height: Responsive.height(24.0, context),
+                                    width: Responsive.width(24.0, context),
                                     fit: BoxFit.none,
                                   ),
                                 ),
@@ -790,20 +796,20 @@ class _BlogPageState extends State<BlogPage> {
                       ),
                     ),
                     SizedBox(
-                      height: 20,
+                      height: Responsive.height(20.0, context),
                     ),
                     Container(
                         child: Text(
                       post.published,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: Responsive.text(16.0, context),
                         fontFamily: 'DM Sans',
                         fontWeight: FontWeight.w700,
                         color: const Color.fromRGBO(48, 111, 220, 1),
                       ),
                     )),
-                    const SizedBox(
-                      height: 8,
+                    SizedBox(
+                      height: Responsive.height(8.0, context),
                     ),
                     Container(
                       child: CommonHtml(
@@ -909,7 +915,7 @@ class CircularProgressIndicatorExtended extends StatelessWidget {
       ]..addAll(label != null
           ? [
               SizedBox(
-                width: 12.0,
+                width: Responsive.width(12.0, context),
               ),
               label!
             ]
@@ -940,11 +946,11 @@ class _BlogthreadState extends State<Blogthread> {
         margin: const EdgeInsets.only(left: 15, right: 16, bottom: 102),
         child: Stack(children: [
           Positioned(
-            left: 24,
-            top: 12,
-            bottom: 4,
+            left: Responsive.width(24.0, context),
+            top: Responsive.height(12.0, context),
+            bottom: Responsive.height(4.0, context),
             child: Container(
-              width: 1,
+              width: Responsive.width(1.0, context),
               decoration: BoxDecoration(
                 color: Color.fromRGBO(48, 111, 220, 1),
                 borderRadius: BorderRadius.circular(2),
@@ -960,8 +966,8 @@ class _BlogthreadState extends State<Blogthread> {
                   ),
                   child: Row(children: [
                     Container(
-                      height: 48,
-                      width: 48,
+                      height: Responsive.height(48.0, context),
+                      width: Responsive.width(48.0, context),
                       decoration: BoxDecoration(
                         color: const Color.fromRGBO(48, 111, 220, 1),
                         borderRadius: BorderRadius.circular(24),

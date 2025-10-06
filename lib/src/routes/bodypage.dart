@@ -164,7 +164,9 @@ class _BodyPageState extends State<BodyPage> {
   @override
   Widget build(BuildContext context) {
     final responsive = Responsive(context);
-    final parent = body?.bodyParents?.first;
+    final parent = (body?.bodyParents != null && body!.bodyParents!.isNotEmpty)
+        ? body!.bodyParents!.first
+        : null;
     final imageUrl = parent?.bodyImageURL;
     final title=parent?.bodyName;
     Constants myConstants=Constants();

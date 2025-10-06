@@ -85,6 +85,9 @@ class Event extends elt.Event {
   @JsonKey(name: "event_interest")
   List<Interest>? eventInterest;
 
+  @JsonKey(name: "venue_room")
+  String? venueRoom;
+
   @JsonKey(ignore: true)
   UES get eventUserUes => UES.values[eventUserUesInt ?? 0];
 
@@ -162,7 +165,8 @@ class Event extends elt.Event {
       this.eventGoing,
       this.eventWebsiteURL,
       this.eventUserUesInt,
-      this.eventInterest})
+      this.eventInterest,
+      this.venueRoom,})
       : super(
           date: DateTime.parse(eventStartTime!),
           title: eventName,
