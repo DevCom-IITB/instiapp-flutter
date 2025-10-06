@@ -47,8 +47,8 @@ part 'apiclient.g.dart';
 
 // @rt.RestApi(baseUrl: "http://127.0.0.1:8000/api")
 // @rt.RestApi(baseUrl: "http://10.198.49.150/api")
-@rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
-//@rt.RestApi(baseUrl: "https://nayeli-nonbulbar-denominationally.ngrok-free.dev/api")
+// @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
+@rt.RestApi(baseUrl: "https://af698a114ff6.ngrok-free.app/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
@@ -178,7 +178,14 @@ abstract class InstiAppApi {
   @rt.POST("/upload")
   @rt.MultiPart()
   Future<ImageUploadResponse> uploadImage(
-      @rt.Header("Cookie") String sessionID, @rt.Part() File picture);
+      @rt.Header("Cookie") String sessionID, @rt.Part() File file);
+
+  // @rt.POST("/upload")
+  // @rt.MultiPart()
+  // Future<ImageUploadResponse> uploadDocument(
+  //     @rt.Header("Cookie") String sessionID,
+  //     @rt.Part() File document
+  //     );
 
   // My data
   @rt.GET("/user-me")
@@ -383,6 +390,11 @@ abstract class InstiAppApi {
       @rt.Header("Cookie") String sessionID,
       @rt.Path() String postID,
       @rt.Query("reaction") int reaction);
+
+  @rt.POST("/communities/poll/{pollID}")
+  Future<PollVoteResponse> voteOnPoll(@rt.Header("Cookie") String sessionID,
+      @rt.Path() String pollID, @rt.Body() Map<String, List<String>> body);
+
   @rt.GET("/user-tags")
   Future<List<UserTagHolder>> getUserTags(
       @rt.Header("Cookie") String sessionId);

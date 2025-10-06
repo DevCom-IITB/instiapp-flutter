@@ -15,6 +15,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:InstiApp/src/utils/responsivenew.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:path/path.dart' as path;
 
 class NavigateArguments {
   final Community? community;
@@ -35,7 +37,8 @@ class _CreatePostPage extends State<CreatePostPage> {
   bool selectedB = false;
   bool selectedS = false;
   bool click = true;
-  bool Poll = false;
+  bool isPoll = false;
+  Map<String, dynamic>? pollData;
 
   List<File> imageFiles = [];
 
@@ -68,6 +71,16 @@ class _CreatePostPage extends State<CreatePostPage> {
       if (args != null) {
         if (args.post != null) {
           isEditing = true;
+          isPoll = args.post!.isPoll ?? false;
+          pollData = {
+            'poll_question': args.post!.poll?.question ?? '',
+            'poll_allow_multiple_answers':
+                args.post!.poll?.allowMultipleAnswers ?? false,
+            'poll_options': args.post!.poll?.options
+                    ?.map((option) => option.text)
+                    .toList() ??
+                [],
+          };
           currRequest1 = args.post!;
         } else {
           currRequest1.community = args.community;
@@ -150,6 +163,58 @@ class _CreatePostPage extends State<CreatePostPage> {
                                         if (_formKey1.currentState
                                                 ?.validate() ??
                                             false) {
+                                          if (isPoll && pollData != null) {
+                                            final question =
+                                                pollData!['poll_question']
+                                                    as String?;
+                                            final options =
+                                                pollData!['poll_options']
+                                                    as List<String>?;
+
+                                            if (question == null ||
+                                                question.isEmpty) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Please enter a poll question'),
+                                                  backgroundColor: Colors.red,
+                                                ),
+                                              );
+                                              return;
+                                            }
+
+                                            if (options == null ||
+                                                options.length < 2) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Please provide at least 2 poll options'),
+                                                  backgroundColor: Colors.red,
+                                                ),
+                                              );
+                                              return;
+                                            }
+
+                                            // Validate that options are not empty
+                                            final validOptions = options
+                                                .where((option) =>
+                                                    option.trim().isNotEmpty)
+                                                .toList();
+                                            if (validOptions.length < 2) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Please provide at least 2 non-empty poll options'),
+                                                  backgroundColor: Colors.red,
+                                                ),
+                                              );
+                                              return;
+                                            }
+                                          }
+
                                           if (currRequest1.imageUrl == null)
                                             currRequest1.imageUrl = [];
                                           for (int i = 0;
@@ -165,6 +230,55 @@ class _CreatePostPage extends State<CreatePostPage> {
                                           currRequest1.deleted = false;
                                           currRequest1.anonymous ??= false;
                                           currRequest1.hasUserReported = false;
+                                          currRequest1.isPoll = isPoll;
+                                          if (isPoll && pollData != null) {
+                                            // ✅ Create poll options list first
+                                            // List<PollOption> pollOptions = [];
+                                            // for (var i = 0;
+                                            //     i <
+                                            //         pollData!['poll_options']
+                                            //             .length;
+                                            //     i++) {
+                                            //   pollOptions.add(PollOption(
+                                            //     order:
+                                            //         i, // ✅ Start from 0, not 1
+                                            //     text: pollData!['poll_options']
+                                            //         [i],
+                                            //     voteCount:
+                                            //         0, // ✅ Correct field name from your model
+                                            //   ));
+                                            // }
+
+                                            // // ✅ Then create the Poll object
+                                            // final Poll pollObject = Poll(
+                                            //   question:
+                                            //       pollData!['poll_question'],
+                                            //   allowMultipleAnswers: pollData![
+                                            //       'poll_allow_multiple_answers'],
+                                            //   options: pollOptions,
+                                            // );
+
+                                            // currRequest1.poll = pollObject;
+                                            final List<PollOption>
+                                                optionsForApi =
+                                                (pollData!['poll_options']
+                                                        as List<String>)
+                                                    .map((text) =>
+                                                        PollOption(text: text))
+                                                    .toList();
+
+                                            // Create a clean poll object with only the fields the backend needs.
+                                            final Poll pollForApi = Poll(
+                                              question:
+                                                  pollData!['poll_question'],
+                                              allowMultipleAnswers: pollData![
+                                                  'poll_allow_multiple_answers'],
+                                              options: optionsForApi,
+                                              
+                                            );
+                                            currRequest1.poll = pollForApi;
+                                          }
+
                                           if (isEditing) {
                                             bloc.communityPostBloc
                                                 .updateCommunityPost(
@@ -300,12 +414,18 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                   return null;
                                                 },
                                               ),
-                                              if (Poll)
+                                              if (isPoll)
                                                 Container(
                                                   child: PollCreator(
                                                     onClose: () {
                                                       setState(() {
-                                                        Poll = false;
+                                                        isPoll = false;
+                                                      });
+                                                    },
+                                                    initialData: pollData,
+                                                    onPollDataChanged: (data) {
+                                                      setState(() {
+                                                        pollData = data;
                                                       });
                                                     },
                                                   ),
@@ -352,13 +472,13 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                   await _picker.pickImage(
                                                       source:
                                                           ImageSource.camera);
-                    
+
                                               if (pi != null) {
-                                                ImageUploadResponse resp =
-                                                    await bloc.client.uploadImage(
-                                                        bloc.getSessionIdHeader(),
-                                                        File(pi.path));
-                                                print(resp.pictureURL);
+                                                // ImageUploadResponse resp =
+                                                //     await bloc.client.uploadImage(
+                                                //         bloc.getSessionIdHeader(),
+                                                //         File(pi.path));
+                                                // print(resp.pictureURL);
                                                 if (await pi.length() /
                                                         1000000 <=
                                                     10) {
@@ -423,13 +543,13 @@ class _CreatePostPage extends State<CreatePostPage> {
                                           final XFile? pi =
                                               await _picker.pickImage(
                                                   source: ImageSource.gallery);
-                    
+
                                           if (pi != null) {
-                                            ImageUploadResponse resp =
-                                                await bloc.client.uploadImage(
-                                                    bloc.getSessionIdHeader(),
-                                                    File(pi.path));
-                                            print(resp.pictureURL);
+                                            // ImageUploadResponse resp =
+                                            //     await bloc.client.uploadImage(
+                                            //         bloc.getSessionIdHeader(),
+                                            //         File(pi.path));
+                                            // print(resp.pictureURL);
                                             if (await pi.length() / 1000000 <=
                                                 10) {
                                               setState(() {
@@ -509,7 +629,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                           Responsive.width(6, context)),
                                       onTap: () {
                                         setState(() {
-                                          Poll = true;
+                                          isPoll = true;
                                         });
                                       },
                                       child: Container(
@@ -534,7 +654,451 @@ class _CreatePostPage extends State<CreatePostPage> {
                               ),
                             )
                           ]),
-                    )
+                    )),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageUrl(String url, int index) {
+    return Stack(
+      children: [
+        Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius:
+                BorderRadius.circular(Responsive.width(16.9, context)),
+          ),
+          child: Image.network(
+            url,
+            height: Responsive.height(77.62, context),
+            width: Responsive.width(77.62, context),
+            fit: BoxFit.fill,
+          ),
+        ),
+        Positioned(
+          right: 0,
+          top: 0,
+          child: Container(
+            child: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                setState(() {
+                  currRequest1.imageUrl!.removeAt(index);
+                });
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImageFile(File file, int index) {
+    return Stack(
+      children: [
+        Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius:
+                BorderRadius.circular(Responsive.width(16.9, context)),
+          ),
+          child: Image.file(
+            file,
+            height: Responsive.height(77.62, context),
+            width: Responsive.width(77.62, context),
+            fit: BoxFit.fill,
+          ),
+        ),
+        Positioned(
+          right: Responsive.width(-10, context),
+          top: Responsive.height(-10, context),
+          child: Container(
+            child: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                setState(() {
+                  imageFiles.removeAt(index);
+                });
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class PollCreator extends StatefulWidget {
+  final VoidCallback? onClose;
+  final Function(Map<String, dynamic>)? onPollDataChanged;
+  final Map<String, dynamic>? initialData;
+
+  const PollCreator({
+    Key? key,
+    this.onClose,
+    this.initialData,
+    this.onPollDataChanged,
+  }) : super(key: key);
+  @override
+  _PollCreatorState createState() => _PollCreatorState();
+}
+
+class _PollCreatorState extends State<PollCreator> {
+  TextEditingController questionController = TextEditingController();
+  List<TextEditingController> optionControllers = [];
+  bool allowMultipleAnswers = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialData != null) {
+      allowMultipleAnswers = widget.initialData!['poll_allow_multiple_answers'] ?? false;
+      questionController.text = widget.initialData!['poll_question'] ?? '';
+
+      final pollOptions = widget.initialData!['poll_options'];
+      if (pollOptions != null && pollOptions is List) {
+      optionControllers = pollOptions
+          .map((option) => TextEditingController(text: option))
+          .cast<TextEditingController>()
+          .toList();
+    } else {
+      optionControllers = [
+        TextEditingController(),
+        TextEditingController(),
+      ];
+    }
+    } else {
+      optionControllers = [
+        TextEditingController(),
+        TextEditingController(),
+      ];
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updatePollData();
+    });
+  }
+
+  void _updatePollData() {
+    if (!mounted) return;
+    final pollData = {
+      'poll_question': questionController.text.trim(),
+      'poll_allow_multiple_answers': allowMultipleAnswers,
+      'poll_options': optionControllers
+          .map((controller) => controller.text.trim())
+          .where((text) => text.isNotEmpty)
+          .toList(),
+    };
+
+    if (widget.onPollDataChanged != null) {
+      Future.microtask(() => widget.onPollDataChanged!(pollData));
+    }
+  }
+
+  @override
+  void dispose() {
+    questionController.dispose();
+    for (var controller in optionControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  Widget buildCustomSwitch() {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          allowMultipleAnswers = !allowMultipleAnswers;
+          _updatePollData();
+        });
+      },
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 200),
+        width: Responsive.width(35, context),
+        height: Responsive.height(19, context),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(Responsive.width(10, context)),
+          color: allowMultipleAnswers
+              ? const Color.fromRGBO(37, 99, 235, 1)
+              : Colors.grey[300],
+        ),
+        child: AnimatedAlign(
+          duration: Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          alignment: allowMultipleAnswers
+              ? Alignment.centerRight
+              : Alignment.centerLeft,
+          child: Container(
+            width: Responsive.width(15, context), // ✅ Custom thumb width
+            height: Responsive.height(15, context), // ✅ Custom thumb height
+            margin: EdgeInsets.all(Responsive.width(
+                2, context)), // ✅ Custom gap between track and thumb
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  offset: Offset(0, 1),
+                  blurRadius: 2,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // height: 300,
+      margin: EdgeInsets.only(
+          // left: Responsive.width(76, context),
+          // right: Responsive.width(16, context),
+          bottom: Responsive.height(16, context),
+          top: Responsive.height(16, context)),
+      child: Container(
+        decoration: ShapeDecoration(
+          color: const Color(0xFFF6F6F6),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        padding: EdgeInsets.symmetric(
+            horizontal: Responsive.width(16, context),
+            vertical: Responsive.height(12, context)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Create Poll',
+                    style: TextStyle(
+                      color: const Color(0xFF0F1620),
+                      fontSize: Responsive.text(16, context),
+                      fontFamily: 'DM Sans',
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: widget.onClose,
+                    child: SvgPicture.asset("assets/communities/x-circle.svg",
+                        height: Responsive.height(24, context),
+                        width: Responsive.width(24, context)),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: Responsive.height(12, context)),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFFD2D5DA),
+                  width: 1,
+                ),
+                color: const Color(0xFFFFFFFF),
+              ),
+              padding: EdgeInsets.symmetric(
+                  horizontal: Responsive.width(16, context),
+                  vertical: Responsive.height(9, context)),
+              child: TextFormField(
+                maxLines: null,
+                controller: questionController,
+                onChanged: (value) {
+                  _updatePollData();
+                },
+                decoration: InputDecoration(
+                  hintText: "Ask question",
+                  hintStyle: TextStyle(
+                    color: const Color(0xFF7E8287),
+                    fontSize: 14,
+                    fontFamily: 'DM Sans',
+                    fontWeight: FontWeight.w400,
+                  ),
+
+                  border: InputBorder.none, // Remove border
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.zero, // Remove padding
+                  isDense: true,
+                ),
+                style: TextStyle(
+                  color: const Color(0xCC0F1620),
+                  fontSize: 14,
+                  fontFamily: 'DM Sans',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            SizedBox(height: Responsive.height(12, context)),
+
+            /// Options List
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFFD2D5DA),
+                  width: 1,
+                ),
+                color: const Color(0xFFFFFFFF),
+              ),
+              child: Column(
+                children: [
+                  ReorderableListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: optionControllers.length,
+                    onReorder: (oldIndex, newIndex) {
+                      if (newIndex > oldIndex) newIndex--;
+                      setState(() {
+                        final item = optionControllers.removeAt(oldIndex);
+                        optionControllers.insert(newIndex, item);
+                        _updatePollData();
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      return Container(
+                        key: ValueKey(index),
+                        child: Container(
+                          padding: EdgeInsets.only(
+                            top: Responsive.height(9, context),
+                            bottom: Responsive.height(7, context),
+                            left: Responsive.width(16, context),
+                            right: Responsive.height(12, context),
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                  color: const Color(0xFFD2D5DA), width: 0.5),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                  "assets/communities/align-justify.svg",
+                                  height: Responsive.height(18, context),
+                                  width: Responsive.width(8, context)),
+                              SizedBox(width: Responsive.width(8, context)),
+                              Expanded(
+                                child: TextField(
+                                  maxLines: null,
+                                  controller: optionControllers[index],
+                                  onChanged: (value) {
+                                    _updatePollData();
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: "Option",
+                                    hintStyle: TextStyle(
+                                      color: const Color(0xFF7E8287),
+                                      fontSize: 14,
+                                      fontFamily: 'DM Sans',
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    border: InputBorder.none, // Remove border
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    contentPadding:
+                                        EdgeInsets.zero, // Remove padding
+                                    isDense: true,
+                                    // border: OutlineInputBorder(),
+                                  ),
+                                  style: TextStyle(
+                                    color: const Color(0xCC0F1620),
+                                    fontSize: 14,
+                                    fontFamily: 'DM Sans',
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: Responsive.width(8, context)),
+                              if (index > 0)
+                                IconButton(
+                                  icon: Icon(Icons.close, color: Colors.red),
+                                  padding: EdgeInsets.zero, // Remove padding
+                                  constraints:
+                                      BoxConstraints(), // Remove minimum size constraints
+                                  iconSize: 20,
+                                  onPressed: () {
+                                    setState(() {
+                                      optionControllers[index].dispose();
+                                      optionControllers.removeAt(index);
+                                      _updatePollData();
+                                    });
+                                  },
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(
+                      top: Responsive.height(9, context),
+                      bottom: Responsive.height(7, context),
+                      left: Responsive.width(16, context),
+                      right: Responsive.height(12, context),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          optionControllers.add(TextEditingController());
+                          _updatePollData();
+                        });
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Add option',
+                            style: TextStyle(
+                              color: const Color(0xFFBEBEBE),
+                              fontSize: 14,
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          SvgPicture.asset("assets/communities/plus.svg",
+                              height: Responsive.height(19.2, context),
+                              width: Responsive.width(19.2, context))
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(height: Responsive.height(16, context)),
+
+            /// Allow Multiple Answers Toggle
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Allow multiple answers',
+                  style: TextStyle(
+                    color: const Color(0xFF306FDC),
+                    fontSize: 14,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                buildCustomSwitch(),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
                     // padding: const EdgeInsets.all(7.0),
                     // child: Form(
                     //   key: _formKey1,
@@ -734,158 +1298,8 @@ class _CreatePostPage extends State<CreatePostPage> {
                     //                           e.key,
                     //                         )),
                     //               ],
-        
-                    ),
-          ),
-        ),
-      ),
-      // persistentFooterButtons: [
-      //   ConstrainedBox(
-      //     constraints: new BoxConstraints(
-      //       maxHeight: MediaQuery.of(context).size.height / 5,
-      //     ),
-      //     child: SingleChildScrollView(
-      //       child: Column(
-      //         children: [
-      //           ListTile(
-      //             dense: true,
-      //             title: Text('Attach Photos/Videos'),
-      //             leading: Icon(Icons.attach_file),
-      //             onTap: () async {
-      //               final ImagePicker _picker = ImagePicker();
-      //               final XFile? pi =
-      //                   await _picker.pickImage(source: ImageSource.gallery);
 
-      //               if (pi != null) {
-      //                 // ImageUploadResponse resp = await bloc.client
-      //                 //     .uploadImage(
-      //                 //         bloc.getSessionIdHeader(), File(pi.path));
-      //                 // print(resp.pictureURL);
-      //                 if (await pi.length() / 1000000 <= 10) {
-      //                   setState(() {
-      //                     imageFiles.add(File(pi.path));
-      //                   });
-      //                 } else {
-      //                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      //                     content:
-      //                         Text("Image size should be less than 10MB"),
-      //                   ));
-      //                 }
-      //               }
-      //             },
-      //           ),
-      //           DropdownMultiSelect<dynamic>(
-      //             load: Future.value([
-      //               ...(currRequest1.bodies ?? []),
-      //               ...(currRequest1.users ?? [])
-      //             ]),
-      //             update: (tags) {
-      //               currRequest1.bodies = tags
-      //                   ?.where((element) => element.runtimeType == Body)
-      //                   .map((e) => e as Body)
-      //                   .toList();
-      //               currRequest1.users = tags
-      //                   ?.where((element) => element.runtimeType == User)
-      //                   .map((e) => e as User)
-      //                   .toList();
-      //             },
-      //             onFind: (String? query) async {
-      //               List<Body> list1 =
-      //                   await bloc.achievementBloc.searchForBody(query);
-      //               List<User> list2 =
-      //                   await bloc.achievementBloc.searchForUser(query);
-      //               List<dynamic> list = [...list1, ...list2];
-      //               return list;
-      //             },
-      //             singularObjectName: "Tag",
-      //             pluralObjectName: "Tags",
-      //           ),
-      //           DropdownMultiSelect<Interest>(
-      //             update: (interests) {
-      //               currRequest1.interests = interests;
-      //             },
-      //             load: Future.value(currRequest1.interests ?? []),
-      //             onFind: bloc.achievementBloc.searchForInterest,
-      //             singularObjectName: "interest",
-      //             pluralObjectName: "interests",
-      //           ),
-      //         ],
-      //       ),
-      //     ),
-      //   )
-      // ],
-    );
-  }
-
-  Widget _buildImageUrl(String url, int index) {
-    return Stack(
-      children: [
-        Container(
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            borderRadius:
-                BorderRadius.circular(Responsive.width(16.9, context)),
-          ),
-          child: Image.network(
-            url,
-            height: Responsive.height(77.62, context),
-            width: Responsive.width(77.62, context),
-            fit: BoxFit.fill,
-          ),
-        ),
-        Positioned(
-          right: 0,
-          top: 0,
-          child: Container(
-            child: IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () {
-                setState(() {
-                  currRequest1.imageUrl!.removeAt(index);
-                });
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildImageFile(File file, int index) {
-    return Stack(
-      children: [
-        Container(
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            borderRadius:
-                BorderRadius.circular(Responsive.width(16.9, context)),
-          ),
-          child: Image.file(
-            file,
-            height: Responsive.height(77.62, context),
-            width: Responsive.width(77.62, context),
-            fit: BoxFit.fill,
-          ),
-        ),
-        Positioned(
-          right: Responsive.width(-10, context),
-          top: Responsive.height(-10, context),
-          child: Container(
-            child: IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () {
-                setState(() {
-                  imageFiles.removeAt(index);
-                });
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-//   class DashedLinePainter extends CustomPainter {
+                    //   class DashedLinePainter extends CustomPainter {
 //     @override
 //     void paint(Canvas canvas, Size size) {
 //       double dashWidth = 4, dashSpace = 4, startX = 0;
@@ -1135,324 +1549,78 @@ class _CreatePostPage extends State<CreatePostPage> {
 //     );
 //   }
 // }
+      // persistentFooterButtons: [
+      //   ConstrainedBox(
+      //     constraints: new BoxConstraints(
+      //       maxHeight: MediaQuery.of(context).size.height / 5,
+      //     ),
+      //     child: SingleChildScrollView(
+      //       child: Column(
+      //         children: [
+      //           ListTile(
+      //             dense: true,
+      //             title: Text('Attach Photos/Videos'),
+      //             leading: Icon(Icons.attach_file),
+      //             onTap: () async {
+      //               final ImagePicker _picker = ImagePicker();
+      //               final XFile? pi =
+      //                   await _picker.pickImage(source: ImageSource.gallery);
 
-class PollCreator extends StatefulWidget {
-  final VoidCallback? onClose;
-  const PollCreator({
-    Key? key,
-    this.onClose,
-  }) : super(key: key);
-  @override
-  _PollCreatorState createState() => _PollCreatorState();
-}
-
-class _PollCreatorState extends State<PollCreator> {
-  TextEditingController questionController = TextEditingController();
-  List<TextEditingController> optionControllers = [TextEditingController()];
-  bool allowMultipleAnswers = false;
-
-  Widget buildCustomSwitch() {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          allowMultipleAnswers = !allowMultipleAnswers;
-        });
-      },
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
-        width: Responsive.width(35, context),
-        height: Responsive.height(19, context),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(Responsive.width(10, context)),
-          color: allowMultipleAnswers
-              ? const Color.fromRGBO(37, 99, 235, 1)
-              : Colors.grey[300],
-        ),
-        child: AnimatedAlign(
-          duration: Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          alignment: allowMultipleAnswers
-              ? Alignment.centerRight
-              : Alignment.centerLeft,
-          child: Container(
-            width: Responsive.width(15, context), // ✅ Custom thumb width
-            height: Responsive.height(15, context), // ✅ Custom thumb height
-            margin: EdgeInsets.all(Responsive.width(
-                2, context)), // ✅ Custom gap between track and thumb
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
-                  offset: Offset(0, 1),
-                  blurRadius: 2,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      // height: 300,
-      margin: EdgeInsets.only(
-          // left: Responsive.width(76, context),
-          // right: Responsive.width(16, context),
-          bottom: Responsive.height(16, context),
-          top: Responsive.height(16, context)),
-      child: Container(
-        decoration: ShapeDecoration(
-          color: const Color(0xFFF6F6F6),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        padding: EdgeInsets.symmetric(
-            horizontal: Responsive.width(16, context),
-            vertical: Responsive.height(12, context)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Create Poll',
-                    style: TextStyle(
-                      color: const Color(0xFF0F1620),
-                      fontSize: Responsive.text(16, context),
-                      fontFamily: 'DM Sans',
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: widget.onClose,
-                    child: SvgPicture.asset("assets/communities/x-circle.svg",
-                        height: Responsive.height(24, context),
-                        width: Responsive.width(24, context)),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: Responsive.height(12, context)),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: const Color(0xFFD2D5DA),
-                  width: 1,
-                ),
-                color: const Color(0xFFFFFFFF),
-              ),
-              padding: EdgeInsets.symmetric(
-                  horizontal: Responsive.width(16, context),
-                  vertical: Responsive.height(9, context)),
-              child: TextField(
-                maxLines: null,
-                controller: questionController,
-                decoration: InputDecoration(
-                  hintText: "Ask question",
-                  hintStyle: TextStyle(
-                    color: const Color(0xFF7E8287),
-                    fontSize: 14,
-                    fontFamily: 'DM Sans',
-                    fontWeight: FontWeight.w400,
-                  ),
-
-                  border: InputBorder.none, // Remove border
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.zero, // Remove padding
-                  isDense: true,
-                ),
-                style: TextStyle(
-                  color: const Color(0xCC0F1620),
-                  fontSize: 14,
-                  fontFamily: 'DM Sans',
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-            SizedBox(height: Responsive.height(12, context)),
-
-            /// Options List
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: const Color(0xFFD2D5DA),
-                  width: 1,
-                ),
-                color: const Color(0xFFFFFFFF),
-              ),
-              child: Column(
-                children: [
-                  ReorderableListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: optionControllers.length,
-                    onReorder: (oldIndex, newIndex) {
-                      if (newIndex > oldIndex) newIndex--;
-                      setState(() {
-                        final item = optionControllers.removeAt(oldIndex);
-                        optionControllers.insert(newIndex, item);
-                      });
-                    },
-                    itemBuilder: (context, index) {
-                      return Container(
-                        key: ValueKey(index),
-                        child: Container(
-                          padding: EdgeInsets.only(
-                            top: Responsive.height(9, context),
-                            bottom: Responsive.height(7, context),
-                            left: Responsive.width(16, context),
-                            right: Responsive.height(12, context),
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                  color: const Color(0xFFD2D5DA), width: 0.5),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              SvgPicture.asset(
-                                  "assets/communities/align-justify.svg",
-                                  height: Responsive.height(18, context),
-                                  width: Responsive.width(8, context)),
-                              SizedBox(width: Responsive.width(8, context)),
-                              Expanded(
-                                child: TextField(
-                                  maxLines: null,
-                                  controller: optionControllers[index],
-                                  decoration: InputDecoration(
-                                    hintText: "Option",
-                                    hintStyle: TextStyle(
-                                      color: const Color(0xFF7E8287),
-                                      fontSize: 14,
-                                      fontFamily: 'DM Sans',
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    border: InputBorder.none, // Remove border
-                                    enabledBorder: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    contentPadding:
-                                        EdgeInsets.zero, // Remove padding
-                                    isDense: true,
-                                    // border: OutlineInputBorder(),
-                                  ),
-                                  style: TextStyle(
-                                    color: const Color(0xCC0F1620),
-                                    fontSize: 14,
-                                    fontFamily: 'DM Sans',
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: Responsive.width(8, context)),
-                              if (index > 0)
-                                IconButton(
-                                  icon: Icon(Icons.close, color: Colors.red),
-                                  padding: EdgeInsets.zero, // Remove padding
-                                  constraints:
-                                      BoxConstraints(), // Remove minimum size constraints
-                                  iconSize: 20,
-                                  onPressed: () {
-                                    setState(() {
-                                      optionControllers.removeAt(index);
-                                    });
-                                  },
-                                ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(
-                      top: Responsive.height(9, context),
-                      bottom: Responsive.height(7, context),
-                      left: Responsive.width(16, context),
-                      right: Responsive.height(12, context),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          optionControllers.add(TextEditingController());
-                        });
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Add option',
-                            style: TextStyle(
-                              color: const Color(0xFFBEBEBE),
-                              fontSize: 14,
-                              fontFamily: 'DM Sans',
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          SvgPicture.asset("assets/communities/plus.svg",
-                              height: Responsive.height(19.2, context),
-                              width: Responsive.width(19.2, context))
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(height: Responsive.height(16, context)),
-
-            /// Allow Multiple Answers Toggle
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Allow multiple answers',
-                  style: TextStyle(
-                    color: const Color(0xFF306FDC),
-                    fontSize: 14,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                buildCustomSwitch(),
-                // Transform.scale(
-                //   scale: 0.9,
-                //   child: CupertinoSwitch(
-                //     value: allowMultipleAnswers,
-                //     onChanged: (value) {
-                //       setState(() {
-                //         allowMultipleAnswers = value;
-                //       });
-                //     },
-                //     activeColor: const Color.fromRGBO(37, 99, 235, 1),
-                //     trackColor: Colors.grey[300],
-                //     thumbColor: Colors.white,
-                //   ),
-                // ),
-                // Switch(
-                //   value: allowMultipleAnswers,
-                //   onChanged: (value) {
-                //     setState(() {
-                //       allowMultipleAnswers = value;
-                //     });
-                //   },
-                // ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+      //               if (pi != null) {
+      //                 // ImageUploadResponse resp = await bloc.client
+      //                 //     .uploadImage(
+      //                 //         bloc.getSessionIdHeader(), File(pi.path));
+      //                 // print(resp.pictureURL);
+      //                 if (await pi.length() / 1000000 <= 10) {
+      //                   setState(() {
+      //                     imageFiles.add(File(pi.path));
+      //                   });
+      //                 } else {
+      //                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //                     content:
+      //                         Text("Image size should be less than 10MB"),
+      //                   ));
+      //                 }
+      //               }
+      //             },
+      //           ),
+      //           DropdownMultiSelect<dynamic>(
+      //             load: Future.value([
+      //               ...(currRequest1.bodies ?? []),
+      //               ...(currRequest1.users ?? [])
+      //             ]),
+      //             update: (tags) {
+      //               currRequest1.bodies = tags
+      //                   ?.where((element) => element.runtimeType == Body)
+      //                   .map((e) => e as Body)
+      //                   .toList();
+      //               currRequest1.users = tags
+      //                   ?.where((element) => element.runtimeType == User)
+      //                   .map((e) => e as User)
+      //                   .toList();
+      //             },
+      //             onFind: (String? query) async {
+      //               List<Body> list1 =
+      //                   await bloc.achievementBloc.searchForBody(query);
+      //               List<User> list2 =
+      //                   await bloc.achievementBloc.searchForUser(query);
+      //               List<dynamic> list = [...list1, ...list2];
+      //               return list;
+      //             },
+      //             singularObjectName: "Tag",
+      //             pluralObjectName: "Tags",
+      //           ),
+      //           DropdownMultiSelect<Interest>(
+      //             update: (interests) {
+      //               currRequest1.interests = interests;
+      //             },
+      //             load: Future.value(currRequest1.interests ?? []),
+      //             onFind: bloc.achievementBloc.searchForInterest,
+      //             singularObjectName: "interest",
+      //             pluralObjectName: "interests",
+      //           ),
+      //         ],
+      //       ),
+      //     ),
+      //   )
+      // ],
