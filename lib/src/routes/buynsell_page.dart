@@ -9,6 +9,7 @@ import 'buynsell_info.dart';
 import 'package:flutter/material.dart';
 import '../widgets/appbar.dart';
 import 'bnscreatepost.dart';
+import 'package:InstiApp/src/utils/responsive.dart';
 
 class BuySellPage extends StatefulWidget {
   const BuySellPage({super.key});
@@ -56,12 +57,12 @@ class _BuySellPageState extends State<BuySellPage> {
         child: !isLoggedIn
             ? Container(
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(50),
+                padding: EdgeInsets.all(RS.sw(context, 50)),
                 child: Column(
                   children: [
                     Icon(
                       Icons.cloud,
-                      size: 200,
+                      size: RS.sw(context, 200),
                       color: Colors.grey[600],
                     ),
                     Text(
@@ -74,7 +75,7 @@ class _BuySellPageState extends State<BuySellPage> {
               )
             : Column(
                 children: [
-                  const SizedBox(height: 4),
+                  SizedBox(height: RS.sh(context, 4)),
                   CustomAppBar(
                     title: _currentTab == 0 ? 'Buy & Sell' : 'Posted By You',
                     other: Icons.bookmark_border_rounded,
@@ -82,7 +83,7 @@ class _BuySellPageState extends State<BuySellPage> {
                   ),
                   _buildSearchBar(),
                   _buildFilterChips(),
-                  const SizedBox(height: 16),
+                  SizedBox(height: RS.sh(context, 16)),
                   Expanded(
                     child: StreamBuilder<List<BuynSellPost>>(
                       stream: buynSellPostBloc.buynsellposts,
@@ -175,7 +176,7 @@ class _BuySellPageState extends State<BuySellPage> {
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             itemCount: filteredPosts.length,
                             separatorBuilder: (_, __) =>
-                                const SizedBox(height: 16),
+                                SizedBox(height: RS.sh(context, 16)),
                             itemBuilder: (context, index) =>
                                 _buildProductItem(filteredPosts[index]),
                           ),
@@ -216,11 +217,11 @@ class _BuySellPageState extends State<BuySellPage> {
     }
 
     return Container(
-      height: 254,
-      padding: const EdgeInsets.only(right: 16),
+      height: RS.sh(context, 254),
+      padding: EdgeInsets.only(right: RS.sw(context, 16)),
       decoration: BoxDecoration(
         color: const Color(0xFFEFEFEF),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(RS.s(context, 16)),
       ),
       child: Row(
         children: [
@@ -232,8 +233,8 @@ class _BuySellPageState extends State<BuySellPage> {
                 child: GestureDetector(
                   onTap: navigateToDetail,
                   child: Container(
-                    width: 154,
-                    height: 254,
+                    width: RS.sw(context, 154),
+                    height: RS.sh(context, 254),
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(16),
@@ -665,7 +666,7 @@ class _BuySellPageState extends State<BuySellPage> {
   Widget _buildBottomNavBar() {
     return Container(
       alignment: Alignment.topCenter,
-      height: 88,
+      height: RS.sh(context, 88),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: const BoxDecoration(
         color: Colors.transparent,
@@ -772,10 +773,10 @@ class _BuySellPageState extends State<BuySellPage> {
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      height: 50,
+      height: RS.sh(context, 50),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(50),
+        borderRadius: BorderRadius.circular(RS.s(context, 50)),
         image: DecorationImage(
           image: AssetImage("assets/buynsell/searchborder.png"),
           fit: BoxFit.fill,
@@ -861,7 +862,7 @@ class _BuySellPageState extends State<BuySellPage> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 36,
+        height: RS.sh(context, 36),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: ShapeDecoration(
           color: isSelected ? const Color(0xFF306FDC) : const Color(0xFFEFEFEF),
