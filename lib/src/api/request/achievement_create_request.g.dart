@@ -36,30 +36,22 @@ AchievementCreateRequest _$AchievementCreateRequestFromJson(
     );
 
 Map<String, dynamic> _$AchievementCreateRequestToJson(
-    AchievementCreateRequest instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('id', instance.id);
-  writeNotNull('time_of_creation', instance.timeOfCreation);
-  writeNotNull('time_of_modification', instance.timeOfModification);
-  writeNotNull('user', instance.user);
-  writeNotNull('hidden', instance.hidden);
-  writeNotNull('dismissed', instance.dismissed);
-  writeNotNull('verified', instance.verified);
-  writeNotNull('verified_by', instance.verifiedBy);
-  writeNotNull('title', instance.title);
-  writeNotNull('description', instance.description);
-  writeNotNull('admin_note', instance.adminNote);
-  writeNotNull('body', instance.bodyID);
-  writeNotNull('body_detail', instance.body);
-  writeNotNull('event_detail', instance.event);
-  writeNotNull('offer', instance.offer);
-  writeNotNull('isSkill', instance.isSkill);
-  return val;
-}
+        AchievementCreateRequest instance) =>
+    <String, dynamic>{
+      if (instance.id != null) 'id': instance.id,
+      if (instance.timeOfCreation != null) 'time_of_creation': instance.timeOfCreation,
+      if (instance.timeOfModification != null) 'time_of_modification': instance.timeOfModification,
+      if (instance.user != null) 'user': instance.user,
+      if (instance.hidden != null) 'hidden': instance.hidden,
+      if (instance.dismissed != null) 'dismissed': instance.dismissed,
+      if (instance.verified != null) 'verified': instance.verified,
+      if (instance.verifiedBy != null) 'verified_by': instance.verifiedBy,
+      if (instance.title != null) 'title': instance.title,
+      if (instance.description != null) 'description': instance.description,
+      if (instance.adminNote != null) 'admin_note': instance.adminNote,
+      if (instance.bodyID != null) 'body': instance.bodyID,
+      if (instance.body != null) 'body_detail': instance.body,
+      if (instance.event != null) 'event_detail': instance.event,
+      if (instance.offer != null) 'offer': instance.offer,
+      if (instance.isSkill != null) 'isSkill': instance.isSkill,
+    };

@@ -73,8 +73,14 @@ class CommunityPost {
   @JsonKey(name: "anonymous")
   bool? anonymous;
 
+  @JsonKey(name: "poll")
+  Poll? poll;
+
   @JsonKey(ignore: true)
   int? postedMinutes;
+
+  @JsonKey(name: "ispoll")
+  bool? isPoll;
 
   // @JsonKey(name: "reported_by")
   // List<User>? reportedBy;
@@ -84,6 +90,20 @@ class CommunityPost {
   @override
   String toString() {
     return 'CommunityPost{id:$id, content:$content}';
+  }
+
+  CommunityPost copyWith({
+    String? id,
+    String? content,
+    Poll? poll, // Make the poll field replaceable
+    // ... other fields
+  }) {
+    return CommunityPost(
+      id: id ?? this.id,
+      content: content ?? this.content,
+      poll: poll ?? this.poll,
+      // ... other fields
+    );
   }
 
   CommunityPost({
@@ -110,6 +130,8 @@ class CommunityPost {
     this.deleted,
     this.anonymous,
     this.hasUserReported,
+    this.poll,
+    this.isPoll,
     // this.reportedBy,
   }) {
     if (timeOfCreation != null) {
@@ -122,4 +144,86 @@ class CommunityPost {
       _$CommunityPostFromJson(json);
 
   Map<String, dynamic> toJson() => _$CommunityPostToJson(this);
+}
+
+
+@JsonSerializable()
+class Poll {
+  @JsonKey(name: "id")
+  String? id;
+
+  @JsonKey(name: "question")
+  String? question;
+
+  @JsonKey(name: "allow_multiple_answers")
+  bool? allowMultipleAnswers;
+
+  @JsonKey(name: "created_at")
+  String? createdAt;
+
+  @JsonKey(name: "options")
+  List<PollOption>? options;
+
+  @JsonKey(name: "total_votes")
+  int? totalVotes;
+
+  @JsonKey(name: "user_voted")
+  bool? userVoted;
+
+  Poll({
+    this.id,
+    this.question,
+    this.allowMultipleAnswers,
+    this.createdAt,
+    this.options,
+    this.totalVotes,
+    this.userVoted,
+  });
+
+  factory Poll.fromJson(Map<String, dynamic> json) => _$PollFromJson(json);
+  Map<String, dynamic> toJson() => _$PollToJson(this);
+}
+
+@JsonSerializable()
+class PollOption {
+  @JsonKey(name: "id")
+  String? id;
+
+  @JsonKey(name: "text")
+  String? text;
+
+  @JsonKey(name: "order")
+  int? order;
+
+  @JsonKey(name: "vote_count")
+  int? voteCount;
+
+  @JsonKey(name: "percentage")
+  double? percentage;
+
+  @JsonKey(name: "user_voted")
+  bool? userVoted;
+
+  PollOption({
+    this.id,
+    this.text,
+    this.order,
+    this.voteCount,
+    this.percentage,
+    this.userVoted,
+  });
+
+  factory PollOption.fromJson(Map<String, dynamic> json) => _$PollOptionFromJson(json);
+  Map<String, dynamic> toJson() => _$PollOptionToJson(this);
+}
+
+@JsonSerializable()
+class PollVoteResponse {
+    final String message;
+    final Poll poll;
+
+    PollVoteResponse({required this.message, required this.poll});
+    
+    factory PollVoteResponse.fromJson(Map<String, dynamic> json) => _$PollVoteResponseFromJson(json);
+    Map<String, dynamic> toJson() => _$PollVoteResponseToJson(this);
 }

@@ -20,6 +20,9 @@ import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:InstiApp/src/routes/communitydetails.dart';
+import 'package:InstiApp/src/api/model/community.dart';
+import 'package:InstiApp/src/api/model/communityPost.dart';
 
 // ignore: unnecessary_import
 import 'dart:ui' show Brightness;
@@ -2020,6 +2023,21 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
             SizedBox(
               height: 12,
             ),
+            // In your post display widget...
+            if (communityPost.isPoll == true && communityPost.poll != null)
+              PollViewer(
+                poll: communityPost.poll!,
+                onVoted: (List<String> selectedOptionIds) {
+                  // Call your BLoC or client here to send the votes to the backend.
+                  // e.g., bloc.communityPostBloc.voteOnPoll(post.id, selectedOptionIds);
+                  print("User voted for options: $selectedOptionIds");
+                  BlocProvider.of(context)!
+                      .bloc
+                      .communityPostBloc
+                      .voteOnPoll(communityPost.id!, selectedOptionIds);
+                },
+              ),
+            
 
             // Footer with actions - outside the row, full width
             _buildFooter(numReactions),
@@ -2162,11 +2180,12 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
   }
 
   Widget _buildContent(String content, int contentChars) {
-    return GestureDetector(
+    return InkWell(
       onTap: _getContentTapHandler(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: 50),
           SelectableLinkify(
             text: content.length > contentChars && !contentExpanded
                 ? content.substring(0, contentChars) +
@@ -2607,12 +2626,12 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
     }
   }
 
-  Widget _buildImagePlaceholder() {
-    return Container(
-      color: Color(0xFFF0F0F0),
-      child: Icon(Icons.error_outline, color: Color(0xFF666666)),
-    );
-  }
+  // Widget _buildImagePlaceholder() {
+  //   return Container(
+  //     color: Color(0xFFF0F0F0),
+  //     child: Icon(Icons.error_outline, color: Color(0xFF666666)),
+  //   );
+  // }
 
   Future<ImageInfo> _getImageInfo(String imageUrl) async {
     final completer = Completer<ImageInfo>();
@@ -3070,6 +3089,14 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
     final emojis = _getEmojis();
     return index >= 0 && index < emojis.length ? emojis[index] : emojis[0];
   }
+
+// This placeholder is now used by _buildFileItem for image errors
+Widget _buildImagePlaceholder() {
+  return Container(
+    color: Color(0xFFF0F0F0),
+    child: Icon(Icons.error_outline, color: Color(0xFF666666)),
+  );
+}
 }
 
 /// An arbitrary widget that lives in a popup menu
