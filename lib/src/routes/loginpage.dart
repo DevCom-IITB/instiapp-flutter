@@ -11,6 +11,7 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/notif_settings.dart';
+import 'package:InstiApp/src/utils/responsive.dart';
 
 class LoginPage extends StatefulWidget {
   final InstiAppBloc bloc;
@@ -192,27 +193,27 @@ class _OnboardingLoginPageState extends State<LoginPage>
               final centerX = screen.width / 2;
               final centerY = screen.height / 2;
 
-              double logoSize = lerpDouble(300, 150, tResize)!;
-              double fontSize = lerpDouble(64, 48, tResize)!;
+              double logoSize = lerpDouble(RS.sw(context, 300), RS.sw(context, 150), tResize)!;
+              double fontSize = lerpDouble(RS.sp(context, 64), RS.sp(context, 48), tResize)!;
 
               // Phase 1: stacked center
               final logoStartX = centerX - logoSize / 2;
               final logoStartY = centerY - logoSize / 2;
 
               final textStartX = centerX - fontSize * 2;
-              final textStartY = centerY + logoSize / 2 - 10;
+              final textStartY = centerY + logoSize / 2 - RS.sh(context, 10);
 
               // Phase 2: shrink + align horizontally (still centered)
-              final totalWidth = logoSize + 20 + fontSize * 8;
+              final totalWidth = logoSize + RS.sw(context, 20) + fontSize * 8;
               final logoMidX = centerX - totalWidth / 3;
               final logoMidY = centerY - logoSize / 2;
 
-              final textMidX = logoMidX + logoSize + 20;
+              final textMidX = logoMidX + logoSize + RS.sw(context, 20);
               final textMidY = centerY - fontSize / 2;
 
               // Phase 3: move entire pair to top
               final logoEndX = logoMidX;
-              final logoEndY = 20;
+              final logoEndY = RS.sh(context, 20);
 
               final textEndX = textMidX;
               final textEndY = logoEndY + logoSize / 2 - fontSize / 2;
@@ -230,15 +231,15 @@ class _OnboardingLoginPageState extends State<LoginPage>
               double textOpacity = 1.0;
 
               if (_isExitingToHome) {
-                logoSize = lerpDouble(150, 40, tHome)!;
-                fontSize = lerpDouble(48, 0, tHome)!;
+                logoSize = lerpDouble(RS.sw(context, 150), RS.sw(context, 40), tHome)!;
+                fontSize = lerpDouble(RS.sp(context, 48), 0, tHome)!;
 
                 final startX = centerX - totalWidth / 3;
                 final endX = centerX - logoSize / 2;
                 final startY = centerY - logoSize / 2;
 
                 currentLogoX = lerpDouble(startX, endX, tHome)!;
-                currentLogoY = lerpDouble(startY, 32, tHome)!;
+                currentLogoY = lerpDouble(startY, RS.sh(context, 32), tHome)!;
 
                 textOpacity = lerpDouble(1.0, 0.0, tHome)!;
               }
@@ -322,9 +323,21 @@ class _OnboardingLoginPageState extends State<LoginPage>
   }
 
   Widget _buildBackgroundLotuses() {
-    final List<double> tops = [-28, 66, 122, 217, 547, 531, 625, 766];
-    final List<double> lefts = [42, 299, -21, 249, -34, 208, 0, 251];
-    final List<double> sizes = [236, 151, 227, 102, 139, 189, 278, 161];
+    final List<double> tops = [
+      RS.sh(context, -28), RS.sh(context, 66), RS.sh(context, 122), 
+      RS.sh(context, 217), RS.sh(context, 547), RS.sh(context, 531), 
+      RS.sh(context, 625), RS.sh(context, 766)
+    ];
+    final List<double> lefts = [
+      RS.sw(context, 42), RS.sw(context, 299), RS.sw(context, -21), 
+      RS.sw(context, 249), RS.sw(context, -34), RS.sw(context, 208), 
+      RS.sw(context, 0), RS.sw(context, 251)
+    ];
+    final List<double> sizes = [
+      RS.sw(context, 236), RS.sw(context, 151), RS.sw(context, 227), 
+      RS.sw(context, 102), RS.sw(context, 139), RS.sw(context, 189), 
+      RS.sw(context, 278), RS.sw(context, 161)
+    ];
 
     return Stack(
       children: List.generate(8, (index) {
@@ -347,16 +360,16 @@ class _OnboardingLoginPageState extends State<LoginPage>
       alignment: Alignment.topCenter,
       children: [
         Container(
-          width: 412,
-          height: 412 + 250,
+          width: MediaQuery.of(context).size.width,
+          height: RS.sh(context, 412 + 250),
           color: Colors.white,
         ),
         ClipPath(
           clipper: BottomCurveClipper(curveDepth: 25),
           child: Image.asset(
             'assets/login/campus_illustration.png',
-            width: 412,
-            height: 412,
+            width: MediaQuery.of(context).size.width,
+            height: RS.sh(context, 412),
             fit: BoxFit.cover,
           ),
         ),
@@ -404,8 +417,8 @@ class _OnboardingLoginPageState extends State<LoginPage>
         ),
         const SizedBox(height: 40),
         SizedBox(
-          width: 300,
-          height: 64,
+          width: RS.sw(context, 300),
+          height: RS.sh(context, 64),
           child: ElevatedButton(
             onPressed: () {
               setState(() {
@@ -424,7 +437,7 @@ class _OnboardingLoginPageState extends State<LoginPage>
             ),
           ),
         ),
-        const SizedBox(height: 60),
+        SizedBox(height: RS.sh(context, 60)),
       ],
     );
   }
@@ -442,7 +455,7 @@ class _OnboardingLoginPageState extends State<LoginPage>
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: 40,
+                    height: RS.sh(context, 40),
                   ),
                   Text(
                     "Get Started.",
@@ -469,7 +482,7 @@ class _OnboardingLoginPageState extends State<LoginPage>
                   const SizedBox(height: 50),
                   Image.asset(
                     'assets/login/person_illustration.png',
-                    height: 400,
+                    height: RS.sh(context, 400),
                     fit: BoxFit.contain,
                   ),
                 ],
@@ -599,7 +612,7 @@ class _OnboardingLoginPageState extends State<LoginPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/login/lotus.png', width: 250),
+            Image.asset('assets/login/lotus.png', width: RS.sw(context, 250)),
             const SizedBox(height: 20),
             const Text("InstiApp",
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),

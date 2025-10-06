@@ -11,6 +11,7 @@ import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'bnscreatepost.dart';
 import 'package:intl/intl.dart';
+import 'package:InstiApp/src/utils/responsive.dart';
 
 class BuyAndSellInfoPage extends StatefulWidget {
   final String postId;
@@ -111,7 +112,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
 
   Widget _buildContent(BuynSellPost post) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final imageHeight = 350.0;
+    final imageHeight = RS.sh(context, 350);
     final isSold = !post.status!;
 
     return Scaffold(
@@ -573,7 +574,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
     String phoneNumber = post.contactDetails ?? '';
     return Container(
       alignment: Alignment.topCenter,
-      height: 88,
+      height: RS.sh(context, 88),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: const BoxDecoration(
         color: Colors.transparent,
@@ -590,7 +591,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
             fit: BoxFit.cover,
           ),
           color: Color(0xFF0F1620),
-          borderRadius: BorderRadius.circular(50),
+          borderRadius: BorderRadius.circular(RS.s(context, 50)),
         ),
         child: IntrinsicHeight(
           child: Row(
@@ -611,7 +612,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
     return isSold
         ? Container(
             alignment: Alignment.topCenter,
-            height: 88,
+            height: RS.sh(context, 88),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: const BoxDecoration(
               color: Colors.transparent,
@@ -628,7 +629,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                   fit: BoxFit.cover,
                 ),
                 color: Color(0xFF0F1620),
-                borderRadius: BorderRadius.circular(50),
+                borderRadius: BorderRadius.circular(RS.s(context, 50)),
               ),
               child: IntrinsicHeight(
                 child: Row(
@@ -643,7 +644,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
           )
         : Container(
             alignment: Alignment.topCenter,
-            height: 88,
+            height: RS.sh(context, 88),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: const BoxDecoration(
               color: Colors.transparent,
@@ -660,7 +661,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
                   fit: BoxFit.cover,
                 ),
                 color: Color(0xFF0F1620),
-                borderRadius: BorderRadius.circular(50),
+                borderRadius: BorderRadius.circular(RS.s(context, 50)),
               ),
               child: IntrinsicHeight(
                 child: Row(
@@ -679,7 +680,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
   Widget _buildSoldIndicator(BuynSellPost post) {
     return Expanded(
       child: Container(
-        height: 50,
+        height: RS.sh(context, 50),
         child: Container(
             decoration: BoxDecoration(
                 color: Color.fromRGBO(21, 32, 46, 1),
@@ -712,7 +713,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
     return Expanded(
       child: Container(
         margin: EdgeInsets.only(right: 4),
-        height: 52,
+        height: RS.sh(context, 52),
         child: TextButton.icon(
           style: TextButton.styleFrom(
             foregroundColor: Colors.white,
@@ -778,8 +779,8 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
 
   Widget _buildShareButton(BuynSellPost post) {
     return Container(
-      width: 48,
-      height: 48,
+      width: RS.sw(context, 48),
+      height: RS.sh(context, 48),
       margin: const EdgeInsets.only(right: 12, top: 4, bottom: 4, left: 4),
       decoration: BoxDecoration(
         color: Color.fromRGBO(45, 70, 108, 1),
@@ -806,7 +807,7 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
   Widget _buildCopyNumberButton(String phoneNumber) {
     return Expanded(
       child: Container(
-        height: 52,
+        height: RS.sh(context, 52),
         child: TextButton.icon(
           style: TextButton.styleFrom(
             foregroundColor: Colors.white,
@@ -845,8 +846,8 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
 
   Widget _buildWhatsAppButton(String phoneNumber) {
     return Container(
-      width: 48,
-      height: 48,
+      width: RS.sw(context, 48),
+      height: RS.sh(context, 48),
       margin: const EdgeInsets.only(left: 12, top: 4, bottom: 4, right: 4),
       decoration: BoxDecoration(
         color: Color.fromRGBO(37, 211, 102, 1),

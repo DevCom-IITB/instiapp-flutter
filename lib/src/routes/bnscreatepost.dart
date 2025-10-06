@@ -10,6 +10,7 @@ import '../widgets/dotted_divider.dart';
 import '../widgets/buttons.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:InstiApp/src/utils/responsive.dart';
 
 class PostItemFlow extends StatefulWidget {
   final bool isEditable;
@@ -170,8 +171,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
       return Column(
         children: [
           Container(
-            width: 32,
-            height: 32,
+            width: RS.s(context, 32),
+            height: RS.s(context, 32),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Color(0xFF306FDC),
@@ -187,8 +188,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
       return Column(
         children: [
           Container(
-            width: 32,
-            height: 32,
+            width: RS.s(context, 32),
+            height: RS.s(context, 32),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
@@ -242,7 +243,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
     return Container(
       // padding: const EdgeInsets.all(16.0),
       margin: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-      height: 58,
+      height: RS.sh(context, 58),
       decoration: BoxDecoration(
         border: Border.all(color: Color.fromRGBO(210, 213, 218, 1), width: 1),
         borderRadius: BorderRadius.circular(14),
@@ -291,8 +292,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
             children: [
               // Camera Button
               SizedBox(
-                width: 185,
-                height: 80,
+                width: RS.sw(context, 185),
+                height: RS.sh(context, 80),
                 child: OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     backgroundColor:
@@ -371,8 +372,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
 
               // Upload Button
               SizedBox(
-                width: 185,
-                height: 80,
+                width: RS.sw(context, 185),
+                height: RS.sh(context, 80),
                 child: OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     backgroundColor:
@@ -463,7 +464,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
           const SizedBox(height: 20),
           if (totalImages > 0)
             SizedBox(
-              height: 220,
+              height: RS.sh(context, 220),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: totalImages,
@@ -515,23 +516,23 @@ class _PostItemFlowState extends State<PostItemFlow> {
             borderRadius: BorderRadius.circular(14),
             child: Image.network(
               _existingImageUrls[index],
-              width: 160,
-              height: 200,
+              width: RS.sw(context, 160),
+              height: RS.sh(context, 200),
               fit: BoxFit.cover,
               loadingBuilder: (context, child, progress) {
                 return progress == null
                     ? child
                     : Container(
-                        width: 160,
-                        height: 200,
+                        width: RS.sw(context, 160),
+                        height: RS.sh(context, 200),
                         color: Colors.grey[200],
                         child: const Center(child: CircularProgressIndicator()),
                       );
               },
               errorBuilder: (context, error, stackTrace) {
                 return Container(
-                  width: 160,
-                  height: 200,
+                  width: RS.sw(context, 160),
+                  height: RS.sh(context, 200),
                   color: Colors.grey[200],
                   child: const Icon(Icons.broken_image, size: 50),
                 );
@@ -581,8 +582,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
             borderRadius: BorderRadius.circular(14),
             child: Image.file(
               File(_images[index].path),
-              width: 160,
-              height: 200,
+              width: RS.sw(context, 160),
+              height: RS.sh(context, 200),
               fit: BoxFit.cover,
             ),
           ),
@@ -878,8 +879,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
                               );
                             },
                             child: Container(
-                              width: 60,
-                              height: 60,
+                              width: RS.sw(context, 60),
+                              height: RS.sh(context, 60),
                               decoration: BoxDecoration(
                                 color: Color.fromRGBO(239, 239, 239, 1),
                                 borderRadius: BorderRadius.circular(14),
@@ -902,8 +903,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
                   // Selected category
                   if (_selectedCategory != null)
                     Container(
-                      width: 60,
-                      height: 60,
+                      width: RS.sw(context, 60),
+                      height: RS.sh(context, 60),
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(239, 239, 239, 1),
                         borderRadius: BorderRadius.circular(8),
@@ -914,8 +915,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
                           // _categories.firstWhere(
                           //   (c) => c['name'] == _selectedCategory,
                           // )['icon'],
-                          width: 48,
-                          height: 48,
+                          width: RS.sw(context, 48),
+                          height: RS.sh(context, 48),
                           fit: BoxFit.contain,
                         ),
                       ),
@@ -1519,14 +1520,14 @@ class _PostItemFlowState extends State<PostItemFlow> {
     final imageWidget = isExisting
         ? Image.network(
             _existingImageUrls[index],
-            width: 60,
-            height: 60,
+            width: RS.sw(context, 60),
+            height: RS.sh(context, 60),
             fit: BoxFit.cover,
           )
         : Image.file(
             File(_images[index - _existingImageUrls.length].path),
-            width: 60,
-            height: 60,
+            width: RS.sw(context, 60),
+            height: RS.sh(context, 60),
             fit: BoxFit.cover,
           );
 
@@ -1548,8 +1549,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
               }
             },
             child: Container(
-              width: 20,
-              height: 20,
+              width: RS.sw(context, 20),
+              height: RS.sh(context, 20),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white.withOpacity(0.6),
