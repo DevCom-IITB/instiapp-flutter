@@ -1,5 +1,6 @@
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/community_bloc.dart';
+import 'package:InstiApp/src/routes/community.dart';
 import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/api/model/community.dart';
@@ -388,7 +389,7 @@ class _CommunityPageState extends State<CommunityPage> {
                 ],
               ),
               onTap: () {
-                CommunityDetails.navigateWith(context, bloc, community);
+                Communities.navigateWith(context, bloc, community);
               },
             ),
           ),
