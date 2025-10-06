@@ -5,7 +5,7 @@ part 'image_upload_response.g.dart';
 class ImageUploadResponse {
   @JsonKey(name: "id")
   String? pictureID;
-  @JsonKey(name: "picture")
+  @JsonKey(name: "file")
   String? pictureURL;
 
   ImageUploadResponse({this.pictureID, this.pictureURL});

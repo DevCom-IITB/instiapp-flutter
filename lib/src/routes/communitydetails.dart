@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
@@ -12,6 +13,7 @@ import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:InstiApp/src/utils/responsivenew.dart';
 
 import '../bloc_provider.dart';
 
@@ -699,3 +701,482 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
     }
   }
 }
+
+
+// class PollViewer extends StatefulWidget {
+//   final Poll poll;
+//   final Function(List<String> selectedOptionIds) onVoted;
+
+//   const PollViewer({
+//     Key? key,
+//     required this.poll,
+//     required this.onVoted,
+//   }) : super(key: key);
+
+//   @override
+//   _PollViewerState createState() => _PollViewerState();
+// }
+
+// class _PollViewerState extends State<PollViewer> {
+//   late Set<String> _selectedOptionIds;
+//   late bool _hasAlreadyVoted;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _initializeState();
+//   }
+
+//   @override
+//   void didUpdateWidget(covariant PollViewer oldWidget) {
+//     super.didUpdateWidget(oldWidget);
+//     if (widget.poll != oldWidget.poll) {
+//       _initializeState();
+//     }
+//   }
+
+//   void _initializeState() {
+//     _selectedOptionIds = widget.poll.options
+//             ?.where((opt) => opt.userVoted == true)
+//             .map((opt) => opt.id!)
+//             .toSet() ??
+//         {};
+//     _hasAlreadyVoted = widget.poll.userVoted ?? _selectedOptionIds.isNotEmpty;
+//   }
+
+  // void _handleVote(String tappedOptionId) {
+  //   // If the user has already voted, don't allow them to vote again.
+  //   // To allow changing votes, you would remove this check.
+  //   if (_hasAlreadyVoted) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("You have already voted in this poll.")),
+  //     );
+  //     return;
+  //   }
+
+  //   setState(() {
+  //     if (widget.poll.allowMultipleAnswers == true) {
+  //       if (_selectedOptionIds.contains(tappedOptionId)) {
+  //         _selectedOptionIds.remove(tappedOptionId);
+  //       } else {
+  //         _selectedOptionIds.add(tappedOptionId);
+  //       }
+  //     } else {
+  //       _selectedOptionIds = {tappedOptionId};
+  //     }
+  //   });
+
+//     // You can add a "Submit Vote" button or call onVoted directly.
+//     // For now, let's assume tapping an option submits the vote.
+//     widget.onVoted(_selectedOptionIds.toList());
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final totalVotes = widget.poll.totalVotes ?? 0;
+    
+//     // Find the maximum vote count to identify the winning option(s)
+//     final maxVotes = widget.poll.options?.fold<int>(0, (maxVal, opt) => max(maxVal, opt.voteCount ?? 0)) ?? 0;
+
+//     return Container(
+//       padding: EdgeInsets.symmetric(
+//         vertical: Responsive.height(12, context),
+//         horizontal: Responsive.width(16, context),
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Text(
+//             widget.poll.question ?? "Poll Question",
+//             style: TextStyle(
+//               color: const Color(0xFF0F1620),
+//               fontSize: Responsive.text(18, context),
+//               fontFamily: 'DM Sans',
+//               fontWeight: FontWeight.w700,
+//             ),
+//           ),
+//           SizedBox(height: Responsive.height(4, context)),
+//           Text(
+//             _hasAlreadyVoted
+//                 ? '$totalVotes votes'
+//                 : (widget.poll.allowMultipleAnswers == true ? 'Select one or more' : 'Select one'),
+//             style: TextStyle(
+//               color: const Color(0xFF7E8287),
+//               fontSize: Responsive.text(14, context),
+//               fontFamily: 'DM Sans',
+//               fontWeight: FontWeight.w400,
+//             ),
+//           ),
+//           SizedBox(height: Responsive.height(16, context)),
+//           Column(
+//             children: widget.poll.options?.map((option) {
+//               final isSelected = _selectedOptionIds.contains(option.id);
+//               final isWinning = _hasAlreadyVoted && (option.voteCount ?? 0) == maxVotes && maxVotes > 0;
+//               final double percentage = totalVotes > 0 ? (option.voteCount ?? 0) / totalVotes : 0.0;
+              
+//               if (_hasAlreadyVoted) {
+//                 return _buildResultOption(context, option, isSelected, isWinning, percentage);
+//               } else {
+//                 return _buildVotingOption(context, option, isSelected);
+//               }
+//             }).toList() ?? [],
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   // Widget for when the user has NOT yet voted
+//   Widget _buildVotingOption(BuildContext context, PollOption option, bool isSelected) {
+//     const Color selectedColor = Color(0xFF306FDC);
+//     const Color defaultColor = Color(0xFF7E8287);
+
+//     return GestureDetector(
+//       onTap: () => _handleVote(option.id!),
+//       child: Container(
+//         color: Colors.transparent,
+//         padding: EdgeInsets.symmetric(vertical: Responsive.height(8, context)),
+//         child: Row(
+//           children: [
+//             Container(
+//               width: Responsive.width(24, context),
+//               height: Responsive.height(24, context),
+//               decoration: BoxDecoration(
+//                 shape: BoxShape.circle,
+//                 border: Border.all(
+//                   color: isSelected ? selectedColor : defaultColor,
+//                   width: 2,
+//                 ),
+//               ),
+//               child: isSelected
+//                   ? Center(
+//                       child: Container(
+//                         width: 12,
+//                         height: 12,
+//                         decoration: BoxDecoration(
+//                           shape: BoxShape.circle,
+//                           color: selectedColor,
+//                         ),
+//                       ),
+//                     )
+//                   : null,
+//             ),
+//             SizedBox(width: Responsive.width(12, context)),
+//             Expanded(
+//               child: Text(
+//                 option.text ?? 'Option',
+//                 style: TextStyle(
+//                   color: const Color(0xFF0F1620),
+//                   fontSize: Responsive.text(16, context),
+//                   fontFamily: 'DM Sans',
+//                   fontWeight: FontWeight.w500,
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+
+//   // Widget for AFTER the user has voted (WhatsApp style)
+//   Widget _buildResultOption(BuildContext context, PollOption option, bool isSelected, bool isWinning, double percentage) {
+//     const Color winningColor = Color(0xFF306FDC); // Blue
+//     const Color defaultColor = Color(0xFFD2D5DA); // Grey
+    
+//     return Container(
+//       margin: EdgeInsets.only(bottom: Responsive.height(8, context)),
+//       child: Stack(
+//         alignment: Alignment.centerLeft,
+//         children: [
+//           // Background bar (full width)
+//           Container(
+//             height: Responsive.height(40, context),
+//             decoration: BoxDecoration(
+//               color: (isWinning ? winningColor : defaultColor).withOpacity(0.2),
+//               borderRadius: BorderRadius.circular(8),
+//             ),
+//           ),
+//           // Progress bar (percentage width)
+//           FractionallySizedBox(
+//             widthFactor: percentage,
+//             child: Container(
+//               height: Responsive.height(40, context),
+//               decoration: BoxDecoration(
+//                 color: (isWinning ? winningColor : defaultColor).withOpacity(0.4),
+//                 borderRadius: BorderRadius.circular(8),
+//               ),
+//             ),
+//           ),
+//           // Text and Icons on top
+//           Padding(
+//             padding: EdgeInsets.symmetric(horizontal: Responsive.width(12, context)),
+//             child: Row(
+//               children: [
+//                 Expanded(
+//                   child: Text(
+//                     option.text ?? 'Option',
+//                     style: TextStyle(
+//                       color: const Color(0xFF0F1620),
+//                       fontSize: Responsive.text(16, context),
+//                       fontFamily: 'DM Sans',
+//                       fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+//                     ),
+//                   ),
+//                 ),
+//                 SizedBox(width: Responsive.width(8, context)),
+//                 if (isSelected)
+//                   Icon(Icons.check_circle, color: winningColor, size: 20),
+//                 SizedBox(width: Responsive.width(8, context)),
+//                 Text(
+//                   '${(percentage * 100).toStringAsFixed(0)}%',
+//                   style: TextStyle(
+//                     color: const Color(0xFF0F1620),
+//                     fontSize: Responsive.text(14, context),
+//                     fontFamily: 'DM Sans',
+//                     fontWeight: isWinning ? FontWeight.bold : FontWeight.normal,
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+
+class PollOption extends StatefulWidget {
+  final String title;
+  final String voteCount;
+  final double votePercentage; // A value between 0.0 and 1.0
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const PollOption({
+    super.key,
+    required this.title,
+    required this.voteCount,
+    required this.votePercentage,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  State<PollOption> createState() => _PollOptionState();
+}
+
+class _PollOptionState extends State<PollOption> {
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: widget.onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // --- Row for radio button, title, and vote count ---
+          Row(
+            children: [
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: widget.isSelected ? const Color(0xFF306FDC) : Colors.transparent,
+                  border: Border.all(
+                    color: widget.isSelected ? const Color(0xFF306FDC) : const Color(0xFF7E8287),
+                  ),
+                ),
+                child: widget.isSelected
+                    ? const Icon(Icons.check, color: Colors.white, size: 14)
+                    : null,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  widget.title,
+                  style: const TextStyle(
+                    color: Color(0xCC0F1620),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                widget.voteCount,
+                style: const TextStyle(
+                  color: Color(0xCC0F1620),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+      
+          // --- Progress Bar ---
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return Stack(
+                children: [
+                  Container(
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD2D5DA),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  Container(
+                    width: constraints.maxWidth * widget.votePercentage,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF306FDC),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+// 2. The Main Widget Using the Reusable PollOption
+class PollViewer extends StatefulWidget {
+  final Poll poll;
+  final Function(List<String> selectedOptionIds) onVoted;
+
+  const PollViewer({
+    Key? key,
+    required this.poll,
+    required this.onVoted,
+  }) : super(key: key);
+
+  @override
+  State<PollViewer> createState() => _PollViewerState();
+}
+
+class _PollViewerState extends State<PollViewer> {
+  late Set<String> _selectedOptionIds;
+  late bool _hasAlreadyVoted;
+
+    @override
+  void initState() {
+    super.initState();
+    _initializeState();
+  }
+
+    void _initializeState() {
+    _selectedOptionIds = widget.poll.options
+            ?.where((opt) => opt.userVoted == true)
+            .map((opt) => opt.id!)
+            .toSet() ??
+        {};
+    _hasAlreadyVoted = widget.poll.userVoted ?? _selectedOptionIds.isNotEmpty;
+  }
+
+    void _handleVote(String tappedOptionId) {
+
+    setState(() {
+      if (widget.poll.allowMultipleAnswers == true) {
+        if (_selectedOptionIds.contains(tappedOptionId)) {
+          _selectedOptionIds.remove(tappedOptionId);
+        } else {
+          _selectedOptionIds.add(tappedOptionId);
+        }
+      } else {
+        _selectedOptionIds = {tappedOptionId};
+      }
+      
+    });
+    widget.onVoted(_selectedOptionIds.toList());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final totalVotes = widget.poll.totalVotes ?? 0;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF6F6F6),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          width: 1,
+          color: const Color(0xFFD2D5DA),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // --- Header Text ---
+          Text(
+            widget.poll.question ?? "Poll Question",
+            style: TextStyle(
+              color: Color(0xFF0F1620),
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            widget.poll.allowMultipleAnswers == true
+                ? 'Select one or more'
+                : 'Select one',
+            style: TextStyle(
+              color: Color(0xFF7E8287),
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // --- Poll Options ---
+          // PollOption(
+          //   title: '9:30 - 10:30 PM',
+          //   voteCount: '0',
+          //   votePercentage: 0.0,
+          //   isSelected: false,
+          //   onTap: () => _handleVote('option1'),
+          // ),
+          // const SizedBox(height: 16),
+          // PollOption(
+          //   title: 'After 9 PM',
+          //   voteCount: '22',
+          //   votePercentage: 0.65, // Example percentage
+          //   isSelected: true,
+          // ),
+          // const SizedBox(height: 16),
+          // const PollOption(
+          //   title: 'Tomorrow | suggest timings etc etc abcde',
+          //   voteCount: '152',
+          //   votePercentage: 0.9, // Example percentage
+          //   isSelected: false,
+          // ),
+          ...?widget.poll.options?.map((option) {
+            final isSelected = _selectedOptionIds.contains(option.id);
+            final double percentage = totalVotes > 0 ? (option.voteCount ?? 0) / totalVotes : 0.0;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: PollOption(
+                title: option.text ?? 'Option',
+                voteCount: (option.voteCount ?? 0).toString(),
+                votePercentage: percentage,
+                isSelected: isSelected,
+                onTap: () => {_handleVote(option.id!),},
+              ),
+            );
+          })
+        ],
+      ),
+    );
+  }}

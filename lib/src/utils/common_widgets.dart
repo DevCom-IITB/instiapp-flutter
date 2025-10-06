@@ -20,11 +20,29 @@ import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:InstiApp/src/routes/communitydetails.dart';
+import 'package:InstiApp/src/api/model/community.dart';
+import 'package:InstiApp/src/api/model/communityPost.dart';
 
 // ignore: unnecessary_import
 import 'dart:ui' show Brightness;
 
 import '../bloc_provider.dart';
+
+
+String fixImageUrl(String? url) {
+  if (url == null || url.isEmpty) return "";
+  
+  // Replace localhost with your ngrok URL
+  if (url.startsWith("http://localhost:8000")) {
+    return url.replaceFirst(
+      "http://localhost:8000", 
+      "https://af698a114ff6.ngrok-free.app"  // Your actual server URL
+    );
+  }
+  
+  return url;
+}
 
 String defUrl = "https://devcom-iitb.org/images/logos/DC_footer.png";
 
@@ -2010,7 +2028,7 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
                       // Images
                       if (communityPost.imageUrl != null &&
                           communityPost.imageUrl!.isNotEmpty)
-                        _buildImages(),
+                        _buildFiles(),
                     ],
                   ),
                 ),
@@ -2020,6 +2038,21 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
             SizedBox(
               height: 12,
             ),
+            // In your post display widget...
+            if (communityPost.isPoll == true && communityPost.poll != null)
+              PollViewer(
+                poll: communityPost.poll!,
+                onVoted: (List<String> selectedOptionIds) {
+                  // Call your BLoC or client here to send the votes to the backend.
+                  // e.g., bloc.communityPostBloc.voteOnPoll(post.id, selectedOptionIds);
+                  print("User voted for options: $selectedOptionIds");
+                  BlocProvider.of(context)!
+                      .bloc
+                      .communityPostBloc
+                      .voteOnPoll(communityPost.id!, selectedOptionIds);
+                },
+              ),
+            
 
             // Footer with actions - outside the row, full width
             _buildFooter(numReactions),
@@ -2162,11 +2195,12 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
   }
 
   Widget _buildContent(String content, int contentChars) {
-    return GestureDetector(
+    return InkWell(
       onTap: _getContentTapHandler(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: 50),
           SelectableLinkify(
             text: content.length > contentChars && !contentExpanded
                 ? content.substring(0, contentChars) +
@@ -2607,12 +2641,12 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
     }
   }
 
-  Widget _buildImagePlaceholder() {
-    return Container(
-      color: Color(0xFFF0F0F0),
-      child: Icon(Icons.error_outline, color: Color(0xFF666666)),
-    );
-  }
+  // Widget _buildImagePlaceholder() {
+  //   return Container(
+  //     color: Color(0xFFF0F0F0),
+  //     child: Icon(Icons.error_outline, color: Color(0xFF666666)),
+  //   );
+  // }
 
   Future<ImageInfo> _getImageInfo(String imageUrl) async {
     final completer = Completer<ImageInfo>();
@@ -3070,6 +3104,346 @@ class _CommunityPostWidgetState extends State<CommunityPostWidget> {
     final emojis = _getEmojis();
     return index >= 0 && index < emojis.length ? emojis[index] : emojis[0];
   }
+
+  // Helper widget to decide what to display based on the file URL
+Widget _buildFileItem(String fileUrl) {
+  final uri = Uri.parse(fixImageUrl(fileUrl));
+  final fileExtension = uri.path.split('.').last.toLowerCase();
+
+  // List of common image extensions
+  const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+
+  if (imageExtensions.contains(fileExtension)) {
+    return Image.network(
+      fixImageUrl(fileUrl),
+      fit: BoxFit.cover,
+      // Ensure the full container is covered
+      width: double.infinity,
+      height: double.infinity,
+      errorBuilder: (context, error, stackTrace) {
+        return _buildImagePlaceholder();
+      },
+    );
+  } else {
+    // Return an icon based on the file type
+    IconData iconData;
+    switch (fileExtension) {
+      case 'pdf':
+        iconData = Icons.picture_as_pdf;
+        break;
+      case 'mp3':
+      case 'wav':
+      case 'aac':
+        iconData = Icons.audiotrack;
+        break;
+      case 'doc':
+      case 'docx':
+        iconData = Icons.article;
+        break;
+      default:
+        iconData = Icons.insert_drive_file;
+    }
+    return InkWell(
+      onTap: () async {
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
+        else {
+          // Optional: Show a snackbar or message if the URL can't be launched
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Could not open file")),
+          );
+        }
+      },
+      child: Container(
+        color: Color(0xFFF0F0F0),
+        child: Center(
+          child: Icon(iconData, color: Color(0xFF666666), size: 40),
+        ),
+      ),
+    );
+  }
+}
+
+
+// Renamed from _buildImages to _buildFiles
+Widget _buildFiles() {
+  final files = communityPost.imageUrl!; // This variable now holds URLs for any file
+  final fileCount = files.length;
+
+  if (fileCount == 0) return Container();
+
+  return Container(
+    width: double.infinity,
+    margin: EdgeInsets.only(top: 12, bottom: 8),
+    child: _buildFileGrid(files, fileCount), // Renamed function call
+  );
+}
+
+// Renamed from _buildFeaturedImages to _buildFeaturedContent
+Widget _buildFeaturedContent() {
+  final files = communityPost.imageUrl!;
+  if (files.isEmpty) return Container();
+
+  // For featured posts, show only the first file
+  return Container(
+    width: double.infinity,
+    height: 180,
+    margin: EdgeInsets.only(bottom: 12),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      // Use the new generic file item builder
+      child: _buildFileItem(files[0]),
+    ),
+  );
+}
+
+// Renamed from _buildImageGrid to _buildFileGrid
+Widget _buildFileGrid(List<String> files, int fileCount) {
+  switch (fileCount) {
+    case 1:
+      // Simplified case 1: Removed FutureBuilder and dynamic aspect ratio
+      return AspectRatio(
+        aspectRatio: 16 / 9, // Using a standard aspect ratio
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: _buildFileItem(files[0]),
+        ),
+      );
+
+    case 2:
+      // Simplified case 2: Removed FutureBuilder and complex calculations
+      return Container(
+        height: 200, // Fixed height for consistency
+        child: Row(
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: _buildFileItem(files[0]),
+              ),
+            ),
+            SizedBox(width: 4),
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: _buildFileItem(files[1]),
+              ),
+            ),
+          ],
+        ),
+      );
+
+    case 3:
+      return Container(
+        height: 200,
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  bottomLeft: Radius.circular(8),
+                ),
+                child: _buildFileItem(files[0]),
+              ),
+            ),
+            SizedBox(width: 4),
+            Expanded(
+              flex: 2,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(8),
+                      ),
+                      child: _buildFileItem(files[1]),
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(8),
+                      ),
+                      child: _buildFileItem(files[2]),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+
+    case 4:
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final totalWidth = constraints.maxWidth;
+          final spacing = 4.0;
+          final itemSize = (totalWidth - spacing) / 2;
+
+          return Column(
+            children: [
+              Row(
+                children: [
+                  SizedBox(
+                    width: itemSize,
+                    height: itemSize,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: _buildFileItem(files[0]),
+                    ),
+                  ),
+                  SizedBox(width: spacing),
+                  SizedBox(
+                    width: itemSize,
+                    height: itemSize,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: _buildFileItem(files[1]),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: spacing),
+              Row(
+                children: [
+                  SizedBox(
+                    width: itemSize,
+                    height: itemSize,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: _buildFileItem(files[2]),
+                    ),
+                  ),
+                  SizedBox(width: spacing),
+                  SizedBox(
+                    width: itemSize,
+                    height: itemSize,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: _buildFileItem(files[3]),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
+      );
+
+    default: // 5 or more
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final totalWidth = constraints.maxWidth;
+          final spacing = 4.0;
+          final leftWidth = (totalWidth - spacing) / 2;
+          final gridItemSize = (leftWidth - spacing) / 2;
+
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: leftWidth,
+                height: leftWidth,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: _buildFileItem(files[0]),
+                ),
+              ),
+              SizedBox(width: spacing),
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: gridItemSize,
+                        height: gridItemSize,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: _buildFileItem(files[1]),
+                        ),
+                      ),
+                      SizedBox(width: spacing),
+                      SizedBox(
+                        width: gridItemSize,
+                        height: gridItemSize,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: _buildFileItem(files[2]),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: spacing),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: gridItemSize,
+                        height: gridItemSize,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: _buildFileItem(files[3]),
+                        ),
+                      ),
+                      SizedBox(width: spacing),
+                      SizedBox(
+                        width: gridItemSize,
+                        height: gridItemSize,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              _buildFileItem(files[4]),
+                              if (files.length > 5)
+                                Positioned.fill(
+                                  child: Container(
+                                    color: Color(0xB3000000),
+                                    child: Center(
+                                      child: Text(
+                                        "+${files.length - 5}",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              )
+            ],
+          );
+        },
+      );
+  }
+}
+
+// This placeholder is now used by _buildFileItem for image errors
+Widget _buildImagePlaceholder() {
+  return Container(
+    color: Color(0xFFF0F0F0),
+    child: Icon(Icons.error_outline, color: Color(0xFF666666)),
+  );
+}
+
+
+// REMOVED: The following methods are no longer needed as we removed the
+// dynamic aspect ratio logic which only worked for images.
+//
+// Future<ImageInfo> _getImageInfo(String imageUrl) { ... }
+// BorderRadius _getGridImageBorderRadius(int index, int total) { ... }
+  
 }
 
 /// An arbitrary widget that lives in a popup menu
@@ -3247,3 +3621,5 @@ class _DropdownMultiSelectState<T> extends State<DropdownMultiSelect<T>> {
     );
   }
 }
+
+

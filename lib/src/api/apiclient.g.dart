@@ -13,13 +13,7 @@ class _InstiAppApi implements InstiAppApi {
     this._dio, {
     this.baseUrl,
   }) {
-    //baseUrl ??= 'https://09b5f0e9f42c.ngrok-free.app/api';
-    // baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
-    // baseUrl ??= 'https://a6c715a9e425.ngrok-free.app/api';
-    // baseUrl ??= 'http://10.198.49.150/api';
-    // baseUrl ??= 'https://43a2-2409-40c4-11e8-61d3-9171-8753-ecdf-8f1a.ngrok-free.app/api';
-    // baseUrl ??= 'https://9dc854412c8e.ngrok-free.app/api';
-    baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
+    baseUrl ??= 'https://af698a114ff6.ngrok-free.app/api';
   }
 
   final Dio _dio;
@@ -885,7 +879,7 @@ class _InstiAppApi implements InstiAppApi {
   @override
   Future<ImageUploadResponse> uploadImage(
     String sessionID,
-    File picture,
+    File file,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -893,10 +887,10 @@ class _InstiAppApi implements InstiAppApi {
     _headers.removeWhere((k, v) => v == null);
     final _data = FormData();
     _data.files.add(MapEntry(
-      'picture',
+      'file',
       MultipartFile.fromFileSync(
-        picture.path,
-        filename: picture.path.split(Platform.pathSeparator).last,
+        file.path,
+        filename: file.path.split(Platform.pathSeparator).last,
       ),
     ));
     final _result = await _dio.fetch<Map<String, dynamic>>(
@@ -2316,6 +2310,39 @@ class _InstiAppApi implements InstiAppApi {
           _dio.options.baseUrl,
           baseUrl,
         ))));
+  }
+
+  @override
+  Future<PollVoteResponse> voteOnPoll(
+    String sessionID,
+    String pollID,
+    Map<String, List<String>> body,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionID};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<PollVoteResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/communities/poll/${pollID}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = PollVoteResponse.fromJson(_result.data!);
+    return value;
   }
 
   @override
