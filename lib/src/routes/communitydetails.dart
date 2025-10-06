@@ -663,7 +663,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
       String? communityId) {
     if (snapshot.hasData) {
       // print(snapshot.data ?? "hii");
-      var communityPosts = snapshot.data!;
+      var   communityPosts = snapshot.data!;
 
       if (communityPosts.isEmpty == true) {
         return [

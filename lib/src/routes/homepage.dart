@@ -3,7 +3,7 @@ import 'dart:collection';
 import 'package:InstiApp/constants.dart';
 import 'package:InstiApp/src/routes/community.dart';
 import 'package:InstiApp/src/routes/communitypage.dart';
-import 'package:InstiApp/src/api/model/community.dart';
+import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
@@ -148,8 +148,10 @@ class _HomepageState extends State<Homepage> {
           ExplorePage(),
           if (currentpage == 'Feed')
             FeedPage(),
-          if(currentpage=='Community')
-            Communities(),
+          if(currentpage=='CommunityPage')
+            // Communities(),
+            CommunityPage(),
+            //CommunityPostPage(communityPostFuture: communityPostFuture),
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -932,7 +934,7 @@ class _HomepageState extends State<Homepage> {
                         
                     } else if (path ==
                         'assets/homepage/icons/message-square.svg') {
-                        currentpage = 'Communities';
+                        currentpage = 'CommunityPage';
                         
                     // } else if (path == 'assets/homepage/icons/map.svg') {
                     //     currentpage = 'Map';  
