@@ -11,6 +11,7 @@ import '../widgets/buttons.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:InstiApp/src/utils/responsive.dart';
+import 'package:InstiApp/src/widgets/custom_dialog.dart';
 
 class PostItemFlow extends StatefulWidget {
   final bool isEditable;
@@ -127,19 +128,20 @@ class _PostItemFlowState extends State<PostItemFlow> {
   Future<void> _confirmExit() async {
     final shouldExit = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Discard Post?'),
-        content: const Text(
-          'All your progress will be lost. Do you want to continue?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+      builder: (context) => CustomDialog(
+        title: 'Discard Changes',
+        content1: 'Are you sure you want to discard changes?',
+        content2: 'This cannot be undone.',
+        imageAssetPath: 'assets/buynsell/discard.png',
+        options: [
+          DialogOption(
+            text: 'Cancel',
+            onPressed: (ctx, setProcessing) => Navigator.pop(ctx, false),
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Discard'),
+          DialogOption(
+            text: 'Discard',
+            onPressed: (ctx, setProcessing) => Navigator.pop(ctx, true),
+            isPrimary: true,
           ),
         ],
       ),
@@ -617,17 +619,21 @@ class _PostItemFlowState extends State<PostItemFlow> {
   Future<void> _removeExistingImage(int index) async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Remove Image'),
-        content: const Text('Are you sure you want to remove this image?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+      builder: (context) => CustomDialog(
+        title: 'Remove Image',
+        content1: 'Are you sure you want to remove this image?',
+        content2: 'This cannot be undone.',
+        // imageAssetPath: 'assets/buynsell/discard.png', // Add your image // IMAGEDOODLE
+        showLoadingState: false, // No loading state needed for instant operation
+        options: [
+          DialogOption(
+            text: 'Cancel',
+            onPressed: (ctx, setProcessing) => Navigator.pop(ctx, false),
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Remove'),
+          DialogOption(
+            text: 'Remove',
+            onPressed: (ctx, setProcessing) => Navigator.pop(ctx, true),
+            isPrimary: true,
           ),
         ],
       ),
@@ -644,17 +650,21 @@ class _PostItemFlowState extends State<PostItemFlow> {
   Future<void> _removeNewImage(int index) async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Remove Image'),
-        content: const Text('Are you sure you want to remove this image?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+      builder: (context) => CustomDialog(
+        title: 'Remove Image',
+        content1: 'Are you sure you want to remove this image?',
+        content2: 'This cannot be undone.',
+        // imageAssetPath: 'assets/buynsell/discard.png', // Add your image // IMAGEDOODLE
+        showLoadingState: false, // No loading state needed for instant operation
+        options: [
+          DialogOption(
+            text: 'Cancel',
+            onPressed: (ctx, setProcessing) => Navigator.pop(ctx, false),
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Remove'),
+          DialogOption(
+            text: 'Remove',
+            onPressed: (ctx, setProcessing) => Navigator.pop(ctx, true),
+            isPrimary: true,
           ),
         ],
       ),

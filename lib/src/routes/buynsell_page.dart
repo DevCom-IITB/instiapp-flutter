@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import '../widgets/appbar.dart';
 import 'bnscreatepost.dart';
 import 'package:InstiApp/src/utils/responsive.dart';
+import 'package:InstiApp/src/widgets/custom_dialog.dart';
 
 class BuySellPage extends StatefulWidget {
   const BuySellPage({super.key});
@@ -572,79 +573,74 @@ class _BuySellPageState extends State<BuySellPage> {
     );
   }
 
-  // Add these new methods for the additional functionality
   void _confirmDelete(String? id) {
-    bool isDeleting = false;
-
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const Text('Confirm Delete'),
-            content: const Text('Are you sure you want to delete this post?'),
-            actions: [
-              TextButton(
-                onPressed: isDeleting ? null : () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: isDeleting
-                    ? null
-                    : () async {
-                        setState(() => isDeleting = true);
-
-                        try {
-                          await bloc.buynSellPostBloc.deleteBuynSellPost(id!);
-                          Navigator.pop(context);
-                          await bloc.buynSellPostBloc.refresh();
-                        } finally {
-                          bloc.buynSellPostBloc.refresh();
-                        }
-                      },
-                child: Text(isDeleting ? 'Deleting...' : 'Delete',
-                    style: TextStyle(color: Colors.red)),
-              ),
-            ],
-          );
-        },
+      builder: (context) => CustomDialog(
+        title: 'Confirm Delete',
+        content1: 'Are you sure you want to delete this post?',
+        content2: 'This cannot be undone.',
+        showLoadingState: true,
+        loadingText: 'Deleting...',
+        options: [
+          DialogOption(
+            text: 'Cancel',
+            onPressed: (ctx, setProcessing) => Navigator.pop(ctx),
+          ),
+          DialogOption(
+            text: 'Delete',
+            onPressed: (ctx, setProcessing) async {
+              try {
+                await bloc.buynSellPostBloc.deleteBuynSellPost(id!);
+                Navigator.pop(ctx);
+                Navigator.pop(context); // Pop the original context
+                await bloc.buynSellPostBloc.refresh();
+              } catch (e) {
+                setProcessing(false);
+                // Handle error if needed
+              } finally {
+                bloc.buynSellPostBloc.refresh();
+              }
+            },
+            isPrimary: true,
+          ),
+        ],
       ),
     );
   }
 
   void _confirmMarkAsSold(BuynSellPost post) {
-    bool isProcessing = false;
-
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const Text('Mark as Sold'),
-            content:
-                const Text('Are you sure you want to mark this item as sold?'),
-            actions: [
-              TextButton(
-                onPressed: isProcessing ? null : () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: isProcessing ? null : () async {
-                  setState(() => isProcessing = true);
-                  
-                  try {
-                    await bloc.buynSellPostBloc.markAsSold(post.id!);
-                    Navigator.pop(context);
-                    await bloc.buynSellPostBloc.refresh();
-                  } finally {
-                    bloc.buynSellPostBloc.refresh();
-                  }
-                },
-                child: Text(isProcessing ? 'Updating...' : 'Confirm'),
-              ),
-            ],
-          );
-        },
+      builder: (context) => CustomDialog(
+        title: 'Mark as Sold',
+        content1: 'Are you sure you want to mark this item as sold?',
+        content2: '',
+        showLoadingState: true,
+        loadingText: 'Updating...',
+        options: [
+          DialogOption(
+            text: 'Cancel',
+            onPressed: (ctx, setProcessing) => Navigator.pop(ctx),
+          ),
+          DialogOption(
+            text: 'Confirm',
+            onPressed: (ctx, setProcessing) async {
+              try {
+                await bloc.buynSellPostBloc.markAsSold(post.id!);
+                Navigator.pop(ctx);
+                Navigator.pop(context); // Pop the original context
+                await bloc.buynSellPostBloc.refresh();
+              } catch (e) {
+                setProcessing(false);
+                // Handle error if needed
+              } finally {
+                bloc.buynSellPostBloc.refresh();
+              }
+            },
+            isPrimary: true,
+          ),
+        ],
       ),
     );
   }

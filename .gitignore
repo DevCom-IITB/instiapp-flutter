@@ -11,7 +11,6 @@
 .svn/
 *.env
 .env
-.fvm
 # IntelliJ related
 *.iml
 *.ipr
@@ -94,3 +93,6 @@ login_response.json
 
 .flutter-plugins-dependencies
 ios/Flutter/flutter_export_environment.sh
+
+# FVM Version Cache
+.fvm/
