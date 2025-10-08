@@ -9,6 +9,7 @@ import 'package:InstiApp/src/widgets/appbar.dart';
 import 'package:InstiApp/src/widgets/buttons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:InstiApp/src/utils/responsive.dart';
+import 'package:InstiApp/src/routes/aboutpage.dart';
 
 class UserPage extends StatefulWidget {
   final User? initialUser;
@@ -137,7 +138,15 @@ class _UserPageState extends State<UserPage>
     return Column(
       children: [
         SizedBox(height: RS.sh(context, 4)),
-        const CustomAppBar(title: 'Profile'),
+        CustomAppBar(
+          title: 'Profile',
+          onOther: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AboutPage()),
+            );
+          },
+        ),
         SizedBox(height: RS.sh(context, 24)),
         cansee
             ? AnimatedCrossFade(
@@ -191,7 +200,15 @@ class _UserPageState extends State<UserPage>
       child: Column(
         children: [
           SizedBox(height: RS.sh(context, 4)),
-          const CustomAppBar(title: 'Profile'),
+          CustomAppBar(
+            title: 'Profile',
+            onOther: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AboutPage()),
+              );
+            },
+          ),
           SizedBox(height: RS.sh(context, 24)),
           // In landscape, always show compact profile card for consistency
           cansee ? _buildCompactProfileCard() : _spectatingProfileCard(),
@@ -750,13 +767,13 @@ class _UserPageState extends State<UserPage>
             top: true,
             icon: Icons.notifications_none_outlined,
           ),
-          SettingsItem(
-            title: 'Settings',
-            icon: Icons.settings_outlined,
-            onTap: () {
-              Navigator.pushNamed(context, '/settings');
-            },
-          ),
+          // SettingsItem(
+          //   title: 'Settings',
+          //   icon: Icons.settings_outlined,
+          //   onTap: () {
+          //     Navigator.pushNamed(context, '/settings');
+          //   },
+          // ),
           SettingsItem(
             title: updatingProfile ? 'Opening...' : 'Edit Profile',
             icon: Icons.edit_outlined,

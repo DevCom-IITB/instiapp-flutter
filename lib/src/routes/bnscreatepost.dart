@@ -12,6 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:InstiApp/src/utils/responsive.dart';
 import 'package:InstiApp/src/widgets/custom_dialog.dart';
+import 'package:InstiApp/src/widgets/custom_dialog.dart';
 
 class PostItemFlow extends StatefulWidget {
   final bool isEditable;
@@ -146,6 +147,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
         ],
       ),
     );
+    
     if (shouldExit == true) {
       Navigator.pop(context);
     }
