@@ -19,6 +19,7 @@ import 'feedpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:intl/intl.dart';
 
 class Responsive {
   final BuildContext context;
@@ -62,6 +63,55 @@ class _HomepageState extends State<Homepage> {
   List<String> hostel = ['H-1', 'H-2'];
   List<String> meals = ['Breakfast', 'Lunch', 'Snacks', 'Dinner'];
   List<String> mealTime = ['7:30 AM -10:00 AM','12:30 PM - 2:00 PM','4:30 PM - 6:00 PM','7:30 PM - 10:00 PM'];
+  late List<TimeOfDay> mealEndTimes;
+
+  @override
+  void initState() {
+    super.initState();
+
+    mealEndTimes = mealTime.map((t) {
+      final parts = t.split('-');
+      final end = parts[1].trim();
+      final dt = DateFormat.jm().parse(end);
+      return TimeOfDay(hour: dt.hour, minute: dt.minute);
+    }).toList();
+
+    // Set initial values based on current datetime
+    _selectedDay = getCurrentDay();
+    selectedMeal = getCurrentMealSlot();
+    
+    // Get user's hostel from profile if available
+    final bloc = BlocProvider.of(context)!.bloc;
+    final userHostel = bloc.currSession?.profile?.hostel;
+    if (userHostel != null) {
+      // Extract hostel number from string like "H-1" or just use as-is
+      _selectedHostel = userHostel.replaceAll('H-', ''); // Remove "H-" prefix if present
+    }
+  }
+
+
+  int getCurrentMealSlot() {
+    final now = TimeOfDay.fromDateTime(DateTime.now());
+    
+    for (int i = 0; i < mealEndTimes.length; i++) {
+      final end = mealEndTimes[i];
+      if (_isBeforeOrEqual(now, end)) {
+        return i;
+      }
+    }
+    // if all meals finished, default to Breakfast next day
+    return 0;
+  }
+
+  bool _isBeforeOrEqual(TimeOfDay a, TimeOfDay b) {
+    return a.hour < b.hour || (a.hour == b.hour && a.minute <= b.minute);
+  }
+
+  String getCurrentDay() {
+    final weekdayIndex = DateTime.now().weekday; // 1=Mon ... 7=Sun
+    return ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][weekdayIndex-1];
+  }
+
   List<String> navLabels = ["Home","Feed","Explore","Communities"];
   // String _dropdownHostel='1';
   String _selectedHostel='1';
@@ -76,13 +126,15 @@ class _HomepageState extends State<Homepage> {
   bool error=false;
   bool loading=true;
   String qrString="";
+
   String _formatMeal(String? meal) {
-  return (meal ?? '')
-      .split(RegExp(r'[\n,]'))
-      .map((item) => item.trim())
-      .where((item) => item.isNotEmpty)
-      .join(' • ');
-}
+    return (meal ?? '')
+        .split(RegExp(r'[\n,]'))
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .join(' • ');
+  }
+
   String _mealString(List<Hostel> hostels) {
       if (_selectedHostel.isEmpty) return 'No menu';
       // 1. pick hostel
