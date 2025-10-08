@@ -130,6 +130,133 @@ class _UserPageState extends State<UserPage>
     super.dispose();
   }
 
+  Widget _buildPortraitLayout() {
+    final isGeneralTab = _tabController!.length == 3 && _tabController!.index == 0;
+    final tabCount = _tabController!.length;
+
+    return Column(
+      children: [
+        SizedBox(height: RS.sh(context, 4)),
+        const CustomAppBar(title: 'Profile'),
+        SizedBox(height: RS.sh(context, 24)),
+        cansee
+            ? AnimatedCrossFade(
+                duration: const Duration(milliseconds: 300),
+                crossFadeState: isGeneralTab
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
+                firstChild: _buildProfileCard(),
+                secondChild: _buildCompactProfileCard(),
+              )
+            : _spectatingProfileCard(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              TabBar(
+                controller: _tabController,
+                labelColor: Color.fromRGBO(15, 22, 32, 0.8),
+                labelStyle: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: 'DM Sans'),
+                labelPadding: EdgeInsets.all(0),
+                unselectedLabelColor: Color.fromRGBO(15, 22, 32, 0.8),
+                unselectedLabelStyle: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'DM Sans'),
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicatorWeight: 3,
+                indicatorColor: Color.fromRGBO(48, 111, 220, 1),
+                tabs: _buildTabs(tabCount)
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: _buildTabViews(tabCount)
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLandscapeLayout() {
+    final tabCount = _tabController!.length;
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(height: RS.sh(context, 4)),
+          const CustomAppBar(title: 'Profile'),
+          SizedBox(height: RS.sh(context, 24)),
+          // In landscape, always show compact profile card for consistency
+          cansee ? _buildCompactProfileCard() : _spectatingProfileCard(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                TabBar(
+                  controller: _tabController,
+                  labelColor: Color.fromRGBO(15, 22, 32, 0.8),
+                  labelStyle: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'DM Sans'),
+                  labelPadding: EdgeInsets.all(0),
+                  unselectedLabelColor: Color.fromRGBO(15, 22, 32, 0.8),
+                  unselectedLabelStyle: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'DM Sans'),
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicatorWeight: 3,
+                  indicatorColor: Color.fromRGBO(48, 111, 220, 1),
+                  tabs: _buildTabs(tabCount)
+                ),
+              ],
+            ),
+          ),
+          // In landscape, show the tab content directly (not in TabBarView)
+          _buildCurrentTabContent(),
+          SizedBox(height: RS.sh(context, 24)), // Add some bottom padding
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCurrentTabContent() {
+    final tabCount = _tabController!.length;
+    final currentIndex = _tabController!.index;
+    
+    if (tabCount == 3) {
+      // Current user view (3 tabs)
+      switch (currentIndex) {
+        case 0:
+          return _buildSettingsSection();
+        case 1:
+          return _buildAssociationsSection(scrollable: false);
+        case 2:
+          return _buildFollowingSection(scrollable: false);
+        default:
+          return Container();
+      }
+    } else {
+      // Spectator view (2 tabs)
+      switch (currentIndex) {
+        case 0:
+          return _buildAssociationsSection(scrollable: false);
+        case 1:
+          return _buildFollowingSection(scrollable: false);
+        default:
+          return Container();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -151,53 +278,12 @@ class _UserPageState extends State<UserPage>
             ? Center(
                 child: CircularProgressIndicatorExtended(
                     label: Text("Loading the User Page")))
-            : Column(
-                children: [
-                  SizedBox(height: RS.sh(context, 4)),
-                  const CustomAppBar(title: 'Profile'),
-                  SizedBox(height: RS.sh(context, 24)),
-                  cansee
-                      ? AnimatedCrossFade(
-                          duration: const Duration(milliseconds: 300),
-                          crossFadeState: isGeneralTab
-                              ? CrossFadeState.showFirst
-                              : CrossFadeState.showSecond,
-                          firstChild: _buildProfileCard(),
-                          secondChild: _buildCompactProfileCard(),
-                        )
-                      : _spectatingProfileCard(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      children: [
-                        TabBar(
-                          controller: _tabController,
-                          labelColor: Color.fromRGBO(15, 22, 32, 0.8),
-                          labelStyle: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: 'DM Sans'),
-                          labelPadding: EdgeInsets.all(0),
-                          unselectedLabelColor: Color.fromRGBO(15, 22, 32, 0.8),
-                          unselectedLabelStyle: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w400,
-                              fontFamily: 'DM Sans'),
-                          indicatorSize: TabBarIndicatorSize.tab,
-                          indicatorWeight: 3,
-                          indicatorColor: Color.fromRGBO(48, 111, 220, 1),
-                          tabs: _buildTabs(tabCount)
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: _buildTabViews(tabCount)
-                    ),
-                  ),
-                ],
+            : OrientationBuilder(
+                builder: (context, orientation) {
+                  return orientation == Orientation.portrait
+                      ? _buildPortraitLayout()
+                      : _buildLandscapeLayout();
+                },
               ),
       ),
     );
@@ -740,7 +826,7 @@ class _UserPageState extends State<UserPage>
     );
   }
 
-  Widget _buildAssociationsSection() {
+  Widget _buildAssociationsSection({bool scrollable = true}) {
     final associations = _convertRolesToGroups();
 
     return associations.isEmpty
@@ -750,30 +836,41 @@ class _UserPageState extends State<UserPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // const SizedBox(height: 12),
-                // Scrollable list of groups
-                Expanded(
-                  child: ListView.separated(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: associations.length,
-                    itemBuilder: (context, index) =>
-                        _buildGroupCard(associations[index]),
-                    separatorBuilder: (context, index) => Padding(
-                      padding: EdgeInsets.only(
-                          left: RS.sh(context, 88), right: 16), // 56 avatar + 16 + 16 padding
-                      // child: Divider(
-                      //   height: 0, // Makes divider flush with content
-                      //   thickness: 0.5,
-                      // ),
+                if (scrollable)
+                  Expanded(
+                    child: ListView.separated(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: associations.length,
+                      itemBuilder: (context, index) =>
+                          _buildGroupCard(associations[index]),
+                      separatorBuilder: (context, index) => Padding(
+                        padding: EdgeInsets.only(
+                            left: RS.sh(context, 88), right: 16),
+                      ),
                     ),
+                  )
+                else
+                  Column(
+                    children: [
+                      for (int index = 0; index < associations.length; index++)
+                        Column(
+                          children: [
+                            _buildGroupCard(associations[index]),
+                            if (index < associations.length - 1)
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: RS.sh(context, 88), right: 16),
+                              ),
+                          ],
+                        ),
+                    ],
                   ),
-                ),
               ],
             ),
           );
   }
 
-  Widget _buildFollowingSection() {
+  Widget _buildFollowingSection({bool scrollable = true}) {
     final following = _convertBodiesToGroups();
 
     return following.isEmpty
@@ -783,24 +880,35 @@ class _UserPageState extends State<UserPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // const SizedBox(height: 12),
-                // Scrollable list of groups
-                Expanded(
-                  child: ListView.separated(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: following.length,
-                    itemBuilder: (context, index) =>
-                        _buildGroupCard(following[index]),
-                    separatorBuilder: (context, index) => Padding(
-                      padding: EdgeInsets.only(
-                          left: RS.sh(context, 88), right: 16), // 56 avatar + 16 + 16 padding
-                      // child: Divider(
-                      //   height: 0, // Makes divider flush with content
-                      //   thickness: 0.5,
-                      // ),
+                if (scrollable)
+                  Expanded(
+                    child: ListView.separated(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: following.length,
+                      itemBuilder: (context, index) =>
+                          _buildGroupCard(following[index]),
+                      separatorBuilder: (context, index) => Padding(
+                        padding: EdgeInsets.only(
+                            left: RS.sh(context, 88), right: 16),
+                      ),
                     ),
+                  )
+                else
+                  Column(
+                    children: [
+                      for (int index = 0; index < following.length; index++)
+                        Column(
+                          children: [
+                            _buildGroupCard(following[index]),
+                            if (index < following.length - 1)
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: RS.sh(context, 88), right: 16),
+                              ),
+                          ],
+                        ),
+                    ],
                   ),
-                ),
               ],
             ),
           );
