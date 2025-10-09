@@ -148,12 +148,12 @@ class _HomepageState extends State<Homepage> {
           ExplorePage(),
           if (currentpage == 'Feed')
             FeedPage(),
-          if(currentpage=='Communities')
-            CommunityPage(),
-          // if(currentpage=='CommunityPage')
-          //   // Communities(),
+          // if(currentpage=='Communities')
           //   CommunityPage(),
-            //CommunityPostPage(communityPostFuture: communityPostFuture),
+          if(currentpage=='CommunityPage')
+            // Communities(communityFuture: null,),
+            CommunityPage(),
+            // CommunityPostPage(communityPostFuture: communityPostFuture),
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(

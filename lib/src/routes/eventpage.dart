@@ -63,16 +63,17 @@ class _EventPageState extends State<EventPage> {
       }
     });
   }
+
   Map<String, String> parentBody = {
-      "Culturals@IITB": "ICC",
-      "IITB Sports": "ISC",
-      "Tech@IITB": "ITC",
-      "IIT Bombay": "IITB",
-      "Hostel Affairs": "HA",
-      "Departments": "IITB",
-      "DevCom": "DC",
-      "Placement Cell": "IITB"
-    };
+    "Culturals@IITB": "ICC",
+    "IITB Sports": "ISC",
+    "Tech@IITB": "ITC",
+    "IIT Bombay": "IITB",
+    "Hostel Affairs": "HA",
+    "Departments": "IITB",
+    "DevCom": "DC",
+    "Placement Cell": "IITB"
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -87,8 +88,11 @@ class _EventPageState extends State<EventPage> {
       isfirstbuild = false;
     }
     String? parentBodyName = "";
-    if (fullbody != null && fullbody!.bodyParents != null && fullbody!.bodyParents!.isNotEmpty) {
-      parentBodyName = parentBody[fullbody!.bodyParents![0].bodyName] ?? fullbody!.bodyParents![0].bodyName;
+    if (fullbody != null &&
+        fullbody!.bodyParents != null &&
+        fullbody!.bodyParents!.isNotEmpty) {
+      parentBodyName = parentBody[fullbody!.bodyParents![0].bodyName] ??
+          fullbody!.bodyParents![0].bodyName;
     }
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Color.fromRGBO(246, 246, 246, 1),
@@ -101,7 +105,10 @@ class _EventPageState extends State<EventPage> {
       body: SafeArea(
         child: Column(children: [
           Container(
-              margin: EdgeInsets.only(left: Responsive.width(16, context), right: Responsive.width(16, context), top: Responsive.height(4, context)),
+              margin: EdgeInsets.only(
+                  left: Responsive.width(16, context),
+                  right: Responsive.width(16, context),
+                  top: Responsive.height(4, context)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -110,7 +117,8 @@ class _EventPageState extends State<EventPage> {
                       width: Responsive.width(52, context),
                       decoration: BoxDecoration(
                         color: const Color.fromRGBO(235, 235, 235, 0.8),
-                        borderRadius: BorderRadius.circular(Responsive.height(26, context)),
+                        borderRadius: BorderRadius.circular(
+                            Responsive.height(26, context)),
                       ),
                       child: IconButton(
                           icon: SvgPicture.asset(
@@ -138,14 +146,16 @@ class _EventPageState extends State<EventPage> {
                 children: [
                   SizedBox(width: Responsive.width(16, context)),
                   ClipRRect(
-                      borderRadius: BorderRadius.circular(Responsive.height(50, context)),
+                      borderRadius:
+                          BorderRadius.circular(Responsive.height(50, context)),
                       child: CachedNetworkImage(
                         imageUrl: event!.eventBodies?[0].bodyImageURL ?? "",
                         width: Responsive.width(28, context),
                         height: Responsive.height(28, context),
                         fit: BoxFit.cover,
-                        errorWidget: (context, error, stackTrace) =>
-                            Icon(Icons.groups_2_outlined, size: Responsive.height(24, context)),
+                        errorWidget: (context, error, stackTrace) => Icon(
+                            Icons.groups_2_outlined,
+                            size: Responsive.height(24, context)),
                       )),
                   SizedBox(width: Responsive.width(10, context)),
                   Text(
@@ -156,7 +166,7 @@ class _EventPageState extends State<EventPage> {
                       fontFamily: 'DM Sans',
                       fontWeight: FontWeight.w700,
                     ),
-                  ),                  
+                  ),
                 ],
               )),
           Expanded(
@@ -181,7 +191,7 @@ class _EventPageState extends State<EventPage> {
                     imageUrl: event!.eventImageURL ??
                         event!.eventBodies?[0].bodyImageURL ??
                         "",
-                    height: Responsive.height(412,context),
+                    height: Responsive.height(412, context),
                     width: double.infinity,
                     fit: BoxFit.cover,
                     placeholder: (context, url) =>
@@ -203,8 +213,9 @@ class _EventPageState extends State<EventPage> {
                           bottom: Responsive.height(20, context)),
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(246, 246, 246, 1),
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(Responsive.height(24, context))),
+                        borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(
+                                Responsive.height(24, context))),
                       ),
                       child: SingleChildScrollView(
                         controller: scrollController,
@@ -217,7 +228,8 @@ class _EventPageState extends State<EventPage> {
                                 width: Responsive.width(50, context),
                                 decoration: BoxDecoration(
                                   color: Color.fromRGBO(210, 213, 218, 1),
-                                  borderRadius: BorderRadius.circular(Responsive.height(100, context)),
+                                  borderRadius: BorderRadius.circular(
+                                      Responsive.height(100, context)),
                                 ),
                               ),
                             ),
@@ -240,19 +252,25 @@ class _EventPageState extends State<EventPage> {
                                     fullbody!.bodyParents!.isNotEmpty)
                                   Container(
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: Responsive.width(8, context), vertical: Responsive.height(6, context)),
+                                          horizontal:
+                                              Responsive.width(8, context),
+                                          vertical:
+                                              Responsive.height(6, context)),
                                       decoration: BoxDecoration(
                                         color: Color.fromRGBO(15, 22, 32, 1),
-                                        borderRadius: BorderRadius.circular(Responsive.height(8, context)),
+                                        borderRadius: BorderRadius.circular(
+                                            Responsive.height(8, context)),
                                       ),
                                       child: Row(
                                         children: [
                                           ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(Responsive.height(15, context)),
+                                            borderRadius: BorderRadius.circular(
+                                                Responsive.height(15, context)),
                                             child: CachedNetworkImage(
-                                              width: Responsive.width(20, context),
-                                              height: Responsive.height(20, context),
+                                              width:
+                                                  Responsive.width(20, context),
+                                              height: Responsive.height(
+                                                  20, context),
                                               fit: BoxFit.cover,
                                               imageUrl: fullbody!
                                                       .bodyParents![0]
@@ -265,12 +283,14 @@ class _EventPageState extends State<EventPage> {
                                                       Icon(Icons.error),
                                             ),
                                           ),
-                                          SizedBox(width: Responsive.width(8, context)),
+                                          SizedBox(
+                                              width:
+                                                  Responsive.width(8, context)),
                                           Text(
-                                            parentBodyName ??
-                                                "",
+                                            fullbody!.bodyParents![0].bodyShortName ?? "",
                                             style: TextStyle(
-                                              fontSize: Responsive.text(14, context),
+                                              fontSize:
+                                                  Responsive.text(14, context),
                                               fontWeight: FontWeight.w700,
                                               fontFamily: 'DM Sans',
                                               color: Color.fromRGBO(
@@ -323,20 +343,22 @@ class _EventPageState extends State<EventPage> {
                             ),
                             SizedBox(height: Responsive.height(24, context)),
                             Container(
-                                padding: EdgeInsets.only(right: Responsive.width(16, context)),
+                                padding: EdgeInsets.only(
+                                    right: Responsive.width(16, context)),
                                 child: Column(children: [
                                   Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
                                         Container(
-                                          height: Responsive.height(46, context),
+                                          height:
+                                              Responsive.height(46, context),
                                           width: Responsive.width(46, context),
                                           decoration: BoxDecoration(
                                             color: Color.fromRGBO(
                                                 196, 212, 239, 1),
-                                            borderRadius:
-                                                BorderRadius.circular(Responsive.height(50, context)),
+                                            borderRadius: BorderRadius.circular(
+                                                Responsive.height(50, context)),
                                           ),
                                           child: Center(
                                             child: SvgPicture.asset(
@@ -344,7 +366,9 @@ class _EventPageState extends State<EventPage> {
                                             ),
                                           ),
                                         ),
-                                        SizedBox(width: Responsive.width(20, context)),
+                                        SizedBox(
+                                            width:
+                                                Responsive.width(20, context)),
                                         Expanded(
                                             child: Column(
                                           mainAxisAlignment:
@@ -355,14 +379,17 @@ class _EventPageState extends State<EventPage> {
                                             Text(
                                               'Date & Time',
                                               style: TextStyle(
-                                                fontSize: Responsive.text(12, context),
+                                                fontSize: Responsive.text(
+                                                    12, context),
                                                 fontWeight: FontWeight.w600,
                                                 fontFamily: 'DM Sans',
                                                 color: Color.fromRGBO(
                                                     126, 130, 135, 1),
                                               ),
                                             ),
-                                            SizedBox(height: Responsive.height(2, context)),
+                                            SizedBox(
+                                                height: Responsive.height(
+                                                    2, context)),
                                             Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
@@ -386,7 +413,8 @@ class _EventPageState extends State<EventPage> {
                                                               : '')
                                                       : 'Unknown Date',
                                                   style: TextStyle(
-                                                    fontSize: Responsive.text(16, context),
+                                                    fontSize: Responsive.text(
+                                                        16, context),
                                                     fontWeight: FontWeight.w700,
                                                     fontFamily: 'DM Sans',
                                                     color: Color.fromRGBO(
@@ -398,7 +426,8 @@ class _EventPageState extends State<EventPage> {
                                                       event!.eventStartTime ??
                                                           ""),
                                                   style: TextStyle(
-                                                    fontSize: Responsive.text(16, context),
+                                                    fontSize: Responsive.text(
+                                                        16, context),
                                                     fontWeight: FontWeight.w700,
                                                     fontFamily: 'DM Sans',
                                                     color: Color.fromRGBO(
@@ -410,7 +439,8 @@ class _EventPageState extends State<EventPage> {
                                           ],
                                         ))
                                       ]),
-                                  SizedBox(height: Responsive.height(16, context)),
+                                  SizedBox(
+                                      height: Responsive.height(16, context)),
                                   InkWell(
                                     onTap: () async {
                                       if ((event!.eventVenues?.isNotEmpty ??
@@ -437,13 +467,17 @@ class _EventPageState extends State<EventPage> {
                                             MainAxisAlignment.start,
                                         children: [
                                           Container(
-                                            height: Responsive.height(46, context),
-                                            width: Responsive.width(46, context),
+                                            height:
+                                                Responsive.height(46, context),
+                                            width:
+                                                Responsive.width(46, context),
                                             decoration: BoxDecoration(
                                               color: Color.fromRGBO(
                                                   196, 212, 239, 1),
                                               borderRadius:
-                                                  BorderRadius.circular(Responsive.height(50, context)),
+                                                  BorderRadius.circular(
+                                                      Responsive.height(
+                                                          50, context)),
                                             ),
                                             child: Center(
                                               child: SvgPicture.asset(
@@ -451,7 +485,9 @@ class _EventPageState extends State<EventPage> {
                                               ),
                                             ),
                                           ),
-                                          SizedBox(width: Responsive.width(20, context)),
+                                          SizedBox(
+                                              width: Responsive.width(
+                                                  20, context)),
                                           Expanded(
                                               child: Column(
                                             mainAxisAlignment:
@@ -462,14 +498,17 @@ class _EventPageState extends State<EventPage> {
                                               Text(
                                                 'Venue',
                                                 style: TextStyle(
-                                                  fontSize: Responsive.text(12, context),
+                                                  fontSize: Responsive.text(
+                                                      12, context),
                                                   fontWeight: FontWeight.w600,
                                                   fontFamily: 'DM Sans',
                                                   color: Color.fromRGBO(
                                                       126, 130, 135, 1),
                                                 ),
                                               ),
-                                              SizedBox(height: Responsive.height(2, context)),
+                                              SizedBox(
+                                                  height: Responsive.height(
+                                                      2, context)),
                                               Text(
                                                 (event!.venueRoom ?? "") +
                                                     (event!.venueRoom != null
@@ -483,7 +522,8 @@ class _EventPageState extends State<EventPage> {
                                                             ""
                                                         : "Venue not specified"),
                                                 style: TextStyle(
-                                                  fontSize: Responsive.text(16, context),
+                                                  fontSize: Responsive.text(
+                                                      16, context),
                                                   fontWeight: FontWeight.w700,
                                                   fontFamily: 'DM Sans',
                                                   color: Color.fromRGBO(
@@ -507,7 +547,7 @@ class _EventPageState extends State<EventPage> {
                             Text(
                               'Description',
                               style: TextStyle(
-                                fontSize: Responsive.text(16,context),
+                                fontSize: Responsive.text(16, context),
                                 fontWeight: FontWeight.w700,
                                 fontFamily: 'DM Sans',
                                 color: Color.fromRGBO(21, 32, 45, 1),
@@ -535,13 +575,16 @@ class _EventPageState extends State<EventPage> {
               Container(
                   alignment: Alignment.bottomCenter,
                   child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: Responsive.width(6, context), vertical: Responsive.height(6, context)),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: Responsive.width(6, context),
+                          vertical: Responsive.height(6, context)),
                       decoration: BoxDecoration(
                         image: const DecorationImage(
                           image: AssetImage('assets/blogs/background.png'),
                           fit: BoxFit.cover,
                         ),
-                        borderRadius: BorderRadius.circular(Responsive.height(50,context)),
+                        borderRadius: BorderRadius.circular(
+                            Responsive.height(50, context)),
                         border: Border.all(
                           color: Color.fromRGBO(246, 246, 246, 1),
                           width: Responsive.height(8, context),
@@ -607,30 +650,35 @@ class _EventPageState extends State<EventPage> {
                                       SvgPicture.asset(
                                         'assets/feed/light.svg',
                                         color: colour,
-                                        height: Responsive.height(18.3, context),
+                                        height:
+                                            Responsive.height(18.3, context),
                                         width: Responsive.width(15, context),
                                         fit: BoxFit.cover,
                                       ),
-                                      if(UES.NotGoing == currentUes)
-                                      SizedBox(width: Responsive.width(11, context)),
-                                      if(UES.NotGoing == currentUes)                                      
-                                      Text(
-                                        'Show enthu',
-                                        style: TextStyle(
-                                          fontSize: Responsive.text(14,context),
-                                          fontWeight: FontWeight.w700,
-                                          fontFamily: 'DM Sans',
-                                          color: colour,
+                                      if (UES.NotGoing == currentUes)
+                                        SizedBox(
+                                            width:
+                                                Responsive.width(11, context)),
+                                      if (UES.NotGoing == currentUes)
+                                        Text(
+                                          'Show enthu',
+                                          style: TextStyle(
+                                            fontSize:
+                                                Responsive.text(14, context),
+                                            fontWeight: FontWeight.w700,
+                                            fontFamily: 'DM Sans',
+                                            color: colour,
+                                          ),
                                         ),
-                                      ),
-                                      if(UES.Going == currentUes)
-                                      SvgPicture.asset(
-                                        'assets/feed/light.svg',
-                                        color: colour,
-                                        height: Responsive.height(18.3, context),
-                                        width: Responsive.width(15, context),
-                                        fit: BoxFit.cover,
-                                      ),
+                                      if (UES.Going == currentUes)
+                                        SvgPicture.asset(
+                                          'assets/feed/light.svg',
+                                          color: colour,
+                                          height:
+                                              Responsive.height(18.3, context),
+                                          width: Responsive.width(15, context),
+                                          fit: BoxFit.cover,
+                                        ),
                                     ])),
                           )),
                           SizedBox(width: Responsive.width(8, context)),
@@ -646,7 +694,22 @@ class _EventPageState extends State<EventPage> {
                                 'assets/feed/whatsapp.svg',
                                 fit: BoxFit.none,
                               ),
-                              onPressed: () {},
+                              onPressed: () async {
+                                String message = Uri.encodeComponent(
+                                    "Check this event: ${ShareURLMaker.getEventURL(event!)}");
+                                String whatsappUrl =
+                                    "https://wa.me/?text=$message";
+                                if (await canLaunchUrl(
+                                    Uri.parse(whatsappUrl))) {
+                                  await launchUrl(Uri.parse(whatsappUrl),
+                                      mode: LaunchMode.externalApplication);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content:
+                                              Text("Could not open WhatsApp")));
+                                }
+                              },
                             ),
                           ),
                         ],

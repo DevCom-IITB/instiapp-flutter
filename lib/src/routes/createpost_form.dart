@@ -41,8 +41,8 @@ class _CreatePostPage extends State<CreatePostPage> {
   Map<String, dynamic>? pollData;
 
   List<File> imageFiles = [];
-  List<PlatformFile> attachedFiles = []; // For general files
-  List<File> documentFiles = []; // For document files
+  // List<PlatformFile> attachedFiles = []; // For general files
+  // List<File> documentFiles = []; // For document files
 
   // List<CreatePost>? posts;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
@@ -58,160 +58,7 @@ class _CreatePostPage extends State<CreatePostPage> {
   bool firstBuild = true;
   bool isEditing = false;
 //For user view
-  Widget _buildAttachedFile(PlatformFile file, int index) {
-    String fileName = file.name;
-    String fileExtension = path.extension(fileName).toLowerCase();
-    int fileSize = file.size;
-    String fileSizeText = _formatFileSize(fileSize);
-
-    IconData fileIcon = _getFileIcon(fileExtension);
-    Color fileColor = _getFileColor(fileExtension);
-
-    return Stack(
-      children: [
-        Container(
-          width: Responsive.width(77.62, context),
-          height: Responsive.height(77.62, context),
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            borderRadius:
-                BorderRadius.circular(Responsive.width(16.9, context)),
-            border: Border.all(color: Colors.grey.shade300, width: 1),
-          ),
-          child: Icon(
-            size: Responsive.height(77.62, context),
-            fileIcon,
-            color: fileColor,
-            // size: Responsive.height(77.62, context),
-          ),
-        ),
-        Positioned(
-          right: -10,
-          top: -10,
-          child: Container(
-            child: IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () {
-                setState(() {
-                  attachedFiles.removeAt(index);
-                  if (index < documentFiles.length) {
-                    documentFiles.removeAt(index);
-                  }
-                });
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-// Helper method to format file size
-  String _formatFileSize(int bytes) {
-    if (bytes < 1024) return '$bytes B';
-    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    if (bytes < 1024 * 1024 * 1024)
-      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
-    return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
-  }
-
-// Helper method to get file icon
-  IconData _getFileIcon(String extension) {
-    switch (extension) {
-      case '.pdf':
-        return Icons.picture_as_pdf;
-      case '.doc':
-      case '.docx':
-        return Icons.description;
-      case '.txt':
-        return Icons.text_snippet;
-      case '.jpg':
-      case '.jpeg':
-      case '.png':
-      case '.gif':
-        return Icons.image;
-      case '.mp4':
-      case '.avi':
-      case '.mov':
-        return Icons.video_file;
-      case '.mp3':
-      case '.wav':
-      case '.aac':
-        return Icons.audio_file;
-      case '.zip':
-      case '.rar':
-        return Icons.archive;
-      default:
-        return Icons.insert_drive_file;
-    }
-  }
-
-// Helper method to get file color
-  Color _getFileColor(String extension) {
-    switch (extension) {
-      case '.pdf':
-        return Colors.red;
-      case '.doc':
-      case '.docx':
-        return Colors.blue;
-      case '.txt':
-        return Colors.grey;
-      case '.jpg':
-      case '.jpeg':
-      case '.png':
-      case '.gif':
-        return Colors.green;
-      case '.mp4':
-      case '.avi':
-      case '.mov':
-        return Colors.purple;
-      case '.mp3':
-      case '.wav':
-      case '.aac':
-        return Colors.orange;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  Future<void> _pickFiles() async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.any,
-        allowMultiple: true,
-        allowedExtensions: null, // Allow all file types
-      );
-
-      if (result != null) {
-        setState(() {
-          // Add selected files to the list
-          attachedFiles.addAll(result.files);
-
-          // Convert PlatformFile to File for upload
-          for (PlatformFile platformFile in result.files) {
-            if (platformFile.path != null) {
-              documentFiles.add(File(platformFile.path!));
-            }
-          }
-        });
-
-        // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${result.files.length} file(s) selected'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error selecting files: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
+//
 
   @override
   Widget build(BuildContext context) {
@@ -384,48 +231,21 @@ class _CreatePostPage extends State<CreatePostPage> {
                                             currRequest1.imageUrl!
                                                 .add(resp.pictureURL!);
                                           }
-                                          for (int i = 0;
-                                              i < documentFiles.length;
-                                              i++) {
-                                            ImageUploadResponse resp =
-                                                await bloc.client.uploadImage(
-                                                    bloc.getSessionIdHeader(),
-                                                    documentFiles[i]);
-                                            currRequest1.imageUrl!
-                                                .add(resp.pictureURL!);
-                                          }
+                                          // for (int i = 0;
+                                          //     i < documentFiles.length;
+                                          //     i++) {
+                                          //   ImageUploadResponse resp =
+                                          //       await bloc.client.uploadImage(
+                                          //           bloc.getSessionIdHeader(),
+                                          //           documentFiles[i]);
+                                          //   currRequest1.imageUrl!
+                                          //       .add(resp.pictureURL!);
+                                          // }
                                           currRequest1.deleted = false;
                                           currRequest1.anonymous ??= false;
                                           currRequest1.hasUserReported = false;
                                           currRequest1.isPoll = isPoll;
                                           if (isPoll && pollData != null) {
-                                            // ✅ Create poll options list first
-                                            // List<PollOption> pollOptions = [];
-                                            // for (var i = 0;
-                                            //     i <
-                                            //         pollData!['poll_options']
-                                            //             .length;
-                                            //     i++) {
-                                            //   pollOptions.add(PollOption(
-                                            //     order:
-                                            //         i, // ✅ Start from 0, not 1
-                                            //     text: pollData!['poll_options']
-                                            //         [i],
-                                            //     voteCount:
-                                            //         0, // ✅ Correct field name from your model
-                                            //   ));
-                                            // }
-
-                                            // // ✅ Then create the Poll object
-                                            // final Poll pollObject = Poll(
-                                            //   question:
-                                            //       pollData!['poll_question'],
-                                            //   allowMultipleAnswers: pollData![
-                                            //       'poll_allow_multiple_answers'],
-                                            //   options: pollOptions,
-                                            // );
-
-                                            // currRequest1.poll = pollObject;
                                             final List<PollOption>
                                                 optionsForApi =
                                                 (pollData!['poll_options']
@@ -441,16 +261,16 @@ class _CreatePostPage extends State<CreatePostPage> {
                                               allowMultipleAnswers: pollData![
                                                   'poll_allow_multiple_answers'],
                                               options: optionsForApi,
-                                              
                                             );
                                             currRequest1.poll = pollForApi;
                                           }
-
+                                          
                                           if (isEditing) {
                                             bloc.communityPostBloc
                                                 .updateCommunityPost(
                                                     currRequest1);
                                           } else {
+                                            // print()
                                             bloc.communityPostBloc
                                                 .createCommunityPost(
                                                     currRequest1);
@@ -504,14 +324,25 @@ class _CreatePostPage extends State<CreatePostPage> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Container(
-                                          padding: EdgeInsets.only(
-                                              top: Responsive.height(
-                                                  13, context)),
-                                          child: Icon(
-                                            Icons.person,
-                                            size:
+                                        padding: EdgeInsets.only(
+                                            top:
+                                                Responsive.height(13, context)),
+                                        child: Image.network(
+                                          currRequest1.postedBy?.userProfilePictureUrl ?? '',
+                                          width: 36,
+                                          height: 36,
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  Image.asset(
+                                            "assets/communities/image 214.png",
+                                            height:
                                                 Responsive.height(36, context),
-                                          )),
+                                            width:
+                                                Responsive.width(36, context),
+                                          ),
+                                        ),
+                                      ),
                                       SizedBox(
                                           width: Responsive.width(16, context)),
                                       Expanded(
@@ -615,62 +446,6 @@ class _CreatePostPage extends State<CreatePostPage> {
                                           MainAxisAlignment.start,
                                       spacing: 8,
                                       children: [
-                                        Container(
-                                          height:
-                                              Responsive.width(77.62, context),
-                                          width:
-                                              Responsive.height(77.76, context),
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      Responsive.width(
-                                                          16.9, context)),
-                                              color: Color.fromRGBO(
-                                                  246, 246, 246, 1),
-                                              border: Border.all(
-                                                width: 1.50,
-                                                color: const Color(0xFFD2D5DA),
-                                              )),
-                                          child: InkWell(
-                                            onTap: () async {
-                                              final ImagePicker _picker =
-                                                  ImagePicker();
-                                              final XFile? pi =
-                                                  await _picker.pickImage(
-                                                      source:
-                                                          ImageSource.camera);
-
-                                              if (pi != null) {
-                                                // ImageUploadResponse resp =
-                                                //     await bloc.client.uploadImage(
-                                                //         bloc.getSessionIdHeader(),
-                                                //         File(pi.path));
-                                                // print(resp.pictureURL);
-                                                if (await pi.length() /
-                                                        1000000 <=
-                                                    10) {
-                                                  setState(() {
-                                                    imageFiles
-                                                        .add(File(pi.path));
-                                                  });
-                                                } else {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(SnackBar(
-                                                    content: Text(
-                                                        "Image size should be less than 10MB"),
-                                                  ));
-                                                }
-                                              }
-                                            },
-                                            child: SvgPicture.asset(
-                                                "assets/communities/camera.svg",
-                                                height: Responsive.height(
-                                                    24, context),
-                                                width: Responsive.width(
-                                                    24, context),
-                                                fit: BoxFit.none),
-                                          ),
-                                        ),
                                         ...(currRequest1.imageUrl ?? [])
                                             .asMap()
                                             .entries
@@ -685,13 +460,13 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                   e.value,
                                                   e.key,
                                                 )),
-                                        ...(attachedFiles)
-                                            .asMap()
-                                            .entries
-                                            .map((e) => _buildAttachedFile(
-                                                  e.value,
-                                                  e.key,
-                                                )),
+                                        // ...(attachedFiles)
+                                        //     .asMap()
+                                        //     .entries
+                                        //     .map((e) => _buildAttachedFile(
+                                        //           e.value,
+                                        //           e.key,
+                                        //         )),
                                       ],
                                     ))),
                             Container(
@@ -711,6 +486,65 @@ class _CreatePostPage extends State<CreatePostPage> {
                                   Material(
                                     color: Colors.transparent,
                                     child: InkWell(
+                                      onTap: () async {
+                                        final ImagePicker _picker =
+                                            ImagePicker();
+                                        final XFile? pi =
+                                            await _picker.pickImage(
+                                                source: ImageSource.camera);
+
+                                        if (pi != null) {
+                                          // ImageUploadResponse resp =
+                                          //     await bloc.client.uploadImage(
+                                          //         bloc.getSessionIdHeader(),
+                                          //         File(pi.path));
+                                          // print(resp.pictureURL);
+                                          if (await pi.length() / 1000000 <=
+                                              10) {
+                                            setState(() {
+                                              imageFiles.add(File(pi.path));
+                                            });
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  "Image size should be less than 10MB"),
+                                            ));
+                                          }
+                                        }
+                                      },
+                                      borderRadius: BorderRadius.circular(
+                                          Responsive.width(6, context)),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal:
+                                                Responsive.width(6, context),
+                                            vertical:
+                                                Responsive.width(6, context)),
+                                        child: SvgPicture.asset(
+                                          'assets/communities/camera.svg',
+                                          height:
+                                              Responsive.height(22, context),
+                                          width: Responsive.width(22, context),
+                                          fit: BoxFit.none,
+                                          color:
+                                              Color.fromRGBO(48, 111, 220, 1),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: Responsive.width(1, context),
+                                    height: Responsive.height(20, context),
+                                    decoration: BoxDecoration(
+                                      color: Color.fromRGBO(210, 213, 218, 1),
+                                      borderRadius: BorderRadius.circular(
+                                          Responsive.width(2, context)),
+                                    ),
+                                  ),
+                                  Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
                                         onTap: () async {
                                           final ImagePicker _picker =
                                               ImagePicker();
@@ -719,11 +553,11 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                   source: ImageSource.gallery);
 
                                           if (pi != null) {
-                                            // ImageUploadResponse resp =
-                                            //     await bloc.client.uploadImage(
-                                            //         bloc.getSessionIdHeader(),
-                                            //         File(pi.path));
-                                            // print(resp.pictureURL);
+                                            ImageUploadResponse resp =
+                                                await bloc.client.uploadImage(
+                                                    bloc.getSessionIdHeader(),
+                                                    File(pi.path));
+                                            print(resp.pictureURL);
                                             if (await pi.length() / 1000000 <=
                                                 10) {
                                               setState(() {
@@ -756,39 +590,31 @@ class _CreatePostPage extends State<CreatePostPage> {
                                           ),
                                         )),
                                   ),
-                                  Container(
-                                    width: Responsive.width(1, context),
-                                    height: Responsive.height(20, context),
-                                    decoration: BoxDecoration(
-                                      color: Color.fromRGBO(210, 213, 218, 1),
-                                      borderRadius: BorderRadius.circular(
-                                          Responsive.width(2, context)),
-                                    ),
-                                  ),
-                                  Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(
-                                          Responsive.width(6, context)),
-                                      onTap: () {
-                                        _pickFiles();
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal:
-                                                Responsive.width(6, context),
-                                            vertical:
-                                                Responsive.width(6, context)),
-                                        child: SvgPicture.asset(
-                                          'assets/communities/file-text.svg',
-                                          height:
-                                              Responsive.height(22, context),
-                                          width: Responsive.width(22, context),
-                                          fit: BoxFit.none,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+
+                                  // Material(
+                                  //   color: Colors.transparent,
+                                  //   child: InkWell(
+                                  //     borderRadius: BorderRadius.circular(
+                                  //         Responsive.width(6, context)),
+                                  //     onTap: () {
+                                  //       _pickFiles();
+                                  //     },
+                                  //     child: Container(
+                                  //       padding: EdgeInsets.symmetric(
+                                  //           horizontal:
+                                  //               Responsive.width(6, context),
+                                  //           vertical:
+                                  //               Responsive.width(6, context)),
+                                  //       child: SvgPicture.asset(
+                                  //         'assets/communities/file-text.svg',
+                                  //         height:
+                                  //             Responsive.height(22, context),
+                                  //         width: Responsive.width(22, context),
+                                  //         fit: BoxFit.none,
+                                  //       ),
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   Container(
                                     width: Responsive.width(1, context),
                                     height: Responsive.height(20, context),
@@ -930,21 +756,22 @@ class _PollCreatorState extends State<PollCreator> {
   void initState() {
     super.initState();
     if (widget.initialData != null) {
-      allowMultipleAnswers = widget.initialData!['poll_allow_multiple_answers'] ?? false;
+      allowMultipleAnswers =
+          widget.initialData!['poll_allow_multiple_answers'] ?? false;
       questionController.text = widget.initialData!['poll_question'] ?? '';
 
       final pollOptions = widget.initialData!['poll_options'];
       if (pollOptions != null && pollOptions is List) {
-      optionControllers = pollOptions
-          .map((option) => TextEditingController(text: option))
-          .cast<TextEditingController>()
-          .toList();
-    } else {
-      optionControllers = [
-        TextEditingController(),
-        TextEditingController(),
-      ];
-    }
+        optionControllers = pollOptions
+            .map((option) => TextEditingController(text: option))
+            .cast<TextEditingController>()
+            .toList();
+      } else {
+        optionControllers = [
+          TextEditingController(),
+          TextEditingController(),
+        ];
+      }
     } else {
       optionControllers = [
         TextEditingController(),
@@ -1800,3 +1627,161 @@ class _PollCreatorState extends State<PollCreator> {
       //     ),
       //   )
       // ],
+
+
+
+      //For uploading Files
+        // Widget _buildAttachedFile(PlatformFile file, int index) {
+//     String fileName = file.name;
+//     String fileExtension = path.extension(fileName).toLowerCase();
+//     int fileSize = file.size;
+//     String fileSizeText = _formatFileSize(fileSize);
+
+//     IconData fileIcon = _getFileIcon(fileExtension);
+//     Color fileColor = _getFileColor(fileExtension);
+
+//     return Stack(
+//       children: [
+//         Container(
+//           width: Responsive.width(77.62, context),
+//           height: Responsive.height(77.62, context),
+//           clipBehavior: Clip.antiAlias,
+//           decoration: BoxDecoration(
+//             borderRadius:
+//                 BorderRadius.circular(Responsive.width(16.9, context)),
+//             border: Border.all(color: Colors.grey.shade300, width: 1),
+//           ),
+//           child: Icon(
+//             size: Responsive.height(77.62, context),
+//             fileIcon,
+//             color: fileColor,
+//             // size: Responsive.height(77.62, context),
+//           ),
+//         ),
+//         Positioned(
+//           right: -10,
+//           top: -10,
+//           child: Container(
+//             child: IconButton(
+//               icon: Icon(Icons.close),
+//               onPressed: () {
+//                 setState(() {
+//                   attachedFiles.removeAt(index);
+//                   if (index < documentFiles.length) {
+//                     documentFiles.removeAt(index);
+//                   }
+//                 });
+//               },
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+
+// // Helper method to format file size
+//   String _formatFileSize(int bytes) {
+//     if (bytes < 1024) return '$bytes B';
+//     if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+//     if (bytes < 1024 * 1024 * 1024)
+//       return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+//     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
+//   }
+
+// // Helper method to get file icon
+//   IconData _getFileIcon(String extension) {
+//     switch (extension) {
+//       case '.pdf':
+//         return Icons.picture_as_pdf;
+//       case '.doc':
+//       case '.docx':
+//         return Icons.description;
+//       case '.txt':
+//         return Icons.text_snippet;
+//       case '.jpg':
+//       case '.jpeg':
+//       case '.png':
+//       case '.gif':
+//         return Icons.image;
+//       case '.mp4':
+//       case '.avi':
+//       case '.mov':
+//         return Icons.video_file;
+//       case '.mp3':
+//       case '.wav':
+//       case '.aac':
+//         return Icons.audio_file;
+//       case '.zip':
+//       case '.rar':
+//         return Icons.archive;
+//       default:
+//         return Icons.insert_drive_file;
+//     }
+//   }
+
+// // Helper method to get file color
+//   Color _getFileColor(String extension) {
+//     switch (extension) {
+//       case '.pdf':
+//         return Colors.red;
+//       case '.doc':
+//       case '.docx':
+//         return Colors.blue;
+//       case '.txt':
+//         return Colors.grey;
+//       case '.jpg':
+//       case '.jpeg':
+//       case '.png':
+//       case '.gif':
+//         return Colors.green;
+//       case '.mp4':
+//       case '.avi':
+//       case '.mov':
+//         return Colors.purple;
+//       case '.mp3':
+//       case '.wav':
+//       case '.aac':
+//         return Colors.orange;
+//       default:
+//         return Colors.grey;
+//     }
+//   }
+
+//   Future<void> _pickFiles() async {
+//     try {
+//       FilePickerResult? result = await FilePicker.platform.pickFiles(
+//         type: FileType.any,
+//         allowMultiple: true,
+//         allowedExtensions: null, // Allow all file types
+//       );
+
+//       if (result != null) {
+//         setState(() {
+//           // Add selected files to the list
+//           attachedFiles.addAll(result.files);
+
+//           // Convert PlatformFile to File for upload
+//           for (PlatformFile platformFile in result.files) {
+//             if (platformFile.path != null) {
+//               documentFiles.add(File(platformFile.path!));
+//             }
+//           }
+//         });
+
+//         // Show success message
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(
+//             content: Text('${result.files.length} file(s) selected'),
+//             backgroundColor: Colors.green,
+//           ),
+//         );
+//       }
+//     } catch (e) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(
+//           content: Text('Error selecting files: $e'),
+//           backgroundColor: Colors.red,
+//         ),
+//       );
+//     }
+//   }

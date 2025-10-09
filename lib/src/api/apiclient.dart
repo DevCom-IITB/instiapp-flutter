@@ -39,6 +39,7 @@ import 'package:InstiApp/src/api/response/news_feed_response.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:InstiApp/src/api/response/user_tags_reach_response.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart' hide Notification;
 import 'package:retrofit/retrofit.dart' as rt;
 
 import 'model/offersecret.dart';
@@ -47,13 +48,8 @@ part 'apiclient.g.dart';
 
 // @rt.RestApi(baseUrl: "http://127.0.0.1:8000/api")
 // @rt.RestApi(baseUrl: "http://10.198.49.150/api")
-<<<<<<< HEAD
 // @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
-@rt.RestApi(baseUrl: "https://af698a114ff6.ngrok-free.app/api")
-=======
-@rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
-//@rt.RestApi(baseUrl: "https://nayeli-nonbulbar-denominationally.ngrok-free.dev/api")
->>>>>>> 0310e29d7cd862ab113eecad4bcfdfe44563824b
+@rt.RestApi(baseUrl: "https://25f4c535fd3d.ngrok-free.app/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
@@ -183,14 +179,8 @@ abstract class InstiAppApi {
   @rt.POST("/upload")
   @rt.MultiPart()
   Future<ImageUploadResponse> uploadImage(
-      @rt.Header("Cookie") String sessionID, @rt.Part() File file);
+      @rt.Header("Cookie") String sessionID, @rt.Part() File Picture);
 
-  // @rt.POST("/upload")
-  // @rt.MultiPart()
-  // Future<ImageUploadResponse> uploadDocument(
-  //     @rt.Header("Cookie") String sessionID,
-  //     @rt.Part() File document
-  //     );
 
   // My data
   @rt.GET("/user-me")

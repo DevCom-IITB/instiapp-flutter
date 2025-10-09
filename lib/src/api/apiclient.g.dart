@@ -13,16 +13,7 @@ class _InstiAppApi implements InstiAppApi {
     this._dio, {
     this.baseUrl,
   }) {
-<<<<<<< HEAD
-    baseUrl ??= 'https://af698a114ff6.ngrok-free.app/api';
-=======
-    //baseUrl ??= 'https://nayeli-nonbulbar-denominationally.ngrok-free.dev/api';
-    //baseUrl ??= 'https://nayeli-nonbulbar-denominationally.ngrok-free.dev/api';
-    baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
-    // baseUrl ??= 'https://a6c715a9e425.ngrok-free.app/api';
-    // baseUrl ??= 'http://10.198.49.150/api';
-    // baseUrl ??= 'https://43a2-2409-40c4-11e8-61d3-9171-8753-ecdf-8f1a.ngrok-free.app/api';
->>>>>>> 0310e29d7cd862ab113eecad4bcfdfe44563824b
+    baseUrl ??= 'https://25f4c535fd3d.ngrok-free.app/api';
   }
 
   final Dio _dio;
@@ -888,7 +879,7 @@ class _InstiAppApi implements InstiAppApi {
   @override
   Future<ImageUploadResponse> uploadImage(
     String sessionID,
-    File file,
+    File Picture,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -896,10 +887,10 @@ class _InstiAppApi implements InstiAppApi {
     _headers.removeWhere((k, v) => v == null);
     final _data = FormData();
     _data.files.add(MapEntry(
-      'file',
+      'Picture',
       MultipartFile.fromFileSync(
-        file.path,
-        filename: file.path.split(Platform.pathSeparator).last,
+        Picture.path,
+        filename: Picture.path.split(Platform.pathSeparator).last,
       ),
     ));
     final _result = await _dio.fetch<Map<String, dynamic>>(
