@@ -164,6 +164,7 @@ class _BodyPageState extends State<BodyPage> {
   @override
   Widget build(BuildContext context) {
     final responsive = Responsive(context);
+    final photoAlbumUrls = body?.bodyPhotoalbumURLs;
     final parent = (body?.bodyParents != null && body!.bodyParents!.isNotEmpty)
         ? body!.bodyParents!.first
         : null;
@@ -525,7 +526,7 @@ class _BodyPageState extends State<BodyPage> {
                                 //     ),
                                 //   ],
                                 // ),
-                                SizedBox(height: responsive.h(24)),
+                                SizedBox(height: responsive.h(7)),
                                 DefaultTabController(
                                   length: 3,
                                   child: Column(
@@ -608,6 +609,8 @@ class _BodyPageState extends State<BodyPage> {
                                                       SizedBox(height: responsive.h(20)),
                           
                                                       // Photo Album Section
+                                                      if (photoAlbumUrls != null && photoAlbumUrls.isNotEmpty)
+                                                      ...[
                                                       Text(
                                                         'Photo Album',
                                                         style: TextStyle(
@@ -619,23 +622,22 @@ class _BodyPageState extends State<BodyPage> {
                                                       SizedBox(height: responsive.h(12)),
                                                       GestureDetector(
                                                         onTap: () {
-                                                          // setState(() {
-                                                          //   isAlbumClicked=true;
-                                                          // });
-                                                          Navigator.push(
-                                                            context, 
-                                                            MaterialPageRoute(
-                                                              builder: (context)=>ExploreImagePreview(
-                                                                imageUrls: imageUrls
-                                                                )
-                                                            ),
-                                                          );
-                                                        },
-                                                        child: PhotoAlbumGrid(
-                                                          imageUrls: imageUrls,
-                                                          // initialIndex: index,
-                                                        ),
+                                                          if (photoAlbumUrls != null && photoAlbumUrls.isNotEmpty) {
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (context) => ExploreImagePreview(
+                                                                  imageUrls: photoAlbumUrls,
+                                                                ),
+                                                              ),
+                                                            );
+                                                           }
+                                                          },
+                                                          child: (photoAlbumUrls != null && photoAlbumUrls.isNotEmpty)
+                                                            ? _buildImages(photoAlbumUrls)
+                                                            : const SizedBox.shrink(),
                                                       ),
+                                                      ],
                                                       SizedBox(height: responsive.h(40)),
                                                       // Container(
                                                       //   height: 190,
@@ -1188,6 +1190,410 @@ class _BodyPageState extends State<BodyPage> {
       //   )
       // ],
     );
+  }
+
+  Widget _buildImages(List<String> images) {
+    final imageCount = images.length;
+
+    if (imageCount == 0) return Container();
+
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.only(top: 12, bottom: 8),
+      child: _buildImageGrid(images, imageCount),
+    );
+  }
+
+  Widget _buildImageGrid(List<String> images, int imageCount) {
+    switch (imageCount) {
+      case 1:
+        return FutureBuilder<ImageInfo>(
+          future: _getImageInfo(images[0]),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Container(
+                  color: Color(0xFFF0F0F0),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              );
+            }
+
+            final imageInfo = snapshot.data;
+            final aspectRatio = imageInfo != null
+                ? imageInfo.image.width / imageInfo.image.height
+                : 16 / 9;
+
+            return AspectRatio(
+              aspectRatio: aspectRatio,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  images[0],
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Color(0xFFF0F0F0),
+                      child:
+                          Icon(Icons.error_outline, color: Color(0xFF666666)),
+                    );
+                  },
+                ),
+              ),
+            );
+          },
+        );
+
+      case 2:
+        return FutureBuilder<List<ImageInfo?>>(
+          future: Future.wait([
+            _getImageInfo(images[0]),
+            _getImageInfo(images[1]),
+          ]),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return Container(
+                height: 200,
+                child: Row(
+                  children: [
+                    Expanded(child: _buildImagePlaceholder()),
+                    SizedBox(width: 4),
+                    Expanded(child: _buildImagePlaceholder()),
+                  ],
+                ),
+              );
+            }
+
+            final imageInfos = snapshot.data!;
+            final aspectRatio1 = imageInfos[0] != null
+                ? imageInfos[0]!.image.width / imageInfos[0]!.image.height
+                : 1.0;
+            final aspectRatio2 = imageInfos[1] != null
+                ? imageInfos[1]!.image.width / imageInfos[1]!.image.height
+                : 1.0;
+
+            // Calculate height that maintains both aspect ratios
+            final availableWidth = MediaQuery.of(context).size.width -
+                92; // 60px avatar + 32px padding
+            final gapWidth = 4.0;
+            final totalWidth = availableWidth - gapWidth;
+
+            final width1 =
+                totalWidth * (aspectRatio1 / (aspectRatio1 + aspectRatio2));
+            final width2 = totalWidth - width1;
+            final height1 = width1 / aspectRatio1;
+            final height2 = width2 / aspectRatio2;
+
+            final containerHeight = height1 > height2 ? height1 : height2;
+
+            return Container(
+              height: containerHeight,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        images[0],
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return _buildImagePlaceholder();
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: gapWidth),
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        images[1],
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return _buildImagePlaceholder();
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+
+      case 3:
+        return Container(
+          height: 200,
+          child: Row(
+            children: [
+              // Big image on left (50% width)
+              Expanded(
+                flex: 2,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    bottomLeft: Radius.circular(8),
+                  ),
+                  child: Image.network(
+                    images[0],
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return _buildImagePlaceholder();
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(width: 4),
+              // Two small images on right (50% width total)
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(8),
+                        ),
+                        child: Image.network(
+                          images[1],
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildImagePlaceholder();
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(8),
+                        ),
+                        child: Image.network(
+                          images[2],
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildImagePlaceholder();
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+
+      case 4:
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final totalWidth = constraints.maxWidth;
+            final spacing = 4.0;
+            final itemSize = (totalWidth - spacing) / 2; // each square
+
+            return Column(
+              children: [
+                Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        images[0],
+                        width: itemSize,
+                        height: itemSize,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            _buildImagePlaceholder(),
+                      ),
+                    ),
+                    SizedBox(width: spacing),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        images[1],
+                        width: itemSize,
+                        height: itemSize,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            _buildImagePlaceholder(),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: spacing),
+                Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        images[2],
+                        width: itemSize,
+                        height: itemSize,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            _buildImagePlaceholder(),
+                      ),
+                    ),
+                    SizedBox(width: spacing),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        images[3],
+                        width: itemSize,
+                        height: itemSize,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            _buildImagePlaceholder(),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+
+      default: // 5 or more
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final totalWidth = constraints.maxWidth;
+            final spacing = 4.0;
+
+            // Calculate widths
+            final leftWidth = (totalWidth - spacing) / 2;
+            final rightWidth = (totalWidth - spacing) / 2;
+            final gridItemSize = (rightWidth - spacing) / 2;
+
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Big left image
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    bottomLeft: Radius.circular(12),
+                  ),
+                  child: Image.network(
+                    images[0],
+                    width: leftWidth,
+                    height: leftWidth, // square
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        _buildImagePlaceholder(),
+                  ),
+                ),
+                SizedBox(width: spacing),
+                // Right 2x2 grid
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        ClipRRect(
+                          //borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            images[1],
+                            width: gridItemSize,
+                            height: gridItemSize,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                _buildImagePlaceholder(),
+                          ),
+                        ),
+                        SizedBox(width: spacing),
+                        ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(12)
+                          ),
+                          child: Image.network(
+                            images[2],
+                            width: gridItemSize,
+                            height: gridItemSize,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                _buildImagePlaceholder(),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: spacing),
+                    Row(
+                      children: [
+                        ClipRRect(
+                          //borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            images[3],
+                            width: gridItemSize,
+                            height: gridItemSize,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                _buildImagePlaceholder(),
+                          ),
+                        ),
+                        SizedBox(width: spacing),
+                        ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(12)
+                          ),
+                          child: Stack(
+                            children: [
+                              Image.network(
+                                images[4],
+                                width: gridItemSize,
+                                height: gridItemSize,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    _buildImagePlaceholder(),
+                              ),
+                              if (images.length > 5)
+                                Positioned.fill(
+                                  child: Container(
+                                    color: Color(0xB3000000),
+                                    child: Center(
+                                      child: Text(
+                                        "+${images.length - 5}",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 15.29
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            );
+          },
+        );
+    }
+  }
+
+  Widget _buildImagePlaceholder() {
+    return Container(
+      color: Color(0xFFF0F0F0),
+      child: Icon(Icons.error_outline, color: Color(0xFF666666)),
+    );
+  }
+  Future<ImageInfo> _getImageInfo(String imageUrl) async {
+    final completer = Completer<ImageInfo>();
+    final imageStream =
+        NetworkImage(imageUrl).resolve(ImageConfiguration.empty);
+
+    final listener =
+        ImageStreamListener((ImageInfo info, bool synchronousCall) {
+      completer.complete(info);
+    });
+
+    imageStream.addListener(listener);
+    return completer.future;
   }
 
   List<Widget> _nonEmptyListWithHeaderOrEmpty(

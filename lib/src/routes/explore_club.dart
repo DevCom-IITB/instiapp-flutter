@@ -518,50 +518,65 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
   // }
   Widget _buildBodyTile(InstiAppBloc bloc, TextTheme theme, Body body) {
     // debugPrint(body.bodyFollowersCount?.toString());
-    return GestureDetector(
-      onTap: () {
-        BodyPage.navigateWith(context, bloc, body: body);
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-        //padding: const EdgeInsets.all(16),
-        // color: Colors.grey[400],
-        // decoration: BoxDecoration(
-        //   color: Colors.white,
-        //   borderRadius: BorderRadius.circular(16),
-        //   boxShadow: [
-        //     BoxShadow(
-        //       color: Colors.black.withOpacity(0.06),
-        //       blurRadius: 10,
-        //       offset: Offset(0, 4),
-        //     ),
-        //   ],
-        // ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Club Image/Logo
-            Container(
-              width: 73,
-              height: 73,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                // boxShadow: [
-                //   BoxShadow(
-                //     color: Colors.black.withOpacity(0.1),
-                //     blurRadius: 6,
-                //     offset: Offset(0, 2),
-                //   ),
-                // ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: body.bodyImageURL != null &&
-                        body.bodyImageURL!.isNotEmpty
-                    ? Image.network(
-                        body.bodyImageURL!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
+    return Material(
+      child: InkWell(
+        onTap: () {
+          BodyPage.navigateWith(context, bloc, body: body);
+        },
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          //padding: const EdgeInsets.all(16),
+          // color: Colors.grey[400],
+          // decoration: BoxDecoration(
+          //   color: Colors.white,
+          //   borderRadius: BorderRadius.circular(16),
+          //   boxShadow: [
+          //     BoxShadow(
+          //       color: Colors.black.withOpacity(0.06),
+          //       blurRadius: 10,
+          //       offset: Offset(0, 4),
+          //     ),
+          //   ],
+          // ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Club Image/Logo
+              Container(
+                width: 73,
+                height: 73,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     color: Colors.black.withOpacity(0.1),
+                  //     blurRadius: 6,
+                  //     offset: Offset(0, 2),
+                  //   ),
+                  // ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: body.bodyImageURL != null &&
+                          body.bodyImageURL!.isNotEmpty
+                      ? Image.network(
+                          body.bodyImageURL!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[100],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              Icons.people_outline,
+                              size: 28,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                        )
+                      : Container(
                           width: 56,
                           height: 56,
                           decoration: BoxDecoration(
@@ -574,102 +589,89 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                             color: Colors.grey[500],
                           ),
                         ),
-                      )
-                    : Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.people_outline,
-                          size: 28,
-                          color: Colors.grey[500],
-                        ),
-                      ),
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-
-            // Club Info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    body.bodyName ?? "",
-                    style: theme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black,
-                      fontSize: 18
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  
-                  Text(
-                    body.bodyShortDescription ?? "",
-                    style: theme.bodyMedium?.copyWith(
-                      color: Colors.black,
-                      fontSize: 14,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  
-                  Container(
-                    height: 23,
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                    decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        width: 1,
-                        color: const Color(0xFFD2D5DA),
+              const SizedBox(width: 16),
+      
+              // Club Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      body.bodyName ?? "",
+                      style: theme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                        fontSize: 18
                       ),
-                    borderRadius: BorderRadius.circular(4),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/explore_new/users.svg',
-                          height: 12,
-                          width: 12,
+                    
+                    Text(
+                      body.bodyShortDescription ?? "",
+                      style: theme.bodyMedium?.copyWith(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    
+                    Container(
+                      height: 23,
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                      decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          width: 1,
+                          color: const Color(0xFFD2D5DA),
+                        ),
+                      borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/explore_new/users.svg',
+                            height: 12,
+                            width: 12,
+                            ),
+                          // Icon(
+                          // Icons.people_outline,
+                          // size: 16,
+                          // color: Colors.blue[600],
+                          // ),
+                          const SizedBox(width: 8),
+                          Text(
+                          "${body.bodyFollowersCount?.toString() ?? '422'} senti",
+                          // body.bodyFollowersCount != null
+                          // ? "${body.bodyFollowersCount} senti"
+                          // : "Loading...",
+                          style: theme.bodySmall?.copyWith(
+                            color: myConstants.instiappBlue,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12
                           ),
-                        // Icon(
-                        // Icons.people_outline,
-                        // size: 16,
-                        // color: Colors.blue[600],
-                        // ),
-                        const SizedBox(width: 8),
-                        Text(
-                        "${body.bodyFollowersCount?.toString() ?? '422'} senti",
-                        // body.bodyFollowersCount != null
-                        // ? "${body.bodyFollowersCount} senti"
-                        // : "Loading...",
-                        style: theme.bodySmall?.copyWith(
-                          color: myConstants.instiappBlue,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12
-                        ),
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-
-            // Arrow icon
-            Icon(
-              Icons.chevron_right,
-              color: Colors.grey[400],
-              size: 24,
-            ),
-          ],
+      
+              // Arrow icon
+              Icon(
+                Icons.chevron_right,
+                color: Colors.grey[400],
+                size: 24,
+              ),
+            ],
+          ),
         ),
       ),
     );
