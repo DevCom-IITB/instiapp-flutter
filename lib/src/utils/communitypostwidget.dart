@@ -168,8 +168,8 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
         SizedBox(height: 16),
         Dash(
           direction: Axis.horizontal,
-          dashLength: 416,
-          length: 416,
+          dashLength: 379,
+          length: 379,
           dashGap: 0,
           dashColor: Color(0xFFDADADA),
         )

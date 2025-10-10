@@ -814,7 +814,7 @@ Widget sort() {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              width: 250,
+              width: 213,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
