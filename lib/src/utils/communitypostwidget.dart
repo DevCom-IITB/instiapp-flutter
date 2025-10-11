@@ -427,30 +427,30 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
     );
   }
 
-  Widget _buildFeaturedImages() {
-    final images = communityPost.imageUrl!;
-    if (images.isEmpty) return Container();
+  // Widget _buildFeaturedImages() {
+  //   final images = communityPost.imageUrl!;
+  //   if (images.isEmpty) return Container();
 
-    // For featured posts, show only first image
-    return Container(
-      width: double.infinity,
-      height: 180,
-      margin: EdgeInsets.only(bottom: 12),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Image.network(
-          images[0],
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              color: Color(0xFFF0F0F0),
-              child: Icon(Icons.error_outline, color: Color(0xFF666666)),
-            );
-          },
-        ),
-      ),
-    );
-  }
+  //   // For featured posts, show only first image
+  //   return Container(
+  //     width: double.infinity,
+  //     height: 180,
+  //     margin: EdgeInsets.only(bottom: 12),
+  //     child: ClipRRect(
+  //       borderRadius: BorderRadius.circular(8),
+  //       child: Image.network(
+  //         images[0],
+  //         fit: BoxFit.cover,
+  //         errorBuilder: (context, error, stackTrace) {
+  //           return Container(
+  //             color: Color(0xFFF0F0F0),
+  //             child: Icon(Icons.error_outline, color: Color(0xFF666666)),
+  //           );
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildImageGrid(List<String> images, int imageCount) {
     switch (imageCount) {

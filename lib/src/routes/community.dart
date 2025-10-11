@@ -853,78 +853,79 @@ class _CommunitiesState extends State<Communities> {
 
           const SizedBox(width: 16),
 
-          // Name and subtitle
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+        // Name and subtitle
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              width: 213,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    u.userName ?? "",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Text(
+                    //u.getSubTitle() ?? "",
+                    "3rd year",
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: 8),
+            if (isAdmin)
               Container(
-                width: 250,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      u.userName ?? "",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Text(
-                      //u.getSubTitle() ?? "",
-                      "3rd year",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
+                height: 24,
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: myConstants.instiappBlue,
+                ),
+              child: const Center(
+                child: Text(
+                  "Admin",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-              SizedBox(width: 8),
-              if (isAdmin)
-                Container(
-                  height: 24,
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: myConstants.instiappBlue,
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Admin",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
+            ),
+          ],
+        ),
 
-          // Admin tag (if applicable)
-          // if (isAdmin)
-          //   Container(
-          //     height: 24,
-          //     padding: const EdgeInsets.symmetric(horizontal: 6),
-          //     decoration: BoxDecoration(
-          //       borderRadius: BorderRadius.circular(8),
-          //       color: myConstants.instiappBlue,
-          //     ),
-          //     child: const Center(
-          //       child: Text(
-          //         "Admin",
-          //         style: TextStyle(
-          //           color: Colors.white,
-          //           fontWeight: FontWeight.w600,
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-        ],
-      ),
-    );
-  }
+        
+        // Admin tag (if applicable)
+        // if (isAdmin)
+        //   Container(
+        //     height: 24,
+        //     padding: const EdgeInsets.symmetric(horizontal: 6),
+        //     decoration: BoxDecoration(
+        //       borderRadius: BorderRadius.circular(8),
+        //       color: myConstants.instiappBlue,
+        //     ),
+        //     child: const Center(
+        //       child: Text(
+        //         "Admin",
+        //         style: TextStyle(
+        //           color: Colors.white,
+        //           fontWeight: FontWeight.w600,
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+      ],
+    ),
+  );
+}
 }
 
 class CommunityPostSection extends StatefulWidget {
@@ -1312,10 +1313,9 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                         SizedBox(height: 20),
                         Row(
                           children: [
-                            sort(),
-                            SizedBox(width: 8),
-                            postTypeContainer(
-                                CPType.All, communityPostBloc, "All"),
+                            //sort(),
+                            //SizedBox(width: 8),
+                            postTypeContainer(CPType.All, communityPostBloc,"All"),
                             SizedBox(width: 8),
                             postTypeContainer(CPType.YourPosts,
                                 communityPostBloc, "Your Posts"),
