@@ -7,6 +7,7 @@ import 'package:InstiApp/src/routes/createpost_form.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/communitypostwidget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:flutter_svg/svg.dart';
@@ -55,6 +56,7 @@ class _CommunitiesState extends State<Communities> {
   Community? community;
   bool loadingFollow = false;
   Constants myConstants = Constants();
+  bool aboutExpanded = false;
   final List<String> _filterTabs = ['Sort', 'Filter'];
   List<String> subContLabels = ["Hostel Affairs", "Interns", "Tech"];
   // Widget _buildUserTile(User u) {
@@ -544,14 +546,14 @@ class _CommunitiesState extends State<Communities> {
                                           color: Color(0xFF0F1620),
                                         ),
                                       ),
-                                      Text(
-                                        "Music Club of IITB",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: Color(0xFF0F1620),
-                                        ),
-                                      ),
+                                      // Text(
+                                      //   "Music Club of IITB",
+                                      //   style: TextStyle(
+                                      //     fontSize: 14,
+                                      //     fontWeight: FontWeight.w400,
+                                      //     color: Color(0xFF0F1620),
+                                      //   ),
+                                      // ),
                                       Row(
                                         children: [
                                           Text(
@@ -620,42 +622,46 @@ class _CommunitiesState extends State<Communities> {
                                       ),
                                     ),
                                     const SizedBox(height: 6),
-                                    Container(
-                                      height: 30,
-                                      width: 30,
-                                      decoration: BoxDecoration(
-                                        color: Color(0xFFF6F6F6),
-                                        borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      child:
-                                          Center(child: Icon(Icons.more_vert)),
-                                    ),
+                                    // Container(
+                                    //   height: 30,
+                                    //   width: 30,
+                                    //   decoration: BoxDecoration(
+                                    //     color: Color(0xFFF6F6F6),
+                                    //     borderRadius: BorderRadius.circular(25),
+                                    //   ),
+                                    //   child:
+                                    //       Center(child: Icon(Icons.more_vert)),
+                                    // ),
                                   ],
                                 )
                               ],
                             ),
                             const SizedBox(height: 10),
-                            const Text(
-                                "Use this forum to Lorem ipsum dolorajhds Read More"),
-                            const SizedBox(height: 10),
+                            Container(
+                              //height: aboutExpanded?192:72,
+                              child: _buildAbout(theme)
+                            ),
+                            // const Text(
+                            //     "Use this forum to Lorem ipsum dolorajhds Read More"),
+                            // const SizedBox(height: 10),
                             Row(
                               children: [
-                                for (int i = 0;
-                                    i < subContLabels.length;
-                                    i++) ...[
-                                  subCont(subContLabels[i]),
-                                  const SizedBox(width: 8),
-                                ]
+                                // for (int i = 0;
+                                //     i < subContLabels.length;
+                                //     i++) ...[
+                                //   subCont(subContLabels[i]),
+                                //   const SizedBox(width: 8),
+                                // ]
                               ],
                             ),
-                            const SizedBox(height: 16),
-                            Dash(
-                              direction: Axis.horizontal,
-                              length: responsive.w(379),
-                              dashLength: 6,
-                              dashGap: 5,
-                              dashColor: const Color(0xFFDADADA),
-                            ),
+                            // const SizedBox(height: 16),
+                            // Dash(
+                            //   direction: Axis.horizontal,
+                            //   length: responsive.w(379),
+                            //   dashLength: 6,
+                            //   dashGap: 5,
+                            //   dashColor: const Color(0xFFDADADA),
+                            // ),
                           ],
                         ),
                       ),
@@ -739,12 +745,12 @@ class _CommunitiesState extends State<Communities> {
                                   SizedBox(height: 24),
                                   Row(
                                     children: [
-                                      sort(),
+                                      // sort(),
                                     ],
                                   ),
-                                  SizedBox(
-                                    height: 26,
-                                  ),
+                                  // SizedBox(
+                                  //   height: 26,
+                                  // ),
                                   //members(memberList),
                                   _buildMembers(theme)
                                 ],
@@ -760,7 +766,51 @@ class _CommunitiesState extends State<Communities> {
       ),
     );
   }
-
+  Widget _buildAbout(ThemeData theme) {
+    String about = community?.description ?? "";
+    return SizedBox(
+      height: aboutExpanded ? 200 : 72,
+      child: SingleChildScrollView(
+        physics: aboutExpanded
+        ? ClampingScrollPhysics()
+        :NeverScrollableScrollPhysics(),
+        child: Text.rich(
+          new TextSpan(
+            text: about.length > 160 && !aboutExpanded
+                ? about.substring(0, 160) + (aboutExpanded ? "" : "...")
+                : about,
+            children: !aboutExpanded && about.length > 160
+                ? [
+                    new TextSpan(
+                      text: 'Read More',
+                      style: TextStyle(
+                        color: myConstants.instiappBlue,
+                        fontWeight: FontWeight.w600
+                      ),
+                      recognizer: new TapGestureRecognizer()
+                        ..onTap = () => setState(() {
+                              aboutExpanded = true;
+                            }),
+                    )
+                  ]
+                : [
+                  new TextSpan(
+                      text: ' Read Less',
+                      style: TextStyle(
+                        color: myConstants.instiappBlue,
+                        fontWeight: FontWeight.w600
+                      ),
+                      recognizer: new TapGestureRecognizer()
+                        ..onTap = () => setState(() {
+                              aboutExpanded = false;
+                            }),
+                    )
+                ],
+          ),
+        ),
+      ),
+    );
+  }
   Widget _buildMembers(ThemeData theme) {
     return Container(
       padding: const EdgeInsets.all(5.0),
