@@ -63,7 +63,7 @@ class _ExplorePageState extends State<ExplorePage> {
                             fontFamily: 'DM Sans',
                             color: Color.fromRGBO(15, 22, 32, 1),
                           ))),
-                  SizedBox(height: Responsive.height(30.5, context)),
+                  SizedBox(height: Responsive.height(18, context)),
                   InkWell(
                     onTap: () {
                       setState(() {
@@ -118,10 +118,11 @@ class _ExplorePageState extends State<ExplorePage> {
                       margin: EdgeInsets.only(
                           left: Responsive.width(32, context),
                           right: Responsive.width(32, context),
-                          top: Responsive.height(18, context),
-                          bottom: Responsive.height(20, context)),
+                          top: Responsive.height(8, context),
+                          bottom: Responsive.height(0, context)),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,                      
                           children: [
                             Container(
                               width: double.infinity,
@@ -168,7 +169,7 @@ class _ExplorePageState extends State<ExplorePage> {
               ),
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.only(top: Responsive.height(12, context)),
+                  padding: EdgeInsets.only(top: Responsive.height(10, context)),
                   child: ListView(
                     shrinkWrap: true,
                     padding: EdgeInsets.zero,

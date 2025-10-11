@@ -407,6 +407,11 @@ class _CommentState extends State<Comment> {
                   ),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Container(
+                height: Responsive.height(36, context),
+                width: Responsive.width(36, context),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(Responsive.height(50, context)),
+                ),
                 child: Image.network(
                   comment!.postedBy?.userProfilePictureUrl ?? '',
                   width: 36,

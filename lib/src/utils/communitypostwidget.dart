@@ -7,6 +7,7 @@ import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/responsivenew.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dash/flutter_dash.dart';
@@ -22,7 +23,12 @@ class Communitypostwidget extends StatefulWidget {
   final bool shouldTap;
   final CPType postType;
   //Map<String,String> c;
-  Communitypostwidget({required this.communityPost,this.onPressedComment,this.shouldTap = true,this.postType = CPType.All,});
+  Communitypostwidget({
+    required this.communityPost,
+    this.onPressedComment,
+    this.shouldTap = true,
+    this.postType = CPType.All,
+  });
 
   @override
   State<Communitypostwidget> createState() => _CommunitypostwidgetState();
@@ -40,6 +46,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
         ? (communityPost.anonymous == true)
         : false;
   }
+
   bool showSelf() {
     if (widget.postType == CPType.YourPosts) return true;
     return !(communityPost.deleted == true);
@@ -62,40 +69,51 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
     });
     return total;
   }
-  void Function()? _getContentTapHandler(){}
-  void Function()? _getCommentHandler(){ return () => CommunityPostPage.navigateWith(context,
-              BlocProvider.of(context)!.bloc.communityPostBloc, communityPost); }
+
+  void Function()? _getContentTapHandler() {}
+  void Function()? _getCommentHandler() {
+    return () => CommunityPostPage.navigateWith(context,
+        BlocProvider.of(context)!.bloc.communityPostBloc, communityPost);
+  }
+
   Constants myConstants = Constants();
-  Widget footer(String reactionCount, String commentCount){
+  Widget footer(String reactionCount, String commentCount) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Row(
-          children: [
-            Icon(Icons.emoji_emotions_outlined, size: 20, color: Color.fromRGBO(68, 68, 68, 1)),
-            SizedBox(width: 6,),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 2.5),
-              height: 22,
-              decoration: BoxDecoration(
+        Row(children: [
+          Icon(Icons.emoji_emotions_outlined,
+              size: 20, color: Color.fromRGBO(68, 68, 68, 1)),
+          SizedBox(
+            width: 6,
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 2.5),
+            height: 22,
+            decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(19),
-                color: myConstants.instiappGrey
-              ),
-              child: Row(
-                children: [
-                  Image.asset("assets/communities/emojis/laugh.png",height: 18.5,width: 18.5,),
-                  Image.asset("assets/communities/emojis/cry.png",height: 18.5,width: 18.5,)
-                ],
-              ),
+                color: myConstants.instiappGrey),
+            child: Row(
+              children: [
+                Image.asset(
+                  "assets/communities/emojis/laugh.png",
+                  height: 18.5,
+                  width: 18.5,
+                ),
+                Image.asset(
+                  "assets/communities/emojis/cry.png",
+                  height: 18.5,
+                  width: 18.5,
+                )
+              ],
             ),
-            SizedBox(width: 6,),
-            Text(
-              reactionCount
-            )
-          ]
-          
-        ),
+          ),
+          SizedBox(
+            width: 6,
+          ),
+          Text(reactionCount)
+        ]),
         SizedBox(width: 25),
         Dash(
           direction: Axis.vertical,
@@ -105,11 +123,11 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
           dashColor: Color(0xFFD9D9D9),
         ),
         SizedBox(width: 25),
-        Icon(Icons.chat_bubble_outline,size: 15,color: Color(0XFF444444)),
-        SizedBox(width: 7,),
-        Text(
-          commentCount+" comments"
+        Icon(Icons.chat_bubble_outline, size: 15, color: Color(0XFF444444)),
+        SizedBox(
+          width: 7,
         ),
+        Text(commentCount + " comments"),
         SizedBox(width: 25),
         Dash(
           direction: Axis.vertical,
@@ -119,16 +137,18 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
           dashColor: Color(0xFFD9D9D9),
         ),
         SizedBox(width: 25),
-        Icon(Icons.share_outlined, size: 16,),
-        SizedBox(width: 6,),
-        Text(
-          "Share"
-        )
-
-
+        Icon(
+          Icons.share_outlined,
+          size: 16,
+        ),
+        SizedBox(
+          width: 6,
+        ),
+        Text("Share")
       ],
     );
   }
+
   @override
   Widget build(BuildContext context) {
     final content = communityPost.content ?? "";
@@ -142,13 +162,23 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: 40,
                 width: 40,
+                height: 40,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.grey
+                  borderRadius: BorderRadius.circular(100),
                 ),
-                
+                clipBehavior: Clip.antiAlias,
+                child: Image.network(
+                  communityPost.postedBy?.userProfilePictureUrl ?? '',
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Image.asset(
+                    "assets/communities/image 214.png",
+                    height: Responsive.height(40, context),
+                    width: Responsive.width(40, context),
+                  ),
+                ),
               ),
               SizedBox(width: 12),
               Expanded(
@@ -160,21 +190,23 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
                     SizedBox(height: 4),
                     _buildContent(content, contentChars),
                     if (communityPost.imageUrl != null &&
-                      communityPost.imageUrl!.isNotEmpty)
-                        _buildImages(),                  
-                    if (communityPost.isPoll == true && communityPost.poll != null)
-                    SizedBox(height: 16),
-                    if (communityPost.isPoll == true && communityPost.poll != null)
-                    PollViewer(
-                      poll: communityPost.poll!,
-                      onVoted: (List<String> selectedOptionIds) {
-                        // print("User voted for options: $selectedOptionIds");
-                        BlocProvider.of(context)!
-                            .bloc
-                            .communityPostBloc
-                            .voteOnPoll(communityPost.id!, selectedOptionIds);
-                      },
-                    ),
+                        communityPost.imageUrl!.isNotEmpty)
+                      _buildImages(),
+                    if (communityPost.isPoll == true &&
+                        communityPost.poll != null)
+                      SizedBox(height: 16),
+                    if (communityPost.isPoll == true &&
+                        communityPost.poll != null)
+                      PollViewer(
+                        poll: communityPost.poll!,
+                        onVoted: (List<String> selectedOptionIds) {
+                          // print("User voted for options: $selectedOptionIds");
+                          BlocProvider.of(context)!
+                              .bloc
+                              .communityPostBloc
+                              .voteOnPoll(communityPost.id!, selectedOptionIds);
+                        },
+                      ),
                   ],
                 ),
               )
@@ -239,7 +271,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
     //                           fontWeight: FontWeight.w400
     //                         ),
     //                       ),
-                          
+
     //                     ],
     //                   ),
     //                   Container(
@@ -280,60 +312,61 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
   }
 
   Widget _buildHeader() {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      // Left side: name + date
-      Row(
-        children: [
-          Text(
-            isAnon
-                ? "Anonymous User"
-                : communityPost.postedBy?.userName ?? "Anonymous user",
-            style: TextStyle(
-              fontFamily: 'DM Sans',
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: Colors.black,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Left side: name + date
+        Row(
+          children: [
+            Text(
+              isAnon
+                  ? "Anonymous User"
+                  : communityPost.postedBy?.userName ?? "Anonymous user",
+              style: TextStyle(
+                fontFamily: 'DM Sans',
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+              ),
             ),
-          ),
-          SizedBox(width: 13),
-          Text(
-            DateFormat("dd MMM, yyyy")
-                .format(DateTime.parse(communityPost.timeOfCreation!)),
-            style: TextStyle(
-              fontFamily: 'DM Sans',
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: Color.fromRGBO(68, 68, 68, 1),
+            SizedBox(width: 13),
+            Text(
+              DateFormat("dd MMM, yyyy")
+                  .format(DateTime.parse(communityPost.timeOfCreation!)),
+              style: TextStyle(
+                fontFamily: 'DM Sans',
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: Color.fromRGBO(68, 68, 68, 1),
+              ),
             ),
-          ),
-        ],
-      ),
-
-      // Right side: delete button (only for "Your Posts")
-      if (widget.postType == CPType.YourPosts)
-        GestureDetector(
-          onTap: () {
-            // Add your delete logic here (e.g., show confirmation, call API, etc.)
-          },
-          child: Container(
-            height: 24,
-            width: 24,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: myConstants.instiappGrey,
-            ),
-            child: Icon(
-              Icons.delete_outline,
-              color: Color(0xFFF8471B),
-              size: 20,
-            ),
-          ),
+          ],
         ),
-    ],
-  );
+
+        // Right side: delete button (only for "Your Posts")
+        if (widget.postType == CPType.YourPosts)
+          GestureDetector(
+            onTap: () {
+              // Add your delete logic here (e.g., show confirmation, call API, etc.)
+            },
+            child: Container(
+              height: 24,
+              width: 24,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: myConstants.instiappGrey,
+              ),
+              child: Icon(
+                Icons.delete_outline,
+                color: Color(0xFFF8471B),
+                size: 20,
+              ),
+            ),
+          ),
+      ],
+    );
   }
+
   Widget _buildContent(String content, int contentChars) {
     return GestureDetector(
       onTap: _getContentTapHandler,
@@ -377,13 +410,13 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
       ),
     );
   }
+
   Widget _buildImages() {
     final images = communityPost.imageUrl!;
     final imageCount = images.length;
-    for(int i =0 ; i<imageCount; i++){
-      images[i]=fixImageUrl(images[i]);
+    for (int i = 0; i < imageCount; i++) {
+      images[i] = fixImageUrl(images[i]);
     }
-
 
     if (imageCount == 0) return Container();
 
@@ -718,9 +751,8 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
                         ),
                         SizedBox(width: spacing),
                         ClipRRect(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(12)
-                          ),
+                          borderRadius:
+                              BorderRadius.only(topRight: Radius.circular(12)),
                           child: Image.network(
                             images[2],
                             width: gridItemSize,
@@ -749,8 +781,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
                         SizedBox(width: spacing),
                         ClipRRect(
                           borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(12)
-                          ),
+                              bottomRight: Radius.circular(12)),
                           child: Stack(
                             children: [
                               Image.network(
@@ -769,10 +800,9 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
                                       child: Text(
                                         "+${images.length - 5}",
                                         style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 15.29
-                                        ),
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 15.29),
                                       ),
                                     ),
                                   ),
@@ -832,6 +862,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
         return BorderRadius.circular(6);
     }
   }
+
   Widget _buildFooter(int numReactions) {
     final commentsCount = communityPost.commentsCount ?? 0;
 
@@ -967,6 +998,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
         return Container();
     }
   }
+
   Widget _buildReactionButton(int numReactions) {
     final bloc = BlocProvider.of(context)!.bloc;
 
@@ -987,14 +1019,15 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
           SizedBox(width: 6),
           if (communityPost.reactionCount != null &&
               communityPost.reactionCount!.isNotEmpty)
-              Builder(builder: (_) {
+            Builder(builder: (_) {
               // Sort by count (descending)
               final sorted = communityPost.reactionCount!.entries.toList()
-              ..sort((a, b) => (b.value ?? 0).compareTo(a.value ?? 0));
+                ..sort((a, b) => (b.value ?? 0).compareTo(a.value ?? 0));
               // Take top 2 only
               final topReactions = sorted.take(2).toList();
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 2.5, vertical: 1.75),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 2.5, vertical: 1.75),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(12),
@@ -1008,10 +1041,10 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
                       padding: const EdgeInsets.symmetric(horizontal: 2),
                       child: Image.asset(emojiPath, width: 18.5, height: 18.5),
                     );
-                    }).toList(),
-                    ),
-                );
-          }),
+                  }).toList(),
+                ),
+              );
+            }),
           SizedBox(width: 6),
           Text(
             '$numReactions',
@@ -1069,6 +1102,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
       ),
     );
   }
+
   void _handleReactionSelection(int val, InstiAppBloc bloc) async {
     await bloc.communityPostBloc
         .updateUserCommunityPostReaction(communityPost, val);
@@ -1132,7 +1166,6 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
   }
 }
 
-
 class PollOption extends StatefulWidget {
   final String title;
   final String voteCount;
@@ -1170,9 +1203,13 @@ class _PollOptionState extends State<PollOption> {
                 height: 20,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: widget.isSelected ? const Color(0xFF306FDC) : Colors.transparent,
+                  color: widget.isSelected
+                      ? const Color(0xFF306FDC)
+                      : Colors.transparent,
                   border: Border.all(
-                    color: widget.isSelected ? const Color(0xFF306FDC) : const Color(0xFF7E8287),
+                    color: widget.isSelected
+                        ? const Color(0xFF306FDC)
+                        : const Color(0xFF7E8287),
                   ),
                 ),
                 child: widget.isSelected
@@ -1203,7 +1240,7 @@ class _PollOptionState extends State<PollOption> {
             ],
           ),
           const SizedBox(height: 5),
-      
+
           // --- Progress Bar ---
           LayoutBuilder(
             builder: (context, constraints) {
@@ -1235,7 +1272,6 @@ class _PollOptionState extends State<PollOption> {
   }
 }
 
-
 // 2. The Main Widget Using the Reusable PollOption
 class PollViewer extends StatefulWidget {
   final Poll poll;
@@ -1255,7 +1291,7 @@ class _PollViewerState extends State<PollViewer> {
   late Set<String> _selectedOptionIds;
   late bool _hasAlreadyVoted;
 
-    @override
+  @override
   void initState() {
     super.initState();
     _selectedOptionIds = widget.poll.options
@@ -1337,8 +1373,8 @@ class _PollViewerState extends State<PollViewer> {
             }
           }
           // increment new
-          final newIdx =
-              widget.poll.options!.indexWhere((opt) => opt.id == tappedOptionId);
+          final newIdx = widget.poll.options!
+              .indexWhere((opt) => opt.id == tappedOptionId);
           if (newIdx != -1) {
             widget.poll.options![newIdx].voteCount =
                 (widget.poll.options![newIdx].voteCount ?? 0) + 1;
@@ -1380,7 +1416,8 @@ class _PollViewerState extends State<PollViewer> {
 
   @override
   Widget build(BuildContext context) {
-    print("Building PollViewer with selected options:" + widget.poll.options![0].userVoted.toString());
+    print("Building PollViewer with selected options:" +
+        widget.poll.options![0].userVoted.toString());
     final totalVotes = widget.poll.totalVotes ?? 0;
     return Container(
       width: double.infinity,
@@ -1443,31 +1480,34 @@ class _PollViewerState extends State<PollViewer> {
           // ),
           ...?widget.poll.options?.map((option) {
             final isSelected = _selectedOptionIds.contains(option.id);
-            final double percentage = totalVotes > 0 ? (option.voteCount ?? 0) / totalVotes : 0.0;
+            final double percentage =
+                totalVotes > 0 ? (option.voteCount ?? 0) / totalVotes : 0.0;
             return PollOption(
               title: option.text ?? 'Option',
               voteCount: (option.voteCount ?? 0).toString(),
               votePercentage: percentage,
               isSelected: isSelected,
-              onTap: () => {_handleVote(option.id!),},
+              onTap: () => {
+                _handleVote(option.id!),
+              },
             );
           })
         ],
       ),
     );
-  }}
+  }
+}
 
 //remove this when on prod
-  String fixImageUrl(String? url) {
+String fixImageUrl(String? url) {
   if (url == null || url.isEmpty) return "";
-  
+
   // Replace localhost with your ngrok URL
   if (url.startsWith("http://localhost:8000")) {
-    return url.replaceFirst(
-      "http://localhost:8000", 
-      "https://fc37c3e64571.ngrok-free.app"  // Your actual server URL
-    );
+    return url.replaceFirst("http://localhost:8000",
+        "https://fc37c3e64571.ngrok-free.app" // Your actual server URL
+        );
   }
-  
+
   return url;
 }

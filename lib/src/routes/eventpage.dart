@@ -511,7 +511,7 @@ class _EventPageState extends State<EventPage> {
                                                       2, context)),
                                               Text(
                                                 (event!.venueRoom ?? "") +
-                                                    (event!.venueRoom != null
+                                                    (event!.venueRoom != ""
                                                         ? ", "
                                                         : "") +
                                                     (event!.eventVenues
