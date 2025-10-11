@@ -4,7 +4,6 @@ import 'package:InstiApp/src/api/request/update_community_post_request.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
-
 enum CPType {
   All,
   YourPosts,
@@ -132,11 +131,36 @@ class CommunityPostBloc {
         pollId,
         body,
       );
+      final updatedPoll = response.poll;
+
+      // 2. Find the post that contains this poll and update it
+      final newPostsList = _communityPosts.map((post) {
+        // Check if this is the post we need to update
+        if (post.poll != null && post.poll!.id == updatedPoll.id) {
+          // Return a new CommunityPost instance with the updated poll data.
+          // This assumes your CommunityPost model has a 'copyWith' method (see note below).
+          return post.copyWith(poll: updatedPoll);
+        } else {
+          // Otherwise, return the post unchanged.
+          return post;
+        }
+      }).toList();
+
+      // 3. Update the internal list and add the new list to the stream
+      _communityPosts = newPostsList;
+      _communitySubject.add(_communityPosts);
+
+      print("Poll updated in BLoC and UI refreshed!");
+
     } catch (e) {
       print("Failed to vote on poll: $e");
+      // Optionally, you can handle the error, e.g., show a snackbar.
+      // For now, we just log it and don't change the state.
     }
   }
 
+  // ✅ Add multiple option voting support
+  // Add this method to your CommunityPostBloc class
 
 // Future<void> createCommunityPostWithPoll(Map<String, dynamic> postData) async {
 //   try {

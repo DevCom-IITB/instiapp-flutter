@@ -5,6 +5,7 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:InstiApp/src/api/model/buynsellPost.dart';
+import 'package:InstiApp/src/utils/responsive.dart';
 
 class ImagePreviewPage extends StatefulWidget {
   final List<String> imageUrls;

@@ -553,11 +553,11 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                   source: ImageSource.gallery);
 
                                           if (pi != null) {
-                                            ImageUploadResponse resp =
-                                                await bloc.client.uploadImage(
-                                                    bloc.getSessionIdHeader(),
-                                                    File(pi.path));
-                                            print(resp.pictureURL);
+                                            // ImageUploadResponse resp =
+                                            //     await bloc.client.uploadImage(
+                                            //         bloc.getSessionIdHeader(),
+                                            //         File(pi.path));
+                                            // print(resp.pictureURL);
                                             if (await pi.length() / 1000000 <=
                                                 10) {
                                               setState(() {

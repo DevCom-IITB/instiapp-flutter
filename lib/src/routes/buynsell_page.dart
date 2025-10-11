@@ -9,6 +9,8 @@ import 'buynsell_info.dart';
 import 'package:flutter/material.dart';
 import '../widgets/appbar.dart';
 import 'bnscreatepost.dart';
+import 'package:InstiApp/src/utils/responsive.dart';
+import 'package:InstiApp/src/widgets/custom_dialog.dart';
 
 class BuySellPage extends StatefulWidget {
   const BuySellPage({super.key});
@@ -56,12 +58,12 @@ class _BuySellPageState extends State<BuySellPage> {
         child: !isLoggedIn
             ? Container(
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(50),
+                padding: EdgeInsets.all(RS.sw(context, 50)),
                 child: Column(
                   children: [
                     Icon(
                       Icons.cloud,
-                      size: 200,
+                      size: RS.sw(context, 200),
                       color: Colors.grey[600],
                     ),
                     Text(
@@ -74,7 +76,7 @@ class _BuySellPageState extends State<BuySellPage> {
               )
             : Column(
                 children: [
-                  const SizedBox(height: 4),
+                  SizedBox(height: RS.sh(context, 4)),
                   CustomAppBar(
                     title: _currentTab == 0 ? 'Buy & Sell' : 'Posted By You',
                     other: Icons.bookmark_border_rounded,
@@ -82,7 +84,7 @@ class _BuySellPageState extends State<BuySellPage> {
                   ),
                   _buildSearchBar(),
                   _buildFilterChips(),
-                  const SizedBox(height: 16),
+                  SizedBox(height: RS.sh(context, 16)),
                   Expanded(
                     child: StreamBuilder<List<BuynSellPost>>(
                       stream: buynSellPostBloc.buynsellposts,
@@ -175,7 +177,7 @@ class _BuySellPageState extends State<BuySellPage> {
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             itemCount: filteredPosts.length,
                             separatorBuilder: (_, __) =>
-                                const SizedBox(height: 16),
+                                SizedBox(height: RS.sh(context, 16)),
                             itemBuilder: (context, index) =>
                                 _buildProductItem(filteredPosts[index]),
                           ),
@@ -216,11 +218,11 @@ class _BuySellPageState extends State<BuySellPage> {
     }
 
     return Container(
-      height: 254,
-      padding: const EdgeInsets.only(right: 16),
+      height: RS.sh(context, 254),
+      padding: EdgeInsets.only(right: RS.sw(context, 16)),
       decoration: BoxDecoration(
         color: const Color(0xFFEFEFEF),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(RS.s(context, 16)),
       ),
       child: Row(
         children: [
@@ -232,8 +234,8 @@ class _BuySellPageState extends State<BuySellPage> {
                 child: GestureDetector(
                   onTap: navigateToDetail,
                   child: Container(
-                    width: 154,
-                    height: 254,
+                    width: RS.sw(context, 154),
+                    height: RS.sh(context, 254),
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(16),
@@ -571,79 +573,74 @@ class _BuySellPageState extends State<BuySellPage> {
     );
   }
 
-  // Add these new methods for the additional functionality
   void _confirmDelete(String? id) {
-    bool isDeleting = false;
-
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const Text('Confirm Delete'),
-            content: const Text('Are you sure you want to delete this post?'),
-            actions: [
-              TextButton(
-                onPressed: isDeleting ? null : () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: isDeleting
-                    ? null
-                    : () async {
-                        setState(() => isDeleting = true);
-
-                        try {
-                          await bloc.buynSellPostBloc.deleteBuynSellPost(id!);
-                          Navigator.pop(context);
-                          await bloc.buynSellPostBloc.refresh();
-                        } finally {
-                          bloc.buynSellPostBloc.refresh();
-                        }
-                      },
-                child: Text(isDeleting ? 'Deleting...' : 'Delete',
-                    style: TextStyle(color: Colors.red)),
-              ),
-            ],
-          );
-        },
+      builder: (context) => CustomDialog(
+        title: 'Confirm Delete',
+        content1: 'Are you sure you want to delete this post?',
+        content2: 'This cannot be undone.',
+        showLoadingState: true,
+        loadingText: 'Deleting...',
+        options: [
+          DialogOption(
+            text: 'Cancel',
+            onPressed: (ctx, setProcessing) => Navigator.pop(ctx),
+          ),
+          DialogOption(
+            text: 'Delete',
+            onPressed: (ctx, setProcessing) async {
+              try {
+                await bloc.buynSellPostBloc.deleteBuynSellPost(id!);
+                Navigator.pop(ctx);
+                Navigator.pop(context); // Pop the original context
+                await bloc.buynSellPostBloc.refresh();
+              } catch (e) {
+                setProcessing(false);
+                // Handle error if needed
+              } finally {
+                bloc.buynSellPostBloc.refresh();
+              }
+            },
+            isPrimary: true,
+          ),
+        ],
       ),
     );
   }
 
   void _confirmMarkAsSold(BuynSellPost post) {
-    bool isProcessing = false;
-
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const Text('Mark as Sold'),
-            content:
-                const Text('Are you sure you want to mark this item as sold?'),
-            actions: [
-              TextButton(
-                onPressed: isProcessing ? null : () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: isProcessing ? null : () async {
-                  setState(() => isProcessing = true);
-                  
-                  try {
-                    await bloc.buynSellPostBloc.markAsSold(post.id!);
-                    Navigator.pop(context);
-                    await bloc.buynSellPostBloc.refresh();
-                  } finally {
-                    bloc.buynSellPostBloc.refresh();
-                  }
-                },
-                child: Text(isProcessing ? 'Updating...' : 'Confirm'),
-              ),
-            ],
-          );
-        },
+      builder: (context) => CustomDialog(
+        title: 'Mark as Sold',
+        content1: 'Are you sure you want to mark this item as sold?',
+        content2: '',
+        showLoadingState: true,
+        loadingText: 'Updating...',
+        options: [
+          DialogOption(
+            text: 'Cancel',
+            onPressed: (ctx, setProcessing) => Navigator.pop(ctx),
+          ),
+          DialogOption(
+            text: 'Confirm',
+            onPressed: (ctx, setProcessing) async {
+              try {
+                await bloc.buynSellPostBloc.markAsSold(post.id!);
+                Navigator.pop(ctx);
+                Navigator.pop(context); // Pop the original context
+                await bloc.buynSellPostBloc.refresh();
+              } catch (e) {
+                setProcessing(false);
+                // Handle error if needed
+              } finally {
+                bloc.buynSellPostBloc.refresh();
+              }
+            },
+            isPrimary: true,
+          ),
+        ],
       ),
     );
   }
@@ -665,7 +662,7 @@ class _BuySellPageState extends State<BuySellPage> {
   Widget _buildBottomNavBar() {
     return Container(
       alignment: Alignment.topCenter,
-      height: 88,
+      height: RS.sh(context, 88),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: const BoxDecoration(
         color: Colors.transparent,
@@ -772,10 +769,10 @@ class _BuySellPageState extends State<BuySellPage> {
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      height: 50,
+      height: RS.sh(context, 50),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(50),
+        borderRadius: BorderRadius.circular(RS.s(context, 50)),
         image: DecorationImage(
           image: AssetImage("assets/buynsell/searchborder.png"),
           fit: BoxFit.fill,
@@ -861,7 +858,7 @@ class _BuySellPageState extends State<BuySellPage> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 36,
+        height: RS.sh(context, 36),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: ShapeDecoration(
           color: isSelected ? const Color(0xFF306FDC) : const Color(0xFFEFEFEF),

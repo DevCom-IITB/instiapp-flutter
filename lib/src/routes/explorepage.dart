@@ -258,6 +258,7 @@ class _ExplorePageState extends State<ExplorePage> {
                   ),
                 ),
               ),
+              SizedBox(height: Responsive.height(16, context)),
             ],
           )),
           // if (searchMode)

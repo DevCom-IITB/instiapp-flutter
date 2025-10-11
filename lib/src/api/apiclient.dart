@@ -8,7 +8,21 @@ import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/lostandfoundPost.dart';
+import 'dart:async';
+import 'dart:io';
+import 'package:InstiApp/src/api/model/UserTag.dart';
+import 'package:InstiApp/src/api/model/achievements.dart';
+import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/buynsellPost.dart';
+import 'package:InstiApp/src/api/model/community.dart';
+import 'package:InstiApp/src/api/model/communityPost.dart';
+import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/lostandfoundPost.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
+import 'package:InstiApp/src/api/model/messCalEvent.dart';
+import 'package:InstiApp/src/api/model/notification.dart';
+import 'package:InstiApp/src/api/model/offeredAchievements.dart';
+import 'package:InstiApp/src/api/model/post.dart';
 import 'package:InstiApp/src/api/model/messCalEvent.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
 import 'package:InstiApp/src/api/model/offeredAchievements.dart';
@@ -39,7 +53,6 @@ import 'package:InstiApp/src/api/response/news_feed_response.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:InstiApp/src/api/response/user_tags_reach_response.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart' hide Notification;
 import 'package:retrofit/retrofit.dart' as rt;
 
 import 'model/offersecret.dart';
@@ -49,7 +62,7 @@ part 'apiclient.g.dart';
 // @rt.RestApi(baseUrl: "http://127.0.0.1:8000/api")
 // @rt.RestApi(baseUrl: "http://10.198.49.150/api")
 // @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
-@rt.RestApi(baseUrl: "https://25f4c535fd3d.ngrok-free.app/api")
+@rt.RestApi(baseUrl: "https://bda7c527113b.ngrok-free.app/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
@@ -179,8 +192,14 @@ abstract class InstiAppApi {
   @rt.POST("/upload")
   @rt.MultiPart()
   Future<ImageUploadResponse> uploadImage(
-      @rt.Header("Cookie") String sessionID, @rt.Part() File Picture);
+      @rt.Header("Cookie") String sessionID, @rt.Part() File file);
 
+  // @rt.POST("/upload")
+  // @rt.MultiPart()
+  // Future<ImageUploadResponse> uploadDocument(
+  //     @rt.Header("Cookie") String sessionID,
+  //     @rt.Part() File document
+  //     );
 
   // My data
   @rt.GET("/user-me")

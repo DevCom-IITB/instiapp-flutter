@@ -148,6 +148,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
                   borderRadius: BorderRadius.circular(20),
                   color: Colors.grey
                 ),
+                
               ),
               SizedBox(width: 12),
               Expanded(
@@ -379,6 +380,10 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
   Widget _buildImages() {
     final images = communityPost.imageUrl!;
     final imageCount = images.length;
+    for(int i =0 ; i<imageCount; i++){
+      images[i]=fixImageUrl(images[i]);
+    }
+
 
     if (imageCount == 0) return Container();
 
@@ -797,6 +802,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
     final completer = Completer<ImageInfo>();
     final imageStream =
         NetworkImage(imageUrl).resolve(ImageConfiguration.empty);
+    print(imageStream);
 
     final listener =
         ImageStreamListener((ImageInfo info, bool synchronousCall) {
@@ -1450,3 +1456,18 @@ class _PollViewerState extends State<PollViewer> {
       ),
     );
   }}
+
+//remove this when on prod
+  String fixImageUrl(String? url) {
+  if (url == null || url.isEmpty) return "";
+  
+  // Replace localhost with your ngrok URL
+  if (url.startsWith("http://localhost:8000")) {
+    return url.replaceFirst(
+      "http://localhost:8000", 
+      "https://fc37c3e64571.ngrok-free.app"  // Your actual server URL
+    );
+  }
+  
+  return url;
+}

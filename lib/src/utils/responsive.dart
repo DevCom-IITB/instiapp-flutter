@@ -55,7 +55,6 @@ class RS {
   }
 }
 
-
 // ------- Orientation helpers -------
 extension RSX on BuildContext {
   bool get isLandscape => MediaQuery.of(this).orientation == Orientation.landscape;

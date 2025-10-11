@@ -13,7 +13,7 @@ class _InstiAppApi implements InstiAppApi {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://25f4c535fd3d.ngrok-free.app/api';
+    baseUrl ??= 'https://bda7c527113b.ngrok-free.app/api';
   }
 
   final Dio _dio;
@@ -879,7 +879,7 @@ class _InstiAppApi implements InstiAppApi {
   @override
   Future<ImageUploadResponse> uploadImage(
     String sessionID,
-    File Picture,
+    File file,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -887,10 +887,10 @@ class _InstiAppApi implements InstiAppApi {
     _headers.removeWhere((k, v) => v == null);
     final _data = FormData();
     _data.files.add(MapEntry(
-      'Picture',
+      'picture',
       MultipartFile.fromFileSync(
-        Picture.path,
-        filename: Picture.path.split(Platform.pathSeparator).last,
+        file.path,
+        filename: file.path.split(Platform.pathSeparator).last,
       ),
     ));
     final _result = await _dio.fetch<Map<String, dynamic>>(
