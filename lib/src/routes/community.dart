@@ -484,6 +484,7 @@ Widget sort() {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        //crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
                             height: 63,
@@ -510,14 +511,14 @@ Widget sort() {
                                     color: Color(0xFF0F1620),
                                   ),
                                 ),
-                                Text(
-                                  "Music Club of IITB",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color(0xFF0F1620),
-                                  ),
-                                ),
+                                // Text(
+                                //   "Music Club of IITB",
+                                //   style: TextStyle(
+                                //     fontSize: 14,
+                                //     fontWeight: FontWeight.w400,
+                                //     color: Color(0xFF0F1620),
+                                //   ),
+                                // ),
                                 Row(
                                   children: [
                                     Text(
@@ -545,6 +546,7 @@ Widget sort() {
                           const SizedBox(width: 25),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               GestureDetector(
                                 onTap: () async{
@@ -582,17 +584,17 @@ Widget sort() {
                                 ),
                               ),
                               const SizedBox(height: 6),
-                              Container(
-                                height: 30,
-                                width: 30,
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFF6F6F6),
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                child: Center(
-                                  child: Icon(Icons.more_vert)
-                                ),
-                              ),
+                              // Container(
+                              //   height: 30,
+                              //   width: 30,
+                              //   decoration: BoxDecoration(
+                              //     color: Color(0xFFF6F6F6),
+                              //     borderRadius: BorderRadius.circular(25),
+                              //   ),
+                              //   child: Center(
+                              //     child: Icon(Icons.more_vert)
+                              //   ),
+                              // ),
                             ],
                           )
                         ],
@@ -696,12 +698,12 @@ Widget sort() {
                         child: Column(
                           children: [
                             SizedBox(height: 24),
-                            Row(
-                              children: [
-                                sort(),
-                              ],
-                            ),
-                            SizedBox(height: 26,),
+                            // Row(
+                            //   children: [
+                            //     sort(),
+                            //   ],
+                            // ),
+                            // SizedBox(height: 26,),
                             //members(memberList),
                             _buildMembers(theme)
                           ],
@@ -1263,8 +1265,8 @@ Widget postTypeContainer(CPType cp, CommunityPostBloc communityPostBloc, String 
                         SizedBox(height: 20),
                         Row(
                           children: [
-                            sort(),
-                            SizedBox(width: 8),
+                            //sort(),
+                            //SizedBox(width: 8),
                             postTypeContainer(CPType.All, communityPostBloc,"All"),
                             SizedBox(width: 8),
                             postTypeContainer(CPType.YourPosts, communityPostBloc,"Your Posts"),

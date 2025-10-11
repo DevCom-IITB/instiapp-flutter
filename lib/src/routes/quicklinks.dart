@@ -116,17 +116,19 @@ Widget LinkSection(String title,Map<String,String> links){
 
     Map<String,Map<String,String>> quickLinks={
       "Devcom": {
-        "Leave Portal": "https://google.com",
-        "Resume Portal": "https://google.com",
-        "AMS": "https://ams.iitb.ac.in/pages/login"
+        "Resobin":"https://resobin.gymkhana.iitb.ac.in/login",
+        "Mess-I":"https://instamess.gymkhana.iitb.ac.in/dashboard/login",
+        "Reach":"http://10.195.160.190/login",
+        "NewBee":"https://gymkhana.iitb.ac.in/newbee",
       },
       "Academic": {
         "ASC": "https://asc.iitb.ac.in/acadmenu/",
         "External ASC": "https://portal.iitb.ac.in/asc/Login",
         "Moodle": "https://moodle.iitb.ac.in/login/index.php",
         "Placement Blog": "https://campus.placements.iitb.ac.in/",
-        "Internship Blog": "https://google.com",
-        "Central Library": "https://www.library.iitb.ac.in/"
+        "Internship Blog": "https://campus.placements.iitb.ac.in/",
+        "Central Library": "https://www.library.iitb.ac.in/",
+        "AMS": "https://ams.iitb.ac.in/pages/login"
       },
       "Calendar": {
         "Academic Calendar": "https://acad.iitb.ac.in/academics/calendar-and-timetable",
