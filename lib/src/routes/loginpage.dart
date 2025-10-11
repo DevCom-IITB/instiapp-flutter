@@ -444,50 +444,34 @@ class _OnboardingLoginPageState extends State<LoginPage>
 
   Widget _buildLoginOptionsPage(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color.fromRGBO(15, 22, 32, 1),
       body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Container(
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: RS.sh(context, 40),
-                  ),
-                  Text(
-                    "Get Started.",
-                    style: TextStyle(
-                        fontSize: 36,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "All Things Insti",
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.normal),
-                  ),
-                  Text(
-                    "Right at your fingertips.",
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.normal),
-                  ),
-                  const SizedBox(height: 50),
-                  Image.asset(
-                    'assets/login/person_illustration.png',
-                    height: RS.sh(context, 400),
-                    fit: BoxFit.contain,
-                  ),
-                ],
-              ),
+          Positioned(
+            top: -10,
+            left: -20,
+            child: Image.asset(
+              'assets/login/doodle.png',
+              height: RS.sh(context, 600),
             ),
+          ),
+          Positioned(
+            top: 291,
+            left: 5,
+            child: Image.asset(
+              'assets/login/lotuslight.png',
+              width: RS.sw(context, 200),
+            ),
+          ),
+          Positioned(
+            top: 400,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Image.asset(
+              'assets/login/clipper.png',
+              // width: RS.sw(context, 250),
+            )
           ),
           Align(
             alignment: Alignment.bottomCenter,
@@ -501,82 +485,119 @@ class _OnboardingLoginPageState extends State<LoginPage>
   Widget _buildLoginOptions(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(0),
       decoration: BoxDecoration(
-        color: Color.fromRGBO(15, 22, 32, 1),
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        color: Colors.transparent,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Align(
-            alignment: Alignment.topRight,
-            child: TextButton(
-              onPressed: _handleGuestLogin,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "Continue as Guest",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w200,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Icon(
-                    Icons.arrow_forward,
-                    size: 20,
-                    color: Colors.white,
-                  ),
-                ],
-              ),
+          Text(
+            "InstiApp",
+            style: TextStyle(
+              fontSize: 54,
+              color: Color.fromRGBO(27, 50, 82, 1),
+              fontWeight: FontWeight.bold,
+              fontFamily: 'DM Sans',
             ),
           ),
-          const SizedBox(height: 32),
+          Text(
+            "Your Campus Companion",
+            style: TextStyle(
+              fontSize: 24,
+              color: Color.fromRGBO(27, 50, 82, 1),
+              fontWeight: FontWeight.w700,
+              fontFamily: 'DM Sans',
+            ),
+          ),
+          SizedBox(height: 48),
           SizedBox(
-            width: double.infinity,
+            width: 260,
+            height: 53,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color.fromRGBO(48, 111, 220, 1),
-                padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
               onPressed: _handleSSOLogin,
               child: Text(
                 _isSSOLoading ? "Redirecting to SSO..." : "Log in via SSO",
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'DM Sans',
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 8),
+          Text(
+            "or",
+            style: TextStyle(
+              fontSize: 16,
+              color: Color.fromRGBO(33, 45, 60, 1),
+              fontWeight: FontWeight.w400,
+              fontFamily: 'DM Sans',
+            ),
+          ),
+          const SizedBox(height: 8),
           SizedBox(
-            width: double.infinity,
+            width: 260,
+            height: 53,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color.fromRGBO(48, 111, 220, 1),
-                padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
               onPressed: _handleAlumniLogin,
               child: const Text(
                 "Log in as an Alumnus",
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'DM Sans',
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
+          Text(
+            "or",
+            style: TextStyle(
+              fontSize: 16,
+              color: Color.fromRGBO(33, 45, 60, 1),
+              fontWeight: FontWeight.w400,
+              fontFamily: 'DM Sans',
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: _handleGuestLogin,
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: Size(0, 0),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Continue as Guest",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: Color.fromRGBO(48, 111, 220, 1),
+                    fontFamily: 'DM Sans',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 64),
         ],
       ),
     );
