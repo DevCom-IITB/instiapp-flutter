@@ -20,6 +20,7 @@ import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:intl/intl.dart';
 
 class Responsive {
   final BuildContext context;
