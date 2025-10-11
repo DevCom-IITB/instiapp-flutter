@@ -5,7 +5,6 @@ import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/response/image_upload_response.dart';
-import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/services.dart';
@@ -213,6 +212,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                 SnackBar(
                                                   content: Text(
                                                       'Please provide at least 2 non-empty poll options'),
+                                                  backgroundColor: Colors.red,
                                                 ),
                                               );
                                               return;
@@ -224,25 +224,12 @@ class _CreatePostPage extends State<CreatePostPage> {
                                           for (int i = 0;
                                               i < imageFiles.length;
                                               i++) {
-                                            try {
-                                              ImageUploadResponse resp =
-                                                  await bloc.client.uploadImage(
-                                                      bloc.getSessionIdHeader(),
-                                                      imageFiles[i]);
-                                              currRequest1.imageUrl!
-                                                  .add(resp.pictureURL!);
-                                            } catch (e) {
-                                              // Find the ScaffoldMessenger and show a SnackBar.
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: const Text(
-                                                      'Error Posting, Try Again Later'),
-                                                  backgroundColor: Colors.red,
-                                                ),
-                                              );
-                                              return null;
-                                            }
+                                            ImageUploadResponse resp =
+                                                await bloc.client.uploadImage(
+                                                    bloc.getSessionIdHeader(),
+                                                    imageFiles[i]);
+                                            currRequest1.imageUrl!
+                                                .add(resp.pictureURL!);
                                           }
                                           // for (int i = 0;
                                           //     i < documentFiles.length;
@@ -277,7 +264,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                             );
                                             currRequest1.poll = pollForApi;
                                           }
-
+                                          
                                           if (isEditing) {
                                             bloc.communityPostBloc
                                                 .updateCommunityPost(
@@ -288,17 +275,6 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                 .createCommunityPost(
                                                     currRequest1);
                                           }
-                                          ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                     'Posted Successfully',
-                                                     style: TextStyle(color: Colors.white,
-                                                     fontSize: Responsive.text(18,context))
-                                                     ),
-                                                  backgroundColor: Colors.green,
-                                                ),
-                                              );
                                           Navigator.of(context)
                                               .pop(currRequest1);
                                         }
@@ -338,139 +314,6 @@ class _CreatePostPage extends State<CreatePostPage> {
                                     )
                                   ],
                                 )),
-                            if (click)
-                              Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  highlightColor: Colors.transparent,
-                                  splashFactory: NoSplash.splashFactory,
-                                  splashColor: Colors.transparent,
-                                  onTap: () {
-                                    setState(() {
-                                      click = !click;
-                                      currRequest1.anonymous = !click;
-                                    });
-                                  },
-                                  child: Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color:
-                                              Color.fromRGBO(48, 111, 220, 1),
-                                          width: 2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(32),
-                                      ),
-                                      padding: EdgeInsets.only(
-                                          left: Responsive.width(12, context),
-                                          right: Responsive.width(16, context),
-                                          top: Responsive.height(6, context),
-                                          bottom:
-                                              Responsive.height(6, context)),
-                                      margin: EdgeInsets.only(
-                                          top: Responsive.height(7, context),
-                                          left: Responsive.width(24, context),
-                                          right: Responsive.width(16, context),
-                                          bottom:
-                                              Responsive.height(8, context)),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          SvgPicture.asset(
-                                            'assets/communities/globe.svg',
-                                            height:
-                                                Responsive.height(20, context),
-                                            width:
-                                                Responsive.width(20, context),
-                                            fit: BoxFit.none,
-                                            color:
-                                                Color.fromRGBO(48, 111, 220, 1),
-                                          ),
-                                          SizedBox(
-                                              width:
-                                                  Responsive.width(4, context)),
-                                          Text(
-                                            'Public',
-                                            style: TextStyle(
-                                              color: Color.fromRGBO(
-                                                  48, 111, 220, 1),
-                                              fontSize:
-                                                  Responsive.text(18, context),
-                                              fontFamily: 'DM Sans',
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          )
-                                        ],
-                                      )),
-                                ),
-                              ),
-                            if (!click)
-                              Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  splashColor: null,
-                                  highlightColor: Colors.transparent,
-                                  splashFactory: NoSplash.splashFactory,
-                                  onTap: () {
-                                    setState(() {
-                                      click = !click;
-                                      currRequest1.anonymous = !click;
-                                    });
-                                  },
-                                  child: Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color:
-                                              Color.fromRGBO(48, 111, 220, 1),
-                                          width: 2,
-                                        ),
-                                        color: Color.fromRGBO(48, 111, 220, 1),
-                                        borderRadius: BorderRadius.circular(32),
-                                      ),
-                                      padding: EdgeInsets.only(
-                                          left: Responsive.width(12, context),
-                                          right: Responsive.width(16, context),
-                                          top: Responsive.height(6, context),
-                                          bottom:
-                                              Responsive.height(6, context)),
-                                      margin: EdgeInsets.only(
-                                          top: Responsive.height(7, context),
-                                          left: Responsive.width(24, context),
-                                          right: Responsive.width(16, context),
-                                          bottom:
-                                              Responsive.height(8, context)),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          SvgPicture.asset(
-                                            'assets/communities/mdi_anonymous.svg',
-                                            height:
-                                                Responsive.height(20, context),
-                                            width:
-                                                Responsive.width(20, context),
-                                            fit: BoxFit.none,
-                                          ),
-                                          SizedBox(
-                                              width:
-                                                  Responsive.width(4, context)),
-                                          Text(
-                                            'Anonymous',
-                                            style: TextStyle(
-                                              color: Color.fromRGBO(
-                                                  255, 255, 255, 1),
-                                              fontSize:
-                                                  Responsive.text(18, context),
-                                              fontFamily: 'DM Sans',
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          )
-                                        ],
-                                      )),
-                                ),
-                              ),
                             Expanded(
                               child: Container(
                                 padding: EdgeInsets.only(
@@ -484,30 +327,19 @@ class _CreatePostPage extends State<CreatePostPage> {
                                         padding: EdgeInsets.only(
                                             top:
                                                 Responsive.height(13, context)),
-                                        child: Container(
-                                          clipBehavior: Clip.antiAlias,
-                                          height: 36,
+                                        child: Image.network(
+                                          currRequest1.postedBy?.userProfilePictureUrl ?? '',
                                           width: 36,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                Responsive.width(100, context)),
-                                          ),
-                                          child: Image.network(
-                                            currRequest1.postedBy
-                                                    ?.userProfilePictureUrl ??
-                                                '',
-                                            width: 36,
-                                            height: 36,
-                                            fit: BoxFit.cover,
-                                            errorBuilder:
-                                                (context, error, stackTrace) =>
-                                                    Image.asset(
-                                              "assets/communities/image 214.png",
-                                              height:
-                                                  Responsive.height(36, context),
-                                              width:
-                                                  Responsive.width(36, context),
-                                            ),
+                                          height: 36,
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  Image.asset(
+                                            "assets/communities/image 214.png",
+                                            height:
+                                                Responsive.height(36, context),
+                                            width:
+                                                Responsive.width(36, context),
                                           ),
                                         ),
                                       ),
@@ -721,11 +553,11 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                   source: ImageSource.gallery);
 
                                           if (pi != null) {
-                                            // ImageUploadResponse resp =
-                                            //     await bloc.client.uploadImage(
-                                            //         bloc.getSessionIdHeader(),
-                                            //         File(pi.path));
-                                            // print(resp.pictureURL);
+                                            ImageUploadResponse resp =
+                                                await bloc.client.uploadImage(
+                                                    bloc.getSessionIdHeader(),
+                                                    File(pi.path));
+                                            print(resp.pictureURL);
                                             if (await pi.length() / 1000000 <=
                                                 10) {
                                               setState(() {

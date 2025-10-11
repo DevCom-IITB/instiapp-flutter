@@ -6,6 +6,7 @@ import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
+import 'package:InstiApp/src/routes/exploreimagepreview.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/responsivenew.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
@@ -423,7 +424,20 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(top: 12, bottom: 0),
-      child: _buildImageGrid(images, imageCount),
+      child: GestureDetector(
+        onTap: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ExploreImagePreview(
+        imageUrls: images,
+        initialIndex: 0,
+      ),
+    ),
+  );
+},
+        child: _buildImageGrid(images, imageCount)
+        ),
     );
   }
 
