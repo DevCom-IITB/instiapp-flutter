@@ -19,6 +19,8 @@ import 'feedpage.dart';
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/intl.dart';
 
 class Responsive {
   final BuildContext context;
@@ -61,7 +63,14 @@ class _HomepageState extends State<Homepage> {
   List<String> days = ['Mon', 'Tue'];
   List<String> hostel = ['H-1', 'H-2'];
   List<String> meals = ['Breakfast', 'Lunch', 'Snacks', 'Dinner'];
-  List<String> mealTime = ['7:30 AM -10:00 AM','12:30 PM - 2:00 PM','4:30 PM - 6:00 PM','7:30 PM - 10:00 PM'];
+  List<String> mealTime = ['7:30 AM - 10:00 AM','12:30 PM - 2:00 PM','4:30 PM - 6:00 PM','7:30 PM - 10:00 PM'];
+  List<TimeOfDay> mealEndTimes = [
+    TimeOfDay(hour: 10, minute: 0),  // Breakfast ends at 10:00 AM
+    TimeOfDay(hour: 14, minute: 0),  // Lunch ends at 2:00 PM (14:00)
+    TimeOfDay(hour: 18, minute: 0),  // Snacks ends at 6:00 PM (18:00)
+    TimeOfDay(hour: 22, minute: 0),  // Dinner ends at 10:00 PM (22:00)
+  ];
+
   List<String> navLabels = ["Home","Feed","Explore","Communities"];
   // String _dropdownHostel='1';
   String _selectedHostel='1';
@@ -76,68 +85,142 @@ class _HomepageState extends State<Homepage> {
   bool error=false;
   bool loading=true;
   String qrString="";
+
   String _formatMeal(String? meal) {
-  return (meal ?? '')
-      .split(RegExp(r'[\n,]'))
-      .map((item) => item.trim())
-      .where((item) => item.isNotEmpty)
-      .join(' • ');
-}
+    return (meal ?? '')
+        .split(RegExp(r'[\n,]'))
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .join(' • ');
+  }
+
   String _mealString(List<Hostel> hostels) {
-      if (_selectedHostel.isEmpty) return 'No menu';
+    if (_selectedHostel.isEmpty) return 'No menu';
+    
+    try {
       // 1. pick hostel
-      final hostel = hostels
-          .firstWhere((h) => h.shortName == _selectedHostel, orElse: () => Hostel());
+      final hostel = hostels.firstWhere(
+        (h) => h.shortName == _selectedHostel, 
+        orElse: () => Hostel()
+      );
+      
       // 2. pick day (Mon=1 … Sun=7)
-      final dayIndex = HostelMess.dayToName.entries
-          .firstWhere((e) => e.value.startsWith(_selectedDay), orElse: () => const MapEntry(1,'Monday'))
-          .key;
-      final mess = hostel.mess?.firstWhere((m) => m.day == dayIndex, orElse: () => HostelMess());
+      final dayEntry = HostelMess.dayToName.entries.firstWhere(
+        (e) => e.value.startsWith(_selectedDay), 
+        orElse: () => const MapEntry(1,'Monday')
+      );
+      final dayIndex = dayEntry.key;
+      
+      final mess = hostel.mess?.firstWhere(
+        (m) => m.day == dayIndex, 
+        orElse: () => HostelMess()
+      );
+      
       // 3. pick meal
+      String? meal;
       switch (selectedMeal) {
-        case 0: 
-          print("Breakfast is: ${mess?.breakfast}");
-          return _formatMeal(mess?.breakfast);
-        case 1: return _formatMeal(mess?.lunch);
-        case 2: return _formatMeal(mess?.snacks);
-        case 3: return _formatMeal(mess?.dinner);
-        default: return '—';
+        case 0: meal = mess?.breakfast; break;
+        case 1: meal = mess?.lunch; break;
+        case 2: meal = mess?.snacks; break;
+        case 3: meal = mess?.dinner; break;
+        default: meal = null;
+      }
+      
+      return _formatMeal(meal);
+    } catch (e) {
+      return 'Menu not available';
+    }
+  }
+
+  void generateQR() {
+    setState(() {
+      loading = true;
+      error = false;
+    });
+
+    final profile = BlocProvider.of(context)!.bloc.currSession?.profile;
+
+    if (profile != null) {
+      final qr_encryption = QREncryption(profile);
+      final qr = qr_encryption.Encrypt();
+
+      setState(() {
+        qrString = qr;
+        loading = false;
+      });
+    } else {
+      setState(() {
+        error = true;
+        loading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Set initial values based on current datetime
+    _selectedDay = getCurrentDay();
+    selectedMeal = getCurrentMealSlot();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
+    if (firstBuild) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final bloc = BlocProvider.of(context)!.bloc;
+        
+        // Get user's hostel from profile if available
+        final userHostel = bloc.currSession?.profile?.hostel;
+        if (userHostel != null && userHostel.isNotEmpty) {
+          setState(() {
+            _selectedHostel = userHostel.replaceAll('H-', '');
+          });
+        }
+        
+        // Update hostels and generate QR
+        bloc.updateHostels();
+        generateQR();
+        
+        setState(() {
+          firstBuild = false;
+        });
+      });
+    }
+  }
+
+  int getCurrentMealSlot() {
+    final now = TimeOfDay.fromDateTime(DateTime.now());
+    
+    // Find the current or next meal
+    for (int i = 0; i < mealEndTimes.length; i++) {
+      final end = mealEndTimes[i];
+      
+      if (_isBeforeOrEqual(now, end)) {
+        return i;
       }
     }
-    void generateQR() {
-  setState(() {
-    loading = true;
-    error = false;
-  });
-
-  final profile = BlocProvider.of(context)!.bloc.currSession?.profile;
-
-  if (profile != null) {
-    final qr_encryption = QREncryption(profile);
-    final qr = qr_encryption.Encrypt();
-
-    setState(() {
-      qrString = qr;
-      loading = false;
-    });
-  } else {
-    setState(() {
-      error = true;
-      loading = false;
-    });
+    
+    // If all meals finished for today, return first meal of next day
+    print('All meals finished, defaulting to breakfast');
+    return 0;
   }
-}
 
+  bool _isBeforeOrEqual(TimeOfDay a, TimeOfDay b) {
+    return a.hour < b.hour || (a.hour == b.hour && a.minute <= b.minute);
+  }
+
+  String getCurrentDay() {
+    final weekdayIndex = DateTime.now().weekday; // 1=Mon ... 7=Sun
+    return ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][weekdayIndex-1];
+  }
 
   @override
   Widget build(BuildContext context) {
     final responsive = Responsive(context);
-    var bloc = BlocProvider.of(context)!.bloc;
-    if (firstBuild) {
-      bloc.updateHostels();
-      generateQR();
-      firstBuild = false;
-    }
 
     return Scaffold(
       body: Stack(
@@ -148,9 +231,11 @@ class _HomepageState extends State<Homepage> {
           ExplorePage(),
           if (currentpage == 'Feed')
             FeedPage(),
-          if(currentpage=='CommunityPage')
-            // Communities(),
+          if(currentpage=='Communities')
             CommunityPage(),
+          // if(currentpage=='CommunityPage')
+          //   // Communities(),
+          //   CommunityPage(),
             //CommunityPostPage(communityPostFuture: communityPostFuture),
           Align(
             alignment: Alignment.bottomCenter,
@@ -502,8 +587,8 @@ class _HomepageState extends State<Homepage> {
       onTap: () {
         if (name == "Buy & Sell") {
           Navigator.of(context).pushNamed('/buynsell');
-        } else if (name == "Lost & Found") {
-          Navigator.of(context).pushNamed('/settings');
+        } else if (name == "Maps") {
+          Navigator.of(context).pushNamed('/map');
         } else if (name == "Blogs") {
           Navigator.of(context).pushNamed('/placeblog');
         } else if (name == "Quick Links") {
@@ -934,7 +1019,7 @@ class _HomepageState extends State<Homepage> {
                         
                     } else if (path ==
                         'assets/homepage/icons/message-square.svg') {
-                        currentpage = 'CommunityPage';
+                        currentpage = 'Communities';
                         
                     // } else if (path == 'assets/homepage/icons/map.svg') {
                     //     currentpage = 'Map';  

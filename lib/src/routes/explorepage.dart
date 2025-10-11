@@ -258,6 +258,7 @@ class _ExplorePageState extends State<ExplorePage> {
                   ),
                 ),
               ),
+              SizedBox(height: Responsive.height(16, context)),
             ],
           )),
           // if (searchMode)
@@ -805,7 +806,6 @@ List<Widget> _buildContent(
         )
       ];
     }
-    //move to next page
     return (bodies
                 ?.map((b) => _buildListTile(
                     b.bodyID ?? "",

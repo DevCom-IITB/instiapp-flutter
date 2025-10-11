@@ -5,6 +5,7 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:InstiApp/src/api/model/buynsellPost.dart';
+import 'package:InstiApp/src/utils/responsive.dart';
 
 class ImagePreviewPage extends StatefulWidget {
   final List<String> imageUrls;
@@ -98,7 +99,7 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
     String phoneNumber = post.contactDetails ?? '';
     return Container(
       alignment: Alignment.topCenter,
-      height: 88,
+      height: RS.sh(context, 88),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: const BoxDecoration(
         color: Colors.transparent,
@@ -110,7 +111,7 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
       child: Container(
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(50),
+          borderRadius: BorderRadius.circular(RS.s(context, 50)),
         ),
         child: IntrinsicHeight(
           child: Row(
@@ -129,8 +130,8 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
 
   Widget _buildShareButton(BuynSellPost post) {
     return Container(
-      width: 48,
-      height: 48,
+      width: RS.sw(context, 48),
+      height: RS.sh(context, 48),
       margin: const EdgeInsets.only(right: 12, top: 4, bottom: 4, left: 4),
       decoration: BoxDecoration(
         color: Color.fromRGBO(45, 70, 108, 1),
@@ -157,13 +158,13 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
   Widget _buildCopyNumberButton(String phoneNumber) {
     return Expanded(
       child: Container(
-        height: 52,
+        height: RS.sh(context, 52),
         child: TextButton.icon(
           style: TextButton.styleFrom(
             foregroundColor: Colors.white,
             backgroundColor: Color.fromRGBO(48, 111, 220, 1),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(48),
+              borderRadius: BorderRadius.circular(RS.s(context, 48)),
             ),
           ),
           icon: Icon(Icons.copy_outlined, size: 28, color: Colors.white),
@@ -196,8 +197,8 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
 
   Widget _buildWhatsAppButton(String phoneNumber) {
     return Container(
-      width: 48,
-      height: 48,
+      width: RS.sw(context, 48),
+      height: RS.sh(context, 48),
       margin: const EdgeInsets.only(left: 12, top: 4, bottom: 4, right: 4),
       decoration: BoxDecoration(
         color: Color.fromRGBO(37, 211, 102, 1),

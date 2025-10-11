@@ -35,6 +35,7 @@ Body _$BodyFromJson(Map<String, dynamic> json) => Body(
           ?.map((e) => e as String)
           .toList(),
     );
+
 Map<String, dynamic> _$BodyToJson(Body instance) => <String, dynamic>{
       'id': instance.bodyID,
       'str_id': instance.bodyStrID,
@@ -50,8 +51,6 @@ Map<String, dynamic> _$BodyToJson(Body instance) => <String, dynamic>{
       'blog_url': instance.bodyBlogURL,
       'whatsapp_group_url': instance.bodyWhatsappGroupURL,
       'instagram_url': instance.bodyInstagramURL,
-      'user_follows': instance.bodyUserFollows,
-      'roles': instance.bodyRoles,
       'user_follows': instance.bodyUserFollows,
       'roles': instance.bodyRoles,
       'photoalbum_urls': instance.bodyPhotoalbumURLs,

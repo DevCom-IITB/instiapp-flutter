@@ -50,6 +50,10 @@ CommunityPost _$CommunityPostFromJson(Map<String, dynamic> json) =>
       deleted: json['deleted'] as bool?,
       anonymous: json['anonymous'] as bool?,
       hasUserReported: json['has_user_reported'] as bool?,
+      poll: json['poll'] == null
+          ? null
+          : Poll.fromJson(json['poll'] as Map<String, dynamic>),
+      isPoll: json['ispoll'] as bool?,
     );
 
 Map<String, dynamic> _$CommunityPostToJson(CommunityPost instance) =>
@@ -76,5 +80,60 @@ Map<String, dynamic> _$CommunityPostToJson(CommunityPost instance) =>
       'featured': instance.featured,
       'deleted': instance.deleted,
       'anonymous': instance.anonymous,
+      'poll': instance.poll,
+      'ispoll': instance.isPoll,
       'has_user_reported': instance.hasUserReported,
+    };
+
+Poll _$PollFromJson(Map<String, dynamic> json) => Poll(
+      id: json['id'] as String?,
+      question: json['question'] as String?,
+      allowMultipleAnswers: json['allow_multiple_answers'] as bool?,
+      createdAt: json['created_at'] as String?,
+      options: (json['options'] as List<dynamic>?)
+          ?.map((e) => PollOption.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      totalVotes: (json['total_votes'] as num?)?.toInt(),
+      userVoted: json['user_voted'] as bool?,
+    );
+
+Map<String, dynamic> _$PollToJson(Poll instance) => <String, dynamic>{
+      'id': instance.id,
+      'question': instance.question,
+      'allow_multiple_answers': instance.allowMultipleAnswers,
+      'created_at': instance.createdAt,
+      'options': instance.options,
+      'total_votes': instance.totalVotes,
+      'user_voted': instance.userVoted,
+    };
+
+PollOption _$PollOptionFromJson(Map<String, dynamic> json) => PollOption(
+      id: json['id'] as String?,
+      text: json['text'] as String?,
+      order: (json['order'] as num?)?.toInt(),
+      voteCount: (json['vote_count'] as num?)?.toInt(),
+      percentage: (json['percentage'] as num?)?.toDouble(),
+      userVoted: json['user_voted'] as bool?,
+    );
+
+Map<String, dynamic> _$PollOptionToJson(PollOption instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'text': instance.text,
+      'order': instance.order,
+      'vote_count': instance.voteCount,
+      'percentage': instance.percentage,
+      'user_voted': instance.userVoted,
+    };
+
+PollVoteResponse _$PollVoteResponseFromJson(Map<String, dynamic> json) =>
+    PollVoteResponse(
+      message: json['message'] as String,
+      poll: Poll.fromJson(json['poll'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$PollVoteResponseToJson(PollVoteResponse instance) =>
+    <String, dynamic>{
+      'message': instance.message,
+      'poll': instance.poll,
     };

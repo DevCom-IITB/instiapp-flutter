@@ -5,6 +5,7 @@ import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +63,8 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
     return total;
   }
   void Function()? _getContentTapHandler(){}
-  void Function()? _getCommentHandler(){}
+  void Function()? _getCommentHandler(){ return () => CommunityPostPage.navigateWith(context,
+              BlocProvider.of(context)!.bloc.communityPostBloc, communityPost); }
   Constants myConstants = Constants();
   Widget footer(String reactionCount, String commentCount){
     return Row(
@@ -134,44 +136,65 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
     final numReactions = _calculateTotalReactions();
     return Column(
       children: [
-        SizedBox(height: 16),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.grey
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.grey
+                ),
+                
               ),
-            ),
-            SizedBox(width: 12),
-            Expanded(
-              //width: 327,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeader(),
-                  SizedBox(height: 4),
-                  _buildContent(content, contentChars),
-                  if (communityPost.imageUrl != null &&
-                    communityPost.imageUrl!.isNotEmpty)
-                      _buildImages(),
-                ],
-              ),
-            )
-          ],
+              SizedBox(width: 12),
+              Expanded(
+                //width: 327,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildHeader(),
+                    SizedBox(height: 4),
+                    _buildContent(content, contentChars),
+                    if (communityPost.imageUrl != null &&
+                      communityPost.imageUrl!.isNotEmpty)
+                        _buildImages(),                  
+                    if (communityPost.isPoll == true && communityPost.poll != null)
+                    SizedBox(height: 16),
+                    if (communityPost.isPoll == true && communityPost.poll != null)
+                    PollViewer(
+                      poll: communityPost.poll!,
+                      onVoted: (List<String> selectedOptionIds) {
+                        // print("User voted for options: $selectedOptionIds");
+                        BlocProvider.of(context)!
+                            .bloc
+                            .communityPostBloc
+                            .voteOnPoll(communityPost.id!, selectedOptionIds);
+                      },
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
         SizedBox(height: 16),
         _buildFooter(numReactions),
         SizedBox(height: 16),
-        Dash(
-          direction: Axis.horizontal,
-          dashLength: 379,
-          length: 379,
-          dashGap: 0,
-          dashColor: Color(0xFFDADADA),
+        // Dash(
+        //   direction: Axis.horizontal,
+        //   dashLength:MediaQuery.of(context).size.width- 32,
+        //   length: MediaQuery.of(context).size.width- 32,
+        //   dashGap: 0,
+        //   dashColor: Color(0xFFDADADA),
+        // ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: 1,
+          color: Color(0xFFDADADA),
         )
       ],
     );
@@ -313,7 +336,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
   }
   Widget _buildContent(String content, int contentChars) {
     return GestureDetector(
-      onTap: _getContentTapHandler(),
+      onTap: _getContentTapHandler,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -357,12 +380,16 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
   Widget _buildImages() {
     final images = communityPost.imageUrl!;
     final imageCount = images.length;
+    for(int i =0 ; i<imageCount; i++){
+      images[i]=fixImageUrl(images[i]);
+    }
+
 
     if (imageCount == 0) return Container();
 
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(top: 12, bottom: 8),
+      margin: EdgeInsets.only(top: 12, bottom: 0),
       child: _buildImageGrid(images, imageCount),
     );
   }
@@ -775,6 +802,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
     final completer = Completer<ImageInfo>();
     final imageStream =
         NetworkImage(imageUrl).resolve(ImageConfiguration.empty);
+    print(imageStream);
 
     final listener =
         ImageStreamListener((ImageInfo info, bool synchronousCall) {
@@ -1102,4 +1130,344 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
       ),
     );
   }
+}
+
+
+class PollOption extends StatefulWidget {
+  final String title;
+  final String voteCount;
+  final double votePercentage; // A value between 0.0 and 1.0
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const PollOption({
+    super.key,
+    required this.title,
+    required this.voteCount,
+    required this.votePercentage,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  State<PollOption> createState() => _PollOptionState();
+}
+
+class _PollOptionState extends State<PollOption> {
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: widget.onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // --- Row for radio button, title, and vote count ---
+          Row(
+            children: [
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: widget.isSelected ? const Color(0xFF306FDC) : Colors.transparent,
+                  border: Border.all(
+                    color: widget.isSelected ? const Color(0xFF306FDC) : const Color(0xFF7E8287),
+                  ),
+                ),
+                child: widget.isSelected
+                    ? const Icon(Icons.check, color: Colors.white, size: 14)
+                    : null,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  widget.title,
+                  style: const TextStyle(
+                    color: Color(0xCC0F1620),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                widget.voteCount,
+                style: const TextStyle(
+                  color: Color(0xCC0F1620),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 5),
+      
+          // --- Progress Bar ---
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return Stack(
+                children: [
+                  Container(
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD2D5DA),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  Container(
+                    width: constraints.maxWidth * widget.votePercentage,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF306FDC),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+}
+
+
+// 2. The Main Widget Using the Reusable PollOption
+class PollViewer extends StatefulWidget {
+  final Poll poll;
+  final Function(List<String> selectedOptionIds) onVoted;
+
+  const PollViewer({
+    Key? key,
+    required this.poll,
+    required this.onVoted,
+  }) : super(key: key);
+
+  @override
+  State<PollViewer> createState() => _PollViewerState();
+}
+
+class _PollViewerState extends State<PollViewer> {
+  late Set<String> _selectedOptionIds;
+  late bool _hasAlreadyVoted;
+
+    @override
+  void initState() {
+    super.initState();
+    _selectedOptionIds = widget.poll.options
+            ?.where((opt) => opt.userVoted == true)
+            .map((opt) => opt.id!)
+            .toSet() ??
+        {};
+    // print("Initial selected options: $_selectedOptionIds");
+    _hasAlreadyVoted = widget.poll.userVoted ?? _selectedOptionIds.isNotEmpty;
+  }
+
+  void _handleVote(String tappedOptionId) async {
+    final prevSelected = Set<String>.from(_selectedOptionIds);
+    final prevOptionVotes = widget.poll.options
+            ?.map((o) => o.voteCount ?? 0)
+            .toList(growable: false) ??
+        [];
+    final prevUserVotedFlags =
+        widget.poll.options?.map((o) => o.userVoted ?? false).toList() ?? [];
+    final prevTotalVotes = widget.poll.totalVotes ?? 0;
+
+    setState(() {
+      if (widget.poll.allowMultipleAnswers == true) {
+        if (_selectedOptionIds.contains(tappedOptionId)) {
+          _selectedOptionIds.remove(tappedOptionId);
+          final idx = widget.poll.options!
+              .indexWhere((opt) => opt.id == tappedOptionId);
+          if (idx != -1) {
+            widget.poll.options![idx].voteCount =
+                (widget.poll.options![idx].voteCount ?? 1) - 1;
+            if ((widget.poll.options![idx].voteCount ?? 0) < 0) {
+              widget.poll.options![idx].voteCount = 0;
+            }
+            widget.poll.options![idx].userVoted = false;
+            widget.poll.totalVotes = (widget.poll.totalVotes ?? 0) - 1;
+            if ((widget.poll.totalVotes ?? 0) < 0) widget.poll.totalVotes = 0;
+          }
+        } else {
+          // select -> increment
+          _selectedOptionIds.add(tappedOptionId);
+          final idx = widget.poll.options!
+              .indexWhere((opt) => opt.id == tappedOptionId);
+          if (idx != -1) {
+            widget.poll.options![idx].voteCount =
+                (widget.poll.options![idx].voteCount ?? 0) + 1;
+            widget.poll.options![idx].userVoted = true;
+            widget.poll.totalVotes = (widget.poll.totalVotes ?? 0) + 1;
+          }
+        }
+      } else {
+        // single-select behavior
+        final previouslySelected =
+            _selectedOptionIds.isNotEmpty ? _selectedOptionIds.first : null;
+        if (previouslySelected == tappedOptionId) {
+          // unselect the only selection
+          _selectedOptionIds.clear();
+          final idx = widget.poll.options!
+              .indexWhere((opt) => opt.id == tappedOptionId);
+          if (idx != -1) {
+            widget.poll.options![idx].voteCount =
+                (widget.poll.options![idx].voteCount ?? 1) - 1;
+            widget.poll.options![idx].userVoted = false;
+            widget.poll.totalVotes = (widget.poll.totalVotes ?? 0) - 1;
+            if ((widget.poll.totalVotes ?? 0) < 0) widget.poll.totalVotes = 0;
+          }
+        } else {
+          // switch selection
+          _selectedOptionIds = {tappedOptionId};
+          // decrement old
+          if (previouslySelected != null) {
+            final oldIdx = widget.poll.options!
+                .indexWhere((opt) => opt.id == previouslySelected);
+            if (oldIdx != -1) {
+              widget.poll.options![oldIdx].voteCount =
+                  (widget.poll.options![oldIdx].voteCount ?? 1) - 1;
+              widget.poll.options![oldIdx].userVoted = false;
+              if ((widget.poll.options![oldIdx].voteCount ?? 0) < 0)
+                widget.poll.options![oldIdx].voteCount = 0;
+            }
+          }
+          // increment new
+          final newIdx =
+              widget.poll.options!.indexWhere((opt) => opt.id == tappedOptionId);
+          if (newIdx != -1) {
+            widget.poll.options![newIdx].voteCount =
+                (widget.poll.options![newIdx].voteCount ?? 0) + 1;
+            widget.poll.options![newIdx].userVoted = true;
+          }
+          // adjust total (if switching, total stays same; if new selection from none, increment)
+          if (previouslySelected == null) {
+            widget.poll.totalVotes = (widget.poll.totalVotes ?? 0) + 1;
+          }
+        }
+      }
+    });
+
+    // Call the provided callback and await if it returns a Future.
+    try {
+      final result = widget.onVoted(_selectedOptionIds.toList());
+      if (result is Future) await result;
+      // success -> keep optimistic UI
+    } catch (e) {
+      // revert to previous state on failure
+      setState(() {
+        _selectedOptionIds = prevSelected;
+        widget.poll.totalVotes = prevTotalVotes;
+        for (int i = 0;
+            i < (widget.poll.options?.length ?? 0) &&
+                i < prevOptionVotes.length;
+            i++) {
+          widget.poll.options![i].voteCount = prevOptionVotes[i];
+          widget.poll.options![i].userVoted = prevUserVotedFlags[i];
+        }
+      });
+      // optionally show error feedback:
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to register vote. Please try again.')),
+      );
+    }
+  }
+// ...existing code...
+
+  @override
+  Widget build(BuildContext context) {
+    print("Building PollViewer with selected options:" + widget.poll.options![0].userVoted.toString());
+    final totalVotes = widget.poll.totalVotes ?? 0;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF6F6F6),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          width: 1,
+          color: const Color(0xFFD2D5DA),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // --- Header Text ---
+          Text(
+            widget.poll.question ?? "Poll Question",
+            style: TextStyle(
+              color: Color(0xFF0F1620),
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            widget.poll.allowMultipleAnswers == true
+                ? 'Select one or more'
+                : 'Select one',
+            style: TextStyle(
+              color: Color(0xFF7E8287),
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // --- Poll Options ---
+          // PollOption(
+          //   title: '9:30 - 10:30 PM',
+          //   voteCount: '0',
+          //   votePercentage: 0.0,
+          //   isSelected: false,
+          //   onTap: () => _handleVote('option1'),
+          // ),
+          // const SizedBox(height: 16),
+          // PollOption(
+          //   title: 'After 9 PM',
+          //   voteCount: '22',
+          //   votePercentage: 0.65, // Example percentage
+          //   isSelected: true,
+          // ),
+          // const SizedBox(height: 16),
+          // const PollOption(
+          //   title: 'Tomorrow | suggest timings etc etc abcde',
+          //   voteCount: '152',
+          //   votePercentage: 0.9, // Example percentage
+          //   isSelected: false,
+          // ),
+          ...?widget.poll.options?.map((option) {
+            final isSelected = _selectedOptionIds.contains(option.id);
+            final double percentage = totalVotes > 0 ? (option.voteCount ?? 0) / totalVotes : 0.0;
+            return PollOption(
+              title: option.text ?? 'Option',
+              voteCount: (option.voteCount ?? 0).toString(),
+              votePercentage: percentage,
+              isSelected: isSelected,
+              onTap: () => {_handleVote(option.id!),},
+            );
+          })
+        ],
+      ),
+    );
+  }}
+
+//remove this when on prod
+  String fixImageUrl(String? url) {
+  if (url == null || url.isEmpty) return "";
+  
+  // Replace localhost with your ngrok URL
+  if (url.startsWith("http://localhost:8000")) {
+    return url.replaceFirst(
+      "http://localhost:8000", 
+      "https://fc37c3e64571.ngrok-free.app"  // Your actual server URL
+    );
+  }
+  
+  return url;
 }

@@ -8,6 +8,8 @@ import 'package:barcode_widget/barcode_widget.dart';
 import 'package:InstiApp/src/widgets/appbar.dart';
 import 'package:InstiApp/src/widgets/buttons.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:InstiApp/src/utils/responsive.dart';
+import 'package:InstiApp/src/routes/aboutpage.dart';
 
 class UserPage extends StatefulWidget {
   final User? initialUser;
@@ -95,14 +97,14 @@ class _UserPageState extends State<UserPage>
   List<Widget> _buildTabs(int tabCount) {
     if (tabCount == 3) {
       return [
-        Tab(text: 'General', height: 64),
-        Tab(text: 'Associations', height: 64),
-        Tab(text: 'Following', height: 64),
+        Tab(text: 'General', height: RS.sh(context, 64)),
+        Tab(text: 'Associations', height: RS.sh(context, 64)),
+        Tab(text: 'Following', height: RS.sh(context, 64)),
       ];
     } else {
       return [
-        Tab(text: 'Associations', height: 64),
-        Tab(text: 'Following', height: 64),
+        Tab(text: 'Associations', height: RS.sh(context, 64)),
+        Tab(text: 'Following', height: RS.sh(context, 64)),
       ];
     }
   }
@@ -129,6 +131,149 @@ class _UserPageState extends State<UserPage>
     super.dispose();
   }
 
+  Widget _buildPortraitLayout() {
+    final isGeneralTab = _tabController!.length == 3 && _tabController!.index == 0;
+    final tabCount = _tabController!.length;
+
+    return Column(
+      children: [
+        SizedBox(height: RS.sh(context, 4)),
+        CustomAppBar(
+          title: 'Profile',
+          onOther: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AboutPage()),
+            );
+          },
+        ),
+        SizedBox(height: RS.sh(context, 24)),
+        cansee
+            ? AnimatedCrossFade(
+                duration: const Duration(milliseconds: 300),
+                crossFadeState: isGeneralTab
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
+                firstChild: _buildProfileCard(),
+                secondChild: _buildCompactProfileCard(),
+              )
+            : _spectatingProfileCard(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              TabBar(
+                controller: _tabController,
+                labelColor: Color.fromRGBO(15, 22, 32, 0.8),
+                labelStyle: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: 'DM Sans'),
+                labelPadding: EdgeInsets.all(0),
+                unselectedLabelColor: Color.fromRGBO(15, 22, 32, 0.8),
+                unselectedLabelStyle: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'DM Sans'),
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicatorWeight: 3,
+                indicatorColor: Color.fromRGBO(48, 111, 220, 1),
+                tabs: _buildTabs(tabCount)
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: _buildTabViews(tabCount)
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLandscapeLayout() {
+    final tabCount = _tabController!.length;
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(height: RS.sh(context, 4)),
+          CustomAppBar(
+            title: 'Profile',
+            onOther: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AboutPage()),
+              );
+            },
+          ),
+          SizedBox(height: RS.sh(context, 24)),
+          // In landscape, always show compact profile card for consistency
+          cansee ? _buildCompactProfileCard() : _spectatingProfileCard(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                TabBar(
+                  controller: _tabController,
+                  labelColor: Color.fromRGBO(15, 22, 32, 0.8),
+                  labelStyle: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'DM Sans'),
+                  labelPadding: EdgeInsets.all(0),
+                  unselectedLabelColor: Color.fromRGBO(15, 22, 32, 0.8),
+                  unselectedLabelStyle: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'DM Sans'),
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicatorWeight: 3,
+                  indicatorColor: Color.fromRGBO(48, 111, 220, 1),
+                  tabs: _buildTabs(tabCount)
+                ),
+              ],
+            ),
+          ),
+          // In landscape, show the tab content directly (not in TabBarView)
+          _buildCurrentTabContent(),
+          SizedBox(height: RS.sh(context, 24)), // Add some bottom padding
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCurrentTabContent() {
+    final tabCount = _tabController!.length;
+    final currentIndex = _tabController!.index;
+    
+    if (tabCount == 3) {
+      // Current user view (3 tabs)
+      switch (currentIndex) {
+        case 0:
+          return _buildSettingsSection();
+        case 1:
+          return _buildAssociationsSection(scrollable: false);
+        case 2:
+          return _buildFollowingSection(scrollable: false);
+        default:
+          return Container();
+      }
+    } else {
+      // Spectator view (2 tabs)
+      switch (currentIndex) {
+        case 0:
+          return _buildAssociationsSection(scrollable: false);
+        case 1:
+          return _buildFollowingSection(scrollable: false);
+        default:
+          return Container();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -150,53 +295,12 @@ class _UserPageState extends State<UserPage>
             ? Center(
                 child: CircularProgressIndicatorExtended(
                     label: Text("Loading the User Page")))
-            : Column(
-                children: [
-                  const SizedBox(height: 4),
-                  const CustomAppBar(title: 'Profile'),
-                  const SizedBox(height: 24),
-                  cansee
-                      ? AnimatedCrossFade(
-                          duration: const Duration(milliseconds: 300),
-                          crossFadeState: isGeneralTab
-                              ? CrossFadeState.showFirst
-                              : CrossFadeState.showSecond,
-                          firstChild: _buildProfileCard(),
-                          secondChild: _buildCompactProfileCard(),
-                        )
-                      : _spectatingProfileCard(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      children: [
-                        TabBar(
-                          controller: _tabController,
-                          labelColor: Color.fromRGBO(15, 22, 32, 0.8),
-                          labelStyle: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: 'DM Sans'),
-                          labelPadding: EdgeInsets.all(0),
-                          unselectedLabelColor: Color.fromRGBO(15, 22, 32, 0.8),
-                          unselectedLabelStyle: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w400,
-                              fontFamily: 'DM Sans'),
-                          indicatorSize: TabBarIndicatorSize.tab,
-                          indicatorWeight: 3,
-                          indicatorColor: Color.fromRGBO(48, 111, 220, 1),
-                          tabs: _buildTabs(tabCount)
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: _buildTabViews(tabCount)
-                    ),
-                  ),
-                ],
+            : OrientationBuilder(
+                builder: (context, orientation) {
+                  return orientation == Orientation.portrait
+                      ? _buildPortraitLayout()
+                      : _buildLandscapeLayout();
+                },
               ),
       ),
     );
@@ -251,8 +355,8 @@ class _UserPageState extends State<UserPage>
             children: [
               // Profile Image
               Container(
-                width: 80,
-                height: 80,
+                width: RS.s(context, 80),
+                height: RS.s(context, 80),
                 padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -306,8 +410,8 @@ class _UserPageState extends State<UserPage>
 
               // Small Logo
               SizedBox(
-                width: 50,
-                height: 50,
+                width: RS.s(context, 50),
+                height: RS.s(context, 50),
                 child: Center(
                   child: Image.asset(
                     'assets/profilepage/logo.png',
@@ -346,11 +450,11 @@ class _UserPageState extends State<UserPage>
             children: [
               // Profile Image
               SizedBox(
-                width: 88,
+                width: RS.sw(context, 88),
                 child: Center(
                   child: Container(
-                    width: 88,
-                    height: 107, // match your original height
+                    width: RS.sw(context, 88),
+                    height: RS.sh(context, 107), // match your original height
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
@@ -414,8 +518,8 @@ class _UserPageState extends State<UserPage>
 
                         // Small Logo
                         SizedBox(
-                          width: 35,
-                          height: 35,
+                          width: RS.s(context, 35),
+                          height: RS.s(context, 35),
                           child: Center(
                             child: Image.asset(
                               'assets/profilepage/logo.png',
@@ -444,7 +548,7 @@ class _UserPageState extends State<UserPage>
                       padding: EdgeInsets.all(6),
                       margin: EdgeInsets.only(bottom: 4),
                       child: ClipRRect(
-                        child: _buildRollNumberBarcode(height: 50),
+                        child: _buildRollNumberBarcode(height: RS.sh(context, 50)),
                       ),
                     ),
                   ],
@@ -477,8 +581,8 @@ class _UserPageState extends State<UserPage>
                 children: [
                   Center(
                     child: Container(
-                      width: 98,
-                      height: 120,
+                      width: RS.sw(context, 98),
+                      height: RS.sh(context, 120),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(8),
@@ -516,8 +620,8 @@ class _UserPageState extends State<UserPage>
                       Column(
                         children: [
                           SizedBox(
-                            width: 51,
-                            height: 50,
+                            width: RS.sw(context, 51),
+                            height: RS.sh(context, 50),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(4),
                               child: Image.asset(
@@ -572,7 +676,7 @@ class _UserPageState extends State<UserPage>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ClipRRect(
-                    child: _buildRollNumberBarcode(height: 72),
+                    child: _buildRollNumberBarcode(height: RS.sh(context, 72)),
                   ),
                   Text(
                     user?.userRollNumber ?? 'Loading...',
@@ -626,7 +730,7 @@ class _UserPageState extends State<UserPage>
     
     if (rollNumber == null || rollNumber.isEmpty) {
       return Container(
-        height: height ?? 50,
+        height: height ?? RS.sh(context, 50),
         color: Colors.white,
         child: Center(
           child: Text(
@@ -644,7 +748,7 @@ class _UserPageState extends State<UserPage>
       barcode: Barcode.code128(),
       data: rollNumber.toUpperCase(),
       width: double.infinity,
-      height: height ?? 50,
+      height: height ?? RS.sh(context, 50),
       drawText: false,
     );
   }
@@ -663,13 +767,13 @@ class _UserPageState extends State<UserPage>
             top: true,
             icon: Icons.notifications_none_outlined,
           ),
-          SettingsItem(
-            title: 'Settings',
-            icon: Icons.settings_outlined,
-            onTap: () {
-              Navigator.pushNamed(context, '/settings');
-            },
-          ),
+          // SettingsItem(
+          //   title: 'Settings',
+          //   icon: Icons.settings_outlined,
+          //   onTap: () {
+          //     Navigator.pushNamed(context, '/settings');
+          //   },
+          // ),
           SettingsItem(
             title: updatingProfile ? 'Opening...' : 'Edit Profile',
             icon: Icons.edit_outlined,
@@ -739,7 +843,7 @@ class _UserPageState extends State<UserPage>
     );
   }
 
-  Widget _buildAssociationsSection() {
+  Widget _buildAssociationsSection({bool scrollable = true}) {
     final associations = _convertRolesToGroups();
 
     return associations.isEmpty
@@ -749,30 +853,41 @@ class _UserPageState extends State<UserPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // const SizedBox(height: 12),
-                // Scrollable list of groups
-                Expanded(
-                  child: ListView.separated(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: associations.length,
-                    itemBuilder: (context, index) =>
-                        _buildGroupCard(associations[index]),
-                    separatorBuilder: (context, index) => const Padding(
-                      padding: EdgeInsets.only(
-                          left: 88, right: 16), // 56 avatar + 16 + 16 padding
-                      // child: Divider(
-                      //   height: 0, // Makes divider flush with content
-                      //   thickness: 0.5,
-                      // ),
+                if (scrollable)
+                  Expanded(
+                    child: ListView.separated(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: associations.length,
+                      itemBuilder: (context, index) =>
+                          _buildGroupCard(associations[index]),
+                      separatorBuilder: (context, index) => Padding(
+                        padding: EdgeInsets.only(
+                            left: RS.sh(context, 88), right: 16),
+                      ),
                     ),
+                  )
+                else
+                  Column(
+                    children: [
+                      for (int index = 0; index < associations.length; index++)
+                        Column(
+                          children: [
+                            _buildGroupCard(associations[index]),
+                            if (index < associations.length - 1)
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: RS.sh(context, 88), right: 16),
+                              ),
+                          ],
+                        ),
+                    ],
                   ),
-                ),
               ],
             ),
           );
   }
 
-  Widget _buildFollowingSection() {
+  Widget _buildFollowingSection({bool scrollable = true}) {
     final following = _convertBodiesToGroups();
 
     return following.isEmpty
@@ -782,24 +897,35 @@ class _UserPageState extends State<UserPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // const SizedBox(height: 12),
-                // Scrollable list of groups
-                Expanded(
-                  child: ListView.separated(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: following.length,
-                    itemBuilder: (context, index) =>
-                        _buildGroupCard(following[index]),
-                    separatorBuilder: (context, index) => const Padding(
-                      padding: EdgeInsets.only(
-                          left: 88, right: 16), // 56 avatar + 16 + 16 padding
-                      // child: Divider(
-                      //   height: 0, // Makes divider flush with content
-                      //   thickness: 0.5,
-                      // ),
+                if (scrollable)
+                  Expanded(
+                    child: ListView.separated(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: following.length,
+                      itemBuilder: (context, index) =>
+                          _buildGroupCard(following[index]),
+                      separatorBuilder: (context, index) => Padding(
+                        padding: EdgeInsets.only(
+                            left: RS.sh(context, 88), right: 16),
+                      ),
                     ),
+                  )
+                else
+                  Column(
+                    children: [
+                      for (int index = 0; index < following.length; index++)
+                        Column(
+                          children: [
+                            _buildGroupCard(following[index]),
+                            if (index < following.length - 1)
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: RS.sh(context, 88), right: 16),
+                              ),
+                          ],
+                        ),
+                    ],
                   ),
-                ),
               ],
             ),
           );
@@ -817,8 +943,8 @@ class _UserPageState extends State<UserPage>
           children: [
             // Group photo
             Container(
-              width: 64,
-              height: 64,
+              width: RS.s(context, 64),
+              height: RS.s(context, 64),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Color.fromRGBO(210, 213, 218, 1), width: 1),
@@ -937,676 +1063,3 @@ class Group {
     this.isFormer = false,
   });
 }
-
-// class UserPage extends StatefulWidget {
-//   final User? initialUser;
-//   final Future<User>? userFuture;
-
-//   UserPage({this.userFuture, this.initialUser});
-
-//   static void navigateWith(
-//       BuildContext context, InstiAppBloc bloc, User? user) {
-//     Navigator.push(
-//       context,
-//       MaterialPageRoute(
-//         settings: RouteSettings(
-//           name: "/user/${user?.userID ?? ""}",
-//         ),
-//         builder: (context) => UserPage(
-//           initialUser: user,
-//           userFuture: bloc.getUser(user?.userID ?? ""),
-//         ),
-//       ),
-//     );
-//   }
-
-//   @override
-//   _UserPageState createState() => _UserPageState();
-// }
-
-// class _UserPageState extends State<UserPage> {
-//   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-//   User? user;
-//   Set<Event> sEvents = Set();
-//   List<Event>? events = [];
-//   Interest? _selectedInterest;
-//   late bool editable;
-//   List<Interest>? interests = [];
-
-//   void onBodyChange(Interest? body) async {
-//     var bloc = BlocProvider.of(context)?.bloc;
-//     var res = await bloc?.achievementBloc.postInterest(body?.id ?? "", body!);
-//     if (res != null) {
-//       setState(() {
-//         List<Interest>? k = interests;
-//         k?.add(body!);
-//         interests = k;
-//       });
-//     } else {
-//       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//         content: new Text('Error: Interest already exists'),
-//         duration: new Duration(seconds: 10),
-//       ));
-//     }
-//   }
-
-//   bool cansee = false;
-
-//   Widget _buildChips(BuildContext context) {
-//     List<Widget> w = [];
-//     var bloc = BlocProvider.of(context)?.bloc;
-//     int length = interests?.length ?? 0;
-//     for (int i = 0; i < length; i++) {
-//       w.add(cansee
-//           ? Chip(
-//               labelPadding: EdgeInsets.all(2.0),
-//               label: Text(
-//                 interests?[i].title ?? "",
-//                 style: TextStyle(
-//                   color: Colors.white,
-//                 ),
-//               ),
-//               backgroundColor:
-//                   Colors.primaries[Random().nextInt(Colors.primaries.length)],
-//               elevation: 6.0,
-//               shadowColor: Colors.grey[60],
-//               padding: EdgeInsets.all(8.0),
-//               onDeleted: () async {
-//                 await bloc?.achievementBloc
-//                     .postDelInterest(interests![i].title!);
-//                 interests?.removeAt(i);
-//                 //_selected.removeAt(i);
-//                 setState(() {
-//                   interests = interests;
-//                   //_selected = _selected;
-//                 });
-//               },
-//             )
-//           : Chip(
-//               labelPadding: EdgeInsets.all(2.0),
-//               label: Text(
-//                 interests?[i].title ?? "",
-//                 style: TextStyle(
-//                   color: Colors.white,
-//                 ),
-//               ),
-//               backgroundColor:
-//                   Colors.primaries[Random().nextInt(Colors.primaries.length)],
-//               elevation: 6.0,
-//               shadowColor: Colors.grey[60],
-//               padding: EdgeInsets.all(8.0),
-//             ));
-//       //w.add(_buildChip(interest.title, Colors.primaries[Random().nextInt(Colors.primaries.length)]));
-//     }
-//     return Wrap(
-//       spacing: 8.0, // gap between adjacent chips
-//       runSpacing: 4.0,
-//       children: w,
-//     );
-//   }
-
-//   Widget buildDropdownMenuItemsInterest(BuildContext context, Interest? body) {
-//     // print("Entered build dropdown menu items");
-//     if (body == null) {
-//       return Container(
-//         child: Text(
-//           "Search for an interest",
-//           style: Theme.of(context).textTheme.bodyLarge,
-//         ),
-//       );
-//     }
-//     // print(body);
-//     return Container(
-//       child: ListTile(
-//         title: Text(body.title!),
-//       ),
-//     );
-//   }
-
-//   Widget _customPopupItemBuilderInterest(
-//       BuildContext context, Interest body, bool isSelected) {
-//     return Container(
-//       margin: EdgeInsets.symmetric(horizontal: 8),
-//       decoration: !isSelected
-//           ? null
-//           : BoxDecoration(
-//               border: Border.all(color: Theme.of(context).primaryColor),
-//               borderRadius: BorderRadius.circular(5),
-//               color: Colors.white,
-//             ),
-//       child: ListTile(
-//         selected: isSelected,
-//         title: Text(body.title!),
-//       ),
-//     );
-//   }
-
-//   @override
-//   void initState() {
-//     super.initState();
-
-//     user = widget.initialUser;
-
-//     //interests=[Interest(id:"123",title: "lll")];
-//     widget.userFuture?.then((u) {
-//       if (this.mounted) {
-//         setState(() {
-//           user = u;
-//           interests = user?.interests!;
-//         });
-//       } else {
-//         user = u;
-//       }
-//     });
-//     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-//       var bloc = BlocProvider.of(context)?.bloc;
-//       bloc?.getUser("me").then((result) {
-//         if (result.userLDAPId == widget.initialUser?.userLDAPId) {
-//           setState(() {
-//             cansee = true;
-//           });
-//         }
-//       });
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     var bloc = BlocProvider.of(context)!.bloc;
-//     var theme = Theme.of(context);
-//     var footerButtons = <Widget>[];
-
-//     if (user != null) {
-//       sEvents.clear();
-//       sEvents.addAll(user!.userGoingEvents ?? []);
-//       sEvents.addAll(user!.userInterestedEvents ?? []);
-
-//       events = user!.userGoingEvents != null ? sEvents.toList() : null;
-
-//       if ((user!.userWebsiteURL ?? "") != "") {
-//         footerButtons.add(IconButton(
-//           tooltip: "Open website",
-//           icon: Icon(Icons.language_outlined),
-//           onPressed: () async {
-//             if (user!.userWebsiteURL != null) {
-//               if (await canLaunchUrl(Uri.parse(user!.userWebsiteURL!))) {
-//                 await launchUrl(
-//                   Uri.parse(user!.userWebsiteURL!),
-//                   mode: LaunchMode.externalApplication,
-//                 );
-//               }
-//             }
-//           },
-//         ));
-//       }
-//     }
-//     return DefaultTabController(
-//       initialIndex: 0,
-//       length: 3,
-//       child: Scaffold(
-//         key: _scaffoldKey,
-//         drawer: NavDrawer(),
-//         bottomNavigationBar: MyBottomAppBar(
-//           shape: RoundedNotchedRectangle(),
-//           child: new Row(
-//             mainAxisSize: MainAxisSize.max,
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             children: <Widget>[
-//               IconButton(
-//                 icon: Icon(
-//                   Icons.menu_outlined,
-//                   semanticLabel: "Show navigation drawer",
-//                 ),
-//                 onPressed: () {
-//                   _scaffoldKey.currentState?.openDrawer();
-//                 },
-//               ),
-//             ],
-//           ),
-//         ),
-//         body: SafeArea(
-//           child: user == null
-//               ? Center(
-//                   child: CircularProgressIndicatorExtended(
-//                   label: Text("Loading the user page"),
-//                 ))
-//               : NestedScrollView(
-//                   headerSliverBuilder:
-//                       (BuildContext context, bool innerBoxIsScrolled) {
-//                     return <Widget>[
-//                       SliverToBoxAdapter(
-//                         child: TitleWithBackButton(
-//                           contentPadding: const EdgeInsets.symmetric(
-//                               vertical: 28.0, horizontal: 12.0),
-//                           child: Column(
-//                             crossAxisAlignment: CrossAxisAlignment.start,
-//                             children: <Widget>[
-//                               ListTile(
-//                                 leading: NullableCircleAvatar(
-//                                   user!.userProfilePictureUrl ?? "",
-//                                   Icons.person_outline_outlined,
-//                                   radius: 48,
-//                                   heroTag: user!.userID ?? "",
-//                                   photoViewable: true,
-//                                 ),
-//                                 title: Text(
-//                                   user!.userName ?? "",
-//                                   style: theme.textTheme.headlineSmall
-//                                       ?.copyWith(
-//                                           fontFamily: theme.textTheme
-//                                               .displaySmall?.fontFamily),
-//                                 ),
-//                                 subtitle: Column(
-//                                   crossAxisAlignment: CrossAxisAlignment.start,
-//                                   children: <Widget>[
-//                                     user!.userRollNumber != null
-//                                         ? Text(user!.userRollNumber ?? "",
-//                                             style: theme.textTheme.titleLarge)
-//                                         : CircularProgressIndicatorExtended(
-//                                             size: 12,
-//                                             label: Text("Loading Roll Number"),
-//                                           ),
-//                                   ]
-//                                     ..addAll(user!.userEmail != null &&
-//                                             !user!.userEmail!
-//                                                 .toLowerCase()
-//                                                 .contains("n/a")
-//                                         ? [
-//                                             InkWell(
-//                                               onTap: user!.userEmail != null
-//                                                   ? () => _launchEmail(context)
-//                                                   : null,
-//                                               child: Tooltip(
-//                                                 message: "E-mail this person",
-//                                                 child: user!.userEmail != null
-//                                                     ? Text(user!.userEmail!,
-//                                                         style: theme.textTheme
-//                                                             .titleLarge
-//                                                             ?.copyWith(
-//                                                                 color: Colors
-//                                                                     .lightBlue))
-//                                                     : CircularProgressIndicatorExtended(
-//                                                         size: 12,
-//                                                         label: Text(
-//                                                             "Loading email"),
-//                                                       ),
-//                                               ),
-//                                             ),
-//                                           ]
-//                                         : [])
-//                                     ..addAll(user!.userContactNumber != null &&
-//                                             !user!.userContactNumber!
-//                                                 .toLowerCase()
-//                                                 .contains("n/a")
-//                                         ? [
-//                                             InkWell(
-//                                               onTap: () =>
-//                                                   _launchDialer(context),
-//                                               child: Tooltip(
-//                                                 message: "Call this person",
-//                                                 child: Text(
-//                                                     user!.userContactNumber!,
-//                                                     style: theme
-//                                                         .textTheme.titleLarge
-//                                                         ?.copyWith(
-//                                                             color: Colors
-//                                                                 .lightBlue)),
-//                                               ),
-//                                             )
-//                                           ]
-//                                         : []),
-//                                 ),
-//                               ),
-//                               Column(
-//                                   mainAxisAlignment: MainAxisAlignment.start,
-//                                   crossAxisAlignment: CrossAxisAlignment.start,
-//                                   children: [
-//                                     Container(
-//                                         // width: double.infinity,
-//                                         margin: EdgeInsets.fromLTRB(
-//                                             15.0, 0.0, 15.0, 10.0),
-//                                         child: Column(
-//                                             crossAxisAlignment:
-//                                                 CrossAxisAlignment.center,
-//                                             mainAxisAlignment:
-//                                                 MainAxisAlignment.center,
-//                                             children: <Widget>[
-//                                               SizedBox(
-//                                                 height: 20.0,
-//                                               ),
-
-//                                               cansee
-//                                                   ? CustomDropdown<Interest>(
-//                                                       emptyText:
-//                                                           "No interests found. Refine your search!",
-//                                                       onChanged: onBodyChange,
-//                                                       label: "Interests",
-//                                                       itemBuilder:
-//                                                           _customPopupItemBuilderInterest,
-//                                                       asyncItems: bloc
-//                                                           .achievementBloc
-//                                                           .searchForInterest,
-//                                                       dropdownBuilder:
-//                                                           buildDropdownMenuItemsInterest,
-//                                                       style: theme.textTheme
-//                                                           .titleMedium,
-//                                                       validator: (value) {
-//                                                         if (value == null) {
-//                                                           return 'Please select a organization';
-//                                                         }
-//                                                         return null;
-//                                                       },
-//                                                       selectedItem:
-//                                                           _selectedInterest,
-//                                                     )
-//                                                   : SizedBox(),
-//                                               _buildChips(context),
-//                                               //_buildChip('Gamer', Color(0xFFff6666))
-//                                               // SizedBox(
-//                                               // height: this.selectedB
-//                                               // ? 20.0
-//                                               //     : 0,
-//                                               // ),
-//                                               // BodyCard(
-//                                               // thing:
-//                                               // this._selectedBody,
-//                                               // selected:
-//                                               // this.selectedB),
-//                                               //_buildEvent(theme, bloc, snapshot.data[0]);//verify_card(thing: this._selectedCompany, selected: this.selected);
-//                                             ])),
-//                                   ]),
-//                             ],
-//                           ),
-//                         ),
-//                       ),
-//                       SliverPersistentHeader(
-//                         floating: true,
-//                         pinned: true,
-//                         delegate: _SliverTabBarDelegate(
-//                           child: PreferredSize(
-//                             preferredSize: Size.fromHeight(72),
-//                             child: Material(
-//                               elevation: 4.0,
-//                               child: TabBar(
-//                                 labelColor: theme.colorScheme.secondary,
-//                                 unselectedLabelColor: theme.disabledColor,
-//                                 tabs: [
-//                                   Tab(
-//                                       text: "Associations",
-//                                       icon: Icon(Icons.work_outline_outlined)),
-//                                   Tab(
-//                                       text: "Following",
-//                                       icon:
-//                                           Icon(Icons.people_outline_outlined)),
-//                                   Tab(
-//                                       text: "Events",
-//                                       icon: Icon(Icons.event_outlined)),
-//                                 ],
-//                               ),
-//                             ),
-//                           ),
-//                         ),
-//                       ),
-//                     ];
-//                   },
-//                   body: TabBarView(
-//                     // These are the contents of the tab views, below the tabs.
-//                     children:
-//                         ["Associations", "Following", "Events"].map((name) {
-//                       return SafeArea(
-//                         top: false,
-//                         bottom: false,
-//                         child: Builder(
-//                           // This Builder is needed to provide a BuildContext that is "inside"
-//                           // the NestedScrollView, so that sliverOverlapAbsorberHandleFor() can
-//                           // find the NestedScrollView.
-//                           builder: (BuildContext context) {
-//                             var delegates = {
-//                               "Associations": SliverChildBuilderDelegate(
-//                                 (BuildContext context, int index) {
-//                                   return user!.userRoles != null
-//                                       ? (index >= (user!.userRoles?.length ?? 0)
-//                                           ? _buildFormerRoleTile(
-//                                               bloc,
-//                                               theme.textTheme,
-//                                               user!.userFormerRoles![index -
-//                                                   (user!.userRoles?.length ??
-//                                                       0)])
-//                                           : _buildRoleTile(
-//                                               bloc,
-//                                               theme.textTheme,
-//                                               user!.userRoles![index]))
-//                                       : Padding(
-//                                           padding: EdgeInsets.all(8.0),
-//                                           child:
-//                                               CircularProgressIndicatorExtended(
-//                                             label: Text("Loading associations"),
-//                                           ));
-//                                 },
-//                                 childCount: (user!.userRoles?.length ?? 1) +
-//                                     (user!.userFormerRoles?.length ?? 0),
-//                               ),
-//                               "Following": SliverChildBuilderDelegate(
-//                                 (BuildContext context, int index) {
-//                                   return user!.userFollowedBodies != null
-//                                       ? _buildBodyTile(bloc, theme.textTheme,
-//                                           user!.userFollowedBodies![index])
-//                                       : Padding(
-//                                           padding: EdgeInsets.all(8.0),
-//                                           child:
-//                                               CircularProgressIndicatorExtended(
-//                                             label: Text(
-//                                                 "Loading following bodies"),
-//                                           ));
-//                                 },
-//                                 childCount:
-//                                     user!.userFollowedBodies?.length ?? 1,
-//                               ),
-//                               "Events": SliverChildBuilderDelegate(
-//                                 (BuildContext context, int index) {
-//                                   return events != null
-//                                       ? _buildEventTile(
-//                                           bloc, events![index], theme)
-//                                       : Padding(
-//                                           padding: EdgeInsets.all(8.0),
-//                                           child:
-//                                               CircularProgressIndicatorExtended(
-//                                             label: Text(
-//                                                 "Loading following events"),
-//                                           ));
-//                                 },
-//                                 childCount: events?.length ?? 1,
-//                               ),
-//                             };
-//                             return CustomScrollView(
-//                               // The "controller" and "primary" members should be left
-//                               // unset, so that the NestedScrollView can control this
-//                               // inner scroll view.
-//                               // If the "controller" property is set, then this scroll
-//                               // view will not be associated with the NestedScrollView.
-//                               // The PageStorageKey should be unique to this ScrollView;
-//                               // it allows the list to remember its scroll position when
-//                               // the tab view is not on the screen.
-//                               key: PageStorageKey<String>(name),
-//                               slivers: <Widget>[
-//                                 // SliverOverlapInjector(
-//                                 //   // This is the flip side of the SliverOverlapAbsorber above.
-//                                 //   handle: NestedScrollView
-//                                 //       .sliverOverlapAbsorberHandleFor(context),
-//                                 // ),
-//                                 SliverPadding(
-//                                   padding: const EdgeInsets.all(8.0),
-//                                   // In this example, the inner scroll view has
-//                                   // fixed-height list items, hence the use of
-//                                   // SliverFixedExtentList. However, one could use any
-//                                   // sliver widget here, e.g. SliverList or SliverGrid.
-//                                   sliver: delegates[name]?.childCount == 0
-//                                       ? SliverToBoxAdapter(
-//                                           child: Center(
-//                                             child: Padding(
-//                                               padding:
-//                                                   const EdgeInsets.all(8.0),
-//                                               child: Text(
-//                                                 "No $name",
-//                                               ),
-//                                             ),
-//                                           ),
-//                                         )
-//                                       : SliverList(
-//                                           delegate: delegates[name]!,
-//                                         ),
-//                                 ),
-//                               ],
-//                             );
-//                           },
-//                         ),
-//                       );
-//                     }).toList(),
-//                   ),
-//                 ),
-//         ),
-//         floatingActionButton: user == null
-//             ? null
-//             : FloatingActionButton(
-//                 child: Icon(Icons.share_outlined),
-//                 tooltip: "Share this person's profile",
-//                 onPressed: () async {
-//                   await Share.share(
-//                       "Check this cool person: ${ShareURLMaker.getUserURL(user!)}");
-//                 },
-//               ),
-//         floatingActionButtonLocation: footerButtons.isEmpty
-//             ? FloatingActionButtonLocation.endDocked
-//             : FloatingActionButtonLocation.endFloat,
-//         persistentFooterButtons:
-//             footerButtons.isNotEmpty ? footerButtons : null,
-//       ),
-//     );
-//   }
-
-//   Widget _buildEventTile(InstiAppBloc bloc, Event event, ThemeData theme) {
-//     return ListTile(
-//       title: Text(
-//         event.eventName ?? "",
-//         style: theme.textTheme.titleLarge,
-//       ),
-//       enabled: true,
-//       leading: NullableCircleAvatar(
-//         event.eventImageURL ?? event.eventBodies?[0].bodyImageURL ?? "",
-//         Icons.event_outlined,
-//         heroTag: event.eventID ?? "",
-//       ),
-//       subtitle: Text(event.getSubTitle()),
-//       onTap: () {
-//         EventPage.navigateWith(context, bloc, event);
-//       },
-//     );
-//   }
-
-//   Widget _buildBodyTile(InstiAppBloc bloc, TextTheme theme, Body body) {
-//     return ListTile(
-//       title: Text(body.bodyName ?? "", style: theme.titleLarge),
-//       subtitle: Text(body.bodyShortDescription ?? "", style: theme.titleSmall),
-//       leading: NullableCircleAvatar(
-//         body.bodyImageURL ?? "",
-//         Icons.people_outline_outlined,
-//         heroTag: body.bodyID ?? "",
-//       ),
-//       onTap: () {
-//         BodyPage.navigateWith(context, bloc, body: body);
-//       },
-//     );
-//   }
-
-//   Widget _buildRoleTile(InstiAppBloc bloc, TextTheme theme, Role role) {
-//     return ListTile(
-//       title:
-//           Text(role.roleBodyDetails?.bodyName ?? "", style: theme.titleLarge),
-//       subtitle: Text(role.roleName ?? "", style: theme.titleSmall),
-//       leading: NullableCircleAvatar(
-//         role.roleBodyDetails?.bodyImageURL ?? "",
-//         Icons.people_outline_outlined,
-//         heroTag: role.roleID ?? role.roleBodyDetails?.bodyID ?? "",
-//       ),
-//       onTap: () {
-//         BodyPage.navigateWith(context, bloc, role: role);
-//       },
-//     );
-//   }
-
-//   Widget _buildFormerRoleTile(InstiAppBloc bloc, TextTheme theme, Role role) {
-//     return ListTile(
-//       title:
-//           Text(role.roleBodyDetails?.bodyName ?? "", style: theme.titleLarge),
-//       subtitle: Text("Former ${role.roleName} ${role.year ?? ""}",
-//           style: theme.titleSmall),
-//       leading: NullableCircleAvatar(
-//         role.roleBodyDetails?.bodyImageURL ?? "",
-//         Icons.people_outline_outlined,
-//         heroTag: role.roleID ?? role.roleBodyDetails?.bodyID ?? "",
-//       ),
-//       onTap: () {
-//         BodyPage.navigateWith(context, bloc, role: role);
-//       },
-//     );
-//   }
-
-//   _launchEmail(BuildContext context) async {
-//     var url = "mailto:${user?.userEmail}?subject=Let's Have Coffee";
-//     if (await canLaunchUrl(Uri.parse(url))) {
-//       await launchUrl(
-//         Uri.parse(url),
-//         mode: LaunchMode.externalApplication,
-//       );
-//     } else {
-//       ScaffoldMessenger.of(context)
-//         ..hideCurrentSnackBar()
-//         ..showSnackBar(
-//           SnackBar(
-//             content: Text("Mail app failed to open"),
-//           ),
-//         );
-//     }
-//   }
-
-//   _launchDialer(BuildContext context) async {
-//     var url = "tel:${user?.userContactNumber}";
-//     if (await canLaunchUrl(Uri.parse(url))) {
-//       await launchUrl(
-//         Uri.parse(url),
-//         mode: LaunchMode.externalApplication,
-//       );
-//     } else {
-//       ScaffoldMessenger.of(context)
-//         ..hideCurrentSnackBar()
-//         ..showSnackBar(
-//           SnackBar(
-//             content: Text("Phone app failed to open"),
-//           ),
-//         );
-//     }
-//   }
-// }
-
-// class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
-//   final PreferredSize child;
-
-//   _SliverTabBarDelegate({required this.child});
-
-//   @override
-//   Widget build(
-//       BuildContext context, double shrinkOffset, bool overlapsContent) {
-//     return child;
-//   }
-
-//   @override
-//   double get maxExtent => child.preferredSize.height;
-
-//   @override
-//   double get minExtent => child.preferredSize.height;
-
-//   @override
-//   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-//     return false;
-//   }
-// }

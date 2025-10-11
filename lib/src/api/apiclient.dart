@@ -8,7 +8,21 @@ import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/lostandfoundPost.dart';
+import 'dart:async';
+import 'dart:io';
+import 'package:InstiApp/src/api/model/UserTag.dart';
+import 'package:InstiApp/src/api/model/achievements.dart';
+import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/buynsellPost.dart';
+import 'package:InstiApp/src/api/model/community.dart';
+import 'package:InstiApp/src/api/model/communityPost.dart';
+import 'package:InstiApp/src/api/model/event.dart';
+import 'package:InstiApp/src/api/model/lostandfoundPost.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
+import 'package:InstiApp/src/api/model/messCalEvent.dart';
+import 'package:InstiApp/src/api/model/notification.dart';
+import 'package:InstiApp/src/api/model/offeredAchievements.dart';
+import 'package:InstiApp/src/api/model/post.dart';
 import 'package:InstiApp/src/api/model/messCalEvent.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
 import 'package:InstiApp/src/api/model/offeredAchievements.dart';
@@ -48,8 +62,12 @@ part 'apiclient.g.dart';
 // @rt.RestApi(baseUrl: "http://127.0.0.1:8000/api")
 // @rt.RestApi(baseUrl: "http://10.198.49.150/api")
 @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
+<<<<<<< HEAD
 //@rt.RestApi(baseUrl: "https://nayeli-nonbulbar-denominationally.ngrok-free.dev/api")
 //@rt.RestApi(baseUrl: "https://bda7c527113b.ngrok-free.app/api")
+=======
+// @rt.RestApi(baseUrl: "https://bda7c527113b.ngrok-free.app/api")
+>>>>>>> 0d93a257e6ed0f33005489307ea79df00166ad99
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
@@ -179,7 +197,14 @@ abstract class InstiAppApi {
   @rt.POST("/upload")
   @rt.MultiPart()
   Future<ImageUploadResponse> uploadImage(
-      @rt.Header("Cookie") String sessionID, @rt.Part() File picture);
+      @rt.Header("Cookie") String sessionID, @rt.Part() File file);
+
+  // @rt.POST("/upload")
+  // @rt.MultiPart()
+  // Future<ImageUploadResponse> uploadDocument(
+  //     @rt.Header("Cookie") String sessionID,
+  //     @rt.Part() File document
+  //     );
 
   // My data
   @rt.GET("/user-me")
@@ -384,6 +409,11 @@ abstract class InstiAppApi {
       @rt.Header("Cookie") String sessionID,
       @rt.Path() String postID,
       @rt.Query("reaction") int reaction);
+
+  @rt.POST("/communities/poll/{pollID}")
+  Future<PollVoteResponse> voteOnPoll(@rt.Header("Cookie") String sessionID,
+      @rt.Path() String pollID, @rt.Body() Map<String, List<String>> body);
+
   @rt.GET("/user-tags")
   Future<List<UserTagHolder>> getUserTags(
       @rt.Header("Cookie") String sessionId);
