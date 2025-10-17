@@ -223,28 +223,39 @@ class _HomepageState extends State<Homepage> {
     final responsive = Responsive(context);
 
     return Scaffold(
-      body: Stack(
-        children: [
-          if(currentpage == 'homepage')
-          Homepagewidget(),
-          if (currentpage == 'explore')
-          ExplorePage(),
-          if (currentpage == 'Feed')
-            FeedPage(),
-          if(currentpage=='Communities')
-            CommunityPage(),
-          // if(currentpage=='CommunityPage')
-          //   // Communities(),
-          //   CommunityPage(),
-            //CommunityPostPage(communityPostFuture: communityPostFuture),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: responsive.h(20)),
-              child: navBar(),
+      body: WillPopScope(
+        onWillPop: () async {
+          if (currentpage != 'homepage') {
+            setState(() {
+              currentpage = 'homepage';
+            });
+            return false;
+          }
+          return true; 
+        },
+        child: Stack(
+          children: [
+            if(currentpage == 'homepage')
+            Homepagewidget(),
+            if (currentpage == 'explore')
+            ExplorePage(),
+            if (currentpage == 'Feed')
+              FeedPage(),
+            if(currentpage=='Communities')
+              CommunityPage(),
+            // if(currentpage=='CommunityPage')
+            //   // Communities(),
+            //   CommunityPage(),
+              //CommunityPostPage(communityPostFuture: communityPostFuture),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: responsive.h(20)),
+                child: navBar(),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

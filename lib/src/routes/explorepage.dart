@@ -93,6 +93,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(Responsive.height(25, context)),
+                        
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:InstiApp/constants.dart';
 import 'package:InstiApp/src/api/model/body.dart';
@@ -6,12 +7,15 @@ import 'package:InstiApp/src/api/model/role.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/drawer.dart';
-import 'package:InstiApp/src/routes/bodypage.dart';
+import 'package:InstiApp/src/routes/bodypage.dart' hide Responsive;
 import 'package:InstiApp/src/routes/explore_club.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markdown/markdown.dart' as markdown;
+import 'package:InstiApp/src/utils/responsivenew.dart';
 
 class ExploreClubPage extends StatefulWidget {
   final Future<Body>? bodyFuture;
@@ -57,46 +61,48 @@ class ExploreClubPage extends StatefulWidget {
     }
   ];
 
-  ExploreClubPage({this.bodyFuture, this.heroTag,required this.onBack,});
-
-  // static void navigateWith(BuildContext context, InstiAppBloc bloc,
-  //     {required String bodyID, Role? role,}) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       settings: RouteSettings(
-  //         name: "/body/${bodyID}",
-  //       ),
-  //       builder: (context) => ExploreClubPage(
-  //         bodyFuture:
-  //             bloc.getBody(bodyID),
-  //         heroTag: bodyID,
-  //       ),
-  //     ),
-  //   );
-  // }
+  ExploreClubPage({
+    this.bodyFuture,
+    this.heroTag,
+    required this.onBack,
+  });
 
   @override
   _ExploreClubPageState createState() => _ExploreClubPageState();
 }
 
 class _ExploreClubPageState extends State<ExploreClubPage> {
+  bool searchMode = false;
+  TextEditingController _searchController = TextEditingController();
+  String _searchQuery = "";
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   Constants myConstants = Constants();
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   Body? body;
   FocusNode _focusNode = FocusNode();
-  TextEditingController? _searchFieldController;
+  // TextEditingController? _searchFieldController;
 
   bool loadingFollow = false;
-    List<Body> Childrens = [];
+  List<Body> Childrens = [];
 
   @override
   void initState() {
     super.initState();
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent, // transparent bar
+      statusBarIconBrightness: Brightness.light, // white icons
+    ));
 
     widget.bodyFuture?.then((b) {
       Childrens = b.bodyChildren ?? [];
-      Childrens.sort((a, b) => (b.bodyFollowersCount ?? 0).compareTo(a.bodyFollowersCount ?? 0));
+      Childrens.sort((a, b) =>
+          (b.bodyFollowersCount ?? 0).compareTo(a.bodyFollowersCount ?? 0));
       var tableParse = markdown.TableSyntax();
       b.bodyDescription = markdown.markdownToHtml(
           b.bodyDescription
@@ -121,249 +127,302 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
     var exploreBloc = bloc.exploreBloc;
-    // var footerButtons = <Widget>[];
-    // var editAccess = false;
-    // if (body != null) {
-    //   editAccess = bloc.editBodyAccess(body!);
-    //   if (bloc.currSession != null) {
-    //     footerButtons.addAll([
-    //       _buildFollowBody(theme, bloc),
-    //     ]);
-    //   }
-
-    //   if ((body?.bodyWebsiteURL ?? "") != "") {
-    //     footerButtons.add(IconButton(
-    //       tooltip: "Open website",
-    //       icon: Icon(Icons.language_outlined),
-    //       onPressed: () async {
-    //         if (body?.bodyWebsiteURL != null) {
-    //           if (await canLaunchUrl(Uri.parse(body?.bodyWebsiteURL ?? ""))) {
-    //             await launchUrl(
-    //               Uri.parse(body?.bodyWebsiteURL ?? ""),
-    //               mode: LaunchMode.externalApplication,
-    //             );
-    //           }
-    //         }
-    //       },
-    //     ));
-    //   }
-
-    //   if (editAccess) {
-    //     footerButtons.add(IconButton(
-    //       icon: Icon(Icons.share_outlined),
-    //       tooltip: "Share this body",
-    //       onPressed: () async {
-    //         await Share.share(
-    //             "Check this Institute Body: ${ShareURLMaker.getBodyURL(body ?? Body())}");
-    //       },
-    //     ));
-    //   }
-    // }
-    return Scaffold(
-      backgroundColor: Color(0xFFF6F6F6),
-        key: _scaffoldKey,
-        drawer: NavDrawer(),
-        // bottomNavigationBar: MyBottomAppBar(
-        //   child: new Row(
-        //     mainAxisSize: MainAxisSize.max,
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: <Widget>[
-        //       IconButton(
-        //         icon: Icon(
-        //           Icons.menu_outlined,
-        //           semanticLabel: "Show bottom sheet",
-        //         ),
-        //         onPressed: () {
-        //           _scaffoldKey.currentState?.openDrawer();
-        //         },
-        //       ),
-        //     ],
-        //   ),
-        // ),
-
-        body: SafeArea(
-          child: body == null
-              ? Center(
-                  child: CircularProgressIndicatorExtended(
-                    label: Text("Loading the body page"),
-                  ),
-                )
-              : ListView(
-                  children: <Widget>[
-                    Stack(
+    return WillPopScope(
+      onWillPop: () async {
+        widget.onBack();
+        return false;
+      },
+      child: Scaffold(
+          extendBodyBehindAppBar: true,
+          backgroundColor: Color.fromRGBO(246, 246, 246, 1),
+          key: _scaffoldKey,
+          drawer: NavDrawer(),
+          body: Container(
+            child: body == null
+                ? Center(
+                    child: CircularProgressIndicatorExtended(
+                      label: Text("Loading the body page"),
+                    ),
+                  )
+                : ListView(
+                    padding: EdgeInsets.zero,
+                    children: <Widget>[
+                      Stack(
                         children: [
-                        
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(20),
-                          bottomRight: Radius.circular(20),
+                          Container(
+                            height: 250,
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(20),
+                                bottomRight: Radius.circular(20),
+                              ),
+                              child: Image.asset(
+                                'assets/explore/culturals.png',
+                                height: 250,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
-                          child: Image.asset(
-                          'assets/explore/culturals.png',
-                          height: 250,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
+                          Positioned(
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            child: ClipRect(
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(
+                                    sigmaX: 10, sigmaY: 10), // adjust blur
+                                child: Container(
+                                  height: MediaQuery.of(context).padding.top,
+                                  color: Colors.white
+                                      .withOpacity(0.2), // translucent layer
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                        Padding(
-                                  padding: const EdgeInsets.only(left: 16,),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      widget.onBack();
-                                    },
-                                    child: Container(
-                                      height: 52,
-                                      width: 52,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.60),
-                                        borderRadius: BorderRadius.circular(25)
-                                      ),
-                                      child: Center(
-                                        child: Container(
-                                          height: 24,
-                                          width: 24,
-                                          child: SvgPicture.asset('assets/quicklinks/icons/arrow_left.svg'),
-                                        ),
-                                      ),
-                                    ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: 16,
+                              top: MediaQuery.of(context).padding.top,
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                widget.onBack();
+                              },
+                              child: Container(
+                                height: 52,
+                                width: 52,
+                                decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.60),
+                                    borderRadius: BorderRadius.circular(25)),
+                                child: Center(
+                                  child: Container(
+                                    height: 24,
+                                    width: 24,
+                                    child: SvgPicture.asset(
+                                        'assets/quicklinks/icons/arrow_left.svg'),
                                   ),
                                 ),
-                        // Positioned(
-                        //   top: 72,
-                        //   left: 16,
-                        //   right: 16,
-                        //   child: Material(
-                        //   elevation: 6,
-                        //   borderRadius: BorderRadius.circular(32),
-                        //   color: Colors.transparent,
-                        //   child: Container(
-                        //     height: 50, // Set height to 50px
-                        //     width: 380,
-                        //     decoration: BoxDecoration(
-                        //     color: Colors.white.withOpacity(0.98),
-                        //     borderRadius: BorderRadius.circular(32),
-                        //     // boxShadow: [
-                        //     //   BoxShadow(
-                        //     //   color: Colors.black.withOpacity(0.08),
-                        //     //   blurRadius: 12,
-                        //     //   offset: Offset(0, 4),
-                        //     //   ),
-                        //     // ],
-                        //     ),
-                        //     child: TextField(
-                        //     controller: _searchFieldController,
-                        //     focusNode: _focusNode,
-                        //     cursorColor: theme.colorScheme.primary,
-                        //     style: theme.textTheme.bodyMedium?.copyWith(
-                        //       fontSize: 18,
-                        //       color: Colors.black87,
-                        //       fontFamily: 'DM Sans',
-                        //     ),
-                        //     decoration: InputDecoration(
-                        //       isDense: true,
-                        //       contentPadding: const EdgeInsets.symmetric(
-                        //       vertical: 14, // Adjust for 50px height
-                        //       horizontal: 20,
-                        //       ),
-                        //       prefixIcon: Icon(
-                        //       Icons.search_outlined,
-                        //       color: Colors.grey[600],
-                        //       size: 22, // Adjust icon size for 50px height
-                        //       ),
-                        //       hintText: "Search clubs...",
-                        //       hintStyle: TextStyle(
-                        //       color: Colors.grey[500],
-                        //       fontSize: 17,
-                        //       fontWeight: FontWeight.w400,
-                        //       fontFamily: 'DM Sans',
-                        //       ),
-                        //       border: InputBorder.none,
-                        //       suffixIcon: IconButton(
-                        //       tooltip: "Clear search",
-                        //       icon: const Icon(Icons.close_outlined, size: 22), // Adjust icon size
-                        //       color: Colors.grey[500],
-                        //       onPressed: () {
-                        //         setState(() {
-                        //         _searchFieldController?.clear();
-                        //         });
-                        //       },
-                        //       ),
-                        //     ),
-                        //     ),
-                        //   ),
-                        //   ),
-                        // ),
-                        Positioned(
-                          top: 150,
-                          left: 24,
-                          right: 24,
-                          child: Text(
-                          (() {
-                            final bodyName = body?.bodyName ?? "";
-                            final match = widget.bodyTitles.firstWhere(
-                            (item) => item["bodyname"] == bodyName,
-                            orElse: () => {},
-                            );
-                            final title = match["title"] ?? "";
-                            return title.isNotEmpty
-                              ? "$title"
-                              : "Explore";
-                          })(),
-                          style: theme.textTheme.displaySmall?.copyWith(
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                            //letterSpacing: 1.2,
-                            fontSize: 36,
-                            fontFamily: 'DM Sans',
-                            shadows: [
-                            Shadow(
-                              color: Colors.black.withOpacity(0.25),
-                              blurRadius: 8,
-                              offset: Offset(0, 2),
+                              ),
                             ),
-                            ],
                           ),
-                          textAlign: TextAlign.start,
+                          Positioned(
+                            top: 70 + MediaQuery.of(context).padding.top,
+                            left: Responsive.width(16, context),
+                            right: Responsive.width(16, context),
+                            child: Container(
+                              height: Responsive.height(50, context),
+                              padding: EdgeInsets.only(
+                                  left: Responsive.width(14, context),
+                                  right: Responsive.width(14, context),
+                                  top: Responsive.height(13, context),
+                                  bottom: Responsive.height(13, context)),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(
+                                    Responsive.height(25, context)),
+                              ),
+                              child: Row(
+                                children: [
+                                  Image(
+                                    image:
+                                        AssetImage('assets/blogs/search.png'),
+                                    height: Responsive.height(24, context),
+                                    width: Responsive.width(24, context),
+                                  ),
+                                  SizedBox(
+                                      width: Responsive.height(20, context)),
+                                  Expanded(
+                                    child: TextField(
+                                      focusNode: _focusNode,
+                                      controller: _searchController,
+                                      style: TextStyle(
+                                        fontSize: Responsive.text(16, context),
+                                        color: Color.fromRGBO(0, 0, 0, 0.8),
+                                        fontFamily: 'DM Sans',
+                                      ),
+                                      decoration: InputDecoration(
+                                        hintText: 'Search events...',
+                                        hintStyle: TextStyle(
+                                          fontSize:
+                                              Responsive.text(16, context),
+                                          color: Color.fromRGBO(0, 0, 0, 0.4),
+                                          fontFamily: 'DM Sans',
+                                        ),
+                                        border: InputBorder.none,
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.zero,
+                                      ),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _searchQuery =
+                                              value.trim().toLowerCase();
+                                        });
+                                      },
+                                      // autofocus: true,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                      width: Responsive.width(20, context)),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    ...(Childrens.map((b) {
-                      return _buildBodyTile(bloc, theme.textTheme, b);
-                    }).toList() ?? []),
-                    Divider(),
-                    const SizedBox(height: 64.0),
-                  ],
-                ),
-        )
-// floatingActionButton: body == null
-        //     ? null
-        //     : editAccess
-        //         ? FloatingActionButton.extended(
-        //             icon: Icon(Icons.edit_outlined),
-        //             label: Text("Edit"),
-        //             tooltip: "Edit this Body",
-        //             onPressed: () {
-        //               Navigator.of(context)
-        //                   .pushNamed("/putentity/body/${body!.bodyID}");
-        //             },
-        //           )
-        //         : FloatingActionButton(
-        //             child: Icon(Icons.share_outlined),
-        //             tooltip: "Share this body",
-        //             onPressed: () async {
-        //               await Share.share(
-        //                   "Check this Institute Body: ${ShareURLMaker.getBodyURL(body!)}");
-        //             },
-        //           ),
-        // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        // persistentFooterButtons: [
-        //   FooterButtons(
-        //     footerButtons: footerButtons,
-        //   )
-        // ],
-        );
+                          // Positioned(
+                          //   top: 72,
+                          //   left: 16,
+                          //   right: 16,
+                          //   child: Material(
+                          //   elevation: 6,
+                          //   borderRadius: BorderRadius.circular(32),
+                          //   color: Colors.transparent,
+                          //   child: Container(
+                          //     height: 50, // Set height to 50px
+                          //     width: 380,
+                          //     decoration: BoxDecoration(
+                          //     color: Colors.white.withOpacity(0.98),
+                          //     borderRadius: BorderRadius.circular(32),
+                          //     // boxShadow: [
+                          //     //   BoxShadow(
+                          //     //   color: Colors.black.withOpacity(0.08),
+                          //     //   blurRadius: 12,
+                          //     //   offset: Offset(0, 4),
+                          //     //   ),
+                          //     // ],
+                          //     ),
+                          //     child: TextField(
+                          //     controller: _searchFieldController,
+                          //     focusNode: _focusNode,
+                          //     cursorColor: theme.colorScheme.primary,
+                          //     style: theme.textTheme.bodyMedium?.copyWith(
+                          //       fontSize: 18,
+                          //       color: Colors.black87,
+                          //       fontFamily: 'DM Sans',
+                          //     ),
+                          //     decoration: InputDecoration(
+                          //       isDense: true,
+                          //       contentPadding: const EdgeInsets.symmetric(
+                          //       vertical: 14, // Adjust for 50px height
+                          //       horizontal: 20,
+                          //       ),
+                          //       prefixIcon: Icon(
+                          //       Icons.search_outlined,
+                          //       color: Colors.grey[600],
+                          //       size: 22, // Adjust icon size for 50px height
+                          //       ),
+                          //       hintText: "Search clubs...",
+                          //       hintStyle: TextStyle(
+                          //       color: Colors.grey[500],
+                          //       fontSize: 17,
+                          //       fontWeight: FontWeight.w400,
+                          //       fontFamily: 'DM Sans',
+                          //       ),
+                          //       border: InputBorder.none,
+                          //       suffixIcon: IconButton(
+                          //       tooltip: "Clear search",
+                          //       icon: const Icon(Icons.close_outlined, size: 22), // Adjust icon size
+                          //       color: Colors.grey[500],
+                          //       onPressed: () {
+                          //         setState(() {
+                          //         _searchFieldController?.clear();
+                          //         });
+                          //       },
+                          //       ),
+                          //     ),
+                          //     ),
+                          //   ),
+                          //   ),
+                          // ),
+                          Positioned(
+                            top: 140 + MediaQuery.of(context).padding.top,
+                            left: 32,
+                            right: 32,
+                            child: Text(
+                              (() {
+                                final bodyName = body?.bodyName ?? "";
+                                final match = widget.bodyTitles.firstWhere(
+                                  (item) => item["bodyname"] == bodyName,
+                                  orElse: () => {},
+                                );
+                                final title = match["title"] ?? "";
+                                return title.isNotEmpty ? "$title" : "Explore";
+                              })(),
+                              style: theme.textTheme.displaySmall?.copyWith(
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                                //letterSpacing: 1.2,
+                                fontSize: 36,
+                                fontFamily: 'DM Sans',
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black.withOpacity(0.25),
+                                    blurRadius: 8,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              textAlign: TextAlign.start,
+                            ),
+                          ),
+                          Positioned(
+                            top: 185 + MediaQuery.of(context).padding.top,
+                            left: 32,
+                            right: 32,
+                            child: Text(
+                              body?.bodyShortDescription ?? "",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontFamily: 'DM Sans',
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.start,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      ...(_searchQuery.isEmpty ? Childrens : Childrens.where((body) {
+                            final name = body.bodyName?.toLowerCase() ?? "";
+                            return name.contains(_searchQuery);
+                          }).toList()).map((b) {
+                            return _buildBodyTile(bloc, theme.textTheme, b);
+                          }).toList() ??
+                          [],
+                      Divider(),
+                      const SizedBox(height: 64.0),
+                    ],
+                  ),
+          )
+          // floatingActionButton: body == null
+          //     ? null
+          //     : editAccess
+          //         ? FloatingActionButton.extended(
+          //             icon: Icon(Icons.edit_outlined),
+          //             label: Text("Edit"),
+          //             tooltip: "Edit this Body",
+          //             onPressed: () {
+          //               Navigator.of(context)
+          //                   .pushNamed("/putentity/body/${body!.bodyID}");
+          //             },
+          //           )
+          //         : FloatingActionButton(
+          //             child: Icon(Icons.share_outlined),
+          //             tooltip: "Share this body",
+          //             onPressed: () async {
+          //               await Share.share(
+          //                   "Check this Institute Body: ${ShareURLMaker.getBodyURL(body!)}");
+          //             },
+          //           ),
+          // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          // persistentFooterButtons: [
+          //   FooterButtons(
+          //     footerButtons: footerButtons,
+          //   )
+          // ],
+          ),
+    );
   }
 
   List<Widget> _nonEmptyListWithHeaderOrEmpty(
@@ -524,7 +583,8 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
           BodyPage.navigateWith(context, bloc, body: body);
         },
         child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          decoration: BoxDecoration(color: Color.fromRGBO(246, 246, 246, 1)),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
           //padding: const EdgeInsets.all(16),
           // color: Colors.grey[400],
           // decoration: BoxDecoration(
@@ -546,7 +606,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                 width: 73,
                 height: 73,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(20),
                   // boxShadow: [
                   //   BoxShadow(
                   //     color: Colors.black.withOpacity(0.1),
@@ -556,43 +616,44 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                   // ],
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: body.bodyImageURL != null &&
-                          body.bodyImageURL!.isNotEmpty
-                      ? Image.network(
-                          body.bodyImageURL!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
-                            width: 56,
-                            height: 56,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
+                  child:
+                      body.bodyImageURL != null && body.bodyImageURL!.isNotEmpty
+                          ? Image.network(
+                              body.bodyImageURL!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                width: 56,
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[100],
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Icon(
+                                  Icons.people_outline,
+                                  size: 28,
+                                  color: Colors.grey[500],
+                                ),
+                              ),
+                            )
+                          : Container(
+                              width: 56,
+                              height: 56,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                Icons.people_outline,
+                                size: 28,
+                                color: Colors.grey[500],
+                              ),
                             ),
-                            child: Icon(
-                              Icons.people_outline,
-                              size: 28,
-                              color: Colors.grey[500],
-                            ),
-                          ),
-                        )
-                      : Container(
-                          width: 56,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(
-                            Icons.people_outline,
-                            size: 28,
-                            color: Colors.grey[500],
-                          ),
-                        ),
                 ),
               ),
               const SizedBox(width: 16),
-      
+
               // Club Info
               Expanded(
                 child: Column(
@@ -601,14 +662,12 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                     Text(
                       body.bodyName ?? "",
                       style: theme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black,
-                        fontSize: 18
-                      ),
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
+                          fontSize: 18),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    
                     Text(
                       body.bodyShortDescription ?? "",
                       style: theme.bodyMedium?.copyWith(
@@ -619,51 +678,45 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
-                    
                     Container(
-                      height: 23,
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                      decoration: ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          width: 1,
-                          color: const Color(0xFFD2D5DA),
-                        ),
-                      borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
+                      // height: 23,
+                      // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SvgPicture.asset(
-                            'assets/explore_new/users.svg',
-                            height: 12,
-                            width: 12,
-                            ),
-                          // Icon(
-                          // Icons.people_outline,
-                          // size: 16,
-                          // color: Colors.blue[600],
-                          // ),
-                          const SizedBox(width: 8),
+                            'assets/explore_new/Isolation_Mode.svg',
+                            height: 13.78,
+                            width: 17,
+                          ),
+                          const SizedBox(width: 4),
                           Text(
-                          "${body.bodyFollowersCount?.toString() ?? '422'} senti",
-                          // body.bodyFollowersCount != null
-                          // ? "${body.bodyFollowersCount} senti"
-                          // : "Loading...",
-                          style: theme.bodySmall?.copyWith(
-                            color: myConstants.instiappBlue,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12
+                            '${body.bodyFollowersCount?.toString() ?? '422'}',
+                            style: TextStyle(
+                              color: const Color(0xFF306FDC),
+                              fontSize: 12,
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
-                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'senti',
+                            style: TextStyle(
+                              color: const Color(0xFF306FDC),
+                              fontSize: 12,
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          )
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
-      
+
               // Arrow icon
               Icon(
                 Icons.chevron_right,
