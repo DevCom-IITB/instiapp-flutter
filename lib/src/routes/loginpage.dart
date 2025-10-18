@@ -35,6 +35,7 @@ class _OnboardingLoginPageState extends State<LoginPage>
   late final AnimationController _moveController;
   late AnimationController _welcomeController;
   late AnimationController _homeTransitionController;
+  late AnimationController _transitionController;
   bool _showWelcome = false;
   bool _showLoginOptions = false;
   bool _isExitingToHome = false;
@@ -95,6 +96,11 @@ class _OnboardingLoginPageState extends State<LoginPage>
       duration: const Duration(milliseconds: 800),
     );
 
+    _transitionController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+
     _restoreSessionAndAnimate();
   }
 
@@ -132,6 +138,7 @@ class _OnboardingLoginPageState extends State<LoginPage>
     _welcomeController.dispose();
     _moveController.dispose();
     _homeTransitionController.dispose();
+    _transitionController.dispose();
     super.dispose();
   }
 
@@ -140,9 +147,18 @@ class _OnboardingLoginPageState extends State<LoginPage>
     if (_processingSSO) return _buildLoadingScreen(context);
     if (_isWebViewVisible) return _buildWebView();
 
-    return _showLoginOptions
-        ? _buildLoginOptionsPage(context)
-        : _buildSplashOnboarding(context);
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 800),
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
+      child: _showLoginOptions
+          ? _buildLoginOptionsPage(context)
+          : _buildSplashOnboarding(context),
+    );
   }
 
   Widget _buildSplashOnboarding(BuildContext context) {
@@ -420,10 +436,14 @@ class _OnboardingLoginPageState extends State<LoginPage>
           width: RS.sw(context, 300),
           height: RS.sh(context, 64),
           child: ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               setState(() {
                 _showLoginOptions = true;
               });
+
+              await Future.delayed(const Duration(milliseconds: 100));
+
+              await _transitionController.forward();
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue.shade700,
@@ -443,162 +463,252 @@ class _OnboardingLoginPageState extends State<LoginPage>
   }
 
   Widget _buildLoginOptionsPage(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromRGBO(15, 22, 32, 1),
-      body: Stack(
-        children: [
-          Positioned(
-            top: -10,
-            left: -20,
-            child: Image.asset(
-              'assets/login/doodle.png',
-              height: RS.sh(context, 600),
-            ),
+    final screen = MediaQuery.of(context).size;
+
+    return AnimatedBuilder(
+      animation: _transitionController,
+      builder: (context, _) {
+        final t = Curves.easeOut.transform(_transitionController.value);
+        final fadeT = Curves.easeIn.transform(_transitionController.value);
+
+        // DOODLE: slide from above into final top (-10)
+        final doodleStartTop = -screen.height * 0.6; // off-screen above
+        final doodleEndTop = -10.0;
+        final doodleTop = lerpDouble(doodleStartTop, doodleEndTop, t)!;
+
+        // LOGO + TITLE: warp from center (splash) into top-left area of login page
+        final centerX = screen.width / 2;
+        final centerY = screen.height / 2;
+
+        // approximate start size from splash final (after resize)
+        final startLogoSize = RS.sw(context, 150); // near-center smaller size
+        final endLogoSize = RS.sw(context, 200); // login page logo size
+        final logoSize = lerpDouble(startLogoSize, endLogoSize, t)!;
+
+        // start position (centered), end position (login page coordinates)
+        final logoStartX = centerX - startLogoSize / 2;
+        final logoStartY = centerY - startLogoSize / 2;
+        final logoEndX = 5.0; // matches previous left: 5
+        final logoEndY = 291.0; // matches previous top: 291
+
+        final currentLogoX = lerpDouble(logoStartX, logoEndX, t)!;
+        final currentLogoY = lerpDouble(logoStartY, logoEndY, t)!;
+
+        // TITLE: fades slightly and moves to align with logo
+        final titleStartX = centerX - RS.sp(context, 64) * 2;
+        final titleStartY = centerY + startLogoSize / 2 - RS.sh(context, 10);
+        final titleEndX = logoEndX + logoSize + RS.sw(context, 8);
+        final titleEndY = logoEndY + logoSize / 2 - RS.sp(context, 28);
+
+        final currentTitleX = lerpDouble(titleStartX, titleEndX, t)!;
+        final currentTitleY = lerpDouble(titleStartY, titleEndY, t)!;
+
+        final titleOpacity = lerpDouble(1.0, 1.0, t)!; // keep visible
+
+        // CLIPPER + OPTIONS: slide up from bottom and fade
+        final clipperStartY = screen.height;
+        final clipperEndY = 300;
+        final clipperOffsetY = lerpDouble(clipperStartY, clipperEndY, t)!;
+        final optionsOpacity = fadeT;
+
+        // small background parallax during transition (subtle)
+        final bgParallax = lerpDouble(0, -20, t)!;
+
+        return Scaffold(
+          backgroundColor: Color.fromRGBO(15, 22, 32, 1),
+          body: Stack(
+            children: [
+              // top doodle (animated from above)
+              Positioned(
+                top: doodleTop,
+                left: -20,
+                child: Opacity(
+                  opacity: fadeT,
+                  child: Image.asset(
+                    'assets/login/doodle.png',
+                    height: RS.sh(context, 600),
+                  ),
+                ),
+              ),
+          
+              // logo (warping)
+              Positioned(
+                left: currentLogoX,
+                top: currentLogoY,
+                child: Image.asset(
+                  'assets/login/lotuslight.png',
+                  width: logoSize,
+                  height: logoSize,
+                ),
+              ),
+          
+              // MAIN CONTENT: clipper image + options card which slides up from bottom
+              Positioned(
+                top: clipperOffsetY,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Opacity(
+                  opacity: optionsOpacity,
+                  child: Container(
+                    // transparent container; clipper inside
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          top: RS.sh(context, 110),
+                          left: 0,
+                          right: 0,
+                          child: Image.asset(
+                            'assets/login/clipper.png',
+                            // optionally animate scale or translate if you want
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.topCenter,
+                          child: _buildLoginOptions(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-          Positioned(
-            top: 291,
-            left: 5,
-            child: Image.asset(
-              'assets/login/lotuslight.png',
-              width: RS.sw(context, 200),
-            ),
-          ),
-          Positioned(
-            top: 400,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Image.asset(
-              'assets/login/clipper.png',
-              // width: RS.sw(context, 250),
-            )
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: _buildLoginOptions(context),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildLoginOptions(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(0),
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            "InstiApp",
-            style: TextStyle(
-              fontSize: 54,
-              color: Color.fromRGBO(27, 50, 82, 1),
-              fontWeight: FontWeight.bold,
-              fontFamily: 'DM Sans',
-            ),
-          ),
-          Text(
-            "Your Campus Companion",
-            style: TextStyle(
-              fontSize: 24,
-              color: Color.fromRGBO(27, 50, 82, 1),
-              fontWeight: FontWeight.w700,
-              fontFamily: 'DM Sans',
-            ),
-          ),
-          SizedBox(height: 48),
-          SizedBox(
-            width: 260,
-            height: 53,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromRGBO(48, 111, 220, 1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              onPressed: _handleSSOLogin,
-              child: Text(
-                _isSSOLoading ? "Redirecting to SSO..." : "Log in via SSO",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'DM Sans',
-                ),
+    return SingleChildScrollView(
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 176),
+            // Fix for "InstiApp" text
+            Text(
+              "InstiApp",
+              textAlign: TextAlign.center, // Center the text
+              style: TextStyle(
+                fontSize: 48,
+                color: Color.fromRGBO(27, 50, 82, 1),
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins',
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            "or",
-            style: TextStyle(
-              fontSize: 16,
-              color: Color.fromRGBO(33, 45, 60, 1),
-              fontWeight: FontWeight.w400,
-              fontFamily: 'DM Sans',
-            ),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: 260,
-            height: 53,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromRGBO(48, 111, 220, 1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              onPressed: _handleAlumniLogin,
-              child: const Text(
-                "Log in as an Alumnus",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'DM Sans',
-                ),
+            // Fix for "Your Campus Companion" text  
+            Text(
+              "Your Campus Companion",
+              textAlign: TextAlign.center, // Center the text
+              style: TextStyle(
+                fontSize: 24,
+                color: Color.fromRGBO(27, 50, 82, 1),
+                fontWeight: FontWeight.w700,
+                fontFamily: 'DM Sans',
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            "or",
-            style: TextStyle(
-              fontSize: 16,
-              color: Color.fromRGBO(33, 45, 60, 1),
-              fontWeight: FontWeight.w400,
-              fontFamily: 'DM Sans',
-            ),
-          ),
-          const SizedBox(height: 8),
-          TextButton(
-            onPressed: _handleGuestLogin,
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.zero,
-              minimumSize: Size(0, 0),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "Continue as Guest",
+            SizedBox(height: 48),
+            SizedBox(
+              width: 260,
+              height: 53,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color.fromRGBO(48, 111, 220, 1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                onPressed: _handleSSOLogin,
+                child: Text(
+                  _isSSOLoading ? "Redirecting to SSO..." : "Log in via SSO",
                   style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: Color.fromRGBO(48, 111, 220, 1),
+                    fontWeight: FontWeight.w600,
                     fontFamily: 'DM Sans',
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-          const SizedBox(height: 64),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              "or",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Color.fromRGBO(33, 45, 60, 1),
+                fontWeight: FontWeight.w400,
+                fontFamily: 'DM Sans',
+              ),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: 260,
+              height: 53,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color.fromRGBO(48, 111, 220, 1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                onPressed: _handleAlumniLogin,
+                child: const Text(
+                  "Log in as an Alumnus",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'DM Sans',
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "or",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Color.fromRGBO(33, 45, 60, 1),
+                fontWeight: FontWeight.w400,
+                fontFamily: 'DM Sans',
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: _handleGuestLogin,
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size(0, 0),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center, // Center the row
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Continue as Guest",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Color.fromRGBO(48, 111, 220, 1),
+                        fontFamily: 'DM Sans',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

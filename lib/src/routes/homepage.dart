@@ -20,6 +20,9 @@ import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:intl/intl.dart';
+import '../widgets/custom_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:io' show Platform;
 
 class Responsive {
   final BuildContext context;
@@ -78,7 +81,7 @@ class _HomepageState extends State<Homepage> {
   String label="Home";
   // String _dropdownDay='Mon';
   bool showQR=false;
-  String selectedNavIcon='assets//homepage/icons/home.svg';
+  String selectedNavIcon='assets/homepage/icons/home.svg';
   bool selectedIcon=true;
   bool firstBuild = true;
   bool error=false;
@@ -866,26 +869,26 @@ class _HomepageState extends State<Homepage> {
                       duration: Duration(milliseconds: 400),
                       transitionBuilder: (child, animation) {
                         final offsetAnimation = Tween<Offset>(
-                          begin: Offset(0, 0.01), // Slide in from below (20% of height)
-                          end: Offset.zero,
+                          begin: Offset(0, 0.9), // start below
+                          end: Offset(0, 0),   // end at its normal position
                         ).animate(animation);
 
-                        return SlideTransition(
-                          position: offsetAnimation,
-                          child: child,
+                        return ClipRect(
+                          child: SlideTransition(
+                            position: offsetAnimation,
+                            child: child,
+                          ),
                         );
                       },
                       child: showQR
-                      ? Padding(
-                        key: ValueKey('qrOpen'),
-                        padding: EdgeInsets.only(left: responsive.w(14),right: responsive.w(13)),
-                        child: qrOpen(
-                          loading: loading,
-                          error: error,
-                          qrString: qrString
-                        ),
-                      )
-                      : SizedBox.shrink(key: ValueKey('empty'))
+                          ? Padding(
+                              key: ValueKey('qrOpen'),
+                              padding: EdgeInsets.only(
+                                  left: responsive.w(14), right: responsive.w(13)),
+                              child: qrOpen(
+                                  loading: loading, error: error, qrString: qrString),
+                            )
+                          : SizedBox.shrink(key: ValueKey('empty')),
                     ),
                   ],
                 ),
@@ -1057,6 +1060,7 @@ class _HomepageState extends State<Homepage> {
                         label,
                         style: TextStyle(
                           color: selectedIcon ? myConstants.instiappBlue : Colors.white,
+                          // color: Colors.white,
                         ),
                       )
                     ],
@@ -1400,6 +1404,13 @@ class _HomepageState extends State<Homepage> {
                   Container(
                     padding:
                         EdgeInsets.symmetric(vertical: responsive.h(8), horizontal: responsive.w(18)),
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(
+                            'assets/homepage/images/doodletime.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -1412,18 +1423,60 @@ class _HomepageState extends State<Homepage> {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        Container(
-                          width: responsive.w(40),
+                        GestureDetector(
+                          onTap: () {
+                              showDialog(
+                              context: context,
+                              builder: (context) => CustomDialog(
+                                title: 'Open Mess-I Dashboard?',
+                                content1: 'Would you like to open the other app?',
+                                content2: 'If it\'s not installed, you\'ll be redirected to the store.',
+                                options: [
+                                  DialogOption(
+                                    text: 'Cancel',
+                                    onPressed: (ctx, setProcessing) => Navigator.of(ctx).pop(),
+                                  ),
+                                  DialogOption(
+                                    text: 'Open',
+                                    isPrimary: true,
+                                    onPressed: (ctx, setProcessing) async {
+                                      Navigator.of(ctx).pop(); // close dialog
+
+                                      const String websiteUrl = "https://instamess.gymkhana.iitb.ac.in"; // your website link
+                                      final Uri uri = Uri.parse(websiteUrl);
+
+                                      try {
+                                        if (await canLaunchUrl(uri)) {
+                                          await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                        } else {
+                                          ScaffoldMessenger.of(ctx).showSnackBar(
+                                            const SnackBar(content: Text('Could not open the website')),
+                                          );
+                                        }
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(ctx).showSnackBar(
+                                          const SnackBar(content: Text('Error opening the website')),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                          );
+                        },
+                        child: Container(
+                          width: responsive.w(30),
                           height: responsive.h(30),
-                          decoration: ShapeDecoration(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
                             color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                  width: responsive.w(1), color: Colors.white),
-                              borderRadius: BorderRadius.circular(80),
+                            image: DecorationImage(
+                              image: AssetImage('assets/homepage/images/messi.webp'),
+                              fit: BoxFit.contain,
                             ),
                           ),
                         ),
+                      )
                       ],
                     ),
                   ),
