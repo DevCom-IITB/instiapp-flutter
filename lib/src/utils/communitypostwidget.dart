@@ -335,6 +335,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
     ],
   );
   }
+  
   Widget _buildContent(String content, int contentChars) {
     return GestureDetector(
       onTap: _getContentTapHandler,

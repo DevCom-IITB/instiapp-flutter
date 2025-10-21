@@ -606,38 +606,48 @@ class _BodyPageState extends State<BodyPage> {
                                                               height: 0.0,
                                                             ),
                                                       //Divider(),
-                                                      SizedBox(height: responsive.h(20)),
+                                                      SizedBox(height: responsive.h(16)),
                           
                                                       // Photo Album Section
-                                                      if (photoAlbumUrls != null && photoAlbumUrls.isNotEmpty)
-                                                      ...[
-                                                      Text(
-                                                        'Photo Album',
-                                                        style: TextStyle(
-                                                          fontSize: responsive.sp(16),
-                                                          fontWeight:FontWeight.w700,
-                                                          fontFamily: 'DM Sans',
-                                                        ),
-                                                      ),
-                                                      SizedBox(height: responsive.h(12)),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          if (photoAlbumUrls != null && photoAlbumUrls.isNotEmpty) {
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder: (context) => ExploreImagePreview(
-                                                                  imageUrls: photoAlbumUrls,
-                                                                ),
-                                                              ),
-                                                            );
-                                                           }
-                                                          },
-                                                          child: (photoAlbumUrls != null && photoAlbumUrls.isNotEmpty)
-                                                            ? _buildImages(photoAlbumUrls)
-                                                            : const SizedBox.shrink(),
-                                                      ),
-                                                      ],
+                                                      // Text(
+                                                      //   'Photo Album',
+                                                      //   style: TextStyle(
+                                                      //     fontSize: responsive.sp(16),
+                                                      //     fontWeight:FontWeight.w700,
+                                                      //     fontFamily: 'DM Sans',
+                                                      //   ),
+                                                      // ),
+                                                      // PhotoAlbumGrid(imageUrls: imageUrls),
+                                                      // if (photoAlbumUrls != null && photoAlbumUrls.isNotEmpty)
+                                                      // ...[
+                                                      // Text(
+                                                      //   'Photo Album',
+                                                      //   style: TextStyle(
+                                                      //     fontSize: responsive.sp(16),
+                                                      //     fontWeight:FontWeight.w700,
+                                                      //     fontFamily: 'DM Sans',
+                                                      //   ),
+                                                      // ),
+                                                      // SizedBox(height: responsive.h(12)),
+                                                      // GestureDetector(
+                                                      //   onTap: () {
+                                                      //     if (photoAlbumUrls != null && photoAlbumUrls.isNotEmpty) {
+                                                      //       Navigator.push(
+                                                      //         context,
+                                                      //         MaterialPageRoute(
+                                                      //           builder: (context) => ExploreImagePreview(
+                                                      //             imageUrls: photoAlbumUrls,
+                                                      //           ),
+                                                      //         ),
+                                                      //       );
+                                                      //      }
+                                                      //     },
+                                                      //     child: (photoAlbumUrls != null && photoAlbumUrls.isNotEmpty)
+                                                      //       ? _buildImages(photoAlbumUrls)
+                                                      //       : PhotoAlbumGrid(imageUrls: imageUrls),
+                                                      // ),
+
+                                                      // ],
                                                       SizedBox(height: responsive.h(40)),
                                                       // Container(
                                                       //   height: 190,
