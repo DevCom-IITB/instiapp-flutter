@@ -107,59 +107,59 @@ class _FeedPageState extends State<FeedPage> {
                       dashColor: Color(0xFFDADADA),
                     ),
                     SizedBox(height: Responsive.height(20, context)),
-                    // Container(
-                    //   margin: EdgeInsets.only(left: Responsive.width(16, context), right: Responsive.width(16, context)),
-                    //   height: Responsive.height(53, context),
-                    //   padding: EdgeInsets.only(
-                    //       left: Responsive.width(14, context), right: Responsive.width(14, context), top: Responsive.height(13, context), bottom: Responsive.height(13, context)),
-                    //   decoration: BoxDecoration(
-                    //     image: const DecorationImage(
-                    //       image: AssetImage('assets/blogs/searchbar.png'),
-                    //       fit: BoxFit.cover,
-                    //     ),
-                    //     borderRadius: BorderRadius.circular(Responsive.height(25, context)),
-                    //   ),
-                    //   child: Row(
-                    //     children: [
-                    //       Image(
-                    //         image: AssetImage('assets/blogs/search.png'),
-                    //         height: Responsive.height(24, context),
-                    //         width: Responsive.width(24, context),
-                    //       ),
-                    //       SizedBox(width: Responsive.height(20,context)),
-                    //       Expanded(
-                    //         child: TextField(
-                    //           focusNode: _focusNode,
-                    //           controller: _searchController,
-                    //           style: TextStyle(
-                    //             fontSize: Responsive.text(16, context),
-                    //             color: Color.fromRGBO(0, 0, 0, 0.8),
-                    //             fontFamily: 'DM Sans',
-                    //           ),
-                    //           decoration: InputDecoration(
-                    //             hintText: 'Search events...',
-                    //             hintStyle: TextStyle(
-                    //               fontSize: Responsive.text(16, context),
-                    //               color: Color.fromRGBO(0, 0, 0, 0.4),
-                    //               fontFamily: 'DM Sans',
-                    //             ),
-                    //             border: InputBorder.none,
-                    //             isDense: true,
-                    //             contentPadding: EdgeInsets.zero,
-                    //           ),
-                    //           onChanged: (value) {
-                    //             setState(() {
-                    //               _searchQuery = value.trim().toLowerCase();
-                    //             });
-                    //           },
-                    //           // autofocus: true,
-                    //           maxLines: 1,
-                    //         ),
-                    //       ),
-                    //       SizedBox(width: Responsive.width(20, context)),
-                    //     ],
-                    //   ),
-                    // ),
+                    Container(
+                      margin: EdgeInsets.only(left: Responsive.width(16, context), right: Responsive.width(16, context)),
+                      height: Responsive.height(53, context),
+                      padding: EdgeInsets.only(
+                          left: Responsive.width(14, context), right: Responsive.width(14, context), top: Responsive.height(13, context), bottom: Responsive.height(13, context)),
+                      decoration: BoxDecoration(
+                        image: const DecorationImage(
+                          image: AssetImage('assets/blogs/searchbar.png'),
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.circular(Responsive.height(25, context)),
+                      ),
+                      child: Row(
+                        children: [
+                          Image(
+                            image: AssetImage('assets/blogs/search.png'),
+                            height: Responsive.height(24, context),
+                            width: Responsive.width(24, context),
+                          ),
+                          SizedBox(width: Responsive.height(20,context)),
+                          Expanded(
+                            child: TextField(
+                              focusNode: _focusNode,
+                              controller: _searchController,
+                              style: TextStyle(
+                                fontSize: Responsive.text(16, context),
+                                color: Color.fromRGBO(0, 0, 0, 0.8),
+                                fontFamily: 'DM Sans',
+                              ),
+                              decoration: InputDecoration(
+                                hintText: 'Search events...',
+                                hintStyle: TextStyle(
+                                  fontSize: Responsive.text(16, context),
+                                  color: Color.fromRGBO(0, 0, 0, 0.4),
+                                  fontFamily: 'DM Sans',
+                                ),
+                                border: InputBorder.none,
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  _searchQuery = value.trim().toLowerCase();
+                                });
+                              },
+                              // autofocus: true,
+                              maxLines: 1,
+                            ),
+                          ),
+                          SizedBox(width: Responsive.width(20, context)),
+                        ],
+                      ),
+                    ),
                     // SizedBox(height: Responsive.height(20, context)),
                     // Container(
                     //     margin: EdgeInsets.symmetric(horizontal: 16),
@@ -235,7 +235,7 @@ class _FeedPageState extends State<FeedPage> {
                     //         ),
                     //   ],
                     // )),
-                    // SizedBox(height: 23),
+                    SizedBox(height: 23),
                   ]),
                 ),
                 StreamBuilder(
@@ -247,7 +247,7 @@ class _FeedPageState extends State<FeedPage> {
                           ? snapshot.data!
                           : UnmodifiableListView(snapshot.data!.where((event) {
                               final name = event.eventName?.toLowerCase() ?? "";
-                              return name.contains(_searchQuery);
+                              return name.contains(_searchQuery) || (event.eventBodies != null && event.eventBodies!.any((body) => body.bodyName?.toLowerCase().contains(_searchQuery) ?? false));
                             }).toList());
                       if (filteredEvents.length > 0) {
                         return SliverList(

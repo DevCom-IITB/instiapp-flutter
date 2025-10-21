@@ -652,3 +652,152 @@ class _CommunityPageState extends State<CommunityPage> {
     );
   }
 }
+
+
+
+
+// class SimplifiedGroupUI extends StatelessWidget {
+//   const SimplifiedGroupUI({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     // Using Theme for consistent styling
+//     final theme = Theme.of(context);
+
+//     return Container(
+//       padding: const EdgeInsets.all(16.0),
+//       child: Column(
+//         mainAxisSize: MainAxisSize.min,
+//         crossAxisAlignment: CrossAxisAlignment.stretch,
+//         children: [
+//           // 1. Simplified Tab Bar
+//           Container(
+//             decoration: const BoxDecoration(
+//               border: Border(
+//                 bottom: BorderSide(color: Colors.grey, width: 1),
+//               ),
+//             ),
+//             child: const Row(
+//               children: [
+//                 _TabButton(title: 'All', isSelected: true),
+//                 _TabButton(title: 'Explore'),
+//                 _TabButton(title: 'My Groups'),
+//               ],
+//             ),
+//           ),
+//           const SizedBox(height: 20),
+
+//           // 2. Simplified Group Card using ListTile
+//           Card(
+//             color: const Color(0xFFEDEDED),
+//             elevation: 0,
+//             shape: RoundedRectangleBorder(
+//               borderRadius: BorderRadius.circular(16),
+//             ),
+//             child: ListTile(
+//               // The image on the left
+//               leading: ClipRRect(
+//                 borderRadius: BorderRadius.circular(8.0),
+//                 child: Image.network(
+//                   "https://placehold.co/50x50",
+//                   width: 50,
+//                   height: 50,
+//                   fit: BoxFit.cover,
+//                 ),
+//               ),
+//               // The main title and the "Public" chip
+//               title: Row(
+//                 children: [
+//                   const Text(
+//                     'Academic Discussion',
+//                     style: TextStyle(fontWeight: FontWeight.bold),
+//                   ),
+//                   const SizedBox(width: 8),
+//                   Chip(
+//                     label: const Text('Public'),
+//                     visualDensity: VisualDensity.compact,
+//                     padding: EdgeInsets.zero,
+//                     backgroundColor: const Color(0xFF1B3252),
+//                     labelStyle: const TextStyle(
+//                       color: Colors.white,
+//                       fontSize: 10,
+//                       fontWeight: FontWeight.bold,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//               // The description and member count below the title
+//               subtitle: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   const SizedBox(height: 4),
+//                   const Text(
+//                     'This forum is for discussions relevant to academics at IIT Bombay.',
+//                     style: TextStyle(color: Color(0xFF7E8287), fontSize: 14),
+//                   ),
+//                   const SizedBox(height: 8),
+//                   Row(
+//                     children: [
+//                       Icon(Icons.group, size: 16, color: theme.primaryColor),
+//                       const SizedBox(width: 4),
+//                       Text(
+//                         '422 members',
+//                         style: TextStyle(
+//                           color: theme.primaryColor,
+//                           fontWeight: FontWeight.bold,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//               contentPadding: const EdgeInsets.all(16),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+// /// A private helper widget to build the tab buttons, avoiding code repetition.
+// class _TabButton extends StatelessWidget {
+//   const _TabButton({required this.title, this.isSelected = false});
+
+//   final String title;
+//   final bool isSelected;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     // Expanded makes each button take up equal space in the Row
+//     return Expanded(
+//       child: TextButton(
+//         onPressed: () {
+//           // TODO: Add tab switching logic here
+//         },
+//         style: TextButton.styleFrom(
+//           shape: const RoundedRectangleBorder(), // Remove default rounding
+//           padding: const EdgeInsets.symmetric(vertical: 16),
+//         ),
+//         child: Container(
+//           decoration: BoxDecoration(
+//             border: Border(
+//               bottom: BorderSide(
+//                 color: isSelected ? Colors.blue : Colors.transparent,
+//                 width: 3,
+//               ),
+//             ),
+//           ),
+//           child: Text(
+//             title,
+//             style: TextStyle(
+//               fontWeight: FontWeight.bold,
+//               fontSize: 16,
+//               color: isSelected ? Colors.blue : Colors.black54,
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
