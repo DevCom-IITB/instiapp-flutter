@@ -1057,8 +1057,8 @@ class _BuySellPageState extends State<BuySellPage> {
                       children: [
                         // Clear Filters Button
                         SizedBox(
-                          width: 165,
-                          height: 60,
+                          width: RS.sw(context, 165),
+                          height: RS.sh(context, 60),
                           child: OutlinedButton(
                             onPressed: () {
                               setModalState(() {
@@ -1088,8 +1088,8 @@ class _BuySellPageState extends State<BuySellPage> {
 
                         // Apply Filters Button
                         SizedBox(
-                          width: 165,
-                          height: 60,
+                          width: RS.sw(context, 165),
+                          height: RS.sh(context, 60),
                           child: ElevatedButton(
                             onPressed: () {
                               setState(() {});
