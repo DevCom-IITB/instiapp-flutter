@@ -53,7 +53,9 @@ class _ExplorePageState extends State<ExplorePage> {
                   ),
                 ),
                 child: SafeArea(
-                    child: Column(children: [
+                    bottom: false,
+                    child: Column(
+                      children: [
                   SizedBox(height: Responsive.height(10.5, context)),
                   Center(
                       child: Text('Explore',
@@ -83,7 +85,7 @@ class _ExplorePageState extends State<ExplorePage> {
                       });
                     },
                     child: Container(
-                      margin: const EdgeInsets.only(left: 16, right: 16),
+                      margin: EdgeInsets.only(left: Responsive.width(16, context), right: Responsive.width(16, context)),
                       height: Responsive.height(50, context),
                       padding: EdgeInsets.only(
                           left: Responsive.width(14, context),
@@ -119,8 +121,8 @@ class _ExplorePageState extends State<ExplorePage> {
                       margin: EdgeInsets.only(
                           left: Responsive.width(32, context),
                           right: Responsive.width(32, context),
-                          top: Responsive.height(8, context),
-                          bottom: Responsive.height(0, context)),
+                          top: Responsive.height(12, context),
+                          bottom: Responsive.height(20, context)),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,                      
@@ -130,7 +132,7 @@ class _ExplorePageState extends State<ExplorePage> {
                               child: RichText(
                                 text: TextSpan(
                                   children: [
-                                    TextSpan(
+                                    TextSpan(                                      
                                       text: 'Around ',
                                       style: TextStyle(
                                         fontSize: Responsive.text(36, context),
@@ -165,7 +167,7 @@ class _ExplorePageState extends State<ExplorePage> {
                                 ),
                               ),
                             ),
-                          ]))
+                          ])),
                 ])),
               ),
               Expanded(

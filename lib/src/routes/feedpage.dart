@@ -63,9 +63,9 @@ class _FeedPageState extends State<FeedPage> {
           },
           child: RefreshIndicator(
             onRefresh: () => bloc.updateEvents(),
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
+            child: Column(
+              children: [
+                Container(
                   child: Column(children: [
                     Center(
                       child: Container(
@@ -235,50 +235,56 @@ class _FeedPageState extends State<FeedPage> {
                     //         ),
                     //   ],
                     // )),
-                    SizedBox(height: 23),
+                    SizedBox(height: 15),
                   ]),
                 ),
-                StreamBuilder(
-                  stream: bloc.events,
-                  builder: (context,
-                      AsyncSnapshot<UnmodifiableListView<Event>> snapshot) {
-                    if (snapshot.hasData) {
-                      final filteredEvents = _searchQuery.isEmpty
-                          ? snapshot.data!
-                          : UnmodifiableListView(snapshot.data!.where((event) {
-                              final name = event.eventName?.toLowerCase() ?? "";
-                              return name.contains(_searchQuery) || (event.eventBodies != null && event.eventBodies!.any((body) => body.bodyName?.toLowerCase().contains(_searchQuery) ?? false));
-                            }).toList());
-                      if (filteredEvents.length > 0) {
-                        return SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                              (context, index) => Feedpost(
-                                  context, bloc, filteredEvents[index]),
-                              childCount: filteredEvents.length),
-                        );
-                      } else {
-                        return SliverToBoxAdapter(
-                          child: Center(
-                            child: Text("No events"),
-                          ),
-                        );
-                      }
-                    } else {
-                      return SliverToBoxAdapter(
-                        child: Center(
-                          child: CircularProgressIndicatorExtended(
-                            label: Text("Getting the latest events"),
-                          ),
+                Expanded(
+                  child: CustomScrollView(
+                    slivers: [                
+                      StreamBuilder(
+                        stream: bloc.events,
+                        builder: (context,
+                            AsyncSnapshot<UnmodifiableListView<Event>> snapshot) {
+                          if (snapshot.hasData) {
+                            final filteredEvents = _searchQuery.isEmpty
+                                ? snapshot.data!
+                                : UnmodifiableListView(snapshot.data!.where((event) {
+                                    final name = event.eventName?.toLowerCase() ?? "";
+                                    return name.contains(_searchQuery) || (event.eventBodies != null && event.eventBodies!.any((body) => body.bodyName?.toLowerCase().contains(_searchQuery) ?? false));
+                                  }).toList());
+                            if (filteredEvents.length > 0) {
+                              return SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                    (context, index) => Feedpost(
+                                        context, bloc, filteredEvents[index]),
+                                    childCount: filteredEvents.length),
+                              );
+                            } else {
+                              return SliverToBoxAdapter(
+                                child: Center(
+                                  child: Text("No events"),
+                                ),
+                              );
+                            }
+                          } else {
+                            return SliverToBoxAdapter(
+                              child: Center(
+                                child: CircularProgressIndicatorExtended(
+                                  label: Text("Getting the latest events"),
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                      SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: Responsive.height(100, context),
                         ),
-                      );
-                    }
-                  },
-                ),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: Responsive.height(100, context),
+                      )
+                    ],
                   ),
-                )
+                ),
               ],
             ),
           ),
