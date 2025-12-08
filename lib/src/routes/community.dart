@@ -4,6 +4,7 @@ import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/community_bloc.dart';
 import 'package:InstiApp/src/blocs/community_post_bloc.dart';
 import 'package:InstiApp/src/routes/createpost_form.dart';
+import 'package:InstiApp/src/routes/exploreimagepreview.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/communitypostwidget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -163,27 +164,27 @@ class _CommunitiesState extends State<Communities> {
     );
   }
 
-  Widget subCont(String label) {
-    return Container(
-      height: 24,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-          border: Border.all(
-            color: myConstants.instiappBlue,
-            width: 1.2,
-          ),
-          borderRadius: BorderRadius.circular(8)),
-      child: Center(
-        child: Text(
-          label,
-          style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: myConstants.instiappBlue),
-        ),
-      ),
-    );
-  }
+  // Widget subCont(String label) {
+  //   return Container(
+  //     height: 24,
+  //     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+  //     decoration: BoxDecoration(
+  //         border: Border.all(
+  //           color: myConstants.instiappBlue,
+  //           width: 1.2,
+  //         ),
+  //         borderRadius: BorderRadius.circular(8)),
+  //     child: Center(
+  //       child: Text(
+  //         label,
+  //         style: TextStyle(
+  //             fontSize: 12,
+  //             fontWeight: FontWeight.w600,
+  //             color: myConstants.instiappBlue),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget LinkContainer(String label, String link, bool isTop, bool isBottom) {
     final responsive = Responsive(context);
@@ -432,24 +433,37 @@ class _CommunitiesState extends State<Communities> {
                           SizedBox(
                             height: 32,
                           ),
-                          Container(
-                            height: 153,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade300,
-                              image: community?.coverImg != null &&
-                                      community!.coverImg!.isNotEmpty
-                                  ? DecorationImage(
-                                      image: CachedNetworkImageProvider(
-                                          community!.coverImg!),
-                                      fit: BoxFit.cover,
-                                      //alignment: Alignment.topCenter,
-                                    )
-                                  : const DecorationImage(
-                                      image: AssetImage(
-                                          'assets/explore/symphony.png'),
-                                      fit: BoxFit.cover,
-                                    ),
+                          GestureDetector(
+                            // onTap: () {
+                            //   Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //     builder: (context) => ExploreImagePreview(
+                            //       imageUrls: images,
+                            //       initialIndex: 0,
+                            //     ),
+                            //   ),
+                            // );
+                            // },
+                            child: Container(
+                              height: 153,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade300,
+                                image: community?.coverImg != null &&
+                                        community!.coverImg!.isNotEmpty
+                                    ? DecorationImage(
+                                        image: CachedNetworkImageProvider(
+                                            community!.coverImg!),
+                                        fit: BoxFit.cover,
+                                        //alignment: Alignment.topCenter,
+                                      )
+                                    : const DecorationImage(
+                                        image: AssetImage(
+                                            'assets/explore/symphony.png'),
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
                             ),
                           ),
                           Row(
@@ -480,31 +494,31 @@ class _CommunitiesState extends State<Communities> {
                                   ),
                                 ),
                               ),
-                              Padding(
-                                padding:
-                                    EdgeInsets.only(right: responsive.w(16)),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Container(
-                                    height: 52,
-                                    width: 52,
-                                    decoration: BoxDecoration(
-                                        color: const Color(0x99FFFFFF),
-                                        borderRadius:
-                                            BorderRadius.circular(25)),
-                                    child: Center(
-                                      child: Container(
-                                        height: responsive.h(24),
-                                        width: responsive.w(24),
-                                        child: SvgPicture.asset(
-                                            'assets/homepage/icons/bell.svg'),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              // Padding(
+                              //   padding:
+                              //       EdgeInsets.only(right: responsive.w(16)),
+                              //   child: GestureDetector(
+                              //     onTap: () {
+                              //       Navigator.of(context).pop();
+                              //     },
+                              //     child: Container(
+                              //       height: 52,
+                              //       width: 52,
+                              //       decoration: BoxDecoration(
+                              //           color: const Color(0x99FFFFFF),
+                              //           borderRadius:
+                              //               BorderRadius.circular(25)),
+                              //       child: Center(
+                              //         child: Container(
+                              //           height: responsive.h(24),
+                              //           width: responsive.w(24),
+                              //           child: SvgPicture.asset(
+                              //               'assets/homepage/icons/bell.svg'),
+                              //         ),
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
                         ],
