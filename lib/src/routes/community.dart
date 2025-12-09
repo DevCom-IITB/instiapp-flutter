@@ -1491,10 +1491,17 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                           stream: communityPostBloc.communityposts,
                           builder: (BuildContext context,
                               AsyncSnapshot<List<CommunityPost>> snapshot) {
+                            // Column does not support `spacing`; add vertical spacing by wrapping each post in Padding.
+                            final posts = _buildPostList(snapshot, theme,
+                                communityPostBloc, community.id);
                             return Column(
-                              spacing: 16,
-                              children: _buildPostList(snapshot, theme,
-                                  communityPostBloc, community.id),
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: posts
+                                  .map((w) => Padding(
+                                        padding: EdgeInsets.only(bottom: 16),
+                                        child: w,
+                                      ))
+                                  .toList(),
                             );
                           },
                         ),
