@@ -757,7 +757,7 @@ class _HomepageState extends State<Homepage> {
                     }
                   },
                   child: Container(
-                    width: responsive.w(52),
+                    width: responsive.h(52),
                     height: responsive.h(52),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(22),
@@ -776,13 +776,13 @@ class _HomepageState extends State<Homepage> {
               },
             ),
             Container(
-              width: responsive.w(52),
+              width: responsive.h(52),
               height: responsive.h(52),
               child: Stack(
                 children: [
                   Container(
                     height: responsive.h(52),
-                    width: responsive.w(52),
+                    width: responsive.h(52),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(22),
                         image: DecorationImage(
@@ -794,7 +794,7 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
             Container(
-              width: responsive.w(52),
+              width: responsive.h(52),
               height: responsive.h(52),
               child: Stack(
                 children: [
@@ -814,7 +814,7 @@ class _HomepageState extends State<Homepage> {
                             },
                             child: Center(
                               child: Container(
-                                width: responsive.w(24),
+                                width: responsive.h(24),
                                 height: responsive.h(24),
                                 child: SvgPicture.asset(
                                   'assets/homepage/icons/bell.svg',
@@ -840,13 +840,13 @@ class _HomepageState extends State<Homepage> {
       backgroundColor: myConstants.instiappWhite,
       
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(52),
+        preferredSize: Size.fromHeight(responsive.h(52)),
         child: customAppBar()
         ),
       body: Stack(
         children: [
           SingleChildScrollView(
-            padding: EdgeInsets.only(bottom: responsive.h(100)),
+            padding: EdgeInsets.only(bottom: responsive.h(120)),
             //margin: EdgeInsets.only(left: 10,right: 0),
             child: Column(
               children: [
@@ -1166,22 +1166,20 @@ class _HomepageState extends State<Homepage> {
                   ),
                 ],
               ),
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.only(top: responsive.h(26), bottom: responsive.h(28)),
-                  child: SizedBox(
-                    width: responsive.w(197),
-                    height: responsive.h(197),
-                    child: loading
-                      ? CircularProgressIndicator()
-                      :error
-                        ?Center(child: Text("Please log in to view QR"))
-                        : QrImageView(
-                          data: '${qrString}',
-                          size: responsive.sp(197),
-                          embeddedImage: AssetImage('assets/buynsell/DevcomLogo.png'),
-                          ),
-                  ),
+              Padding(
+                padding: EdgeInsets.only(top: responsive.h(26), bottom: responsive.h(28)),
+                child: Container(
+                  width: responsive.w(197),
+                  height: responsive.h(197),
+                  child: loading
+                    ? Center(child: CircularProgressIndicator())
+                    :error
+                      ?Center(child: Text("Please log in to view QR"))
+                      : QrImageView(
+                        data: qrString,
+                        size: responsive.w(197),
+                        embeddedImage: AssetImage('assets/buynsell/DevcomLogo.png'),
+                        ),
                 ),
               ),
               Center(
@@ -1235,18 +1233,20 @@ class _HomepageState extends State<Homepage> {
                 color: myConstants.instiappGrey,
                 border: Border.all(
                   color: Color(0xFF7E8287),
-                  width: responsive.w(1)
+                  width: responsive.h(1)
                 )
               ),
-              padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(11), responsive.w(4), responsive.h(10)),
+              padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(10), responsive.w(16), responsive.h(10)),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     "${_selectedDay.substring(0,3)}, H-${_selectedHostel}",
                     style: TextStyle(
                       color: Color(0xCC0F1620),
-                      fontWeight: FontWeight.w500
+                      fontWeight: FontWeight.w500,
+                      fontSize: responsive.w(14)
                     ),
                   ),
                   // SizedBox(width: 8),
@@ -1401,17 +1401,17 @@ class _HomepageState extends State<Homepage> {
                         _mealString(hostels),
                         style: TextStyle(
                           color: const Color(0xFF1B3252),
-                          fontSize: responsive.sp(14),
+                          fontSize: responsive.w(14),
                           fontFamily: 'DM Sans',
                           fontWeight: FontWeight.w500,
-                          height: responsive.h(1.31),
+                          height: responsive.w(1.31),
                         ),
                       ),
                     ),
                   ),
                   Container(
                     padding:
-                        EdgeInsets.symmetric(vertical: responsive.h(8), horizontal: responsive.w(18)),
+                        EdgeInsets.symmetric(vertical: responsive.h(6), horizontal: responsive.w(18)),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

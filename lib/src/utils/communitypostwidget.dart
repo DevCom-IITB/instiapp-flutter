@@ -18,6 +18,18 @@ import 'package:intl/intl.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+class Responsive {
+  final BuildContext context;
+  final double baseWidth;  
+  final double baseHeight;
+
+  Responsive(this.context, {this.baseWidth = 411, this.baseHeight = 914});
+
+  double w(double px) => MediaQuery.of(context).size.width * (px / baseWidth);
+  double h(double px) => MediaQuery.of(context).size.height * (px / baseHeight);
+  double sp(double px) => w(px); // scale text with width
+}
+
 class Communitypostwidget extends StatefulWidget {
   final CommunityPost communityPost;
   final void Function()? onPressedComment;
@@ -79,6 +91,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
 
   Constants myConstants = Constants();
   Widget footer(String reactionCount, String commentCount) {
+    final responsive = Responsive(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -87,11 +100,11 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
           Icon(Icons.emoji_emotions_outlined,
               size: 20, color: Color.fromRGBO(68, 68, 68, 1)),
           SizedBox(
-            width: 6,
+            width: responsive.w(6),
           ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 2.5),
-            height: 22,
+            height: responsive.h(22),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(19),
                 color: myConstants.instiappGrey),
@@ -99,51 +112,51 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
               children: [
                 Image.asset(
                   "assets/communities/emojis/laugh.png",
-                  height: 18.5,
-                  width: 18.5,
+                  height: responsive.h(18.5),
+                  width: responsive.w(18.5),
                 ),
                 Image.asset(
                   "assets/communities/emojis/cry.png",
-                  height: 18.5,
-                  width: 18.5,
+                  height: responsive.h(18.5),
+                  width: responsive.w(18.5),
                 )
               ],
             ),
           ),
           SizedBox(
-            width: 6,
+            width: responsive.w(6),
           ),
           Text(reactionCount)
         ]),
-        SizedBox(width: 25),
+        SizedBox(width: responsive.w(25)),
         Dash(
           direction: Axis.vertical,
-          length: 25,
-          dashLength: 25,
+          length: responsive.w(25),
+          dashLength: responsive.w(25),
           dashGap: 0,
           dashColor: Color(0xFFD9D9D9),
         ),
-        SizedBox(width: 25),
+        SizedBox(width: responsive.w(25)),
         Icon(Icons.chat_bubble_outline, size: 15, color: Color(0XFF444444)),
         SizedBox(
-          width: 7,
+          width: responsive.w(7),
         ),
         Text(commentCount + " comments"),
-        SizedBox(width: 25),
+        SizedBox(width: responsive.w(25)),
         Dash(
           direction: Axis.vertical,
-          length: 25,
-          dashLength: 25,
+          length: responsive.w(25),
+          dashLength: responsive.w(25),
           dashGap: 0,
           dashColor: Color(0xFFD9D9D9),
         ),
-        SizedBox(width: 25),
+        SizedBox(width: responsive.w(25)),
         Icon(
           Icons.share_outlined,
           size: 16,
         ),
         SizedBox(
-          width: 6,
+          width: responsive.w(6),
         ),
         Text("Share")
       ],
@@ -152,50 +165,51 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
     final content = communityPost.content ?? "";
     final contentChars = _calculateContentChars();
     final numReactions = _calculateTotalReactions();
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: responsive.w(16)),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: responsive.w(40),
+                height: responsive.h(40),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(100),
                 ),
                 clipBehavior: Clip.antiAlias,
                 child: Image.network(
                   communityPost.postedBy?.userProfilePictureUrl ?? '',
-                  width: 40,
-                  height: 40,
+                  width: responsive.w(40),
+                  height: responsive.h(40),
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Image.asset(
                     "assets/communities/image 214.png",
-                    height: Responsive.height(40, context),
-                    width: Responsive.width(40, context),
+                    height: responsive.h(40),
+                    width: responsive.w(40),
                   ),
                 ),
               ),
-              SizedBox(width: 12),
+              SizedBox(width: responsive.w(12)),
               Expanded(
                 //width: 327,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildHeader(),
-                    SizedBox(height: 4),
+                    SizedBox(height: responsive.h(4)),
                     _buildContent(content, contentChars),
                     if (communityPost.imageUrl != null &&
                         communityPost.imageUrl!.isNotEmpty)
                       _buildImages(),
                     if (communityPost.isPoll == true &&
                         communityPost.poll != null)
-                      SizedBox(height: 16),
+                      SizedBox(height: responsive.h(16)),
                     if (communityPost.isPoll == true &&
                         communityPost.poll != null)
                       PollViewer(
@@ -214,9 +228,9 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
             ],
           ),
         ),
-        SizedBox(height: 16),
+        SizedBox(height: responsive.h(16)),
         _buildFooter(numReactions),
-        SizedBox(height: 16),
+        SizedBox(height: responsive.h(16)),
         // Dash(
         //   direction: Axis.horizontal,
         //   dashLength:MediaQuery.of(context).size.width- 32,
@@ -226,7 +240,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
         // ),
         Container(
           width: MediaQuery.of(context).size.width,
-          height: 1,
+          height: responsive.h(1),
           color: Color(0xFFDADADA),
         )
       ],
@@ -313,6 +327,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
   }
 
   Widget _buildHeader() {
+    final responsive = Responsive(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -325,18 +340,18 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
                   : communityPost.postedBy?.userName ?? "Anonymous user",
               style: TextStyle(
                 fontFamily: 'DM Sans',
-                fontSize: 18,
+                fontSize: responsive.sp(18),
                 fontWeight: FontWeight.w700,
                 color: Colors.black,
               ),
             ),
-            SizedBox(width: 13),
+            SizedBox(width: responsive.h(13)),
             Text(
               DateFormat("dd MMM, yyyy")
                   .format(DateTime.parse(communityPost.timeOfCreation!)),
               style: TextStyle(
                 fontFamily: 'DM Sans',
-                fontSize: 12,
+                fontSize: responsive.sp(12),
                 fontWeight: FontWeight.w400,
                 color: Color.fromRGBO(68, 68, 68, 1),
               ),
@@ -351,8 +366,8 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
               // Add your delete logic here (e.g., show confirmation, call API, etc.)
             },
             child: Container(
-              height: 24,
-              width: 24,
+              height: responsive.h(24),
+              width: responsive.w(24),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 color: myConstants.instiappGrey,
@@ -360,7 +375,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
               child: Icon(
                 Icons.delete_outline,
                 color: Color(0xFFF8471B),
-                size: 20,
+                size: responsive.sp(20),
               ),
             ),
           ),
@@ -369,6 +384,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
   }
   
   Widget _buildContent(String content, int contentChars) {
+    final responsive = Responsive(context);
     return GestureDetector(
       onTap: _getContentTapHandler,
       child: Column(
@@ -387,7 +403,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
             },
             style: TextStyle(
               fontFamily: 'DM Sans',
-              fontSize: 16,
+              fontSize: responsive.sp(16),
               color: Colors.black,
               height: 1.25,
             ),
@@ -401,7 +417,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
                 'Read More',
                 style: TextStyle(
                   fontFamily: 'DM Sans',
-                  fontSize: 16,
+                  fontSize: responsive.sp(16),
                   color: Color.fromRGBO(48, 111, 220, 1),
                   fontWeight: FontWeight.w700,
                 ),
@@ -413,6 +429,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
   }
 
   Widget _buildImages() {
+    final responsive = Responsive(context);
     final images = communityPost.imageUrl!;
     final imageCount = images.length;
     for (int i = 0; i < imageCount; i++) {
@@ -467,6 +484,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
   // }
 
   Widget _buildImageGrid(List<String> images, int imageCount) {
+    final responsive = Responsive(context);
     switch (imageCount) {
       case 1:
         return FutureBuilder<ImageInfo>(
@@ -516,7 +534,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
               return Container(
-                height: 200,
+                height: responsive.h(200),
                 child: Row(
                   children: [
                     Expanded(child: _buildImagePlaceholder()),
@@ -586,7 +604,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
 
       case 3:
         return Container(
-          height: 200,
+          height: responsive.h(200),
           child: Row(
             children: [
               // Big image on left (50% width)
@@ -626,7 +644,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 4),
+                    SizedBox(height: responsive.h(4)),
                     Expanded(
                       child: ClipRRect(
                         borderRadius: BorderRadius.only(
@@ -816,7 +834,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w600,
-                                            fontSize: 15.29),
+                                            fontSize: responsive.sp(15.29)),
                                       ),
                                     ),
                                   ),
@@ -878,6 +896,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
   }
 
   Widget _buildFooter(int numReactions) {
+    final responsive = Responsive(context);
     final commentsCount = communityPost.commentsCount ?? 0;
 
     switch (widget.postType) {
@@ -890,22 +909,22 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
             children: [
               // Reactions
               _buildReactionButton(numReactions),
-              SizedBox(width: 25),
+              SizedBox(width: responsive.w(25)),
               Container(
-                height: 24,
-                width: 1,
+                height: responsive.h(24),
+                width: responsive.w(1),
                 color: Color.fromRGBO(217, 217, 217, 1),
               ),
-              SizedBox(width: 25),
+              SizedBox(width: responsive.w(25)),
               // Comments
               _buildCommentButton(commentsCount),
-              SizedBox(width: 25),
+              SizedBox(width: responsive.w(25)),
               Container(
-                height: 24,
-                width: 1,
+                height: responsive.h(24),
+                width:  responsive.w(1),
                 color: Color.fromRGBO(217, 217, 217, 1),
               ),
-              SizedBox(width: 25),
+              SizedBox(width: responsive.w(25)),
               // Share
               _buildShareButton(),
             ],
@@ -936,7 +955,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
                 },
               ),
             ),
-            SizedBox(width: 12),
+            SizedBox(width: responsive.w(12)),
             Expanded(
               child: TextButton(
                 style: TextButton.styleFrom(
@@ -1015,7 +1034,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
 
   Widget _buildReactionButton(int numReactions) {
     final bloc = BlocProvider.of(context)!.bloc;
-
+    final responsive = Responsive(context);
     return PopupMenuButton<int>(
       onSelected: (val) => _handleReactionSelection(val, bloc),
       itemBuilder: (BuildContext context) {
@@ -1053,7 +1072,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
                     final emojiPath = _getEmojiPath(emojiIndex);
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 2),
-                      child: Image.asset(emojiPath, width: 18.5, height: 18.5),
+                      child: Image.asset(emojiPath, width: responsive.w(18.5), height: responsive.w(18.5)),
                     );
                   }).toList(),
                 ),
@@ -1064,7 +1083,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
             '$numReactions',
             style: TextStyle(
               fontFamily: 'DM Sans',
-              fontSize: 12,
+              fontSize: responsive.sp(12),
               color: Color.fromRGBO(68, 68, 68, 1),
             ),
           ),
@@ -1074,18 +1093,19 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
   }
 
   Widget _buildCommentButton(int commentsCount) {
+    final responsive = Responsive(context);
     return GestureDetector(
       onTap: widget.onPressedComment ?? _getCommentHandler(),
       child: Row(
         children: [
           Icon(Icons.chat_bubble_outline,
               size: 20, color: Color.fromRGBO(68, 68, 68, 1)),
-          SizedBox(width: 6),
+          SizedBox(width: responsive.w(6)),
           Text(
             '$commentsCount comments',
             style: TextStyle(
               fontFamily: 'DM Sans',
-              fontSize: 12,
+              fontSize: responsive.sp(12),
               color: Color.fromRGBO(68, 68, 68, 1),
             ),
           ),
@@ -1095,6 +1115,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
   }
 
   Widget _buildShareButton() {
+    final responsive = Responsive(context);
     return GestureDetector(
       onTap: () => Share.share(
           "Check this post: ${ShareURLMaker.getCommunityPostURL(communityPost)}"),
@@ -1108,7 +1129,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
             'Share',
             style: TextStyle(
               fontFamily: 'DM Sans',
-              fontSize: 12,
+              fontSize: responsive.sp(12),
               color: Color.fromRGBO(68, 68, 68, 1),
             ),
           ),
@@ -1153,10 +1174,11 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
   }
 
   PopupMenuWidget<int> _buildReactionMenu() {
+    final responsive = Responsive(context);
     return PopupMenuWidget<int>(
-      height: 20,
+      height: responsive.h(20),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 5),
+        padding: EdgeInsets.symmetric(horizontal: responsive.w(5)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: _getEmojis()
@@ -1169,7 +1191,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
                       : Colors.transparent,
                   child: InkWell(
                     onTap: () => Navigator.of(context).pop(e.key),
-                    child: Image.asset(e.value, width: 30),
+                    child: Image.asset(e.value, width: responsive.w(30)),
                   ),
                 ),
               )
@@ -1203,6 +1225,7 @@ class PollOption extends StatefulWidget {
 class _PollOptionState extends State<PollOption> {
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
     return InkWell(
       onTap: widget.onTap,
       child: Column(
@@ -1213,8 +1236,8 @@ class _PollOptionState extends State<PollOption> {
           Row(
             children: [
               Container(
-                width: 20,
-                height: 20,
+                width: responsive.w(20),
+                height: responsive.h(20),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: widget.isSelected
@@ -1234,26 +1257,26 @@ class _PollOptionState extends State<PollOption> {
               Expanded(
                 child: Text(
                   widget.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Color(0xCC0F1620),
-                    fontSize: 14,
+                    fontSize: responsive.sp(14),
                     fontWeight: FontWeight.w500,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: responsive.w(8)),
               Text(
                 widget.voteCount,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Color(0xCC0F1620),
-                  fontSize: 12,
+                  fontSize: responsive.sp(12),
                   fontWeight: FontWeight.w400,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 5),
+          SizedBox(height: responsive.h(5)),
 
           // --- Progress Bar ---
           LayoutBuilder(
@@ -1261,7 +1284,7 @@ class _PollOptionState extends State<PollOption> {
               return Stack(
                 children: [
                   Container(
-                    height: 6,
+                    height: responsive.h(6),
                     decoration: BoxDecoration(
                       color: const Color(0xFFD2D5DA),
                       borderRadius: BorderRadius.circular(16),
@@ -1269,7 +1292,7 @@ class _PollOptionState extends State<PollOption> {
                   ),
                   Container(
                     width: constraints.maxWidth * widget.votePercentage,
-                    height: 6,
+                    height: responsive.h(6),
                     decoration: BoxDecoration(
                       color: const Color(0xFF306FDC),
                       borderRadius: BorderRadius.circular(16),
@@ -1279,7 +1302,7 @@ class _PollOptionState extends State<PollOption> {
               );
             },
           ),
-          SizedBox(height: 16),
+          SizedBox(height: responsive.h(16)),
         ],
       ),
     );
@@ -1430,6 +1453,7 @@ class _PollViewerState extends State<PollViewer> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
     print("Building PollViewer with selected options:" +
         widget.poll.options![0].userVoted.toString());
     final totalVotes = widget.poll.totalVotes ?? 0;
@@ -1453,7 +1477,7 @@ class _PollViewerState extends State<PollViewer> {
             widget.poll.question ?? "Poll Question",
             style: TextStyle(
               color: Color(0xFF0F1620),
-              fontSize: 16,
+              fontSize: responsive.sp(16),
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -1464,11 +1488,11 @@ class _PollViewerState extends State<PollViewer> {
                 : 'Select one',
             style: TextStyle(
               color: Color(0xFF7E8287),
-              fontSize: 12,
+              fontSize: responsive.sp(12),
               fontWeight: FontWeight.w400,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: responsive.h(12)),
 
           // --- Poll Options ---
           // PollOption(

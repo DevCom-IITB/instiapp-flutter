@@ -341,8 +341,8 @@ class _BodyPageState extends State<BodyPage> {
                                         Navigator.of(context).pop();
                                       },
                                       child: Container(
-                                        height: 52,
-                                        width: 52,
+                                        height: responsive.h(52),
+                                        width: responsive.h(52),
                                         decoration: BoxDecoration(
                                             color:
                                                 Colors.white.withOpacity(0.6),
@@ -351,7 +351,7 @@ class _BodyPageState extends State<BodyPage> {
                                         child: Center(
                                           child: Container(
                                             height: responsive.h(24),
-                                            width: responsive.w(24),
+                                            width: responsive.h(24),
                                             child: SvgPicture.asset(
                                                 'assets/quicklinks/icons/arrow_left.svg'),
                                           ),
@@ -1855,7 +1855,7 @@ class _BodyPageState extends State<BodyPage> {
                     height: responsive.h(71),
                     width: responsive.w(71),
                     decoration: BoxDecoration(
-                        color: Colors.pink[100],
+                        // color: Colors.pink[100],
                         borderRadius: BorderRadius.circular(35.5)),
                     child: NullableCircleAvatar(
                       event.eventImageURL ??
