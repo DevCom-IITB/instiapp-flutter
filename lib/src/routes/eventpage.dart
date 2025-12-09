@@ -15,6 +15,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:InstiApp/src/utils/responsivenew.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 
 class EventPage extends StatefulWidget {
   final Event? initialEvent;
@@ -75,6 +76,19 @@ class _EventPageState extends State<EventPage> {
     "DevCom": "DC",
     "Placement Cell": "IITB"
   };
+
+  String _buildVenueText(Event? ev) {
+  if (ev == null) return 'Venue not specified';
+  final room = ev.venueRoom?.trim();
+  final hasRoom = room != null && room.isNotEmpty;
+  final venueName = (ev.eventVenues?.isNotEmpty == true)
+      ? (ev.eventVenues![0].venueName?.trim() ?? "")
+      : "";
+  if (hasRoom && venueName.isNotEmpty) return '$room, $venueName';
+  if (hasRoom) return room!;
+  if (venueName.isNotEmpty) return venueName;
+  return 'Venue not specified';
+}
 
   @override
   Widget build(BuildContext context) {
@@ -511,17 +525,7 @@ class _EventPageState extends State<EventPage> {
                                                   height: Responsive.height(
                                                       2, context)),
                                               Text(
-                                                (event!.venueRoom ?? "") +
-                                                    (event!.venueRoom != ""
-                                                        ? ", "
-                                                        : "") +
-                                                    (event!.eventVenues
-                                                                ?.isNotEmpty ??
-                                                            false
-                                                        ? event!.eventVenues![0]
-                                                                .venueName ??
-                                                            ""
-                                                        : "Venue not specified"),
+                                                _buildVenueText(event),
                                                 style: TextStyle(
                                                   fontSize: Responsive.text(
                                                       16, context),
@@ -554,10 +558,11 @@ class _EventPageState extends State<EventPage> {
                                 color: Color.fromRGBO(21, 32, 45, 1),
                               ),
                             ),
+                            
                             SizedBox(height: Responsive.height(8, context)),
                             Container(
-                              child: Text(
-                                event!.eventDescription ??
+                              child: SelectableLinkify(
+                                text : event!.eventDescription ??
                                     "No description available",
                                 style: TextStyle(
                                   fontSize: Responsive.text(16, context),
@@ -565,6 +570,17 @@ class _EventPageState extends State<EventPage> {
                                   fontFamily: 'DM Sans',
                                   color: Color.fromRGBO(15, 22, 32, 1),
                                 ),
+                                linkStyle: TextStyle(
+                                  color: Color.fromRGBO(48, 111, 220, 1),
+                                  decoration: TextDecoration.underline,
+                                ),
+                                onOpen: (link) async {
+                                  final uri = Uri.tryParse(link.url);
+                                  if (uri == null) return;
+                                  if (await canLaunchUrl(uri)) {
+                                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                  }
+                                },
                               ),
                             ),
                             SizedBox(height: Responsive.height(70, context)),
