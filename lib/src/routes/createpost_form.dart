@@ -297,7 +297,6 @@ class _CreatePostPage extends State<CreatePostPage> {
                                               MainAxisAlignment.start,
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
-                                          spacing: 8,
                                           children: [
                                             Text(
                                               'Post',
@@ -444,7 +443,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
-                                      spacing: 8,
+                                      mainAxisSize: MainAxisSize.min,
                                       children: [
                                         ...(currRequest1.imageUrl ?? [])
                                             .asMap()
@@ -479,7 +478,6 @@ class _CreatePostPage extends State<CreatePostPage> {
                                   bottom: Responsive.height(6, context),
                                   top: Responsive.height(6, context)),
                               child: Row(
-                                spacing: 14,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
