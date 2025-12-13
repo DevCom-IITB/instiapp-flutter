@@ -14,7 +14,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:InstiApp/src/routes/explore_club.dart';
 // import 'package:InstiApp/src/routes/bodypage.dart';
-import 'package:share/share.dart';
+// import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/responsivenew.dart';
 
