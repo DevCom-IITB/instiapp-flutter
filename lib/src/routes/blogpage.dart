@@ -74,6 +74,8 @@ class BlogPage extends StatefulWidget {
 class _BlogPageState extends State<BlogPage> {
   String view = 'normal'; // 'normal' or 'company wise'
   TextEditingController? _searchFieldController;
+  PageController? _pageController;
+  int currentTabIndex = 0; // 0: Placement, 1: Internship, 2: External
 
   late PostType postType;
   String? selectedDepartment;
@@ -81,6 +83,7 @@ class _BlogPageState extends State<BlogPage> {
   void initState() {
     super.initState();
     _searchFieldController = TextEditingController();
+    _pageController = PageController(initialPage: 0);
     setUrl();
     _hideButtonController = ScrollController()
       ..addListener(() {
@@ -110,12 +113,34 @@ class _BlogPageState extends State<BlogPage> {
   @override
   void dispose() {
     _searchFieldController?.dispose();
+    _pageController?.dispose();
     _focusNode.dispose();
     _hideButtonController?.dispose();
     super.dispose();
   }
 
   double placement = 1, internship = 0, external = 0;
+
+  void switchToTab(int index) {
+    setState(() {
+      currentTabIndex = index;
+      placement = index == 0 ? 1 : 0;
+      internship = index == 1 ? 1 : 0;
+      external = index == 2 ? 1 : 0;
+
+      _searchFieldController?.clear();
+      _focusNode.unfocus();
+      setUrl();
+    });
+
+    var bloc = BlocProvider.of(context)?.bloc;
+    var blogBloc = bloc?.getPostsBloc(postType);
+    if (blogBloc != null) {
+      blogBloc.query = '';
+      blogBloc.refresh();
+    }
+  }
+
   void setUrl() {
     if (placement == 1) {
       postType = PostType.Placement;
@@ -192,12 +217,6 @@ class _BlogPageState extends State<BlogPage> {
     var bloc = BlocProvider.of(context)!.bloc;
     bool isLoggedIn = bloc.currSession != null;
     var blogBloc = bloc.getPostsBloc(postType);
-
-    // if (firstBuild) {
-    //   blogBloc?.query = "";
-    //   blogBloc?.refresh();
-    //   firstBuild = false;
-    // }
     return GestureDetector(
       onTap: () {
         _focusNode.unfocus();
@@ -222,15 +241,11 @@ class _BlogPageState extends State<BlogPage> {
                         child: FloatingActionButton(
                           backgroundColor: Color.fromRGBO(48, 111, 220, 1),
                           onPressed: () {
-                            // Smooth scroll to top:
                             _hideButtonController?.animateTo(
                               0.0,
                               duration: Duration(milliseconds: 400),
                               curve: Curves.easeOut,
                             );
-
-                            // Or jump instantly:
-                            // _hideButtonController?.jumpTo(0.0);
                           },
                           child: Icon(Icons.arrow_upward),
                         ),
@@ -321,17 +336,11 @@ class _BlogPageState extends State<BlogPage> {
                                     splashColor:
                                         Color.fromRGBO(48, 111, 220, 1),
                                     onTap: () {
-                                      setState(() {
-                                        placement = 1;
-                                        internship = 0;
-                                        external = 0;
-
-                                        _searchFieldController?.clear();
-                                        _focusNode.unfocus();
-                                        blogBloc!.query = '';
-                                        setUrl();
-                                      });
-                                      blogBloc!.refresh();
+                                      _pageController?.animateToPage(
+                                        0,
+                                        duration: Duration(milliseconds: 300),
+                                        curve: Curves.easeInOut,
+                                      );
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(
@@ -372,17 +381,11 @@ class _BlogPageState extends State<BlogPage> {
                                     splashColor:
                                         Color.fromRGBO(48, 111, 220, 1),
                                     onTap: () {
-                                      setState(() {
-                                        placement = 0;
-                                        internship = 1;
-                                        external = 0;
-
-                                        _searchFieldController?.clear();
-                                        _focusNode.unfocus();
-                                        blogBloc!.query = '';
-                                        setUrl();
-                                      });
-                                      blogBloc!.refresh();
+                                      _pageController?.animateToPage(
+                                        1,
+                                        duration: Duration(milliseconds: 300),
+                                        curve: Curves.easeInOut,
+                                      );
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(
@@ -422,17 +425,11 @@ class _BlogPageState extends State<BlogPage> {
                                     splashColor:
                                         Color.fromRGBO(48, 111, 220, 1),
                                     onTap: () {
-                                      setState(() {
-                                        placement = 0;
-                                        internship = 0;
-                                        external = 1;
-
-                                        _searchFieldController?.clear();
-                                        _focusNode.unfocus();
-                                        blogBloc!.query = '';
-                                        setUrl();
-                                      });
-                                      blogBloc!.refresh();
+                                      _pageController?.animateToPage(
+                                        2,
+                                        duration: Duration(milliseconds: 300),
+                                        curve: Curves.easeInOut,
+                                      );
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(
@@ -516,19 +513,33 @@ class _BlogPageState extends State<BlogPage> {
                                               query.length >= 4) ||
                                           query.length == 0) {
                                         blogBloc!.query = query;
-                                        await blogBloc.refresh(force: query.isEmpty);
+                                        await blogBloc.refresh(
+                                            force: query.isEmpty);
                                       }
                                     },
                                     onSubmitted: (query) async {
                                       blogBloc!.query = query;
-                                      await blogBloc.refresh(force: query.isEmpty);
+                                      await blogBloc.refresh(
+                                          force: query.isEmpty);
                                     },
                                     // autofocus: true,
                                     maxLines: 1,
                                   ),
                                 ),
-                                SizedBox(
-                                    width: Responsive.width(20.0, context)),
+                                SizedBox(width: Responsive.width(8.0, context)),  
+                                InkWell(
+                                  onTap: () {
+                                    _searchFieldController?.clear();
+                                    _focusNode.unfocus();
+                                    blogBloc!.query = '';
+                                    blogBloc.refresh();
+                                  },
+                                  child:
+                                      SvgPicture.asset('assets/explore/x.svg',
+                                      width:Responsive.width(24.0, context),
+                                      height:Responsive.height(24.0, context)
+                                      ),
+                                ),
                               ],
                             ),
                           ),
@@ -642,65 +653,22 @@ class _BlogPageState extends State<BlogPage> {
                           //           ))
                           //         ])),
                           // SizedBox(height: Responsive.height(24.0, context)),
-                          if (view == 'normal')
-                            Expanded(
-                              child: StreamBuilder<UnmodifiableListView<Post>>(
-                                  stream: blogBloc!.blog,
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<UnmodifiableListView<Post>>
-                                          snapshot) {
-                                    final posts = snapshot.data;
-                                    final int baseCount =
-                                        (posts == null || posts.isEmpty)
-                                            ? 0
-                                            : ((posts.isNotEmpty &&
-                                                    posts.last.content == null)
-                                                ? posts.length - 1
-                                                : posts.length);
-                                    final int totalItemCount = baseCount + 1;
-                                    // if (snapshot.connectionState ==
-                                    //         ConnectionState.waiting ||
-                                    //     !snapshot.hasData) {
-                                    //   return Center(
-                                    //     child:
-                                    //         CircularProgressIndicatorExtended(
-                                    //             label:
-                                    //                 Text("Loading content...")),
-                                    //   );
-                                    // }
-                                    return ListView.builder(
-                                        controller: _hideButtonController,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return _buildPost(blogBloc, index,
-                                              snapshot.data, context);
-                                        },
-                                        itemCount: totalItemCount);
-                                  }),
-                            ),
-                          if (view == 'company wise')
-                            Expanded(
-                                child:
-                                    StreamBuilder<UnmodifiableListView<Post>>(
-                              stream: blogBloc!.blog,
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<UnmodifiableListView<Post>>
-                                      snapshot) {
-                                final List<Post> posts =
-                                    snapshot.data?.toList() ?? [];
-                                final Map<String, List<Post>> companyMap =
-                                    groupPostsByCompany(posts);
-                                return ListView(
-                                  children: <Widget>[
-                                    for (final entry in companyMap.entries)
-                                      Blogthread(
-                                        entry.value,
-                                        entry.key,
-                                      ),
-                                  ],
-                                );
+                          Expanded(
+                            child: PageView(
+                              controller: _pageController,
+                              onPageChanged: (index) {
+                                switchToTab(index);
                               },
-                            ))
+                              children: [
+                                // Placement Tab
+                                _buildTabContent(PostType.Placement, context),
+                                // Internship Tab
+                                _buildTabContent(PostType.Training, context),
+                                // External Tab
+                                _buildTabContent(PostType.External, context),
+                              ],
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -761,6 +729,54 @@ class _BlogPageState extends State<BlogPage> {
     return blogbloc!.refresh(force: blogbloc.query.isEmpty);
   }
 
+  Widget _buildTabContent(PostType tabPostType, BuildContext context) {
+    var bloc = BlocProvider.of(context)!.bloc;
+    var tabBlogBloc = bloc.getPostsBloc(tabPostType);
+
+    if (view == 'normal') {
+      return StreamBuilder<UnmodifiableListView<Post>>(
+        stream: tabBlogBloc!.blog,
+        builder: (BuildContext context,
+            AsyncSnapshot<UnmodifiableListView<Post>> snapshot) {
+          final posts = snapshot.data;
+          final int baseCount = (posts == null || posts.isEmpty)
+              ? 0
+              : ((posts.isNotEmpty && posts.last.content == null)
+                  ? posts.length - 1
+                  : posts.length);
+          final int totalItemCount = baseCount + 1;
+
+          return ListView.builder(
+            controller: _hideButtonController,
+            itemBuilder: (BuildContext context, int index) {
+              return _buildPost(tabBlogBloc, index, snapshot.data, context);
+            },
+            itemCount: totalItemCount,
+          );
+        },
+      );
+    } else {
+      // Company wise view
+      return StreamBuilder<UnmodifiableListView<Post>>(
+        stream: tabBlogBloc!.blog,
+        builder: (BuildContext context,
+            AsyncSnapshot<UnmodifiableListView<Post>> snapshot) {
+          final List<Post> posts = snapshot.data?.toList() ?? [];
+          final Map<String, List<Post>> companyMap = groupPostsByCompany(posts);
+          return ListView(
+            children: <Widget>[
+              for (final entry in companyMap.entries)
+                Blogthread(
+                  entry.value,
+                  entry.key,
+                ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
   Widget _buildPost(
       PostBloc bloc, int index, List<Post>? posts, BuildContext context) {
     bloc.inPostIndex.add(index);
@@ -768,14 +784,13 @@ class _BlogPageState extends State<BlogPage> {
     final Post? post =
         (posts != null && posts.length > index) ? posts[index] : null;
 
-        if (post == null &&
+    if (post == null &&
         (postType != PostType.ChatBot ||
             (postType == PostType.ChatBot && bloc.query.isNotEmpty))) {
       return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Center(
-        child: CircularProgressIndicator()),
-            );
+        padding: const EdgeInsets.all(8.0),
+        child: Center(child: CircularProgressIndicator()),
+      );
     }
     if (post?.content == null) {
       return Container(

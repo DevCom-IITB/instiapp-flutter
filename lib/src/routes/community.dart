@@ -58,6 +58,8 @@ class _CommunitiesState extends State<Communities> {
   bool loadingFollow = false;
   Constants myConstants = Constants();
   bool aboutExpanded = false;
+  final ScrollController _scrollcontroller = ScrollController();
+  bool _headerCollapsed = false;
   final List<String> _filterTabs = ['Sort', 'Filter'];
   List<String> subContLabels = ["Hostel Affairs", "Interns", "Tech"];
   // Widget _buildUserTile(User u) {
@@ -344,6 +346,14 @@ class _CommunitiesState extends State<Communities> {
   void initState() {
     super.initState();
     community = widget.initialCommunity;
+    _scrollcontroller.addListener(() {
+      final shouldCollapse = _scrollcontroller.hasClients && _scrollcontroller.offset > 60;
+      if (shouldCollapse != _headerCollapsed) {
+        setState(() {
+          _headerCollapsed = shouldCollapse;
+        });
+      }
+    });
     widget.communityFuture.then((community) {
       if (this.mounted) {
         setState(() {
@@ -351,6 +361,12 @@ class _CommunitiesState extends State<Communities> {
         });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollcontroller.dispose();
+    super.dispose();
   }
 
   @override
@@ -428,6 +444,7 @@ class _CommunitiesState extends State<Communities> {
                   child: Column(
                     children: [
                       // --- Banner with buttons ---
+                      if(!_headerCollapsed)
                       Stack(
                         children: [
                           SizedBox(
@@ -523,7 +540,7 @@ class _CommunitiesState extends State<Communities> {
                           ),
                         ],
                       ),
-
+                      if(!_headerCollapsed)
                       const SizedBox(height: 16),
 
                       // --- Club Info ---
@@ -650,32 +667,13 @@ class _CommunitiesState extends State<Communities> {
                                 )
                               ],
                             ),
+                            if(!_headerCollapsed)
                             const SizedBox(height: 10),
+                            if(!_headerCollapsed)
                             Container(
                               //height: aboutExpanded?192:72,
                               child: _buildAbout(theme)
                             ),
-                            // const Text(
-                            //     "Use this forum to Lorem ipsum dolorajhds Read More"),
-                            // const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                // for (int i = 0;
-                                //     i < subContLabels.length;
-                                //     i++) ...[
-                                //   subCont(subContLabels[i]),
-                                //   const SizedBox(width: 8),
-                                // ]
-                              ],
-                            ),
-                            // const SizedBox(height: 16),
-                            // Dash(
-                            //   direction: Axis.horizontal,
-                            //   length: responsive.w(379),
-                            //   dashLength: 6,
-                            //   dashGap: 5,
-                            //   dashColor: const Color(0xFFDADADA),
-                            // ),
                           ],
                         ),
                       ),
@@ -683,6 +681,7 @@ class _CommunitiesState extends State<Communities> {
                       const SizedBox(height: 10),
 
                       // --- Tabs ---
+                      if(!_headerCollapsed)
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Stack(
@@ -718,6 +717,7 @@ class _CommunitiesState extends State<Communities> {
                           children: [
                             //posts
                             SingleChildScrollView(
+                              controller: _scrollcontroller,
                               child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 0),

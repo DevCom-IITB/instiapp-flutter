@@ -244,6 +244,7 @@ class _CommunityPageState extends State<CommunityPage> {
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Image(
                                 image: AssetImage('assets/blogs/search.png'),
@@ -251,13 +252,43 @@ class _CommunityPageState extends State<CommunityPage> {
                                 width: responsive.h(24),
                               ),
                               SizedBox(width: responsive.w(20)),
-                              Text(
-                                'Search community...',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: 'DM Sans',
-                                  color: Color.fromRGBO(0, 0, 0, 0.4),
+                              Expanded(
+                                child: TextField(
+                                  controller: _searchFieldController,
+                                  focusNode: _focusNode,
+                                  // onChanged: (value) {
+                                  //   communityBloc.query = value;
+                                  //   communityBloc.refresh();
+                                  // },
+                                  // onSubmitted: (value) {
+                                  //   communityBloc.query = value;
+                                  //   communityBloc.refresh();
+                                  // },
+                                  onChanged: (value) {
+                                          // Just update UI, don't call refresh
+                                          setState(() {}); // Rebuild with filtered results
+                                        },
+                                  onSubmitted: (value) {
+                                          setState(() {}); // Rebuild with filtered results
+                                        }, 
+                                  decoration: InputDecoration(         
+                                    border: InputBorder.none,                                                             
+                                    hintText: 'Search communities',
+                                    hintStyle: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'DM Sans',
+                                      color: Color.fromRGBO(0, 0, 0, 0.4),                                      
+                                    ),
+                                    contentPadding: EdgeInsets.zero,
+                                    isDense: true,
+                                  ),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'DM Sans',
+                                    color: Color.fromRGBO(0, 0, 0, 1),
+                                  ),
                                 ),
                               ),
                             ],
@@ -316,6 +347,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                           Column(
                                             children: [
                                               SizedBox(height: 20),
+                                              
                                              ... _buildContent(snapshot, theme, communityBloc)
                                             ],
                                           ),
@@ -369,6 +401,12 @@ class _CommunityPageState extends State<CommunityPage> {
   ) {
     if (snapshot.hasData) {
       var communities = snapshot.data!;
+
+      var filteredCommunities = communities.where((community) {
+      return community.name!.toLowerCase().contains(_searchFieldController!.text.toLowerCase()) ||
+             (community.about?.toLowerCase().contains(_searchFieldController!.text.toLowerCase()) ?? false);
+    }).toList();
+      communities = filteredCommunities;
       if (communities.isEmpty == true) {
         return [
           Padding(
@@ -432,6 +470,7 @@ class _CommunityPageState extends State<CommunityPage> {
     // var instiBloc = BlocProvider.of(context)!.bloc;
 
     return Material(
+      color:Color.fromRGBO(246, 246, 246, 1.0),
       child: InkWell(
         onTap:() {
           Communities.navigateWith(context, bloc, community);
