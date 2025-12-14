@@ -3,6 +3,7 @@ import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/blocs/buynsell_post_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/services.dart';
 import '../api/model/user.dart';
 import 'buynsell_info.dart';
 
@@ -52,143 +53,150 @@ class _BuySellPageState extends State<BuySellPage> {
   Widget build(BuildContext context) {
     bool isLoggedIn = bloc.currSession != null;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
-      body: SafeArea(
-        child: !isLoggedIn
-            ? Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(RS.sw(context, 50)),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.cloud,
-                      size: RS.sw(context, 200),
-                      color: Colors.grey[600],
-                    ),
-                    Text(
-                      "Login To View Buy and Sell Posts",
-                      textAlign: TextAlign.center,
-                    )
-                  ],
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                ),
-              )
-            : Column(
-                children: [
-                  SizedBox(height: RS.sh(context, 4)),
-                  CustomAppBar(
-                    title: _currentTab == 0 ? 'Buy & Sell' : 'Posted By You',
-                    other: Icons.bookmark_border_rounded,
-                    // onOther: _onBookmarkPressed,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF6F6F6),
+        body: SafeArea(
+          child: !isLoggedIn
+              ? Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(RS.sw(context, 50)),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.cloud,
+                        size: RS.sw(context, 200),
+                        color: Colors.grey[600],
+                      ),
+                      Text(
+                        "Login To View Buy and Sell Posts",
+                        textAlign: TextAlign.center,
+                      )
+                    ],
+                    crossAxisAlignment: CrossAxisAlignment.center,
                   ),
-                  _buildSearchBar(),
-                  _buildFilterChips(),
-                  SizedBox(height: RS.sh(context, 16)),
-                  Expanded(
-                    child: StreamBuilder<List<BuynSellPost>>(
-                      stream: buynSellPostBloc.buynsellposts,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
-                        }
-
-                        if (snapshot.hasError) {
-                          return Center(child: Text('Error loading posts'));
-                        }
-
-                        final posts = snapshot.data ?? [];
-
-                        List<BuynSellPost> filteredPosts = posts.where((post) {
-                          // 1. Exclude deleted posts
-                          if (post.deleted == true) return false;
-
-                          // 2. Apply tab filter (My Posts)
-                          if (_currentTab == 1) {
-                            if (post.user?.userID != profile?.userID)
-                              return false;
+                )
+              : Column(
+                  children: [
+                    SizedBox(height: RS.sh(context, 4)),
+                    CustomAppBar(
+                      title: _currentTab == 0 ? 'Buy & Sell' : 'Posted By You',
+                      other: Icons.bookmark_border_rounded,
+                      // onOther: _onBookmarkPressed,
+                    ),
+                    _buildSearchBar(),
+                    _buildFilterChips(),
+                    SizedBox(height: RS.sh(context, 16)),
+                    Expanded(
+                      child: StreamBuilder<List<BuynSellPost>>(
+                        stream: buynSellPostBloc.buynsellposts,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
                           }
-
-                          // 3. Apply availability filter
-                          if (_currentFilter == 1 && (!post.status!) == true)
-                            return false; // Available
-                          if (_currentFilter == 2 && (!post.status!) == false)
-                            return false; // Sold
-
-                          // 4. Apply search filter
-                          if (_searchQuery.isNotEmpty) {
-                            final title = post.name?.toLowerCase() ?? '';
-                            if (!title.contains(_searchQuery.toLowerCase()))
-                              return false;
+      
+                          if (snapshot.hasError) {
+                            return Center(child: Text('Error loading posts'));
                           }
-
-                          // 5. Apply category filter (updated for multiple selection)
-                          if (_selectedCategories != null &&
-                              _selectedCategories!.isNotEmpty) {
-                            if (!_selectedCategories!.contains(post.category)) {
+      
+                          final posts = snapshot.data ?? [];
+      
+                          List<BuynSellPost> filteredPosts = posts.where((post) {
+                            // 1. Exclude deleted posts
+                            if (post.deleted == true) return false;
+      
+                            // 2. Apply tab filter (My Posts)
+                            if (_currentTab == 1) {
+                              if (post.user?.userID != profile?.userID)
+                                return false;
+                            }
+      
+                            // 3. Apply availability filter
+                            if (_currentFilter == 1 && (!post.status!) == true)
+                              return false; // Available
+                            if (_currentFilter == 2 && (!post.status!) == false)
+                              return false; // Sold
+      
+                            // 4. Apply search filter
+                            if (_searchQuery.isNotEmpty) {
+                              final title = post.name?.toLowerCase() ?? '';
+                              if (!title.contains(_searchQuery.toLowerCase()))
+                                return false;
+                            }
+      
+                            // 5. Apply category filter (updated for multiple selection)
+                            if (_selectedCategories != null &&
+                                _selectedCategories!.isNotEmpty) {
+                              if (!_selectedCategories!.contains(post.category)) {
+                                return false;
+                              }
+                            }
+      
+                            // 6. Apply negotiable filter
+                            if (_isNegotiable != null &&
+                                post.negotiable != _isNegotiable) {
                               return false;
                             }
+      
+                            return true;
+                          }).toList();
+      
+                          // 7. Apply sorting
+                          if (_sortBy == 'Price: Low to High') {
+                            filteredPosts.sort(
+                                (a, b) => (a.price ?? 0).compareTo(b.price ?? 0));
+                          } else if (_sortBy == 'Price: High to Low') {
+                            filteredPosts.sort(
+                                (a, b) => (b.price ?? 0).compareTo(a.price ?? 0));
+                          } else if (_sortBy == 'Recently Added') {
+                            // Already sorted by server - no action needed
+                          } else if (_sortBy == 'Oldest First') {
+                            filteredPosts = filteredPosts.reversed.toList();
                           }
-
-                          // 6. Apply negotiable filter
-                          if (_isNegotiable != null &&
-                              post.negotiable != _isNegotiable) {
-                            return false;
+      
+                          // Handle empty state
+                          if (filteredPosts.isEmpty) {
+                            String message = _currentTab == 1
+                                ? "You haven't posted anything yet"
+                                : "No posts available";
+      
+                            return Center(
+                              child: Text(
+                                message,
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            );
                           }
-
-                          return true;
-                        }).toList();
-
-                        // 7. Apply sorting
-                        if (_sortBy == 'Price: Low to High') {
-                          filteredPosts.sort(
-                              (a, b) => (a.price ?? 0).compareTo(b.price ?? 0));
-                        } else if (_sortBy == 'Price: High to Low') {
-                          filteredPosts.sort(
-                              (a, b) => (b.price ?? 0).compareTo(a.price ?? 0));
-                        } else if (_sortBy == 'Recently Added') {
-                          // Already sorted by server - no action needed
-                        } else if (_sortBy == 'Oldest First') {
-                          filteredPosts = filteredPosts.reversed.toList();
-                        }
-
-                        // Handle empty state
-                        if (filteredPosts.isEmpty) {
-                          String message = _currentTab == 1
-                              ? "You haven't posted anything yet"
-                              : "No posts available";
-
-                          return Center(
-                            child: Text(
-                              message,
-                              style: Theme.of(context).textTheme.titleMedium,
+      
+                          return RefreshIndicator(
+                            onRefresh: () async {
+                              await buynSellPostBloc.refresh();
+                            },
+                            displacement: 40,
+                            edgeOffset: 0,
+                            child: ListView.separated(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              itemCount: filteredPosts.length,
+                              separatorBuilder: (_, __) =>
+                                  SizedBox(height: RS.sh(context, 16)),
+                              itemBuilder: (context, index) =>
+                                  _buildProductItem(filteredPosts[index]),
                             ),
                           );
-                        }
-
-                        return RefreshIndicator(
-                          onRefresh: () async {
-                            await buynSellPostBloc.refresh();
-                          },
-                          displacement: 40,
-                          edgeOffset: 0,
-                          child: ListView.separated(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            itemCount: filteredPosts.length,
-                            separatorBuilder: (_, __) =>
-                                SizedBox(height: RS.sh(context, 16)),
-                            itemBuilder: (context, index) =>
-                                _buildProductItem(filteredPosts[index]),
-                          ),
-                        );
-                      },
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+        ),
+        bottomNavigationBar: _buildBottomNavBar(),
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
     );
   }
 
