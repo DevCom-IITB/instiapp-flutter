@@ -1014,26 +1014,21 @@ class _UserPageState extends State<UserPage>
     );
   }
 
-  Widget _buildSettingsSection() {
-    // SECURITY CHECK: Double-check before showing settings
+  Widget _settingsContent() {
+    // SECURITY CHECK
     if (!cansee || _isGuest) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: const [
               Icon(Icons.lock_outline, size: 48, color: Colors.grey),
               SizedBox(height: 16),
               Text(
                 'Access restricted',
                 style: TextStyle(color: Colors.grey, fontSize: 16),
               ),
-              if (_isGuest)
-                Text(
-                  'Login to access settings',
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
-                ),
             ],
           ),
         ),
@@ -1047,10 +1042,12 @@ class _UserPageState extends State<UserPage>
           ToggleItem(
             title: 'Notifications',
             value: NotificationVisibility,
-            onChanged: (val) => setState(() => NotificationVisibility = val),
+            onChanged: (val) =>
+                setState(() => NotificationVisibility = val),
             top: true,
             icon: Icons.notifications_none_outlined,
           ),
+
           SettingsItem(
             title: updatingProfile ? 'Opening...' : 'Edit Profile',
             icon: Icons.edit_outlined,
@@ -1059,7 +1056,6 @@ class _UserPageState extends State<UserPage>
               setState(() => updatingProfile = true);
               try {
                 await Future.delayed(const Duration(milliseconds: 300));
-
                 if (await canLaunchUrl(Uri.parse(updateProfileUrl))) {
                   await launchUrl(
                     Uri.parse(updateProfileUrl),
@@ -1071,6 +1067,7 @@ class _UserPageState extends State<UserPage>
               }
             },
           ),
+
           SettingsItem(
             title: sendingFeedback ? 'Opening...' : 'Feedback',
             icon: Icons.feedback_outlined,
@@ -1080,7 +1077,6 @@ class _UserPageState extends State<UserPage>
               setState(() => sendingFeedback = true);
               try {
                 await Future.delayed(const Duration(milliseconds: 300));
-
                 if (await canLaunchUrl(Uri.parse(feedbackUrl))) {
                   await launchUrl(
                     Uri.parse(feedbackUrl),
@@ -1092,23 +1088,26 @@ class _UserPageState extends State<UserPage>
               }
             },
           ),
+
           const SizedBox(height: 24),
+
           SettingsItem(
             title: loggingOutLoading ? 'Logging out...' : 'Logout',
             icon: Icons.logout,
             top: true,
             bottom: true,
-            color: loggingOutLoading ? Colors.grey : Color.fromRGBO(237, 0, 51, 1),
+            color: loggingOutLoading
+                ? Colors.grey
+                : const Color.fromRGBO(237, 0, 51, 1),
             onTap: () async {
               if (_bloc == null) return;
-              
+
               setState(() => loggingOutLoading = true);
               try {
                 await _bloc!.logout();
-
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/', 
-                  (Route<dynamic> route) => false
+                  '/',
+                  (Route<dynamic> route) => false,
                 );
               } finally {
                 setState(() => loggingOutLoading = false);
@@ -1118,6 +1117,19 @@ class _UserPageState extends State<UserPage>
         ],
       ),
     );
+  }
+
+  Widget _buildSettingsSection({bool scrollable = true}) {
+    if (scrollable) {
+      return Expanded(
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: _settingsContent(),
+        ),
+      );
+    }
+  
+    return _settingsContent();
   }
 
   Widget _buildAssociationsSection({bool scrollable = true}) {
