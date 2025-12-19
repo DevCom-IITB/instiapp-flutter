@@ -108,12 +108,12 @@ class _CreatePostPage extends State<CreatePostPage> {
             child: bloc.currSession == null
                 ? Container(
                     alignment: Alignment.center,
-                    padding: EdgeInsets.all(50),
+                    padding: EdgeInsets.symmetric(horizontal: Responsive.width(50,context), vertical: Responsive.height(50,context)),
                     child: Column(
                       children: [
                         Icon(
                           Icons.cloud,
-                          size: 200,
+                          size: Responsive.height(200,context),
                           color: Colors.grey[600],
                         ),
                         Text(
@@ -280,15 +280,15 @@ class _CreatePostPage extends State<CreatePostPage> {
                                         }
                                       },
                                       child: Container(
-                                        height: 35,
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 6),
+                                        height: Responsive.height(35,context),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: Responsive.width(16,context), vertical: Responsive.height(6,context)),
                                         clipBehavior: Clip.antiAlias,
                                         decoration: ShapeDecoration(
                                           color: const Color(0xFF306FDC),
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(100),
+                                                BorderRadius.circular(Responsive.width(100,context)),
                                           ),
                                         ),
                                         child: Row(
@@ -302,7 +302,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                               'Post',
                                               style: TextStyle(
                                                 color: const Color(0xFFF6F6F6),
-                                                fontSize: 16,
+                                                fontSize: Responsive.text(16,context),
                                                 fontFamily: 'DM Sans',
                                                 fontWeight: FontWeight.w600,
                                               ),
@@ -313,6 +313,17 @@ class _CreatePostPage extends State<CreatePostPage> {
                                     )
                                   ],
                                 )),
+                             Container(   
+                              margin: EdgeInsets.only(top: Responsive.height(4,context), bottom: Responsive.height(4,context), left: Responsive.width(24,context)),
+                            child:InkWell(
+                              onTap: (){
+                                setState(() {
+                                  click = !click;
+                                  currRequest1.anonymous = !click;
+                                });
+                              },
+                              child: Anonymous(click),
+                            ),),
                             Expanded(
                               child: Container(
                                 padding: EdgeInsets.only(
@@ -328,8 +339,8 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                 Responsive.height(13, context)),
                                         child: Image.network(
                                           currRequest1.postedBy?.userProfilePictureUrl ?? '',
-                                          width: 36,
-                                          height: 36,
+                                          width: Responsive.width(36,context),
+                                          height: Responsive.height(36,context),
                                           fit: BoxFit.cover,
                                           errorBuilder:
                                               (context, error, stackTrace) =>
@@ -358,7 +369,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                 style: TextStyle(
                                                   color:
                                                       const Color(0xFF7E8287),
-                                                  fontSize: 13,
+                                                  fontSize: Responsive.text(13,context),
                                                   fontFamily: 'DM Sans',
                                                   fontWeight: FontWeight.w500,
                                                 ),
@@ -374,7 +385,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                 style: TextStyle(
                                                   color:
                                                       const Color(0xFF0F1620),
-                                                  fontSize: 16,
+                                                  fontSize: Responsive.text(16,context),
                                                   fontFamily: 'DM Sans',
                                                   fontWeight: FontWeight.w400,
                                                 ),
@@ -385,7 +396,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                   hintStyle: TextStyle(
                                                     color:
                                                         const Color(0xFF0F1620),
-                                                    fontSize: 16,
+                                                    fontSize: Responsive.text(16,context),
                                                     fontFamily: 'DM Sans',
                                                     fontWeight: FontWeight.w500,
                                                   ),
@@ -516,17 +527,14 @@ class _CreatePostPage extends State<CreatePostPage> {
                                       child: Container(
                                         padding: EdgeInsets.symmetric(
                                             horizontal:
-                                                Responsive.width(6, context),
+                                                Responsive.width(8, context),
                                             vertical:
-                                                Responsive.width(6, context)),
+                                                Responsive.height(6, context)),
                                         child: SvgPicture.asset(
                                           'assets/communities/camera.svg',
-                                          height:
-                                              Responsive.height(22, context),
-                                          width: Responsive.width(22, context),
-                                          fit: BoxFit.none,
-                                          color:
-                                              Color.fromRGBO(48, 111, 220, 1),
+                                          height:Responsive.height(26, context),                                              
+                                          width: Responsive.width(26, context),
+                                          color:Color.fromRGBO(48, 111, 220, 1),                                            
                                         ),
                                       ),
                                     ),
@@ -575,16 +583,16 @@ class _CreatePostPage extends State<CreatePostPage> {
                                         child: Container(
                                           padding: EdgeInsets.symmetric(
                                               horizontal:
-                                                  Responsive.width(6, context),
+                                                  Responsive.width(8, context),
                                               vertical:
-                                                  Responsive.width(6, context)),
+                                                  Responsive.height(6, context)),
                                           child: SvgPicture.asset(
                                             'assets/communities/image.svg',
                                             height:
-                                                Responsive.height(22, context),
+                                                Responsive.height(26, context),
                                             width:
-                                                Responsive.width(22, context),
-                                            fit: BoxFit.none,
+                                                Responsive.width(26, context),
+                                            
                                           ),
                                         )),
                                   ),
@@ -614,12 +622,11 @@ class _CreatePostPage extends State<CreatePostPage> {
                                   //   ),
                                   // ),
                                   Container(
-                                    width: Responsive.width(1, context),
+                                    width: 1,
                                     height: Responsive.height(20, context),
                                     decoration: BoxDecoration(
                                       color: Color.fromRGBO(210, 213, 218, 1),
-                                      borderRadius: BorderRadius.circular(
-                                          Responsive.width(2, context)),
+                                      borderRadius: BorderRadius.circular(2),
                                     ),
                                   ),
                                   Material(
@@ -635,14 +642,14 @@ class _CreatePostPage extends State<CreatePostPage> {
                                       child: Container(
                                         padding: EdgeInsets.symmetric(
                                             horizontal:
-                                                Responsive.width(6, context),
+                                                Responsive.width(8, context),
                                             vertical:
-                                                Responsive.width(6, context)),
+                                                Responsive.height(6, context)),
                                         child: SvgPicture.asset(
                                           'assets/communities/bar-chart-2.svg',
                                           height:
-                                              Responsive.height(22, context),
-                                          width: Responsive.width(22, context),
+                                              Responsive.height(26, context),
+                                          width: Responsive.width(26, context),
                                           color:
                                               Color.fromRGBO(48, 111, 220, 1),
                                           fit: BoxFit.none,
@@ -659,6 +666,61 @@ class _CreatePostPage extends State<CreatePostPage> {
         ),
       ),
     );
+  }
+  Widget Anonymous(bool isano){
+    return isano ? Container(
+      margin: EdgeInsets.only(right: Responsive.width(24,context)),
+      padding: EdgeInsets.symmetric(horizontal: Responsive.width(12,context), vertical: Responsive.height(5, context)),
+      decoration: BoxDecoration( 
+        border: Border.all(
+          color: Color.fromRGBO(48,111,220,1)
+        ),
+        borderRadius: BorderRadius.circular(Responsive.width(100, context))
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+        SvgPicture.asset("assets/communities/globe.svg",
+        height: Responsive.height(20,context),
+        width: Responsive.width(20,context),
+        color: Color.fromRGBO(48,111,220,1)
+        ),
+        SizedBox(width: Responsive.width(4,context)),
+        Text("Public", style: TextStyle(
+                                                  color:
+                                                      Color.fromRGBO(48,111,220,1),
+                                                  fontSize: Responsive.text(18,context),
+                                                  fontFamily: 'DM Sans',
+                                                  fontWeight: FontWeight.w700,
+                                                ), )
+
+    ],),): Container(
+      padding: EdgeInsets.symmetric(horizontal: Responsive.width(12,context), vertical: Responsive.height(5, context)),
+      decoration: BoxDecoration( 
+        border: Border.all(
+          color: Color.fromRGBO(48,111,220,1)
+        ),
+        color: Color.fromRGBO(48,111,220,1),
+        borderRadius: BorderRadius.circular(Responsive.width(100, context))
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+        SvgPicture.asset("assets/communities/mdi_anonymous.svg",
+        height: Responsive.height(20,context),
+        width: Responsive.width(20,context),
+        color: Color.fromRGBO(255,255,255,1),
+        ),
+        SizedBox(width: Responsive.width(4,context)),
+        Text("Anonymous", style: TextStyle(
+                                                  color:
+                                                      Color.fromRGBO(255,255,255,1),
+                                                  fontSize: Responsive.text(18,context),
+                                                  fontFamily: 'DM Sans',
+                                                  fontWeight: FontWeight.w700,
+                                                ),)
+
+      ],),);
   }
 
   Widget _buildImageUrl(String url, int index) {
@@ -699,6 +761,7 @@ class _CreatePostPage extends State<CreatePostPage> {
     return Stack(
       children: [
         Container(
+          margin: EdgeInsets.only(right: Responsive.width(8, context)),
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             borderRadius:
@@ -712,7 +775,7 @@ class _CreatePostPage extends State<CreatePostPage> {
           ),
         ),
         Positioned(
-          right: Responsive.width(-10, context),
+          right: Responsive.width(-2, context),
           top: Responsive.height(-10, context),
           child: Container(
             child: IconButton(
@@ -919,7 +982,7 @@ class _PollCreatorState extends State<PollCreator> {
                   hintText: "Ask question",
                   hintStyle: TextStyle(
                     color: const Color(0xFF7E8287),
-                    fontSize: 14,
+                    fontSize: Responsive.text(14,context),
                     fontFamily: 'DM Sans',
                     fontWeight: FontWeight.w400,
                   ),
@@ -932,7 +995,7 @@ class _PollCreatorState extends State<PollCreator> {
                 ),
                 style: TextStyle(
                   color: const Color(0xCC0F1620),
-                  fontSize: 14,
+                  fontSize: Responsive.text(14,context),
                   fontFamily: 'DM Sans',
                   fontWeight: FontWeight.w400,
                 ),
@@ -946,7 +1009,7 @@ class _PollCreatorState extends State<PollCreator> {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: const Color(0xFFD2D5DA),
-                  width: 1,
+                  width: Responsive.width(1,context),
                 ),
                 color: const Color(0xFFFFFFFF),
               ),
@@ -998,7 +1061,7 @@ class _PollCreatorState extends State<PollCreator> {
                                     hintText: "Option",
                                     hintStyle: TextStyle(
                                       color: const Color(0xFF7E8287),
-                                      fontSize: 14,
+                                      fontSize: Responsive.text(14,context),
                                       fontFamily: 'DM Sans',
                                       fontWeight: FontWeight.w400,
                                     ),
@@ -1012,7 +1075,7 @@ class _PollCreatorState extends State<PollCreator> {
                                   ),
                                   style: TextStyle(
                                     color: const Color(0xCC0F1620),
-                                    fontSize: 14,
+                                    fontSize: Responsive.text(14,context),
                                     fontFamily: 'DM Sans',
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -1025,7 +1088,7 @@ class _PollCreatorState extends State<PollCreator> {
                                   padding: EdgeInsets.zero, // Remove padding
                                   constraints:
                                       BoxConstraints(), // Remove minimum size constraints
-                                  iconSize: 20,
+                                  iconSize: Responsive.width(20,context),
                                   onPressed: () {
                                     setState(() {
                                       optionControllers[index].dispose();
@@ -1061,7 +1124,7 @@ class _PollCreatorState extends State<PollCreator> {
                             'Add option',
                             style: TextStyle(
                               color: const Color(0xFFBEBEBE),
-                              fontSize: 14,
+                              fontSize: Responsive.text(14,context),
                               fontFamily: 'DM Sans',
                               fontWeight: FontWeight.w400,
                             ),
@@ -1086,7 +1149,7 @@ class _PollCreatorState extends State<PollCreator> {
                   'Allow multiple answers',
                   style: TextStyle(
                     color: const Color(0xFF306FDC),
-                    fontSize: 14,
+                    fontSize: Responsive.text(14,context),
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w500,
                   ),
@@ -1100,6 +1163,7 @@ class _PollCreatorState extends State<PollCreator> {
     );
   }
 }
+
                     // padding: const EdgeInsets.all(7.0),
                     // child: Form(
                     //   key: _formKey1,
