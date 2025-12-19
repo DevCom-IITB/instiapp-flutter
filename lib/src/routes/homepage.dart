@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:ui';
 
 import 'package:InstiApp/constants.dart';
 import 'package:InstiApp/src/routes/community.dart';
@@ -21,6 +22,7 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:intl/intl.dart';
 import '../widgets/custom_dialog.dart';
+import '../widgets/bottom_navbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io' show Platform;
 
@@ -43,27 +45,10 @@ class Homepage extends StatefulWidget {
   State<Homepage> createState() => _HomepageState();
 }
 
-class _HomepageState extends State<Homepage> {
+class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   String currentpage = 'homepage';
   Constants myConstants = Constants();
-  List<String> navIconPaths = [
-    'assets/homepage/icons/home.svg',
-    'assets/homepage/icons/loader.svg',
-    'assets/homepage/icons/search.svg',
-    'assets/homepage/icons/message-square.svg',
-    //'assets/homepage/icons/map.svg'
-  ];
-  Map<String,String> navIcons= {
-    "Home": 'assets/homepage/icons/home.svg',
-    "Feed": 'assets/homepage/icons/loader.svg',
-    "Explore": 'assets/homepage/icons/search.svg',
-    "Communities": 'assets/homepage/icons/message-square.svg',
-  };
-  
-  List<String> get navIconLabels => navIcons.keys.toList();
 
-  List<String> days = ['Mon', 'Tue'];
-  List<String> hostel = ['H-1', 'H-2'];
   List<String> meals = ['Breakfast', 'Lunch', 'Snacks', 'Dinner'];
   List<String> mealTime = ['7:30 AM - 10:00 AM','12:30 PM - 2:00 PM','4:30 PM - 6:00 PM','7:30 PM - 10:00 PM'];
   List<TimeOfDay> mealEndTimes = [
@@ -73,20 +58,28 @@ class _HomepageState extends State<Homepage> {
     TimeOfDay(hour: 22, minute: 0),  // Dinner ends at 10:00 PM (22:00)
   ];
 
-  List<String> navLabels = ["Home","Feed","Explore","Communities"];
-  // String _dropdownHostel='1';
   String _selectedHostel='1';
   String _selectedDay='Monday';
   int selectedMeal=0;
-  String label="Home";
-  // String _dropdownDay='Mon';
   bool showQR=false;
-  String selectedNavIcon='assets/homepage/icons/home.svg';
-  bool selectedIcon=true;
   bool firstBuild = true;
   bool error=false;
   bool loading=true;
   String qrString="";
+
+  // Page Controller for swipe navigation
+  late PageController _pageController;
+  int _currentPageIndex = 0;
+  double _pageOffset = 0.0;
+  
+  // Animation controllers for navbar
+  late AnimationController _navIndicatorController;
+  late Animation<double> _navIndicatorAnimation;
+  late AnimationController _navScaleController;
+  late Animation<double> _navScaleAnimation;
+  
+  // Track previous index for animation direction
+  int _previousIndex = 0;
 
   String _formatMeal(String? meal) {
     return (meal ?? '')
@@ -161,10 +154,85 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     super.initState();
-
-    // Set initial values based on current datetime
+    
+    // Initialize page controller
+    _pageController = PageController(initialPage: _currentPageIndex);
+    _pageController.addListener(_pageListener);
+    
+    // Initialize animation controllers
+    _navIndicatorController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    
+    _navScaleController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    
+    // Create animations
+    _navIndicatorAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _navIndicatorController,
+      curve: Curves.easeInOut,
+    ));
+    
+    _navScaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.1,
+    ).animate(CurvedAnimation(
+      parent: _navScaleController,
+      curve: Curves.easeOut,
+    ));
+    
+    // Start with indicator at first position
+    _navIndicatorController.forward();
+    
+    // Set initial values
     _selectedDay = getCurrentDay();
     selectedMeal = getCurrentMealSlot();
+  }
+
+  void _pageListener() {
+    if (_pageController.hasClients) {
+      setState(() {
+        _pageOffset = _pageController.page! - _currentPageIndex;
+      });
+    }
+  }
+
+  void _onPageSwiped(int index) {
+    _previousIndex = _currentPageIndex;
+    _currentPageIndex = index;
+  
+    _navIndicatorController
+      ..reset()
+      ..forward();
+  
+    setState(() {});
+  }
+
+  void _onNavTap(int index) {
+    if (index == _currentPageIndex) return;
+
+    _previousIndex = _currentPageIndex;
+    _currentPageIndex = index;
+
+    // Animate ONLY navbar
+    _navIndicatorController
+      ..reset()
+      ..forward();
+
+    _navScaleController
+      ..reset()
+      ..forward().then((_) => _navScaleController.reverse());
+
+    // Instant page change (NO animation)
+    _pageController.jumpToPage(index);
+
+    setState(() {});
   }
 
   @override
@@ -206,8 +274,6 @@ class _HomepageState extends State<Homepage> {
       }
     }
     
-    // If all meals finished for today, return first meal of next day
-    print('All meals finished, defaulting to breakfast');
     return 0;
   }
 
@@ -221,48 +287,61 @@ class _HomepageState extends State<Homepage> {
   }
 
   @override
+  void dispose() {
+    _pageController.removeListener(_pageListener);
+    _pageController.dispose();
+    _navIndicatorController.dispose();
+    _navScaleController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final responsive = Responsive(context);
 
     return Scaffold(
-      body: WillPopScope(
-        onWillPop: () async {
-          if (currentpage != 'homepage') {
-            setState(() {
-              currentpage = 'homepage';
-            });
-            return false;
-          }
-          return true; 
-        },
-        child: Stack(
-          children: [
-            if(currentpage == 'homepage')
-            Homepagewidget(),
-            if (currentpage == 'explore')
-            ExplorePage(),
-            if (currentpage == 'Feed')
+      body: Stack(
+        children: [
+          // Main content with swipe navigation
+          PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              _onPageSwiped(index);
+            },
+            physics: const BouncingScrollPhysics(),
+            children: [
+              Homepagewidget(),
               FeedPage(),
-            if(currentpage=='Communities')
+              ExplorePage(),
               CommunityPage(),
-            // if(currentpage=='CommunityPage')
-            //   // Communities(),
-            //   CommunityPage(),
-              //CommunityPostPage(communityPostFuture: communityPostFuture),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: EdgeInsets.only(bottom: responsive.h(20)),
-                child: navBar(),
+            ],
+          ),
+          
+          // Bottom Navigation Bar
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: responsive.h(20)),
+              child: InstiBottomNavBar(
+                items: const [
+                  NavBarItem(label: 'Home', iconPath: 'assets/homepage/icons/home.svg'),
+                  NavBarItem(label: 'Feed', iconPath: 'assets/homepage/icons/loader.svg'),
+                  NavBarItem(label: 'Explore', iconPath: 'assets/homepage/icons/search.svg'),
+                  NavBarItem(label: 'Communities', iconPath: 'assets/homepage/icons/message-square.svg'),
+                ],
+                currentIndex: _currentPageIndex,
+                onTap: _onNavTap,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
+
   List<String> daysList=HostelMess.dayToName.values.map((d) => d.substring(0, 1)).toList();
   List<String> daysKeys=HostelMess.dayToName.values.map((d) => d.substring(0 )).toList();
+  
   void _openFilterBottomSheet(List<Hostel> hostels){
     final responsive = Responsive(context);
     String tempSelectedDay=_selectedDay;
@@ -569,6 +648,7 @@ class _HomepageState extends State<Homepage> {
       }
       );
   }
+
   Widget dayContainer(String day,bool isSelected, VoidCallback onTap){
     final responsive = Responsive(context);
     return GestureDetector(
@@ -594,6 +674,7 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
+
   Widget services(String name, String path, Map<String,dynamic> services_icon) {
     final responsive = Responsive(context);
     return InkWell(
@@ -990,102 +1071,6 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  Widget navBar() {
-    final responsive = Responsive(context);
-    return Container(
-      height: responsive.h(80),
-      width: responsive.w(396),
-      decoration: BoxDecoration(
-          color: myConstants.instiappDark,
-          borderRadius: BorderRadius.circular(50)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: navIcons.entries.map((entry) {
-          String label = entry.key;
-          String path = entry.value;
-          selectedIcon = path == selectedNavIcon;
-          return SizedBox(
-            width: responsive.w(87),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // if (selectedIcon)
-                  
-                //   SvgPicture.asset(
-                //     'assets/homepage/icons/icon1.svg',
-                //     width: 69,
-                //     height: 10,
-                //     colorFilter:
-                //         ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                //   )
-                // else
-                //   SizedBox(height: 10),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedNavIcon = path;
-                    });
-                    if (path == 'assets/homepage/icons/search.svg') {
-                        currentpage = 'explore';
-                        
-                    } else if (path ==
-                        'assets/homepage/icons/message-square.svg') {
-                        currentpage = 'Communities';
-                        
-                    // } else if (path == 'assets/homepage/icons/map.svg') {
-                    //     currentpage = 'Map';  
-                    } else if (path == 'assets/homepage/icons/loader.svg') {
-                        currentpage = 'Feed';
-                        
-                    } else if (path == 'assets/homepage/icons/home.svg') {
-                        currentpage = 'homepage';
-                        
-                    }
-                  },
-                  child: Column(
-                    children: [
-                      Container(
-                        width: responsive.w(63),
-                        height: responsive.h(33),
-                        decoration: BoxDecoration(
-                          color: selectedIcon ? myConstants.instiappBlue : Colors.transparent,
-                          borderRadius: BorderRadius.circular(79.67)
-                        ),
-                        child: Center(
-                          child: Container(
-                            width: responsive.w(24),
-                            height: responsive.w(24),
-                            child: SvgPicture.asset(
-                              path,
-                              colorFilter: ColorFilter.mode(
-                                Colors.white,
-                                BlendMode.srcIn),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: responsive.h(2)),
-                      Text(
-                        label,
-                        style: TextStyle(
-                          color: selectedIcon ? myConstants.instiappBlue : Colors.white,
-                          // color: Colors.white,
-                        ),
-                      )
-                    ],
-                  ),
-                  
-                ),
-              ],
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
   Widget qrOpen({
     required bool loading,
     required bool error,
@@ -1115,7 +1100,6 @@ class _HomepageState extends State<Homepage> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      print("clicked");
                       generateQR();
                     },
                     child: Container(
@@ -1211,369 +1195,369 @@ class _HomepageState extends State<Homepage> {
   }
 
   Widget qrClosed(List<Hostel> hostels) {
-  final responsive = Responsive(context);
-  return Column(
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Mess Menu',
-            style: TextStyle(
-              color: const Color(0xFF15202D),
-              fontSize: responsive.sp(20),
-              fontFamily: 'DM Sans',
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          GestureDetector(
-            onTap: (){
-              _openFilterBottomSheet(hostels);
-            },
-            child: Container(
-              width: responsive.w(94),
-              height: responsive.h(40),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                color: myConstants.instiappGrey,
-                border: Border.all(
-                  color: Color(0xFF7E8287),
-                  width: responsive.w(1)
-                )
-              ),
-              padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(11), responsive.w(4), responsive.h(10)),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "${_selectedDay.substring(0,3)}, H-${_selectedHostel}",
-                    style: TextStyle(
-                      color: Color(0xCC0F1620),
-                      fontWeight: FontWeight.w500
-                    ),
-                  ),
-                  // SizedBox(width: 8),
-                  // Container(
-                  //   height: 20,
-                  //   width: 20,
-                  //   child: Icon(Icons.keyboard_arrow_down),
-                  // )
-                ],
+    final responsive = Responsive(context);
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Mess Menu',
+              style: TextStyle(
+                color: const Color(0xFF15202D),
+                fontSize: responsive.sp(20),
+                fontFamily: 'DM Sans',
+                fontWeight: FontWeight.w700,
               ),
             ),
-          )
-          // Row(
-          //   children: [
-          //     Container(
-          //       height: 40,
-          //       width: 78.5,
-          //       decoration: BoxDecoration(
-          //         color: myConstants.instiappGrey,
-          //         borderRadius: BorderRadius.circular(20),
-          //       ),
-          //       child: Center(
-          //         child: DropdownButton(
-          //           items: HostelMess.dayToName.values
-          //                   .map((d) => DropdownMenuItem(value: d.substring(0,3), child: Text(d.substring(0,3))))
-          //                   .toList(),
-          //           onChanged: (String? newDay) {
-          //             setState(() {
-          //               _dropdownDay = newDay!;
-          //             });
-          //           },
-          //           value: _dropdownDay,
-          //           icon: Icon(Icons.keyboard_arrow_down),
-          //           style: TextStyle(
-          //             color: Colors.grey[800],
-          //             fontWeight: FontWeight.w400,
-          //           ),
-          //           underline: SizedBox(),
-          //         ),
-          //       ),
-          //     ),
-          //     SizedBox(width: 8),
-          //     Container(
-          //       height: 40,
-          //       width: 78.5,
-          //       decoration: BoxDecoration(
-          //         color: myConstants.instiappGrey,
-          //         borderRadius: BorderRadius.circular(20),
-          //       ),
-          //       padding: EdgeInsets.only(left: 10),
-          //       child: DropdownButton(
-          //         items: hostels.map((h){
-          //           final name=(h.shortName! =='tansa'||h.shortName! =='qip')
-          //           ? h.shortName!
-          //           : 'H-${h.shortName!}';
-          //           return DropdownMenuItem(
-          //             value: h.shortName!,
-          //             child: Text(name)
-          //             );
-          //         }).toList(),
-          //         onChanged: (String? newValue) {
-          //           setState(() {
-          //             _dropdownHostel = newValue!;
-          //           });
-          //         },
-          //         value: _dropdownHostel,
-          //         icon: Padding(
-          //           padding: const EdgeInsets.only(left: 7),
-          //           child: Icon(Icons.keyboard_arrow_down),
-          //         ),
-          //         style: TextStyle(
-          //           color: Colors.grey[800],
-          //           fontWeight: FontWeight.w400,
-          //         ),
-          //         underline: SizedBox(),
-                  
-          //       ),
-          //     ),
-          //   ],
-          // )
-        ],
-      ),
-      SizedBox(height: responsive.h(20)),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: responsive.w(110),
-            height: responsive.h(184),
-            child: Column(
-              children: [
-                for (int i = 0; i < meals.length; i++) ...[
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedMeal = i;
-                      });
-                    },
-                    child: Container(
-                      height: responsive.h(40),
-                      width: responsive.w(120),
-                      decoration: BoxDecoration(
-                        color: selectedMeal == i
-                            ? myConstants.instiappBlue
-                            : myConstants.instiappGrey,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(
-                        child: Text(
-                          meals[i],
-                          style: TextStyle(
-                            color: selectedMeal == i
-                                ? Colors.white
-                                : Color(0xCC0F1620),
-                            fontFamily: 'DM Sans',
-                            fontWeight: FontWeight.w500,
-                            fontSize: responsive.sp(14),
-                          ),
-                        ),
+            GestureDetector(
+              onTap: (){
+                _openFilterBottomSheet(hostels);
+              },
+              child: Container(
+                width: responsive.w(94),
+                height: responsive.h(40),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  color: myConstants.instiappGrey,
+                  border: Border.all(
+                    color: Color(0xFF7E8287),
+                    width: responsive.w(1)
+                  )
+                ),
+                padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(11), responsive.w(4), responsive.h(10)),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "${_selectedDay.substring(0,3)}, H-${_selectedHostel}",
+                      style: TextStyle(
+                        color: Color(0xCC0F1620),
+                        fontWeight: FontWeight.w500
                       ),
                     ),
-                  ),
-                  if (i != meals.length - 1) SizedBox(height: responsive.h(8)),
-                ],
-              ],
-            ),
-          ),
-          SizedBox(width: responsive.w(8)),
-          SizedBox(
-            width: responsive.w(250),
-            height: responsive.h(184),
-            child: Container(
-              padding: EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: myConstants.instiappBlue,
-                borderRadius: BorderRadius.circular(15),
+                    // SizedBox(width: 8),
+                    // Container(
+                    //   height: 20,
+                    //   width: 20,
+                    //   child: Icon(Icons.keyboard_arrow_down),
+                    // )
+                  ],
+                ),
               ),
+            )
+            // Row(
+            //   children: [
+            //     Container(
+            //       height: 40,
+            //       width: 78.5,
+            //       decoration: BoxDecoration(
+            //         color: myConstants.instiappGrey,
+            //         borderRadius: BorderRadius.circular(20),
+            //       ),
+            //       child: Center(
+            //         child: DropdownButton(
+            //           items: HostelMess.dayToName.values
+            //                   .map((d) => DropdownMenuItem(value: d.substring(0,3), child: Text(d.substring(0,3))))
+            //                   .toList(),
+            //           onChanged: (String? newDay) {
+            //             setState(() {
+            //               _dropdownDay = newDay!;
+            //             });
+            //           },
+            //           value: _dropdownDay,
+            //           icon: Icon(Icons.keyboard_arrow_down),
+            //           style: TextStyle(
+            //             color: Colors.grey[800],
+            //             fontWeight: FontWeight.w400,
+            //           ),
+            //           underline: SizedBox(),
+            //         ),
+            //       ),
+            //     ),
+            //     SizedBox(width: 8),
+            //     Container(
+            //       height: 40,
+            //       width: 78.5,
+            //       decoration: BoxDecoration(
+            //         color: myConstants.instiappGrey,
+            //         borderRadius: BorderRadius.circular(20),
+            //       ),
+            //       padding: EdgeInsets.only(left: 10),
+            //       child: DropdownButton(
+            //         items: hostels.map((h){
+            //           final name=(h.shortName! =='tansa'||h.shortName! =='qip')
+            //           ? h.shortName!
+            //           : 'H-${h.shortName!}';
+            //           return DropdownMenuItem(
+            //             value: h.shortName!,
+            //             child: Text(name)
+            //             );
+            //         }).toList(),
+            //         onChanged: (String? newValue) {
+            //           setState(() {
+            //             _dropdownHostel = newValue!;
+            //           });
+            //         },
+            //         value: _dropdownHostel,
+            //         icon: Padding(
+            //           padding: const EdgeInsets.only(left: 7),
+            //           child: Icon(Icons.keyboard_arrow_down),
+            //         ),
+            //         style: TextStyle(
+            //           color: Colors.grey[800],
+            //           fontWeight: FontWeight.w400,
+            //         ),
+            //         underline: SizedBox(),
+                    
+            //       ),
+            //     ),
+            //   ],
+            // )
+          ],
+        ),
+        SizedBox(height: responsive.h(20)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: responsive.w(110),
+              height: responsive.h(184),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: EdgeInsets.all(16),
-                    width: responsive.w(242),
-                    height: responsive.h(129),
-                    decoration: BoxDecoration(
-                      color: myConstants.instiappWhite,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: SingleChildScrollView(
-                      child: Text(
-                        _mealString(hostels),
-                        style: TextStyle(
-                          color: const Color(0xFF1B3252),
-                          fontSize: responsive.sp(14),
-                          fontFamily: 'DM Sans',
-                          fontWeight: FontWeight.w500,
-                          height: responsive.h(1.31),
+                  for (int i = 0; i < meals.length; i++) ...[
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedMeal = i;
+                        });
+                      },
+                      child: Container(
+                        height: responsive.h(40),
+                        width: responsive.w(120),
+                        decoration: BoxDecoration(
+                          color: selectedMeal == i
+                              ? myConstants.instiappBlue
+                              : myConstants.instiappGrey,
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(vertical: responsive.h(8), horizontal: responsive.w(18)),
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(
-                            'assets/homepage/images/doodletime.png'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          mealTime[selectedMeal],
-                          style: TextStyle(
-                            color: myConstants.instiappWhite,
-                            fontSize: responsive.sp(14),
-                            fontFamily: 'DM Sans',
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                              showDialog(
-                              context: context,
-                              builder: (context) => CustomDialog(
-                                title: 'Open Mess-I Dashboard?',
-                                content1: 'Would you like to open the other app?',
-                                content2: 'If it\'s not installed, you\'ll be redirected to the store.',
-                                options: [
-                                  DialogOption(
-                                    text: 'Cancel',
-                                    onPressed: (ctx, setProcessing) => Navigator.of(ctx).pop(),
-                                  ),
-                                  DialogOption(
-                                    text: 'Open',
-                                    isPrimary: true,
-                                    onPressed: (ctx, setProcessing) async {
-                                      Navigator.of(ctx).pop(); // close dialog
-
-                                      const String websiteUrl = "https://instamess.gymkhana.iitb.ac.in"; // your website link
-                                      final Uri uri = Uri.parse(websiteUrl);
-
-                                      try {
-                                        if (await canLaunchUrl(uri)) {
-                                          await launchUrl(uri, mode: LaunchMode.externalApplication);
-                                        } else {
-                                          ScaffoldMessenger.of(ctx).showSnackBar(
-                                            const SnackBar(content: Text('Could not open the website')),
-                                          );
-                                        }
-                                      } catch (e) {
-                                        ScaffoldMessenger.of(ctx).showSnackBar(
-                                          const SnackBar(content: Text('Error opening the website')),
-                                        );
-                                      }
-                                    },
-                                  ),
-                                ],
-                              ),
-                          );
-                        },
-                        child: Container(
-                          width: responsive.w(30),
-                          height: responsive.h(30),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                            image: DecorationImage(
-                              image: AssetImage('assets/homepage/images/messi.webp'),
-                              fit: BoxFit.contain,
+                        child: Center(
+                          child: Text(
+                            meals[i],
+                            style: TextStyle(
+                              color: selectedMeal == i
+                                  ? Colors.white
+                                  : Color(0xCC0F1620),
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w500,
+                              fontSize: responsive.sp(14),
                             ),
                           ),
                         ),
-                      )
-                      ],
+                      ),
                     ),
-                  ),
+                    if (i != meals.length - 1) SizedBox(height: responsive.h(8)),
+                  ],
                 ],
               ),
             ),
-          ),
-        ],
-      ),
-      SizedBox(height: responsive.h(20)),
-      Dash(
-        direction: Axis.horizontal,
-        length: responsive.w(368),
-        dashLength: 6,
-        dashGap: 7,
-        dashColor: Color(0xFFDADADA),
-      ),
-      SizedBox(height: responsive.h(20)),
-      GestureDetector(
-        onTap: () {
-          setState(() {
-            showQR = true;
-          });
-        },
-        child: Container(
-          height: responsive.h(96),
-          width: responsive.w(380),
-          child: Stack(
-            children: [
-              SvgPicture.asset(
-                'assets/homepage/icons/border.svg',
-                width: responsive.w(368),
-                fit: BoxFit.fill,
+            SizedBox(width: responsive.w(8)),
+            SizedBox(
+              width: responsive.w(250),
+              height: responsive.h(184),
+              child: Container(
+                padding: EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: myConstants.instiappBlue,
+                  borderRadius: BorderRadius.circular(15),
                 ),
-              Container(
-              height: responsive.h(96),
-              width: responsive.w(368),
-              padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(8), responsive.w(16), responsive.h(8)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(
-                        'My QR',
-                        style: TextStyle(
-                          color: Color(0xFF275489),
-                          fontSize: responsive.sp(20),
-                          fontWeight: FontWeight.w700,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(16),
+                      width: responsive.w(242),
+                      height: responsive.h(129),
+                      decoration: BoxDecoration(
+                        color: myConstants.instiappWhite,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: SingleChildScrollView(
+                        child: Text(
+                          _mealString(hostels),
+                          style: TextStyle(
+                            color: const Color(0xFF1B3252),
+                            fontSize: responsive.sp(14),
+                            fontFamily: 'DM Sans',
+                            fontWeight: FontWeight.w500,
+                            height: responsive.h(1.31),
+                          ),
                         ),
                       ),
-                      Text(
-                        'Mess • Gym • Swimming & more...',
-                        style: TextStyle(
-                          color: const Color(0xFF15202D),
-                          fontSize: responsive.sp(14),
-                          fontFamily: 'DM Sans',
-                          fontWeight: FontWeight.w500,
+                    ),
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: responsive.h(8), horizontal: responsive.w(18)),
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(
+                              'assets/homepage/images/doodletime.png'),
+                          fit: BoxFit.cover,
                         ),
                       ),
-                    ],
-                  ),
-                  Container(
-                    height: responsive.h(75),
-                    width: responsive.w(75),
-                    child: SvgPicture.asset('assets/homepage/icons/qr.svg'),
-                  ),
-                ],
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            mealTime[selectedMeal],
+                            style: TextStyle(
+                              color: myConstants.instiappWhite,
+                              fontSize: responsive.sp(14),
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                                showDialog(
+                                context: context,
+                                builder: (context) => CustomDialog(
+                                  title: 'Open Mess-I Dashboard?',
+                                  content1: 'Would you like to open the other app?',
+                                  content2: 'If it\'s not installed, you\'ll be redirected to the store.',
+                                  options: [
+                                    DialogOption(
+                                      text: 'Cancel',
+                                      onPressed: (ctx, setProcessing) => Navigator.of(ctx).pop(),
+                                    ),
+                                    DialogOption(
+                                      text: 'Open',
+                                      isPrimary: true,
+                                      onPressed: (ctx, setProcessing) async {
+                                        Navigator.of(ctx).pop(); // close dialog
+
+                                        const String websiteUrl = "https://instamess.gymkhana.iitb.ac.in"; // your website link
+                                        final Uri uri = Uri.parse(websiteUrl);
+
+                                        try {
+                                          if (await canLaunchUrl(uri)) {
+                                            await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                          } else {
+                                            ScaffoldMessenger.of(ctx).showSnackBar(
+                                              const SnackBar(content: Text('Could not open the website')),
+                                            );
+                                          }
+                                        } catch (e) {
+                                          ScaffoldMessenger.of(ctx).showSnackBar(
+                                            const SnackBar(content: Text('Error opening the website')),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                            );
+                          },
+                          child: Container(
+                            width: responsive.w(30),
+                            height: responsive.h(30),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                              image: DecorationImage(
+                                image: AssetImage('assets/homepage/images/messi.webp'),
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                        )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            )
-            ],
+            ),
+          ],
+        ),
+        SizedBox(height: responsive.h(20)),
+        Dash(
+          direction: Axis.horizontal,
+          length: responsive.w(368),
+          dashLength: 6,
+          dashGap: 7,
+          dashColor: Color(0xFFDADADA),
+        ),
+        SizedBox(height: responsive.h(20)),
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              showQR = true;
+            });
+          },
+          child: Container(
+            height: responsive.h(96),
+            width: responsive.w(380),
+            child: Stack(
+              children: [
+                SvgPicture.asset(
+                  'assets/homepage/icons/border.svg',
+                  width: responsive.w(368),
+                  fit: BoxFit.fill,
+                  ),
+                Container(
+                height: responsive.h(96),
+                width: responsive.w(368),
+                padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(8), responsive.w(16), responsive.h(8)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          'My QR',
+                          style: TextStyle(
+                            color: Color(0xFF275489),
+                            fontSize: responsive.sp(20),
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          'Mess • Gym • Swimming & more...',
+                          style: TextStyle(
+                            color: const Color(0xFF15202D),
+                            fontSize: responsive.sp(14),
+                            fontFamily: 'DM Sans',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      height: responsive.h(75),
+                      width: responsive.w(75),
+                      child: SvgPicture.asset('assets/homepage/icons/qr.svg'),
+                    ),
+                  ],
+                ),
+              )
+              ],
+            ),
           ),
         ),
-      ),
-      SizedBox(height: responsive.h(20)),
-      Dash(
-        direction: Axis.horizontal,
-        length: responsive.w(368),
-        dashLength: 6,
-        dashGap: 7,
-        dashColor: Color(0xFFDADADA),
-      ),
-      SizedBox(height: responsive.h(20)),
-    ],
-  );
-} 
+        SizedBox(height: responsive.h(20)),
+        Dash(
+          direction: Axis.horizontal,
+          length: responsive.w(368),
+          dashLength: 6,
+          dashGap: 7,
+          dashColor: Color(0xFFDADADA),
+        ),
+        SizedBox(height: responsive.h(20)),
+      ],
+    );
+  }
 }

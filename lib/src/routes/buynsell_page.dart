@@ -3,6 +3,7 @@ import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/blocs/buynsell_post_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/services.dart';
 import '../api/model/user.dart';
 import 'buynsell_info.dart';
 
@@ -52,143 +53,150 @@ class _BuySellPageState extends State<BuySellPage> {
   Widget build(BuildContext context) {
     bool isLoggedIn = bloc.currSession != null;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
-      body: SafeArea(
-        child: !isLoggedIn
-            ? Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(RS.sw(context, 50)),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.cloud,
-                      size: RS.sw(context, 200),
-                      color: Colors.grey[600],
-                    ),
-                    Text(
-                      "Login To View Buy and Sell Posts",
-                      textAlign: TextAlign.center,
-                    )
-                  ],
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                ),
-              )
-            : Column(
-                children: [
-                  SizedBox(height: RS.sh(context, 4)),
-                  CustomAppBar(
-                    title: _currentTab == 0 ? 'Buy & Sell' : 'Posted By You',
-                    other: Icons.bookmark_border_rounded,
-                    // onOther: _onBookmarkPressed,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF6F6F6),
+        body: SafeArea(
+          child: !isLoggedIn
+              ? Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(RS.sw(context, 50)),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.cloud,
+                        size: RS.sw(context, 200),
+                        color: Colors.grey[600],
+                      ),
+                      Text(
+                        "Login To View Buy and Sell Posts",
+                        textAlign: TextAlign.center,
+                      )
+                    ],
+                    crossAxisAlignment: CrossAxisAlignment.center,
                   ),
-                  _buildSearchBar(),
-                  _buildFilterChips(),
-                  SizedBox(height: RS.sh(context, 16)),
-                  Expanded(
-                    child: StreamBuilder<List<BuynSellPost>>(
-                      stream: buynSellPostBloc.buynsellposts,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
-                        }
-
-                        if (snapshot.hasError) {
-                          return Center(child: Text('Error loading posts'));
-                        }
-
-                        final posts = snapshot.data ?? [];
-
-                        List<BuynSellPost> filteredPosts = posts.where((post) {
-                          // 1. Exclude deleted posts
-                          if (post.deleted == true) return false;
-
-                          // 2. Apply tab filter (My Posts)
-                          if (_currentTab == 1) {
-                            if (post.user?.userID != profile?.userID)
-                              return false;
+                )
+              : Column(
+                  children: [
+                    SizedBox(height: RS.sh(context, 4)),
+                    CustomAppBar(
+                      title: _currentTab == 0 ? 'Buy & Sell' : 'Posted By You',
+                      other: Icons.bookmark_border_rounded,
+                      // onOther: _onBookmarkPressed,
+                    ),
+                    _buildSearchBar(),
+                    _buildFilterChips(),
+                    SizedBox(height: RS.sh(context, 16)),
+                    Expanded(
+                      child: StreamBuilder<List<BuynSellPost>>(
+                        stream: buynSellPostBloc.buynsellposts,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
                           }
-
-                          // 3. Apply availability filter
-                          if (_currentFilter == 1 && (!post.status!) == true)
-                            return false; // Available
-                          if (_currentFilter == 2 && (!post.status!) == false)
-                            return false; // Sold
-
-                          // 4. Apply search filter
-                          if (_searchQuery.isNotEmpty) {
-                            final title = post.name?.toLowerCase() ?? '';
-                            if (!title.contains(_searchQuery.toLowerCase()))
-                              return false;
+      
+                          if (snapshot.hasError) {
+                            return Center(child: Text('Error loading posts'));
                           }
-
-                          // 5. Apply category filter (updated for multiple selection)
-                          if (_selectedCategories != null &&
-                              _selectedCategories!.isNotEmpty) {
-                            if (!_selectedCategories!.contains(post.category)) {
+      
+                          final posts = snapshot.data ?? [];
+      
+                          List<BuynSellPost> filteredPosts = posts.where((post) {
+                            // 1. Exclude deleted posts
+                            if (post.deleted == true) return false;
+      
+                            // 2. Apply tab filter (My Posts)
+                            if (_currentTab == 1) {
+                              if (post.user?.userID != profile?.userID)
+                                return false;
+                            }
+      
+                            // 3. Apply availability filter
+                            if (_currentFilter == 1 && (!post.status!) == true)
+                              return false; // Available
+                            if (_currentFilter == 2 && (!post.status!) == false)
+                              return false; // Sold
+      
+                            // 4. Apply search filter
+                            if (_searchQuery.isNotEmpty) {
+                              final title = post.name?.toLowerCase() ?? '';
+                              if (!title.contains(_searchQuery.toLowerCase()))
+                                return false;
+                            }
+      
+                            // 5. Apply category filter (updated for multiple selection)
+                            if (_selectedCategories != null &&
+                                _selectedCategories!.isNotEmpty) {
+                              if (!_selectedCategories!.contains(post.category)) {
+                                return false;
+                              }
+                            }
+      
+                            // 6. Apply negotiable filter
+                            if (_isNegotiable != null &&
+                                post.negotiable != _isNegotiable) {
                               return false;
                             }
+      
+                            return true;
+                          }).toList();
+      
+                          // 7. Apply sorting
+                          if (_sortBy == 'Price: Low to High') {
+                            filteredPosts.sort(
+                                (a, b) => (a.price ?? 0).compareTo(b.price ?? 0));
+                          } else if (_sortBy == 'Price: High to Low') {
+                            filteredPosts.sort(
+                                (a, b) => (b.price ?? 0).compareTo(a.price ?? 0));
+                          } else if (_sortBy == 'Recently Added') {
+                            // Already sorted by server - no action needed
+                          } else if (_sortBy == 'Oldest First') {
+                            filteredPosts = filteredPosts.reversed.toList();
                           }
-
-                          // 6. Apply negotiable filter
-                          if (_isNegotiable != null &&
-                              post.negotiable != _isNegotiable) {
-                            return false;
+      
+                          // Handle empty state
+                          if (filteredPosts.isEmpty) {
+                            String message = _currentTab == 1
+                                ? "You haven't posted anything yet"
+                                : "No posts available";
+      
+                            return Center(
+                              child: Text(
+                                message,
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            );
                           }
-
-                          return true;
-                        }).toList();
-
-                        // 7. Apply sorting
-                        if (_sortBy == 'Price: Low to High') {
-                          filteredPosts.sort(
-                              (a, b) => (a.price ?? 0).compareTo(b.price ?? 0));
-                        } else if (_sortBy == 'Price: High to Low') {
-                          filteredPosts.sort(
-                              (a, b) => (b.price ?? 0).compareTo(a.price ?? 0));
-                        } else if (_sortBy == 'Recently Added') {
-                          // Already sorted by server - no action needed
-                        } else if (_sortBy == 'Oldest First') {
-                          filteredPosts = filteredPosts.reversed.toList();
-                        }
-
-                        // Handle empty state
-                        if (filteredPosts.isEmpty) {
-                          String message = _currentTab == 1
-                              ? "You haven't posted anything yet"
-                              : "No posts available";
-
-                          return Center(
-                            child: Text(
-                              message,
-                              style: Theme.of(context).textTheme.titleMedium,
+      
+                          return RefreshIndicator(
+                            onRefresh: () async {
+                              await buynSellPostBloc.refresh();
+                            },
+                            displacement: 40,
+                            edgeOffset: 0,
+                            child: ListView.separated(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              itemCount: filteredPosts.length,
+                              separatorBuilder: (_, __) =>
+                                  SizedBox(height: RS.sh(context, 16)),
+                              itemBuilder: (context, index) =>
+                                  _buildProductItem(filteredPosts[index]),
                             ),
                           );
-                        }
-
-                        return RefreshIndicator(
-                          onRefresh: () async {
-                            await buynSellPostBloc.refresh();
-                          },
-                          displacement: 40,
-                          edgeOffset: 0,
-                          child: ListView.separated(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            itemCount: filteredPosts.length,
-                            separatorBuilder: (_, __) =>
-                                SizedBox(height: RS.sh(context, 16)),
-                            itemBuilder: (context, index) =>
-                                _buildProductItem(filteredPosts[index]),
-                          ),
-                        );
-                      },
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+        ),
+        bottomNavigationBar: _buildBottomNavBar(),
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
     );
   }
 
@@ -434,7 +442,10 @@ class _BuySellPageState extends State<BuySellPage> {
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 24, bottom: 8),
+                  padding: EdgeInsets.only(
+                    top: RS.s(context, 24),
+                    bottom: RS.s(context, 8),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -444,28 +455,31 @@ class _BuySellPageState extends State<BuySellPage> {
                         children: [
                           Text(
                             post.name ?? "Untitled Item",
-                            style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: Color.fromRGBO(41, 41, 41, 1)),
+                            style: TextStyle(
+                              fontSize: RS.sp(context, 16), // Use sp for text
+                              fontWeight: FontWeight.w700,
+                              color: const Color.fromRGBO(41, 41, 41, 1),
+                            ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: RS.s(context, 8)),
                           Text(
                             isGiveaway ? "Free" : "₹${post.price ?? 0}",
-                            style: const TextStyle(
-                                fontSize: 24,
-                                color: Color.fromRGBO(48, 111, 220, 1),
-                                fontWeight: FontWeight.w700),
+                            style: TextStyle(
+                              fontSize: RS.sp(context, 24), // Use sp for text
+                              color: const Color.fromRGBO(48, 111, 220, 1),
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                           if (post.originalPrice != null)
                             Text(
                               'Bought at ₹${post.originalPrice}',
                               style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color.fromRGBO(126, 130, 135, 1)),
+                                fontSize: RS.sp(context, 14), // Use sp for text
+                                fontWeight: FontWeight.w700,
+                                color: const Color.fromRGBO(126, 130, 135, 1),
+                              ),
                             ),
                         ],
                       ),
@@ -473,34 +487,35 @@ class _BuySellPageState extends State<BuySellPage> {
                       // Condition Tag
                       isSold
                           ? Container(
-                              margin: const EdgeInsets.symmetric(vertical: 8),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
+                              margin: EdgeInsets.symmetric(vertical: RS.s(context, 8)),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: RS.s(context, 8),
+                                vertical: RS.s(context, 2),
                               ),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(RS.s(context, 12)),
                                 border: Border.all(color: Colors.black),
                               ),
                               child: Text(
                                 'Sold',
                                 style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600),
+                                  fontSize: RS.sp(context, 12), // Use sp for text
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             )
                           : Container(
-                              margin: const EdgeInsets.symmetric(vertical: 8),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
+                              margin: EdgeInsets.symmetric(vertical: RS.s(context, 8)),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: RS.s(context, 8),
+                                vertical: RS.s(context, 2),
                               ),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(RS.s(context, 12)),
                                 border: Border.all(
                                   color: isGiveaway
-                                      ? Color.fromRGBO(48, 111, 220, 1)
+                                      ? const Color.fromRGBO(48, 111, 220, 1)
                                       : (isNegotiable
                                           ? const Color(0xFF67BC00)
                                           : Colors.red),
@@ -509,13 +524,11 @@ class _BuySellPageState extends State<BuySellPage> {
                               child: Text(
                                 isGiveaway
                                     ? 'GiveAway'
-                                    : (isNegotiable
-                                        ? 'Negotiable'
-                                        : 'Fixed Price'),
+                                    : (isNegotiable ? 'Negotiable' : 'Fixed Price'),
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: RS.sp(context, 12), // Use sp for text
                                   color: isGiveaway
-                                      ? Color.fromRGBO(48, 111, 220, 1)
+                                      ? const Color.fromRGBO(48, 111, 220, 1)
                                       : (isNegotiable
                                           ? const Color(0xFF67BC00)
                                           : Colors.red),
@@ -530,25 +543,28 @@ class _BuySellPageState extends State<BuySellPage> {
                           Text(
                             post.description ?? "No description",
                             style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w400),
+                              fontSize: RS.sp(context, 14), // Use sp for text
+                              fontWeight: FontWeight.w400,
+                            ),
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: RS.s(context, 8)),
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.access_time,
-                                size: 16,
-                                color: Color.fromRGBO(126, 130, 135, 1),
+                                size: RS.s(context, 16), // Use s for icons
+                                color: const Color.fromRGBO(126, 130, 135, 1),
                               ),
-                              const SizedBox(width: 4),
+                              SizedBox(width: RS.s(context, 4)),
                               Text(
                                 post.timeBefore ?? "Recently",
                                 style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color.fromRGBO(126, 130, 135, 1)),
+                                  fontSize: RS.sp(context, 14), // Use sp for text
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color.fromRGBO(126, 130, 135, 1),
+                                ),
                               ),
                             ],
                           ),
@@ -859,7 +875,7 @@ class _BuySellPageState extends State<BuySellPage> {
       onTap: onTap,
       child: Container(
         height: RS.sh(context, 36),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: RS.sw(context, 16), vertical: RS.sh(context, 8)),
         decoration: ShapeDecoration(
           color: isSelected ? const Color(0xFF306FDC) : const Color(0xFFEFEFEF),
           shape: RoundedRectangleBorder(
@@ -868,7 +884,7 @@ class _BuySellPageState extends State<BuySellPage> {
                   ? const Color(0xFF306FDC)
                   : const Color(0xFFD2D5DA),
             ),
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: BorderRadius.circular(RS.s(context, 50)),
           ),
         ),
         child: Row(
@@ -877,7 +893,7 @@ class _BuySellPageState extends State<BuySellPage> {
             if (icon != null)
               Icon(
                 icon,
-                size: 16,
+                size: RS.sp(context, 16),
                 color: isSelected ? Colors.white : Colors.black,
               ),
             if (icon != null) const SizedBox(width: 8),
@@ -885,7 +901,7 @@ class _BuySellPageState extends State<BuySellPage> {
               label,
               style: TextStyle(
                 color: isSelected ? Colors.white : Colors.black,
-                fontSize: 14,
+                fontSize: RS.sp(context, 14),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -896,7 +912,7 @@ class _BuySellPageState extends State<BuySellPage> {
             if (icon2 != null)
               Icon(
                 icon2,
-                size: 20,
+                size: RS.sp(context, 20),
                 color: isSelected ? Colors.white : Colors.black,
               ),
           ],

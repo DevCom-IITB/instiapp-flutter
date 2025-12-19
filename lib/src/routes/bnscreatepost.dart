@@ -12,7 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:InstiApp/src/utils/responsive.dart';
 import 'package:InstiApp/src/widgets/custom_dialog.dart';
-import 'package:InstiApp/src/widgets/custom_dialog.dart';
+import 'package:dio/dio.dart';
 
 class PostItemFlow extends StatefulWidget {
   final bool isEditable;
@@ -245,7 +245,6 @@ class _PostItemFlowState extends State<PostItemFlow> {
 
   Widget _defaultDetails() {
     return Container(
-      // padding: const EdgeInsets.all(16.0),
       margin: const EdgeInsets.fromLTRB(16, 4, 16, 16),
       height: RS.sh(context, 58),
       decoration: BoxDecoration(
@@ -258,17 +257,56 @@ class _PostItemFlowState extends State<PostItemFlow> {
         children: [
           Icon(
             Icons.visibility_outlined,
-            size: 20,
+            size: RS.sp(context, 20),
             color: Color.fromRGBO(27, 50, 82, 1),
           ),
           const SizedBox(width: 8),
-          const Text(
+          Text(
             'Your Name and LDAP will be visible by default',
             style:
-                TextStyle(fontSize: 14, color: Color.fromRGBO(27, 50, 82, 1)),
+                TextStyle(fontSize: RS.sp(context, 14), color: Color.fromRGBO(27, 50, 82, 1)),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buttonContent({
+    required String title1,
+    required String title2,
+    required String asset,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title1,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Color.fromRGBO(15, 22, 32, 0.8),
+              ),
+            ),
+            Text(
+              title2,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Color.fromRGBO(15, 22, 32, 0.8),
+              ),
+            ),
+          ],
+        ),
+        Image.asset(
+          asset,
+          width: 42,
+          height: 36,
+        ),
+      ],
     );
   }
 
@@ -292,174 +330,135 @@ class _PostItemFlowState extends State<PostItemFlow> {
             ),
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Camera Button
-              SizedBox(
-                width: RS.sw(context, 185),
-                height: RS.sh(context, 80),
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor:
-                        Color.fromRGBO(239, 239, 239, 1), // Greyish white
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+              Expanded(
+                child: SizedBox(
+                  height: RS.sh(context, 80),
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: const Color.fromRGBO(239, 239, 239, 1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      side: BorderSide.none,
                     ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
-                    side: BorderSide.none,
-                  ),
-                  onPressed: () async {
-                    final picker = ImagePicker();
-                    final image = await picker.pickImage(source: ImageSource.camera);
+                    onPressed: () async {
+                      final picker = ImagePicker();
+                      final image =
+                          await picker.pickImage(source: ImageSource.camera);
 
-                    if (image != null) {
-                      await Future.delayed(const Duration(milliseconds: 100));
+                      if (image != null) {
+                        await Future.delayed(const Duration(milliseconds: 100));
 
-                      final file = File(image.path);
-                      if (await file.exists()) {
-                        final appDir = await getApplicationDocumentsDirectory();
-                        final fileName = path.basename(image.path);
+                        final file = File(image.path);
+                        if (await file.exists()) {
+                          final appDir =
+                              await getApplicationDocumentsDirectory();
+                          final fileName = path.basename(image.path);
 
-                        final imagesDir = Directory('${appDir.path}/user_images');
-                        if (!await imagesDir.exists()) {
-                          await imagesDir.create(recursive: true);
+                          final imagesDir =
+                              Directory('${appDir.path}/user_images');
+                          if (!await imagesDir.exists()) {
+                            await imagesDir.create(recursive: true);
+                          }
+
+                          final savedFile = await file
+                              .copy('${imagesDir.path}/$fileName');
+
+                          setState(() => _images.add(XFile(savedFile.path)));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content:
+                                  Text("Could not access the captured image."),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
                         }
-
-                        final savedFile = await file.copy('${imagesDir.path}/$fileName');
-
-                        setState(() => _images.add(XFile(savedFile.path)));
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Could not access the captured image."),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
                       }
-                    }
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            'Take',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Color.fromRGBO(15, 22, 32, 0.8)),
-                          ),
-                          Text(
-                            'Image',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Color.fromRGBO(15, 22, 32, 0.8)),
-                          ),
-                        ],
-                      ),
-                      Image.asset(
-                        'assets/buynsell/Camera.png',
-                        width: 42,
-                        height: 36,
-                      ),
-                    ],
+                    },
+                    child: _buttonContent(
+                      title1: 'Take',
+                      title2: 'Image',
+                      asset: 'assets/buynsell/Camera.png',
+                    ),
                   ),
                 ),
               ),
 
+              const SizedBox(width: 16),
+
               // Upload Button
-              SizedBox(
-                width: RS.sw(context, 185),
-                height: RS.sh(context, 80),
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor:
-                        Color.fromRGBO(239, 239, 239, 1), // Greyish white
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+              Expanded(
+                child: SizedBox(
+                  height: RS.sh(context, 80),
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: const Color.fromRGBO(239, 239, 239, 1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      side: BorderSide.none,
                     ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
-                    side: BorderSide.none,
-                  ),
-                  onPressed: () async {
-                    final picker = ImagePicker();
-                    final pickedImages = await picker.pickMultiImage();
+                    onPressed: () async {
+                      final picker = ImagePicker();
+                      final pickedImages = await picker.pickMultiImage();
 
-                    if (pickedImages.isNotEmpty) {
-                      final validImages = <XFile>[];
-                      int skipped = 0;
+                      if (pickedImages.isNotEmpty) {
+                        final validImages = <XFile>[];
+                        int skipped = 0;
 
-                      final appDir = await getApplicationDocumentsDirectory();
+                        final appDir =
+                            await getApplicationDocumentsDirectory();
+                        final imagesDir =
+                            Directory('${appDir.path}/user_images');
 
-                      final imagesDir = Directory('${appDir.path}/user_images');
-                      if (!await imagesDir.exists()) {
-                        await imagesDir.create(recursive: true);
-                      }
+                        if (!await imagesDir.exists()) {
+                          await imagesDir.create(recursive: true);
+                        }
 
-                      for (final image in pickedImages) {
-                        final file = File(image.path);
-                        if (await file.exists()) {
-                          final fileName = path.basename(image.path);
-                          final savedFile = await file.copy('${imagesDir.path}/$fileName');
-                          validImages.add(XFile(savedFile.path));
-                        } else {
-                          skipped++;
+                        for (final image in pickedImages) {
+                          final file = File(image.path);
+                          if (await file.exists()) {
+                            final fileName =
+                                path.basename(image.path);
+                            final savedFile = await file.copy(
+                                '${imagesDir.path}/$fileName');
+                            validImages.add(XFile(savedFile.path));
+                          } else {
+                            skipped++;
+                          }
+                        }
+
+                        if (validImages.isNotEmpty) {
+                          setState(() => _images.addAll(validImages));
+                        }
+
+                        if (skipped > 0) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  "Skipped $skipped image(s) that could not be loaded."),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
                         }
                       }
-
-                      if (validImages.isNotEmpty) {
-                        setState(() => _images.addAll(validImages));
-                      }
-
-                      if (skipped > 0) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Skipped $skipped image(s) that could not be loaded."),
-                            duration: const Duration(seconds: 2),
-                          ),
-                        );
-                      }
-                    }
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            'Upload',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Color.fromRGBO(15, 22, 32, 0.8)),
-                          ),
-                          Text(
-                            'Image',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Color.fromRGBO(15, 22, 32, 0.8)),
-                          ),
-                        ],
-                      ),
-                      Image.asset(
-                        'assets/buynsell/Upload.png',
-                        width: 42,
-                        height: 36,
-                      ),
-                    ],
+                    },
+                    child: _buttonContent(
+                      title1: 'Upload',
+                      title2: 'Image',
+                      asset: 'assets/buynsell/Upload.png',
+                    ),
                   ),
                 ),
               ),
@@ -1388,121 +1387,120 @@ class _PostItemFlowState extends State<PostItemFlow> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: DecoratedButton(
-                      text: isPosting ? 'Posting...' : 'Post',
-                      onPressed: isPosting
-                          ? null
-                          : () async {
-                              if (_formKey.currentState!.validate()) {
-                                setState(() => isPosting = true);
+  text: isPosting ? 'Posting...' : 'Post',
+  onPressed: isPosting
+      ? null
+      : () async {
+          if (!_formKey.currentState!.validate()) return;
 
-                                // Bloc Instance
-                                final bloc = BlocProvider.of(context)!.bloc;
+          setState(() => isPosting = true);
 
-                                late BuynSellPost bnsPost;
+          final bloc = BlocProvider.of(context)!.bloc;
+          late BuynSellPost bnsPost;
 
-                                if (_isEditMode) {
-                                  // Changes in existing post
-                                  bnsPost = widget.existingPost!;
-                                  bnsPost.name = _titleController.text;
-                                  bnsPost.description = _descController.text;
-                                  bnsPost.contactDetails =
-                                      _mobileController.text;
-                                  bnsPost.negotiable =
-                                      _isGiveAway ? false : _isNegotiable;
-                                  bnsPost.action =
-                                      _isGiveAway ? "giveaway" : "sell";
-                                  bnsPost.originalPrice = int.tryParse(
-                                          _boughtPriceController.text) ??
-                                      null;
-                                  bnsPost.price = _isGiveAway
-                                      ? 0
-                                      : int.tryParse(_priceController.text) ??
-                                          0;
-                                  bnsPost.category = _selectedCategory;
-                                } else {
-                                  // BuynSell Post Creation
-                                  bnsPost = BuynSellPost()
-                                    ..name = _titleController.text
-                                    ..description = _descController.text
-                                    ..contactDetails = _mobileController.text
-                                    ..negotiable =
-                                        _isGiveAway ? false : _isNegotiable
-                                    ..action = _isGiveAway ? "giveaway" : "sell"
-                                    ..originalPrice = int.tryParse(
-                                            _boughtPriceController.text) ??
-                                        null
-                                    ..price = _isGiveAway
-                                        ? 0
-                                        : int.tryParse(_priceController.text) ??
-                                            0
-                                    ..category = _selectedCategory;
-                                }
+          // ----------------------------
+          // Build post object
+          // ----------------------------
+          if (_isEditMode) {
+            bnsPost = widget.existingPost!;
+          } else {
+            bnsPost = BuynSellPost();
+          }
 
-                                try {
-                                  // Upload Images and get URLs
-                                  List<String> imageUrls = [];
+          bnsPost
+            ..name = _titleController.text.trim()
+            ..description = _descController.text.trim()
+            ..contactDetails = _mobileController.text.trim()
+            ..negotiable = _isGiveAway ? false : _isNegotiable
+            ..action = _isGiveAway ? "giveaway" : "sell"
+            ..originalPrice =
+                int.tryParse(_boughtPriceController.text.trim())
+            ..price = _isGiveAway
+                ? 0
+                : int.tryParse(_priceController.text.trim()) ?? 0
+            ..category = (_selectedCategory != null &&
+                    _categories.any(
+                        (c) => c['name'] == _selectedCategory))
+                ? _selectedCategory
+                : 'Others';
 
-                                  if (_isEditMode) {
-                                    imageUrls.addAll(_existingImageUrls);
-                                  }
+          try {
+            // ----------------------------
+            // Upload images
+            // ----------------------------
+            final List<String> imageUrls = [];
 
-                                  for (XFile image in _images) {
-                                    File file = File(image.path);
-                                    if (await file.length() / 1000000 > 10) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            'Image size should be less than 10MB',
-                                          ),
-                                        ),
-                                      );
-                                      continue;
-                                    }
+            if (_isEditMode) {
+              imageUrls.addAll(_existingImageUrls);
+            }
 
-                                    ImageUploadResponse resp =
-                                        await bloc.client.uploadImage(
-                                      bloc.getSessionIdHeader(),
-                                      file,
-                                    );
-                                    imageUrls.add(resp.pictureURL!);
-                                  }
+            for (final XFile image in _images) {
+              final file = File(image.path);
 
-                                  bnsPost.imageUrl = imageUrls;
+              if (await file.length() / 1000000 > 10) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Image size should be less than 10MB'),
+                  ),
+                );
+                continue;
+              }
 
-                                  if (_isEditMode) {
-                                    bloc.buynSellPostBloc
-                                        .updateBuynSellPost(bnsPost);
-                                  } else {
-                                    bloc.buynSellPostBloc
-                                        .createBuynSellPost(bnsPost);
-                                  }
+              final ImageUploadResponse resp =
+                  await bloc.client.uploadImage(
+                bloc.getSessionIdHeader(),
+                file,
+              );
 
-                                  // Show success message
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(_isEditMode
-                                          ? 'Post updated successfully!'
-                                          : 'Item posted successfully!'),
-                                    ),
-                                  );
-                                  Navigator.pop(context);
-                                } catch (e) {
-                                  // Handle errors
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Error posting item: $e'),
-                                    ),
-                                  );
-                                } finally {
-                                  setState(() => isPosting = false);
-                                }
-                              }
-                            },
-                      backgroundColor: const Color(0xFF0F1620),
-                      textColor: Colors.white,
-                      backgroundImageAsset: 'assets/buynsell/button_bg.png',
-                    ),
+              imageUrls.add(resp.pictureURL!);
+            }
+
+            // Assign images (assumed non-empty)
+            bnsPost.imageUrl = imageUrls;
+
+            // ----------------------------
+            // CREATE / UPDATE (IMPORTANT: await)
+            // ----------------------------
+            if (_isEditMode) {
+              await bloc.buynSellPostBloc.updateBuynSellPost(bnsPost);
+            } else {
+              await bloc.buynSellPostBloc.createBuynSellPost(bnsPost);
+            }
+
+            // ----------------------------
+            // SUCCESS
+            // ----------------------------
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  _isEditMode
+                      ? 'Post updated successfully!'
+                      : 'Item posted successfully!',
+                ),
+              ),
+            );
+
+            Navigator.pop(context);
+          } catch (e) {
+  String msg = 'Error posting item';
+
+  if (e is DioException) {
+    msg = e.response?.data?.toString() ?? e.message ?? msg;
+  }
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(msg)),
+  );
+}
+ finally {
+            setState(() => isPosting = false);
+          }
+        },
+  backgroundColor: const Color(0xFF0F1620),
+  textColor: Colors.white,
+  backgroundImageAsset: 'assets/buynsell/button_bg.png',
+),
+
                   ),
                 ],
               ),

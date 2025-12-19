@@ -143,6 +143,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         systemNavigationBarIconBrightness: Brightness.light,
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
       ),
     );
 

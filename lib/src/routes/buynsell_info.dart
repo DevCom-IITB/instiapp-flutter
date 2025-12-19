@@ -116,35 +116,42 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
     final imageHeight = RS.sh(context, 350);
     final isSold = !post.status!;
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildImageGallery(post, imageHeight, screenWidth),
-                _buildProductInfo(post, screenWidth),
-              ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.black.withOpacity(0.6),
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildImageGallery(post, imageHeight, screenWidth),
+                  _buildProductInfo(post, screenWidth),
+                ],
+              ),
             ),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 8,
-            left: 12,
-            child: _buildBackButton(),
-          ),
-          if (widget.isMyPost)
             Positioned(
               top: MediaQuery.of(context).padding.top + 8,
-              right: 12,
-              child: _buildEditDeleteMenu(post, isSold),
+              left: 12,
+              child: _buildBackButton(),
             ),
-        ],
+            if (widget.isMyPost)
+              Positioned(
+                top: MediaQuery.of(context).padding.top + 8,
+                right: 12,
+                child: _buildEditDeleteMenu(post, isSold),
+              ),
+          ],
+        ),
+        bottomNavigationBar: widget.isMyPost
+            ? _buildOwnerBottomBar(post, isSold)
+            : _buildBottomActionBar(post),
       ),
-      bottomNavigationBar: widget.isMyPost
-          ? _buildOwnerBottomBar(post, isSold)
-          : _buildBottomActionBar(post),
     );
   }
 
