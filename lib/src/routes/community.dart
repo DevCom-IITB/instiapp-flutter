@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:InstiApp/constants.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
@@ -347,7 +349,8 @@ class _CommunitiesState extends State<Communities> {
     super.initState();
     community = widget.initialCommunity;
     _scrollcontroller.addListener(() {
-      final shouldCollapse = _scrollcontroller.hasClients && _scrollcontroller.offset > 60;
+      final shouldCollapse =
+          _scrollcontroller.hasClients && _scrollcontroller.offset > 100;
       if (shouldCollapse != _headerCollapsed) {
         setState(() {
           _headerCollapsed = shouldCollapse;
@@ -410,139 +413,152 @@ class _CommunitiesState extends State<Communities> {
     List<Map<String, String>> links = quickLinks.values.toList();
     return DefaultTabController(
       length: 3,
-      child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-            child: SvgPicture.asset(
-              "assets/communities/system-uicons_write.svg",
-              height: 24,
-              width: 24,
-              color: Colors.white,
-            ),
-            backgroundColor: Color.fromRGBO(48, 111, 220, 1),
-            onPressed: () {
-              Navigator.of(context).pushNamed("/posts/add",
-                  arguments: NavigateArguments(community: community!));
-            }),
-        body: !isLoggedIn
-            ? Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.all(50),
-                child: Text("Login to Continue"),
-              )
-            : RefreshIndicator(
-                onRefresh: () async {
-                  bloc.communityBloc
-                      .getCommunity(community!.id!)
-                      .then((community) {
-                    setState(() {
-                      this.community = community;
+      child: SafeArea(
+        child: Scaffold(
+          floatingActionButton: FloatingActionButton(
+              child: SvgPicture.asset(
+                "assets/communities/system-uicons_write.svg",
+                height: 24,
+                width: 24,
+                color: Colors.white,
+              ),
+              backgroundColor: Color.fromRGBO(48, 111, 220, 1),
+              onPressed: () {
+                Navigator.of(context).pushNamed("/posts/add",
+                    arguments: NavigateArguments(community: community!));
+              }),
+          body: !isLoggedIn
+              ? Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(50),
+                  child: Text("Login to Continue"),
+                )
+              : RefreshIndicator(
+                  onRefresh: () async {
+                    bloc.communityBloc
+                        .getCommunity(community!.id!)
+                        .then((community) {
+                      setState(() {
+                        this.community = community;
+                      });
                     });
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 32),
+                  },
                   child: Column(
                     children: [
                       // --- Banner with buttons ---
-                      if(!_headerCollapsed)
-                      Stack(
-                        children: [
-                          SizedBox(
-                            height: 32,
-                          ),
-                          GestureDetector(
-                            // onTap: () {
-                            //   Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //     builder: (context) => ExploreImagePreview(
-                            //       imageUrls: images,
-                            //       initialIndex: 0,
-                            //     ),
-                            //   ),
-                            // );
-                            // },
-                            child: Container(
-                              height: 153,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                image: community?.coverImg != null &&
-                                        community!.coverImg!.isNotEmpty
-                                    ? DecorationImage(
-                                        image: CachedNetworkImageProvider(
-                                            community!.coverImg!),
-                                        fit: BoxFit.cover,
-                                        //alignment: Alignment.topCenter,
-                                      )
-                                    : const DecorationImage(
-                                        image: AssetImage(
-                                            'assets/explore/symphony.png'),
-                                        fit: BoxFit.cover,
-                                      ),
-                              ),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding:
-                                    EdgeInsets.only(left: responsive.w(16)),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
+                      // if (!_headerCollapsed)
+                        ClipRect(
+                          child: AnimatedContainer(
+                            duration: Duration(milliseconds: 800),
+                            height: _headerCollapsed ? 0 : 153,
+                            child: Stack(
+                              children: [
+                                SizedBox(
+                                  height: 32,
+                                ),
+                                GestureDetector(
+                                  // onTap: () {
+                                  //   Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //     builder: (context) => ExploreImagePreview(
+                                  //       imageUrls: images,
+                                  //       initialIndex: 0,
+                                  //     ),
+                                  //   ),
+                                  // );
+                                  // },
                                   child: Container(
-                                    height: 52,
-                                    width: 52,
+                                    height: 153,
+                                    width: double.infinity,
                                     decoration: BoxDecoration(
-                                        color: const Color(0x99FFFFFF),
-                                        borderRadius:
-                                            BorderRadius.circular(25)),
-                                    child: Center(
-                                      child: Container(
-                                        height: responsive.h(24),
-                                        width: responsive.w(24),
-                                        child: SvgPicture.asset(
-                                            'assets/quicklinks/icons/arrow_left.svg'),
-                                      ),
+                                      color: Colors.grey.shade300,
+                                      image: community?.coverImg != null &&
+                                              community!.coverImg!.isNotEmpty
+                                          ? DecorationImage(
+                                              image: CachedNetworkImageProvider(
+                                                  community!.coverImg!),
+                                              fit: BoxFit.cover,
+                                              //alignment: Alignment.topCenter,
+                                            )
+                                          : const DecorationImage(
+                                              image: AssetImage(
+                                                  'assets/explore/symphony.png'),
+                                              fit: BoxFit.cover,
+                                            ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              // Padding(
-                              //   padding:
-                              //       EdgeInsets.only(right: responsive.w(16)),
-                              //   child: GestureDetector(
-                              //     onTap: () {
-                              //       Navigator.of(context).pop();
-                              //     },
-                              //     child: Container(
-                              //       height: 52,
-                              //       width: 52,
-                              //       decoration: BoxDecoration(
-                              //           color: const Color(0x99FFFFFF),
-                              //           borderRadius:
-                              //               BorderRadius.circular(25)),
-                              //       child: Center(
-                              //         child: Container(
-                              //           height: responsive.h(24),
-                              //           width: responsive.w(24),
-                              //           child: SvgPicture.asset(
-                              //               'assets/homepage/icons/bell.svg'),
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
-                            ],
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.only(left: responsive.w(16)),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(50),
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(
+                                                sigmaX: 12, sigmaY: 12),
+                                            child: Container(
+                                              height: 52,
+                                              width: 52,
+                                              decoration: BoxDecoration(
+                                                  color: const Color.fromRGBO(
+                                                      255, 255, 255, 0.4),
+                                                  borderRadius:
+                                                      BorderRadius.circular(25)),
+                                              child: Center(
+                                                child: SizedBox(
+                                                  height: responsive.h(24),
+                                                  width: responsive.w(24),
+                                                  child: SvgPicture.asset(
+                                                      'assets/quicklinks/icons/arrow_left.svg'),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    // Padding(
+                                    //   padding:
+                                    //       EdgeInsets.only(right: responsive.w(16)),
+                                    //   child: GestureDetector(
+                                    //     onTap: () {
+                                    //       Navigator.of(context).pop();
+                                    //     },
+                                    //     child: Container(
+                                    //       height: 52,
+                                    //       width: 52,
+                                    //       decoration: BoxDecoration(
+                                    //           color: const Color(0x99FFFFFF),
+                                    //           borderRadius:
+                                    //               BorderRadius.circular(25)),
+                                    //       child: Center(
+                                    //         child: Container(
+                                    //           height: responsive.h(24),
+                                    //           width: responsive.w(24),
+                                    //           child: SvgPicture.asset(
+                                    //               'assets/homepage/icons/bell.svg'),
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                      if(!_headerCollapsed)
-                      const SizedBox(height: 16),
-
+                        ),
+                      if (!_headerCollapsed) const SizedBox(height: 16),
+                  
                       // --- Club Info ---
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -667,50 +683,48 @@ class _CommunitiesState extends State<Communities> {
                                 )
                               ],
                             ),
-                            if(!_headerCollapsed)
-                            const SizedBox(height: 10),
-                            if(!_headerCollapsed)
-                            Container(
-                              //height: aboutExpanded?192:72,
-                              child: _buildAbout(theme)
-                            ),
+                            if (!_headerCollapsed) const SizedBox(height: 10),
+                            if (!_headerCollapsed)
+                              Container(
+                                  //height: aboutExpanded?192:72,
+                                  child: _buildAbout(theme)),
                           ],
                         ),
                       ),
-
+                  
                       const SizedBox(height: 10),
-
+                  
                       // --- Tabs ---
-                      if(!_headerCollapsed)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Stack(
-                          children: [
-                            Positioned(
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                child: Container(
-                                    height: 1.5, color: Color(0xFFD0D5DD))),
-                            TabBar(
-                              indicatorColor: myConstants.instiappBlue,
-                              labelColor: myConstants.instiappBlue,
-                              unselectedLabelColor: Colors.black54,
-                              labelStyle: TextStyle(
-                                fontSize: responsive.sp(16),
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'DM Sans',
+                      if (!_headerCollapsed)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: Container(
+                                      height: 1.5, color: Color(0xFFD0D5DD))),
+                              TabBar(
+                                indicatorColor: myConstants.instiappBlue,
+                                labelColor: myConstants.instiappBlue,
+                                unselectedLabelColor: Colors.black54,
+                                labelStyle: TextStyle(
+                                  fontSize: responsive.sp(16),
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'DM Sans',
+                                ),
+                                tabs: const [
+                                  Tab(text: 'Posts'),
+                                  Tab(text: 'Links'),
+                                  Tab(text: 'Members'),
+                                ],
                               ),
-                              tabs: const [
-                                Tab(text: 'Posts'),
-                                Tab(text: 'Links'),
-                                Tab(text: 'Members'),
-                              ],
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-
+                  
                       // --- Tab Content (fills remaining space) ---
                       Expanded(
                         child: TabBarView(
@@ -726,7 +740,8 @@ class _CommunitiesState extends State<Communities> {
                                     // Communitypostwidget(c: cPost),
                                     // Communitypostwidget(c: cPost),
                                     // Communitypostwidget(c: cPost),
-                                    CommunityPostSection(community: community),
+                                    CommunityPostSection(
+                                        community: community),
                                     //SizedBox(height: 100,)
                                   ],
                                 ),
@@ -776,18 +791,19 @@ class _CommunitiesState extends State<Communities> {
                     ],
                   ),
                 ),
-              ),
+        ),
       ),
     );
   }
+
   Widget _buildAbout(ThemeData theme) {
     String about = community?.description ?? "";
     return SizedBox(
       height: aboutExpanded ? 200 : 72,
       child: SingleChildScrollView(
         physics: aboutExpanded
-        ? ClampingScrollPhysics()
-        :NeverScrollableScrollPhysics(),
+            ? ClampingScrollPhysics()
+            : NeverScrollableScrollPhysics(),
         child: Text.rich(
           new TextSpan(
             text: about.length > 160 && !aboutExpanded
@@ -798,9 +814,8 @@ class _CommunitiesState extends State<Communities> {
                     new TextSpan(
                       text: 'Read More',
                       style: TextStyle(
-                        color: myConstants.instiappBlue,
-                        fontWeight: FontWeight.w600
-                      ),
+                          color: myConstants.instiappBlue,
+                          fontWeight: FontWeight.w600),
                       recognizer: new TapGestureRecognizer()
                         ..onTap = () => setState(() {
                               aboutExpanded = true;
@@ -808,23 +823,23 @@ class _CommunitiesState extends State<Communities> {
                     )
                   ]
                 : [
-                  new TextSpan(
+                    new TextSpan(
                       text: ' Read Less',
                       style: TextStyle(
-                        color: myConstants.instiappBlue,
-                        fontWeight: FontWeight.w600
-                      ),
+                          color: myConstants.instiappBlue,
+                          fontWeight: FontWeight.w600),
                       recognizer: new TapGestureRecognizer()
                         ..onTap = () => setState(() {
                               aboutExpanded = false;
                             }),
                     )
-                ],
+                  ],
           ),
         ),
       ),
     );
   }
+
   Widget _buildMembers(ThemeData theme) {
     return Container(
       padding: const EdgeInsets.all(5.0),
@@ -917,79 +932,78 @@ class _CommunitiesState extends State<Communities> {
 
           const SizedBox(width: 16),
 
-        // Name and subtitle
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              width: 213,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    u.userName ?? "",
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Text(
-                    //u.getSubTitle() ?? "",
-                    "3rd year",
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: 8),
-            if (isAdmin)
+          // Name and subtitle
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               Container(
-                height: 24,
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: myConstants.instiappBlue,
-                ),
-              child: const Center(
-                child: Text(
-                  "Admin",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
+                width: 213,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      u.userName ?? "",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      //u.getSubTitle() ?? "",
+                      "3rd year",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
-        ),
+              SizedBox(width: 8),
+              if (isAdmin)
+                Container(
+                  height: 24,
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: myConstants.instiappBlue,
+                  ),
+                  child: const Center(
+                    child: Text(
+                      "Admin",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
 
-        
-        // Admin tag (if applicable)
-        // if (isAdmin)
-        //   Container(
-        //     height: 24,
-        //     padding: const EdgeInsets.symmetric(horizontal: 6),
-        //     decoration: BoxDecoration(
-        //       borderRadius: BorderRadius.circular(8),
-        //       color: myConstants.instiappBlue,
-        //     ),
-        //     child: const Center(
-        //       child: Text(
-        //         "Admin",
-        //         style: TextStyle(
-        //           color: Colors.white,
-        //           fontWeight: FontWeight.w600,
-        //         ),
-        //       ),
-        //     ),
-        //   ),
-      ],
-    ),
-  );
-}
+          // Admin tag (if applicable)
+          // if (isAdmin)
+          //   Container(
+          //     height: 24,
+          //     padding: const EdgeInsets.symmetric(horizontal: 6),
+          //     decoration: BoxDecoration(
+          //       borderRadius: BorderRadius.circular(8),
+          //       color: myConstants.instiappBlue,
+          //     ),
+          //     child: const Center(
+          //       child: Text(
+          //         "Admin",
+          //         style: TextStyle(
+          //           color: Colors.white,
+          //           fontWeight: FontWeight.w600,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+        ],
+      ),
+    );
+  }
 }
 
 class CommunityPostSection extends StatefulWidget {
@@ -1379,7 +1393,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                           children: [
                             //sort(),
                             //SizedBox(width: 8),
-                            postTypeContainer(CPType.All, communityPostBloc,"All"),
+                            postTypeContainer(
+                                CPType.All, communityPostBloc, "All"),
                             SizedBox(width: 8),
                             postTypeContainer(CPType.YourPosts,
                                 communityPostBloc, "Your Posts"),
@@ -1485,7 +1500,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                 loading
                     ? CircularProgressIndicator()
                     : Container(
-                      padding: EdgeInsets.only(top: 16),
+                        padding: EdgeInsets.only(top: 16),
                         decoration: BoxDecoration(color: Colors.white),
                         child: StreamBuilder<List<CommunityPost>>(
                           stream: communityPostBloc.communityposts,

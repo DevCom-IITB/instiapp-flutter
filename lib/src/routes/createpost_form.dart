@@ -41,6 +41,7 @@ class _CreatePostPage extends State<CreatePostPage> {
   Map<String, dynamic>? pollData;
 
   List<File> imageFiles = [];
+  Set<int> loadedImageIndices = {}; // Track which images are fully loaded
   // List<PlatformFile> attachedFiles = []; // For general files
   // List<File> documentFiles = []; // For document files
 
@@ -108,12 +109,14 @@ class _CreatePostPage extends State<CreatePostPage> {
             child: bloc.currSession == null
                 ? Container(
                     alignment: Alignment.center,
-                    padding: EdgeInsets.symmetric(horizontal: Responsive.width(50,context), vertical: Responsive.height(50,context)),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: Responsive.width(50, context),
+                        vertical: Responsive.height(50, context)),
                     child: Column(
                       children: [
                         Icon(
                           Icons.cloud,
-                          size: Responsive.height(200,context),
+                          size: Responsive.height(200, context),
                           color: Colors.grey[600],
                         ),
                         Text(
@@ -174,7 +177,6 @@ class _CreatePostPage extends State<CreatePostPage> {
                                             final options =
                                                 pollData!['poll_options']
                                                     as List<String>?;
-
                                             if (question == null ||
                                                 question.isEmpty) {
                                               ScaffoldMessenger.of(context)
@@ -221,6 +223,9 @@ class _CreatePostPage extends State<CreatePostPage> {
 
                                           if (currRequest1.imageUrl == null)
                                             currRequest1.imageUrl = [];
+
+                                          // If editing, only add new images (imageFiles contains only new ones)
+                                          // If creating, add all images from imageFiles
                                           for (int i = 0;
                                               i < imageFiles.length;
                                               i++) {
@@ -228,8 +233,12 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                 await bloc.client.uploadImage(
                                                     bloc.getSessionIdHeader(),
                                                     imageFiles[i]);
-                                            currRequest1.imageUrl!
-                                                .add(resp.pictureURL!);
+                                            // Check if image URL already exists to avoid duplicates
+                                            if (!currRequest1.imageUrl!
+                                                .contains(resp.pictureURL!)) {
+                                              currRequest1.imageUrl!
+                                                  .add(resp.pictureURL!);
+                                            }
                                           }
                                           // for (int i = 0;
                                           //     i < documentFiles.length;
@@ -264,31 +273,65 @@ class _CreatePostPage extends State<CreatePostPage> {
                                             );
                                             currRequest1.poll = pollForApi;
                                           }
-                                          
-                                          if (isEditing) {
-                                            bloc.communityPostBloc
-                                                .updateCommunityPost(
-                                                    currRequest1);
-                                          } else {
-                                            // print()
-                                            bloc.communityPostBloc
-                                                .createCommunityPost(
-                                                    currRequest1);
+                                          try {
+                                            if (isEditing) {
+                                              bloc.communityPostBloc
+                                                  .updateCommunityPost(
+                                                      currRequest1);
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Post updated successfully'),
+                                                  backgroundColor: Colors.green,
+                                                  duration:
+                                                      Duration(seconds: 2),
+                                                ),
+                                              );
+                                            } else {
+                                              bloc.communityPostBloc
+                                                  .createCommunityPost(
+                                                      currRequest1);
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Post created successfully'),
+                                                  backgroundColor: Colors.green,
+                                                  duration:
+                                                      Duration(seconds: 2),
+                                                ),
+                                              );
+                                            }
+                                          } catch (e) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                    'Error uploading post: ${e.toString()}'),
+                                                backgroundColor: Colors.red,
+                                                duration: Duration(seconds: 2),
+                                              ),
+                                            );
+                                            return;
                                           }
                                           Navigator.of(context)
                                               .pop(currRequest1);
                                         }
                                       },
                                       child: Container(
-                                        height: Responsive.height(35,context),
+                                        height: Responsive.height(35, context),
                                         padding: EdgeInsets.symmetric(
-                                            horizontal: Responsive.width(16,context), vertical: Responsive.height(6,context)),
+                                            horizontal:
+                                                Responsive.width(16, context),
+                                            vertical:
+                                                Responsive.height(6, context)),
                                         clipBehavior: Clip.antiAlias,
                                         decoration: ShapeDecoration(
                                           color: const Color(0xFF306FDC),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(Responsive.width(100,context)),
+                                            borderRadius: BorderRadius.circular(
+                                                Responsive.width(100, context)),
                                           ),
                                         ),
                                         child: Row(
@@ -302,7 +345,8 @@ class _CreatePostPage extends State<CreatePostPage> {
                                               'Post',
                                               style: TextStyle(
                                                 color: const Color(0xFFF6F6F6),
-                                                fontSize: Responsive.text(16,context),
+                                                fontSize: Responsive.text(
+                                                    16, context),
                                                 fontFamily: 'DM Sans',
                                                 fontWeight: FontWeight.w600,
                                               ),
@@ -313,17 +357,21 @@ class _CreatePostPage extends State<CreatePostPage> {
                                     )
                                   ],
                                 )),
-                             Container(   
-                              margin: EdgeInsets.only(top: Responsive.height(4,context), bottom: Responsive.height(4,context), left: Responsive.width(24,context)),
-                            child:InkWell(
-                              onTap: (){
-                                setState(() {
-                                  click = !click;
-                                  currRequest1.anonymous = !click;
-                                });
-                              },
-                              child: Anonymous(click),
-                            ),),
+                            Container(
+                              margin: EdgeInsets.only(
+                                  top: Responsive.height(4, context),
+                                  bottom: Responsive.height(4, context),
+                                  left: Responsive.width(24, context)),
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    click = !click;
+                                    currRequest1.anonymous = !click;
+                                  });
+                                },
+                                child: Anonymous(click),
+                              ),
+                            ),
                             Expanded(
                               child: Container(
                                 padding: EdgeInsets.only(
@@ -338,9 +386,12 @@ class _CreatePostPage extends State<CreatePostPage> {
                                             top:
                                                 Responsive.height(13, context)),
                                         child: Image.network(
-                                          currRequest1.postedBy?.userProfilePictureUrl ?? '',
-                                          width: Responsive.width(36,context),
-                                          height: Responsive.height(36,context),
+                                          currRequest1.postedBy
+                                                  ?.userProfilePictureUrl ??
+                                              '',
+                                          width: Responsive.width(36, context),
+                                          height:
+                                              Responsive.height(36, context),
                                           fit: BoxFit.cover,
                                           errorBuilder:
                                               (context, error, stackTrace) =>
@@ -369,7 +420,8 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                 style: TextStyle(
                                                   color:
                                                       const Color(0xFF7E8287),
-                                                  fontSize: Responsive.text(13,context),
+                                                  fontSize: Responsive.text(
+                                                      13, context),
                                                   fontFamily: 'DM Sans',
                                                   fontWeight: FontWeight.w500,
                                                 ),
@@ -385,7 +437,8 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                 style: TextStyle(
                                                   color:
                                                       const Color(0xFF0F1620),
-                                                  fontSize: Responsive.text(16,context),
+                                                  fontSize: Responsive.text(
+                                                      16, context),
                                                   fontFamily: 'DM Sans',
                                                   fontWeight: FontWeight.w400,
                                                 ),
@@ -396,7 +449,8 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                   hintStyle: TextStyle(
                                                     color:
                                                         const Color(0xFF0F1620),
-                                                    fontSize: Responsive.text(16,context),
+                                                    fontSize: Responsive.text(
+                                                        16, context),
                                                     fontFamily: 'DM Sans',
                                                     fontWeight: FontWeight.w500,
                                                   ),
@@ -532,9 +586,11 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                 Responsive.height(6, context)),
                                         child: SvgPicture.asset(
                                           'assets/communities/camera.svg',
-                                          height:Responsive.height(26, context),                                              
+                                          height:
+                                              Responsive.height(26, context),
                                           width: Responsive.width(26, context),
-                                          color:Color.fromRGBO(48, 111, 220, 1),                                            
+                                          color:
+                                              Color.fromRGBO(48, 111, 220, 1),
                                         ),
                                       ),
                                     ),
@@ -584,15 +640,14 @@ class _CreatePostPage extends State<CreatePostPage> {
                                           padding: EdgeInsets.symmetric(
                                               horizontal:
                                                   Responsive.width(8, context),
-                                              vertical:
-                                                  Responsive.height(6, context)),
+                                              vertical: Responsive.height(
+                                                  6, context)),
                                           child: SvgPicture.asset(
                                             'assets/communities/image.svg',
                                             height:
                                                 Responsive.height(26, context),
                                             width:
                                                 Responsive.width(26, context),
-                                            
                                           ),
                                         )),
                                   ),
@@ -667,60 +722,69 @@ class _CreatePostPage extends State<CreatePostPage> {
       ),
     );
   }
-  Widget Anonymous(bool isano){
-    return isano ? Container(
-      margin: EdgeInsets.only(right: Responsive.width(24,context)),
-      padding: EdgeInsets.symmetric(horizontal: Responsive.width(12,context), vertical: Responsive.height(5, context)),
-      decoration: BoxDecoration( 
-        border: Border.all(
-          color: Color.fromRGBO(48,111,220,1)
-        ),
-        borderRadius: BorderRadius.circular(Responsive.width(100, context))
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-        SvgPicture.asset("assets/communities/globe.svg",
-        height: Responsive.height(20,context),
-        width: Responsive.width(20,context),
-        color: Color.fromRGBO(48,111,220,1)
-        ),
-        SizedBox(width: Responsive.width(4,context)),
-        Text("Public", style: TextStyle(
-                                                  color:
-                                                      Color.fromRGBO(48,111,220,1),
-                                                  fontSize: Responsive.text(18,context),
-                                                  fontFamily: 'DM Sans',
-                                                  fontWeight: FontWeight.w700,
-                                                ), )
 
-    ],),): Container(
-      padding: EdgeInsets.symmetric(horizontal: Responsive.width(12,context), vertical: Responsive.height(5, context)),
-      decoration: BoxDecoration( 
-        border: Border.all(
-          color: Color.fromRGBO(48,111,220,1)
-        ),
-        color: Color.fromRGBO(48,111,220,1),
-        borderRadius: BorderRadius.circular(Responsive.width(100, context))
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-        SvgPicture.asset("assets/communities/mdi_anonymous.svg",
-        height: Responsive.height(20,context),
-        width: Responsive.width(20,context),
-        color: Color.fromRGBO(255,255,255,1),
-        ),
-        SizedBox(width: Responsive.width(4,context)),
-        Text("Anonymous", style: TextStyle(
-                                                  color:
-                                                      Color.fromRGBO(255,255,255,1),
-                                                  fontSize: Responsive.text(18,context),
-                                                  fontFamily: 'DM Sans',
-                                                  fontWeight: FontWeight.w700,
-                                                ),)
-
-      ],),);
+  Widget Anonymous(bool isano) {
+    return isano
+        ? Container(
+            margin: EdgeInsets.only(right: Responsive.width(24, context)),
+            padding: EdgeInsets.symmetric(
+                horizontal: Responsive.width(10, context),
+                vertical: Responsive.height(4, context)),
+            decoration: BoxDecoration(
+                border: Border.all(color: Color.fromRGBO(48, 111, 220, 1)),
+                borderRadius:
+                    BorderRadius.circular(Responsive.width(100, context))),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SvgPicture.asset("assets/communities/globe.svg",
+                    height: Responsive.height(20, context),
+                    width: Responsive.width(20, context),
+                    color: Color.fromRGBO(48, 111, 220, 1)),
+                SizedBox(width: Responsive.width(4, context)),
+                Text(
+                  "Public",
+                  style: TextStyle(
+                    color: Color.fromRGBO(48, 111, 220, 1),
+                    fontSize: Responsive.text(16, context),
+                    fontFamily: 'DM Sans',
+                    fontWeight: FontWeight.w700,
+                  ),
+                )
+              ],
+            ),
+          )
+        : Container(
+            padding: EdgeInsets.symmetric(
+                horizontal: Responsive.width(10, context),
+                vertical: Responsive.height(4, context)),
+            decoration: BoxDecoration(
+                border: Border.all(color: Color.fromRGBO(48, 111, 220, 1)),
+                color: Color.fromRGBO(48, 111, 220, 1),
+                borderRadius:
+                    BorderRadius.circular(Responsive.width(100, context))),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SvgPicture.asset(
+                  "assets/communities/mdi_anonymous.svg",
+                  height: Responsive.height(20, context),
+                  width: Responsive.width(20, context),
+                  color: Color.fromRGBO(255, 255, 255, 1),
+                ),
+                SizedBox(width: Responsive.width(4, context)),
+                Text(
+                  "Anonymous",
+                  style: TextStyle(
+                    color: Color.fromRGBO(255, 255, 255, 1),
+                    fontSize: Responsive.text(16, context),
+                    fontFamily: 'DM Sans',
+                    fontWeight: FontWeight.w700,
+                  ),
+                )
+              ],
+            ),
+          );
   }
 
   Widget _buildImageUrl(String url, int index) {
@@ -758,7 +822,10 @@ class _CreatePostPage extends State<CreatePostPage> {
   }
 
   Widget _buildImageFile(File file, int index) {
+    bool isLoaded = loadedImageIndices.contains(index);
+
     return Stack(
+      key: ValueKey('image_$index'),
       children: [
         Container(
           margin: EdgeInsets.only(right: Responsive.width(8, context)),
@@ -767,11 +834,37 @@ class _CreatePostPage extends State<CreatePostPage> {
             borderRadius:
                 BorderRadius.circular(Responsive.width(16.9, context)),
           ),
-          child: Image.file(
-            file,
-            height: Responsive.height(77.62, context),
-            width: Responsive.width(77.62, context),
-            fit: BoxFit.fill,
+          child: Stack(
+            children: [
+              Image.file(
+                file,
+                height: Responsive.height(77.62, context),
+                width: Responsive.width(77.62, context),
+                fit: BoxFit.fill,
+                frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                  if (!isLoaded && frame != null) {
+                    Future.microtask(() {
+                      setState(() {
+                        loadedImageIndices.add(index);
+                      });
+                    });
+                  }
+                  return child;
+                },
+              ),
+              if (!isLoaded)
+                Container(
+                  height: Responsive.height(77.62, context),
+                  width: Responsive.width(77.62, context),
+                  color: Colors.black.withOpacity(0.4),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      strokeWidth: 2,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
         Positioned(
@@ -783,6 +876,7 @@ class _CreatePostPage extends State<CreatePostPage> {
               onPressed: () {
                 setState(() {
                   imageFiles.removeAt(index);
+                  loadedImageIndices.remove(index);
                 });
               },
             ),
@@ -982,7 +1076,7 @@ class _PollCreatorState extends State<PollCreator> {
                   hintText: "Ask question",
                   hintStyle: TextStyle(
                     color: const Color(0xFF7E8287),
-                    fontSize: Responsive.text(14,context),
+                    fontSize: Responsive.text(14, context),
                     fontFamily: 'DM Sans',
                     fontWeight: FontWeight.w400,
                   ),
@@ -995,7 +1089,7 @@ class _PollCreatorState extends State<PollCreator> {
                 ),
                 style: TextStyle(
                   color: const Color(0xCC0F1620),
-                  fontSize: Responsive.text(14,context),
+                  fontSize: Responsive.text(14, context),
                   fontFamily: 'DM Sans',
                   fontWeight: FontWeight.w400,
                 ),
@@ -1009,7 +1103,7 @@ class _PollCreatorState extends State<PollCreator> {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: const Color(0xFFD2D5DA),
-                  width: Responsive.width(1,context),
+                  width: Responsive.width(1, context),
                 ),
                 color: const Color(0xFFFFFFFF),
               ),
@@ -1061,7 +1155,7 @@ class _PollCreatorState extends State<PollCreator> {
                                     hintText: "Option",
                                     hintStyle: TextStyle(
                                       color: const Color(0xFF7E8287),
-                                      fontSize: Responsive.text(14,context),
+                                      fontSize: Responsive.text(14, context),
                                       fontFamily: 'DM Sans',
                                       fontWeight: FontWeight.w400,
                                     ),
@@ -1075,7 +1169,7 @@ class _PollCreatorState extends State<PollCreator> {
                                   ),
                                   style: TextStyle(
                                     color: const Color(0xCC0F1620),
-                                    fontSize: Responsive.text(14,context),
+                                    fontSize: Responsive.text(14, context),
                                     fontFamily: 'DM Sans',
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -1088,7 +1182,7 @@ class _PollCreatorState extends State<PollCreator> {
                                   padding: EdgeInsets.zero, // Remove padding
                                   constraints:
                                       BoxConstraints(), // Remove minimum size constraints
-                                  iconSize: Responsive.width(20,context),
+                                  iconSize: Responsive.width(20, context),
                                   onPressed: () {
                                     setState(() {
                                       optionControllers[index].dispose();
@@ -1124,7 +1218,7 @@ class _PollCreatorState extends State<PollCreator> {
                             'Add option',
                             style: TextStyle(
                               color: const Color(0xFFBEBEBE),
-                              fontSize: Responsive.text(14,context),
+                              fontSize: Responsive.text(14, context),
                               fontFamily: 'DM Sans',
                               fontWeight: FontWeight.w400,
                             ),
@@ -1149,7 +1243,7 @@ class _PollCreatorState extends State<PollCreator> {
                   'Allow multiple answers',
                   style: TextStyle(
                     color: const Color(0xFF306FDC),
-                    fontSize: Responsive.text(14,context),
+                    fontSize: Responsive.text(14, context),
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w500,
                   ),

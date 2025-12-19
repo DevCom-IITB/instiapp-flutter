@@ -10,6 +10,7 @@ import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 // import 'package:share/share.dart';
 import 'package:share_plus/share_plus.dart';
@@ -80,6 +81,9 @@ class _CommunityPageState extends State<CommunityPage> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Color.fromRGBO(246, 246, 246, 1),
+    ));
     final responsive = Responsive(context);
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
