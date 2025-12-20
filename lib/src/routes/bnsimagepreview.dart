@@ -36,62 +36,69 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 12.0, top: 8.0),
-          child: GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: Color.fromRGBO(235, 235, 235, 0.8),
-                shape: BoxShape.circle,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 12.0, top: 8.0),
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: Color.fromRGBO(235, 235, 235, 0.8),
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Icon(Icons.arrow_back, color: Colors.black, size: 24),
+                ),
               ),
-              child: const Center(
-                child: Icon(Icons.arrow_back, color: Colors.black, size: 24),
+            ),
+          ),
+          title: Text(
+            '${_currentIndex + 1} / ${widget.imageUrls.length}',
+            style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w400),
+          ),
+          centerTitle: true,
+        ),
+        body: PhotoViewGallery.builder(
+          pageController: _pageController,
+          itemCount: widget.imageUrls.length,
+          onPageChanged: (index) {
+            setState(() => _currentIndex = index);
+          },
+          builder: (context, index) {
+            return PhotoViewGalleryPageOptions(
+              imageProvider: NetworkImage(widget.imageUrls[index]),
+              minScale: PhotoViewComputedScale.contained,
+              maxScale: PhotoViewComputedScale.covered * 4,
+              heroAttributes:
+                  PhotoViewHeroAttributes(tag: widget.imageUrls[index]),
+            );
+          },
+          loadingBuilder: (context, event) => Center(
+            child: SizedBox(
+              width: 30,
+              height: 30,
+              child: CircularProgressIndicator(
+                value: event == null
+                    ? 0
+                    : event.cumulativeBytesLoaded / event.expectedTotalBytes!,
               ),
             ),
           ),
         ),
-        title: Text(
-          '${_currentIndex + 1} / ${widget.imageUrls.length}',
-          style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w400),
-        ),
-        centerTitle: true,
+        bottomNavigationBar: _buildBottomActionBar(widget.post),
       ),
-      body: PhotoViewGallery.builder(
-        pageController: _pageController,
-        itemCount: widget.imageUrls.length,
-        onPageChanged: (index) {
-          setState(() => _currentIndex = index);
-        },
-        builder: (context, index) {
-          return PhotoViewGalleryPageOptions(
-            imageProvider: NetworkImage(widget.imageUrls[index]),
-            minScale: PhotoViewComputedScale.contained,
-            maxScale: PhotoViewComputedScale.covered * 4,
-            heroAttributes:
-                PhotoViewHeroAttributes(tag: widget.imageUrls[index]),
-          );
-        },
-        loadingBuilder: (context, event) => Center(
-          child: SizedBox(
-            width: 30,
-            height: 30,
-            child: CircularProgressIndicator(
-              value: event == null
-                  ? 0
-                  : event.cumulativeBytesLoaded / event.expectedTotalBytes!,
-            ),
-          ),
-        ),
-      ),
-      bottomNavigationBar: _buildBottomActionBar(widget.post),
     );
   }
 

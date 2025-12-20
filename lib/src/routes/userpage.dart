@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
@@ -10,6 +11,7 @@ import 'package:InstiApp/src/widgets/buttons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:InstiApp/src/utils/responsive.dart';
 import 'package:InstiApp/src/routes/aboutpage.dart';
+import 'package:InstiApp/src/routes/bodypage.dart';
 
 class UserPage extends StatefulWidget {
   final User? initialUser;
@@ -38,7 +40,7 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin { // Changed to TickerProviderStateMixin
   User? user;
   bool cansee = false;
   TabController? _tabController;
@@ -48,6 +50,11 @@ class _UserPageState extends State<UserPage>
   bool loggingOutLoading = false;
   bool updatingProfile = false;
   bool sendingFeedback = false;
+  bool _isLoading = false;
+  bool _loadFailed = false;
+  bool _isGuest = false;
+  bool _initialized = false;
+  InstiAppBloc? _bloc;
 
   final String updateProfileUrl = "https://gymkhana.iitb.ac.in/sso/user";
   final String feedbackUrl = "https://insti.app/feedback";
@@ -55,9 +62,126 @@ class _UserPageState extends State<UserPage>
   @override
   void initState() {
     super.initState();
+    
+    // Use cached data immediately
     user = widget.initialUser;
+    
+    // Initialize with basic data (no bloc access yet)
+    _initializeBasicData();
+  }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
+    if (!_initialized) {
+      _bloc = BlocProvider.of(context)?.bloc;
+      _initializeWithBloc();
+    }
+  }
+
+  void _initializeBasicData() {
+    // Initialize with whatever data we have immediately (without bloc)
+    if (user != null) {
+      associations = _convertRolesToGroups();
+      following = _convertBodiesToGroups();
+    }
+  }
+
+  void _initializeWithBloc() {
+    if (_bloc == null) {
+      _isGuest = true;
+      cansee = false;
+      _initialized = true;
+      _createTabController(); // Create tab controller even for guests
+      return;
+    }
+    
+    // Determine if viewing own profile using cached session
+    _checkIfViewingOwnProfileFromCache();
+    
+    // Create tab controller based on permissions
+    _createTabController();
+    
+    _initialized = true;
+    
+    // Try to load fresh data in background
     _loadUserData();
+  }
+
+  void _createTabController() {
+    // Dispose old controller if exists
+    if (_tabController != null) {
+      _tabController!.dispose();
+    }
+    
+    // Create new controller based on current cansee state
+    final length = cansee ? 3 : 2;
+    _tabController = TabController(
+      length: length, 
+      vsync: this
+    );
+    _tabController?.addListener(_handleTabChange);
+  }
+
+  void _checkIfViewingOwnProfileFromCache() {
+    if (_bloc == null) {
+      _isGuest = true;
+      cansee = false;
+      return;
+    }
+    
+    // Check if user is guest (no session)
+    if (_bloc!.currSession == null) {
+      _isGuest = true;
+      cansee = false;
+      return;
+    }
+    
+    // User is not guest, we have a session
+    _isGuest = false;
+    
+    if (user == null) {
+      cansee = false;
+      return;
+    }
+
+    // Method 1: Check against session's current user profile (cached)
+    final currentUserFromSession = _bloc!.currSession?.profile;
+    if (currentUserFromSession != null) {
+      // Compare by userID first (most reliable)
+      if (currentUserFromSession.userID != null && user!.userID != null) {
+        cansee = currentUserFromSession.userID == user!.userID;
+        if (cansee) return;
+      }
+      
+      // Compare by LDAP ID as fallback
+      if (currentUserFromSession.userLDAPId != null && user!.userLDAPId != null) {
+        cansee = currentUserFromSession.userLDAPId == user!.userLDAPId;
+        if (cansee) return;
+      }
+      
+      // For "me" endpoint navigation
+      if (user!.userID == "me" || widget.userFuture == null) {
+        cansee = true;
+        return;
+      }
+    }
+
+    // Method 2: Check if session ID matches user ID
+    if (_bloc!.currSession?.profileId != null && user!.userID != null) {
+      cansee = _bloc!.currSession?.profileId == user!.userID;
+      if (cansee) return;
+    }
+
+    // Method 3: Check session user ID
+    if (_bloc!.currSession?.user != null && user!.userID != null) {
+      cansee = _bloc!.currSession?.user == user!.userID;
+      if (cansee) return;
+    }
+
+    // Default to false if we can't verify
+    cansee = false;
   }
 
   void _handleTabChange() {
@@ -65,32 +189,84 @@ class _UserPageState extends State<UserPage>
   }
 
   Future<void> _loadUserData() async {
+    if (!mounted || _bloc == null) return;
+    
+    setState(() {
+      _isLoading = true;
+      _loadFailed = false;
+    });
+
     try {
-      // Load user data
+      // Try to load fresh user data
       if (widget.userFuture != null) {
         final u = await widget.userFuture!;
-        if (mounted) setState(() {
-          user = u;
-          associations = _convertRolesToGroups();
-          following = _convertBodiesToGroups();
-        });
-      }
-
-      // Check if current user
-      final bloc = BlocProvider.of(context)!.bloc;
-      if (bloc != null) {
-        final currentUser = await bloc.getUser("me");
         if (mounted) {
           setState(() {
-            cansee = currentUser.userLDAPId == widget.initialUser?.userLDAPId;
-            
-            _tabController = TabController(length: cansee ? 3 : 2, vsync: this);
-            _tabController!.addListener(_handleTabChange);
+            user = u; // Update with fresh data
+            associations = _convertRolesToGroups();
+            following = _convertBodiesToGroups();
+          });
+        }
+      } else {
+        // If no future provided (viewing "me" without cached data)
+        // Try to get current user from bloc
+        if (_bloc!.currSession?.profile != null && user == null) {
+          if (mounted) {
+            setState(() {
+              user = _bloc!.currSession?.profile;
+              associations = _convertRolesToGroups();
+              following = _convertBodiesToGroups();
+            });
+          }
+        }
+      }
+
+      // Verify if viewing own profile with fresh data (only if not guest)
+      if (!_isGuest) {
+        await _verifyOwnProfileWithFreshData();
+      }
+      
+    } catch (e) {
+      // If loading fails, keep cached data but mark as failed
+      if (mounted) {
+        setState(() {
+          _loadFailed = true;
+        });
+      }
+      print("Failed to load fresh user data: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _verifyOwnProfileWithFreshData() async {
+    if (_bloc == null || user == null || _isGuest) return;
+
+    try {
+      // Try to get fresh current user data
+      final currentUser = await _bloc!.getUser("me");
+      if (mounted) {
+        bool newCansee = (currentUser.userID != null && user!.userID != null && 
+                    currentUser.userID == user!.userID) ||
+                   (currentUser.userLDAPId != null && user!.userLDAPId != null && 
+                    currentUser.userLDAPId == user!.userLDAPId);
+        
+        // Only update if cansee state changed
+        if (newCansee != cansee) {
+          setState(() {
+            cansee = newCansee;
+            _createTabController(); // Recreate tab controller with new length
           });
         }
       }
     } catch (e) {
-      // Handle error
+      // If we can't verify with fresh data, keep the cached assumption
+      // Don't update cansee state - keep what we determined from cache
+      print("Failed to verify current user, using cached: $e");
     }
   }
 
@@ -126,12 +302,19 @@ class _UserPageState extends State<UserPage>
 
   @override
   void dispose() {
-    _tabController?.removeListener(_handleTabChange);
     _tabController?.dispose();
     super.dispose();
   }
 
   Widget _buildPortraitLayout() {
+    if (_tabController == null) {
+      return Center(
+        child: CircularProgressIndicatorExtended(
+          label: Text("Loading tabs...")
+        ),
+      );
+    }
+    
     final isGeneralTab = _tabController!.length == 3 && _tabController!.index == 0;
     final tabCount = _tabController!.length;
 
@@ -148,16 +331,39 @@ class _UserPageState extends State<UserPage>
           },
         ),
         SizedBox(height: RS.sh(context, 24)),
-        cansee
-            ? AnimatedCrossFade(
-                duration: const Duration(milliseconds: 300),
-                crossFadeState: isGeneralTab
-                    ? CrossFadeState.showFirst
-                    : CrossFadeState.showSecond,
-                firstChild: _buildProfileCard(),
-                secondChild: _buildCompactProfileCard(),
-              )
-            : _spectatingProfileCard(),
+        if (_isLoading && user != null)
+          LinearProgressIndicator(
+            backgroundColor: Colors.transparent,
+            minHeight: 2,
+          ),
+        
+        // Show appropriate profile card
+        if (_isGuest)
+          _buildGuestProfileCard()
+        else if (cansee)
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 300),
+            crossFadeState: isGeneralTab
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+            firstChild: _buildProfileCard(),
+            secondChild: _buildCompactProfileCard(),
+          )
+        else
+          _spectatingProfileCard(),
+        
+        if (_loadFailed)
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              'Showing cached data. Some information may be outdated.',
+              style: TextStyle(
+                color: Colors.orange,
+                fontSize: 12,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
@@ -193,7 +399,62 @@ class _UserPageState extends State<UserPage>
     );
   }
 
+  Widget _buildGuestProfileCard() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/profilepage/othersprofiledoodle.png'),
+            fit: BoxFit.cover,
+          ),
+          color: const Color(0xFF0F1620),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.person_outline_outlined,
+                size: 60,
+                color: Colors.white,
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Guest Mode',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Login to view profiles',
+                style: TextStyle(
+                  color: Color.fromRGBO(239, 239, 239, 1),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildLandscapeLayout() {
+    if (_tabController == null) {
+      return Center(
+        child: CircularProgressIndicatorExtended(
+          label: Text("Loading tabs...")
+        ),
+      );
+    }
+    
     final tabCount = _tabController!.length;
 
     return SingleChildScrollView(
@@ -210,8 +471,32 @@ class _UserPageState extends State<UserPage>
             },
           ),
           SizedBox(height: RS.sh(context, 24)),
-          // In landscape, always show compact profile card for consistency
-          cansee ? _buildCompactProfileCard() : _spectatingProfileCard(),
+          if (_isLoading && user != null)
+            LinearProgressIndicator(
+              backgroundColor: Colors.transparent,
+              minHeight: 2,
+            ),
+          
+          // Show appropriate profile card
+          if (_isGuest)
+            _buildGuestProfileCard()
+          else if (cansee)
+            _buildCompactProfileCard()
+          else
+            _spectatingProfileCard(),
+          
+          if (_loadFailed)
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                'Showing cached data. Some information may be outdated.',
+                style: TextStyle(
+                  color: Colors.orange,
+                  fontSize: 12,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
@@ -237,20 +522,20 @@ class _UserPageState extends State<UserPage>
               ],
             ),
           ),
-          // In landscape, show the tab content directly (not in TabBarView)
           _buildCurrentTabContent(),
-          SizedBox(height: RS.sh(context, 24)), // Add some bottom padding
+          SizedBox(height: RS.sh(context, 24)),
         ],
       ),
     );
   }
 
   Widget _buildCurrentTabContent() {
+    if (_tabController == null) return Container();
+    
     final tabCount = _tabController!.length;
     final currentIndex = _tabController!.index;
     
     if (tabCount == 3) {
-      // Current user view (3 tabs)
       switch (currentIndex) {
         case 0:
           return _buildSettingsSection();
@@ -262,7 +547,6 @@ class _UserPageState extends State<UserPage>
           return Container();
       }
     } else {
-      // Spectator view (2 tabs)
       switch (currentIndex) {
         case 0:
           return _buildAssociationsSection(scrollable: false);
@@ -276,22 +560,10 @@ class _UserPageState extends State<UserPage>
 
   @override
   Widget build(BuildContext context) {
-
-    if (_tabController == null) {
-      return Scaffold(
-        body: Center(
-          child: CircularProgressIndicatorExtended(label: Text("Loading tabs...")),
-        ),
-      );
-    }
-
-    final isGeneralTab = _tabController!.length == 3 && _tabController!.index == 0;
-    final tabCount = _tabController!.length;
-
     return Scaffold(
       backgroundColor: Color.fromRGBO(246, 246, 246, 1),
       body: SafeArea(
-        child: user == null
+        child: !_initialized && _isLoading && user == null
             ? Center(
                 child: CircularProgressIndicatorExtended(
                     label: Text("Loading the User Page")))
@@ -309,7 +581,6 @@ class _UserPageState extends State<UserPage>
   Widget _buildProfileImage() {
     final profileUrl = user?.userProfilePictureUrl;
 
-    // Case 1: No profile image available
     if (profileUrl == null || profileUrl.isEmpty) {
       return const Icon(
         Icons.person_outline_outlined,
@@ -318,7 +589,6 @@ class _UserPageState extends State<UserPage>
       );
     }
 
-    // Case 2: Valid image URL
     return Image.network(
       profileUrl,
       fit: BoxFit.cover,
@@ -353,7 +623,6 @@ class _UserPageState extends State<UserPage>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Profile Image
               Container(
                 width: RS.s(context, 80),
                 height: RS.s(context, 80),
@@ -369,7 +638,6 @@ class _UserPageState extends State<UserPage>
 
               const SizedBox(width: 16),
 
-              // Name and Roll Number
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -408,7 +676,6 @@ class _UserPageState extends State<UserPage>
               
               const SizedBox(width: 16),
 
-              // Small Logo
               SizedBox(
                 width: RS.s(context, 50),
                 height: RS.s(context, 50),
@@ -448,13 +715,12 @@ class _UserPageState extends State<UserPage>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Profile Image
               SizedBox(
                 width: RS.sw(context, 88),
                 child: Center(
                   child: Container(
                     width: RS.sw(context, 88),
-                    height: RS.sh(context, 107), // match your original height
+                    height: RS.sh(context, 107),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
@@ -470,18 +736,15 @@ class _UserPageState extends State<UserPage>
 
               const SizedBox(width: 16),
 
-              // Name, ID, logo, and banner
               Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Name + logo
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Name and ID
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -516,7 +779,6 @@ class _UserPageState extends State<UserPage>
                           ),
                         ),
 
-                        // Small Logo
                         SizedBox(
                           width: RS.s(context, 35),
                           height: RS.s(context, 35),
@@ -538,7 +800,6 @@ class _UserPageState extends State<UserPage>
 
                     const SizedBox(height: 8),
 
-                    // Banner Image
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -590,7 +851,7 @@ class _UserPageState extends State<UserPage>
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: _buildProfileImage(), // ✅ Reuse same logic
+                        child: _buildProfileImage(),
                       ),
                     ),
                   ),
@@ -753,8 +1014,26 @@ class _UserPageState extends State<UserPage>
     );
   }
 
-  Widget _buildSettingsSection() {
-    var bloc = BlocProvider.of(context)?.bloc;
+  Widget _settingsContent() {
+    // SECURITY CHECK
+    if (!cansee || _isGuest) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(Icons.lock_outline, size: 48, color: Colors.grey),
+              SizedBox(height: 16),
+              Text(
+                'Access restricted',
+                style: TextStyle(color: Colors.grey, fontSize: 16),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -763,17 +1042,12 @@ class _UserPageState extends State<UserPage>
           ToggleItem(
             title: 'Notifications',
             value: NotificationVisibility,
-            onChanged: (val) => setState(() => NotificationVisibility = val),
+            onChanged: (val) =>
+                setState(() => NotificationVisibility = val),
             top: true,
             icon: Icons.notifications_none_outlined,
           ),
-          // SettingsItem(
-          //   title: 'Settings',
-          //   icon: Icons.settings_outlined,
-          //   onTap: () {
-          //     Navigator.pushNamed(context, '/settings');
-          //   },
-          // ),
+
           SettingsItem(
             title: updatingProfile ? 'Opening...' : 'Edit Profile',
             icon: Icons.edit_outlined,
@@ -782,7 +1056,6 @@ class _UserPageState extends State<UserPage>
               setState(() => updatingProfile = true);
               try {
                 await Future.delayed(const Duration(milliseconds: 300));
-
                 if (await canLaunchUrl(Uri.parse(updateProfileUrl))) {
                   await launchUrl(
                     Uri.parse(updateProfileUrl),
@@ -794,6 +1067,7 @@ class _UserPageState extends State<UserPage>
               }
             },
           ),
+
           SettingsItem(
             title: sendingFeedback ? 'Opening...' : 'Feedback',
             icon: Icons.feedback_outlined,
@@ -803,7 +1077,6 @@ class _UserPageState extends State<UserPage>
               setState(() => sendingFeedback = true);
               try {
                 await Future.delayed(const Duration(milliseconds: 300));
-
                 if (await canLaunchUrl(Uri.parse(feedbackUrl))) {
                   await launchUrl(
                     Uri.parse(feedbackUrl),
@@ -815,23 +1088,26 @@ class _UserPageState extends State<UserPage>
               }
             },
           ),
+
           const SizedBox(height: 24),
+
           SettingsItem(
             title: loggingOutLoading ? 'Logging out...' : 'Logout',
             icon: Icons.logout,
             top: true,
             bottom: true,
-            color: loggingOutLoading ? Colors.grey : Color.fromRGBO(237, 0, 51, 1),
+            color: loggingOutLoading
+                ? Colors.grey
+                : const Color.fromRGBO(237, 0, 51, 1),
             onTap: () async {
-              if (bloc == null) return;
-              
+              if (_bloc == null) return;
+
               setState(() => loggingOutLoading = true);
               try {
-                await bloc.logout();
-
+                await _bloc!.logout();
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/', 
-                  (Route<dynamic> route) => false
+                  '/',
+                  (Route<dynamic> route) => false,
                 );
               } finally {
                 setState(() => loggingOutLoading = false);
@@ -843,92 +1119,121 @@ class _UserPageState extends State<UserPage>
     );
   }
 
-  Widget _buildAssociationsSection({bool scrollable = true}) {
-    final associations = _convertRolesToGroups();
+  Widget _buildSettingsSection({bool scrollable = true}) {
+    if (scrollable) {
+      return Expanded(
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: _settingsContent(),
+        ),
+      );
+    }
+  
+    return _settingsContent();
+  }
 
-    return associations.isEmpty
-        ? const Center(child: Text('No Associations Found'))
-        : Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildAssociationsSection({bool scrollable = true}) {
+    if (associations.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'No Associations Found',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (scrollable)
+            Expanded(
+              child: ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: associations.length,
+                itemBuilder: (context, index) =>
+                    _buildGroupCard(associations[index]),
+                separatorBuilder: (context, index) => Padding(
+                  padding: EdgeInsets.only(
+                      left: RS.sh(context, 88), right: 16),
+                ),
+              ),
+            )
+          else
+            Column(
               children: [
-                if (scrollable)
-                  Expanded(
-                    child: ListView.separated(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: associations.length,
-                      itemBuilder: (context, index) =>
-                          _buildGroupCard(associations[index]),
-                      separatorBuilder: (context, index) => Padding(
-                        padding: EdgeInsets.only(
-                            left: RS.sh(context, 88), right: 16),
-                      ),
-                    ),
-                  )
-                else
+                for (int index = 0; index < associations.length; index++)
                   Column(
                     children: [
-                      for (int index = 0; index < associations.length; index++)
-                        Column(
-                          children: [
-                            _buildGroupCard(associations[index]),
-                            if (index < associations.length - 1)
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: RS.sh(context, 88), right: 16),
-                              ),
-                          ],
+                      _buildGroupCard(associations[index]),
+                      if (index < associations.length - 1)
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: RS.sh(context, 88), right: 16),
                         ),
                     ],
                   ),
               ],
             ),
-          );
+        ],
+      ),
+    );
   }
 
   Widget _buildFollowingSection({bool scrollable = true}) {
-    final following = _convertBodiesToGroups();
+    if (following.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'You are not following any groups',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
+      );
+    }
 
-    return following.isEmpty
-        ? const Center(child: Text('You are not following any groups'))
-        : Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (scrollable)
+            Expanded(
+              child: ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: following.length,
+                itemBuilder: (context, index) =>
+                    _buildGroupCard(following[index]),
+                separatorBuilder: (context, index) => Padding(
+                  padding: EdgeInsets.only(
+                      left: RS.sh(context, 88), right: 16),
+                ),
+              ),
+            )
+          else
+            Column(
               children: [
-                if (scrollable)
-                  Expanded(
-                    child: ListView.separated(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: following.length,
-                      itemBuilder: (context, index) =>
-                          _buildGroupCard(following[index]),
-                      separatorBuilder: (context, index) => Padding(
-                        padding: EdgeInsets.only(
-                            left: RS.sh(context, 88), right: 16),
-                      ),
-                    ),
-                  )
-                else
+                for (int index = 0; index < following.length; index++)
                   Column(
                     children: [
-                      for (int index = 0; index < following.length; index++)
-                        Column(
-                          children: [
-                            _buildGroupCard(following[index]),
-                            if (index < following.length - 1)
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: RS.sh(context, 88), right: 16),
-                              ),
-                          ],
+                      _buildGroupCard(following[index]),
+                      if (index < following.length - 1)
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: RS.sh(context, 88), right: 16),
                         ),
                     ],
                   ),
               ],
             ),
-          );
+        ],
+      ),
+    );
   }
 
   Widget _buildGroupCard(Group group) {
@@ -936,12 +1241,11 @@ class _UserPageState extends State<UserPage>
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: InkWell(
         onTap: () {
-          // Handle tap
+          BodyPage.navigateWith(context, _bloc!, body: Body(bodyID: group.bodyId));
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Group photo
             Container(
               width: RS.s(context, 64),
               height: RS.s(context, 64),
@@ -960,7 +1264,6 @@ class _UserPageState extends State<UserPage>
                   : null,
             ),
             const SizedBox(width: 16),
-            // Group info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -1011,8 +1314,10 @@ class _UserPageState extends State<UserPage>
     final groups = <Group>[];
     
     user?.userFollowedBodies?.forEach((body) {
+      if (body.bodyID == null) return;
+
       groups.add(Group(
-        id: body.bodyID ?? UniqueKey().toString(),
+        bodyId: body.bodyID!,
         name: body.bodyName ?? "Unnamed Group",
         about: body.bodyShortDescription ?? "Followed organization",
         photoUrl: body.bodyImageURL,
@@ -1026,37 +1331,30 @@ class _UserPageState extends State<UserPage>
     final groups = <Group>[];
 
     user?.userRoles?.forEach((role) {
+      final body = role.roleBodyDetails;
+      if (body?.bodyID == null) return;
+      
       groups.add(Group(
-        id: role.roleID ?? UniqueKey().toString(),
-        name: role.roleBodyDetails?.bodyName ?? 'Unnamed Group',
-        about: role.roleBodyDetails?.bodyShortDescription ?? 'No description',
-        photoUrl: role.roleBodyDetails?.bodyImageURL,
+        bodyId: body!.bodyID!,
+        name: body.bodyName ?? 'Unnamed Group',
+        about: body.bodyShortDescription ?? 'No description',
+        photoUrl: body.bodyImageURL,
       ));
     });
-
-    // user?.userFormerRoles?.forEach((role) {
-    //   groups.add(Group(
-    //     id: role.roleID ?? UniqueKey().toString(),
-    //     name: role.roleBodyDetails?.bodyName ?? 'Former Group',
-    //     about: role.roleBodyDetails?.bodyShortDescription ?? 'No description',
-    //     photoUrl: role.roleBodyDetails?.bodyImageURL,
-    //     isFormer: true,
-    //   ));
-    // });
 
     return groups;
   }
 }
 
 class Group {
-  final String id;
+  final String bodyId;
   final String name;
   final String about;
   final String? photoUrl;
   final bool isFormer;
 
   const Group({
-    required this.id,
+    required this.bodyId,
     required this.name,
     required this.about,
     this.photoUrl,

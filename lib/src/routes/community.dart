@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:InstiApp/constants.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
@@ -58,6 +60,8 @@ class _CommunitiesState extends State<Communities> {
   bool loadingFollow = false;
   Constants myConstants = Constants();
   bool aboutExpanded = false;
+  final ScrollController _scrollcontroller = ScrollController();
+  bool _headerCollapsed = false;
   final List<String> _filterTabs = ['Sort', 'Filter'];
   List<String> subContLabels = ["Hostel Affairs", "Interns", "Tech"];
   // Widget _buildUserTile(User u) {
@@ -98,6 +102,7 @@ class _CommunitiesState extends State<Communities> {
 // }
 
   Widget members(Map<String, Map<String, String>> membersList) {
+    final responsive = Responsive(context);
     List<Map<String, String>> member = membersList.values.toList();
     return Column(
       children: [
@@ -105,42 +110,45 @@ class _CommunitiesState extends State<Communities> {
           Row(
             children: [
               Container(
-                height: 63,
-                width: 63,
+                height: responsive.h(63),
+                width: responsive.w(63),
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(responsive.w(16)),
                     color: Colors.grey),
               ),
               SizedBox(
-                width: 16,
+                width: responsive.w(16),
               ),
               Container(
-                width: 213,
+                width: responsive.w(213),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       member[i]["name"] ?? "",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                          fontSize: responsive.sp(18),
+                          fontWeight: FontWeight.w700),
                     ),
                     Text(
                       member[i]["year"] ?? "",
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                      style: TextStyle(
+                          fontSize: responsive.sp(14),
+                          fontWeight: FontWeight.w400),
                     )
                   ],
                 ),
               ),
               SizedBox(
-                width: 16,
+                width: responsive.w(16),
               ),
               member[i]["role"] == "Admin"
                   ? Container(
-                      height: 24,
-                      padding: EdgeInsets.symmetric(horizontal: 6),
+                      height: responsive.h(24),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: responsive.w(6)),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(responsive.w(8)),
                         color: myConstants.instiappBlue,
                       ),
                       child: Center(
@@ -157,7 +165,7 @@ class _CommunitiesState extends State<Communities> {
             ],
           ),
           SizedBox(
-            height: 16,
+            height: responsive.h(16),
           )
         ]
       ],
@@ -266,32 +274,34 @@ class _CommunitiesState extends State<Communities> {
   }
 
   Widget sort() {
+    final responsive = Responsive(context);
     return Container(
-      height: 36,
+      height: responsive.h(36),
       //width: 108,
       decoration: BoxDecoration(
         color: Color(0xFFEFEFEF),
         borderRadius: BorderRadius.circular(50),
         border: Border.all(
           color: Color(0XFFD2D5DA), // your border color here
-          width: 1, // thickness of the border
+          width: responsive.w(1), // thickness of the border
         ),
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: EdgeInsets.symmetric(
+            horizontal: responsive.w(16), vertical: responsive.h(8)),
         child: Row(
           children: [
             SvgPicture.asset('assets/feed/setting-4.svg'),
-            SizedBox(width: 8),
+            SizedBox(width: responsive.w(8)),
             Text(
               "Sort",
               style: TextStyle(fontWeight: FontWeight.w500),
             ),
-            SizedBox(width: 8),
+            SizedBox(width: responsive.w(8)),
             SvgPicture.asset(
               'assets/homepage/icons/arrow_down.svg',
-              height: 14,
-              width: 16,
+              height: responsive.h(14),
+              width: responsive.w(16),
             )
           ],
         ),
@@ -344,6 +354,15 @@ class _CommunitiesState extends State<Communities> {
   void initState() {
     super.initState();
     community = widget.initialCommunity;
+    _scrollcontroller.addListener(() {
+      final shouldCollapse =
+          _scrollcontroller.hasClients && _scrollcontroller.offset > 100;
+      if (shouldCollapse != _headerCollapsed) {
+        setState(() {
+          _headerCollapsed = shouldCollapse;
+        });
+      }
+    });
     widget.communityFuture.then((community) {
       if (this.mounted) {
         setState(() {
@@ -351,6 +370,12 @@ class _CommunitiesState extends State<Communities> {
         });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollcontroller.dispose();
+    super.dispose();
   }
 
   @override
@@ -394,137 +419,152 @@ class _CommunitiesState extends State<Communities> {
     List<Map<String, String>> links = quickLinks.values.toList();
     return DefaultTabController(
       length: 3,
-      child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-            child: SvgPicture.asset(
-              "assets/communities/system-uicons_write.svg",
-              height: 24,
-              width: 24,
-              color: Colors.white,
-            ),
-            backgroundColor: Color.fromRGBO(48, 111, 220, 1),
-            onPressed: () {
-              Navigator.of(context).pushNamed("/posts/add",
-                  arguments: NavigateArguments(community: community!));
-            }),
-        body: !isLoggedIn
-            ? Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.all(50),
-                child: Text("Login to Continue"),
-              )
-            : RefreshIndicator(
-                onRefresh: () async {
-                  bloc.communityBloc
-                      .getCommunity(community!.id!)
-                      .then((community) {
-                    setState(() {
-                      this.community = community;
+      child: SafeArea(
+        child: Scaffold(
+          floatingActionButton: FloatingActionButton(
+              child: SvgPicture.asset(
+                "assets/communities/system-uicons_write.svg",
+                height: responsive.h(24),
+                width: responsive.w(24),
+                color: Colors.white,
+              ),
+              backgroundColor: Color.fromRGBO(48, 111, 220, 1),
+              onPressed: () {
+                Navigator.of(context).pushNamed("/posts/add",
+                    arguments: NavigateArguments(community: community!));
+              }),
+          body: !isLoggedIn
+              ? Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(50),
+                  child: Text("Login to Continue"),
+                )
+              : RefreshIndicator(
+                  onRefresh: () async {
+                    bloc.communityBloc
+                        .getCommunity(community!.id!)
+                        .then((community) {
+                      setState(() {
+                        this.community = community;
+                      });
                     });
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 32),
+                  },
                   child: Column(
                     children: [
                       // --- Banner with buttons ---
-                      Stack(
-                        children: [
-                          SizedBox(
-                            height: 32,
-                          ),
-                          GestureDetector(
-                            // onTap: () {
-                            //   Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //     builder: (context) => ExploreImagePreview(
-                            //       imageUrls: images,
-                            //       initialIndex: 0,
-                            //     ),
-                            //   ),
-                            // );
-                            // },
-                            child: Container(
-                              height: 153,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                image: community?.coverImg != null &&
-                                        community!.coverImg!.isNotEmpty
-                                    ? DecorationImage(
-                                        image: CachedNetworkImageProvider(
-                                            community!.coverImg!),
-                                        fit: BoxFit.cover,
-                                        //alignment: Alignment.topCenter,
-                                      )
-                                    : const DecorationImage(
-                                        image: AssetImage(
-                                            'assets/explore/symphony.png'),
-                                        fit: BoxFit.cover,
-                                      ),
-                              ),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // if (!_headerCollapsed)
+                      ClipRect(
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 800),
+                          height: _headerCollapsed ? 0 : responsive.h(153),
+                          child: Stack(
                             children: [
-                              Padding(
-                                padding:
-                                    EdgeInsets.only(left: responsive.w(16)),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Container(
-                                    height: 52,
-                                    width: 52,
-                                    decoration: BoxDecoration(
-                                        color: const Color(0x99FFFFFF),
-                                        borderRadius:
-                                            BorderRadius.circular(25)),
-                                    child: Center(
-                                      child: Container(
-                                        height: responsive.h(24),
-                                        width: responsive.w(24),
-                                        child: SvgPicture.asset(
-                                            'assets/quicklinks/icons/arrow_left.svg'),
-                                      ),
-                                    ),
+                              SizedBox(
+                                height: responsive.h(32),
+                              ),
+                              GestureDetector(
+                                // onTap: () {
+                                //   Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //     builder: (context) => ExploreImagePreview(
+                                //       imageUrls: images,
+                                //       initialIndex: 0,
+                                //     ),
+                                //   ),
+                                // );
+                                // },
+                                child: Container(
+                                  height: responsive.h(153),
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade300,
+                                    image: community?.coverImg != null &&
+                                            community!.coverImg!.isNotEmpty
+                                        ? DecorationImage(
+                                            image: CachedNetworkImageProvider(
+                                                community!.coverImg!),
+                                            fit: BoxFit.cover,
+                                            //alignment: Alignment.topCenter,
+                                          )
+                                        : const DecorationImage(
+                                            image: AssetImage(
+                                                'assets/explore/symphony.png'),
+                                            fit: BoxFit.cover,
+                                          ),
                                   ),
                                 ),
                               ),
-                              // Padding(
-                              //   padding:
-                              //       EdgeInsets.only(right: responsive.w(16)),
-                              //   child: GestureDetector(
-                              //     onTap: () {
-                              //       Navigator.of(context).pop();
-                              //     },
-                              //     child: Container(
-                              //       height: 52,
-                              //       width: 52,
-                              //       decoration: BoxDecoration(
-                              //           color: const Color(0x99FFFFFF),
-                              //           borderRadius:
-                              //               BorderRadius.circular(25)),
-                              //       child: Center(
-                              //         child: Container(
-                              //           height: responsive.h(24),
-                              //           width: responsive.w(24),
-                              //           child: SvgPicture.asset(
-                              //               'assets/homepage/icons/bell.svg'),
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.only(left: responsive.w(16)),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(50),
+                                        child: BackdropFilter(
+                                          filter: ImageFilter.blur(
+                                              sigmaX: 12, sigmaY: 12),
+                                          child: Container(
+                                            height: responsive.h(52),
+                                            width: responsive.w(52),
+                                            decoration: BoxDecoration(
+                                                color: const Color.fromRGBO(
+                                                    255, 255, 255, 0.4),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        responsive.w(25))),
+                                            child: Center(
+                                              child: SizedBox(
+                                                height: responsive.h(24),
+                                                width: responsive.w(24),
+                                                child: SvgPicture.asset(
+                                                    'assets/quicklinks/icons/arrow_left.svg'),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  // Padding(
+                                  //   padding:
+                                  //       EdgeInsets.only(right: responsive.w(16)),
+                                  //   child: GestureDetector(
+                                  //     onTap: () {
+                                  //       Navigator.of(context).pop();
+                                  //     },
+                                  //     child: Container(
+                                  //       height: 52,
+                                  //       width: 52,
+                                  //       decoration: BoxDecoration(
+                                  //           color: const Color(0x99FFFFFF),
+                                  //           borderRadius:
+                                  //               BorderRadius.circular(25)),
+                                  //       child: Center(
+                                  //         child: Container(
+                                  //           height: responsive.h(24),
+                                  //           width: responsive.w(24),
+                                  //           child: SvgPicture.asset(
+                                  //               'assets/homepage/icons/bell.svg'),
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                ],
+                              ),
                             ],
                           ),
-                        ],
+                        ),
                       ),
-
-                      const SizedBox(height: 16),
+                      if (!_headerCollapsed) SizedBox(height: responsive.h(16)),
 
                       // --- Club Info ---
                       Padding(
@@ -535,10 +575,11 @@ class _CommunitiesState extends State<Communities> {
                             Row(
                               children: [
                                 SizedBox(
-                                  height: 63,
-                                  width: 63,
+                                  height: responsive.h(63),
+                                  width: responsive.w(63),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(31.5),
+                                    borderRadius: BorderRadius.circular(
+                                        responsive.w(31.5)),
                                     child: NullableCircleAvatar(
                                       community?.logoImg ?? "",
                                       Icons.person,
@@ -546,7 +587,7 @@ class _CommunitiesState extends State<Communities> {
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 16),
+                                SizedBox(width: responsive.w(16)),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
@@ -555,7 +596,7 @@ class _CommunitiesState extends State<Communities> {
                                       Text(
                                         community?.name ?? "",
                                         style: TextStyle(
-                                          fontSize: 20,
+                                          fontSize: responsive.sp(20),
                                           fontWeight: FontWeight.w700,
                                           color: Color(0xFF0F1620),
                                         ),
@@ -574,16 +615,16 @@ class _CommunitiesState extends State<Communities> {
                                             (community?.followersCount ?? 0)
                                                 .toString(),
                                             style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: responsive.sp(14),
                                               fontWeight: FontWeight.w700,
                                               color: Color(0xFF306FDC),
                                             ),
                                           ),
-                                          SizedBox(width: 4),
+                                          SizedBox(width: responsive.w(4)),
                                           Text(
                                             "Members",
                                             style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: responsive.sp(14),
                                               fontWeight: FontWeight.w400,
                                               color: Color(0xFF306FDC),
                                             ),
@@ -593,7 +634,7 @@ class _CommunitiesState extends State<Communities> {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(width: 25),
+                                SizedBox(width: responsive.w(25)),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
@@ -613,12 +654,12 @@ class _CommunitiesState extends State<Communities> {
                                         });
                                       },
                                       child: Container(
-                                        height: 35,
-                                        width: 61,
+                                        height: responsive.h(35),
+                                        width: responsive.w(61),
                                         decoration: BoxDecoration(
                                           color: Color(0xFF306FDC),
-                                          borderRadius:
-                                              BorderRadius.circular(100),
+                                          borderRadius: BorderRadius.circular(
+                                              responsive.w(100)),
                                         ),
                                         child: Center(
                                           child: Text(
@@ -627,7 +668,7 @@ class _CommunitiesState extends State<Communities> {
                                                 ? "Joined"
                                                 : "Join",
                                             style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: responsive.sp(14),
                                               fontWeight: FontWeight.w700,
                                               color: Colors.white,
                                             ),
@@ -635,7 +676,7 @@ class _CommunitiesState extends State<Communities> {
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 6),
+                                    SizedBox(height: responsive.h(6)),
                                     // Container(
                                     //   height: 30,
                                     //   width: 30,
@@ -650,67 +691,50 @@ class _CommunitiesState extends State<Communities> {
                                 )
                               ],
                             ),
-                            const SizedBox(height: 10),
-                            Container(
-                              //height: aboutExpanded?192:72,
-                              child: _buildAbout(theme)
-                            ),
-                            // const Text(
-                            //     "Use this forum to Lorem ipsum dolorajhds Read More"),
-                            // const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                // for (int i = 0;
-                                //     i < subContLabels.length;
-                                //     i++) ...[
-                                //   subCont(subContLabels[i]),
-                                //   const SizedBox(width: 8),
-                                // ]
-                              ],
-                            ),
-                            // const SizedBox(height: 16),
-                            // Dash(
-                            //   direction: Axis.horizontal,
-                            //   length: responsive.w(379),
-                            //   dashLength: 6,
-                            //   dashGap: 5,
-                            //   dashColor: const Color(0xFFDADADA),
-                            // ),
+                            if (!_headerCollapsed)
+                              SizedBox(height: responsive.h(10)),
+                            if (!_headerCollapsed)
+                              Container(
+                                  //height: aboutExpanded?192:72,
+                                  child: _buildAbout(theme)),
                           ],
                         ),
                       ),
 
-                      const SizedBox(height: 10),
+                      SizedBox(height: responsive.h(10)),
 
                       // --- Tabs ---
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Stack(
-                          children: [
-                            Positioned(
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                child: Container(
-                                    height: 1.5, color: Color(0xFFD0D5DD))),
-                            TabBar(
-                              indicatorColor: myConstants.instiappBlue,
-                              labelColor: myConstants.instiappBlue,
-                              unselectedLabelColor: Colors.black54,
-                              labelStyle: TextStyle(
-                                fontSize: responsive.sp(16),
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'DM Sans',
+
+                      if (!_headerCollapsed)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: Container(
+                                      height: responsive.h(1.5),
+                                      color: Color(0xFFD0D5DD))),
+                              TabBar(
+                                indicatorColor: myConstants.instiappBlue,
+                                labelColor: myConstants.instiappBlue,
+                                unselectedLabelColor: Colors.black54,
+                                labelStyle: TextStyle(
+                                  fontSize: responsive.sp(16),
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'DM Sans',
+                                ),
+                                tabs: const [
+                                  Tab(text: 'Posts'),
+                                  Tab(text: 'Links'),
+                                  Tab(text: 'Members'),
+                                ],
                               ),
-                              tabs: const [
-                                Tab(text: 'Posts'),
-                                Tab(text: 'Links'),
-                                Tab(text: 'Members'),
-                              ],
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
 
                       // --- Tab Content (fills remaining space) ---
                       Expanded(
@@ -718,6 +742,7 @@ class _CommunitiesState extends State<Communities> {
                           children: [
                             //posts
                             SingleChildScrollView(
+                              controller: _scrollcontroller,
                               child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 0),
@@ -739,13 +764,13 @@ class _CommunitiesState extends State<Communities> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(height: 24),
+                                  SizedBox(height: responsive.h(24)),
                                   for (int i = 0;
                                       i < linkLabel.length;
                                       i++) ...[
                                     LinkSection(linkLabel[i], links[i]),
                                   ],
-                                  SizedBox(height: 12)
+                                  SizedBox(height: responsive.h(12))
                                 ],
                               ),
                             ),
@@ -756,7 +781,7 @@ class _CommunitiesState extends State<Communities> {
                                   const EdgeInsets.symmetric(horizontal: 16),
                               child: Column(
                                 children: [
-                                  SizedBox(height: 24),
+                                  SizedBox(height: responsive.h(24)),
                                   Row(
                                     children: [
                                       // sort(),
@@ -776,18 +801,24 @@ class _CommunitiesState extends State<Communities> {
                     ],
                   ),
                 ),
-              ),
+        ),
       ),
     );
   }
+
   Widget _buildAbout(ThemeData theme) {
     String about = community?.description ?? "";
+    final responsive = Responsive(context);
+    if (about.trim().isEmpty) {
+      aboutExpanded = false;
+      return SizedBox.shrink();
+    }
     return SizedBox(
-      height: aboutExpanded ? 200 : 72,
+      height: aboutExpanded ? responsive.h(200) : responsive.h(72),
       child: SingleChildScrollView(
         physics: aboutExpanded
-        ? ClampingScrollPhysics()
-        :NeverScrollableScrollPhysics(),
+            ? ClampingScrollPhysics()
+            : NeverScrollableScrollPhysics(),
         child: Text.rich(
           new TextSpan(
             text: about.length > 160 && !aboutExpanded
@@ -798,9 +829,8 @@ class _CommunitiesState extends State<Communities> {
                     new TextSpan(
                       text: 'Read More',
                       style: TextStyle(
-                        color: myConstants.instiappBlue,
-                        fontWeight: FontWeight.w600
-                      ),
+                          color: myConstants.instiappBlue,
+                          fontWeight: FontWeight.w600),
                       recognizer: new TapGestureRecognizer()
                         ..onTap = () => setState(() {
                               aboutExpanded = true;
@@ -808,23 +838,23 @@ class _CommunitiesState extends State<Communities> {
                     )
                   ]
                 : [
-                  new TextSpan(
+                    new TextSpan(
                       text: ' Read Less',
                       style: TextStyle(
-                        color: myConstants.instiappBlue,
-                        fontWeight: FontWeight.w600
-                      ),
+                          color: myConstants.instiappBlue,
+                          fontWeight: FontWeight.w600),
                       recognizer: new TapGestureRecognizer()
                         ..onTap = () => setState(() {
                               aboutExpanded = false;
                             }),
                     )
-                ],
+                  ],
           ),
         ),
       ),
     );
   }
+
   Widget _buildMembers(ThemeData theme) {
     return Container(
       padding: const EdgeInsets.all(5.0),
@@ -889,17 +919,18 @@ class _CommunitiesState extends State<Communities> {
   // }
   Widget _buildUserTile(ThemeData theme, User u) {
     final isAdmin = (u.currentRole?.toLowerCase() == "admin");
+    final responsive = Responsive(context);
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
+      padding: EdgeInsets.only(bottom: responsive.h(16)),
       child: Row(
         children: [
           // Profile picture container
           Container(
-            height: 63,
-            width: 63,
+            height: responsive.h(63),
+            width: responsive.w(63),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(responsive.w(16)),
               color: Colors.grey.shade300,
               image: u.userProfilePictureUrl != null &&
                       u.userProfilePictureUrl!.isNotEmpty
@@ -911,85 +942,85 @@ class _CommunitiesState extends State<Communities> {
             ),
             child: (u.userProfilePictureUrl == null ||
                     u.userProfilePictureUrl!.isEmpty)
-                ? const Icon(Icons.person, size: 32, color: Colors.white)
+                ? Icon(Icons.person,
+                    size: responsive.sp(32), color: Colors.white)
                 : null,
           ),
 
-          const SizedBox(width: 16),
+          SizedBox(width: responsive.w(16)),
 
-        // Name and subtitle
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              width: 213,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    u.userName ?? "",
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Text(
-                    //u.getSubTitle() ?? "",
-                    "3rd year",
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: 8),
-            if (isAdmin)
+          // Name and subtitle
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               Container(
-                height: 24,
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: myConstants.instiappBlue,
-                ),
-              child: const Center(
-                child: Text(
-                  "Admin",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
+                width: responsive.w(213),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      u.userName ?? "",
+                      style: TextStyle(
+                        fontSize: responsive.sp(18),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      //u.getSubTitle() ?? "",
+                      "3rd year",
+                      style: TextStyle(
+                        fontSize: responsive.sp(14),
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
-        ),
+              SizedBox(width: responsive.w(8)),
+              if (isAdmin)
+                Container(
+                  height: responsive.h(24),
+                  padding: EdgeInsets.symmetric(horizontal: responsive.w(6)),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(responsive.w(8)),
+                    color: myConstants.instiappBlue,
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Admin",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
 
-        
-        // Admin tag (if applicable)
-        // if (isAdmin)
-        //   Container(
-        //     height: 24,
-        //     padding: const EdgeInsets.symmetric(horizontal: 6),
-        //     decoration: BoxDecoration(
-        //       borderRadius: BorderRadius.circular(8),
-        //       color: myConstants.instiappBlue,
-        //     ),
-        //     child: const Center(
-        //       child: Text(
-        //         "Admin",
-        //         style: TextStyle(
-        //           color: Colors.white,
-        //           fontWeight: FontWeight.w600,
-        //         ),
-        //       ),
-        //     ),
-        //   ),
-      ],
-    ),
-  );
-}
+          // Admin tag (if applicable)
+          // if (isAdmin)
+          //   Container(
+          //     height: 24,
+          //     padding: const EdgeInsets.symmetric(horizontal: 6),
+          //     decoration: BoxDecoration(
+          //       borderRadius: BorderRadius.circular(8),
+          //       color: myConstants.instiappBlue,
+          //     ),
+          //     child: const Center(
+          //       child: Text(
+          //         "Admin",
+          //         style: TextStyle(
+          //           color: Colors.white,
+          //           fontWeight: FontWeight.w600,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+        ],
+      ),
+    );
+  }
 }
 
 class CommunityPostSection extends StatefulWidget {
@@ -1013,37 +1044,40 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
   int _selectedFilterTabIndex = 0;
 
   bool loading = false;
+  bool hasReceivedData = false; // Track if we've received data from stream
   Widget sort() {
+    final responsive = Responsive(context);
     return GestureDetector(
       onTap: () {
         _openSortBottomSheet();
       },
       child: Container(
-        height: 36,
+        height: responsive.h(36),
         //width: 108,
         decoration: BoxDecoration(
           color: Color(0xFFEFEFEF),
           borderRadius: BorderRadius.circular(50),
           border: Border.all(
             color: Color(0XFFD2D5DA),
-            width: 1,
+            width: responsive.w(1),
           ),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: EdgeInsets.symmetric(
+              horizontal: responsive.w(16), vertical: responsive.h(8)),
           child: Row(
             children: [
               SvgPicture.asset('assets/feed/setting-4.svg'),
-              SizedBox(width: 8),
+              SizedBox(width: responsive.w(8)),
               Text(
                 "Sort",
                 style: TextStyle(fontWeight: FontWeight.w500),
               ),
-              SizedBox(width: 8),
+              SizedBox(width: responsive.w(8)),
               SvgPicture.asset(
                 'assets/homepage/icons/arrow_down.svg',
-                height: 14,
-                width: 16,
+                height: responsive.h(14),
+                width: responsive.w(16),
               )
             ],
           ),
@@ -1053,6 +1087,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
   }
 
   void _openSortBottomSheet() {
+    final responsive = Responsive(context);
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.transparent,
@@ -1064,13 +1099,14 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
               child: Container(
                 decoration: BoxDecoration(
                     color: Color(0xFFF6F6F6),
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(16))),
+                    borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(responsive.w(16)))),
                 child: Column(
                   children: [
                     // Header
                     Container(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                      padding: EdgeInsets.fromLTRB(responsive.w(16),
+                          responsive.h(8), responsive.w(16), 0),
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(246, 246, 246, 1),
                         borderRadius: const BorderRadius.vertical(
@@ -1082,7 +1118,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                           Text(
                             'Sort By',
                             style: TextStyle(
-                                fontWeight: FontWeight.w700, fontSize: 20),
+                                fontWeight: FontWeight.w700,
+                                fontSize: responsive.sp(20)),
                           ),
                           IconButton(
                             icon: const Icon(Icons.close),
@@ -1098,7 +1135,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                         children: [
                           // Navigation Rail
                           Container(
-                            width: 100,
+                            width: responsive.w(100),
                             decoration: const BoxDecoration(
                               color: Color.fromRGBO(246, 246, 246, 1),
                               borderRadius: BorderRadius.only(
@@ -1119,8 +1156,9 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                                       });
                                     },
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 14, horizontal: 0),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: responsive.h(14),
+                                          horizontal: 0),
                                       decoration: BoxDecoration(
                                         // 1. base color: white if not selected, grey if selected
                                         color: isSelected
@@ -1157,9 +1195,9 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                                         child: Text(
                                           label,
                                           textAlign: TextAlign.center,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             color: Colors.black,
-                                            fontSize: 16,
+                                            fontSize: responsive.sp(16),
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -1174,14 +1212,18 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                           // Content area
                           Expanded(
                             child: Container(
-                              padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
+                              padding: EdgeInsets.fromLTRB(
+                                  responsive.w(16),
+                                  responsive.h(16),
+                                  responsive.w(8),
+                                  responsive.h(16)),
                               decoration: BoxDecoration(
                                 color: Color.fromRGBO(239, 239, 239, 1),
                                 borderRadius: BorderRadius.only(
                                   topLeft: _selectedFilterTabIndex == 0
                                       ? Radius.circular(0)
-                                      : Radius.circular(24),
-                                  bottomLeft: Radius.circular(24),
+                                      : Radius.circular(responsive.w(24)),
+                                  bottomLeft: Radius.circular(responsive.w(24)),
                                 ),
                               ),
                               child: _buildFilterTabPanel(setModalState),
@@ -1192,7 +1234,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                     ),
                     //Footer
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(responsive.w(16)),
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(246, 246, 246, 1),
                       ),
@@ -1201,8 +1243,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                         children: [
                           // Clear Filters Button
                           SizedBox(
-                            width: 165,
-                            height: 60,
+                            width: responsive.w(165),
+                            height: responsive.h(60),
                             child: OutlinedButton(
                               onPressed: () {
                                 setModalState(() {
@@ -1215,16 +1257,17 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                               style: OutlinedButton.styleFrom(
                                 side: const BorderSide(color: Colors.grey),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50),
+                                  borderRadius:
+                                      BorderRadius.circular(responsive.w(50)),
                                 ),
                                 padding: EdgeInsets.zero, // ensure height fits
                               ),
-                              child: const Text(
+                              child: Text(
                                 "Clear All",
                                 style: TextStyle(
                                   color: Colors.grey,
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 20,
+                                  fontSize: responsive.sp(20),
                                 ),
                               ),
                             ),
@@ -1232,8 +1275,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
 
                           // Apply Filters Button
                           SizedBox(
-                            width: 165,
-                            height: 60,
+                            width: responsive.w(165),
+                            height: responsive.h(60),
                             child: ElevatedButton(
                               onPressed: () {
                                 setState(() {});
@@ -1244,7 +1287,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                                 backgroundColor: Colors.transparent,
                                 shadowColor: Colors.transparent,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50),
+                                  borderRadius:
+                                      BorderRadius.circular(responsive.w(50)),
                                 ),
                               ),
                               child: Ink(
@@ -1254,15 +1298,16 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                                         "assets/buynsell/filterbutton.png"),
                                     fit: BoxFit.cover,
                                   ),
-                                  borderRadius: BorderRadius.circular(50),
+                                  borderRadius:
+                                      BorderRadius.circular(responsive.w(50)),
                                 ),
                                 child: Center(
-                                  child: const Text(
+                                  child: Text(
                                     "Apply",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 20,
+                                      fontSize: responsive.sp(20),
                                     ),
                                   ),
                                 ),
@@ -1296,11 +1341,13 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
   Widget postTypeContainer(
       CPType cp, CommunityPostBloc communityPostBloc, String label) {
     final bool isSelected = cpType == cp;
+    final responsive = Responsive(context);
     return GestureDetector(
       onTap: () async {
         setState(() {
           loading = true;
           cpType = cp;
+          hasReceivedData = false; // Reset when changing filter
         });
         await communityPostBloc.refresh(type: cp, id: widget.community?.id);
         setState(() {
@@ -1308,19 +1355,20 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
         });
       },
       child: Container(
-        height: 36,
+        height: responsive.h(36),
         decoration: BoxDecoration(
           color: Color(0xFFEFEFEF),
-          borderRadius: BorderRadius.circular(50),
+          borderRadius: BorderRadius.circular(responsive.w(50)),
           border: Border.all(
             color: isSelected
                 ? myConstants.instiappBlue
                 : Color(0XFFD2D5DA), // your border color here
-            width: 1, // thickness of the border
+            width: responsive.w(1), // thickness of the border
           ),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: EdgeInsets.symmetric(
+              horizontal: responsive.w(16), vertical: responsive.h(8)),
           child: Row(
             children: [
               Text(
@@ -1348,6 +1396,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
     var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
     var communityPostBloc = bloc.communityPostBloc;
+    final responsive = Responsive(context);
 
     loading = false;
     if (firstBuild) {
@@ -1364,7 +1413,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
             child: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.only(left: 16, right: 16),
+                  padding: EdgeInsets.only(
+                      left: responsive.w(16), right: responsive.w(16)),
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -1374,13 +1424,14 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                     scrollDirection: Axis.horizontal,
                     child: Column(
                       children: [
-                        SizedBox(height: 20),
+                        SizedBox(height: responsive.h(20)),
                         Row(
                           children: [
                             //sort(),
                             //SizedBox(width: 8),
-                            postTypeContainer(CPType.All, communityPostBloc,"All"),
-                            SizedBox(width: 8),
+                            postTypeContainer(
+                                CPType.All, communityPostBloc, "All"),
+                            SizedBox(width: responsive.w(8)),
                             postTypeContainer(CPType.YourPosts,
                                 communityPostBloc, "Your Posts"),
                             // TextButton(
@@ -1446,7 +1497,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                                         cpType == CPType.PendingPosts, theme),
                                   )
                                 : Container(),
-                            SizedBox(width: 10),
+                            SizedBox(width: responsive.w(10)),
                             bloc.hasPermission(community.body!, "ModC")
                                 ? TextButton(
                                     child: Text(
@@ -1485,7 +1536,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                 loading
                     ? CircularProgressIndicator()
                     : Container(
-                      padding: EdgeInsets.only(top: 16),
+                        padding: EdgeInsets.only(top: responsive.h(16)),
                         decoration: BoxDecoration(color: Colors.white),
                         child: StreamBuilder<List<CommunityPost>>(
                           stream: communityPostBloc.communityposts,
@@ -1498,7 +1549,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: posts
                                   .map((w) => Padding(
-                                        padding: EdgeInsets.only(bottom: 16),
+                                        padding: EdgeInsets.only(
+                                            bottom: responsive.h(16)),
                                         child: w,
                                       ))
                                   .toList(),
@@ -1540,32 +1592,11 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
       ThemeData theme,
       CommunityPostBloc communityPostBloc,
       String? communityId) {
-    if (snapshot.hasData) {
-      // print(snapshot.data ?? "hii");
-      var communityPosts = snapshot.data!;
+    final responsive = Responsive(context);
 
-      if (communityPosts.isEmpty == true) {
-        return [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 200.0),
-            child: Center(
-                child: Text(
-              "Nothing here yet!",
-              style: TextStyle(fontSize: 18),
-            )),
-          )
-        ];
-      }
-      //print("a");
-      return (communityPosts
-          .map(
-            (c) => Communitypostwidget(
-              communityPost: c,
-              postType: cpType,
-            ),
-          )
-          .toList());
-    } else {
+    // Show loading indicator while waiting for data
+    if (snapshot.connectionState == ConnectionState.waiting ||
+        !snapshot.hasData) {
       return [
         Center(
             child: CircularProgressIndicatorExtended(
@@ -1573,5 +1604,71 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
         ))
       ];
     }
+
+    // Handle errors
+    if (snapshot.hasError) {
+      return [
+        Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: responsive.w(28), vertical: responsive.h(200)),
+          child: Center(
+              child: Text(
+            "Error loading posts",
+            style: TextStyle(fontSize: responsive.sp(18)),
+          )),
+        )
+      ];
+    }
+
+    // Data is available
+    var communityPosts = snapshot.data!;
+
+    // If list is empty but we haven't received data before, still show loading
+    if (communityPosts.isEmpty && !hasReceivedData) {
+      return [
+        Center(
+            child:Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(child: CircularProgressIndicator()),
+      ))
+      ];
+    }
+
+    // Mark that we've received data (either empty or with posts)
+    if (!hasReceivedData) {
+      // Using WidgetsBinding to avoid setState during build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            hasReceivedData = true;
+          });
+        }
+      });
+    }
+
+    // Show empty state if no posts after data has loaded
+    if (communityPosts.isEmpty) {
+      return [
+        Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: responsive.w(28), vertical: responsive.h(200)),
+          child: Center(
+              child: Text(
+            "Nothing here yet!",
+            style: TextStyle(fontSize: responsive.sp(18)),
+          )),
+        )
+      ];
+    }
+
+    //print("a");
+    return (communityPosts
+        .map(
+          (c) => Communitypostwidget(
+            communityPost: c,
+            postType: cpType,
+          ),
+        )
+        .toList());
   }
 }

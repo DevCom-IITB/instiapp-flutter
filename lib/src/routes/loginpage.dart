@@ -583,123 +583,135 @@ class _OnboardingLoginPageState extends State<LoginPage>
     return SingleChildScrollView(
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
+        padding: EdgeInsets.all(RS.s(context, 24)), // Responsive padding
+        decoration: const BoxDecoration(
           color: Colors.transparent,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 176),
+            SizedBox(height: RS.sh(context, 176)), // Use sh for vertical spacing
+            
             // Fix for "InstiApp" text
             Text(
               "InstiApp",
-              textAlign: TextAlign.center, // Center the text
+              textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 48,
-                color: Color.fromRGBO(27, 50, 82, 1),
+                fontSize: RS.sp(context, 48), // Responsive text
+                color: const Color.fromRGBO(27, 50, 82, 1),
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Poppins',
               ),
             ),
+            
             // Fix for "Your Campus Companion" text  
             Text(
               "Your Campus Companion",
-              textAlign: TextAlign.center, // Center the text
+              textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 24,
-                color: Color.fromRGBO(27, 50, 82, 1),
+                fontSize: RS.sp(context, 24), // Responsive text
+                color: const Color.fromRGBO(27, 50, 82, 1),
                 fontWeight: FontWeight.w700,
                 fontFamily: 'DM Sans',
               ),
             ),
-            SizedBox(height: 48),
+            
+            SizedBox(height: RS.s(context, 48)), // Uniform spacing
+            
             SizedBox(
-              width: 260,
-              height: 53,
+              width: RS.sw(context, 260), // Responsive button width
+              height: RS.s(context, 53), // Responsive button height
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromRGBO(48, 111, 220, 1),
+                  backgroundColor: const Color.fromRGBO(48, 111, 220, 1),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(RS.s(context, 16)), // Responsive radius
                   ),
                 ),
                 onPressed: _handleSSOLogin,
                 child: Text(
                   _isSSOLoading ? "Redirecting to SSO..." : "Log in via SSO",
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: RS.sp(context, 20), // Responsive text
                     fontWeight: FontWeight.w600,
                     fontFamily: 'DM Sans',
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            
+            SizedBox(height: RS.s(context, 8)), // Uniform spacing
+            
             Text(
               "or",
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 16,
-                color: Color.fromRGBO(33, 45, 60, 1),
+                fontSize: RS.sp(context, 16), // Responsive text
+                color: const Color.fromRGBO(33, 45, 60, 1),
                 fontWeight: FontWeight.w400,
                 fontFamily: 'DM Sans',
               ),
             ),
-            const SizedBox(height: 8),
+            
+            SizedBox(height: RS.s(context, 8)), // Uniform spacing
+            
             SizedBox(
-              width: 260,
-              height: 53,
+              width: RS.sw(context, 260), // Responsive button width
+              height: RS.s(context, 53), // Responsive button height
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromRGBO(48, 111, 220, 1),
+                  backgroundColor: const Color.fromRGBO(48, 111, 220, 1),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(RS.s(context, 16)), // Responsive radius
                   ),
                 ),
                 onPressed: _handleAlumniLogin,
-                child: const Text(
+                child: Text(
                   "Log in as an Alumnus",
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: RS.sp(context, 20), // Responsive text
                     fontWeight: FontWeight.w600,
                     fontFamily: 'DM Sans',
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            
+            SizedBox(height: RS.s(context, 8)), // Uniform spacing
+            
             Text(
               "or",
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 16,
-                color: Color.fromRGBO(33, 45, 60, 1),
+                fontSize: RS.sp(context, 16), // Responsive text
+                color: const Color.fromRGBO(33, 45, 60, 1),
                 fontWeight: FontWeight.w400,
                 fontFamily: 'DM Sans',
               ),
             ),
-            const SizedBox(height: 8),
+            
+            SizedBox(height: RS.s(context, 8)), // Uniform spacing
+            
             Container(
               width: double.infinity,
               child: TextButton(
                 onPressed: _handleGuestLogin,
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
-                  minimumSize: Size(0, 0),
+                  minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center, // Center the row
+                  mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       "Continue as Guest",
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: RS.sp(context, 20), // Responsive text
                         fontWeight: FontWeight.w500,
-                        color: Color.fromRGBO(48, 111, 220, 1),
+                        color: const Color.fromRGBO(48, 111, 220, 1),
                         fontFamily: 'DM Sans',
                       ),
                     ),

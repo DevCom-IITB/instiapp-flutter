@@ -150,15 +150,15 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                       Stack(
                         children: [
                           Container(
-                            height: 250,
+                            height: Responsive.height(250, context),
                             child: ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(20),
-                                bottomRight: Radius.circular(20),
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(Responsive.width(20, context)),
+                                bottomRight: Radius.circular(Responsive.width(20, context)),
                               ),
                               child: Image.asset(
                                 'assets/explore/culturals.png',
-                                height: 250,
+                                height: Responsive.height(250, context),
                                 width: double.infinity,
                                 fit: BoxFit.cover,
                               ),
@@ -182,7 +182,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(
-                              left: 16,
+                              left: Responsive.width(16, context),
                               top: MediaQuery.of(context).padding.top,
                             ),
                             child: GestureDetector(
