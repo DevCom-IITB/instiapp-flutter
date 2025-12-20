@@ -182,7 +182,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(
-                              left: 16,
+                              left: Responsive.width(16, context),
                               top: MediaQuery.of(context).padding.top,
                             ),
                             child: GestureDetector(
