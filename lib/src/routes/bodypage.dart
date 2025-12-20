@@ -265,8 +265,11 @@ class _BodyPageState extends State<BodyPage> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    setState(() {
-                      showLinks = false;
+                    Future.delayed(const Duration(milliseconds: 150), () {
+                      if (!mounted) return;
+                      setState(() {
+                        showLinks = false;
+                      });
                     });
                   },
                   child: Container(
@@ -287,7 +290,7 @@ class _BodyPageState extends State<BodyPage> {
                                               builder: (context) =>
                                                   ExploreImagePreview(
                                                       imageUrls: [
-                                                        "assets/explore/symphony.png"
+                                                        body!.bodyImageURL!
                                                       ])));
                                     },
                                     child: Container(
@@ -299,9 +302,9 @@ class _BodyPageState extends State<BodyPage> {
                                         image: body?.bodyImageURL != null
                                             ? DecorationImage(
                                                 image:
-                                                    // NetworkImage(body!.bodyImageURL!),
-                                                    AssetImage(
-                                                        'assets/explore/symphony.png'),
+                                                    NetworkImage(body!.bodyImageURL!),
+                                                    // AssetImage(
+                                                    //     'assets/explore/symphony.png'),
                                                 fit: BoxFit.cover,
                                               )
                                             : const DecorationImage(
@@ -608,27 +611,33 @@ class _BodyPageState extends State<BodyPage> {
                                             ),
                                           ),
                                           TabBar(
-                                              indicatorColor:
-                                                  myConstants.instiappBlue,
-                                              labelColor:
-                                                  myConstants.instiappBlue,
-                                              unselectedLabelColor:
-                                                  Colors.black54,
-                                              labelStyle: TextStyle(
-                                                fontSize: responsive.sp(16),
-                                                fontWeight: FontWeight.w600,
-                                                fontFamily: 'DM Sans',
-                                              ),
-                                              tabs: [
-                                                Tab(text: 'About'),
-                                                Tab(text: 'Events'),
-                                                Tab(text: 'People'),
-                                              ],
-                                              onTap: (index) {
+                                            indicatorColor:
+                                                myConstants.instiappBlue,
+                                            labelColor:
+                                                myConstants.instiappBlue,
+                                            unselectedLabelColor:
+                                                Colors.black54,
+                                            labelStyle: TextStyle(
+                                              fontSize: responsive.sp(16),
+                                              fontWeight: FontWeight.w600,
+                                              fontFamily: 'DM Sans',
+                                            ),
+                                            tabs: const [
+                                              Tab(text: 'About'),
+                                              Tab(text: 'Events'),
+                                              Tab(text: 'People'),
+                                            ],
+                                            onTap: (index) {
+                                              Future.delayed(
+                                                  const Duration(
+                                                      milliseconds: 150), () {
+                                                if (!mounted) return;
                                                 setState(() {
                                                   showLinks = false;
                                                 });
-                                              }),
+                                              });
+                                            },
+                                          ),
                                         ],
                                       ),
                                       SizedBox(
@@ -824,31 +833,51 @@ class _BodyPageState extends State<BodyPage> {
                                                                   _buildEventTile(
                                                                       bloc,
                                                                       theme,
-                                                                      e))
+                                                                      e)),
+                                                          SizedBox(
+                                                              height: responsive
+                                                                  .h(50))
                                                         ],
                                                       ),
 
                                                 // People Tab
-                                                people.isEmpty
-                                                    ? const Center(
-                                                        child: Text(
-                                                            "No people listed."))
-                                                    : ListView(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                vertical:
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    Future.delayed(
+                                                        const Duration(
+                                                            milliseconds: 150),
+                                                        () {
+                                                      if (!mounted) return;
+                                                      setState(() {
+                                                        showLinks = false;
+                                                      });
+                                                    });
+                                                  },
+                                                  child: people.isEmpty
+                                                      ? const Center(
+                                                          child: Text(
+                                                              "No people listed."))
+                                                      : ListView(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  vertical:
+                                                                      responsive
+                                                                          .h(16)),
+                                                          children: [
+                                                            ...people
+                                                                .map((u) =>
+                                                                    _buildUserTile(
+                                                                        bloc,
+                                                                        theme,
+                                                                        u))
+                                                                .toList(),
+                                                            SizedBox(
+                                                                height:
                                                                     responsive
-                                                                        .h(16)),
-                                                        children: [
-                                                          ...people
-                                                              .map((u) =>
-                                                                  _buildUserTile(
-                                                                      bloc,
-                                                                      theme,
-                                                                      u))
-                                                              .toList(),
-                                                        ],
-                                                      )
+                                                                        .h(50))
+                                                          ],
+                                                        ),
+                                                )
                                               ],
                                             );
                                           },
@@ -995,8 +1024,12 @@ class _BodyPageState extends State<BodyPage> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    setState(() {
-                                      showLinks = false;
+                                    Future.delayed(
+                                        const Duration(milliseconds: 150), () {
+                                      if (!mounted) return;
+                                      setState(() {
+                                        showLinks = false;
+                                      });
                                     });
                                   },
                                   child: Container(
@@ -1070,8 +1103,13 @@ class _BodyPageState extends State<BodyPage> {
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                      setState(() {
-                                        showLinks = true;
+                                      Future.delayed(
+                                          const Duration(milliseconds: 150),
+                                          () {
+                                        if (!mounted) return;
+                                        setState(() {
+                                          showLinks = true;
+                                        });
                                       });
                                     },
                                     child: Container(
@@ -1309,6 +1347,7 @@ class _BodyPageState extends State<BodyPage> {
   }
 
   Widget _buildImageGrid(List<String> images, int imageCount) {
+    final responsive = Responsive(context);
     switch (imageCount) {
       case 1:
         return FutureBuilder<ImageInfo>(
@@ -1658,7 +1697,7 @@ class _BodyPageState extends State<BodyPage> {
                                         style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w600,
-                                            fontSize: 15.29),
+                                            fontSize: responsive.w(15.29)),
                                       ),
                                     ),
                                   ),
@@ -1857,13 +1896,14 @@ class _BodyPageState extends State<BodyPage> {
                     width: responsive.w(71),
                     decoration: BoxDecoration(
                         // color: Colors.pink[100],
-                        borderRadius: BorderRadius.circular(35.5)),
+                        borderRadius:
+                            BorderRadius.circular(responsive.w(35.5))),
                     child: NullableCircleAvatar(
                       event.eventImageURL ??
                           event.eventBodies?[0].bodyImageURL ??
                           "",
                       Icons.event_outlined,
-                      radius: 35.5,
+                      radius: responsive.w(35.5),
                       heroTag: event.eventID ?? "",
                     ),
                   ),
@@ -1879,13 +1919,15 @@ class _BodyPageState extends State<BodyPage> {
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
-                              fontSize: responsive.sp(20)),
+                              fontSize: responsive.w(20)),
                         ),
                         SizedBox(height: responsive.h(4)),
                         Text(
                           event.getSubTitle(),
                           style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.w400),
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400,
+                              fontSize: responsive.w(14)),
                         )
                       ],
                     ),
@@ -1961,7 +2003,9 @@ class _BodyPageState extends State<BodyPage> {
                         Text(
                           u.getSubTitle() ?? "",
                           style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.w400),
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400,
+                              fontSize: responsive.w(14)),
                         )
                       ],
                     ),

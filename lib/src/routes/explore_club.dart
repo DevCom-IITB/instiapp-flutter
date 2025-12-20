@@ -352,7 +352,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                                 fontWeight: FontWeight.w900,
                                 color: Colors.white,
                                 //letterSpacing: 1.2,
-                                fontSize: 36,
+                                fontSize: Responsive.width(36, context),
                                 fontFamily: 'DM Sans',
                                 shadows: [
                                   Shadow(
@@ -373,7 +373,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                               body?.bodyShortDescription ?? "",
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 16,
+                                fontSize: Responsive.width(16, context),
                                 fontFamily: 'DM Sans',
                                 fontWeight: FontWeight.w500,
                               ),
@@ -382,7 +382,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: Responsive.height(20, context)),
                       ...(_searchQuery.isEmpty ? Childrens : Childrens.where((body) {
                             final name = body.bodyName?.toLowerCase() ?? "";
                             return name.contains(_searchQuery);
@@ -391,7 +391,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                           }).toList() ??
                           [],
                       Divider(),
-                      const SizedBox(height: 64.0),
+                      SizedBox(height: Responsive.height(64, context)),
                     ],
                   ),
           )
@@ -584,7 +584,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
         },
         child: Container(
           decoration: BoxDecoration(color: Color.fromRGBO(246, 246, 246, 1)),
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          padding: EdgeInsets.symmetric(vertical: Responsive.height(10, context), horizontal: Responsive.width(16, context)),
           //padding: const EdgeInsets.all(16),
           // color: Colors.grey[400],
           // decoration: BoxDecoration(
@@ -603,10 +603,10 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
             children: [
               // Club Image/Logo
               Container(
-                width: 73,
-                height: 73,
+                width: Responsive.width(73, context),
+                height: Responsive.width(73, context),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(Responsive.width(20, context)),
                   // boxShadow: [
                   //   BoxShadow(
                   //     color: Colors.black.withOpacity(0.1),
@@ -624,35 +624,35 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) =>
                                   Container(
-                                width: 56,
-                                height: 56,
+                                width: Responsive.width(56, context),
+                                height: Responsive.height(56, context),
                                 decoration: BoxDecoration(
                                   color: Colors.grey[100],
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Icon(
                                   Icons.people_outline,
-                                  size: 28,
+                                  size: Responsive.width(28, context),
                                   color: Colors.grey[500],
                                 ),
                               ),
                             )
                           : Container(
-                              width: 56,
-                              height: 56,
+                              width: Responsive.width(56, context),
+                              height: Responsive.height(56, context),
                               decoration: BoxDecoration(
                                 color: Colors.grey[100],
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(Responsive.width(12, context)),
                               ),
                               child: Icon(
                                 Icons.people_outline,
-                                size: 28,
+                                size: Responsive.width(28, context),
                                 color: Colors.grey[500],
                               ),
                             ),
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: Responsive.width(16, context)),
 
               // Club Info
               Expanded(
@@ -664,7 +664,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                       style: theme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w700,
                           color: Colors.black,
-                          fontSize: 18),
+                          fontSize: Responsive.width(18, context)),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -672,12 +672,12 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                       body.bodyShortDescription ?? "",
                       style: theme.bodyMedium?.copyWith(
                         color: Colors.black,
-                        fontSize: 14,
+                        fontSize: Responsive.width(14, context),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: Responsive.height(8, context)),
                     Container(
                       // height: 23,
                       // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
@@ -687,25 +687,25 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                         children: [
                           SvgPicture.asset(
                             'assets/explore_new/Isolation_Mode.svg',
-                            height: 13.78,
-                            width: 17,
+                            height: Responsive.height(13.78, context),
+                            width: Responsive.width(17, context),
                           ),
-                          const SizedBox(width: 4),
+                          SizedBox(width: Responsive.width(4, context)),
                           Text(
                             '${body.bodyFollowersCount?.toString() ?? '422'}',
                             style: TextStyle(
                               color: const Color(0xFF306FDC),
-                              fontSize: 12,
+                              fontSize: Responsive.width(12, context),
                               fontFamily: 'DM Sans',
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const SizedBox(width: 4),
+                          SizedBox(width: Responsive.width(4, context)),
                           Text(
                             'senti',
                             style: TextStyle(
                               color: const Color(0xFF306FDC),
-                              fontSize: 12,
+                              fontSize: Responsive.width(12, context),
                               fontFamily: 'DM Sans',
                               fontWeight: FontWeight.w400,
                             ),
@@ -721,7 +721,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
               Icon(
                 Icons.chevron_right,
                 color: Colors.grey[400],
-                size: 24,
+                size: Responsive.width(24, context),
               ),
             ],
           ),
