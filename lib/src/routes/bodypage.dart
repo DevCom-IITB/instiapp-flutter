@@ -1976,7 +1976,7 @@ class _BodyPageState extends State<BodyPage> {
                     height: responsive.h(71),
                     width: responsive.w(71),
                     decoration: BoxDecoration(
-                        color: Colors.pink[100],
+                        // color: Colors.pink[100],
                         borderRadius: BorderRadius.circular(35.5)),
                     child: NullableCircleAvatar(
                       u.userProfilePictureUrl ?? "",

@@ -121,309 +121,519 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
       }
     });
   }
-
   @override
-  Widget build(BuildContext context) {
-    var theme = Theme.of(context);
-    var bloc = BlocProvider.of(context)!.bloc;
-    var exploreBloc = bloc.exploreBloc;
-    return WillPopScope(
-      onWillPop: () async {
-        widget.onBack();
-        return false;
-      },
-      child: Scaffold(
-          extendBodyBehindAppBar: true,
-          backgroundColor: Color.fromRGBO(246, 246, 246, 1),
-          key: _scaffoldKey,
-          drawer: NavDrawer(),
-          body: Container(
-            child: body == null
-                ? Center(
-                    child: CircularProgressIndicatorExtended(
-                      label: Text("Loading the body page"),
-                    ),
-                  )
-                : ListView(
-                    padding: EdgeInsets.zero,
-                    children: <Widget>[
-                      Stack(
-                        children: [
-                          Container(
-                            height: Responsive.height(250, context),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(Responsive.width(20, context)),
-                                bottomRight: Radius.circular(Responsive.width(20, context)),
-                              ),
-                              child: Image.asset(
-                                'assets/explore/culturals.png',
-                                height: Responsive.height(250, context),
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            child: ClipRect(
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(
-                                    sigmaX: 10, sigmaY: 10), // adjust blur
-                                child: Container(
-                                  height: MediaQuery.of(context).padding.top,
-                                  color: Colors.white
-                                      .withOpacity(0.2), // translucent layer
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              left: Responsive.width(16, context),
-                              top: MediaQuery.of(context).padding.top,
-                            ),
-                            child: GestureDetector(
-                              onTap: () {
-                                widget.onBack();
-                              },
-                              child: Container(
-                                height: 52,
-                                width: 52,
-                                decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.60),
-                                    borderRadius: BorderRadius.circular(25)),
-                                child: Center(
-                                  child: Container(
-                                    height: 24,
-                                    width: 24,
-                                    child: SvgPicture.asset(
-                                        'assets/quicklinks/icons/arrow_left.svg'),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 70 + MediaQuery.of(context).padding.top,
-                            left: Responsive.width(16, context),
-                            right: Responsive.width(16, context),
-                            child: Container(
-                              height: Responsive.height(50, context),
-                              padding: EdgeInsets.only(
-                                  left: Responsive.width(14, context),
-                                  right: Responsive.width(14, context),
-                                  top: Responsive.height(13, context),
-                                  bottom: Responsive.height(13, context)),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(
-                                    Responsive.height(25, context)),
-                              ),
-                              child: Row(
-                                children: [
-                                  Image(
-                                    image:
-                                        AssetImage('assets/blogs/search.png'),
-                                    height: Responsive.height(24, context),
-                                    width: Responsive.width(24, context),
-                                  ),
-                                  SizedBox(
-                                      width: Responsive.height(20, context)),
-                                  Expanded(
-                                    child: TextField(
-                                      focusNode: _focusNode,
-                                      controller: _searchController,
-                                      style: TextStyle(
-                                        fontSize: Responsive.text(16, context),
-                                        color: Color.fromRGBO(0, 0, 0, 0.8),
-                                        fontFamily: 'DM Sans',
-                                      ),
-                                      decoration: InputDecoration(
-                                        hintText: 'Search events...',
-                                        hintStyle: TextStyle(
-                                          fontSize:
-                                              Responsive.text(16, context),
-                                          color: Color.fromRGBO(0, 0, 0, 0.4),
-                                          fontFamily: 'DM Sans',
-                                        ),
-                                        border: InputBorder.none,
-                                        isDense: true,
-                                        contentPadding: EdgeInsets.zero,
-                                      ),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _searchQuery =
-                                              value.trim().toLowerCase();
-                                        });
-                                      },
-                                      // autofocus: true,
-                                      maxLines: 1,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      width: Responsive.width(20, context)),
-                                ],
-                              ),
-                            ),
-                          ),
-                          // Positioned(
-                          //   top: 72,
-                          //   left: 16,
-                          //   right: 16,
-                          //   child: Material(
-                          //   elevation: 6,
-                          //   borderRadius: BorderRadius.circular(32),
-                          //   color: Colors.transparent,
-                          //   child: Container(
-                          //     height: 50, // Set height to 50px
-                          //     width: 380,
-                          //     decoration: BoxDecoration(
-                          //     color: Colors.white.withOpacity(0.98),
-                          //     borderRadius: BorderRadius.circular(32),
-                          //     // boxShadow: [
-                          //     //   BoxShadow(
-                          //     //   color: Colors.black.withOpacity(0.08),
-                          //     //   blurRadius: 12,
-                          //     //   offset: Offset(0, 4),
-                          //     //   ),
-                          //     // ],
-                          //     ),
-                          //     child: TextField(
-                          //     controller: _searchFieldController,
-                          //     focusNode: _focusNode,
-                          //     cursorColor: theme.colorScheme.primary,
-                          //     style: theme.textTheme.bodyMedium?.copyWith(
-                          //       fontSize: 18,
-                          //       color: Colors.black87,
-                          //       fontFamily: 'DM Sans',
-                          //     ),
-                          //     decoration: InputDecoration(
-                          //       isDense: true,
-                          //       contentPadding: const EdgeInsets.symmetric(
-                          //       vertical: 14, // Adjust for 50px height
-                          //       horizontal: 20,
-                          //       ),
-                          //       prefixIcon: Icon(
-                          //       Icons.search_outlined,
-                          //       color: Colors.grey[600],
-                          //       size: 22, // Adjust icon size for 50px height
-                          //       ),
-                          //       hintText: "Search clubs...",
-                          //       hintStyle: TextStyle(
-                          //       color: Colors.grey[500],
-                          //       fontSize: 17,
-                          //       fontWeight: FontWeight.w400,
-                          //       fontFamily: 'DM Sans',
-                          //       ),
-                          //       border: InputBorder.none,
-                          //       suffixIcon: IconButton(
-                          //       tooltip: "Clear search",
-                          //       icon: const Icon(Icons.close_outlined, size: 22), // Adjust icon size
-                          //       color: Colors.grey[500],
-                          //       onPressed: () {
-                          //         setState(() {
-                          //         _searchFieldController?.clear();
-                          //         });
-                          //       },
-                          //       ),
-                          //     ),
-                          //     ),
-                          //   ),
-                          //   ),
-                          // ),
-                          Positioned(
-                            top: 140 + MediaQuery.of(context).padding.top,
-                            left: 32,
-                            right: 32,
-                            child: Text(
-                              (() {
-                                final bodyName = body?.bodyName ?? "";
-                                final match = widget.bodyTitles.firstWhere(
-                                  (item) => item["bodyname"] == bodyName,
-                                  orElse: () => {},
-                                );
-                                final title = match["title"] ?? "";
-                                return title.isNotEmpty ? "$title" : "Explore";
-                              })(),
-                              style: theme.textTheme.displaySmall?.copyWith(
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white,
-                                //letterSpacing: 1.2,
-                                fontSize: Responsive.width(36, context),
-                                fontFamily: 'DM Sans',
-                                shadows: [
-                                  Shadow(
-                                    color: Colors.black.withOpacity(0.25),
-                                    blurRadius: 8,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              textAlign: TextAlign.start,
-                            ),
-                          ),
-                          Positioned(
-                            top: 185 + MediaQuery.of(context).padding.top,
-                            left: 32,
-                            right: 32,
-                            child: Text(
-                              body?.bodyShortDescription ?? "",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: Responsive.width(16, context),
-                                fontFamily: 'DM Sans',
-                                fontWeight: FontWeight.w500,
-                              ),
-                              textAlign: TextAlign.start,
-                            ),
-                          ),
-                        ],
+Widget build(BuildContext context) {
+  var theme = Theme.of(context);
+  var bloc = BlocProvider.of(context)!.bloc;
+  var exploreBloc = bloc.exploreBloc;
+  return WillPopScope(
+    onWillPop: () async {
+      widget.onBack();
+      return false;
+    },
+    child: Scaffold(
+      extendBodyBehindAppBar: true,
+      backgroundColor: Color.fromRGBO(246, 246, 246, 1),
+      key: _scaffoldKey,
+      drawer: NavDrawer(),
+      body: body == null
+          ? Center(
+              child: CircularProgressIndicatorExtended(
+                label: Text("Loading the body page"),
+              ),
+            )
+          : Column(
+              children: [
+                // Fixed Header
+                Stack(
+                  children: [
+                    Container(
+                      height: Responsive.width(295, context),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(Responsive.width(20, context)),
+                          bottomRight: Radius.circular(Responsive.width(20, context)),
+                        ),
+                        child: Image.asset(
+                          'assets/explore/culturals.png',
+                          height: Responsive.width(295, context),
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                      SizedBox(height: Responsive.height(20, context)),
-                      ...(_searchQuery.isEmpty ? Childrens : Childrens.where((body) {
-                            final name = body.bodyName?.toLowerCase() ?? "";
-                            return name.contains(_searchQuery);
-                          }).toList()).map((b) {
-                            return _buildBodyTile(bloc, theme.textTheme, b);
-                          }).toList() ??
-                          [],
-                      Divider(),
-                      SizedBox(height: Responsive.height(64, context)),
-                    ],
+                    ),
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      child: ClipRect(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                          child: Container(
+                            height: MediaQuery.of(context).padding.top,
+                            color: Colors.white.withOpacity(0.2),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: Responsive.width(16, context),
+                        top: MediaQuery.of(context).padding.top,
+                      ),
+                      child: GestureDetector(
+                        onTap: () {
+                          widget.onBack();
+                        },
+                        child: Container(
+                          height: Responsive.width(52, context),
+                          width: Responsive.width(52, context),
+                          decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.60),
+                              borderRadius: BorderRadius.circular(25)),
+                          child: Center(
+                            child: Container(
+                              height: Responsive.width(24, context),
+                              width: Responsive.width(24, context),
+                              child: SvgPicture.asset(
+                                  'assets/quicklinks/icons/arrow_left.svg'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 70 + MediaQuery.of(context).padding.top,
+                      left: Responsive.width(16, context),
+                      right: Responsive.width(16, context),
+                      child: Container(
+                        height: Responsive.height(50, context),
+                        padding: EdgeInsets.only(
+                            left: Responsive.width(14, context),
+                            right: Responsive.width(14, context),
+                            top: Responsive.height(13, context),
+                            bottom: Responsive.height(13, context)),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(
+                              Responsive.height(25, context)),
+                        ),
+                        child: Row(
+                          children: [
+                            Image(
+                              image: AssetImage('assets/blogs/search.png'),
+                              height: Responsive.height(24, context),
+                              width: Responsive.width(24, context),
+                            ),
+                            SizedBox(width: Responsive.height(20, context)),
+                            Expanded(
+                              child: TextField(
+                                focusNode: _focusNode,
+                                controller: _searchController,
+                                style: TextStyle(
+                                  fontSize: Responsive.text(16, context),
+                                  color: Color.fromRGBO(0, 0, 0, 0.8),
+                                  fontFamily: 'DM Sans',
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: 'Search events...',
+                                  hintStyle: TextStyle(
+                                    fontSize: Responsive.text(16, context),
+                                    color: Color.fromRGBO(0, 0, 0, 0.4),
+                                    fontFamily: 'DM Sans',
+                                  ),
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _searchQuery = value.trim().toLowerCase();
+                                  });
+                                },
+                                maxLines: 1,
+                              ),
+                            ),
+                            SizedBox(width: Responsive.width(20, context)),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 140 + MediaQuery.of(context).padding.top,
+                      left: 32,
+                      right: 32,
+                      child: Text(
+                        (() {
+                          final bodyName = body?.bodyName ?? "";
+                          final match = widget.bodyTitles.firstWhere(
+                            (item) => item["bodyname"] == bodyName,
+                            orElse: () => {},
+                          );
+                          final title = match["title"] ?? "";
+                          return title.isNotEmpty ? "$title" : "Explore";
+                        })(),
+                        style: theme.textTheme.displaySmall?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          fontSize: Responsive.width(36, context),
+                          fontFamily: 'DM Sans',
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withOpacity(0.25),
+                              blurRadius: 8,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                    Positioned(
+                      top: 185 + MediaQuery.of(context).padding.top,
+                      left: 32,
+                      right: 32,
+                      child: Text(
+                        body?.bodyShortDescription ?? "",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: Responsive.width(16, context),
+                          fontFamily: 'DM Sans',
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                  ],
+                ),
+                
+                // Scrollable Body Section
+                Expanded(
+                  child: Container(
+                    color: Color.fromRGBO(246, 246, 246, 1),
+                    child: ListView(
+                      padding: EdgeInsets.only(top: Responsive.height(20, context)),
+                      children: [
+                        ...(_searchQuery.isEmpty ? Childrens : Childrens.where((body) {
+                          final name = body.bodyName?.toLowerCase() ?? "";
+                          return name.contains(_searchQuery);
+                        }).toList()).map((b) {
+                          return _buildBodyTile(bloc, theme.textTheme, b);
+                        }).toList(),
+                        Divider(),
+                        SizedBox(height: Responsive.height(80, context)),
+                      ],
+                    ),
                   ),
-          )
-          // floatingActionButton: body == null
-          //     ? null
-          //     : editAccess
-          //         ? FloatingActionButton.extended(
-          //             icon: Icon(Icons.edit_outlined),
-          //             label: Text("Edit"),
-          //             tooltip: "Edit this Body",
-          //             onPressed: () {
-          //               Navigator.of(context)
-          //                   .pushNamed("/putentity/body/${body!.bodyID}");
-          //             },
-          //           )
-          //         : FloatingActionButton(
-          //             child: Icon(Icons.share_outlined),
-          //             tooltip: "Share this body",
-          //             onPressed: () async {
-          //               await Share.share(
-          //                   "Check this Institute Body: ${ShareURLMaker.getBodyURL(body!)}");
-          //             },
-          //           ),
-          // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          // persistentFooterButtons: [
-          //   FooterButtons(
-          //     footerButtons: footerButtons,
-          //   )
-          // ],
-          ),
-    );
-  }
+                ),
+              ],
+            ),
+    ),
+  );
+}
+  // @override
+  // Widget build(BuildContext context) {
+  //   var theme = Theme.of(context);
+  //   var bloc = BlocProvider.of(context)!.bloc;
+  //   var exploreBloc = bloc.exploreBloc;
+  //   return WillPopScope(
+  //     onWillPop: () async {
+  //       widget.onBack();
+  //       return false;
+  //     },
+  //     child: Scaffold(
+  //         extendBodyBehindAppBar: true,
+  //         backgroundColor: Color.fromRGBO(246, 246, 246, 1),
+  //         key: _scaffoldKey,
+  //         drawer: NavDrawer(),
+  //         body: Container(
+  //           child: body == null
+  //               ? Center(
+  //                   child: CircularProgressIndicatorExtended(
+  //                     label: Text("Loading the body page"),
+  //                   ),
+  //                 )
+  //               : ListView(
+  //                   padding: EdgeInsets.zero,
+  //                   children: <Widget>[
+  //                     Stack(
+  //                       children: [
+  //                         Container(
+  //                           // height: Responsive.height(250, context),
+  //                           height: 250,
+  //                           child: ClipRRect(
+  //                             borderRadius: BorderRadius.only(
+  //                               bottomLeft: Radius.circular(Responsive.width(20, context)),
+  //                               bottomRight: Radius.circular(Responsive.width(20, context)),
+  //                             ),
+  //                             child: Image.asset(
+  //                               'assets/explore/culturals.png',
+  //                               // height: Responsive.height(250, context),
+  //                               height: 250,
+  //                               width: double.infinity,
+  //                               fit: BoxFit.cover,
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         Positioned(
+  //                           top: 0,
+  //                           left: 0,
+  //                           right: 0,
+  //                           child: ClipRect(
+  //                             child: BackdropFilter(
+  //                               filter: ImageFilter.blur(
+  //                                   sigmaX: 10, sigmaY: 10), // adjust blur
+  //                               child: Container(
+  //                                 height: MediaQuery.of(context).padding.top,
+  //                                 color: Colors.white
+  //                                     .withOpacity(0.2), // translucent layer
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         Padding(
+  //                           padding: EdgeInsets.only(
+  //                             left: Responsive.width(16, context),
+  //                             top: MediaQuery.of(context).padding.top,
+  //                           ),
+  //                           child: GestureDetector(
+  //                             onTap: () {
+  //                               widget.onBack();
+  //                             },
+  //                             child: Container(
+  //                               height: Responsive.width(52, context),
+  //                               width: Responsive.width(52, context),
+  //                               decoration: BoxDecoration(
+  //                                   color: Colors.white.withOpacity(0.60),
+  //                                   borderRadius: BorderRadius.circular(25)),
+  //                               child: Center(
+  //                                 child: Container(
+  //                                   height: Responsive.width(24, context),
+  //                                   width: Responsive.width(24, context),                                    child: SvgPicture.asset(
+  //                                       'assets/quicklinks/icons/arrow_left.svg'),
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         Positioned(
+  //                           top: 70 + MediaQuery.of(context).padding.top,
+  //                           left: Responsive.width(16, context),
+  //                           right: Responsive.width(16, context),
+  //                           child: Container(
+  //                             height: Responsive.height(50, context),
+  //                             padding: EdgeInsets.only(
+  //                                 left: Responsive.width(14, context),
+  //                                 right: Responsive.width(14, context),
+  //                                 top: Responsive.height(13, context),
+  //                                 bottom: Responsive.height(13, context)),
+  //                             decoration: BoxDecoration(
+  //                               color: Colors.white,
+  //                               borderRadius: BorderRadius.circular(
+  //                                   Responsive.height(25, context)),
+  //                             ),
+  //                             child: Row(
+  //                               children: [
+  //                                 Image(
+  //                                   image:
+  //                                       AssetImage('assets/blogs/search.png'),
+  //                                   height: Responsive.height(24, context),
+  //                                   width: Responsive.width(24, context),
+  //                                 ),
+  //                                 SizedBox(
+  //                                     width: Responsive.height(20, context)),
+  //                                 Expanded(
+  //                                   child: TextField(
+  //                                     focusNode: _focusNode,
+  //                                     controller: _searchController,
+  //                                     style: TextStyle(
+  //                                       fontSize: Responsive.text(16, context),
+  //                                       color: Color.fromRGBO(0, 0, 0, 0.8),
+  //                                       fontFamily: 'DM Sans',
+  //                                     ),
+  //                                     decoration: InputDecoration(
+  //                                       hintText: 'Search events...',
+  //                                       hintStyle: TextStyle(
+  //                                         fontSize:
+  //                                             Responsive.text(16, context),
+  //                                         color: Color.fromRGBO(0, 0, 0, 0.4),
+  //                                         fontFamily: 'DM Sans',
+  //                                       ),
+  //                                       border: InputBorder.none,
+  //                                       isDense: true,
+  //                                       contentPadding: EdgeInsets.zero,
+  //                                     ),
+  //                                     onChanged: (value) {
+  //                                       setState(() {
+  //                                         _searchQuery =
+  //                                             value.trim().toLowerCase();
+  //                                       });
+  //                                     },
+  //                                     // autofocus: true,
+  //                                     maxLines: 1,
+  //                                   ),
+  //                                 ),
+  //                                 SizedBox(
+  //                                     width: Responsive.width(20, context)),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                         ),
+  //                         // Positioned(
+  //                         //   top: 72,
+  //                         //   left: 16,
+  //                         //   right: 16,
+  //                         //   child: Material(
+  //                         //   elevation: 6,
+  //                         //   borderRadius: BorderRadius.circular(32),
+  //                         //   color: Colors.transparent,
+  //                         //   child: Container(
+  //                         //     height: 50, // Set height to 50px
+  //                         //     width: 380,
+  //                         //     decoration: BoxDecoration(
+  //                         //     color: Colors.white.withOpacity(0.98),
+  //                         //     borderRadius: BorderRadius.circular(32),
+  //                         //     // boxShadow: [
+  //                         //     //   BoxShadow(
+  //                         //     //   color: Colors.black.withOpacity(0.08),
+  //                         //     //   blurRadius: 12,
+  //                         //     //   offset: Offset(0, 4),
+  //                         //     //   ),
+  //                         //     // ],
+  //                         //     ),
+  //                         //     child: TextField(
+  //                         //     controller: _searchFieldController,
+  //                         //     focusNode: _focusNode,
+  //                         //     cursorColor: theme.colorScheme.primary,
+  //                         //     style: theme.textTheme.bodyMedium?.copyWith(
+  //                         //       fontSize: 18,
+  //                         //       color: Colors.black87,
+  //                         //       fontFamily: 'DM Sans',
+  //                         //     ),
+  //                         //     decoration: InputDecoration(
+  //                         //       isDense: true,
+  //                         //       contentPadding: const EdgeInsets.symmetric(
+  //                         //       vertical: 14, // Adjust for 50px height
+  //                         //       horizontal: 20,
+  //                         //       ),
+  //                         //       prefixIcon: Icon(
+  //                         //       Icons.search_outlined,
+  //                         //       color: Colors.grey[600],
+  //                         //       size: 22, // Adjust icon size for 50px height
+  //                         //       ),
+  //                         //       hintText: "Search clubs...",
+  //                         //       hintStyle: TextStyle(
+  //                         //       color: Colors.grey[500],
+  //                         //       fontSize: 17,
+  //                         //       fontWeight: FontWeight.w400,
+  //                         //       fontFamily: 'DM Sans',
+  //                         //       ),
+  //                         //       border: InputBorder.none,
+  //                         //       suffixIcon: IconButton(
+  //                         //       tooltip: "Clear search",
+  //                         //       icon: const Icon(Icons.close_outlined, size: 22), // Adjust icon size
+  //                         //       color: Colors.grey[500],
+  //                         //       onPressed: () {
+  //                         //         setState(() {
+  //                         //         _searchFieldController?.clear();
+  //                         //         });
+  //                         //       },
+  //                         //       ),
+  //                         //     ),
+  //                         //     ),
+  //                         //   ),
+  //                         //   ),
+  //                         // ),
+  //                         Positioned(
+  //                           top: 140 + MediaQuery.of(context).padding.top,
+  //                           left: 32,
+  //                           right: 32,
+  //                           child: Text(
+  //                             (() {
+  //                               final bodyName = body?.bodyName ?? "";
+  //                               final match = widget.bodyTitles.firstWhere(
+  //                                 (item) => item["bodyname"] == bodyName,
+  //                                 orElse: () => {},
+  //                               );
+  //                               final title = match["title"] ?? "";
+  //                               return title.isNotEmpty ? "$title" : "Explore";
+  //                             })(),
+  //                             style: theme.textTheme.displaySmall?.copyWith(
+  //                               fontWeight: FontWeight.w900,
+  //                               color: Colors.white,
+  //                               //letterSpacing: 1.2,
+  //                               fontSize: Responsive.width(36, context),
+  //                               fontFamily: 'DM Sans',
+  //                               shadows: [
+  //                                 Shadow(
+  //                                   color: Colors.black.withOpacity(0.25),
+  //                                   blurRadius: 8,
+  //                                   offset: Offset(0, 2),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                             textAlign: TextAlign.start,
+  //                           ),
+  //                         ),
+  //                         Positioned(
+  //                           top: 185 + MediaQuery.of(context).padding.top,
+  //                           left: 32,
+  //                           right: 32,
+  //                           child: Text(
+  //                             body?.bodyShortDescription ?? "",
+  //                             style: TextStyle(
+  //                               color: Colors.white,
+  //                               fontSize: Responsive.width(16, context),
+  //                               fontFamily: 'DM Sans',
+  //                               fontWeight: FontWeight.w500,
+  //                             ),
+  //                             textAlign: TextAlign.start,
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     SizedBox(height: Responsive.height(20, context)),
+  //                     ...(_searchQuery.isEmpty ? Childrens : Childrens.where((body) {
+  //                           final name = body.bodyName?.toLowerCase() ?? "";
+  //                           return name.contains(_searchQuery);
+  //                         }).toList()).map((b) {
+  //                           return _buildBodyTile(bloc, theme.textTheme, b);
+  //                         }).toList() ??
+  //                         [],
+  //                     Divider(),
+  //                     SizedBox(height: Responsive.height(64, context)),
+  //                   ],
+  //                 ),
+  //         )
+  //         // floatingActionButton: body == null
+  //         //     ? null
+  //         //     : editAccess
+  //         //         ? FloatingActionButton.extended(
+  //         //             icon: Icon(Icons.edit_outlined),
+  //         //             label: Text("Edit"),
+  //         //             tooltip: "Edit this Body",
+  //         //             onPressed: () {
+  //         //               Navigator.of(context)
+  //         //                   .pushNamed("/putentity/body/${body!.bodyID}");
+  //         //             },
+  //         //           )
+  //         //         : FloatingActionButton(
+  //         //             child: Icon(Icons.share_outlined),
+  //         //             tooltip: "Share this body",
+  //         //             onPressed: () async {
+  //         //               await Share.share(
+  //         //                   "Check this Institute Body: ${ShareURLMaker.getBodyURL(body!)}");
+  //         //             },
+  //         //           ),
+  //         // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+  //         // persistentFooterButtons: [
+  //         //   FooterButtons(
+  //         //     footerButtons: footerButtons,
+  //         //   )
+  //         // ],
+  //         ),
+  //   );
+  // }
 
   List<Widget> _nonEmptyListWithHeaderOrEmpty(
       List<Widget>? list, Widget header) {

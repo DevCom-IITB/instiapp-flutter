@@ -512,12 +512,12 @@ class _CommunityPageState extends State<CommunityPage> {
                       height: responsive.h(47),
                       width: responsive.w(49),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.5),
-                        color: Colors.amber,
+                        borderRadius: BorderRadius.circular(responsive.w(8.5)),
+                        //color: Colors.amber,
                       ),
                       child: community.logoImg != null
                       ? ClipRRect(
-                        borderRadius: BorderRadius.circular(8.5),
+                        borderRadius: BorderRadius.circular(responsive.w(8.5)),
                         child: Image.network(
                           community.logoImg!,     
                           fit: BoxFit.cover,      

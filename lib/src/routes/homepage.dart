@@ -313,15 +313,6 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   @override
-  void dispose() {
-    _pageController.removeListener(_pageListener);
-    _pageController.dispose();
-    _navIndicatorController.dispose();
-    _navScaleController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final responsive = Responsive(context);
 
@@ -1129,75 +1120,77 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
               ),
         ),
         Container(
-        width: responsive.w(380),
-        height: responsive.h(380),
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(16), responsive.w(16), responsive.h(0)),
-          child: Column(
-            //mainAxisAlignment: MainAxisAlignment.start,            
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      generateQR();
-                    },
-                    child: Container(
-                      width: responsive.w(50),
-                      height: responsive.h(50),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFEBEBEB),
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: Center(
-                        child: SizedBox(
-                          width: responsive.w(24),
-                          height: responsive.h(24),
-                          child: SvgPicture.asset(
-                              'assets/homepage/icons/refresh.svg'),
+          width: responsive.w(380),
+          height: responsive.h(380),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(16),
+                responsive.w(16), responsive.h(0)),
+            child: Column(
+              //mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        print("clicked");
+                        generateQR();
+                      },
+                      child: Container(
+                        width: responsive.h(50),
+                        height: responsive.h(50),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEBEBEB),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: Center(
+                          child: SizedBox(
+                            width: responsive.h(24),
+                            height: responsive.h(24),
+                            child: SvgPicture.asset(
+                                'assets/homepage/icons/refresh.svg'),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Text(
-                    'My QR',
-                    style: TextStyle(
-                      color: myConstants.instiappBlue,
-                      fontSize: responsive.sp(20),
-                      fontFamily: 'DM Sans',
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        showQR = false;
-                      });
-                    },
-                    child: Container(
-                      width: responsive.w(50),
-                      height: responsive.h(50),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFEBEBEB),
-                        borderRadius: BorderRadius.circular(25),
+                    Text(
+                      'My QR',
+                      style: TextStyle(
+                        color: myConstants.instiappBlue,
+                        fontSize: responsive.sp(20),
+                        fontFamily: 'DM Sans',
+                        fontWeight: FontWeight.w900,
                       ),
-                      child: Center(
-                        child: SizedBox(
-                          width: responsive.w(29),
-                          height: responsive.h(29),
-                          child: SvgPicture.asset(
-                              'assets/homepage/icons/arrow_down.svg'),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          showQR = false;
+                        });
+                      },
+                      child: Container(
+                        width: responsive.h(50),
+                        height: responsive.h(50),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEBEBEB),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: Center(
+                          child: SizedBox(
+                            width: responsive.h(29),
+                            height: responsive.h(29),
+                            child: SvgPicture.asset(
+                                'assets/homepage/icons/arrow_down.svg'),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.only(top: responsive.h(26), bottom: responsive.h(28)),
-                  child: SizedBox(
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: responsive.h(26), bottom: responsive.h(28)),
+                  child: Container(
                     width: responsive.w(197),
                     height: responsive.h(197),
                     child: loading
@@ -1235,6 +1228,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     );
   }
 
+
+
   Widget qrClosed(List<Hostel> hostels) {
     final responsive = Responsive(context);
     return Column(
@@ -1252,31 +1247,32 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
               ),
             ),
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 _openFilterBottomSheet(hostels);
               },
               child: Container(
-                width: responsive.w(94),
+                // width: responsive.w(94),
                 height: responsive.h(40),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  color: myConstants.instiappGrey,
-                  border: Border.all(
-                    color: Color(0xFF7E8287),
-                    width: responsive.w(1)
-                  )
-                ),
-                padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(11), responsive.w(4), responsive.h(10)),
+                    borderRadius: BorderRadius.circular(100),
+                    color: myConstants.instiappGrey,
+                    border: Border.all(
+                        color: Color(0xFF7E8287), width: responsive.h(1))),
+                padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(10),
+                    responsive.w(16), responsive.h(10)),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "${_selectedDay.substring(0,3)}, H-${_selectedHostel}",
+                      "${_selectedDay.substring(0, 3)}, "
+                      "${(_selectedHostel == 'tansa' || _selectedHostel == 'qip') ? _selectedHostel : 'H-${_selectedHostel}'}",
                       style: TextStyle(
                         color: Color(0xCC0F1620),
-                        fontWeight: FontWeight.w500
+                        fontWeight: FontWeight.w500,
+                        fontSize: responsive.w(12.5),
                       ),
-                    ),
+                    )
                     // SizedBox(width: 8),
                     // Container(
                     //   height: 20,
@@ -1429,17 +1425,17 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                           _mealString(hostels),
                           style: TextStyle(
                             color: const Color(0xFF1B3252),
-                            fontSize: responsive.sp(14),
+                            fontSize: responsive.w(14),
                             fontFamily: 'DM Sans',
                             fontWeight: FontWeight.w500,
-                            height: responsive.h(1.31),
+                            height: responsive.w(1.31),
                           ),
                         ),
                       ),
                     ),
                     Container(
                       padding:
-                          EdgeInsets.symmetric(vertical: responsive.h(8), horizontal: responsive.w(18)),
+                          EdgeInsets.symmetric(vertical: responsive.h(6), horizontal: responsive.w(18)),
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage(
