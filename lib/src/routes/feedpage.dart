@@ -109,16 +109,22 @@ class _FeedPageState extends State<FeedPage> {
                     ),
                     SizedBox(height: Responsive.height(20, context)),
                     Container(
-                      margin: EdgeInsets.only(left: Responsive.width(16, context), right: Responsive.width(16, context)),
+                      margin: EdgeInsets.only(
+                          left: Responsive.width(16, context),
+                          right: Responsive.width(16, context)),
                       height: Responsive.height(53, context),
                       padding: EdgeInsets.only(
-                          left: Responsive.width(14, context), right: Responsive.width(14, context), top: Responsive.height(13, context), bottom: Responsive.height(13, context)),
+                          left: Responsive.width(14, context),
+                          right: Responsive.width(14, context),
+                          top: Responsive.height(13, context),
+                          bottom: Responsive.height(13, context)),
                       decoration: BoxDecoration(
                         image: const DecorationImage(
                           image: AssetImage('assets/blogs/searchbar.png'),
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                         ),
-                        borderRadius: BorderRadius.circular(Responsive.height(25, context)),
+                        borderRadius: BorderRadius.circular(
+                            Responsive.height(25, context)),
                       ),
                       child: Row(
                         children: [
@@ -127,7 +133,7 @@ class _FeedPageState extends State<FeedPage> {
                             height: Responsive.height(24, context),
                             width: Responsive.width(24, context),
                           ),
-                          SizedBox(width: Responsive.height(20,context)),
+                          SizedBox(width: Responsive.height(20, context)),
                           Expanded(
                             child: TextField(
                               focusNode: _focusNode,
@@ -157,7 +163,27 @@ class _FeedPageState extends State<FeedPage> {
                               maxLines: 1,
                             ),
                           ),
-                          SizedBox(width: Responsive.width(20, context)),
+                          SizedBox(width: Responsive.width(8, context)),
+                          if (_searchQuery.isNotEmpty)
+                            InkWell(
+                              customBorder: const CircleBorder(),
+                              onTap: () {
+                                _searchController.clear();
+                                _focusNode.unfocus();
+                                setState(() {
+                                  _searchQuery = '';
+                                });
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.all(
+                                    Responsive.width(3, context)),
+                                child: SvgPicture.asset(
+                                  'assets/explore/x.svg',
+                                  width: Responsive.width(24, context),
+                                  height: Responsive.height(24, context),
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -241,17 +267,26 @@ class _FeedPageState extends State<FeedPage> {
                 ),
                 Expanded(
                   child: CustomScrollView(
-                    slivers: [                
+                    slivers: [
                       StreamBuilder(
                         stream: bloc.events,
                         builder: (context,
-                            AsyncSnapshot<UnmodifiableListView<Event>> snapshot) {
+                            AsyncSnapshot<UnmodifiableListView<Event>>
+                                snapshot) {
                           if (snapshot.hasData) {
                             final filteredEvents = _searchQuery.isEmpty
                                 ? snapshot.data!
-                                : UnmodifiableListView(snapshot.data!.where((event) {
-                                    final name = event.eventName?.toLowerCase() ?? "";
-                                    return name.contains(_searchQuery) || (event.eventBodies != null && event.eventBodies!.any((body) => body.bodyName?.toLowerCase().contains(_searchQuery) ?? false));
+                                : UnmodifiableListView(
+                                    snapshot.data!.where((event) {
+                                    final name =
+                                        event.eventName?.toLowerCase() ?? "";
+                                    return name.contains(_searchQuery) ||
+                                        (event.eventBodies != null &&
+                                            event.eventBodies!.any((body) =>
+                                                body.bodyName
+                                                    ?.toLowerCase()
+                                                    .contains(_searchQuery) ??
+                                                false));
                                   }).toList());
                             if (filteredEvents.length > 0) {
                               return SliverList(

@@ -153,8 +153,10 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                             height: Responsive.height(250, context),
                             child: ClipRRect(
                               borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(Responsive.width(20, context)),
-                                bottomRight: Radius.circular(Responsive.width(20, context)),
+                                bottomLeft: Radius.circular(
+                                    Responsive.width(20, context)),
+                                bottomRight: Radius.circular(
+                                    Responsive.width(20, context)),
                               ),
                               child: Image.asset(
                                 'assets/explore/culturals.png',
@@ -263,8 +265,29 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                                       maxLines: 1,
                                     ),
                                   ),
+                                  SizedBox(width: Responsive.width(8, context)),
+                                  if (_searchQuery.isNotEmpty)
+                                    InkWell(
+                                      customBorder: const CircleBorder(),
+                                      onTap: () {
+                                        _searchController.clear();
+                                        _focusNode.unfocus();
+                                        setState(() {
+                                          _searchQuery = '';
+                                        });
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.all(1),
+                                        child: SvgPicture.asset(
+                                          'assets/explore/x.svg',
+                                          width: Responsive.width(24, context),
+                                          height:
+                                              Responsive.height(24, context),
+                                        ),
+                                      ),
+                                    ),
                                   SizedBox(
-                                      width: Responsive.width(20, context)),
+                                      width: Responsive.width(8, context)),
                                 ],
                               ),
                             ),
@@ -383,10 +406,14 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      ...(_searchQuery.isEmpty ? Childrens : Childrens.where((body) {
-                            final name = body.bodyName?.toLowerCase() ?? "";
-                            return name.contains(_searchQuery);
-                          }).toList()).map((b) {
+                      ...(_searchQuery.isEmpty
+                                  ? Childrens
+                                  : Childrens.where((body) {
+                                      final name =
+                                          body.bodyName?.toLowerCase() ?? "";
+                                      return name.contains(_searchQuery);
+                                    }).toList())
+                              .map((b) {
                             return _buildBodyTile(bloc, theme.textTheme, b);
                           }).toList() ??
                           [],

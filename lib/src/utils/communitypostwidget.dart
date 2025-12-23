@@ -156,6 +156,9 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
     final content = communityPost.content ?? "";
     final contentChars = _calculateContentChars();
     final numReactions = _calculateTotalReactions();
+    if (communityPost.deleted == true) {
+      return Container();
+    }
     return Column(
       children: [
         Padding(
@@ -348,8 +351,52 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
         // Right side: delete button (only for "Your Posts")
         if (widget.postType == CPType.YourPosts)
           GestureDetector(
-            onTap: () {
-              // Add your delete logic here (e.g., show confirmation, call API, etc.)
+            onTap: () async {
+              final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: Text("Delete post?"),
+                      content: Text(
+                          "Are you sure you want to delete this post? This action cannot be undone."),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(ctx).pop(false),
+                          child: Text("Cancel"),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(ctx).pop(true),
+                          style: TextButton.styleFrom(
+                            foregroundColor: Color(0xFFF8471B),
+                          ),
+                          child: Text("Delete"),
+                        ),
+                      ],
+                    ),
+                  ) ??
+                  false;
+
+              if (!confirm) return;
+
+              try {
+                // await BlocProvider.of(context)!
+                //     .bloc
+                //     .communityPostBloc
+                //     .updateCommunityPostStatus(communityPost.id!, 2);
+                await BlocProvider.of(context)!
+                     .bloc.communityPostBloc
+                    .deleteCommunityPost(communityPost.id ?? "");
+                setState(() {
+                  communityPost.deleted = true;
+                });
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Post deleted')),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Failed to delete post')),
+                );
+              }
             },
             child: Container(
               height: 24,
@@ -368,7 +415,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
       ],
     );
   }
-  
+
   Widget _buildContent(String content, int contentChars) {
     return GestureDetector(
       onTap: _getContentTapHandler,
@@ -426,19 +473,18 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
       width: double.infinity,
       margin: EdgeInsets.only(top: 12, bottom: 0),
       child: GestureDetector(
-        onTap: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => ExploreImagePreview(
-        imageUrls: images,
-        initialIndex: 0,
-      ),
-    ),
-  );
-},
-        child: _buildImageGrid(images, imageCount)
-        ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ExploreImagePreview(
+                  imageUrls: images,
+                  initialIndex: 0,
+                ),
+              ),
+            );
+          },
+          child: _buildImageGrid(images, imageCount)),
     );
   }
 

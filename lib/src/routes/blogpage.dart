@@ -79,6 +79,7 @@ class _BlogPageState extends State<BlogPage> {
 
   late PostType postType;
   String? selectedDepartment;
+  String? currquery = "";
   @override
   void initState() {
     super.initState();
@@ -168,6 +169,8 @@ class _BlogPageState extends State<BlogPage> {
   String highlightHtml(String html, String? query) {
     if (html == null || html.isEmpty) return html;
     if (query == null) query = "";
+    if (query.length < 4) return html;
+    if (query.length > 32) return html;
     final q = query.trim();
     if (q.isEmpty) return html;
 
@@ -474,7 +477,7 @@ class _BlogPageState extends State<BlogPage> {
                             decoration: BoxDecoration(
                               image: const DecorationImage(
                                 image: AssetImage('assets/blogs/searchbar.png'),
-                                fit: BoxFit.cover,
+                                fit: BoxFit.fill,
                               ),
                               borderRadius: BorderRadius.circular(
                                   Responsive.height(2.0, context)),
@@ -509,6 +512,9 @@ class _BlogPageState extends State<BlogPage> {
                                       contentPadding: EdgeInsets.zero,
                                     ),
                                     onChanged: (query) async {
+                                      setState(() {
+                                        currquery = query;
+                                      });
                                       if ((postType != PostType.ChatBot &&
                                               query.length >= 4) ||
                                           query.length == 0) {
@@ -518,6 +524,9 @@ class _BlogPageState extends State<BlogPage> {
                                       }
                                     },
                                     onSubmitted: (query) async {
+                                      setState(() {
+                                        currquery = query;
+                                      });
                                       blogBloc!.query = query;
                                       await blogBloc.refresh(
                                           force: query.isEmpty);
@@ -526,19 +535,26 @@ class _BlogPageState extends State<BlogPage> {
                                     maxLines: 1,
                                   ),
                                 ),
-                                SizedBox(width: Responsive.width(8.0, context)),  
-                                InkWell(
+                                SizedBox(width: Responsive.width(8.0, context)),
+                                if(currquery != null && currquery!.isNotEmpty)
+                                InkWell(               
+                                  customBorder: const CircleBorder(),                                      
                                   onTap: () {
                                     _searchFieldController?.clear();
                                     _focusNode.unfocus();
                                     blogBloc!.query = '';
                                     blogBloc.refresh();
+                                    setState(() {
+                                      currquery = "";
+                                    });
                                   },
-                                  child:
-                                      SvgPicture.asset('assets/explore/x.svg',
-                                      width:Responsive.width(24.0, context),
-                                      height:Responsive.height(24.0, context)
-                                      ),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(Responsive.width(3,context)),
+                                    child: SvgPicture.asset(
+                                        'assets/explore/x.svg',
+                                        width: Responsive.width(24.0, context),
+                                        height: Responsive.height(24.0, context)),
+                                  ),
                                 ),
                               ],
                             ),

@@ -52,6 +52,7 @@ class _CommunityPageState extends State<CommunityPage> {
 
   bool firstBuild = true;
   bool firstCallBack = true;
+  String? currquery = "";
 
   @override
   void initState() {
@@ -235,17 +236,20 @@ class _CommunityPageState extends State<CommunityPage> {
                         SizedBox(height: 20),
                         Container(
                           margin: const EdgeInsets.only(left: 16, right: 16),
-                          height: responsive.h(50),
+                          height: responsive.h(52),
                           padding: EdgeInsets.only(
                             left: responsive.w(14),
                             right: responsive.w(14),
-                            top: responsive.h(13),
-                            bottom: responsive.h(13),
+                            top: responsive.h(12),
+                            bottom: responsive.h(12),
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            image: const DecorationImage(
+                              image: AssetImage('assets/blogs/searchbar.png'),
+                              fit: BoxFit.fill,
+                            ),
                             borderRadius:
-                                BorderRadius.circular(responsive.h(25)),
+                                BorderRadius.circular(responsive.h(2)),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -261,29 +265,24 @@ class _CommunityPageState extends State<CommunityPage> {
                                 child: TextField(
                                   controller: _searchFieldController,
                                   focusNode: _focusNode,
-                                  // onChanged: (value) {
-                                  //   communityBloc.query = value;
-                                  //   communityBloc.refresh();
-                                  // },
-                                  // onSubmitted: (value) {
-                                  //   communityBloc.query = value;
-                                  //   communityBloc.refresh();
-                                  // },
                                   onChanged: (value) {
-                                          // Just update UI, don't call refresh
-                                          setState(() {}); // Rebuild with filtered results
-                                        },
+                                    setState(() {
+                                      currquery = value;
+                                    });
+                                  },
                                   onSubmitted: (value) {
-                                          setState(() {}); // Rebuild with filtered results
-                                        }, 
-                                  decoration: InputDecoration(         
-                                    border: InputBorder.none,                                                             
+                                    setState(() {
+                                      currquery = value;
+                                    });
+                                  },
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
                                     hintText: 'Search communities',
                                     hintStyle: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400,
                                       fontFamily: 'DM Sans',
-                                      color: Color.fromRGBO(0, 0, 0, 0.4),                                      
+                                      color: Color.fromRGBO(0, 0, 0, 0.4),
                                     ),
                                     contentPadding: EdgeInsets.zero,
                                     isDense: true,
@@ -296,6 +295,26 @@ class _CommunityPageState extends State<CommunityPage> {
                                   ),
                                 ),
                               ),
+                              SizedBox(width: responsive.w(8)),
+                              if (currquery != null && currquery!.isNotEmpty)
+                                InkWell(
+                                  customBorder: const CircleBorder(),
+                                  onTap: () {
+                                    _searchFieldController?.clear();
+                                    _focusNode.unfocus();
+                                    setState(() {
+                                      currquery = '';
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.all(responsive.w(3)),
+                                    child: SvgPicture.asset(
+                                      'assets/explore/x.svg',
+                                      width: responsive.w(24),
+                                      height: responsive.h(24),
+                                    ),
+                                  ),
+                                ),
                             ],
                           ),
                         ),
@@ -314,61 +333,61 @@ class _CommunityPageState extends State<CommunityPage> {
                                 //     communityBloc,
                                 //   ),
                                 // );
-                                // Tabs 
+                                // Tabs
                                 return Column(
                                   children: [
                                     Stack(
                                       children: [
                                         Positioned(
-                                          bottom: 0,
-                                          left: 0,
-                                          right: 0,
-                                          child: Container(
-                                            height: 1.5,
-                                            color: Color(0xFFD0D5DD),
-                                          )
-                                        ),
+                                            bottom: 0,
+                                            left: 0,
+                                            right: 0,
+                                            child: Container(
+                                              height: 1.5,
+                                              color: Color(0xFFD0D5DD),
+                                            )),
                                         TabBar(
-                                          indicatorColor: myConstants.instiappBlue,
-                                          labelColor: myConstants.instiappBlue,
-                                          unselectedLabelColor: Colors.black54,
-                                          labelStyle: TextStyle(
-                                            fontSize: responsive.sp(16),
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'DM Sans',
-                                          ),
-                                          tabs: [
-                                            Tab(text: "All"),
-                                            Tab(text: "Explore"),
-                                            Tab(text: "My Groups"), 
-                                          ]
-                                        )
+                                            indicatorColor:
+                                                myConstants.instiappBlue,
+                                            labelColor:
+                                                myConstants.instiappBlue,
+                                            unselectedLabelColor:
+                                                Colors.black54,
+                                            labelStyle: TextStyle(
+                                              fontSize: responsive.sp(16),
+                                              fontWeight: FontWeight.w600,
+                                              fontFamily: 'DM Sans',
+                                            ),
+                                            tabs: [
+                                              Tab(text: "All"),
+                                              Tab(text: "Explore"),
+                                              Tab(text: "My Groups"),
+                                            ])
                                       ],
                                     ),
                                     Expanded(
-                                      child: TabBarView(
+                                        child: TabBarView(children: [
+                                      // All
+                                      Column(
                                         children: [
-                                          // All
-                                          Column(
-                                            children: [
-                                              SizedBox(height: 20),
-                                              
-                                             ... _buildContent(snapshot, theme, communityBloc)
-                                            ],
-                                          ),
-                                          // Explore
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 70, left: 150),
-                                            child: Text("coming soon"),
-                                          ),
-                                          // My Groups
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 70, left: 150),
-                                            child: Text("coming soon"),
-                                          ),
-                                        ]
-                                      )
-                                    )
+                                          SizedBox(height: 20),
+                                          ..._buildContent(
+                                              snapshot, theme, communityBloc)
+                                        ],
+                                      ),
+                                      // Explore
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 70, left: 150),
+                                        child: Text("coming soon"),
+                                      ),
+                                      // My Groups
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 70, left: 150),
+                                        child: Text("coming soon"),
+                                      ),
+                                    ]))
                                   ],
                                 );
                               },
@@ -408,9 +427,14 @@ class _CommunityPageState extends State<CommunityPage> {
       var communities = snapshot.data!;
 
       var filteredCommunities = communities.where((community) {
-      return community.name!.toLowerCase().contains(_searchFieldController!.text.toLowerCase()) ||
-             (community.about?.toLowerCase().contains(_searchFieldController!.text.toLowerCase()) ?? false);
-    }).toList();
+        return community.name!
+                .toLowerCase()
+                .contains(_searchFieldController!.text.toLowerCase()) ||
+            (community.about
+                    ?.toLowerCase()
+                    .contains(_searchFieldController!.text.toLowerCase()) ??
+                false);
+      }).toList();
       communities = filteredCommunities;
       if (communities.isEmpty == true) {
         return [
@@ -445,27 +469,25 @@ class _CommunityPageState extends State<CommunityPage> {
       ];
     }
   }
-  Widget tagContainer(){
+
+  Widget tagContainer() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 11.13,vertical: 4.17),
+      padding: EdgeInsets.symmetric(horizontal: 11.13, vertical: 4.17),
       height: 23,
       // width: 52,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(69.54),
-        color: myConstants.instiappDark
-      ),
+          borderRadius: BorderRadius.circular(69.54),
+          color: myConstants.instiappDark),
       child: Center(
         child: Text(
           "Public",
           style: TextStyle(
-            color: Colors.white,
-            fontSize: 11,
-            fontWeight: FontWeight.w700
-          ),
-          ),
+              color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700),
+        ),
       ),
     );
   }
+
   Widget _buildListTile(
     Community community,
     ThemeData theme,
@@ -475,9 +497,9 @@ class _CommunityPageState extends State<CommunityPage> {
     // var instiBloc = BlocProvider.of(context)!.bloc;
 
     return Material(
-      color:Color.fromRGBO(246, 246, 246, 1.0),
+      color: Color.fromRGBO(246, 246, 246, 1.0),
       child: InkWell(
-        onTap:() {
+        onTap: () {
           Communities.navigateWith(context, bloc, community);
         },
         child: Container(
@@ -514,14 +536,14 @@ class _CommunityPageState extends State<CommunityPage> {
                         color: Colors.amber,
                       ),
                       child: community.logoImg != null
-                      ? ClipRRect(
-                        borderRadius: BorderRadius.circular(8.5),
-                        child: Image.network(
-                          community.logoImg!,     
-                          fit: BoxFit.cover,      
-                        ),
-                      )
-                      : Icon(Icons.group, color: Colors.white),
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(8.5),
+                              child: Image.network(
+                                community.logoImg!,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : Icon(Icons.group, color: Colors.white),
                     ),
                     SizedBox(width: 8),
                     Column(
@@ -530,24 +552,25 @@ class _CommunityPageState extends State<CommunityPage> {
                         Text(
                           community.name ?? "Some community",
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700
-                          ),
+                              fontSize: 16, fontWeight: FontWeight.w700),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4.51),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Icon(Icons.group_outlined,size: 18,color: myConstants.instiappBlue,),
+                              Icon(
+                                Icons.group_outlined,
+                                size: 18,
+                                color: myConstants.instiappBlue,
+                              ),
                               SizedBox(width: 4.51),
                               Text(
                                 "${community.followersCount ?? "0"} followers",
                                 style: TextStyle(
-                                  color: myConstants.instiappBlue,
-                                  fontWeight: FontWeight.w700
-                                ),
-                                ),
+                                    color: myConstants.instiappBlue,
+                                    fontWeight: FontWeight.w700),
+                              ),
                             ],
                           ),
                         )
@@ -558,19 +581,15 @@ class _CommunityPageState extends State<CommunityPage> {
                 SizedBox(height: 8),
                 Text(
                   community.about ?? "",
-                  style: TextStyle(
-                    color: Color(0xFF7E8287)
-                  ),
+                  style: TextStyle(color: Color(0xFF7E8287)),
                 ),
                 SizedBox(height: 12),
                 Row(
-                  children: [
-                    tagContainer()
-                  ],
+                  children: [tagContainer()],
                 )
               ],
             ),
-            ),
+          ),
           // child: ListTile(
           //   horizontalTitleGap: 0,
           //   contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 5),

@@ -57,6 +57,7 @@ class _CreatePostPage extends State<CreatePostPage> {
   }
 
   bool firstBuild = true;
+  bool posting = false;
   bool isEditing = false;
 //For user view
 //
@@ -167,6 +168,8 @@ class _CreatePostPage extends State<CreatePostPage> {
                                     ),
                                     GestureDetector(
                                       onTap: () async {
+                                        posting = true;
+                                        setState(() {});
                                         if (_formKey1.currentState
                                                 ?.validate() ??
                                             false) {
@@ -223,12 +226,12 @@ class _CreatePostPage extends State<CreatePostPage> {
 
                                           if (currRequest1.imageUrl == null)
                                             currRequest1.imageUrl = [];
-
                                           // If editing, only add new images (imageFiles contains only new ones)
                                           // If creating, add all images from imageFiles
                                           for (int i = 0;
                                               i < imageFiles.length;
                                               i++) {
+                                                try{
                                             ImageUploadResponse resp =
                                                 await bloc.client.uploadImage(
                                                     bloc.getSessionIdHeader(),
@@ -238,7 +241,19 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                 .contains(resp.pictureURL!)) {
                                               currRequest1.imageUrl!
                                                   .add(resp.pictureURL!);
-                                            }
+                                            }} catch(e){
+                                                  ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                    'Error uploading image: ${e.toString()}'),
+                                                backgroundColor: Colors.red,
+                                                duration: Duration(seconds: 2),
+                                              ),
+                                            );
+                                                  posting = false;
+                                                  return;
+                                                }
                                           }
                                           // for (int i = 0;
                                           //     i < documentFiles.length;
@@ -277,7 +292,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                             if (isEditing) {
                                               bloc.communityPostBloc
                                                   .updateCommunityPost(
-                                                      currRequest1);
+                                                      currRequest1);                                              
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
                                                 SnackBar(
@@ -313,6 +328,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                 duration: Duration(seconds: 2),
                                               ),
                                             );
+                                            posting = false;
                                             return;
                                           }
                                           Navigator.of(context)
@@ -342,7 +358,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                               CrossAxisAlignment.center,
                                           children: [
                                             Text(
-                                              'Post',
+                                              posting ? 'Posting...' : 'Post',
                                               style: TextStyle(
                                                 color: const Color(0xFFF6F6F6),
                                                 fontSize: Responsive.text(
@@ -868,17 +884,26 @@ class _CreatePostPage extends State<CreatePostPage> {
           ),
         ),
         Positioned(
-          right: Responsive.width(-2, context),
-          top: Responsive.height(-10, context),
-          child: Container(
-            child: IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () {
-                setState(() {
-                  imageFiles.removeAt(index);
-                  loadedImageIndices.remove(index);
-                });
-              },
+          right: Responsive.width(13, context),
+          top: Responsive.height(3, context),
+          child: SizedBox(
+            height: Responsive.height(20, context),
+            width: Responsive.width(20, context),
+            child: Material(
+              color: Colors.white70,
+              shape: const CircleBorder(),
+              child: IconButton(
+                padding: EdgeInsets.all(0),
+                icon: Icon(Icons.close),
+                constraints: BoxConstraints(),
+                iconSize: Responsive.width(20, context),
+                onPressed: () {
+                  setState(() {
+                    imageFiles.removeAt(index);
+                    loadedImageIndices.remove(index);
+                  });
+                },
+              ),
             ),
           ),
         ),

@@ -692,8 +692,6 @@ class _CommunitiesState extends State<Communities> {
                               ],
                             ),
                             if (!_headerCollapsed)
-                              SizedBox(height: responsive.h(10)),
-                            if (!_headerCollapsed)
                               Container(
                                   //height: aboutExpanded?192:72,
                                   child: _buildAbout(theme)),
@@ -814,30 +812,27 @@ class _CommunitiesState extends State<Communities> {
       return SizedBox.shrink();
     }
     return SizedBox(
-      height: aboutExpanded ? responsive.h(200) : responsive.h(72),
-      child: SingleChildScrollView(
-        physics: aboutExpanded
-            ? ClampingScrollPhysics()
-            : NeverScrollableScrollPhysics(),
-        child: Text.rich(
-          new TextSpan(
-            text: about.length > 160 && !aboutExpanded
-                ? about.substring(0, 160) + (aboutExpanded ? "" : "...")
-                : about,
-            children: !aboutExpanded && about.length > 160
-                ? [
-                    new TextSpan(
-                      text: 'Read More',
-                      style: TextStyle(
-                          color: myConstants.instiappBlue,
-                          fontWeight: FontWeight.w600),
-                      recognizer: new TapGestureRecognizer()
-                        ..onTap = () => setState(() {
-                              aboutExpanded = true;
-                            }),
-                    )
-                  ]
-                : [
+      height: aboutExpanded ? responsive.h(200) : null,
+      child: aboutExpanded
+          ? SingleChildScrollView(
+              padding: EdgeInsets.only(top: responsive.h(8)),
+              child: Text.rich(
+                new TextSpan(
+                  text: about,
+                  children:
+                      // ? [
+                      //     new TextSpan(
+                      //       text: 'Read More',
+                      //       style: TextStyle(
+                      //           color: myConstants.instiappBlue,
+                      //           fontWeight: FontWeight.w600),
+                      //       recognizer: new TapGestureRecognizer()
+                      //         ..onTap = () => setState(() {
+                      //               aboutExpanded = true;
+                      //             }),
+                      //     )
+                      //   ]
+                      [
                     new TextSpan(
                       text: ' Read Less',
                       style: TextStyle(
@@ -849,9 +844,32 @@ class _CommunitiesState extends State<Communities> {
                             }),
                     )
                   ],
-          ),
-        ),
-      ),
+                ),
+              ),
+            )
+          : Container(
+              padding: EdgeInsets.only(top: responsive.h(8)),
+              child: Text.rich(
+                new TextSpan(
+                  text: about.length > 200
+                      ? about.substring(0, 200) + "..."
+                      : about,
+                  children: [
+                    if (about.length > 200)
+                      new TextSpan(
+                        text: ' Read More',
+                        style: TextStyle(
+                            color: myConstants.instiappBlue,
+                            fontWeight: FontWeight.w600),
+                        recognizer: new TapGestureRecognizer()
+                          ..onTap = () => setState(() {
+                                aboutExpanded = true;
+                              }),
+                      )
+                  ],
+                ),
+              ),
+            ),
     );
   }
 
@@ -1593,20 +1611,9 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
       CommunityPostBloc communityPostBloc,
       String? communityId) {
     final responsive = Responsive(context);
-
-    // Show loading indicator while waiting for data
-    if (snapshot.connectionState == ConnectionState.waiting ||
-        !snapshot.hasData) {
-      return [
-        Center(
-            child: CircularProgressIndicatorExtended(
-          label: Text("Loading..."),
-        ))
-      ];
-    }
-
     // Handle errors
     if (snapshot.hasError) {
+      print("Error loading posts: ${snapshot.error}");
       return [
         Padding(
           padding: EdgeInsets.symmetric(
@@ -1625,12 +1632,13 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
 
     // If list is empty but we haven't received data before, still show loading
     if (communityPosts.isEmpty && !hasReceivedData) {
+      print("loading data...");
       return [
         Center(
-            child:Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(child: CircularProgressIndicator()),
-      ))
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(child: CircularProgressIndicator()),
+        ))
       ];
     }
 
@@ -1640,18 +1648,28 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           setState(() {
+            print("Setting hasReceivedData to true");
             hasReceivedData = true;
           });
         }
       });
     }
 
+final posts = communityPosts
+        .where((c) => c.deleted != true)
+        .map((c) => Communitypostwidget(
+              communityPost: c,
+              postType: cpType,
+            ))
+        .toList();
+
     // Show empty state if no posts after data has loaded
-    if (communityPosts.isEmpty) {
+    if (posts.isEmpty && hasReceivedData) {
+      print("No posts available");
       return [
         Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: responsive.w(28), vertical: responsive.h(200)),
+              horizontal: responsive.w(28), vertical: responsive.h(100)),
           child: Center(
               child: Text(
             "Nothing here yet!",
@@ -1660,15 +1678,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
         )
       ];
     }
-
+        
     //print("a");
-    return (communityPosts
-        .map(
-          (c) => Communitypostwidget(
-            communityPost: c,
-            postType: cpType,
-          ),
-        )
-        .toList());
+    return posts;
   }
 }

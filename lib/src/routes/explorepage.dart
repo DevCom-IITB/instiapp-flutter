@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:InstiApp/src/api/response/explore_response.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/explore_bloc.dart';
@@ -45,7 +47,8 @@ class _ExplorePageState extends State<ExplorePage> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(Responsive.height(24, context)),
-                    bottomRight: Radius.circular(Responsive.height(24, context)),
+                    bottomRight:
+                        Radius.circular(Responsive.height(24, context)),
                   ),
                   image: DecorationImage(
                     image: AssetImage('assets/explore/searchbackground.png'),
@@ -54,121 +57,125 @@ class _ExplorePageState extends State<ExplorePage> {
                 ),
                 child: SafeArea(
                     bottom: false,
-                    child: Column(
-                      children: [
-                  SizedBox(height: Responsive.height(10.5, context)),
-                  Center(
-                      child: Text('Explore',
-                          style: TextStyle(
-                            fontSize: Responsive.text(24, context),
-                            fontWeight: FontWeight.w700,
-                            fontFamily: 'DM Sans',
-                            color: Color.fromRGBO(15, 22, 32, 1),
-                          ))),
-                  SizedBox(height: Responsive.height(18, context)),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Exploresearch(
-                              onBack: (String id) {
-                                setState(() {
-                                  bodyID = id;
-                                  // searchMode = false;
-                                });
-                              },
-                            ),
-                          ),
-                        );
-                      });
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(left: Responsive.width(16, context), right: Responsive.width(16, context)),
-                      height: Responsive.height(50, context),
-                      padding: EdgeInsets.only(
-                          left: Responsive.width(14, context),
-                          right: Responsive.width(14, context),
-                          top: Responsive.height(13, context),
-                          bottom: Responsive.height(13, context)),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(Responsive.height(25, context)),
-                        
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Image(
-                            image: AssetImage('assets/blogs/search.png'),
-                            height: Responsive.height(24, context),
-                            width: Responsive.width(24, context),
-                          ),
-                          SizedBox(width: Responsive.width(20, context)),
-                          Text('Search clubs, events, users...',
+                    child: Column(children: [
+                      SizedBox(height: Responsive.height(10.5, context)),
+                      Center(
+                          child: Text('Explore',
                               style: TextStyle(
-                                fontSize: Responsive.text(16, context),
-                                fontWeight: FontWeight.w400,
+                                fontSize: Responsive.text(24, context),
+                                fontWeight: FontWeight.w700,
                                 fontFamily: 'DM Sans',
-                                color: Color.fromRGBO(0, 0, 0, 0.4),
-                              )),
-                        ],
+                                color: Color.fromRGBO(15, 22, 32, 1),
+                              ))),
+                      SizedBox(height: Responsive.height(18, context)),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Exploresearch(
+                                  onBack: (String id) {
+                                    setState(() {
+                                      bodyID = id;
+                                      // searchMode = false;
+                                    });
+                                  },
+                                ),
+                              ),
+                            );
+                          });
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(
+                              left: Responsive.width(16, context),
+                              right: Responsive.width(16, context)),
+                          height: Responsive.height(50, context),
+                          padding: EdgeInsets.only(
+                              left: Responsive.width(14, context),
+                              right: Responsive.width(14, context),
+                              top: Responsive.height(13, context),
+                              bottom: Responsive.height(13, context)),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(
+                                Responsive.height(25, context)),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Image(
+                                image: AssetImage('assets/blogs/search.png'),
+                                height: Responsive.height(24, context),
+                                width: Responsive.width(24, context),
+                              ),
+                              SizedBox(width: Responsive.width(20, context)),
+                              Text('Search clubs, events, users...',
+                                  style: TextStyle(
+                                    fontSize: Responsive.text(16, context),
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'DM Sans',
+                                    color: Color.fromRGBO(0, 0, 0, 0.4),
+                                  )),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  Container(
-                      margin: EdgeInsets.only(
-                          left: Responsive.width(32, context),
-                          right: Responsive.width(32, context),
-                          top: Responsive.height(12, context),
-                          bottom: Responsive.height(20, context)),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,                      
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              child: RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(                                      
-                                      text: 'Around ',
-                                      style: TextStyle(
-                                        fontSize: Responsive.text(36, context),
-                                        fontWeight: FontWeight.w900,
-                                        color: Color.fromRGBO(15, 22, 32, 1),
-                                        fontFamily: 'DM Sans',
-                                      ),
+                      Container(
+                          margin: EdgeInsets.only(
+                              left: Responsive.width(32, context),
+                              right: Responsive.width(32, context),
+                              top: Responsive.height(12, context),
+                              bottom: Responsive.height(20, context)),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  child: RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: 'Around ',
+                                          style: TextStyle(
+                                            fontSize:
+                                                Responsive.text(36, context),
+                                            fontWeight: FontWeight.w900,
+                                            color:
+                                                Color.fromRGBO(15, 22, 32, 1),
+                                            fontFamily: 'DM Sans',
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: 'Insti',
+                                          style: TextStyle(
+                                            fontSize:
+                                                Responsive.text(36, context),
+                                            fontWeight: FontWeight.w900,
+                                            color: Color.fromRGBO(
+                                                48, 111, 220, 1), // blue
+                                            fontFamily: 'DM Sans',
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    TextSpan(
-                                      text: 'Insti',
-                                      style: TextStyle(
-                                        fontSize: Responsive.text(36, context),
-                                        fontWeight: FontWeight.w900,
-                                        color: Color.fromRGBO(
-                                            48, 111, 220, 1), // blue
-                                        fontFamily: 'DM Sans',
-                                      ),
+                                  ),
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  child: Text(
+                                    'Heard about the new hostels',
+                                    style: TextStyle(
+                                      fontSize: Responsive.text(16, context),
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'DM Sans',
+                                      color: Color.fromRGBO(15, 22, 32, 1),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ),
-                            Container(
-                              width: double.infinity,
-                              child: Text(
-                                'Heard about the new hostels',
-                                style: TextStyle(
-                                  fontSize: Responsive.text(16, context),
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: 'DM Sans',
-                                  color: Color.fromRGBO(15, 22, 32, 1),
-                                ),
-                              ),
-                            ),
-                          ])),
-                ])),
+                              ])),
+                    ])),
               ),
               Expanded(
                 child: Container(
@@ -375,8 +382,18 @@ class _ExploresearchState extends State<Exploresearch> {
   bool firstBuild = true;
 
   TextEditingController _searchFieldController = TextEditingController();
+  String currquery = "";
+  Timer? _debounce;
 
   List<String> recentSearches = [];
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchFieldController.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -398,9 +415,14 @@ class _ExploresearchState extends State<Exploresearch> {
                   child: Material(
                     color: Colors.transparent,
                     child: Container(
-                      margin: EdgeInsets.only(left: Responsive.width(16, context), right: Responsive.width(16, context)),
+                      margin: EdgeInsets.only(
+                          left: Responsive.width(16, context),
+                          right: Responsive.width(16, context)),
                       padding: EdgeInsets.only(
-                          left: Responsive.width(14, context), right: Responsive.width(14, context), top: Responsive.height(13, context), bottom: Responsive.height(13, context)),
+                          left: Responsive.width(14, context),
+                          right: Responsive.width(14, context),
+                          top: Responsive.height(13, context),
+                          bottom: Responsive.height(13, context)),
                       height: Responsive.height(50, context),
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(246, 246, 246, 1),
@@ -459,16 +481,33 @@ class _ExploresearchState extends State<Exploresearch> {
                                 isDense: true,
                                 contentPadding: EdgeInsets.zero,
                               ),
-                              onChanged: (query) async {
-                                if (query.length > 3 || query == '') {
-                                  setState(() {
-                                    exploreBloc.query = query;
-                                  });
-                                  await exploreBloc.refresh();
+                              onChanged: (query) {
+                                setState(() {
+                                  currquery = query;
+                                });
+
+                                final trimmed = query.trim();
+                                _debounce?.cancel();
+
+                                if (trimmed.isEmpty) {
+                                  exploreBloc.query = '';
+                                  exploreBloc.refresh();
+                                  return;
                                 }
+                                 if(query.length < 3){
+                                  return;
+                                }                               
+                                _debounce = Timer(
+                                  const Duration(milliseconds: 300),
+                                  () async {
+                                    exploreBloc.query = trimmed;
+                                    await exploreBloc.refresh();
+                                  },
+                                );
                               },
                               onSubmitted: (query) async {
                                 setState(() {
+                                  currquery = query;
                                   if (query.isNotEmpty &&
                                       !recentSearches.contains(query)) {
                                     recentSearches.insert(0, query);
@@ -484,7 +523,30 @@ class _ExploresearchState extends State<Exploresearch> {
                               autofocus: true,
                               maxLines: 1,
                             ),
-                          )
+                          ),
+                          SizedBox(width: Responsive.width(8, context)),
+                          if (currquery.isNotEmpty)
+                            InkWell(
+                              customBorder: const CircleBorder(),
+                              onTap: () {
+                                _searchFieldController.clear();
+                                _focusNode.unfocus();
+                                setState(() {
+                                  currquery = '';
+                                  exploreBloc.query = '';
+                                });
+                                exploreBloc.refresh();
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.all(
+                                    Responsive.width(1, context)),
+                                child: SvgPicture.asset(
+                                  'assets/explore/x.svg',
+                                  width: Responsive.width(24, context),
+                                  height: Responsive.height(24, context),
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -492,7 +554,10 @@ class _ExploresearchState extends State<Exploresearch> {
                 ),
                 if (exploreBloc.query == '' && recentSearches.isNotEmpty) ...[
                   Container(
-                      margin: EdgeInsets.only(left: Responsive.width(16, context), right: Responsive.width(16, context), top: Responsive.height(23, context)),
+                      margin: EdgeInsets.only(
+                          left: Responsive.width(16, context),
+                          right: Responsive.width(16, context),
+                          top: Responsive.height(23, context)),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -536,23 +601,18 @@ class _ExploresearchState extends State<Exploresearch> {
                               alignment: WrapAlignment.start,
                               crossAxisAlignment: WrapCrossAlignment.start,
                               children: recentSearches
-                                  .map((search) => RecentSearch(
-                                        search,
-                                        () {
-                                          setState(() {
-                                            _searchFieldController.text =
-                                                search;
-                                            exploreBloc.query = search;
-                                            exploreBloc.refresh();
-                                          });
-                                        },
-                                        () async {
-                                          setState(() {
-                                            recentSearches.remove(search);
-                                          });
-                                          await saveRecentSearches();
-                                        }, context
-                                      ))
+                                  .map((search) => RecentSearch(search, () {
+                                        setState(() {
+                                          _searchFieldController.text = search;
+                                          exploreBloc.query = search;
+                                          exploreBloc.refresh();
+                                        });
+                                      }, () async {
+                                        setState(() {
+                                          recentSearches.remove(search);
+                                        });
+                                        await saveRecentSearches();
+                                      }, context))
                                   .toList(),
                             )),
                           ])),
@@ -567,7 +627,10 @@ class _ExploresearchState extends State<Exploresearch> {
                 ],
                 if (exploreBloc.query == '')
                   Container(
-                    margin: EdgeInsets.only(left: Responsive.width(16, context), right: Responsive.width(8, context), top: Responsive.height(20, context)),
+                    margin: EdgeInsets.only(
+                        left: Responsive.width(16, context),
+                        right: Responsive.width(8, context),
+                        top: Responsive.height(20, context)),
                     height: Responsive.height(144, context),
                     child:
                         ListView(scrollDirection: Axis.horizontal, children: [
@@ -642,12 +705,16 @@ class _ExploresearchState extends State<Exploresearch> {
                     child: Container(
                       width: double.infinity,
                       margin: EdgeInsets.only(
-                          top: Responsive.height(22, context), left: Responsive.width(16, context), right: Responsive.width(16, context), bottom: Responsive.height(8, context)),
+                          top: Responsive.height(22, context),
+                          left: Responsive.width(16, context),
+                          right: Responsive.width(16, context),
+                          bottom: Responsive.height(8, context)),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            margin: EdgeInsets.only(bottom: Responsive.height(8, context)),
+                            margin: EdgeInsets.only(
+                                bottom: Responsive.height(8, context)),
                             child: Text(
                               'Popular',
                               style: TextStyle(
@@ -679,7 +746,10 @@ class _ExploresearchState extends State<Exploresearch> {
                 if (exploreBloc.query != '')
                   Expanded(
                     child: Container(
-                        margin: EdgeInsets.only(left: Responsive.width(16, context), right: Responsive.width(16, context), top: Responsive.height(11, context)),
+                        margin: EdgeInsets.only(
+                            left: Responsive.width(16, context),
+                            right: Responsive.width(16, context),
+                            top: Responsive.height(11, context)),
                         child: SingleChildScrollView(
                           child: StreamBuilder<ExploreResponse>(
                             stream: exploreBloc.explore,
@@ -709,7 +779,7 @@ Widget SearchBodycard(BuildContext context, String title, String imagePath) {
       right: Responsive.width(8, context),
     ),
     decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(Responsive.height(14,context)),
+      borderRadius: BorderRadius.circular(Responsive.height(14, context)),
       image: DecorationImage(
         image: AssetImage(imagePath),
         fit: BoxFit.cover,
@@ -730,7 +800,9 @@ Widget SearchBodycard(BuildContext context, String title, String imagePath) {
       ),
       Container(
           alignment: Alignment.bottomLeft,
-          padding: EdgeInsets.only(left: Responsive.width(10, context), bottom: Responsive.height(11, context)),
+          padding: EdgeInsets.only(
+              left: Responsive.width(10, context),
+              bottom: Responsive.height(11, context)),
           child: Text(
             title,
             style: TextStyle(
@@ -744,10 +816,14 @@ Widget SearchBodycard(BuildContext context, String title, String imagePath) {
   ));
 }
 
-Widget RecentSearch(
-    String searchtext, VoidCallback onTap, VoidCallback onDelete, BuildContext context) {
+Widget RecentSearch(String searchtext, VoidCallback onTap,
+    VoidCallback onDelete, BuildContext context) {
   return Container(
-    padding: EdgeInsets.only(top: Responsive.height(8, context), bottom: Responsive.height(8, context), left: Responsive.width(16, context), right: Responsive.width(16, context)),
+    padding: EdgeInsets.only(
+        top: Responsive.height(8, context),
+        bottom: Responsive.height(8, context),
+        left: Responsive.width(16, context),
+        right: Responsive.width(16, context)),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(Responsive.height(50, context)),
       color: Color.fromRGBO(239, 239, 239, 1),
@@ -798,7 +874,9 @@ List<Widget> _buildContent(
         users?.isEmpty == true) {
       return [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: Responsive.width(28.0, context), vertical: Responsive.height(8.0, context)),
+          padding: EdgeInsets.symmetric(
+              horizontal: Responsive.width(28.0, context),
+              vertical: Responsive.height(8.0, context)),
           child:
               Text.rich(TextSpan(style: theme.textTheme.titleLarge, children: [
             TextSpan(text: "Nothing found for the query "),
@@ -817,31 +895,34 @@ List<Widget> _buildContent(
                     b.bodyShortDescription ?? "",
                     b.bodyImageURL ?? "",
                     Icons.people_outline_outlined,
-                    () => bodypage.BodyPage.navigateWith(context, exploreBloc.bloc,
-                        body: b,), context))
+                    () => bodypage.BodyPage.navigateWith(
+                          context,
+                          exploreBloc.bloc,
+                          body: b,
+                        ),
+                    context))
                 .toList() ??
             []) +
         (events
                 ?.map((e) => _buildListTile(
-                      e.eventID ?? "",
-                      e.eventName ?? "",
-                      e.getSubTitle(),
-                      e.eventImageURL ?? e.eventBodies?[0].bodyImageURL ?? "",
-                      Icons.event_outlined,
-                      () =>
-                          EventPage.navigateWith(context, exploreBloc.bloc, e),context
-                    ))
+                    e.eventID ?? "",
+                    e.eventName ?? "",
+                    e.getSubTitle(),
+                    e.eventImageURL ?? e.eventBodies?[0].bodyImageURL ?? "",
+                    Icons.event_outlined,
+                    () => EventPage.navigateWith(context, exploreBloc.bloc, e),
+                    context))
                 .toList() ??
             []) +
         (users
                 ?.map((u) => _buildListTile(
-                      u.userID ?? "",
-                      u.userName ?? "",
-                      u.userLDAPId ?? "",
-                      u.userProfilePictureUrl ?? "",
-                      Icons.person_outline_outlined,
-                      () => UserPage.navigateWith(context, exploreBloc.bloc, u),context
-                    ))
+                    u.userID ?? "",
+                    u.userName ?? "",
+                    u.userLDAPId ?? "",
+                    u.userProfilePictureUrl ?? "",
+                    Icons.person_outline_outlined,
+                    () => UserPage.navigateWith(context, exploreBloc.bloc, u),
+                    context))
                 .toList() ??
             []);
   } else {
@@ -865,7 +946,8 @@ Widget _buildListTile(String id, String title, String subtitle, String url,
         onTap: onClick,
         child: Row(children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(Responsive.height(18.0, context)),
+            borderRadius:
+                BorderRadius.circular(Responsive.height(18.0, context)),
             child: CachedNetworkImage(
               imageUrl: url,
               height: Responsive.height(63, context),
