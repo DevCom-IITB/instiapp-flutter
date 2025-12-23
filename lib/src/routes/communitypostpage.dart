@@ -17,8 +17,19 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:InstiApp/src/routes/communitydetails.dart';
 import 'package:InstiApp/src/utils/responsivenew.dart';
 // import 'package:share/share.dart';
-
 import '../bloc_provider.dart';
+
+class Responsive {
+  final BuildContext context;
+  final double baseWidth;  
+  final double baseHeight;
+
+  Responsive(this.context, {this.baseWidth = 411, this.baseHeight = 914});
+
+  double w(double px) => MediaQuery.of(context).size.width * (px / baseWidth);
+  double h(double px) => MediaQuery.of(context).size.height * (px / baseHeight);
+  double sp(double px) => w(px); // scale text with width
+}
 
 class CommunityPostPage extends StatefulWidget {
   final CommunityPost? initialCommunityPost;
@@ -66,6 +77,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Color.fromRGBO(255, 255, 255, 1),
     ));
@@ -126,14 +138,14 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      height: Responsive.height(52, context),
-                      width: Responsive.width(52, context),
+                      height: responsive.h(52),
+                      width: responsive.w(52),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(50),
                       ),
                       clipBehavior: Clip.antiAlias,
                       margin:
-                          EdgeInsets.only(left: Responsive.width(16, context), bottom: Responsive.height(2, context)),
+                          EdgeInsets.only(left: responsive.w(16), bottom: responsive.h(2)),
                       child: Material(
                         color: Colors.transparent,
                         shape: CircleBorder(),
@@ -141,8 +153,8 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                           onTap: () => Navigator.of(context).pop(),
                           child: SvgPicture.asset(
                             'assets/blogs/arrow-left.svg',
-                            height: Responsive.height(24, context),
-                            width: Responsive.width(24, context),
+                            height: responsive.h(24),
+                            width: responsive.w(24),
                             fit: BoxFit.none,
                           ),
                         ),
@@ -164,7 +176,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                               children: _buildCommentList(
                                   theme, communityPost!, bloc),
                             ),
-                            SizedBox(height: Responsive.height(150, context))
+                            SizedBox(height: responsive.h(150))
                           ],
                         ),
                       ),
@@ -172,13 +184,13 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                     Container(
                       color: Color.fromRGBO(246, 246, 246, 1),
                       padding:
-                          EdgeInsets.symmetric(horizontal: Responsive.width(10, context), vertical: Responsive.height(5, context)),
+                          EdgeInsets.symmetric(horizontal: responsive.w(10), vertical: responsive.h(5)),
                       child: Row(
                         children: [
                           Expanded(
                             child: Container(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(Responsive.width(50,context)),
+                                borderRadius: BorderRadius.circular(50),
                               ),
                               clipBehavior: Clip.antiAlias,
                               child: TextField(
@@ -186,7 +198,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                                 cursorColor: theme.textTheme.bodyMedium?.color,
                                 style: TextStyle(
                                   color: const Color.fromARGB(255, 0, 0, 0),
-                                  fontSize: Responsive.text(16,context),
+                                  fontSize: responsive.sp(16),
                                   fontFamily: 'DM Sans',
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -194,16 +206,16 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                                 decoration: InputDecoration(
                                   isDense: true,
                                   contentPadding: EdgeInsets.symmetric(
-                                      vertical: Responsive.height(10,context), horizontal: Responsive.width(10,context)),
+                                      vertical: responsive.h(10), horizontal: responsive.w(10)),
                                   border: OutlineInputBorder(
                                       borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.circular(Responsive.width(5,context))),
+                                      borderRadius: BorderRadius.circular(5)),
                                   enabledBorder: OutlineInputBorder(
                                       borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.circular(Responsive.width(5,context))),
+                                      borderRadius: BorderRadius.circular(5)),
                                   focusedBorder: OutlineInputBorder(
                                       borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.circular(Responsive.width(5,context))),
+                                      borderRadius: BorderRadius.circular(5)),
                                   filled: true,
                                   fillColor: theme.colorScheme.surface,
                                   hintText: communityPost!.id ==
@@ -213,7 +225,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                                   hintStyle: TextStyle(
                                     color:
                                         const Color.fromARGB(255, 48, 48, 48),
-                                    fontSize: Responsive.text(16,context),
+                                    fontSize: responsive.sp(16),
                                     fontFamily: 'DM Sans',
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -224,9 +236,9 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.only(left: Responsive.width(10,context)),
+                            margin: EdgeInsets.only(left: responsive.w(10)),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(Responsive.width(20,context)),
+                              borderRadius: BorderRadius.circular(20),
                               color: theme.colorScheme.surface,
                             ),
                             child: IconButton(
@@ -297,7 +309,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
       return [
         Container(
           child: CircularProgressIndicator(),
-          padding: EdgeInsets.symmetric(horizontal: Responsive.width(20,context), vertical: Responsive.height(20,context)),
+          padding: EdgeInsets.all(20),
         )
       ];
     }
@@ -347,6 +359,7 @@ class _CommentState extends State<Comment> {
   }
 
   Widget build(BuildContext context) {
+    final responsive = Responsive(context);
     if (comment!.deleted == true) {
       return Container();
     }
@@ -396,26 +409,26 @@ class _CommentState extends State<Comment> {
             ),
             padding: (widget.comment.threadRank! <= 2)
                 ? EdgeInsets.only(
-                    left: Responsive.width(16, context),
-                    right: Responsive.width(16, context),
-                    top: Responsive.height(16, context),
-                    bottom: Responsive.height(16, context),
+                    left: responsive.w(16),
+                    right: responsive.w(16),
+                    top: responsive.h(16),
+                    bottom: responsive.h(16),
                   )
                 : EdgeInsets.only(
-                    top: Responsive.height(16, context),
-                    bottom: Responsive.height(0, context),
+                    top: responsive.h(16),
+                    bottom: responsive.h(16),
                   ),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Container(
                 child: Image.network(
                   comment!.postedBy?.userProfilePictureUrl ?? '',
-                  width: Responsive.width(36, context),
-                  height: Responsive.height(36, context),
+                  width: responsive.w(36),
+                  height: responsive.h(36),
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Image.asset(
                     "assets/communities/image 214.png",
-                    height: Responsive.height(36, context),
-                    width: Responsive.width(36, context),
+                    height: responsive.h(36),
+                    width: responsive.w(36),
                   ),
                 ),
               ),
@@ -425,22 +438,22 @@ class _CommentState extends State<Comment> {
                 children: [
                   Row(
                     children: [
-                      SizedBox(width: Responsive.width(11, context)),
+                      SizedBox(width: responsive.w(11)),
                       Text(
                         comment!.postedBy?.userName ?? "Anonymous",
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: Responsive.text(18, context),
+                          fontSize: responsive.sp(18),
                           fontFamily: 'DM Sans',
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      SizedBox(width: Responsive.width(13, context)),
+                      SizedBox(width: responsive.w(13)),
                       Text(
                         timeToShow,
                         style: TextStyle(
                           color: const Color(0xFF444444),
-                          fontSize: Responsive.text(12, context),
+                          fontSize: responsive.sp(12),
                           fontFamily: 'DM Sans',
                           fontWeight: FontWeight.w400,
                         ),
@@ -499,7 +512,7 @@ class _CommentState extends State<Comment> {
                                       Icon(Icons.delete),
                                       SizedBox(
                                         // sized box with width 10
-                                        width: Responsive.width(10, context),
+                                        width: responsive.w(10),
                                       ),
                                       Text("Delete")
                                     ],
@@ -526,7 +539,7 @@ class _CommentState extends State<Comment> {
                                         : Icon(Icons.report_off),
                                     SizedBox(
                                       // sized box with width 10
-                                      width: Responsive.width(10, context),
+                                      width: responsive.w(10),
                                     ),
                                     !(comment?.hasUserReported ?? false)
                                         ? Text("Report")
@@ -554,14 +567,14 @@ class _CommentState extends State<Comment> {
                           tooltip: "More",
                           child: Container(
                               padding: EdgeInsets.all(0),
-                              height: Responsive.height(23, context),
-                              width: Responsive.width(23, context),
+                              height: responsive.h(23),
+                              width: responsive.w(23),
                               decoration: BoxDecoration(
                                 color: Color.fromRGBO(246, 246, 246, 1),
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: Icon(
-                                size: Responsive.text(18, context),
+                                size: 18,
                                 color: Colors.black,
                                 Icons.more_vert,
                               )),
@@ -569,19 +582,19 @@ class _CommentState extends State<Comment> {
                       )
                     ],
                   ),
-                  SizedBox(height: Responsive.height(4, context)),
+                  SizedBox(height: responsive.h(4)),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         padding: EdgeInsets.only(
-                            left: Responsive.width(11, context),
-                            right: Responsive.width(20, context)),
+                            left: responsive.w(11),
+                            right: responsive.w(20)),
                         child: SelectableLinkify(
                           text: comment!.content ?? "",
                           style: TextStyle(
                             color: const Color(0xFF0F1620),
-                            fontSize: Responsive.text(16, context),
+                            fontSize: responsive.sp(16),
                             fontFamily: 'DM Sans',
                             fontWeight: FontWeight.w400,
                           ),
@@ -595,10 +608,10 @@ class _CommentState extends State<Comment> {
                           },
                         ),
                       ),
-                      SizedBox(height: Responsive.height(8, context)),
+                      SizedBox(height: responsive.h(8)),
                       Container(
                           margin: EdgeInsets.only(
-                              left: Responsive.width(11, context)),
+                              left: responsive.w(11)),
                           child: _buildFooter(theme, bloc, comment!)),
                       ..._buildCommentList(theme, comment!)
                     ],
@@ -797,15 +810,16 @@ class _CommentState extends State<Comment> {
   }
 
   List<Widget> _buildCommentList(ThemeData theme, CommunityPost communityPost) {
+    final responsive = Responsive(context);
     if (showingComments) {
       if (loading) {
         return [
           Container(
             alignment: Alignment.center,
             child: Container(
-              padding: EdgeInsets.all(Responsive.width(5, context)),
-              height: Responsive.height(20, context),
-              width: Responsive.width(20, context),
+              padding: EdgeInsets.symmetric(horizontal: responsive.w(5), vertical: responsive.h(5)),
+              height: responsive.h(20),
+              width: responsive.w(20),
               child: CircularProgressIndicator(
                 strokeWidth: 2,
               ),
@@ -842,7 +856,7 @@ class _CommentState extends State<Comment> {
                 //   ),
                 //   flex: 1,
                 // ),
-                SizedBox(width: Responsive.width(10, context)),
+                SizedBox(width: responsive.w(10)),
                 Expanded(
                   flex: 3,
                   child: Text(
@@ -874,11 +888,12 @@ class _CommentState extends State<Comment> {
 
   Widget _buildFooter(
       ThemeData theme, InstiAppBloc bloc, CommunityPost communityPost) {
+        final responsive = Responsive(context);
     int numReactions = communityPost.reactionCount?.values
             .reduce((sum, element) => sum + element) ??
         0;
     return Container(
-      padding: EdgeInsets.only(left: Responsive.width(16, context)),
+      padding: EdgeInsets.only(left: responsive.w(16)),
       child: Row(
         children: [
           if (communityPost.threadRank! <= 3) ...[
@@ -888,20 +903,20 @@ class _CommentState extends State<Comment> {
               },
               child: SvgPicture.asset(
                 'assets/communities/corner-down-left.svg',
-                height: Responsive.height(19.92, context),
-                width: Responsive.width(19.92, context),
+                height:responsive.h(19.92),
+                width: responsive.w(19.92),
               ),
               // SizedBox(width: 3),
               // Text((communityPost.commentsCount ?? 0).toString(),
               //     style: theme.textTheme.bodySmall),
             ),
-            SizedBox(width: Responsive.width(12, context)),
+            SizedBox(width: responsive.w(12)),
             Container(
-              height: Responsive.height(25, context),
-              width: Responsive.width(1, context),
+              height: responsive.h(25),
+              width: responsive.w(1),
               color: Color.fromRGBO(217, 217, 217, 1),
             ),
-            SizedBox(width: Responsive.width(12, context)),
+            SizedBox(width: responsive.w(12)),
           ],
           PopupMenuButton<int>(
             onSelected: (val) async {
@@ -928,9 +943,9 @@ class _CommentState extends State<Comment> {
             itemBuilder: (BuildContext context) {
               return [
                 new PopupMenuWidget(
-                  height: Responsive.height(20, context),
+                  height: responsive.h(20),
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: Responsive.width(5, context)),
+                    padding: EdgeInsets.symmetric(horizontal: responsive.w(5)),
                     child: new Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: emojis
@@ -943,7 +958,7 @@ class _CommentState extends State<Comment> {
                                   : Colors.transparent,
                               child: InkWell(
                                 onTap: () => Navigator.of(context).pop(e.key),
-                                child: Image.asset(e.value, width: Responsive.width(30, context)),
+                                child: Image.asset(e.value, width: responsive.w(30)),
                               ),
                             ),
                           )
@@ -956,14 +971,14 @@ class _CommentState extends State<Comment> {
             child: Row(children: [
               Icon(
                 Icons.add_reaction_outlined,
-                size: Responsive.text(17, context),
+                size: 17,
               ),
-              SizedBox(width: Responsive.width(6, context)),
+              SizedBox(width: responsive.w(6)),
               numReactions > 0
                   ? Container(
                       padding: EdgeInsets.symmetric(
-                          horizontal: Responsive.width(2.5, context),
-                          vertical: Responsive.height(2, context)),
+                          horizontal: responsive.w(2.5),
+                          vertical: responsive.h(2)),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(100),
                         color: Color.fromRGBO(239, 239, 239, 1),
@@ -977,20 +992,20 @@ class _CommentState extends State<Comment> {
                                               e.key.toString()] ??
                                           0) >
                                       0
-                                  ? Image.asset(e.value, width: Responsive.width(20, context))
+                                  ? Image.asset(e.value, width: 20)
                                   : Container(),
                             )
                             .toList(),
                       ),
                     )
                   : Container(),
-              SizedBox(width: Responsive.width(6, context)),
+              SizedBox(width: responsive.w(6)),
               numReactions > 0
                   ? Text(
                       numReactions.toString(),
                       style: TextStyle(
                         color: const Color(0xFF444444),
-                        fontSize: Responsive.text(12, context),
+                        fontSize: responsive.sp(12),
                         fontFamily: 'DM Sans',
                         fontWeight: FontWeight.w400,
                       ),

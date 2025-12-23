@@ -19,6 +19,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/responsivenew.dart';
 
+
 class FeedPage extends StatefulWidget {
   @override
   _FeedPageState createState() => _FeedPageState();

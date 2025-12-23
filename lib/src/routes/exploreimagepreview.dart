@@ -59,7 +59,7 @@ class _ExploreImagePreviewState extends State<ExploreImagePreview> {
         }, 
         builder: (context, index) {
           return PhotoViewGalleryPageOptions(
-            //imageProvider: AssetImage(widget.imageUrls[index]),
+            // imageProvider: AssetImage(widget.imageUrls[index]),
             imageProvider: NetworkImage(widget.imageUrls[index]),
             minScale: PhotoViewComputedScale.contained,
             maxScale: PhotoViewComputedScale.covered * 4,

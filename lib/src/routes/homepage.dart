@@ -28,7 +28,7 @@ import 'dart:io' show Platform;
 
 class Responsive {
   final BuildContext context;
-  final double baseWidth;  
+  final double baseWidth;
   final double baseHeight;
 
   Responsive(this.context, {this.baseWidth = 411, this.baseHeight = 914});
@@ -50,12 +50,17 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   Constants myConstants = Constants();
 
   List<String> meals = ['Breakfast', 'Lunch', 'Snacks', 'Dinner'];
-  List<String> mealTime = ['7:30 AM - 10:00 AM','12:30 PM - 2:00 PM','4:30 PM - 6:00 PM','7:30 PM - 10:00 PM'];
+  List<String> mealTime = [
+    '7:30 AM - 10:00 AM',
+    '12:30 PM - 2:00 PM',
+    '4:30 PM - 6:00 PM',
+    '7:30 PM - 10:00 PM'
+  ];
   List<TimeOfDay> mealEndTimes = [
-    TimeOfDay(hour: 10, minute: 0),  // Breakfast ends at 10:00 AM
-    TimeOfDay(hour: 14, minute: 0),  // Lunch ends at 2:00 PM (14:00)
-    TimeOfDay(hour: 18, minute: 0),  // Snacks ends at 6:00 PM (18:00)
-    TimeOfDay(hour: 22, minute: 0),  // Dinner ends at 10:00 PM (22:00)
+    TimeOfDay(hour: 10, minute: 0), // Breakfast ends at 10:00 AM
+    TimeOfDay(hour: 14, minute: 0), // Lunch ends at 2:00 PM (14:00)
+    TimeOfDay(hour: 18, minute: 0), // Snacks ends at 6:00 PM (18:00)
+    TimeOfDay(hour: 22, minute: 0), // Dinner ends at 10:00 PM (22:00)
   ];
 
   String _selectedHostel='1';
@@ -91,36 +96,40 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
   String _mealString(List<Hostel> hostels) {
     if (_selectedHostel.isEmpty) return 'No menu';
-    
+
     try {
       // 1. pick hostel
-      final hostel = hostels.firstWhere(
-        (h) => h.shortName == _selectedHostel, 
-        orElse: () => Hostel()
-      );
-      
+      final hostel = hostels.firstWhere((h) => h.shortName == _selectedHostel,
+          orElse: () => Hostel());
+
       // 2. pick day (Mon=1 … Sun=7)
       final dayEntry = HostelMess.dayToName.entries.firstWhere(
-        (e) => e.value.startsWith(_selectedDay), 
-        orElse: () => const MapEntry(1,'Monday')
-      );
+          (e) => e.value.startsWith(_selectedDay),
+          orElse: () => const MapEntry(1, 'Monday'));
       final dayIndex = dayEntry.key;
-      
-      final mess = hostel.mess?.firstWhere(
-        (m) => m.day == dayIndex, 
-        orElse: () => HostelMess()
-      );
-      
+
+      final mess = hostel.mess
+          ?.firstWhere((m) => m.day == dayIndex, orElse: () => HostelMess());
+
       // 3. pick meal
       String? meal;
       switch (selectedMeal) {
-        case 0: meal = mess?.breakfast; break;
-        case 1: meal = mess?.lunch; break;
-        case 2: meal = mess?.snacks; break;
-        case 3: meal = mess?.dinner; break;
-        default: meal = null;
+        case 0:
+          meal = mess?.breakfast;
+          break;
+        case 1:
+          meal = mess?.lunch;
+          break;
+        case 2:
+          meal = mess?.snacks;
+          break;
+        case 3:
+          meal = mess?.dinner;
+          break;
+        default:
+          meal = null;
       }
-      
+
       return _formatMeal(meal);
     } catch (e) {
       return 'Menu not available';
@@ -238,11 +247,11 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    
+
     if (firstBuild) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final bloc = BlocProvider.of(context)!.bloc;
-        
+
         // Get user's hostel from profile if available
         final userHostel = bloc.currSession?.profile?.hostel;
         if (userHostel != null && userHostel.isNotEmpty) {
@@ -250,11 +259,11 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             _selectedHostel = userHostel.replaceAll('H-', '');
           });
         }
-        
+
         // Update hostels and generate QR
         bloc.updateHostels();
         generateQR();
-        
+
         setState(() {
           firstBuild = false;
         });
@@ -264,11 +273,11 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
   int getCurrentMealSlot() {
     final now = TimeOfDay.fromDateTime(DateTime.now());
-    
+
     // Find the current or next meal
     for (int i = 0; i < mealEndTimes.length; i++) {
       final end = mealEndTimes[i];
-      
+
       if (_isBeforeOrEqual(now, end)) {
         return i;
       }
@@ -283,7 +292,15 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
   String getCurrentDay() {
     final weekdayIndex = DateTime.now().weekday; // 1=Mon ... 7=Sun
-    return ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][weekdayIndex-1];
+    return [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ][weekdayIndex - 1];
   }
 
   @override
@@ -344,37 +361,36 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   
   void _openFilterBottomSheet(List<Hostel> hostels){
     final responsive = Responsive(context);
-    String tempSelectedDay=_selectedDay;
-    String tempSelectedHostel=_selectedHostel;
+    String tempSelectedDay = _selectedDay;
+    String tempSelectedHostel = _selectedHostel;
     showModalBottomSheet(
-      context: context, 
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context){
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setModalState) {
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setModalState) {
             return FractionallySizedBox(
               heightFactor: 0.6632,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Color(0xFFF6F6F6),
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(16)
-                  )
-                ),
+                    color: Color(0xFFF6F6F6),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(16))),
                 // height: MediaQuery.of(context).size.height * responsive.h(0.6632),
                 // height: responsive.h(0.6632),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: responsive.w(16),vertical: responsive.h(24)),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: responsive.w(16),
+                          vertical: responsive.h(24)),
                       child: Text(
                         "Mess Menu for...",
                         style: TextStyle(
-                          fontSize: responsive.sp(20),
-                          fontWeight: FontWeight.w700
-                        ),
+                            fontSize: responsive.sp(20),
+                            fontWeight: FontWeight.w700),
                       ),
                     ),
                     Container(
@@ -389,29 +405,29 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                             child: Stack(
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(16), responsive.w(84), responsive.h(15)),
+                                  padding: EdgeInsets.fromLTRB(
+                                      responsive.w(16),
+                                      responsive.h(16),
+                                      responsive.w(84),
+                                      responsive.h(15)),
                                   child: Text(
                                     "Day",
                                     style: TextStyle(
-                                      fontSize: responsive.sp(16),
-                                      fontWeight: FontWeight.w500
-                                    ),
+                                        fontSize: responsive.sp(16),
+                                        fontWeight: FontWeight.w500),
                                   ),
                                 ),
                                 Positioned(
-                                  left: responsive.w(0),
-                                  right: responsive.w(124),
-                                  child: Container(
-                                    width: responsive.w(4),
-                                    height: responsive.h(52),
-                                    decoration: BoxDecoration(
-                                      color: myConstants.instiappBlue,
-                                      borderRadius: BorderRadius.horizontal(
-                                        right: Radius.circular(5)
-                                      )
-                                    ),
-                                  )
-                                )
+                                    left: responsive.w(0),
+                                    right: responsive.w(124),
+                                    child: Container(
+                                      width: responsive.w(4),
+                                      height: responsive.h(52),
+                                      decoration: BoxDecoration(
+                                          color: myConstants.instiappBlue,
+                                          borderRadius: BorderRadius.horizontal(
+                                              right: Radius.circular(5))),
+                                    ))
                               ],
                             ),
                           ),
@@ -420,22 +436,24 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                             height: responsive.h(52),
                             color: myConstants.instiappGrey,
                             child: Padding(
-                              padding: EdgeInsets.fromLTRB(responsive.w(11), responsive.h(12), responsive.w(5), responsive.h(10)),
+                              padding: EdgeInsets.fromLTRB(
+                                  responsive.w(11),
+                                  responsive.h(12),
+                                  responsive.w(5),
+                                  responsive.h(10)),
                               child: Row(
                                 children: [
-                                  for(int i=0;i<daysList.length;i++) ...[
-                                    dayContainer(
-                                      daysList[i],
-                                      tempSelectedDay == daysKeys[i],
-                                      (){
-                                        setModalState((){
-                                          tempSelectedDay=daysKeys[i];
-                                        });
-                                      }
-                                      ),
-                                    SizedBox(width: responsive.w(8),)
+                                  for (int i = 0; i < daysList.length; i++) ...[
+                                    dayContainer(daysList[i],
+                                        tempSelectedDay == daysKeys[i], () {
+                                      setModalState(() {
+                                        tempSelectedDay = daysKeys[i];
+                                      });
+                                    }),
+                                    SizedBox(
+                                      width: responsive.w(8),
+                                    )
                                   ]
-                                    
                                 ],
                               ),
                             ),
@@ -443,7 +461,9 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                         ],
                       ),
                     ),
-                    SizedBox(height: responsive.h(8),),
+                    SizedBox(
+                      height: responsive.h(8),
+                    ),
                     Container(
                       width: responsive.w(412),
                       height: responsive.h(348),
@@ -456,44 +476,44 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                                 height: responsive.h(52),
                                 color: myConstants.instiappGrey,
                                 child: Stack(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(16), responsive.w(51), responsive.h(15)),
-                                  child: Text(
-                                    "Hostel",
-                                    style: TextStyle(
-                                      fontSize: responsive.sp(16),
-                                      fontWeight: FontWeight.w500
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.fromLTRB(
+                                          responsive.w(16),
+                                          responsive.h(16),
+                                          responsive.w(51),
+                                          responsive.h(15)),
+                                      child: Text(
+                                        "Hostel",
+                                        style: TextStyle(
+                                            fontSize: responsive.sp(16),
+                                            fontWeight: FontWeight.w500),
+                                      ),
                                     ),
-                                  ),
+                                    Positioned(
+                                        left: responsive.w(0),
+                                        right: responsive.w(120),
+                                        child: Container(
+                                          width: responsive.w(4),
+                                          height: responsive.h(52),
+                                          decoration: BoxDecoration(
+                                              color: myConstants.instiappBlue,
+                                              borderRadius:
+                                                  BorderRadius.horizontal(
+                                                      right:
+                                                          Radius.circular(5))),
+                                        ))
+                                  ],
                                 ),
-                                Positioned(
-                                  left: responsive.w(0),
-                                  right: responsive.w(120),
-                                  child: Container(
-                                    width: responsive.w(4),
-                                    height: responsive.h(52),
-                                    decoration: BoxDecoration(
-                                      color: myConstants.instiappBlue,
-                                      borderRadius: BorderRadius.horizontal(
-                                        right: Radius.circular(5)
-                                      )
-                                    ),
-                                  )
-                                )
-                              ],
-                            ),
                               ),
                               Container(
                                 width: responsive.w(125),
                                 height: responsive.h(296),
-                                
+
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFF6F6F6),
-                                  borderRadius: BorderRadius.horizontal(
-                                    right: Radius.circular(16)
-                                  )
-                                ),
+                                    color: Color(0xFFF6F6F6),
+                                    borderRadius: BorderRadius.horizontal(
+                                        right: Radius.circular(16))),
                                 //child: Text("data"),
                               )
                             ],
@@ -501,21 +521,24 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                           Container(
                             width: responsive.w(286),
                             height: responsive.h(348),
-                            padding: EdgeInsets.only(top: responsive.h(16),left: responsive.w(20)),
+                            padding: EdgeInsets.only(
+                                top: responsive.h(16), left: responsive.w(20)),
                             color: myConstants.instiappGrey,
                             child: SingleChildScrollView(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  ...hostels.map((h){
+                                  ...hostels.map((h) {
                                     final value = h.shortName!;
-                                    final name=(value =='tansa'||value =='qip')
-                                    ? value
-                                    : 'Hostel ${value}';
-                                    final isSelected = tempSelectedHostel == h.shortName;
+                                    final name =
+                                        (value == 'tansa' || value == 'qip')
+                                            ? value
+                                            : 'Hostel ${value}';
+                                    final isSelected =
+                                        tempSelectedHostel == h.shortName;
                                     // return RadioListTile(
-                                    //   value: value, 
-                                    //   groupValue: _selectedHostel, 
+                                    //   value: value,
+                                    //   groupValue: _selectedHostel,
                                     //   onChanged: (newValue){
                                     //     setModalState((){
                                     //       _selectedHostel=newValue as String;
@@ -535,59 +558,78 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                                     return Column(
                                       children: [
                                         GestureDetector(
-                                          onTap: (){
-                                            setModalState((){
-                                               tempSelectedHostel = h.shortName!;
+                                          onTap: () {
+                                            setModalState(() {
+                                              tempSelectedHostel = h.shortName!;
                                             });
                                           },
                                           child: Row(
                                             children: [
                                               Container(
-                                                width: responsive.w(16),
-                                                height: responsive.h(16),
-                                                
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  border: Border.all(
-                                                    color: Color(0xFFD2D5DA),
-                                                    width: responsive.w(1.5)
-                                                  )
-                                                ),
-                                                child: isSelected
-                                                ? Center(
-                                                  child: Container(
-                                                    height: responsive.h(14),
-                                                    width: responsive.w(14),
-                                                    decoration: BoxDecoration(
+                                                  width: responsive.w(16),
+                                                  height: responsive.h(16),
+                                                  decoration: BoxDecoration(
                                                       shape: BoxShape.circle,
-                                                      color: isSelected ? myConstants.instiappBlue: Colors.transparent,
-                                                    ),
-                                                    child: Center(
-                                                      child: Container(
-                                                        height: responsive.h(6),
-                                                        width: responsive.w(6),
-                                                        decoration: BoxDecoration(
-                                                          shape: BoxShape.circle,
-                                                          color: isSelected ? Colors.white: Colors.transparent,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                                : null
+                                                      border: Border.all(
+                                                          color:
+                                                              Color(0xFFD2D5DA),
+                                                          width: responsive
+                                                              .w(1.5))),
+                                                  child: isSelected
+                                                      ? Center(
+                                                          child: Container(
+                                                            height: responsive
+                                                                .h(14),
+                                                            width: responsive
+                                                                .w(14),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              color: isSelected
+                                                                  ? myConstants
+                                                                      .instiappBlue
+                                                                  : Colors
+                                                                      .transparent,
+                                                            ),
+                                                            child: Center(
+                                                              child: Container(
+                                                                height:
+                                                                    responsive
+                                                                        .h(6),
+                                                                width:
+                                                                    responsive
+                                                                        .w(6),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  color: isSelected
+                                                                      ? Colors
+                                                                          .white
+                                                                      : Colors
+                                                                          .transparent,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : null),
+                                              SizedBox(
+                                                width: responsive.w(12),
                                               ),
-                                              SizedBox(width: responsive.w(12),),
                                               Text(
                                                 name,
                                                 style: TextStyle(
-                                                  fontWeight: FontWeight.w500
-                                                ),
+                                                    fontWeight:
+                                                        FontWeight.w500),
                                               ),
                                             ],
                                           ),
                                         ),
-                                        
-                                        SizedBox(height: responsive.h(16),)
+                                        SizedBox(
+                                          height: responsive.h(16),
+                                        )
                                       ],
                                     );
                                   }).toList()
@@ -605,33 +647,31 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           GestureDetector(
-                            onTap: (){
+                            onTap: () {
                               Navigator.pop(context);
                               setState(() {
-                                _selectedDay=tempSelectedDay;
-                                _selectedHostel=tempSelectedHostel;
+                                _selectedDay = tempSelectedDay;
+                                _selectedHostel = tempSelectedHostel;
                               });
                             },
                             child: Container(
                               height: responsive.h(60),
                               width: responsive.w(165),
                               decoration: BoxDecoration(
-                                image: const DecorationImage(
+                                  image: const DecorationImage(
                                     image: AssetImage(
-                                      "assets/buynsell/filterbutton.png"),
-                                      fit: BoxFit.cover,
-                                ),
-                                color: myConstants.instiappDark,
-                                borderRadius: BorderRadius.circular(50)
-                              ),
+                                        "assets/buynsell/filterbutton.png"),
+                                    fit: BoxFit.cover,
+                                  ),
+                                  color: myConstants.instiappDark,
+                                  borderRadius: BorderRadius.circular(50)),
                               child: Center(
                                 child: Text(
                                   "Apply",
                                   style: TextStyle(
-                                    fontSize: responsive.sp(18),
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white
-                                  ),
+                                      fontSize: responsive.sp(18),
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -643,10 +683,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                 ),
               ),
             );
-          }
-        );
-      }
-      );
+          });
+        });
   }
 
   Widget dayContainer(String day,bool isSelected, VoidCallback onTap){
@@ -656,19 +694,18 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       child: Container(
         height: responsive.h(30),
         width: responsive.w(30),
-        padding: EdgeInsets.symmetric(vertical: responsive.h(3),horizontal: responsive.w(7)),
+        padding: EdgeInsets.symmetric(
+            vertical: responsive.h(3), horizontal: responsive.w(7)),
         decoration: BoxDecoration(
-          color: isSelected? myConstants.instiappBlue:Colors.white,
-          borderRadius: BorderRadius.circular(8)
-        ),
+            color: isSelected ? myConstants.instiappBlue : Colors.white,
+            borderRadius: BorderRadius.circular(8)),
         child: Center(
           child: Text(
             day,
             style: TextStyle(
-              fontSize: responsive.w(18),
-              fontWeight: FontWeight.w600,
-              color: isSelected? Colors.white:Colors.black
-            ),
+                fontSize: responsive.w(18),
+                fontWeight: FontWeight.w600,
+                color: isSelected ? Colors.white : Colors.black),
           ),
         ),
       ),
@@ -716,48 +753,46 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                     Text(
                       services_icon["Subtitle"],
                       style: TextStyle(
-                        color: Colors.grey[700],
-                        fontSize: responsive.sp(11),
-                        fontWeight: FontWeight.w500
-                      ),
+                          color: Colors.grey[700],
+                          fontSize: responsive.sp(11),
+                          fontWeight: FontWeight.w500),
                     )
                   ],
                 )),
-            services_icon["Title"]=="Buy & Sell"? Positioned(
-              bottom: responsive.h(12),
-              left: responsive.w(12),
-              child: Container(
-                width: responsive.w(37), 
-                height: responsive.h(16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: myConstants.instiappBlue
-                ),
-                child: Center(
-                  child: Text(
-                    "New!",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: responsive.sp(10),
-                    ),
-                  ),
-                ),
-              )
-            )
-            : SizedBox(),
+            services_icon["Title"] == "Buy & Sell"
+                ? Positioned(
+                    bottom: responsive.h(12),
+                    left: responsive.w(12),
+                    child: Container(
+                      width: responsive.w(37),
+                      height: responsive.h(16),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: myConstants.instiappBlue),
+                      child: Center(
+                        child: Text(
+                          "New!",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: responsive.sp(10),
+                          ),
+                        ),
+                      ),
+                    ))
+                : SizedBox(),
             Positioned(
-              right: services_icon["Positions"][2],
-              left:services_icon["Positions"][0],
-              bottom: services_icon["Positions"][3],
-              top: services_icon["Positions"][1],
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: services_icon["Title"]=="Quick Links"? Image.asset(services_icon["Path"]):SvgPicture.asset(
-                    services_icon["Path"],
-                    
-                  ),
-              )
-              ),
+                right: services_icon["Positions"][2],
+                left: services_icon["Positions"][0],
+                bottom: services_icon["Positions"][3],
+                top: services_icon["Positions"][1],
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: services_icon["Title"] == "Quick Links"
+                      ? Image.asset(services_icon["Path"])
+                      : SvgPicture.asset(
+                          services_icon["Path"],
+                        ),
+                )),
             // Positioned(
             //     left: 95,
             //     top: 12,
@@ -791,7 +826,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       elevation: 0,
       flexibleSpace: SafeArea(
           child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: responsive.w(16), vertical: responsive.h(0)),
+        padding: EdgeInsets.symmetric(
+            horizontal: responsive.w(16), vertical: responsive.h(0)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -799,14 +835,17 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             StreamBuilder<Session?>(
               stream: bloc.session,
               builder: (context, snapshot) {
-                final isLoggedIn = snapshot.hasData && snapshot.data?.profile != null;
+                final isLoggedIn =
+                    snapshot.hasData && snapshot.data?.profile != null;
                 final user = snapshot.data?.profile;
-                
+
                 Widget avatarContent;
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  avatarContent = Center(child: CircularProgressIndicator(strokeWidth: 2));
+                  avatarContent =
+                      Center(child: CircularProgressIndicator(strokeWidth: 2));
                 } else if (snapshot.hasError) {
-                  avatarContent = Icon(Icons.error_outline, size: 28, color: Colors.red);
+                  avatarContent =
+                      Icon(Icons.error_outline, size: 28, color: Colors.red);
                 } else if (isLoggedIn) {
                   avatarContent = ClipRRect(
                     borderRadius: BorderRadius.circular(22),
@@ -829,7 +868,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                     color: Colors.red,
                   );
                 }
-                
+
                 return InkWell(
                   borderRadius: BorderRadius.circular(22),
                   onTap: () {
@@ -840,7 +879,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                     }
                   },
                   child: Container(
-                    width: responsive.w(52),
+                    width: responsive.h(52),
                     height: responsive.h(52),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(22),
@@ -859,13 +898,13 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
               },
             ),
             Container(
-              width: responsive.w(52),
+              width: responsive.h(52),
               height: responsive.h(52),
               child: Stack(
                 children: [
                   Container(
                     height: responsive.h(52),
-                    width: responsive.w(52),
+                    width: responsive.h(52),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(22),
                         image: DecorationImage(
@@ -877,13 +916,13 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
               ),
             ),
             Container(
-              width: responsive.w(52),
+              width: responsive.h(52),
               height: responsive.h(52),
               child: Stack(
                 children: [
                   Container(
-                    height: responsive.h(52),
-                    width: responsive.w(52),
+                      height: responsive.h(52),
+                      width: responsive.w(52),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(22),
                           color: myConstants.instiappGrey),
@@ -892,12 +931,11 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                           GestureDetector(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      NotificationsPage()));
+                                  builder: (context) => NotificationsPage()));
                             },
                             child: Center(
                               child: Container(
-                                width: responsive.w(24),
+                                width: responsive.h(24),
                                 height: responsive.h(24),
                                 child: SvgPicture.asset(
                                   'assets/homepage/icons/bell.svg',
@@ -921,15 +959,13 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     var bloc = BlocProvider.of(context)!.bloc;
     return Scaffold(
       backgroundColor: myConstants.instiappWhite,
-      
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(52),
-        child: customAppBar()
-        ),
+          preferredSize: Size.fromHeight(responsive.h(52)),
+          child: customAppBar()),
       body: Stack(
         children: [
           SingleChildScrollView(
-            padding: EdgeInsets.only(bottom: responsive.h(100)),
+            padding: EdgeInsets.only(bottom: responsive.h(115)),
             //margin: EdgeInsets.only(left: 10,right: 0),
             child: Column(
               children: [
@@ -945,24 +981,26 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                 Stack(
                   children: [
                     StreamBuilder<UnmodifiableListView<Hostel>>(
-                    stream: bloc.hostels,
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                    final hostels = snapshot.data!;
-                    return Padding(
-                      padding: EdgeInsets.only(left: responsive.w(21),right: responsive.w(22)),
-                      child: qrClosed(hostels),
-                    );
-                    },
+                      stream: bloc.hostels,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        final hostels = snapshot.data!;
+                        return Padding(
+                          padding: EdgeInsets.only(
+                              left: responsive.w(21), right: responsive.w(22)),
+                          child: qrClosed(hostels),
+                        );
+                      },
                     ),
                     AnimatedSwitcher(
                       duration: Duration(milliseconds: 400),
                       transitionBuilder: (child, animation) {
                         final offsetAnimation = Tween<Offset>(
                           begin: Offset(0, 0.9), // start below
-                          end: Offset(0, 0),   // end at its normal position
+                          end: Offset(0, 0), // end at its normal position
                         ).animate(animation);
 
                         return ClipRect(
@@ -976,19 +1014,23 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                           ? Padding(
                               key: ValueKey('qrOpen'),
                               padding: EdgeInsets.only(
-                                  left: responsive.w(14), right: responsive.w(13)),
+                                  left: responsive.w(14),
+                                  right: responsive.w(13)),
                               child: qrOpen(
-                                  loading: loading, error: error, qrString: qrString),
+                                  loading: loading,
+                                  error: error,
+                                  qrString: qrString),
                             )
                           : SizedBox.shrink(key: ValueKey('empty')),
                     ),
                   ],
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: responsive.w(21),right: responsive.w(22)),
+                  padding: EdgeInsets.only(
+                      left: responsive.w(21), right: responsive.w(22)),
                   child: servicesWidget(),
                 ),
-              ], 
+              ],
             ),
           ),
         ],
@@ -1000,73 +1042,64 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     final responsive = Responsive(context);
     return Column(
       children: [
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Services',
-                        style: TextStyle(
-                          fontSize: responsive.sp(20),
-                          fontFamily: 'DM Sans',
-                          fontWeight: FontWeight.w700
-                        ),
-                        ),
-                    ],
-                ),
-                SizedBox(height: responsive.h(16)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    services("Buy & Sell","bns_new",
-                    {
-                      "Title": "Buy & Sell",
-                      "Path": 'assets/homepage/icons/bns_new.svg',
-                      "Subtitle": "Deals made easy",
-                      // "Icon Height": 75.67,
-                      // "Icon Width": 90.8,
-                      "Positions": [97.0,14.5,-11.0,-7.8,-7.81]
-                    }
-                    ),
-                    SizedBox(width: responsive.w(8)),
-                    services("Maps","maps_new",
-                    {
-                      "Title": "Maps",
-                      "Path": 'assets/homepage/icons/maps_new.svg',
-                      "Subtitle": "Navigate Insti",
-                      // "Icon Height": 72.0,
-                      // "Icon Width": 76.0,
-                      "Positions": [111.0,28.0,-1.0,-6.0,0.0]
-                    }
-                    )
-                  ],
-                ),
-                SizedBox(height: responsive.h(8)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    services("Blogs","blogs_new",
-                    {
-                      "Title": "Blogs",
-                      "Path": 'assets/homepage/icons/blogs_new.svg',
-                      "Subtitle": "",
-                      // "Icon Height": 77.54,
-                      // "Icon Width": 72.0,
-                      "Positions": [107.46,23.0,-1.0,-1.0,0.0]
-                    }
-                    ),
-                    SizedBox(width: responsive.w(8)),
-                    services("Quick Links","blogs_new",
-                    {
-                      "Title": "Quick Links",
-                      "Path": 'assets/homepage/images/quicklinks_new.png',
-                      "Subtitle": "Useful Insti Links",
-                      // "Icon Height": 77.7,
-                      // "Icon Width": 80.18,
-                      "Positions": [107.72,16.52,-6.0,-6.5,4.71]
-                    }
-                    )
-                  ],
-                ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              'Services',
+              style: TextStyle(
+                  fontSize: responsive.sp(20),
+                  fontFamily: 'DM Sans',
+                  fontWeight: FontWeight.w700),
+            ),
+          ],
+        ),
+        SizedBox(height: responsive.h(16)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            services("Buy & Sell", "bns_new", {
+              "Title": "Buy & Sell",
+              "Path": 'assets/homepage/icons/bns_new.svg',
+              "Subtitle": "Deals made easy",
+              // "Icon Height": 75.67,
+              // "Icon Width": 90.8,
+              "Positions": [97.0, 14.5, -11.0, -7.8, -7.81]
+            }),
+            SizedBox(width: responsive.w(8)),
+            services("Maps", "maps_new", {
+              "Title": "Maps",
+              "Path": 'assets/homepage/icons/maps_new.svg',
+              "Subtitle": "Navigate Insti",
+              // "Icon Height": 72.0,
+              // "Icon Width": 76.0,
+              "Positions": [111.0, 28.0, -1.0, -6.0, 0.0]
+            })
+          ],
+        ),
+        SizedBox(height: responsive.h(8)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            services("Blogs", "blogs_new", {
+              "Title": "Blogs",
+              "Path": 'assets/homepage/icons/blogs_new.svg',
+              "Subtitle": "",
+              // "Icon Height": 77.54,
+              // "Icon Width": 72.0,
+              "Positions": [107.46, 23.0, -1.0, -1.0, 0.0]
+            }),
+            SizedBox(width: responsive.w(8)),
+            services("Quick Links", "blogs_new", {
+              "Title": "Quick Links",
+              "Path": 'assets/homepage/images/quicklinks_new.png',
+              "Subtitle": "Useful Insti Links",
+              // "Icon Height": 77.7,
+              // "Icon Width": 80.18,
+              "Positions": [107.72, 16.52, -6.0, -6.5, 4.71]
+            })
+          ],
+        ),
       ],
     );
   }
@@ -1080,119 +1113,122 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     return Stack(
       children: [
         Center(
-          child: SvgPicture.asset(
-            'assets/homepage/icons/bigborder.svg',
-            height: responsive.h(380),
-            width: responsive.w(382),
-            fit: BoxFit.fill
-            ),
+          child: SvgPicture.asset('assets/homepage/icons/bigborder.svg',
+              height: responsive.h(380),
+              width: responsive.w(382),
+              fit: BoxFit.fill
+              ),
         ),
         Container(
-        width: responsive.w(380),
-        height: responsive.h(380),
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(16), responsive.w(16), responsive.h(0)),
-          child: Column(
-            //mainAxisAlignment: MainAxisAlignment.start,            
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      generateQR();
-                    },
-                    child: Container(
-                      width: responsive.w(50),
-                      height: responsive.h(50),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFEBEBEB),
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: Center(
-                        child: SizedBox(
-                          width: responsive.w(24),
-                          height: responsive.h(24),
-                          child: SvgPicture.asset(
-                              'assets/homepage/icons/refresh.svg'),
+          width: responsive.w(380),
+          height: responsive.h(380),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(16),
+                responsive.w(16), responsive.h(0)),
+            child: Column(
+              //mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        print("clicked");
+                        generateQR();
+                      },
+                      child: Container(
+                        width: responsive.h(50),
+                        height: responsive.h(50),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEBEBEB),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: Center(
+                          child: SizedBox(
+                            width: responsive.h(24),
+                            height: responsive.h(24),
+                            child: SvgPicture.asset(
+                                'assets/homepage/icons/refresh.svg'),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Text(
-                    'My QR',
-                    style: TextStyle(
-                      color: myConstants.instiappBlue,
-                      fontSize: responsive.sp(20),
-                      fontFamily: 'DM Sans',
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        showQR = false;
-                      });
-                    },
-                    child: Container(
-                      width: responsive.w(50),
-                      height: responsive.h(50),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFEBEBEB),
-                        borderRadius: BorderRadius.circular(25),
+                    Text(
+                      'My QR',
+                      style: TextStyle(
+                        color: myConstants.instiappBlue,
+                        fontSize: responsive.sp(20),
+                        fontFamily: 'DM Sans',
+                        fontWeight: FontWeight.w900,
                       ),
-                      child: Center(
-                        child: SizedBox(
-                          width: responsive.w(29),
-                          height: responsive.h(29),
-                          child: SvgPicture.asset(
-                              'assets/homepage/icons/arrow_down.svg'),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          showQR = false;
+                        });
+                      },
+                      child: Container(
+                        width: responsive.h(50),
+                        height: responsive.h(50),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEBEBEB),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: Center(
+                          child: SizedBox(
+                            width: responsive.h(29),
+                            height: responsive.h(29),
+                            child: SvgPicture.asset(
+                                'assets/homepage/icons/arrow_down.svg'),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.only(top: responsive.h(26), bottom: responsive.h(28)),
-                  child: SizedBox(
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: responsive.h(26), bottom: responsive.h(28)),
+                  child: Container(
                     width: responsive.w(197),
                     height: responsive.h(197),
                     child: loading
+                        ? Center(child: CircularProgressIndicator())
+                        : error
+                            ? Center(child: Text("Please log in to view QR"))
+                            : QrImageView(
+                                data: qrString,
+                                size: responsive.w(197),
+                                embeddedImage: AssetImage(
+                                    'assets/buynsell/DevcomLogo.png'),
+                              ),
+                  ),
+                ),
+                Center(
+                  child: loading
                       ? CircularProgressIndicator()
-                      :error
-                        ?Center(child: Text("Please log in to view QR"))
-                        : QrImageView(
-                          data: '${qrString}',
-                          size: responsive.sp(197),
-                          embeddedImage: AssetImage('assets/buynsell/DevcomLogo.png'),
-                          ),
-                  ),
+                      : error
+                          ? SizedBox()
+                          : Text(
+                              'Mess • Gym • Swimming & more...',
+                              style: TextStyle(
+                                color: const Color(0xFF15202D),
+                                fontSize: responsive.sp(14),
+                                fontFamily: 'DM Sans',
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                 ),
-              ),
-              Center(
-                child: loading
-                ? CircularProgressIndicator()
-                : error
-                ? SizedBox()
-                : Text(
-                  'Mess • Gym • Swimming & more...',
-                  style: TextStyle(
-                    color: const Color(0xFF15202D),
-                    fontSize: responsive.sp(14),
-                    fontFamily: 'DM Sans',
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      )
+        )
       ],
     );
   }
+
+
 
   Widget qrClosed(List<Hostel> hostels) {
     final responsive = Responsive(context);
@@ -1211,31 +1247,32 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
               ),
             ),
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 _openFilterBottomSheet(hostels);
               },
               child: Container(
-                width: responsive.w(94),
+                // width: responsive.w(94),
                 height: responsive.h(40),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  color: myConstants.instiappGrey,
-                  border: Border.all(
-                    color: Color(0xFF7E8287),
-                    width: responsive.w(1)
-                  )
-                ),
-                padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(11), responsive.w(4), responsive.h(10)),
+                    borderRadius: BorderRadius.circular(100),
+                    color: myConstants.instiappGrey,
+                    border: Border.all(
+                        color: Color(0xFF7E8287), width: responsive.h(1))),
+                padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(10),
+                    responsive.w(16), responsive.h(10)),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "${_selectedDay.substring(0,3)}, H-${_selectedHostel}",
+                      "${_selectedDay.substring(0, 3)}, "
+                      "${(_selectedHostel == 'tansa' || _selectedHostel == 'qip') ? _selectedHostel : 'H-${_selectedHostel}'}",
                       style: TextStyle(
                         color: Color(0xCC0F1620),
-                        fontWeight: FontWeight.w500
+                        fontWeight: FontWeight.w500,
+                        fontSize: responsive.w(12.5),
                       ),
-                    ),
+                    )
                     // SizedBox(width: 8),
                     // Container(
                     //   height: 20,
@@ -1388,17 +1425,17 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                           _mealString(hostels),
                           style: TextStyle(
                             color: const Color(0xFF1B3252),
-                            fontSize: responsive.sp(14),
+                            fontSize: responsive.w(14),
                             fontFamily: 'DM Sans',
                             fontWeight: FontWeight.w500,
-                            height: responsive.h(1.31),
+                            height: responsive.w(1.31),
                           ),
                         ),
                       ),
                     ),
                     Container(
                       padding:
-                          EdgeInsets.symmetric(vertical: responsive.h(8), horizontal: responsive.w(18)),
+                          EdgeInsets.symmetric(vertical: responsive.h(6), horizontal: responsive.w(18)),
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage(

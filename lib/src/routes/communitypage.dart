@@ -205,7 +205,7 @@ class _CommunityPageState extends State<CommunityPage> {
                   children: [
                     Icon(
                       Icons.cloud,
-                      size: 200,
+                      size: responsive.sp(200),
                       color: Colors.grey[600],
                     ),
                     Text(
@@ -233,9 +233,9 @@ class _CommunityPageState extends State<CommunityPage> {
                       // ),
                       // physics: const ClampingScrollPhysics(),
                       children: <Widget>[
-                        SizedBox(height: 20),
+                        SizedBox(height: responsive.h(20)),
                         Container(
-                          margin: const EdgeInsets.only(left: 16, right: 16),
+                          margin: EdgeInsets.only(left: responsive.w(16), right: responsive.w(16)),
                           height: responsive.h(52),
                           padding: EdgeInsets.only(
                             left: responsive.w(14),
@@ -318,10 +318,10 @@ class _CommunityPageState extends State<CommunityPage> {
                             ],
                           ),
                         ),
-                        SizedBox(height: 16),
+                        SizedBox(height: responsive.h(16)),
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            padding: EdgeInsets.symmetric(horizontal: responsive.w(16)),
                             child: StreamBuilder<List<Community>>(
                               stream: communityBloc.communities,
                               builder: (BuildContext context,
@@ -339,13 +339,14 @@ class _CommunityPageState extends State<CommunityPage> {
                                     Stack(
                                       children: [
                                         Positioned(
-                                            bottom: 0,
-                                            left: 0,
-                                            right: 0,
-                                            child: Container(
-                                              height: 1.5,
-                                              color: Color(0xFFD0D5DD),
-                                            )),
+                                          bottom: 0,
+                                          left: 0,
+                                          right: 0,
+                                          child: Container(
+                                            height: responsive.h(1.5),
+                                            color: Color(0xFFD0D5DD),
+                                          )
+                                        ),
                                         TabBar(
                                             indicatorColor:
                                                 myConstants.instiappBlue,
@@ -366,28 +367,28 @@ class _CommunityPageState extends State<CommunityPage> {
                                       ],
                                     ),
                                     Expanded(
-                                        child: TabBarView(children: [
-                                      // All
-                                      Column(
+                                      child: TabBarView(
                                         children: [
-                                          SizedBox(height: 20),
-                                          ..._buildContent(
-                                              snapshot, theme, communityBloc)
-                                        ],
-                                      ),
-                                      // Explore
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 70, left: 150),
-                                        child: Text("coming soon"),
-                                      ),
-                                      // My Groups
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 70, left: 150),
-                                        child: Text("coming soon"),
-                                      ),
-                                    ]))
+                                          // All
+                                          Column(
+                                            children: [
+                                              SizedBox(height: responsive.h(20)),
+                                             ... _buildContent(snapshot, theme, communityBloc)
+                                            ],
+                                          ),
+                                          // Explore
+                                          Padding(
+                                            padding: EdgeInsets.only(top: responsive.h(70), left: responsive.w(150)),
+                                            child: Text("coming soon"),
+                                          ),
+                                          // My Groups
+                                          Padding(
+                                            padding: EdgeInsets.only(top: responsive.h(70), left: responsive.w(150)),
+                                            child: Text("coming soon"),
+                                          ),
+                                        ]
+                                      )
+                                    )
                                   ],
                                 );
                               },
@@ -423,6 +424,7 @@ class _CommunityPageState extends State<CommunityPage> {
     ThemeData theme,
     CommunityBloc communityBloc,
   ) {
+    final responsive = Responsive(context);
     if (snapshot.hasData) {
       var communities = snapshot.data!;
 
@@ -439,7 +441,7 @@ class _CommunityPageState extends State<CommunityPage> {
       if (communities.isEmpty == true) {
         return [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
+            padding: EdgeInsets.symmetric(horizontal: responsive.w(28), vertical: responsive.h(8)),
             child: Text.rich(
               TextSpan(
                 style: theme.textTheme.titleLarge,
@@ -469,11 +471,11 @@ class _CommunityPageState extends State<CommunityPage> {
       ];
     }
   }
-
-  Widget tagContainer() {
+  Widget tagContainer(){
+    final responsive = Responsive(context);
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 11.13, vertical: 4.17),
-      height: 23,
+      padding: EdgeInsets.symmetric(horizontal: responsive.w(11.13),vertical: responsive.h(4.17)),
+      height: responsive.h(23),
       // width: 52,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(69.54),
@@ -482,8 +484,11 @@ class _CommunityPageState extends State<CommunityPage> {
         child: Text(
           "Public",
           style: TextStyle(
-              color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700),
-        ),
+            color: Colors.white,
+            fontSize: responsive.sp(11),
+            fontWeight: FontWeight.w700
+          ),
+          ),
       ),
     );
   }
@@ -493,6 +498,7 @@ class _CommunityPageState extends State<CommunityPage> {
     ThemeData theme,
     CommunityBloc bloc,
   ) {
+    final responsive = Responsive(context);
     // var borderRadius = const BorderRadius.all(Radius.circular(10));
     // var instiBloc = BlocProvider.of(context)!.bloc;
 
@@ -503,7 +509,7 @@ class _CommunityPageState extends State<CommunityPage> {
           Communities.navigateWith(context, bloc, community);
         },
         child: Container(
-          margin: EdgeInsets.only(bottom: 12),
+          margin: EdgeInsets.only(bottom: responsive.h(12)),
           decoration: BoxDecoration(
             color: Color(0xFFEDEDED),
             // border: Border.all(
@@ -529,42 +535,40 @@ class _CommunityPageState extends State<CommunityPage> {
                 Row(
                   children: [
                     Container(
-                      height: 47,
-                      width: 49,
+                      height: responsive.h(47),
+                      width: responsive.w(49),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.5),
-                        color: Colors.amber,
+                        borderRadius: BorderRadius.circular(responsive.w(8.5)),
+                        //color: Colors.amber,
                       ),
                       child: community.logoImg != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(8.5),
-                              child: Image.network(
-                                community.logoImg!,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                          : Icon(Icons.group, color: Colors.white),
+                      ? ClipRRect(
+                        borderRadius: BorderRadius.circular(responsive.w(8.5)),
+                        child: Image.network(
+                          community.logoImg!,     
+                          fit: BoxFit.cover,      
+                        ),
+                      )
+                      : Icon(Icons.group, color: Colors.white),
                     ),
-                    SizedBox(width: 8),
+                    SizedBox(width: responsive.w(8)),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           community.name ?? "Some community",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w700),
+                            fontSize: responsive.sp(16),
+                            fontWeight: FontWeight.w700
+                          ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4.51),
+                          padding: EdgeInsets.symmetric(vertical: responsive.h(4.51)),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Icon(
-                                Icons.group_outlined,
-                                size: 18,
-                                color: myConstants.instiappBlue,
-                              ),
-                              SizedBox(width: 4.51),
+                              Icon(Icons.group_outlined,size: responsive.sp(18), color: myConstants.instiappBlue,),
+                              SizedBox(width: responsive.w(4.51)),
                               Text(
                                 "${community.followersCount ?? "0"} followers",
                                 style: TextStyle(
@@ -578,12 +582,12 @@ class _CommunityPageState extends State<CommunityPage> {
                     )
                   ],
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: responsive.h(8)),
                 Text(
                   community.about ?? "",
                   style: TextStyle(color: Color(0xFF7E8287)),
                 ),
-                SizedBox(height: 12),
+                SizedBox(height: responsive.h(12)),
                 Row(
                   children: [tagContainer()],
                 )
