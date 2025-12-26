@@ -285,6 +285,8 @@ class _ExplorePageState extends State<ExplorePage> {
             ExploreClubPage(
               bodyFuture: bloc.getBody(bodyID),
               heroTag: bodyID,
+              headerTitle: _resolveTitleFromBodyId(bodyID),
+              headerDescription: null,
               onBack: () {
                 setState(() {
                   bodyID = "";
@@ -292,6 +294,25 @@ class _ExplorePageState extends State<ExplorePage> {
               },
             ),
         ]));
+  }
+}
+
+String _resolveTitleFromBodyId(String id) {
+  switch (id) {
+    case "91199c20-7488-41c5-9f6b-6f6c7c5b897d":
+      return "Cult";
+    case "81e05a1a-7fd1-45b5-84f6-074e52c0f085":
+      return "Tech";
+    case "a9f81e69-fcc9-4fe3-b261-9e5e7a13f898":
+      return "Sports";
+    case "44fe710a-8ede-4d59-a25b-a86434373209":
+      return "Academics";
+    case "f3ae5230-4441-4586-81a8-bf75a2e47318":
+      return "Hostels";
+    case "252ddc80-910b-4f63-b68a-de30a62a947e":
+      return "Departments";
+    default:
+      return "Explore";
   }
 }
 

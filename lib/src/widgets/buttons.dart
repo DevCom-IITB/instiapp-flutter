@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:InstiApp/src/utils/responsive.dart';
 
 class SettingsItem extends StatelessWidget {
   final String title;
@@ -22,29 +23,50 @@ class SettingsItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final radius = RS.s(context, 14);
+
     return Container(
-      height: 64,
+      height: RS.sh(context, 64),
       decoration: BoxDecoration(
         color: const Color.fromRGBO(239, 239, 239, 1),
         borderRadius: BorderRadius.vertical(
-          top: top ? const Radius.circular(14) : Radius.zero,
-          bottom: bottom ? const Radius.circular(14) : Radius.zero,
+          top: top ? Radius.circular(radius) : Radius.zero,
+          bottom: bottom ? Radius.circular(radius) : Radius.zero,
         ),
-        border: bottom ? null :
-          const Border(bottom: BorderSide(color: Color.fromRGBO(210, 213, 218, 0.5), width: 1)),
+        border: bottom
+            ? null
+            : const Border(
+                bottom: BorderSide(
+                  color: Color.fromRGBO(210, 213, 218, 0.5),
+                  width: 1,
+                ),
+              ),
       ),
-      child: Center(
-        child: ListTile(
-          leading: Icon(icon, color: color ?? const Color(0xFF1E293B)),
-          title: Text(
-            title,
-            style: TextStyle(
-              fontSize: 16,
-              color: color ?? const Color(0xFF1E293B),
-              fontWeight: FontWeight.w600,
-            ),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: RS.sw(context, 16)),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                size: RS.s(context, 24),
+                color: color ?? const Color(0xFF1E293B),
+              ),
+              SizedBox(width: RS.sw(context, 16)),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: RS.sp(context, 16),
+                    fontWeight: FontWeight.w600,
+                    color: color ?? const Color(0xFF1E293B),
+                    fontFamily: 'DM Sans',
+                  ),
+                ),
+              ),
+            ],
           ),
-          onTap: onTap,
         ),
       ),
     );
@@ -71,43 +93,59 @@ class ToggleItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final radius = RS.s(context, 14);
+
     return Container(
-      height: 64,
+      height: RS.sh(context, 64),
       decoration: BoxDecoration(
         color: const Color.fromRGBO(239, 239, 239, 1),
         borderRadius: BorderRadius.vertical(
-          top: top ? const Radius.circular(14) : Radius.zero,
-          bottom: bottom ? const Radius.circular(14) : Radius.zero,
+          top: top ? Radius.circular(radius) : Radius.zero,
+          bottom: bottom ? Radius.circular(radius) : Radius.zero,
         ),
-        border: bottom ? null :
-          const Border(bottom: BorderSide(color: Color.fromRGBO(210, 213, 218, 0.5), width: 1)),
-      ),
-      child: Center(
-        child: Theme(
-          data: ThemeData.light().copyWith(
-            switchTheme: SwitchThemeData(
-              thumbColor: WidgetStateProperty.resolveWith((states) {
-                return Colors.white;
-              }),
-              trackColor: WidgetStateProperty.resolveWith((states) {
-                return states.contains(WidgetState.selected)
-                    ? Color.fromRGBO(48, 111, 220, 1)
-                    : Color.fromRGBO(210, 213, 218, 1);
-              }),
-              trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-            ),
-          ),
-          child: Center(
-            child: SwitchListTile(
-              secondary: icon != null ? Icon(icon, color: const Color(0xFF1E293B)) : null,
-              title: Padding(
-                padding: const EdgeInsets.only(left: 16),
-                child: Text(title, style: const TextStyle(fontFamily: "DM Sans", fontWeight: FontWeight.w600, fontSize: 16)),
+        border: bottom
+            ? null
+            : const Border(
+                bottom: BorderSide(
+                  color: Color.fromRGBO(210, 213, 218, 0.5),
+                  width: 1,
+                ),
               ),
-              value: value,
-              onChanged: onChanged,
+      ),
+      child: Theme(
+        data: ThemeData.light().copyWith(
+          switchTheme: SwitchThemeData(
+            thumbColor: WidgetStateProperty.all(Colors.white),
+            trackColor: WidgetStateProperty.resolveWith(
+              (states) => states.contains(WidgetState.selected)
+                  ? const Color.fromRGBO(48, 111, 220, 1)
+                  : const Color.fromRGBO(210, 213, 218, 1),
+            ),
+            trackOutlineColor:
+                WidgetStateProperty.all(Colors.transparent),
+          ),
+        ),
+        child: SwitchListTile(
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: RS.sw(context, 16),
+          ),
+          secondary: icon != null
+              ? Icon(
+                  icon,
+                  size: RS.s(context, 24),
+                  color: const Color(0xFF1E293B),
+                )
+              : null,
+          title: Text(
+            title,
+            style: TextStyle(
+              fontFamily: 'DM Sans',
+              fontWeight: FontWeight.w600,
+              fontSize: RS.sp(context, 16),
             ),
           ),
+          value: value,
+          onChanged: onChanged,
         ),
       ),
     );
@@ -120,6 +158,7 @@ class DecoratedButton extends StatelessWidget {
   final Color backgroundColor;
   final Color textColor;
   final String? backgroundImageAsset;
+
   final double borderRadius;
   final double height;
   final double fontSize;
@@ -142,16 +181,19 @@ class DecoratedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isEnabled = onPressed != null;
 
+    final scaledHeight = RS.sh(context, height);
+    final scaledRadius = RS.s(context, borderRadius);
+
     return Opacity(
       opacity: isEnabled ? 1.0 : 0.6,
       child: InkWell(
         onTap: isEnabled ? onPressed : null,
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: BorderRadius.circular(scaledRadius),
         child: Container(
-          height: height,
+          height: scaledHeight,
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: BorderRadius.circular(borderRadius),
+            borderRadius: BorderRadius.circular(scaledRadius),
             image: backgroundImageAsset != null
                 ? DecorationImage(
                     image: AssetImage(backgroundImageAsset!),
@@ -164,8 +206,9 @@ class DecoratedButton extends StatelessWidget {
             text,
             style: TextStyle(
               color: textColor,
-              fontSize: fontSize,
+              fontSize: RS.sp(context, fontSize),
               fontWeight: fontWeight,
+              fontFamily: 'DM Sans',
             ),
           ),
         ),
