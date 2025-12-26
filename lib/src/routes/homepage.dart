@@ -75,7 +75,6 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   // Page Controller for swipe navigation
   late PageController _pageController;
   int _currentPageIndex = 0;
-  double _pageOffset = 0.0;
   
   // Animation controllers for navbar
   late AnimationController _navIndicatorController;
@@ -166,7 +165,6 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     
     // Initialize page controller
     _pageController = PageController(initialPage: _currentPageIndex);
-    _pageController.addListener(_pageListener);
     
     // Initialize animation controllers
     _navIndicatorController = AnimationController(
@@ -202,14 +200,6 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     // Set initial values
     _selectedDay = getCurrentDay();
     selectedMeal = getCurrentMealSlot();
-  }
-
-  void _pageListener() {
-    if (_pageController.hasClients) {
-      setState(() {
-        _pageOffset = _pageController.page! - _currentPageIndex;
-      });
-    }
   }
 
   void _onPageSwiped(int index) {
@@ -305,7 +295,6 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    _pageController.removeListener(_pageListener);
     _pageController.dispose();
     _navIndicatorController.dispose();
     _navScaleController.dispose();
@@ -325,7 +314,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             onPageChanged: (index) {
               _onPageSwiped(index);
             },
-            physics: const BouncingScrollPhysics(),
+            physics: const ClampingScrollPhysics(),
             children: [
               Homepagewidget(),
               FeedPage(),

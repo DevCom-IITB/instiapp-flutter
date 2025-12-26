@@ -1239,7 +1239,7 @@ class _UserPageState extends State<UserPage>
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: InkWell(
         onTap: () {
-          BodyPage.navigateWith(context, _bloc!, body: Body(bodyID: group.bodyId));
+          BodyPage.navigateWith(context, _bloc!, body: Body(bodyID: group.bodyId, bodyName: group.name, bodyShortDescription: group.about, bodyImageURL: group.photoUrl));
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
