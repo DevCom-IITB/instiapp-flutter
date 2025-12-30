@@ -5,13 +5,13 @@ buildscript {
     ext.kotlin_version = '1.8.22'
     repositories {
         google()
-        jcenter()
+        // jcenter()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.google.gms:google-services:4.3.0'
-        classpath 'com.android.tools.build:gradle:8.1.0'
+        classpath 'com.google.gms:google-services:4.4.0'
+        classpath 'com.android.tools.build:gradle:8.5.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -19,7 +19,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
+        // jcenter()
         mavenCentral()
     }
 }
@@ -37,6 +37,6 @@ tasks.register("clean", Delete) {
 }
 subprojects {
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "17"
     }
 }
