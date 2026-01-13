@@ -21,7 +21,7 @@ import '../bloc_provider.dart';
 
 class Responsive {
   final BuildContext context;
-  final double baseWidth;  
+  final double baseWidth;
   final double baseHeight;
 
   Responsive(this.context, {this.baseWidth = 411, this.baseHeight = 914});
@@ -144,8 +144,8 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                         borderRadius: BorderRadius.circular(50),
                       ),
                       clipBehavior: Clip.antiAlias,
-                      margin:
-                          EdgeInsets.only(left: responsive.w(16), bottom: responsive.h(2)),
+                      margin: EdgeInsets.only(
+                          left: responsive.w(16), bottom: responsive.h(2)),
                       child: Material(
                         color: Colors.transparent,
                         shape: CircleBorder(),
@@ -183,8 +183,9 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                     ),
                     Container(
                       color: Color.fromRGBO(246, 246, 246, 1),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: responsive.w(10), vertical: responsive.h(5)),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: responsive.w(10),
+                          vertical: responsive.h(5)),
                       child: Row(
                         children: [
                           Expanded(
@@ -206,7 +207,8 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                                 decoration: InputDecoration(
                                   isDense: true,
                                   contentPadding: EdgeInsets.symmetric(
-                                      vertical: responsive.h(10), horizontal: responsive.w(10)),
+                                      vertical: responsive.h(10),
+                                      horizontal: responsive.w(10)),
                                   border: OutlineInputBorder(
                                       borderSide: BorderSide.none,
                                       borderRadius: BorderRadius.circular(5)),
@@ -221,7 +223,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                                   hintText: communityPost!.id ==
                                           currentlyCommentingPost!.id
                                       ? "Add a comment"
-                                      : "Reply to ${currentlyCommentingPost!.content!.length > 23 ? currentlyCommentingPost!.content!.substring(0, 20) + "..." : currentlyCommentingPost!.content!}",
+                                      : "Replying to: ${currentlyCommentingPost!.content!.length > 23 ? currentlyCommentingPost!.content!.substring(0, 20) + "..." : currentlyCommentingPost!.content!}",
                                   hintStyle: TextStyle(
                                     color:
                                         const Color.fromARGB(255, 48, 48, 48),
@@ -416,209 +418,258 @@ class _CommentState extends State<Comment> {
                   )
                 : EdgeInsets.only(
                     top: responsive.h(16),
-                    bottom: responsive.h(16),
                   ),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Container(
-                child: Image.network(
-                  comment!.postedBy?.userProfilePictureUrl ?? '',
-                  width: responsive.w(36),
-                  height: responsive.h(36),
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Image.asset(
-                    "assets/communities/image 214.png",
-                    height: responsive.h(36),
-                    width: responsive.w(36),
-                  ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  children: [
+                    SizedBox(height: responsive.h(18)),
+                    Container(
+                      height: 1,
+                      width: (widget.comment.threadRank! > 2)
+                          ? responsive.w(10)
+                          : 0,
+                      color: Color.fromRGBO(220, 220, 220, 1),
+                    )
+                  ],
                 ),
-              ),
-              Expanded(
+                Expanded(
                   child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      SizedBox(width: responsive.w(11)),
-                      Text(
-                        comment!.postedBy?.userName ?? "Anonymous",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: responsive.sp(18),
-                          fontFamily: 'DM Sans',
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(width: responsive.w(13)),
-                      Text(
-                        timeToShow,
-                        style: TextStyle(
-                          color: const Color(0xFF444444),
-                          fontSize: responsive.sp(12),
-                          fontFamily: 'DM Sans',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      Expanded(child: Container()),
-                      Container(
-                        child: PopupMenuButton<int>(
-                          itemBuilder: (context) {
-                            List<PopupMenuItem<int>> items = [];
-
-                            bool isAuthor = comment!.postedBy?.userID ==
-                                bloc.currSession!.profile!.userID;
-
-                            bool isAdmin = bloc.hasPermission(
-                                comment!.community?.body ?? "", "ModC");
-
-                            if (isAuthor) {
-                              // items.add(
-                              //   PopupMenuItem(
-                              //     value: 1,
-                              //     // row has two child icon and text.
-                              //     child: Row(
-                              //       children: [
-                              //         Icon(Icons.edit),
-                              //         SizedBox(
-                              //           // sized box with width 10
-                              //           width: 10,
-                              //         ),
-                              //         Text("Edit")
-                              //       ],
-                              //     ),
-                              //     onTap: () => Future(() async {
-                              //       CommunityPost? post =
-                              //           (await Navigator.of(context).pushNamed(
-                              //         "/posts/add",
-                              //         arguments: NavigateArguments(post: comment!),
-                              //       )) as CommunityPost?;
-                              //       if (post != null) {
-                              //         setState(() {
-                              //           comment = post;
-                              //         });
-                              //       }
-                              //     }),
-                              //   ),
-                              // );
-                            }
-
-                            if ((isAuthor || isAdmin) &&
-                                !(comment!.deleted == true)) {
-                              items.add(
-                                PopupMenuItem(
-                                  value: 2,
-                                  // row has two child icon and text
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.delete),
-                                      SizedBox(
-                                        // sized box with width 10
-                                        width: responsive.w(10),
-                                      ),
-                                      Text("Delete")
-                                    ],
-                                  ),
-                                  onTap: () async {
-                                    await bloc.communityPostBloc
-                                        .deleteCommunityPost(comment!.id ?? "");
-                                    setState(() {
-                                      comment!.deleted = true;
-                                    });
-                                  },
-                                ),
-                              );
-                            }
-
-                            items.add(
-                              PopupMenuItem(
-                                value: 3,
-                                // row has two child icon and text
-                                child: Row(
-                                  children: [
-                                    !(comment?.hasUserReported ?? false)
-                                        ? Icon(Icons.report)
-                                        : Icon(Icons.report_off),
-                                    SizedBox(
-                                      // sized box with width 10
-                                      width: responsive.w(10),
-                                    ),
-                                    !(comment?.hasUserReported ?? false)
-                                        ? Text("Report")
-                                        : Text("Unreport")
-                                  ],
-                                ),
-                                onTap: () async {
-                                  await bloc.communityPostBloc
-                                      .reportCommunityPost(comment!.id ?? "");
-                                  setState(() {
-                                    comment!.hasUserReported =
-                                        !(comment?.hasUserReported ?? false);
-                                  });
-                                },
-                              ),
-                            );
-
-                            return items;
-                          },
-                          // offset: Offset(0, 100),
-                          padding: EdgeInsets.all(0),
-                          constraints: BoxConstraints(),
-                          splashRadius: null,
-                          // elevation: 2,
-                          tooltip: "More",
-                          child: Container(
-                              padding: EdgeInsets.all(0),
-                              height: responsive.h(23),
-                              width: responsive.w(23),
-                              decoration: BoxDecoration(
-                                color: Color.fromRGBO(246, 246, 246, 1),
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              child: Icon(
-                                size: 18,
-                                color: Colors.black,
-                                Icons.more_vert,
-                              )),
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: responsive.h(4)),
-                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: EdgeInsets.only(
-                            left: responsive.w(11),
-                            right: responsive.w(20)),
-                        child: SelectableLinkify(
-                          text: comment!.content ?? "",
-                          style: TextStyle(
-                            color: const Color(0xFF0F1620),
-                            fontSize: responsive.sp(16),
-                            fontFamily: 'DM Sans',
-                            fontWeight: FontWeight.w400,
-                          ),
-                          onOpen: (link) async {
-                            if (await canLaunchUrl(Uri.parse(link.url))) {
-                              await launchUrl(
-                                Uri.parse(link.url),
-                                mode: LaunchMode.externalApplication,
-                              );
-                            }
-                          },
+                      IntrinsicHeight(
+                        child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    child: Image.network(
+                                      comment!.postedBy
+                                              ?.userProfilePictureUrl ??
+                                          '',
+                                      width: responsive.w(36),
+                                      height: responsive.h(36),
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Image.asset(
+                                        "assets/communities/image 214.png",
+                                        height: responsive.h(36),
+                                        width: responsive.w(36),
+                                      ),
+                                    ),
+                                  ),
+                                  if (comment!.comments != null)
+                                    Expanded(
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                            left: responsive.w(18)),
+                                        width: 1,
+                                        color: Color.fromRGBO(220, 220, 220, 1),
+                                      ),
+                                    )
+                                ],
+                              ),
+                              Expanded(
+                                  child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      SizedBox(width: responsive.w(11)),
+                                      ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          maxWidth: responsive.w(150),
+                                        ),
+                                        child: Text(
+                                          comment!.postedBy?.userName ??
+                                              "Anonymous",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: responsive.sp(18),
+                                            fontFamily: 'DM Sans',
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
+                                      ),
+                                      SizedBox(width: responsive.w(8)),
+                                      Text(
+                                        timeToShow,
+                                        style: TextStyle(
+                                          color: const Color(0xFF444444),
+                                          fontSize: responsive.sp(12),
+                                          fontFamily: 'DM Sans',
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      Expanded(child: Container()),
+                                      Container(
+                                        child: PopupMenuButton<int>(
+                                          itemBuilder: (context) {
+                                            List<PopupMenuItem<int>> items = [];
+
+                                            bool isAuthor =
+                                                comment!.postedBy?.userID ==
+                                                    bloc.currSession!.profile!
+                                                        .userID;
+
+                                            bool isAdmin = bloc.hasPermission(
+                                                comment!.community?.body ?? "",
+                                                "ModC");
+
+                                            if ((isAuthor || isAdmin) &&
+                                                !(comment!.deleted == true)) {
+                                              items.add(
+                                                PopupMenuItem(
+                                                  value: 2,
+                                                  // row has two child icon and text
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(Icons.delete),
+                                                      SizedBox(
+                                                        // sized box with width 10
+                                                        width: responsive.w(10),
+                                                      ),
+                                                      Text("Delete")
+                                                    ],
+                                                  ),
+                                                  onTap: () async {
+                                                    await bloc.communityPostBloc
+                                                        .deleteCommunityPost(
+                                                            comment!.id ?? "");
+                                                    setState(() {
+                                                      comment!.deleted = true;
+                                                    });
+                                                  },
+                                                ),
+                                              );
+                                            }
+
+                                            items.add(
+                                              PopupMenuItem(
+                                                value: 3,
+                                                // row has two child icon and text
+                                                child: Row(
+                                                  children: [
+                                                    !(comment?.hasUserReported ??
+                                                            false)
+                                                        ? Icon(Icons.report)
+                                                        : Icon(
+                                                            Icons.report_off),
+                                                    SizedBox(
+                                                      // sized box with width 10
+                                                      width: responsive.w(10),
+                                                    ),
+                                                    !(comment?.hasUserReported ??
+                                                            false)
+                                                        ? Text("Report")
+                                                        : Text("Unreport")
+                                                  ],
+                                                ),
+                                                onTap: () async {
+                                                  await bloc.communityPostBloc
+                                                      .reportCommunityPost(
+                                                          comment!.id ?? "");
+                                                  setState(() {
+                                                    comment!.hasUserReported =
+                                                        !(comment
+                                                                ?.hasUserReported ??
+                                                            false);
+                                                  });
+                                                },
+                                              ),
+                                            );
+
+                                            return items;
+                                          },
+                                          // offset: Offset(0, 100),
+                                          padding: EdgeInsets.all(0),
+                                          constraints: BoxConstraints(),
+                                          splashRadius: null,
+                                          // elevation: 2,
+                                          tooltip: "More",
+                                          child: Container(
+                                              padding: EdgeInsets.all(0),
+                                              height: responsive.h(23),
+                                              width: responsive.w(23),
+                                              decoration: BoxDecoration(
+                                                color: Color.fromRGBO(
+                                                    246, 246, 246, 1),
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                              ),
+                                              child: Icon(
+                                                size: 18,
+                                                color: Colors.black,
+                                                Icons.more_vert,
+                                              )),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(height: responsive.h(4)),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.only(
+                                            left: responsive.w(11),
+                                            right: responsive.w(20)),
+                                        child: SelectableLinkify(
+                                          text: comment!.content ?? "",
+                                          style: TextStyle(
+                                            color: const Color(0xFF0F1620),
+                                            fontSize: responsive.sp(16),
+                                            fontFamily: 'DM Sans',
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                          onOpen: (link) async {
+                                            if (await canLaunchUrl(
+                                                Uri.parse(link.url))) {
+                                              await launchUrl(
+                                                Uri.parse(link.url),
+                                                mode: LaunchMode
+                                                    .externalApplication,
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(height: responsive.h(8)),
+                                      Container(
+                                          margin: EdgeInsets.only(
+                                              left: responsive.w(11)),
+                                          child: _buildFooter(
+                                              theme, bloc, comment!)),
+                                    ],
+                                  ),
+                                ],
+                              )),
+                            ]),
+                      ),
+                      IntrinsicHeight(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(width: responsive.w(18)),
+                            Expanded(
+                                child: Column(
+                              children: [..._buildCommentList(theme, comment!)],
+                            )),
+                          ],
                         ),
                       ),
-                      SizedBox(height: responsive.h(8)),
-                      Container(
-                          margin: EdgeInsets.only(
-                              left: responsive.w(11)),
-                          child: _buildFooter(theme, bloc, comment!)),
-                      ..._buildCommentList(theme, comment!)
                     ],
                   ),
-                ],
-              )),
-            ]))
+                ),
+              ],
+            ))
 
         //       style: theme.textTheme.bodyMedium,
         //       children: [
@@ -817,7 +868,8 @@ class _CommentState extends State<Comment> {
           Container(
             alignment: Alignment.center,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: responsive.w(5), vertical: responsive.h(5)),
+              padding: EdgeInsets.symmetric(
+                  horizontal: responsive.w(5), vertical: responsive.h(5)),
               height: responsive.h(20),
               width: responsive.w(20),
               child: CircularProgressIndicator(
@@ -827,10 +879,37 @@ class _CommentState extends State<Comment> {
           )
         ];
       }
-      return (communityPost.comments?.map((c) => Comment(
-                    comment: c,
-                    onReply: widget.onReply,
-                  )) ??
+      int n = communityPost.comments?.length ?? 0;
+      return (communityPost.comments?.asMap().entries.map((entry) {
+                int index = entry.key;
+                CommunityPost c = entry.value;
+                bool isLast = index == n - 1;
+
+                return IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (!isLast)
+                        Container(
+                          width: 1,
+                          color: Color.fromRGBO(220, 220, 220, 1),
+                        ),
+                      if (isLast)
+                        Container(
+                          width: 1,
+                          height: responsive.h(35),
+                          color: Color.fromRGBO(220, 220, 220, 1),
+                        ),
+                      Expanded(
+                        child: Comment(
+                          comment: c,
+                          onReply: widget.onReply,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }) ??
               [])
           .toList();
     } else if (communityPost.commentsCount != 0) {
@@ -888,7 +967,7 @@ class _CommentState extends State<Comment> {
 
   Widget _buildFooter(
       ThemeData theme, InstiAppBloc bloc, CommunityPost communityPost) {
-        final responsive = Responsive(context);
+    final responsive = Responsive(context);
     int numReactions = communityPost.reactionCount?.values
             .reduce((sum, element) => sum + element) ??
         0;
@@ -903,7 +982,7 @@ class _CommentState extends State<Comment> {
               },
               child: SvgPicture.asset(
                 'assets/communities/corner-down-left.svg',
-                height:responsive.h(19.92),
+                height: responsive.h(19.92),
                 width: responsive.w(19.92),
               ),
               // SizedBox(width: 3),
@@ -958,7 +1037,8 @@ class _CommentState extends State<Comment> {
                                   : Colors.transparent,
                               child: InkWell(
                                 onTap: () => Navigator.of(context).pop(e.key),
-                                child: Image.asset(e.value, width: responsive.w(30)),
+                                child: Image.asset(e.value,
+                                    width: responsive.w(30)),
                               ),
                             ),
                           )

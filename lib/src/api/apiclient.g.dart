@@ -13,8 +13,6 @@ class _InstiAppApi implements InstiAppApi {
     this._dio, {
     this.baseUrl,
   }) {
-    //baseUrl ??= 'https://bda7c527113b.ngrok-free.app/api';
-    //baseUrl ??= 'https://nayeli-nonbulbar-denominationally.ngrok-free.dev/api';
     baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
   }
 
@@ -889,7 +887,7 @@ class _InstiAppApi implements InstiAppApi {
     _headers.removeWhere((k, v) => v == null);
     final _data = FormData();
     _data.files.add(MapEntry(
-      'picture',
+      'file',
       MultipartFile.fromFileSync(
         file.path,
         filename: file.path.split(Platform.pathSeparator).last,

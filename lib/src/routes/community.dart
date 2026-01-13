@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:InstiApp/constants.dart';
+import 'package:flutter/rendering.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/blocs/community_bloc.dart';
@@ -62,6 +63,8 @@ class _CommunitiesState extends State<Communities> {
   bool aboutExpanded = false;
   final ScrollController _scrollcontroller = ScrollController();
   bool _headerCollapsed = false;
+  double _lastScrollOffset = 0;
+  double isFabVisible = 0;
   final List<String> _filterTabs = ['Sort', 'Filter'];
   List<String> subContLabels = ["Hostel Affairs", "Interns", "Tech"];
   // Widget _buildUserTile(User u) {
@@ -355,13 +358,35 @@ class _CommunitiesState extends State<Communities> {
     super.initState();
     community = widget.initialCommunity;
     _scrollcontroller.addListener(() {
-      final shouldCollapse =
-          _scrollcontroller.hasClients && _scrollcontroller.offset > 100;
-      if (shouldCollapse != _headerCollapsed) {
+      if (!_scrollcontroller.hasClients) return;
+
+      final currentOffset = _scrollcontroller.offset;
+      final isScrollingDown = currentOffset > _lastScrollOffset;
+
+      bool shouldCollapse = _headerCollapsed;
+
+      if (isScrollingDown && currentOffset > 100) {
+        // Scrolling down: collapse at 100
+        shouldCollapse = true;
+      } else if (!isScrollingDown && currentOffset < 80) {
+        // Scrolling up: expand at 80
+        shouldCollapse = false;
+      }
+
+      // Handle FAB visibility
+      final visible = _scrollcontroller.position.userScrollDirection ==
+              ScrollDirection.forward &&
+          _scrollcontroller.offset > 100;
+
+      if (shouldCollapse != _headerCollapsed ||
+          (visible ? 1.0 : 0.0) != isFabVisible) {
         setState(() {
           _headerCollapsed = shouldCollapse;
+          isFabVisible = visible ? 1.0 : 0.0;
         });
       }
+
+      _lastScrollOffset = currentOffset;
     });
     widget.communityFuture.then((community) {
       if (this.mounted) {
@@ -421,18 +446,53 @@ class _CommunitiesState extends State<Communities> {
       length: 3,
       child: SafeArea(
         child: Scaffold(
-          floatingActionButton: FloatingActionButton(
-              child: SvgPicture.asset(
-                "assets/communities/system-uicons_write.svg",
-                height: responsive.h(24),
-                width: responsive.w(24),
-                color: Colors.white,
+          floatingActionButton: Stack(
+            children: [
+              // Scroll-to-top FAB
+              Positioned(
+                right: 0,
+                bottom: responsive.h(70),
+                child: AnimatedOpacity(
+                  opacity: isFabVisible,
+                  duration: Duration(milliseconds: 200),
+                  child: IgnorePointer(
+                    ignoring: isFabVisible == 0,
+                    child: FloatingActionButton(
+                      heroTag: 'scrollToTop',
+                      backgroundColor: Color.fromRGBO(48, 111, 220, 1),
+                      onPressed: () {
+                        _scrollcontroller.animateTo(
+                          0.0,
+                          duration: Duration(milliseconds: 400),
+                          curve: Curves.easeOut,
+                        );
+                      },
+                      child: Icon(Icons.arrow_upward),
+                    ),
+                  ),
+                ),
               ),
-              backgroundColor: Color.fromRGBO(48, 111, 220, 1),
-              onPressed: () {
-                Navigator.of(context).pushNamed("/posts/add",
-                    arguments: NavigateArguments(community: community!));
-              }),
+              // Create post FAB
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: FloatingActionButton(
+                  heroTag: 'createPost',
+                  child: SvgPicture.asset(
+                    "assets/communities/system-uicons_write.svg",
+                    height: responsive.h(24),
+                    width: responsive.w(24),
+                    color: Colors.white,
+                  ),
+                  backgroundColor: Color.fromRGBO(48, 111, 220, 1),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed("/posts/add",
+                        arguments: NavigateArguments(community: community!));
+                  },
+                ),
+              ),
+            ],
+          ),
           body: !isLoggedIn
               ? Container(
                   alignment: Alignment.center,
@@ -657,7 +717,8 @@ class _CommunitiesState extends State<Communities> {
                                         height: responsive.h(35),
                                         width: responsive.w(61),
                                         decoration: BoxDecoration(
-                                          color: Color(0xFF306FDC),
+                                          color: (community?.isUserFollowing ??
+                                                    false) ?  Colors.grey[500]:Color(0xFF306FDC),
                                           borderRadius: BorderRadius.circular(
                                               responsive.w(100)),
                                         ),
@@ -1655,7 +1716,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
       });
     }
 
-final posts = communityPosts
+    final posts = communityPosts
         .where((c) => c.deleted != true)
         .map((c) => Communitypostwidget(
               communityPost: c,
@@ -1678,7 +1739,7 @@ final posts = communityPosts
         )
       ];
     }
-        
+
     //print("a");
     return posts;
   }

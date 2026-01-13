@@ -692,42 +692,45 @@ class _CreatePostPage extends State<CreatePostPage> {
                                   //     ),
                                   //   ),
                                   // ),
-                                  Container(
-                                    width: 1,
-                                    height: Responsive.height(20, context),
-                                    decoration: BoxDecoration(
-                                      color: Color.fromRGBO(210, 213, 218, 1),
-                                      borderRadius: BorderRadius.circular(2),
-                                    ),
-                                  ),
-                                  Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(
-                                          Responsive.width(6, context)),
-                                      onTap: () {
-                                        setState(() {
-                                          isPoll = true;
-                                        });
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal:
-                                                Responsive.width(8, context),
-                                            vertical:
-                                                Responsive.height(6, context)),
-                                        child: SvgPicture.asset(
-                                          'assets/communities/bar-chart-2.svg',
-                                          height:
-                                              Responsive.height(26, context),
-                                          width: Responsive.width(26, context),
-                                          color:
-                                              Color.fromRGBO(48, 111, 220, 1),
-                                          fit: BoxFit.none,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+
+                                  //-------------------------
+                                  //Uncomment for Poll
+                                  // Container(
+                                  //   width: 1,
+                                  //   height: Responsive.height(20, context),
+                                  //   decoration: BoxDecoration(
+                                  //     color: Color.fromRGBO(210, 213, 218, 1),
+                                  //     borderRadius: BorderRadius.circular(2),
+                                  //   ),
+                                  // ),
+                                  // Material(
+                                  //   color: Colors.transparent,
+                                  //   child: InkWell(
+                                  //     borderRadius: BorderRadius.circular(
+                                  //         Responsive.width(6, context)),
+                                  //     onTap: () {
+                                  //       setState(() {
+                                  //         isPoll = true;
+                                  //       });
+                                  //     },
+                                  //     child: Container(
+                                  //       padding: EdgeInsets.symmetric(
+                                  //           horizontal:
+                                  //               Responsive.width(8, context),
+                                  //           vertical:
+                                  //               Responsive.height(6, context)),
+                                  //       child: SvgPicture.asset(
+                                  //         'assets/communities/bar-chart-2.svg',
+                                  //         height:
+                                  //             Responsive.height(26, context),
+                                  //         width: Responsive.width(26, context),
+                                  //         color:
+                                  //             Color.fromRGBO(48, 111, 220, 1),
+                                  //         fit: BoxFit.none,
+                                  //       ),
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             )
