@@ -372,13 +372,13 @@ class _UserPageState extends State<UserPage>
                 controller: _tabController,
                 labelColor: Color.fromRGBO(15, 22, 32, 0.8),
                 labelStyle: TextStyle(
-                    fontSize: 18,
+                    fontSize: RS.sp(context, 18),
                     fontWeight: FontWeight.w700,
                     fontFamily: 'DM Sans'),
                 labelPadding: EdgeInsets.all(0),
                 unselectedLabelColor: Color.fromRGBO(15, 22, 32, 0.8),
                 unselectedLabelStyle: TextStyle(
-                    fontSize: 18,
+                    fontSize: RS.sp(context, 18),
                     fontWeight: FontWeight.w400,
                     fontFamily: 'DM Sans'),
                 indicatorSize: TabBarIndicatorSize.tab,
@@ -418,7 +418,7 @@ class _UserPageState extends State<UserPage>
             children: [
               Icon(
                 Icons.person_outline_outlined,
-                size: 60,
+                size: RS.s(context, 60),
                 color: Colors.white,
               ),
               SizedBox(height: 16),
@@ -426,7 +426,7 @@ class _UserPageState extends State<UserPage>
                 'Guest Mode',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 24,
+                  fontSize: RS.sp(context, 24),
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -435,7 +435,7 @@ class _UserPageState extends State<UserPage>
                 'Login to view profiles',
                 style: TextStyle(
                   color: Color.fromRGBO(239, 239, 239, 1),
-                  fontSize: 14,
+                  fontSize: RS.sp(context, 14),
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -582,9 +582,9 @@ class _UserPageState extends State<UserPage>
     final profileUrl = user?.userProfilePictureUrl;
 
     if (profileUrl == null || profileUrl.isEmpty) {
-      return const Icon(
+      return Icon(
         Icons.person_outline_outlined,
-        size: 50,
+        size: RS.s(context, 50),
         color: Colors.grey,
       );
     }
@@ -598,9 +598,9 @@ class _UserPageState extends State<UserPage>
         if (loadingProgress == null) return child;
         return const Center(child: CircularProgressIndicator());
       },
-      errorBuilder: (context, error, stackTrace) => const Icon(
+      errorBuilder: (context, error, stackTrace) => Icon(
         Icons.person_outline_outlined,
-        size: 50,
+        size: RS.s(context, 50),
         color: Colors.grey,
       ),
     );
@@ -653,7 +653,7 @@ class _UserPageState extends State<UserPage>
                       ),
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 24,
+                        fontSize: RS.sp(context, 24),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -666,7 +666,7 @@ class _UserPageState extends State<UserPage>
                       ),
                       style: TextStyle(
                         color: Color.fromRGBO(239, 239, 239, 1),
-                        fontSize: 14,
+                        fontSize: RS.sp(context, 14),
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -759,7 +759,7 @@ class _UserPageState extends State<UserPage>
                                 ),
                                 style: TextStyle(
                                   color: Color.fromRGBO(255, 255, 255, 0.9),
-                                  fontSize: 16,
+                                  fontSize: RS.sp(context, 16),
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -771,7 +771,7 @@ class _UserPageState extends State<UserPage>
                                 ),
                                 style: TextStyle(
                                   color: Color.fromRGBO(255, 255, 255, 0.9),
-                                  fontSize: 16,
+                                  fontSize: RS.sp(context, 16),
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -787,9 +787,9 @@ class _UserPageState extends State<UserPage>
                               'assets/profilepage/logo.png',
                               fit: BoxFit.contain,
                               errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(
+                                  Icon(
                                 Icons.school,
-                                size: 35,
+                                size: RS.s(context, 35),
                                 color: Colors.white54,
                               ),
                             ),
@@ -888,9 +888,9 @@ class _UserPageState extends State<UserPage>
                               child: Image.asset(
                                 'assets/profilepage/logo.png',
                                 fit: BoxFit.contain,
-                                errorBuilder: (context, error, stackTrace) => const Icon(
+                                errorBuilder: (context, error, stackTrace) => Icon(
                                   Icons.school,
-                                  size: 35,
+                                  size: RS.s(context, 35),
                                   color: Colors.white54,
                                 ),
                               ),
@@ -965,7 +965,7 @@ class _UserPageState extends State<UserPage>
           label,
           style: TextStyle(
             color: Colors.white.withOpacity(0.3),
-            fontSize: 10,
+            fontSize: RS.sp(context, 10),
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -974,7 +974,7 @@ class _UserPageState extends State<UserPage>
           value,
           style: TextStyle(
             color: Colors.white,
-            fontSize: fsize,
+            fontSize: RS.sp(context, fsize),
             fontWeight: FontWeight.w700,
             height: 1,
           ),
@@ -1089,7 +1089,7 @@ class _UserPageState extends State<UserPage>
             },
           ),
 
-          const SizedBox(height: 24),
+          SizedBox(height: RS.sh(context, 24)),
 
           SettingsItem(
             title: loggingOutLoading ? 'Logging out...' : 'Logout',
@@ -1121,11 +1121,9 @@ class _UserPageState extends State<UserPage>
 
   Widget _buildSettingsSection({bool scrollable = true}) {
     if (scrollable) {
-      return Expanded(
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: _settingsContent(),
-        ),
+      return SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: _settingsContent(),
       );
     }
   
@@ -1159,7 +1157,7 @@ class _UserPageState extends State<UserPage>
                     _buildGroupCard(associations[index]),
                 separatorBuilder: (context, index) => Padding(
                   padding: EdgeInsets.only(
-                      left: RS.sh(context, 88), right: 16),
+                      left: RS.sw(context, 88), right: 16),
                 ),
               ),
             )
@@ -1173,7 +1171,7 @@ class _UserPageState extends State<UserPage>
                       if (index < associations.length - 1)
                         Padding(
                           padding: EdgeInsets.only(
-                              left: RS.sh(context, 88), right: 16),
+                              left: RS.sw(context, 88), right: 16),
                         ),
                     ],
                   ),
@@ -1211,7 +1209,7 @@ class _UserPageState extends State<UserPage>
                     _buildGroupCard(following[index]),
                 separatorBuilder: (context, index) => Padding(
                   padding: EdgeInsets.only(
-                      left: RS.sh(context, 88), right: 16),
+                      left: RS.sw(context, 88), right: 16),
                 ),
               ),
             )
@@ -1225,7 +1223,7 @@ class _UserPageState extends State<UserPage>
                       if (index < following.length - 1)
                         Padding(
                           padding: EdgeInsets.only(
-                              left: RS.sh(context, 88), right: 16),
+                              left: RS.sw(context, 88), right: 16),
                         ),
                     ],
                   ),
@@ -1241,7 +1239,7 @@ class _UserPageState extends State<UserPage>
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: InkWell(
         onTap: () {
-          BodyPage.navigateWith(context, _bloc!, body: Body(bodyID: group.bodyId));
+          BodyPage.navigateWith(context, _bloc!, body: Body(bodyID: group.bodyId, bodyName: group.name, bodyShortDescription: group.about, bodyImageURL: group.photoUrl));
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -1263,7 +1261,7 @@ class _UserPageState extends State<UserPage>
                   ? const Icon(Icons.people, size: 24)
                   : null,
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: RS.sw(context, 16)),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -1273,8 +1271,8 @@ class _UserPageState extends State<UserPage>
                       Expanded(
                         child: Text(
                           group.name,
-                          style: const TextStyle(
-                            fontSize: 20,
+                          style: TextStyle(
+                            fontSize: RS.sp(context, 20),
                             fontWeight: FontWeight.w600,
                             color: Color.fromRGBO(15, 22, 32, 1)
                           ),
@@ -1291,7 +1289,7 @@ class _UserPageState extends State<UserPage>
                         child: Text(
                           group.about,
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: RS.sp(context, 14),
                             color: Color.fromRGBO(15, 22, 32, 1),
                             fontWeight: FontWeight.w400
                           ),

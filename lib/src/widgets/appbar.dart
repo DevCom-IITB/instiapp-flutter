@@ -1,3 +1,4 @@
+import 'package:InstiApp/src/utils/responsive.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget {
@@ -21,8 +22,7 @@ class CustomAppBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildIconBackground(
-            Icons.arrow_back,
+          _buildIconBackground(context, Icons.arrow_back, RS.s(context, 52),
             onPressed: onBack ?? () {
               if (Navigator.of(context).canPop()) {
                 Navigator.of(context).pop();
@@ -33,25 +33,25 @@ class CustomAppBar extends StatelessWidget {
           ),
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 24,
+            style: TextStyle(
+              fontSize: RS.sp(context, 24),
               fontWeight: FontWeight.bold,
               fontFamily: "DM Sans",
               color: Color(0xFF0F1620),
             ),
           ),
           onOther != null 
-          ? _buildIconBackground(other, onPressed: onOther)
-          : SizedBox(width: 52), // Maintain spacing balance
+          ? _buildIconBackground(context, other, RS.s(context, 52), onPressed: onOther)
+          : SizedBox(width: RS.s(context, 52)),
         ],
       ),
     );
   }
 
-  Widget _buildIconBackground(IconData icon, {VoidCallback? onPressed}) {
+  Widget _buildIconBackground(BuildContext context, IconData icon, double size, {VoidCallback? onPressed}) {
     return Container(
-      width: 52,
-      height: 52,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         color: const Color.fromRGBO(235, 235, 235, 0.8),
         shape: BoxShape.circle,
@@ -59,7 +59,7 @@ class CustomAppBar extends StatelessWidget {
       child: Center(
         child: IconButton(
           padding: EdgeInsets.zero,
-          icon: Icon(icon, color: const Color(0xFF0F1620)),
+          icon: Icon(icon, size: RS.s(context, 24), color: const Color(0xFF0F1620)),
           onPressed: onPressed,
           constraints: const BoxConstraints(),
         ),

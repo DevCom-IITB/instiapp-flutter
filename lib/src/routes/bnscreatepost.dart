@@ -155,7 +155,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
 
   Widget _buildProgressIndicator() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+      padding: EdgeInsets.symmetric(vertical: RS.sh(context, 16), horizontal: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,10 +182,10 @@ class _PostItemFlowState extends State<PostItemFlow> {
               color: Color(0xFF306FDC),
             ),
             alignment: Alignment.center,
-            child: Icon(Icons.check, color: Colors.white, size: 20),
+            child: Icon(Icons.check, color: Colors.white, size: RS.s(context, 20)),
           ),
           SizedBox(height: 4),
-          Text(label, style: TextStyle(color: Color(0xFF306FDC), fontSize: 14)),
+          Text(label, style: TextStyle(color: Color(0xFF306FDC), fontSize: RS.sp(context, 14))),
         ],
       );
     } else {
@@ -210,7 +210,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                 color: _currentStep == step
                     ? Color(0xFF306FDC)
                     : Color.fromRGBO(126, 130, 135, 1),
-                fontSize: 14,
+                fontSize: RS.sp(context, 14),
               ),
             ),
           ),
@@ -221,7 +221,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
               color: _currentStep >= step
                   ? Color(0xFF306FDC)
                   : Color.fromRGBO(126, 130, 135, 1),
-              fontSize: 14,
+              fontSize: RS.sp(context, 14),
             ),
           ),
         ],
@@ -232,7 +232,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
   Widget _buildProgressLine(int step) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.only(top: 16),
+        padding: EdgeInsets.only(top: RS.sh(context, 16)),
         child: Container(
           height: 2,
           color: _currentStep > step
@@ -245,7 +245,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
 
   Widget _defaultDetails() {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+      margin: EdgeInsets.fromLTRB(16, RS.sh(context, 4), 16, RS.sh(context, 16)),
       height: RS.sh(context, 58),
       decoration: BoxDecoration(
         border: Border.all(color: Color.fromRGBO(210, 213, 218, 1), width: 1),
@@ -257,7 +257,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
         children: [
           Icon(
             Icons.visibility_outlined,
-            size: RS.sp(context, 20),
+            size: RS.s(context, 20),
             color: Color.fromRGBO(27, 50, 82, 1),
           ),
           const SizedBox(width: 8),
@@ -285,16 +285,16 @@ class _PostItemFlowState extends State<PostItemFlow> {
           children: [
             Text(
               title1,
-              style: const TextStyle(
-                fontSize: 14,
+              style: TextStyle(
+                fontSize: RS.sp(context, 14),
                 fontWeight: FontWeight.bold,
                 color: Color.fromRGBO(15, 22, 32, 0.8),
               ),
             ),
             Text(
               title2,
-              style: const TextStyle(
-                fontSize: 14,
+              style: TextStyle(
+                fontSize: RS.sp(context, 14),
                 fontWeight: FontWeight.bold,
                 color: Color.fromRGBO(15, 22, 32, 0.8),
               ),
@@ -303,8 +303,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
         ),
         Image.asset(
           asset,
-          width: 42,
-          height: 36,
+          width: RS.sw(context, 42),
+          height: RS.sh(context, 36),
         ),
       ],
     );
@@ -314,17 +314,17 @@ class _PostItemFlowState extends State<PostItemFlow> {
     final totalImages = _existingImageUrls.length + _images.length;
 
     return Container(
-      padding: EdgeInsets.fromLTRB(16, 20, 16, 16),
+      padding: EdgeInsets.fromLTRB(16, RS.sh(context, 20), 16, RS.sh(context, 16)),
       child: Column(
         children: [
           Container(
             alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(bottom: 8),
+            padding: EdgeInsets.only(bottom: RS.sh(context, 8)),
             child: Text(
               'Add Product Images',
               style: TextStyle(
                 color: Color(0xFF306FDC),
-                fontSize: 20,
+                fontSize: RS.sp(context, 20),
                 fontWeight: FontWeight.w900,
               ),
             ),
@@ -464,7 +464,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: RS.sh(context, 20)),
           if (totalImages > 0)
             SizedBox(
               height: RS.sh(context, 220),
@@ -682,25 +682,25 @@ class _PostItemFlowState extends State<PostItemFlow> {
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.fromLTRB(16, 20, 16, 0),
+          padding: EdgeInsets.fromLTRB(16, RS.sh(context, 20), 16, 0),
           alignment: Alignment.centerLeft,
           child: Text(
             'Select Item Category',
             style: TextStyle(
               color: Color(0xFF306FDC),
-              fontSize: 20,
+              fontSize: RS.sp(context, 20),
               fontWeight: FontWeight.w900,
             ),
           ),
         ),
         Expanded(
           child: GridView.builder(
-            padding: const EdgeInsets.all(16),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            padding: EdgeInsets.fromLTRB(16, RS.sh(context, 8), 16, 0),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: 2.25,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
+              mainAxisSpacing: RS.s(context, 10),
+              crossAxisSpacing: RS.s(context, 10),
             ),
             itemCount: _categories.length,
             itemBuilder: (context, index) {
@@ -733,8 +733,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
                     children: [
                       Image.asset(
                         category['icon'],
-                        width: 64,
-                        height: 64,
+                        width: RS.s(context, 64),
+                        height: RS.s(context, 64),
                         fit: BoxFit.contain,
                       ),
                       const SizedBox(width: 8),
@@ -757,7 +757,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: RS.sh(context, 16)),
           child: Row(
             children: [
               Expanded(
@@ -836,7 +836,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: RS.sh(context, 16)),
         child: Form(
           key: _formKey,
           child: Column(
@@ -899,8 +899,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
                               child: Center(
                                 child: Text(
                                   '+${totalImages - 2}',
-                                  style: const TextStyle(
-                                    fontSize: 24,
+                                  style: TextStyle(
+                                    fontSize: RS.sp(context, 24),
                                     fontWeight: FontWeight.w400,
                                     color: Color.fromRGBO(126, 130, 135, 1),
                                   ),
@@ -935,7 +935,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                 ],
               ),
 
-              const SizedBox(height: 20),
+              SizedBox(height: RS.sh(context, 20)),
 
               // Heading
               Container(
@@ -944,23 +944,23 @@ class _PostItemFlowState extends State<PostItemFlow> {
                   'Add Item Details',
                   style: TextStyle(
                     color: Color(0xFF306FDC),
-                    fontSize: 20,
+                    fontSize: RS.sp(context, 20),
                     fontWeight: FontWeight.w900,
                   ),
                 ),
               ),
 
-              const SizedBox(height: 20),
+              SizedBox(height: RS.sh(context, 20)),
 
               // Form fields
               // Title
               RichText(
-                text: const TextSpan(
+                text: TextSpan(
                   text: 'Title',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Color.fromRGBO(21, 32, 45, 1),
-                      fontSize: 16),
+                      fontSize: RS.sp(context, 16)),
                   children: [
                     TextSpan(
                       text: '*',
@@ -969,19 +969,19 @@ class _PostItemFlowState extends State<PostItemFlow> {
                   ],
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: RS.sh(context, 8)),
               TextFormField(
                 controller: _titleController,
                 decoration: InputDecoration(
                   isDense: true,
                   contentPadding: EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 16,
+                    vertical: RS.s(context, 12),
+                    horizontal: RS.s(context, 16),
                   ),
                   hintText: 'Enter item name',
                   hintStyle: TextStyle(
                     color: Color.fromRGBO(126, 130, 135, 1),
-                    fontSize: 14,
+                    fontSize: RS.sp(context, 14),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
@@ -1003,7 +1003,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: RS.sh(context, 16)),
 
               // Price and Bought At
               Row(
@@ -1015,12 +1015,12 @@ class _PostItemFlowState extends State<PostItemFlow> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         RichText(
-                          text: const TextSpan(
+                          text: TextSpan(
                             text: 'Price',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Color.fromRGBO(21, 32, 45, 1),
-                                fontSize: 16),
+                                fontSize: RS.sp(context, 16)),
                             children: [
                               TextSpan(
                                 text: '*',
@@ -1029,7 +1029,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: RS.sh(context, 8)),
                         _isGiveAway
                             ? _buildGiveAwayDisplay()
                             : TextFormField(
@@ -1037,22 +1037,22 @@ class _PostItemFlowState extends State<PostItemFlow> {
                                 decoration: InputDecoration(
                                   isDense: true,
                                   contentPadding: EdgeInsets.symmetric(
-                                    vertical: 12,
-                                    horizontal: 16,
+                                    vertical: RS.sh(context, 12),
+                                    horizontal: RS.sw(context, 16),
                                   ),
                                   hintText: 'Enter Selling Price',
                                   hintStyle: TextStyle(
                                     color: Color.fromRGBO(126, 130, 135, 1),
-                                    fontSize: 14,
+                                    fontSize: RS.sp(context, 14),
                                   ),
                                   prefixIcon: Padding(
                                     padding: EdgeInsets.only(
-                                      left: 8,
+                                      left: RS.s(context, 8),
                                     ),
                                     child: Text(
                                       '₹',
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: RS.sp(context, 16),
                                         color: Colors.black,
                                       ),
                                     ),
@@ -1088,43 +1088,43 @@ class _PostItemFlowState extends State<PostItemFlow> {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: RS.sw(context, 16)),
                   Expanded(
                     flex: 5,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         RichText(
-                          text: const TextSpan(
+                          text: TextSpan(
                             text: 'Bought at',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Color.fromRGBO(21, 32, 45, 1),
-                                fontSize: 16),
+                                fontSize: RS.sp(context, 16)),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: RS.sh(context, 8)),
                         TextFormField(
                           controller: _boughtPriceController,
                           decoration: InputDecoration(
                             isDense: true,
                             contentPadding: EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 16,
+                              vertical: RS.s(context, 12),
+                              horizontal: RS.s(context, 16),
                             ),
                             hintText: 'Cost Price',
                             hintStyle: TextStyle(
                               color: Color.fromRGBO(126, 130, 135, 1),
-                              fontSize: 14,
+                              fontSize: RS.sp(context, 14),
                             ),
                             prefixIcon: Padding(
                               padding: EdgeInsets.only(
-                                left: 8,
+                                left: RS.s(context, 8),
                               ),
                               child: Text(
                                 '₹',
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: RS.sp(context, 16),
                                   color: Colors.black,
                                 ),
                               ),
@@ -1153,18 +1153,17 @@ class _PostItemFlowState extends State<PostItemFlow> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: RS.sh(context, 16)),
 
               // Price Type (ChoiceChips)
               if (!_isGiveAway)
                 Row(
                   children: [
                     ChoiceChip(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 8),
-                      label: const Text('Negotiable',
+                      padding: EdgeInsets.all(RS.s(context, 8)),
+                      label: Text('Negotiable',
                           style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w500)),
+                              fontSize: RS.sp(context, 14), fontWeight: FontWeight.w500)),
                       selected: _isNegotiable,
                       onSelected: (selected) {
                         setState(() => _isNegotiable = true);
@@ -1182,13 +1181,12 @@ class _PostItemFlowState extends State<PostItemFlow> {
                           color: Color.fromRGBO(210, 213, 218, 1), width: 1),
                       checkmarkColor: Colors.white,
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: RS.sw(context, 8)),
                     ChoiceChip(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 8),
-                      label: const Text('Fixed',
+                      padding: EdgeInsets.all(RS.s(context, 8)),
+                      label: Text('Fixed',
                           style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w500)),
+                              fontSize: RS.sp(context, 14), fontWeight: FontWeight.w500)),
                       selected: !_isNegotiable,
                       onSelected: (selected) {
                         setState(() => _isNegotiable = false);
@@ -1206,14 +1204,13 @@ class _PostItemFlowState extends State<PostItemFlow> {
                           color: Color.fromRGBO(210, 213, 218, 1), width: 1),
                       checkmarkColor: Colors.white,
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: RS.sw(context, 8)),
                     ChoiceChip(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 8),
-                      label: const Text(
+                      padding: EdgeInsets.all(RS.s(context, 8)),
+                      label: Text(
                         'Give-Away',
                         style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w500),
+                            fontSize: RS.sp(context, 14), fontWeight: FontWeight.w500),
                       ),
                       selected: _isGiveAway,
                       onSelected: (selected) {
@@ -1237,16 +1234,16 @@ class _PostItemFlowState extends State<PostItemFlow> {
                     ),
                   ],
                 ),
-              const SizedBox(height: 16),
+              SizedBox(height: RS.sh(context, 16)),
 
               // Description
               RichText(
-                text: const TextSpan(
+                text: TextSpan(
                   text: 'Description',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Color.fromRGBO(21, 32, 45, 1),
-                    fontSize: 16,
+                    fontSize: RS.sp(context, 16),
                   ),
                   children: [
                     TextSpan(
@@ -1256,7 +1253,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                   ],
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: RS.sh(context, 8)),
               TextFormField(
                 controller: _descController,
                 buildCounter: (
@@ -1268,14 +1265,14 @@ class _PostItemFlowState extends State<PostItemFlow> {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Character Limit',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                        style: TextStyle(fontSize: RS.sp(context, 12), color: Colors.grey),
                       ),
                       Text(
                         '$currentLength/$maxLength',
-                        style: const TextStyle(
-                          fontSize: 12,
+                        style: TextStyle(
+                          fontSize: RS.sp(context, 12),
                           color: Colors.grey,
                         ),
                       ),
@@ -1285,13 +1282,13 @@ class _PostItemFlowState extends State<PostItemFlow> {
                 decoration: InputDecoration(
                   isDense: true,
                   contentPadding: EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 16,
+                    vertical: RS.s(context, 12),
+                    horizontal: RS.s(context, 16),
                   ),
                   hintText: 'Enter Description',
                   hintStyle: TextStyle(
                     color: Color.fromRGBO(126, 130, 135, 1),
-                    fontSize: 14,
+                    fontSize: RS.sp(context, 14),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
@@ -1316,16 +1313,16 @@ class _PostItemFlowState extends State<PostItemFlow> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: RS.sh(context, 16)),
 
               // Mobile Number
               RichText(
-                text: const TextSpan(
+                text: TextSpan(
                   text: '10-Digit Mobile Number',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Color.fromRGBO(21, 32, 45, 1),
-                      fontSize: 16),
+                      fontSize: RS.sp(context, 16)),
                   children: [
                     TextSpan(
                       text: '*',
@@ -1334,19 +1331,19 @@ class _PostItemFlowState extends State<PostItemFlow> {
                   ],
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: RS.sh(context, 8)),
               TextFormField(
                 controller: _mobileController,
                 decoration: InputDecoration(
                   isDense: true,
                   contentPadding: EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 16,
+                    vertical: RS.s(context, 12),
+                    horizontal: RS.s(context, 16),
                   ),
                   hintText: 'Enter your mobile number',
                   hintStyle: TextStyle(
                     color: Color.fromRGBO(126, 130, 135, 1),
-                    fontSize: 14,
+                    fontSize: RS.sp(context, 14),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
@@ -1372,7 +1369,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                   return null;
                 },
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: RS.sh(context, 30)),
               Row(
                 children: [
                   Expanded(
@@ -1384,123 +1381,116 @@ class _PostItemFlowState extends State<PostItemFlow> {
                       backgroundImageAsset: 'assets/buynsell/button_bg.png',
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16),
                   Expanded(
                     child: DecoratedButton(
-  text: isPosting ? 'Posting...' : 'Post',
-  onPressed: isPosting
-      ? null
-      : () async {
-          if (!_formKey.currentState!.validate()) return;
+                      text: isPosting ? 'Posting...' : 'Post',
+                      onPressed: (totalImages == 0) ? () async {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please add at least one image to post'),
+                          ),
+                        );
+                      } : (isPosting)  ? null
+                        : () async {
+                          if (!_formKey.currentState!.validate()) return;
 
-          setState(() => isPosting = true);
+                          setState(() => isPosting = true);
 
-          final bloc = BlocProvider.of(context)!.bloc;
-          late BuynSellPost bnsPost;
+                          final bloc = BlocProvider.of(context)!.bloc;
+                          late BuynSellPost bnsPost;
 
-          // ----------------------------
-          // Build post object
-          // ----------------------------
-          if (_isEditMode) {
-            bnsPost = widget.existingPost!;
-          } else {
-            bnsPost = BuynSellPost();
-          }
+                          if (_isEditMode) {
+                            bnsPost = widget.existingPost!;
+                          } else {
+                            bnsPost = BuynSellPost();
+                          }
 
-          bnsPost
-            ..name = _titleController.text.trim()
-            ..description = _descController.text.trim()
-            ..contactDetails = _mobileController.text.trim()
-            ..negotiable = _isGiveAway ? false : _isNegotiable
-            ..action = _isGiveAway ? "giveaway" : "sell"
-            ..originalPrice =
-                int.tryParse(_boughtPriceController.text.trim())
-            ..price = _isGiveAway
-                ? 0
-                : int.tryParse(_priceController.text.trim()) ?? 0
-            ..category = (_selectedCategory != null &&
-                    _categories.any(
-                        (c) => c['name'] == _selectedCategory))
-                ? _selectedCategory
-                : 'Others';
+                          bnsPost
+                            ..name = _titleController.text.trim()
+                            ..description = _descController.text.trim()
+                            ..contactDetails = _mobileController.text.trim()
+                            ..negotiable = _isGiveAway ? false : _isNegotiable
+                            ..action = _isGiveAway ? "giveaway" : "sell"
+                            ..originalPrice =
+                                int.tryParse(_boughtPriceController.text.trim())
+                            ..price = _isGiveAway
+                                ? 0
+                                : int.tryParse(_priceController.text.trim()) ?? 0
+                            ..category = (_selectedCategory != null &&
+                                    _categories.any(
+                                        (c) => c['name'] == _selectedCategory))
+                                ? _selectedCategory
+                                : 'Others';
 
-          try {
-            // ----------------------------
-            // Upload images
-            // ----------------------------
-            final List<String> imageUrls = [];
+                          try {
+                            final List<String> imageUrls = [];
 
-            if (_isEditMode) {
-              imageUrls.addAll(_existingImageUrls);
-            }
+                            if (_isEditMode) {
+                              imageUrls.addAll(_existingImageUrls);
+                            }
 
-            for (final XFile image in _images) {
-              final file = File(image.path);
+                            for (final XFile image in _images) {
+                              final file = File(image.path);
 
-              if (await file.length() / 1000000 > 10) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Image size should be less than 10MB'),
-                  ),
-                );
-                continue;
-              }
+                              // if (await file.length() / 1000000 > 10) {
+                              //   ScaffoldMessenger.of(context).showSnackBar(
+                              //     const SnackBar(
+                              //       content: Text('Image size should be less than 10MB'),
+                              //     ),
+                              //   );
+                              //   continue;
+                              // }
 
-              final ImageUploadResponse resp =
-                  await bloc.client.uploadImage(
-                bloc.getSessionIdHeader(),
-                file,
-              );
+                              final ImageUploadResponse resp =
+                                  await bloc.client.uploadImage(
+                                bloc.getSessionIdHeader(),
+                                file,
+                              );
 
-              imageUrls.add(resp.pictureURL!);
-            }
+                              imageUrls.add(resp.pictureURL!);
+                            }
 
-            // Assign images (assumed non-empty)
-            bnsPost.imageUrl = imageUrls;
+                            bnsPost.imageUrl = imageUrls;
 
-            // ----------------------------
-            // CREATE / UPDATE (IMPORTANT: await)
-            // ----------------------------
-            if (_isEditMode) {
-              await bloc.buynSellPostBloc.updateBuynSellPost(bnsPost);
-            } else {
-              await bloc.buynSellPostBloc.createBuynSellPost(bnsPost);
-            }
+                            if (_isEditMode) {
+                              await bloc.buynSellPostBloc.updateBuynSellPost(bnsPost);
+                            } else {
+                              await bloc.buynSellPostBloc.createBuynSellPost(bnsPost);
+                            }
 
-            // ----------------------------
-            // SUCCESS
-            // ----------------------------
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  _isEditMode
-                      ? 'Post updated successfully!'
-                      : 'Item posted successfully!',
-                ),
-              ),
-            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  _isEditMode
+                                      ? 'Post updated successfully!'
+                                      : 'Item posted successfully!',
+                                ),
+                              ),
+                            );
 
-            Navigator.pop(context);
-          } catch (e) {
-  String msg = 'Error posting item';
+                            Navigator.pop(context);
+                          } catch (e) {
+                            String msg = 'Error posting item';
 
-  if (e is DioException) {
-    msg = e.response?.data?.toString() ?? e.message ?? msg;
-  }
+                            if (e is DioException) {
+                              msg = e.response?.data?.toString() ?? e.message ?? msg;
+                            } else {
+                              msg = e.toString();
+                            }
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(msg)),
-  );
-}
- finally {
-            setState(() => isPosting = false);
-          }
-        },
-  backgroundColor: const Color(0xFF0F1620),
-  textColor: Colors.white,
-  backgroundImageAsset: 'assets/buynsell/button_bg.png',
-),
-
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(msg)),
+                            );
+                          }
+                          finally {
+                            setState(() => isPosting = false);
+                          }
+                        },
+                      backgroundColor: const Color(0xFF0F1620),
+                      textColor: Colors.white,
+                      backgroundImageAsset: 'assets/buynsell/button_bg.png',
+                    ),
                   ),
                 ],
               ),
@@ -1511,14 +1501,13 @@ class _PostItemFlowState extends State<PostItemFlow> {
     );
   }
 
-  // Add this helper function to your _PostItemFlowState class
   String _getCategoryIcon(String categoryName) {
     try {
       return _categories.firstWhere(
         (c) => c['name'] == categoryName,
       )['icon'];
     } catch (e) {
-      return 'assets/categories/other.png'; // Fallback to Others icon
+      return 'assets/categories/other.png';
     }
   }
 
@@ -1577,10 +1566,10 @@ class _PostItemFlowState extends State<PostItemFlow> {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.green, width: 1.5),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        padding: EdgeInsets.symmetric(horizontal: RS.sw(context, 12), vertical: RS.sh(context, 9)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -1589,7 +1578,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
               style: TextStyle(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: RS.sp(context, 16),
               ),
             ),
             GestureDetector(

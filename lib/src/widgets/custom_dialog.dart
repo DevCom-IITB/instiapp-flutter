@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/dotted_divider.dart';
+import 'package:InstiApp/src/utils/responsive.dart';
 
 class CustomDialog extends StatefulWidget {
   final String title;
@@ -39,21 +40,20 @@ class _CustomDialogState extends State<CustomDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RS.s(context, 20))),
       backgroundColor: Colors.white,
       insetPadding: EdgeInsets.zero,
       child: Container(
         padding: const EdgeInsets.all(16),
-        width: 380,
-        // height: widget.imageAssetPath != null ? 380 : null,
+        width: RS.sw(context, 380),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               widget.title,
-              style: const TextStyle(
-                fontSize: 20,
+              style: TextStyle(
+                fontSize: RS.sp(context, 20),
                 fontWeight: FontWeight.bold,
                 color: Color.fromRGBO(15, 22, 32, 1),
                 fontFamily: 'DM Sans',
@@ -67,8 +67,8 @@ class _CustomDialogState extends State<CustomDialog> {
             // Content1
             Text(
               widget.content1,
-              style: const TextStyle(
-                fontSize: 16,
+              style: TextStyle(
+                fontSize: RS.sp(context, 16),
                 color: Color.fromRGBO(15, 22, 32, 0.8),
                 height: 1.4,
                 fontFamily: 'DM Sans',
@@ -79,8 +79,8 @@ class _CustomDialogState extends State<CustomDialog> {
             if (widget.content2.isNotEmpty) ...[
               Text(
                 widget.content2,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: TextStyle(
+                  fontSize: RS.sp(context, 16),
                   color: Color.fromRGBO(15, 22, 32, 0.8),
                   height: 1.4,
                   fontFamily: 'DM Sans',
@@ -98,8 +98,8 @@ class _CustomDialogState extends State<CustomDialog> {
                     heightFactor: 0.85,
                     child: Image.asset(
                       widget.imageAssetPath!,
-                      width: 220,
-                      height: 220,
+                      width: RS.s(context, 220),
+                      height: RS.s(context, 220),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -156,8 +156,8 @@ class _CustomDialogState extends State<CustomDialog> {
         ),
         child: Text(
           isDisabled ? widget.loadingText : option.text,
-          style: const TextStyle(
-            fontSize: 16,
+          style: TextStyle(
+            fontSize: RS.sp(context, 16),
             fontWeight: FontWeight.w700,
             fontFamily: 'DM Sans',
           ),
