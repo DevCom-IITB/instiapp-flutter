@@ -306,6 +306,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     final responsive = Responsive(context);
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           // Main content with swipe navigation
@@ -316,10 +317,22 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             },
             physics: const ClampingScrollPhysics(),
             children: [
-              Homepagewidget(),
-              FeedPage(),
-              ExplorePage(),
-              CommunityPage(),
+              Padding(
+                padding: EdgeInsets.only(bottom: responsive.h(90)),
+                child: Homepagewidget(),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: responsive.h(90)),
+                child: FeedPage(),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: responsive.h(90)),
+                child: ExplorePage(),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: responsive.h(90)),
+                child: CommunityPage(),
+              ),
             ],
           ),
           

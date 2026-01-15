@@ -9,6 +9,7 @@ import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_dash/flutter_dash.dart';
@@ -18,7 +19,6 @@ import 'package:InstiApp/src/routes/explore_club.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/responsivenew.dart';
-
 
 class FeedPage extends StatefulWidget {
   @override
@@ -30,6 +30,12 @@ class _FeedPageState extends State<FeedPage> {
 
   bool firstBuild = true;
 
+  ScrollController? _hideButtonController;
+  bool headervisible = true;
+  double isFabVisible = 0;
+  bool _headerCollapsed = false;
+  double _lastScrollOffset = 0;
+
   IconData actionIcon = Icons.search_outlined;
 
   bool searchMode = false;
@@ -39,10 +45,47 @@ class _FeedPageState extends State<FeedPage> {
   @override
   void dispose() {
     _searchController.dispose();
+    _hideButtonController?.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
   FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _hideButtonController = ScrollController()
+      ..addListener(() {
+        if (!mounted || !_hideButtonController!.hasClients) return;
+
+        final currentOffset = _hideButtonController!.offset;
+        final isScrollingDown = currentOffset > _lastScrollOffset;
+
+        // FAB visibility
+        final visible = _hideButtonController!.position.userScrollDirection ==
+                ScrollDirection.forward &&
+            currentOffset > 100;
+
+        // Header collapse logic
+        bool shouldCollapse = _headerCollapsed;
+        if (isScrollingDown && currentOffset > 100) {
+          shouldCollapse = true;
+        } else if (!isScrollingDown && currentOffset < 80) {
+          shouldCollapse = false;
+        }
+
+        if ((visible ? 1.0 : 0.0) != isFabVisible ||
+            shouldCollapse != _headerCollapsed) {
+          setState(() {
+            isFabVisible = visible ? 1 : 0;
+            _headerCollapsed = shouldCollapse;
+          });
+        }
+
+        _lastScrollOffset = currentOffset;
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +101,27 @@ class _FeedPageState extends State<FeedPage> {
     return Scaffold(
       backgroundColor: Color.fromRGBO(246, 246, 246, 1),
       key: _scaffoldKey,
+      floatingActionButton: AnimatedOpacity(
+        opacity: isFabVisible, // 1 = visible, 0 = hidden
+        duration: Duration(milliseconds: 200),
+        child: IgnorePointer(
+          ignoring: isFabVisible == 0,
+          child: Container(
+            padding: EdgeInsets.only(bottom: Responsive.height(70.0, context)),
+            child: FloatingActionButton(
+              backgroundColor: Color.fromRGBO(48, 111, 220, 1),
+              onPressed: () {
+                _hideButtonController?.animateTo(
+                  0.0,
+                  duration: Duration(milliseconds: 400),
+                  curve: Curves.easeOut,
+                );
+              },
+              child: Icon(Icons.arrow_upward),
+            ),
+          ),
+        ),
+      ),
       body: SafeArea(
         child: GestureDetector(
           onTap: () {
@@ -69,46 +133,61 @@ class _FeedPageState extends State<FeedPage> {
               children: [
                 Container(
                   child: Column(children: [
-                    Center(
-                      child: Container(
-                          padding: EdgeInsets.only(
-                              top: Responsive.height(10.5, context),
-                              bottom: Responsive.height(10.5, context)),
-                          child: Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Insti ',
-                                  style: TextStyle(
-                                    color: const Color(0xFF0F1620),
-                                    fontSize: Responsive.text(24, context),
-                                    fontFamily: 'DM Sans',
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: 'Feed',
-                                  style: TextStyle(
-                                    color: const Color(0xFF306FDC),
-                                    fontSize: Responsive.text(24, context),
-                                    fontFamily: 'DM Sans',
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
+                    ClipRect(
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 300),
+                        height: _headerCollapsed
+                            ? 0
+                            : Responsive.height(67.5, context),
+                        child: ListView(
+                          children: [
+                            Center(
+                              child: Container(
+                                  padding: EdgeInsets.only(
+                                      top: Responsive.height(10.5, context),
+                                      bottom: Responsive.height(10.5, context)),
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: 'Insti ',
+                                          style: TextStyle(
+                                            color: const Color(0xFF0F1620),
+                                            fontSize:
+                                                Responsive.text(24, context),
+                                            fontFamily: 'DM Sans',
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: 'Feed',
+                                          style: TextStyle(
+                                            color: const Color(0xFF306FDC),
+                                            fontSize:
+                                                Responsive.text(24, context),
+                                            fontFamily: 'DM Sans',
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  )),
                             ),
-                            textAlign: TextAlign.center,
-                          )),
+                            SizedBox(height: Responsive.height(2, context)),
+                            Dash(
+                              direction: Axis.horizontal,
+                              length: Responsive.width(368, context),
+                              dashLength: Responsive.width(6, context),
+                              dashGap: Responsive.width(7, context),
+                              dashColor: Color(0xFFDADADA),
+                            ),
+                            SizedBox(height: Responsive.height(10, context)),
+                          ],
+                        ),
+                      ),
                     ),
-                    SizedBox(height: Responsive.height(2, context)),
-                    Dash(
-                      direction: Axis.horizontal,
-                      length: Responsive.width(368, context),
-                      dashLength: Responsive.width(6, context),
-                      dashGap: Responsive.width(7, context),
-                      dashColor: Color(0xFFDADADA),
-                    ),
-                    SizedBox(height: Responsive.height(20, context)),
+                    SizedBox(height: Responsive.height(10, context)),
                     Container(
                       margin: EdgeInsets.only(
                           left: Responsive.width(16, context),
@@ -268,6 +347,7 @@ class _FeedPageState extends State<FeedPage> {
                 ),
                 Expanded(
                   child: CustomScrollView(
+                    controller: _hideButtonController,
                     slivers: [
                       StreamBuilder(
                         stream: bloc.events,
@@ -372,7 +452,7 @@ Widget Feedpost(BuildContext context, InstiAppBloc bloc, Event event) {
                     event.eventBodies?[0].bodyImageURL ??
                     "",
                 width: double.infinity,
-                height: Responsive.height(475, context),
+                height: Responsive.height(440, context),
                 fit: BoxFit.fill,
                 placeholder: (context, url) =>
                     Center(child: CircularProgressIndicator()),

@@ -298,9 +298,10 @@ class _EventPageState extends State<EventPage> {
                                                       Icon(Icons.error),
                                             ),
                                           ),
-                                          SizedBox(
+                                          SizedBox(  
                                               width:
                                                   Responsive.width(8, context)),
+
                                           Text(
                                             fullbody!.bodyParents![0].bodyShortName ?? "",
                                             style: TextStyle(

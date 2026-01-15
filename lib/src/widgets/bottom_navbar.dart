@@ -49,7 +49,6 @@ class InstiBottomNavBar extends StatelessWidget {
     final navBarWidth = responsive.w(width);
 
     // === EXACT ratios from original design ===
-    final itemWidth = navBarWidth * (87 / 396);
     final indicatorWidth = navBarWidth * (63 / 396);
     final indicatorHeight = navBarHeight * (33 / 80);
     final iconSize = navBarWidth * (24 / 396);
@@ -61,61 +60,61 @@ class InstiBottomNavBar extends StatelessWidget {
         color: constants.instiappDark,
         borderRadius: BorderRadius.circular(navBarHeight / 2),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(items.length, (index) {
-          final item = items[index];
-          final isSelected = currentIndex == index;
-
-          return SizedBox(
-            width: itemWidth,
-            child: GestureDetector(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: List.generate(items.length, (index) {
+            final item = items[index];
+            final isSelected = currentIndex == index;
+        
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTap: () => onTap(index),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: indicatorWidth,
-                    height: indicatorHeight,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        AnimatedScale(
-                          scale: isSelected ? 1.0 : 0.0,
-                          duration: const Duration(milliseconds: 200),
-                          curve: Curves.easeOut,
-                          child: Container(
-                            width: indicatorWidth,
-                            height: indicatorHeight,
-                            decoration: BoxDecoration(
-                              color: constants.instiappBlue,
-                              borderRadius:
-                                  BorderRadius.circular(79.67),
+              child: SizedBox(
+                width: indicatorWidth * 1.3, // spreads horizontally
+                height: navBarHeight,        // full vertical tap area
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: indicatorWidth,
+                      height: indicatorHeight,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          AnimatedScale(
+                            scale: isSelected ? 1.0 : 0.0,
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeOut,
+                            child: Container(
+                              width: indicatorWidth,
+                              height: indicatorHeight,
+                              decoration: BoxDecoration(
+                                color: constants.instiappBlue,
+                                borderRadius: BorderRadius.circular(79.67),
+                              ),
                             ),
                           ),
-                        ),
-                        SvgPicture.asset(
-                          item.iconPath,
-                          width: iconSize,
-                          height: iconSize,
-                          colorFilter: ColorFilter.mode(
-                            Colors.white.withOpacity(isSelected ? 1 : 0.7),
-                            BlendMode.srcIn,
+                          SvgPicture.asset(
+                            item.iconPath,
+                            width: iconSize,
+                            height: iconSize,
+                            colorFilter: ColorFilter.mode(
+                              Colors.white.withOpacity(isSelected ? 1 : 0.7),
+                              BlendMode.srcIn,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: responsive.h(2)),
-                  SizedBox(
-                    width: itemWidth,
-                    child: FittedBox(
+                    SizedBox(height: responsive.h(2)),
+                    FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
                         item.label,
                         maxLines: 1,
                         softWrap: false,
-                        overflow: TextOverflow.visible,
                         style: TextStyle(
                           color: isSelected
                               ? constants.instiappBlue
@@ -125,12 +124,12 @@ class InstiBottomNavBar extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ),
     );
   }
