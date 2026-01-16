@@ -1,3 +1,4 @@
+import 'package:InstiApp/main.dart';
 import 'package:InstiApp/src/api/model/rich_notification.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -193,9 +194,29 @@ class NotificationController {
 
   @pragma("vm:entry-point")
   static Future<void> onActionReceivedMethod(
-      customHandler, ReceivedAction receivedAction) async {
-    // Navigate into pages, avoiding to open the notification details page over another details page already opened
-    return customHandler(receivedAction);
+      ReceivedAction receivedAction) async {
+    
+    if (receivedAction.payload != null) {
+      RichNotification notif = RichNotification.fromJson(receivedAction.payload!);
+      String routeName = routeFromNotification(notif);
+      String actionKey = receivedAction.buttonKeyPressed;
+
+      // Navigate using the global key
+      navigatorKey.currentState?.pushReplacementNamed(
+        routeName,
+        arguments: NotificationRouteArguments(actionKey, notif),
+      );
+
+      // Handle "Open Browser" action
+      if (actionKey == ActionKeys.OPEN_BROWSER) {
+        if (notif.notificationExtra != null) {
+          Uri uri = Uri.parse(notif.notificationExtra!);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri);
+          }
+        }
+      }
+    }
   }
 }
 
@@ -240,59 +261,47 @@ void setupNotifications(BuildContext context, InstiAppBloc bloc) async {
   FirebaseMessaging.onMessage.listen(sendMessage);
 
   /// Handle what action to take depending on key
-  void _handleActionKey(String actionKey, RichNotification notif) async {
-    // Open browser
-    if (actionKey == ActionKeys.OPEN_BROWSER) {
-      if (notif.notificationExtra != null) {
-        Uri uri = Uri.parse(notif.notificationExtra!);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri);
-        }
-      }
-    }
-  }
+  // void _handleActionKey(String actionKey, RichNotification notif) async {
+  //   // Open browser
+  //   if (actionKey == ActionKeys.OPEN_BROWSER) {
+  //     if (notif.notificationExtra != null) {
+  //       Uri uri = Uri.parse(notif.notificationExtra!);
+  //       if (await canLaunchUrl(uri)) {
+  //         await launchUrl(uri);
+  //       }
+  //     }
+  //   }
+  // }
 
   /// Handle notification on press
-  void _handleNotification(ReceivedAction notification) {
-    if (notification.payload != null) {
-      // Getting notification payload
-      RichNotification notif = RichNotification.fromJson(notification.payload!);
+  // void _handleNotification(ReceivedAction notification) {
+  //   if (notification.payload != null) {
+  //     // Getting notification payload
+  //     RichNotification notif = RichNotification.fromJson(notification.payload!);
 
-      // Getting route depending on payload
-      String routeName = routeFromNotification(notif);
+  //     // Getting route depending on payload
+  //     String routeName = routeFromNotification(notif);
 
-      // Get action button key if any
-      String actionKey = notification.buttonKeyPressed;
+  //     // Get action button key if any
+  //     String actionKey = notification.buttonKeyPressed;
 
-      // Navigate to Route
-      Navigator.of(context).pushReplacementNamed(routeName,
-          arguments: NotificationRouteArguments(actionKey, notif));
+  //     // Navigate to Route
+  //     Navigator.of(context).pushReplacementNamed(routeName,
+  //         arguments: NotificationRouteArguments(actionKey, notif));
 
-      // marking the notification as read
-      bloc.clearNotificationUsingID(notif.notificationID!);
+  //     // marking the notification as read
+  //     bloc.clearNotificationUsingID(notif.notificationID!);
 
-      // Handling action key
-      _handleActionKey(actionKey, notif);
-    }
-  }
+  //     // Handling action key
+  //     _handleActionKey(actionKey, notif);
+  //   }
+  // }
 
   AwesomeNotifications().setListeners(
-    onActionReceivedMethod: (ReceivedAction receivedAction) {
-      return NotificationController.onActionReceivedMethod(
-          _handleNotification, receivedAction);
-    },
-    onNotificationCreatedMethod: (ReceivedNotification receivedNotification) {
-      return NotificationController.onNotificationCreatedMethod(
-          receivedNotification);
-    },
-    onNotificationDisplayedMethod: (ReceivedNotification receivedNotification) {
-      return NotificationController.onNotificationDisplayedMethod(
-          receivedNotification);
-    },
-    onDismissActionReceivedMethod: (ReceivedAction receivedAction) {
-      return NotificationController.onDismissActionReceivedMethod(
-          receivedAction);
-    },
+    onActionReceivedMethod: NotificationController.onActionReceivedMethod,
+    onNotificationCreatedMethod: NotificationController.onNotificationCreatedMethod,
+    onNotificationDisplayedMethod: NotificationController.onNotificationDisplayedMethod,
+    onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod,
   );
 }
 

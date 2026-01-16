@@ -43,7 +43,7 @@ dependencies:
   image_picker: ^1.1.2
   flutter_dash: ^1.0.0
   html: ^0.15.4
-  firebase_messaging: ^11.2.3
+  firebase_messaging: ^14.7.9
   flutter_local_notifications: ^17.1.2
   path_provider: ^2.0.8
   cached_network_image: ^3.2.0
@@ -75,8 +75,8 @@ dependencies:
 
   collection: any
   timezone: any
-  firebase_core: any
-  firebase_core_platform_interface: ^4.2.2
+  firebase_core: 2.24.2
+  # firebase_core_platform_interface: ^4.2.2
   file_picker: ^8.0.0+1
 
   shimmer: ^2.0.0
@@ -160,15 +160,15 @@ flutter:
 #           include_if_null: true
 
 dependency_overrides:
-  firebase_messaging_platform_interface: 3.1.6
-  firebase_crashlytics_platform_interface: 3.1.13
-  cloud_firestore_platform_interface: 5.4.13
-  firebase_auth_platform_interface: 6.1.11
-  firebase_storage_platform_interface: 4.0.14
-  cloud_functions_platform_interface: 5.0.21
-  firebase_analytics_platform_interface: 3.0.5
-  firebase_remote_config_platform_interface: 1.0.5
-  firebase_dynamic_links_platform_interface: 0.2.0+5
-  firebase_performance_platform_interface: 0.1.0+5
-  firebase_app_installations_platform_interface: 0.1.0+6
-  firebase_core_platform_interface: 4.2.2
+  # firebase_messaging_platform_interface: 3.1.6
+  # firebase_crashlytics_platform_interface: 3.1.13
+  # cloud_firestore_platform_interface: 5.4.13
+  # firebase_auth_platform_interface: 6.1.11
+  # firebase_storage_platform_interface: 4.0.14
+  # cloud_functions_platform_interface: 5.0.21
+  # firebase_analytics_platform_interface: 3.0.5
+  # firebase_remote_config_platform_interface: 1.0.5
+  # firebase_dynamic_links_platform_interface: 0.2.0+5
+  # firebase_performance_platform_interface: 0.1.0+5
+  # firebase_app_installations_platform_interface: 0.1.0+6
+  # firebase_core_platform_interface: 4.2.2
