@@ -75,6 +75,11 @@ void main() async {
 
   await bloc.restorePrefs();
 
+  FirebaseMessaging.instance.getToken().then((token) {
+    print("========================================");
+    print("FCM TOKEN: $token");
+    print("========================================");
+  }); 
   runApp(MyApp(
     key: key,
     bloc: bloc,

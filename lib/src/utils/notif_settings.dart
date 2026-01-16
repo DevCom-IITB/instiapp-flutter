@@ -382,8 +382,9 @@ Future<void> createNotification(RichNotification notif) async {
 
 /// Get the content of the notification
 NotificationContent getNotificationContent(RichNotification notif) {
+  // Modulo by the max 32-bit integer (2,147,483,647) to ensure it fits
   int id = stringToInt(notif.notificationID ?? "") ??
-      (DateTime.now().millisecondsSinceEpoch);
+    (DateTime.now().millisecondsSinceEpoch % 2147483647);
 
   /// Get the channel name to which the notification should be sent
   String getChannelKey(RichNotification notif) {
