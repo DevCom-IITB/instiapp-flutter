@@ -323,12 +323,12 @@ class _UserPageState extends State<UserPage>
         SizedBox(height: RS.sh(context, 4)),
         CustomAppBar(
           title: 'Profile',
-          onOther: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => AboutPage()),
-            );
-          },
+          // onOther: () {
+          //   Navigator.push(
+          //     context,
+          //     MaterialPageRoute(builder: (context) => AboutPage()),
+          //   );
+          // },
         ),
         SizedBox(height: RS.sh(context, 24)),
         if (_isLoading && user != null)

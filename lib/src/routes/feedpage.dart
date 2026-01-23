@@ -1,5 +1,5 @@
 import 'dart:collection';
-
+import 'dart:math';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
@@ -101,13 +101,14 @@ class _FeedPageState extends State<FeedPage> {
     return Scaffold(
       backgroundColor: Color.fromRGBO(246, 246, 246, 1),
       key: _scaffoldKey,
+      resizeToAvoidBottomInset: false,
       floatingActionButton: AnimatedOpacity(
         opacity: isFabVisible, // 1 = visible, 0 = hidden
         duration: Duration(milliseconds: 200),
         child: IgnorePointer(
           ignoring: isFabVisible == 0,
           child: Container(
-            padding: EdgeInsets.only(bottom: Responsive.height(70.0, context)),
+            padding: EdgeInsets.only(bottom: Responsive.height(16.0, context)),
             child: FloatingActionButton(
               backgroundColor: Color.fromRGBO(48, 111, 220, 1),
               onPressed: () {

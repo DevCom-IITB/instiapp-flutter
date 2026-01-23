@@ -69,7 +69,7 @@ class _LostpageState extends State<LostPage> {
     double myfont = ((18 / 274.4) * screen_h);
     return Scaffold(
         key: _scaffoldKey,
-        drawer: NavDrawer(),
+        // drawer: NavDrawer(),
         bottomNavigationBar: MyBottomAppBar(
           shape: RoundedNotchedRectangle(),
           notchMargin: 4.0,

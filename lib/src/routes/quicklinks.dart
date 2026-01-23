@@ -121,9 +121,9 @@ class _QuicklinksState extends State<Quicklinks> {
         "NewBee": "https://gymkhana.iitb.ac.in/newbee",
       },
       "Academic": {
-        "ASC": "https://asc.iitb.ac.in/acadmenu/",
-        "External ASC": "https://portal.iitb.ac.in/asc/Login",
-        "Moodle": "https://moodle.iitb.ac.in/login/index.php",
+        "ASC": "https://asc.iitb.ac.in/",
+        "External ASC": "https://portal.iitb.ac.in/asc/",
+        "Moodle": "https://moodle.iitb.ac.in",
         "Placement Blog": "https://campus.placements.iitb.ac.in/",
         "Internship Blog": "https://campus.placements.iitb.ac.in/",
         "Central Library": "https://www.library.iitb.ac.in/",
@@ -206,7 +206,7 @@ class _QuicklinksState extends State<Quicklinks> {
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                      Navigator.of(context).pushNamed('/feed');
+                                      Navigator.of(context).pop();
                                     },
                                     child: Center(
                                       child: Container(

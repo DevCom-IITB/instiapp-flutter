@@ -71,7 +71,7 @@ class _MessCalendarPageState extends State<MessCalendarPage> {
           ],
         ),
       ),
-      drawer: NavDrawer(),
+      // drawer: NavDrawer(),
       body: SafeArea(
         child: bloc.currSession == null
             ? Container(

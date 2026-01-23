@@ -31,6 +31,42 @@ class _ExplorePageState extends State<ExplorePage> {
   TextEditingController? _searchFieldController;
   String bodyID = "";
   bool searchMode = false;
+// inside _ExplorePageState
+final ScrollController _listController = ScrollController();
+double _maxScrollOffset = double.infinity;
+final double _clampFraction = 0.3; // change to desired fraction (0.0 - 1.0)
+
+@override
+void initState() {
+  super.initState();
+
+  // compute allowed max after first layout (the ListView's maxScrollExtent becomes available)
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (_listController.hasClients) {
+      final maxExtent = _listController.position.maxScrollExtent;
+      // Option A: clamp to a fraction of the full scrollable extent
+      _maxScrollOffset = maxExtent * _clampFraction;
+
+      // Option B: clamp to an absolute pixel height (uncomment to use instead)
+      // final pixels = MediaQuery.of(context).size.height * 0.6; // e.g. 60% viewport height
+      // _maxScrollOffset = pixels.clamp(0.0, maxExtent);
+    }
+  });
+
+  // prevent going past the allowed offset
+  _listController.addListener(() {
+    if (_listController.hasClients && _listController.offset > _maxScrollOffset) {
+      _listController.jumpTo(_maxScrollOffset);
+    }
+  });
+}
+
+  @override
+  void dispose() {
+    _listController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of(context)!.bloc;
@@ -181,6 +217,8 @@ class _ExplorePageState extends State<ExplorePage> {
                 child: Container(
                   padding: EdgeInsets.only(top: Responsive.height(10, context)),
                   child: ListView(
+                    controller: _listController,
+                    physics: ClampingScrollPhysics(),
                     shrinkWrap: true,
                     padding: EdgeInsets.zero,
                     children: [
