@@ -48,7 +48,7 @@ class _VerifyAchPageState extends State<VerifyAchPage> {
 
     return Scaffold(
       key: _scaffoldKey,
-      drawer: NavDrawer(),
+      // drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
         shape: RoundedNotchedRectangle(),
         child: new Row(

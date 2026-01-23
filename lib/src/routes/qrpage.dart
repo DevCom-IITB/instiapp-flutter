@@ -79,7 +79,7 @@ class _QRPageState extends State<QRPage> {
           ],
         ),
       ),
-      drawer: NavDrawer(),
+      // drawer: NavDrawer(),
       body: SafeArea(
         child: bloc.currSession == null
             ? Container(

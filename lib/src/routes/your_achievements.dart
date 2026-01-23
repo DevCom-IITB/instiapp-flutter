@@ -41,7 +41,7 @@ class _YourAchievementPageState extends State<YourAchievementPage> {
     );
     return Scaffold(
       key: _scaffoldKey,
-      drawer: NavDrawer(),
+      // drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
         shape: RoundedNotchedRectangle(),
         child: new Row(

@@ -33,6 +33,24 @@ class _NotificationsPageState extends State<NotificationsPage> {
   bool isPersonalSelected = true;
   bool clearAllLoading = false;
   bool shouldMarkAsRead = true;
+
+  Future<void> _clearAllNotifications() async {
+    setState(() => clearAllLoading = true);
+    try {
+      final bloc = BlocProvider.of(context)!.bloc;
+      final list =
+          await bloc.notifications.first; // get current list from stream
+      for (final n in list) {
+        await bloc.clearNotification(n);
+      }
+      await bloc.updateNotifications();
+    } catch (e) {
+      // ignore or log
+    } finally {
+      if (mounted) setState(() => clearAllLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -44,7 +62,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(52),
         child: AppBar(
-          title: const SizedBox(
+          title: SizedBox(
             height: 31,
             child: Center(
               child: Text(
@@ -82,21 +100,35 @@ class _NotificationsPageState extends State<NotificationsPage> {
           ),
           actions: [
             Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: IconButton(
-                iconSize: 52,
-                padding: EdgeInsets.zero,
-                icon: const CircleAvatar(
-                  backgroundColor: Color(0xCCEBEBEB),
-                  radius: 25,
-                  child: Icon(
-                    Icons.settings_outlined,
-                    color: Colors.black,
-                    size: 28,
-                  ),
-                ),
-                onPressed: () {},
-              ),
+              padding: const EdgeInsets.only(right: 12.0),
+              child: clearAllLoading
+                  ? SizedBox(
+                      width: 52,
+                      height: 52,
+                      child: Center(
+                        child: SizedBox(
+                          width: 28,
+                          height: 28,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    )
+                  : IconButton(
+                      iconSize: 52,
+                      padding: EdgeInsets.zero,
+                      icon: const CircleAvatar(
+                        backgroundColor: Color(0xCCEBEBEB),
+                        radius: 25,
+                        child: Icon(
+                          Icons.delete_outline,
+                          color: Colors.black,
+                          size: 28,
+                        ),
+                      ),
+                      onPressed: () async {
+                        await _clearAllNotifications();
+                      },
+                    ),
             ),
           ],
         ),
@@ -269,6 +301,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
             .closed;
         if (shouldMarkAsRead) {
           await bloc.clearNotification(notification);
+          await bloc.updateNotifications(); // ensure both views refresh
         }
         shouldMarkAsRead = true;
         setState(() {});

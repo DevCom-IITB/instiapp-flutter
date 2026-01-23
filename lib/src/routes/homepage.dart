@@ -63,25 +63,25 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     TimeOfDay(hour: 22, minute: 0), // Dinner ends at 10:00 PM (22:00)
   ];
 
-  String _selectedHostel='1';
-  String _selectedDay='Monday';
-  int selectedMeal=0;
-  bool showQR=false;
+  String _selectedHostel = '1';
+  String _selectedDay = 'Monday';
+  int selectedMeal = 0;
+  bool showQR = false;
   bool firstBuild = true;
-  bool error=false;
-  bool loading=true;
-  String qrString="";
+  bool error = false;
+  bool loading = true;
+  String qrString = "";
 
   // Page Controller for swipe navigation
   late PageController _pageController;
   int _currentPageIndex = 0;
-  
+
   // Animation controllers for navbar
   late AnimationController _navIndicatorController;
   late Animation<double> _navIndicatorAnimation;
   late AnimationController _navScaleController;
   late Animation<double> _navScaleAnimation;
-  
+
   // Track previous index for animation direction
   int _previousIndex = 0;
 
@@ -162,21 +162,21 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize page controller
     _pageController = PageController(initialPage: _currentPageIndex);
-    
+
     // Initialize animation controllers
     _navIndicatorController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    
+
     _navScaleController = AnimationController(
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    
+
     // Create animations
     _navIndicatorAnimation = Tween<double>(
       begin: 0.0,
@@ -185,7 +185,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       parent: _navIndicatorController,
       curve: Curves.easeInOut,
     ));
-    
+
     _navScaleAnimation = Tween<double>(
       begin: 1.0,
       end: 1.1,
@@ -193,10 +193,10 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       parent: _navScaleController,
       curve: Curves.easeOut,
     ));
-    
+
     // Start with indicator at first position
     _navIndicatorController.forward();
-    
+
     // Set initial values
     _selectedDay = getCurrentDay();
     selectedMeal = getCurrentMealSlot();
@@ -205,11 +205,11 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   void _onPageSwiped(int index) {
     _previousIndex = _currentPageIndex;
     _currentPageIndex = index;
-  
+
     _navIndicatorController
       ..reset()
       ..forward();
-  
+
     setState(() {});
   }
 
@@ -272,7 +272,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         return i;
       }
     }
-    
+
     return 0;
   }
 
@@ -335,7 +335,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
               ),
             ],
           ),
-          
+
           // Bottom Navigation Bar
           Align(
             alignment: Alignment.bottomCenter,
@@ -343,10 +343,18 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
               padding: EdgeInsets.only(bottom: responsive.h(20)),
               child: InstiBottomNavBar(
                 items: const [
-                  NavBarItem(label: 'Home', iconPath: 'assets/homepage/icons/home.svg'),
-                  NavBarItem(label: 'Feed', iconPath: 'assets/homepage/icons/loader.svg'),
-                  NavBarItem(label: 'Explore', iconPath: 'assets/homepage/icons/search.svg'),
-                  NavBarItem(label: 'Communities', iconPath: 'assets/homepage/icons/message-square.svg'),
+                  NavBarItem(
+                      label: 'Home',
+                      iconPath: 'assets/homepage/icons/home.svg'),
+                  NavBarItem(
+                      label: 'Feed',
+                      iconPath: 'assets/homepage/icons/loader.svg'),
+                  NavBarItem(
+                      label: 'Explore',
+                      iconPath: 'assets/homepage/icons/search.svg'),
+                  NavBarItem(
+                      label: 'Communities',
+                      iconPath: 'assets/homepage/icons/message-square.svg'),
                 ],
                 currentIndex: _currentPageIndex,
                 onTap: _onNavTap,
@@ -358,10 +366,12 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     );
   }
 
-  List<String> daysList=HostelMess.dayToName.values.map((d) => d.substring(0, 1)).toList();
-  List<String> daysKeys=HostelMess.dayToName.values.map((d) => d.substring(0 )).toList();
-  
-  void _openFilterBottomSheet(List<Hostel> hostels){
+  List<String> daysList =
+      HostelMess.dayToName.values.map((d) => d.substring(0, 1)).toList();
+  List<String> daysKeys =
+      HostelMess.dayToName.values.map((d) => d.substring(0)).toList();
+
+  void _openFilterBottomSheet(List<Hostel> hostels) {
     final responsive = Responsive(context);
     String tempSelectedDay = _selectedDay;
     String tempSelectedHostel = _selectedHostel;
@@ -689,7 +699,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         });
   }
 
-  Widget dayContainer(String day,bool isSelected, VoidCallback onTap){
+  Widget dayContainer(String day, bool isSelected, VoidCallback onTap) {
     final responsive = Responsive(context);
     return GestureDetector(
       onTap: onTap,
@@ -714,7 +724,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     );
   }
 
-  Widget services(String name, String path, Map<String,dynamic> services_icon) {
+  Widget services(
+      String name, String path, Map<String, dynamic> services_icon) {
     final responsive = Responsive(context);
     return InkWell(
       onTap: () {
@@ -967,6 +978,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       body: Stack(
         children: [
           SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.only(bottom: responsive.h(115)),
             //margin: EdgeInsets.only(left: 10,right: 0),
             child: Column(
@@ -1118,8 +1130,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           child: SvgPicture.asset('assets/homepage/icons/bigborder.svg',
               height: responsive.h(380),
               width: responsive.w(382),
-              fit: BoxFit.fill
-              ),
+              fit: BoxFit.fill),
         ),
         Container(
           width: responsive.w(380),
@@ -1229,8 +1240,6 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       ],
     );
   }
-
-
 
   Widget qrClosed(List<Hostel> hostels) {
     final responsive = Responsive(context);
@@ -1348,7 +1357,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             //           fontWeight: FontWeight.w400,
             //         ),
             //         underline: SizedBox(),
-                    
+
             //       ),
             //     ),
             //   ],
@@ -1395,7 +1404,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-                    if (i != meals.length - 1) SizedBox(height: responsive.h(8)),
+                    if (i != meals.length - 1)
+                      SizedBox(height: responsive.h(8)),
                   ],
                 ],
               ),
@@ -1436,8 +1446,9 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                       ),
                     ),
                     Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: responsive.h(6), horizontal: responsive.w(18)),
+                      padding: EdgeInsets.symmetric(
+                          vertical: responsive.h(6),
+                          horizontal: responsive.w(18)),
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage(
@@ -1459,16 +1470,19 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                           ),
                           GestureDetector(
                             onTap: () {
-                                showDialog(
+                              showDialog(
                                 context: context,
                                 builder: (context) => CustomDialog(
                                   title: 'Open Mess-I Dashboard?',
-                                  content1: 'Would you like to open the other app?',
-                                  content2: 'If it\'s not installed, you\'ll be redirected to the store.',
+                                  content1:
+                                      'Would you like to open the other app?',
+                                  content2:
+                                      'If it\'s not installed, you\'ll be redirected to the store.',
                                   options: [
                                     DialogOption(
                                       text: 'Cancel',
-                                      onPressed: (ctx, setProcessing) => Navigator.of(ctx).pop(),
+                                      onPressed: (ctx, setProcessing) =>
+                                          Navigator.of(ctx).pop(),
                                     ),
                                     DialogOption(
                                       text: 'Open',
@@ -1476,41 +1490,51 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                                       onPressed: (ctx, setProcessing) async {
                                         Navigator.of(ctx).pop(); // close dialog
 
-                                        const String websiteUrl = "https://instamess.gymkhana.iitb.ac.in"; // your website link
+                                        const String websiteUrl =
+                                            "https://instamess.gymkhana.iitb.ac.in"; // your website link
                                         final Uri uri = Uri.parse(websiteUrl);
 
                                         try {
                                           if (await canLaunchUrl(uri)) {
-                                            await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                            await launchUrl(uri,
+                                                mode: LaunchMode
+                                                    .externalApplication);
                                           } else {
-                                            ScaffoldMessenger.of(ctx).showSnackBar(
-                                              const SnackBar(content: Text('Could not open the website')),
+                                            ScaffoldMessenger.of(ctx)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                  content: Text(
+                                                      'Could not open the website')),
                                             );
                                           }
                                         } catch (e) {
-                                          ScaffoldMessenger.of(ctx).showSnackBar(
-                                            const SnackBar(content: Text('Error opening the website')),
+                                          ScaffoldMessenger.of(ctx)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                                content: Text(
+                                                    'Error opening the website')),
                                           );
                                         }
                                       },
                                     ),
                                   ],
                                 ),
-                            );
-                          },
-                          child: Container(
-                            width: responsive.w(30),
-                            height: responsive.h(30),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
-                              image: DecorationImage(
-                                image: AssetImage('assets/homepage/images/messi.webp'),
-                                fit: BoxFit.contain,
+                              );
+                            },
+                            child: Container(
+                              width: responsive.w(30),
+                              height: responsive.h(30),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                      'assets/homepage/images/messi.webp'),
+                                  fit: BoxFit.contain,
+                                ),
                               ),
                             ),
-                          ),
-                        )
+                          )
                         ],
                       ),
                     ),
@@ -1544,45 +1568,46 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                   'assets/homepage/icons/border.svg',
                   width: responsive.w(368),
                   fit: BoxFit.fill,
-                  ),
-                Container(
-                height: responsive.h(96),
-                width: responsive.w(368),
-                padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(8), responsive.w(16), responsive.h(8)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          'My QR',
-                          style: TextStyle(
-                            color: Color(0xFF275489),
-                            fontSize: responsive.sp(20),
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        Text(
-                          'Mess • Gym • Swimming & more...',
-                          style: TextStyle(
-                            color: const Color(0xFF15202D),
-                            fontSize: responsive.sp(14),
-                            fontFamily: 'DM Sans',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      height: responsive.h(75),
-                      width: responsive.w(75),
-                      child: SvgPicture.asset('assets/homepage/icons/qr.svg'),
-                    ),
-                  ],
                 ),
-              )
+                Container(
+                  height: responsive.h(96),
+                  width: responsive.w(368),
+                  padding: EdgeInsets.fromLTRB(responsive.w(16),
+                      responsive.h(8), responsive.w(16), responsive.h(8)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            'My QR',
+                            style: TextStyle(
+                              color: Color(0xFF275489),
+                              fontSize: responsive.sp(20),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Text(
+                            'Mess • Gym • Swimming & more...',
+                            style: TextStyle(
+                              color: const Color(0xFF15202D),
+                              fontSize: responsive.sp(14),
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        height: responsive.h(75),
+                        width: responsive.w(75),
+                        child: SvgPicture.asset('assets/homepage/icons/qr.svg'),
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           ),

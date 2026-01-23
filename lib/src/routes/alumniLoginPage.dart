@@ -18,7 +18,7 @@ class _AlumniLoginPageState extends State<AlumniLoginPage> {
   Widget build(BuildContext context) {
     _bloc = BlocProvider.of(context)!.bloc;
     return Scaffold(
-      drawer: NavDrawer(),
+      // drawer: NavDrawer(),
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: Colors.blue[900],

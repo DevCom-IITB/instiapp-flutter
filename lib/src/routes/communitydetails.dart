@@ -87,7 +87,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
               Navigator.of(context).pop();
             }),
       ),
-      drawer: NavDrawer(),
+      // drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
         shape: RoundedNotchedRectangle(),
         child: new Row(

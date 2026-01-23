@@ -24,7 +24,7 @@ class _AlumniOTPPageState extends State<AlumniOTPPage> {
     // print(_bloc!.alumniID);
 
     return Scaffold(
-      drawer: NavDrawer(),
+      // drawer: NavDrawer(),
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: Colors.blue[900],
