@@ -209,8 +209,10 @@ class _OnboardingLoginPageState extends State<LoginPage>
               final centerX = screen.width / 2;
               final centerY = screen.height / 2;
 
-              double logoSize = lerpDouble(RS.sw(context, 300), RS.sw(context, 150), tResize)!;
-              double fontSize = lerpDouble(RS.sp(context, 64), RS.sp(context, 48), tResize)!;
+              double logoSize = lerpDouble(
+                  RS.sw(context, 300), RS.sw(context, 150), tResize)!;
+              double fontSize =
+                  lerpDouble(RS.sp(context, 64), RS.sp(context, 48), tResize)!;
 
               // Phase 1: stacked center
               final logoStartX = centerX - logoSize / 2;
@@ -247,7 +249,8 @@ class _OnboardingLoginPageState extends State<LoginPage>
               double textOpacity = 1.0;
 
               if (_isExitingToHome) {
-                logoSize = lerpDouble(RS.sw(context, 150), RS.sw(context, 40), tHome)!;
+                logoSize =
+                    lerpDouble(RS.sw(context, 150), RS.sw(context, 40), tHome)!;
                 fontSize = lerpDouble(RS.sp(context, 48), 0, tHome)!;
 
                 final startX = centerX - totalWidth / 3;
@@ -340,19 +343,34 @@ class _OnboardingLoginPageState extends State<LoginPage>
 
   Widget _buildBackgroundLotuses() {
     final List<double> tops = [
-      RS.sh(context, -28), RS.sh(context, 66), RS.sh(context, 122), 
-      RS.sh(context, 217), RS.sh(context, 547), RS.sh(context, 531), 
-      RS.sh(context, 625), RS.sh(context, 766)
+      RS.sh(context, -28),
+      RS.sh(context, 66),
+      RS.sh(context, 122),
+      RS.sh(context, 217),
+      RS.sh(context, 547),
+      RS.sh(context, 531),
+      RS.sh(context, 625),
+      RS.sh(context, 766)
     ];
     final List<double> lefts = [
-      RS.sw(context, 42), RS.sw(context, 299), RS.sw(context, -21), 
-      RS.sw(context, 249), RS.sw(context, -34), RS.sw(context, 208), 
-      RS.sw(context, 0), RS.sw(context, 251)
+      RS.sw(context, 42),
+      RS.sw(context, 299),
+      RS.sw(context, -21),
+      RS.sw(context, 249),
+      RS.sw(context, -34),
+      RS.sw(context, 208),
+      RS.sw(context, 0),
+      RS.sw(context, 251)
     ];
     final List<double> sizes = [
-      RS.sw(context, 236), RS.sw(context, 151), RS.sw(context, 227), 
-      RS.sw(context, 102), RS.sw(context, 139), RS.sw(context, 189), 
-      RS.sw(context, 278), RS.sw(context, 161)
+      RS.sw(context, 236),
+      RS.sw(context, 151),
+      RS.sw(context, 227),
+      RS.sw(context, 102),
+      RS.sw(context, 139),
+      RS.sw(context, 189),
+      RS.sw(context, 278),
+      RS.sw(context, 161)
     ];
 
     return Stack(
@@ -530,7 +548,7 @@ class _OnboardingLoginPageState extends State<LoginPage>
                   ),
                 ),
               ),
-          
+
               // logo (warping)
               Positioned(
                 left: currentLogoX,
@@ -541,7 +559,7 @@ class _OnboardingLoginPageState extends State<LoginPage>
                   height: logoSize,
                 ),
               ),
-          
+
               // MAIN CONTENT: clipper image + options card which slides up from bottom
               Positioned(
                 top: clipperOffsetY,
@@ -591,8 +609,9 @@ class _OnboardingLoginPageState extends State<LoginPage>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: RS.sh(context, 176)), // Use sh for vertical spacing
-            
+            SizedBox(
+                height: RS.sh(context, 176)), // Use sh for vertical spacing
+
             // Fix for "InstiApp" text
             Text(
               "InstiApp",
@@ -604,8 +623,8 @@ class _OnboardingLoginPageState extends State<LoginPage>
                 fontFamily: 'Poppins',
               ),
             ),
-            
-            // Fix for "Your Campus Companion" text  
+
+            // Fix for "Your Campus Companion" text
             Text(
               "Your Campus Companion",
               textAlign: TextAlign.center,
@@ -616,9 +635,9 @@ class _OnboardingLoginPageState extends State<LoginPage>
                 fontFamily: 'DM Sans',
               ),
             ),
-            
+
             SizedBox(height: RS.s(context, 48)), // Uniform spacing
-            
+
             SizedBox(
               width: RS.sw(context, 260), // Responsive button width
               height: RS.s(context, 53), // Responsive button height
@@ -626,7 +645,8 @@ class _OnboardingLoginPageState extends State<LoginPage>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(48, 111, 220, 1),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(RS.s(context, 16)), // Responsive radius
+                    borderRadius: BorderRadius.circular(
+                        RS.s(context, 16)), // Responsive radius
                   ),
                 ),
                 onPressed: _handleSSOLogin,
@@ -640,9 +660,9 @@ class _OnboardingLoginPageState extends State<LoginPage>
                 ),
               ),
             ),
-            
+
             SizedBox(height: RS.s(context, 8)), // Uniform spacing
-            
+
             Text(
               "or",
               textAlign: TextAlign.center,
@@ -653,9 +673,9 @@ class _OnboardingLoginPageState extends State<LoginPage>
                 fontFamily: 'DM Sans',
               ),
             ),
-            
+
             SizedBox(height: RS.s(context, 8)), // Uniform spacing
-            
+
             SizedBox(
               width: RS.sw(context, 260), // Responsive button width
               height: RS.s(context, 53), // Responsive button height
@@ -663,7 +683,8 @@ class _OnboardingLoginPageState extends State<LoginPage>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(48, 111, 220, 1),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(RS.s(context, 16)), // Responsive radius
+                    borderRadius: BorderRadius.circular(
+                        RS.s(context, 16)), // Responsive radius
                   ),
                 ),
                 onPressed: _handleAlumniLogin,
@@ -677,9 +698,9 @@ class _OnboardingLoginPageState extends State<LoginPage>
                 ),
               ),
             ),
-            
+
             SizedBox(height: RS.s(context, 8)), // Uniform spacing
-            
+
             Text(
               "or",
               textAlign: TextAlign.center,
@@ -690,9 +711,9 @@ class _OnboardingLoginPageState extends State<LoginPage>
                 fontFamily: 'DM Sans',
               ),
             ),
-            
+
             SizedBox(height: RS.s(context, 8)), // Uniform spacing
-            
+
             Container(
               width: double.infinity,
               child: TextButton(
@@ -730,19 +751,23 @@ class _OnboardingLoginPageState extends State<LoginPage>
       body: webview.WebView(
         javascriptMode: webview.JavascriptMode.unrestricted,
         initialUrl: _webViewUrl,
-        onPageStarted: (url) {
-          if (url.startsWith(successUrl)) {
+        navigationDelegate: (request) {
+          if (request.url.startsWith(successUrl)) {
             setState(() {
               _isWebViewVisible = false;
               _processingSSO = true;
               _statusMessage = "Logging you in";
             });
-            _handleSuccessUrl(url);
-          } else if (url.startsWith(guestUrl)) {
+            _handleSuccessUrl(request.url);
+            return webview.NavigationDecision.prevent;
+          } else if (request.url.startsWith(guestUrl)) {
             _handleGuestLogin();
-          } else if (url.startsWith(alumniUrl)) {
+            return webview.NavigationDecision.prevent;
+          } else if (request.url.startsWith(alumniUrl)) {
             _handleAlumniLogin();
+            return webview.NavigationDecision.prevent;
           }
+          return webview.NavigationDecision.navigate;
         },
         gestureNavigationEnabled: true,
       ),

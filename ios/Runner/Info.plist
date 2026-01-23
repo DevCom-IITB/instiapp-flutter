@@ -36,6 +36,12 @@
 	<string></string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>To upload photo from the gallery</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Allow the app to discover devices on the local network for debugging.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_dartobservatory._tcp</string>
+	</array>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>Hostel_numberIntent</string>
@@ -67,6 +73,10 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
+	<true/>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 </dict>
 </plist>
