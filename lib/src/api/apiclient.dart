@@ -63,7 +63,7 @@ part 'apiclient.g.dart';
 // @rt.RestApi(baseUrl: "http://10.198.49.150/api")
 @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
 //@rt.RestApi(baseUrl: "https://nayeli-nonbulbar-denominationally.ngrok-free.dev/api")
-//@rt.RestApi(baseUrl: "https://bda7c527113b.ngrok-free.app/api")
+// @rt.RestApi(baseUrl: "https://f6ba722a576a.ngrok-free.app/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
@@ -193,7 +193,7 @@ abstract class InstiAppApi {
   @rt.POST("/upload")
   @rt.MultiPart()
   Future<ImageUploadResponse> uploadImage(
-      @rt.Header("Cookie") String sessionID, @rt.Part() File file);
+      @rt.Header("Cookie") String sessionID, @rt.Part(name: "picture") File file);
 
   // @rt.POST("/upload")
   // @rt.MultiPart()

@@ -134,40 +134,6 @@ class _CommunityPageState extends State<CommunityPage> {
                   Container(
                     width: responsive.w(52),
                     height: responsive.h(52),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          left: responsive.w(4),
-                          right: responsive.w(4),
-                          top: responsive.h(4),
-                          bottom: responsive.h(4),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(22),
-                              color: myConstants.instiappGrey,
-                            ),
-                            child: Stack(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).pushNamed('/feed');
-                                  },
-                                  child: Center(
-                                    child: Container(
-                                      width: responsive.w(24),
-                                      height: responsive.h(24),
-                                      child: SvgPicture.asset(
-                                        'assets/homepage/icons/bell.svg',
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ],
               ),

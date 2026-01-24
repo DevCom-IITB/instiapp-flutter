@@ -99,7 +99,7 @@ class _QueryAddPageState extends State<QueryAddPage> {
 
     return Scaffold(
       key: _scaffoldKey,
-      drawer: NavDrawer(),
+      // drawer: NavDrawer(),
       bottomNavigationBar: MyBottomAppBar(
         shape: RoundedNotchedRectangle(),
         child: new Row(

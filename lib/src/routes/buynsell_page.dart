@@ -609,7 +609,7 @@ class _BuySellPageState extends State<BuySellPage> {
               try {
                 await bloc.buynSellPostBloc.deleteBuynSellPost(id!);
                 Navigator.pop(ctx);
-                Navigator.pop(context); // Pop the original context
+                // Navigator.pop(context); // Pop the original context
                 await bloc.buynSellPostBloc.refresh();
               } catch (e) {
                 setProcessing(false);
@@ -645,7 +645,7 @@ class _BuySellPageState extends State<BuySellPage> {
               try {
                 await bloc.buynSellPostBloc.markAsSold(post.id!);
                 Navigator.pop(ctx);
-                Navigator.pop(context); // Pop the original context
+                // Navigator.pop(context); // Pop the original context
                 await bloc.buynSellPostBloc.refresh();
               } catch (e) {
                 setProcessing(false);

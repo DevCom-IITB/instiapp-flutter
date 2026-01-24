@@ -163,7 +163,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
         extendBodyBehindAppBar: true,
         backgroundColor: Color.fromRGBO(246, 246, 246, 1),
         key: _scaffoldKey,
-        drawer: NavDrawer(),
+        // drawer: NavDrawer(),
         body: Column(
                 children: [
                   // Fixed Header
