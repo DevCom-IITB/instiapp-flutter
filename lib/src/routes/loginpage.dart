@@ -144,10 +144,12 @@ class _OnboardingLoginPageState extends State<LoginPage>
 
   @override
   Widget build(BuildContext context) {
+
     if (_processingSSO) return _buildLoadingScreen(context);
     if (_isWebViewVisible) return _buildWebView();
 
     return AnimatedSwitcher(
+      
       duration: const Duration(milliseconds: 800),
       transitionBuilder: (child, animation) {
         return FadeTransition(

@@ -306,6 +306,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     final responsive = Responsive(context);
 
     return Scaffold(
+      backgroundColor: Color.fromRGBO(246, 246, 246, 1),
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
@@ -340,7 +341,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: EdgeInsets.only(bottom: responsive.h(20)),
+              padding: EdgeInsets.only(bottom: responsive.h(0)),
               child: InstiBottomNavBar(
                 items: const [
                   NavBarItem(
@@ -835,7 +836,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: myConstants.instiappWhite,
+      backgroundColor: Color.fromRGBO(246, 246, 246, 1),
       elevation: 0,
       flexibleSpace: SafeArea(
           child: Padding(
@@ -971,7 +972,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     final responsive = Responsive(context);
     var bloc = BlocProvider.of(context)!.bloc;
     return Scaffold(
-      backgroundColor: myConstants.instiappWhite,
+      backgroundColor: Color.fromRGBO(246, 246, 246, 1),
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(responsive.h(52)),
           child: customAppBar()),
