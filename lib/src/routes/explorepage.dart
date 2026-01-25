@@ -307,7 +307,7 @@ void initState() {
                   ),
                 ),
               ),
-              SizedBox(height: Responsive.height(16, context)),
+              // SizedBox(height: Responsive.height(16, context)),
             ],
           )),
           // if (searchMode)

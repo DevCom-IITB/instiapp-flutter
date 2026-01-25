@@ -104,6 +104,12 @@ class _OnboardingLoginPageState extends State<LoginPage>
     _restoreSessionAndAnimate();
   }
 
+  Future<void> safeNetworkCall(Future<void> Function() fn) async {
+    try {
+      await fn().timeout(const Duration(seconds: 5));
+    } catch (_) {}
+  }
+
   Future<void> _restoreSessionAndAnimate() async {
     await _bloc?.restorePrefs();
 
@@ -120,10 +126,11 @@ class _OnboardingLoginPageState extends State<LoginPage>
         _isExitingToHome = true;
       });
 
+      await _homeTransitionController.forward();
+
       await Future.wait([
-        _homeTransitionController.forward(),
-        _bloc!.patchFcmKey(),
-        _bloc!.reloadCurrentUser(),
+        safeNetworkCall(() => _bloc!.patchFcmKey()),
+        safeNetworkCall(() => _bloc!.reloadCurrentUser()),
       ]);
 
       if (mounted) {
