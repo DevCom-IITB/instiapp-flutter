@@ -74,7 +74,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
     // print(community?.isUserFollowing);
     return Scaffold(
       key: _scaffoldKey,
-      extendBodyBehindAppBar: true,
+      // extendBodyBehindAppBar: true,
       appBar: CustomAppBar(
         transparentBackground: true,
         searchIcon: true,
@@ -87,26 +87,26 @@ class _CommunityDetailsState extends State<CommunityDetails> {
               Navigator.of(context).pop();
             }),
       ),
-      // drawer: NavDrawer(),
-      bottomNavigationBar: MyBottomAppBar(
-        shape: RoundedNotchedRectangle(),
-        child: new Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            IconButton(
-              tooltip: "Show bottom sheet",
-              icon: Icon(
-                Icons.menu_outlined,
-                semanticLabel: "Show bottom sheet",
-              ),
-              onPressed: () {
-                _scaffoldKey.currentState?.openDrawer();
-              },
-            ),
-          ],
-        ),
-      ),
+      // // drawer: NavDrawer(),
+      // bottomNavigationBar: MyBottomAppBar(
+      //   shape: RoundedNotchedRectangle(),
+      //   child: new Row(
+      //     mainAxisSize: MainAxisSize.max,
+      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //     children: <Widget>[
+      //       IconButton(
+      //         tooltip: "Show bottom sheet",
+      //         icon: Icon(
+      //           Icons.menu_outlined,
+      //           semanticLabel: "Show bottom sheet",
+      //         ),
+      //         onPressed: () {
+      //           _scaffoldKey.currentState?.openDrawer();
+      //         },
+      //       ),
+      //     ],
+      //   ),
+      // ),
       body: !isLoggedIn
           ? Container(
               alignment: Alignment.center,

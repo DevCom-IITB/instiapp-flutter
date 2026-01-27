@@ -224,10 +224,7 @@ class _BlogPageState extends State<BlogPage> {
       onTap: () {
         _focusNode.unfocus();
       },
-      child: RefreshIndicator(
-        key: _refreshIndicatorKey,
-        onRefresh: _handleRefresh,
-        child: Scaffold(
+      child: Scaffold(
             resizeToAvoidBottomInset: true,
             key: _scaffoldKey,
             body: StreamBuilder(
@@ -719,8 +716,7 @@ class _BlogPageState extends State<BlogPage> {
                 }
               },
             )),
-      ),
-    );
+      );
   }
 
   Map<String, List<Post>> groupPostsByCompany(List<Post> posts) {
@@ -762,12 +758,16 @@ class _BlogPageState extends State<BlogPage> {
                   : posts.length);
           final int totalItemCount = baseCount + 1;
 
-          return ListView.builder(
-            controller: _hideButtonController,
-            itemBuilder: (BuildContext context, int index) {
-              return _buildPost(tabBlogBloc, index, snapshot.data, context);
-            },
-            itemCount: totalItemCount,
+          return RefreshIndicator(
+            key: _refreshIndicatorKey,
+            onRefresh: _handleRefresh,
+            child: ListView.builder(
+              controller: _hideButtonController,
+              itemBuilder: (BuildContext context, int index) {
+                return _buildPost(tabBlogBloc, index, snapshot.data, context);
+              },
+              itemCount: totalItemCount,
+            ),
           );
         },
       );
@@ -779,14 +779,18 @@ class _BlogPageState extends State<BlogPage> {
             AsyncSnapshot<UnmodifiableListView<Post>> snapshot) {
           final List<Post> posts = snapshot.data?.toList() ?? [];
           final Map<String, List<Post>> companyMap = groupPostsByCompany(posts);
-          return ListView(
-            children: <Widget>[
-              for (final entry in companyMap.entries)
-                Blogthread(
-                  entry.value,
-                  entry.key,
-                ),
-            ],
+          return RefreshIndicator(
+            key: _refreshIndicatorKey,
+            onRefresh: _handleRefresh,
+            child: ListView(
+              children: <Widget>[
+                for (final entry in companyMap.entries)
+                  Blogthread(
+                    entry.value,
+                    entry.key,
+                  ),
+              ],
+            ),
           );
         },
       );
