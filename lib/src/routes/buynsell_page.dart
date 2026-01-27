@@ -37,6 +37,19 @@ class _BuySellPageState extends State<BuySellPage> {
   final List<String> _filterTabs = ['Sort', 'Filter'];
   int _selectedFilterTabIndex = 0;
 
+  late final ScrollController _scrollController;
+  bool _showScrollToTop = false;
+
+  void _scrollToTop() {
+    if (!_scrollController.hasClients) return;
+
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
   // void _onBookmarkPressed() {}
   // void _onBookmarkPost(String id, bool isBookmarked) {}
 
@@ -47,6 +60,25 @@ class _BuySellPageState extends State<BuySellPage> {
     buynSellPostBloc = bloc.buynSellPostBloc;
     profile = bloc.currSession?.profile;
     buynSellPostBloc.refresh();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController()
+      ..addListener(() {
+        if (_scrollController.offset > 300 && !_showScrollToTop) {
+          setState(() => _showScrollToTop = true);
+        } else if (_scrollController.offset <= 300 && _showScrollToTop) {
+          setState(() => _showScrollToTop = false);
+        }
+      });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -181,6 +213,7 @@ class _BuySellPageState extends State<BuySellPage> {
                             displacement: 40,
                             edgeOffset: 0,
                             child: ListView.separated(
+                              controller: _scrollController,
                               padding: const EdgeInsets.symmetric(horizontal: 16),
                               itemCount: filteredPosts.length,
                               separatorBuilder: (_, __) =>
@@ -195,6 +228,20 @@ class _BuySellPageState extends State<BuySellPage> {
                   ],
                 ),
         ),
+        floatingActionButton: _showScrollToTop
+            ? FloatingActionButton(
+                mini: true,
+                backgroundColor: const Color(0xFF306FDC),
+                onPressed: () {
+                  _scrollController.animateTo(
+                    0,
+                    duration: const Duration(milliseconds: 350),
+                    curve: Curves.easeOutCubic,
+                  );
+                },
+                child: const Icon(Icons.arrow_upward, color: Colors.white),
+              )
+            : null,
         bottomNavigationBar: _buildBottomNavBar(),
       ),
     );
@@ -710,6 +757,7 @@ class _BuySellPageState extends State<BuySellPage> {
                       if (_currentTab == 0) return;
                       setState(() => _currentTab = 0);
                       buynSellPostBloc.refresh();
+                      _scrollToTop();
                     },
                   ),
                   _buildBottomNavButton(
@@ -719,6 +767,7 @@ class _BuySellPageState extends State<BuySellPage> {
                       if (_currentTab == 1) return;
                       setState(() => _currentTab = 1);
                       buynSellPostBloc.refresh();
+                      _scrollToTop();
                     },
                   ),
                 ],
@@ -808,6 +857,7 @@ class _BuySellPageState extends State<BuySellPage> {
                   setState(() {
                     _searchQuery = value;
                   });
+                  _scrollToTop();
                 },
               ),
             ),
@@ -1083,6 +1133,8 @@ class _BuySellPageState extends State<BuySellPage> {
                                 _isNegotiable = null;
                               });
                               setState(() {});
+                              Navigator.pop(context);
+                              _scrollToTop();
                             },
                             style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: Colors.grey),
@@ -1110,6 +1162,7 @@ class _BuySellPageState extends State<BuySellPage> {
                             onPressed: () {
                               setState(() {});
                               Navigator.pop(context);
+                              _scrollToTop();
                             },
                             style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.zero,

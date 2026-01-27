@@ -21,7 +21,7 @@ import 'package:InstiApp/src/shimmers/header_description.dart';
 import 'package:InstiApp/src/shimmers/header_title.dart';
 
 class ExploreClubPage extends StatefulWidget {
-  final Future<Body>? bodyFuture;
+  final Future<Body> Function()? loadBody;
   final String? heroTag;
   final VoidCallback onBack;
 
@@ -68,7 +68,7 @@ class ExploreClubPage extends StatefulWidget {
   ];
 
   ExploreClubPage({
-    this.bodyFuture,
+    this.loadBody,
     this.heroTag,
     required this.onBack,
     this.headerTitle,
@@ -100,6 +100,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
   List<Body> Childrens = [];
 
   bool _isLoading = true;
+  bool _hasError = false;
   Map<String, String> bodyIdToImage = {
     "91199c20-7488-41c5-9f6b-6f6c7c5b897d": "assets/explore/cult.png",
     "81e05a1a-7fd1-45b5-84f6-074e52c0f085": "assets/explore/tech.png",
@@ -117,10 +118,23 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
       statusBarIconBrightness: Brightness.light, // white icons
     ));
 
-    widget.bodyFuture?.then((b) {
+    _loadBody();
+  }
+
+  Future<void> _loadBody() async {
+    setState(() {
+      _isLoading = true;
+      _hasError = false;
+    });
+
+    try {
+      final b = await widget.loadBody!();
+      if (!mounted) return;
+
       Childrens = b.bodyChildren ?? [];
       Childrens.sort((a, b) =>
           (b.bodyFollowersCount ?? 0).compareTo(a.bodyFollowersCount ?? 0));
+
       var tableParse = markdown.TableSyntax();
       b.bodyDescription = markdown.markdownToHtml(
           b.bodyDescription
@@ -130,23 +144,19 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                   .join('\n') ??
               "",
           blockSyntaxes: [tableParse]);
-          
-      if (this.mounted) {
-        setState(() {
-          body = b;
-          _isLoading = false;
-        });
-      } else {
+
+      setState(() {
         body = b;
         _isLoading = false;
-      }
-    }).catchError((error) {
-      if (this.mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    });
+        _hasError = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _hasError = true;
+      });
+    }
   }
 
   @override

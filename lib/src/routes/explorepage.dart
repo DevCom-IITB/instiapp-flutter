@@ -307,7 +307,7 @@ void initState() {
                   ),
                 ),
               ),
-              SizedBox(height: Responsive.height(16, context)),
+              // SizedBox(height: Responsive.height(16, context)),
             ],
           )),
           // if (searchMode)
@@ -321,7 +321,7 @@ void initState() {
           //   ),
           if (bodyID != "")
             ExploreClubPage(
-              bodyFuture: bloc.getBody(bodyID),
+              loadBody: () => bloc.getBody(bodyID),
               heroTag: bodyID,
               headerTitle: _resolveTitleFromBodyId(bodyID),
               headerDescription: null,
