@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'dart:collection';
-import 'dart:ui';
 
 import 'package:InstiApp/constants.dart';
 import 'package:InstiApp/src/routes/community.dart';
@@ -24,7 +24,7 @@ import 'package:intl/intl.dart';
 import '../widgets/custom_dialog.dart';
 import '../widgets/bottom_navbar.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:io' show Platform;
+import 'package:shimmer/shimmer.dart';
 
 class Responsive {
   final BuildContext context;
@@ -46,6 +46,9 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
+
   String currentpage = 'homepage';
   Constants myConstants = Constants();
 
@@ -83,7 +86,10 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   late Animation<double> _navScaleAnimation;
 
   // Track previous index for animation direction
-  int _previousIndex = 0;
+  bool _isRefreshingHostels = false;
+
+  StreamSubscription<bool>? _hostelErrorSub;
+  bool _offlineSnackShown = false;
 
   String _formatMeal(String? meal) {
     return (meal ?? '')
@@ -203,7 +209,6 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   void _onPageSwiped(int index) {
-    _previousIndex = _currentPageIndex;
     _currentPageIndex = index;
 
     _navIndicatorController
@@ -216,7 +221,6 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   void _onNavTap(int index) {
     if (index == _currentPageIndex) return;
 
-    _previousIndex = _currentPageIndex;
     _currentPageIndex = index;
 
     // Animate ONLY navbar
@@ -250,8 +254,33 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           });
         }
 
+        _hostelErrorSub = bloc.hostelNetworkError.listen((failed) {
+          if (!mounted) return;
+
+          if (failed) {
+            if (!_offlineSnackShown) {
+              _offlineSnackShown = true;
+              _showOfflineSnackBarOnce();
+            }
+          } else {
+            // Network recovered → allow snackbar again in future failures
+            _offlineSnackShown = false;
+          }
+        });
+
         // Update hostels and generate QR
-        bloc.updateHostels();
+        setState(() {
+          _isRefreshingHostels = true;
+        });
+
+        bloc.updateHostels().whenComplete(() {
+          if (!mounted) return;
+
+          setState(() {
+            _isRefreshingHostels = false;
+          });
+        });
+
         generateQR();
 
         setState(() {
@@ -259,6 +288,19 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         });
       });
     }
+  }
+
+  void _showOfflineSnackBarOnce() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _scaffoldMessengerKey.currentState?.showSnackBar(
+        const SnackBar(
+          content: Text('Offline — showing cached mess menu'),
+          duration: Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    });
   }
 
   int getCurrentMealSlot() {
@@ -295,6 +337,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    _hostelErrorSub?.cancel();
     _pageController.dispose();
     _navIndicatorController.dispose();
     _navScaleController.dispose();
@@ -305,63 +348,67 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final responsive = Responsive(context);
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Stack(
-        children: [
-          // Main content with swipe navigation
-          PageView(
-            controller: _pageController,
-            onPageChanged: (index) {
-              _onPageSwiped(index);
-            },
-            physics: const ClampingScrollPhysics(),
-            children: [
-              Padding(
-                padding: EdgeInsets.only(bottom: responsive.h(90)),
-                child: Homepagewidget(),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: responsive.h(90)),
-                child: FeedPage(),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: responsive.h(90)),
-                child: ExplorePage(),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: responsive.h(90)),
-                child: CommunityPage(),
-              ),
-            ],
-          ),
-
-          // Bottom Navigation Bar
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: responsive.h(20)),
-              child: InstiBottomNavBar(
-                items: const [
-                  NavBarItem(
-                      label: 'Home',
-                      iconPath: 'assets/homepage/icons/home.svg'),
-                  NavBarItem(
-                      label: 'Feed',
-                      iconPath: 'assets/homepage/icons/loader.svg'),
-                  NavBarItem(
-                      label: 'Explore',
-                      iconPath: 'assets/homepage/icons/search.svg'),
-                  NavBarItem(
-                      label: 'Communities',
-                      iconPath: 'assets/homepage/icons/message-square.svg'),
-                ],
-                currentIndex: _currentPageIndex,
-                onTap: _onNavTap,
+    return ScaffoldMessenger(
+      key: _scaffoldMessengerKey,
+      child: Scaffold(
+        backgroundColor: Color.fromRGBO(246, 246, 246, 1),
+        resizeToAvoidBottomInset: false,
+        body: Stack(
+          children: [
+            // Main content with swipe navigation
+            PageView(
+              controller: _pageController,
+              onPageChanged: (index) {
+                _onPageSwiped(index);
+              },
+              physics: const ClampingScrollPhysics(),
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(bottom: responsive.h(90)),
+                  child: Homepagewidget(),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: responsive.h(90)),
+                  child: FeedPage(),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: responsive.h(90)),
+                  child: ExplorePage(),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: responsive.h(90)),
+                  child: CommunityPage(),
+                ),
+              ],
+            ),
+      
+            // Bottom Navigation Bar
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: responsive.h(0)),
+                child: InstiBottomNavBar(
+                  items: const [
+                    NavBarItem(
+                        label: 'Home',
+                        iconPath: 'assets/homepage/icons/home.svg'),
+                    NavBarItem(
+                        label: 'Feed',
+                        iconPath: 'assets/homepage/icons/loader.svg'),
+                    NavBarItem(
+                        label: 'Explore',
+                        iconPath: 'assets/homepage/icons/search.svg'),
+                    NavBarItem(
+                        label: 'Communities',
+                        iconPath: 'assets/homepage/icons/message-square.svg'),
+                  ],
+                  currentIndex: _currentPageIndex,
+                  onTap: _onNavTap,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -835,7 +882,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: myConstants.instiappWhite,
+      backgroundColor: Color.fromRGBO(246, 246, 246, 1),
       elevation: 0,
       flexibleSpace: SafeArea(
           child: Padding(
@@ -971,7 +1018,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     final responsive = Responsive(context);
     var bloc = BlocProvider.of(context)!.bloc;
     return Scaffold(
-      backgroundColor: myConstants.instiappWhite,
+      backgroundColor: Color.fromRGBO(246, 246, 246, 1),
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(responsive.h(52)),
           child: customAppBar()),
@@ -997,15 +1044,21 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                     StreamBuilder<UnmodifiableListView<Hostel>>(
                       stream: bloc.hostels,
                       builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                        final hostels = snapshot.data!;
+                        final hostels =
+                            snapshot.data ?? UnmodifiableListView<Hostel>([]);
+
+                        final isLoading =
+                            snapshot.connectionState == ConnectionState.waiting &&
+                            hostels.isEmpty;
+
                         return Padding(
                           padding: EdgeInsets.only(
                               left: responsive.w(21), right: responsive.w(22)),
-                          child: qrClosed(hostels),
+                          child: qrClosed(
+                            hostels,
+                            isLoading: isLoading,
+                            isRefreshing: _isRefreshingHostels,
+                          ),
                         );
                       },
                     ),
@@ -1241,7 +1294,10 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     );
   }
 
-  Widget qrClosed(List<Hostel> hostels) {
+  Widget qrClosed(List<Hostel> hostels, {
+    bool isLoading = false,
+    bool isRefreshing = false,
+  }) {
     final responsive = Responsive(context);
     return Column(
       children: [
@@ -1432,18 +1488,20 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                         color: myConstants.instiappWhite,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: SingleChildScrollView(
-                        child: Text(
-                          _mealString(hostels),
-                          style: TextStyle(
-                            color: const Color(0xFF1B3252),
-                            fontSize: responsive.w(14),
-                            fontFamily: 'DM Sans',
-                            fontWeight: FontWeight.w500,
-                            height: responsive.w(1.31),
+                      child: (isLoading && hostels.isEmpty) || isRefreshing
+                      ? _mealShimmer(responsive)
+                      : SingleChildScrollView(
+                          child: Text(
+                            _mealString(hostels),
+                            style: TextStyle(
+                              color: const Color(0xFF1B3252),
+                              fontSize: responsive.w(14),
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w500,
+                              height: responsive.w(1.31),
+                            ),
                           ),
                         ),
-                      ),
                     ),
                     Container(
                       padding: EdgeInsets.symmetric(
@@ -1622,6 +1680,29 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         ),
         SizedBox(height: responsive.h(20)),
       ],
+    );
+  }
+
+  Widget _mealShimmer(Responsive responsive) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: List.generate(4, (_) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: responsive.h(10)),
+            child: Container(
+              height: responsive.h(14),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+          );
+        }),
+      ),
     );
   }
 }

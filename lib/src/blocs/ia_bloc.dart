@@ -312,11 +312,52 @@ class InstiAppBloc {
   }
 
   // Mess bloc
+  static const _hostelCacheKey = 'cached_hostel_mess';
+
+  Future<void> _saveHostelsToCache(List<Hostel> hostels) async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonList = hostels.map((h) => h.toJson()).toList();
+    prefs.setString(_hostelCacheKey, jsonEncode(jsonList));
+  }
+
+  Future<List<Hostel>> _loadHostelsFromCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_hostelCacheKey);
+    if (raw == null) return [];
+    final List decoded = jsonDecode(raw);
+    return decoded.map((e) => Hostel.fromJson(e)).toList();
+  }
+
+  final _hostelNetworkErrorController = StreamController<bool>.broadcast();
+  Stream<bool> get hostelNetworkError => _hostelNetworkErrorController.stream;
+
   Future<void> updateHostels() async {
-    List<Hostel> hostels = await client.getHostelMess();
-    hostels.sort((h1, h2) => h1.compareTo(h2));
-    _hostels = hostels;
-    _hostelsSubject.add(UnmodifiableListView(_hostels));
+    // 1. Load cache FIRST
+    final cached = await _loadHostelsFromCache();
+    if (cached.isNotEmpty) {
+      cached.sort((a, b) => a.compareTo(b));
+      _hostels = cached;
+      _hostelsSubject.add(UnmodifiableListView(_hostels));
+    }
+
+    // 2. Try network fetch
+    try {
+      final fresh = await client.getHostelMess();
+      fresh.sort((a, b) => a.compareTo(b));
+
+      _hostels = fresh;
+      _hostelsSubject.add(UnmodifiableListView(_hostels));
+
+      // 3. Save new data
+      await _saveHostelsToCache(fresh);
+      _hostelNetworkErrorController.add(false);
+    } on DioException catch (e) {
+      // Network error → keep cached data
+      debugPrint('Mess fetch failed, using cache: ${e.message}');
+      _hostelNetworkErrorController.add(true);
+    } catch (e) {
+      debugPrint('Unexpected error in updateHostels: $e');
+    }
   }
 
   Future<String?> getQRString() async {

@@ -307,7 +307,7 @@ void initState() {
                   ),
                 ),
               ),
-              SizedBox(height: Responsive.height(16, context)),
+              // SizedBox(height: Responsive.height(16, context)),
             ],
           )),
           // if (searchMode)
@@ -321,7 +321,7 @@ void initState() {
           //   ),
           if (bodyID != "")
             ExploreClubPage(
-              bodyFuture: bloc.getBody(bodyID),
+              loadBody: () => bloc.getBody(bodyID),
               heroTag: bodyID,
               headerTitle: _resolveTitleFromBodyId(bodyID),
               headerDescription: null,
@@ -349,7 +349,7 @@ String _resolveTitleFromBodyId(String id) {
       return "Hostels";
     case "252ddc80-910b-4f63-b68a-de30a62a947e":
       return "Departments";
-    default:
+    default:  
       return "Explore";
   }
 }

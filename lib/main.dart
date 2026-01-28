@@ -145,10 +145,11 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: Color.fromRGBO(246, 246,246, 1), 
+        systemNavigationBarDividerColor: Color.fromRGBO(246, 246,246, 1),
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor:Color.fromRGBO(246, 246,246, 1),
+        statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.dark,
       ),
     );
@@ -164,13 +165,30 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     //   statusBarBrightness:
     //       Brightness.values[widget.bloc.brightness.toBrightness().index],
     // ));
-
+    WidgetsFlutterBinding.ensureInitialized();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return BlocProvider(
       widget.bloc,
       child: MaterialApp(
         scaffoldMessengerKey: scaffoldMessengerKey,
         navigatorKey: navigatorKey,
         title: 'InstiApp',
+        builder: (context, child) {
+      final mediaQuery = MediaQuery.of(context);
+      return MediaQuery(
+        data: mediaQuery.copyWith(
+          textScaler: const TextScaler.linear(1.0),
+          boldText: false,                          
+        ),
+        child: SafeArea(
+        top: false,      // keep status bar edge-to-edge
+        left: false,
+        right: false,
+        bottom: true,    // ⛔ protect from navigation bar
+        child: child!,
+      ),
+      );
+    },
         theme: ThemeData(
           // fontFamily: "SourceSansPro",
           fontFamily: "DM Sans",

@@ -21,7 +21,7 @@ import 'package:InstiApp/src/shimmers/header_description.dart';
 import 'package:InstiApp/src/shimmers/header_title.dart';
 
 class ExploreClubPage extends StatefulWidget {
-  final Future<Body>? bodyFuture;
+  final Future<Body> Function()? loadBody;
   final String? heroTag;
   final VoidCallback onBack;
 
@@ -68,7 +68,7 @@ class ExploreClubPage extends StatefulWidget {
   ];
 
   ExploreClubPage({
-    this.bodyFuture,
+    this.loadBody,
     this.heroTag,
     required this.onBack,
     this.headerTitle,
@@ -100,6 +100,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
   List<Body> Childrens = [];
 
   bool _isLoading = true;
+  bool _hasError = false;
   Map<String, String> bodyIdToImage = {
     "91199c20-7488-41c5-9f6b-6f6c7c5b897d": "assets/explore/cult.png",
     "81e05a1a-7fd1-45b5-84f6-074e52c0f085": "assets/explore/tech.png",
@@ -117,10 +118,23 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
       statusBarIconBrightness: Brightness.light, // white icons
     ));
 
-    widget.bodyFuture?.then((b) {
+    _loadBody();
+  }
+
+  Future<void> _loadBody() async {
+    setState(() {
+      _isLoading = true;
+      _hasError = false;
+    });
+
+    try {
+      final b = await widget.loadBody!();
+      if (!mounted) return;
+
       Childrens = b.bodyChildren ?? [];
       Childrens.sort((a, b) =>
           (b.bodyFollowersCount ?? 0).compareTo(a.bodyFollowersCount ?? 0));
+
       var tableParse = markdown.TableSyntax();
       b.bodyDescription = markdown.markdownToHtml(
           b.bodyDescription
@@ -130,23 +144,19 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                   .join('\n') ??
               "",
           blockSyntaxes: [tableParse]);
-          
-      if (this.mounted) {
-        setState(() {
-          body = b;
-          _isLoading = false;
-        });
-      } else {
+
+      setState(() {
         body = b;
         _isLoading = false;
-      }
-    }).catchError((error) {
-      if (this.mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    });
+        _hasError = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _hasError = true;
+      });
+    }
   }
 
   @override
@@ -159,208 +169,247 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
         widget.onBack();
         return false;
       },
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        backgroundColor: Color.fromRGBO(246, 246, 246, 1),
-        key: _scaffoldKey,
-        // drawer: NavDrawer(),
-        body: Column(
-                children: [
-                  // Fixed Header
-                  Stack(
-                    children: [
-                      Container(
-                        height: Responsive.width(295, context),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(Responsive.width(20, context)),
-                            bottomRight: Radius.circular(Responsive.width(20, context)),
-                          ),
-                          child: Image.asset(
-                            // bodyIdToImage[widget.heroTag] ?? 'assets/explore/culturals.png',
-                            'assets/explore/culturals.png',
-                            height: Responsive.width(295, context),
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: ClipRect(
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                            child: Container(
-                              height: MediaQuery.of(context).padding.top,
-                              color: Colors.white.withOpacity(0.2),
+      child: RefreshIndicator(
+        onRefresh: () async {
+          if (widget.bodyFuture != null) {
+            setState(() {
+              _isLoading = true;
+            });
+            try {
+              Body b = await widget.bodyFuture!;
+              Childrens = b.bodyChildren ?? [];
+              Childrens.sort((a, b) =>
+                  (b.bodyFollowersCount ?? 0).compareTo(a.bodyFollowersCount ?? 0));
+              var tableParse = markdown.TableSyntax();
+              b.bodyDescription = markdown.markdownToHtml(
+                  b.bodyDescription
+                          ?.split('\n')
+                          .map((s) => s.trimRight())
+                          .toList()
+                          .join('\n') ??
+                      "",
+                  blockSyntaxes: [tableParse]);
+              if (this.mounted) {
+                setState(() {
+                  body = b;
+                  _isLoading = false;
+                });
+              } else {
+                body = b;
+                _isLoading = false;
+              }
+            } catch (error) {
+              if (this.mounted) {
+                setState(() {
+                  _isLoading = false;
+                });
+              }
+            }
+          }
+        },
+        child: Scaffold(
+          extendBodyBehindAppBar: true,
+          backgroundColor: Color.fromRGBO(246, 246, 246, 1),
+          key: _scaffoldKey,
+          // drawer: NavDrawer(),
+          body: Column(
+                  children: [
+                    // Fixed Header
+                    Stack(
+                      children: [
+                        Container(
+                          height: Responsive.width(295, context),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(Responsive.width(20, context)),
+                              bottomRight: Radius.circular(Responsive.width(20, context)),
+                            ),
+                            child: Image.asset(
+                              // bodyIdToImage[widget.heroTag] ?? 'assets/explore/culturals.png',
+                              'assets/explore/culturals.png',
+                              height: Responsive.width(295, context),
+                              width: double.infinity,
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: Responsive.width(16, context),
-                          top: MediaQuery.of(context).padding.top,
-                        ),
-                        child: GestureDetector(
-                          onTap: () {
-                            widget.onBack();
-                          },
-                          child: Container(
-                            height: Responsive.width(52, context),
-                            width: Responsive.width(52, context),
-                            decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.60),
-                                borderRadius: BorderRadius.circular(25)),
-                            child: Center(
+                        Positioned(
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          child: ClipRect(
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                               child: Container(
-                                height: Responsive.width(24, context),
-                                width: Responsive.width(24, context),
-                                child: SvgPicture.asset(
-                                    'assets/quicklinks/icons/arrow_left.svg'),
+                                height: MediaQuery.of(context).padding.top,
+                                color: Colors.white.withOpacity(0.2),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        top: 70 + MediaQuery.of(context).padding.top,
-                        left: Responsive.width(16, context),
-                        right: Responsive.width(16, context),
-                        child: Container(
-                          height: Responsive.height(50, context),
+                        Padding(
                           padding: EdgeInsets.only(
-                              left: Responsive.width(14, context),
-                              right: Responsive.width(14, context),
-                              top: Responsive.height(13, context),
-                              bottom: Responsive.height(13, context)),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(
-                                Responsive.height(25, context)),
+                            left: Responsive.width(16, context),
+                            top: MediaQuery.of(context).padding.top,
                           ),
-                          child: Row(
-                            children: [
-                              Image(
-                                image: AssetImage('assets/blogs/search.png'),
-                                height: Responsive.height(24, context),
-                                width: Responsive.width(24, context),
+                          child: GestureDetector(
+                            onTap: () {
+                              widget.onBack();
+                            },
+                            child: Container(
+                              height: Responsive.width(52, context),
+                              width: Responsive.width(52, context),
+                              decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.60),
+                                  borderRadius: BorderRadius.circular(25)),
+                              child: Center(
+                                child: Container(
+                                  height: Responsive.width(24, context),
+                                  width: Responsive.width(24, context),
+                                  child: SvgPicture.asset(
+                                      'assets/quicklinks/icons/arrow_left.svg'),
+                                ),
                               ),
-                              SizedBox(width: Responsive.height(20, context)),
-                              Expanded(
-                                child: TextField(
-                                  focusNode: _focusNode,
-                                  controller: _searchController,
-                                  style: TextStyle(
-                                    fontSize: Responsive.text(16, context),
-                                    color: Color.fromRGBO(0, 0, 0, 0.8),
-                                    fontFamily: 'DM Sans',
-                                  ),
-                                  decoration: InputDecoration(
-                                    hintText: 'Search events...',
-                                    hintStyle: TextStyle(
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 70 + MediaQuery.of(context).padding.top,
+                          left: Responsive.width(16, context),
+                          right: Responsive.width(16, context),
+                          child: Container(
+                            height: Responsive.height(50, context),
+                            padding: EdgeInsets.only(
+                                left: Responsive.width(14, context),
+                                right: Responsive.width(14, context),
+                                top: Responsive.height(13, context),
+                                bottom: Responsive.height(13, context)),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(
+                                  Responsive.height(25, context)),
+                            ),
+                            child: Row(
+                              children: [
+                                Image(
+                                  image: AssetImage('assets/blogs/search.png'),
+                                  height: Responsive.height(24, context),
+                                  width: Responsive.width(24, context),
+                                ),
+                                SizedBox(width: Responsive.height(20, context)),
+                                Expanded(
+                                  child: TextField(
+                                    focusNode: _focusNode,
+                                    controller: _searchController,
+                                    style: TextStyle(
                                       fontSize: Responsive.text(16, context),
-                                      color: Color.fromRGBO(0, 0, 0, 0.4),
+                                      color: Color.fromRGBO(0, 0, 0, 0.8),
                                       fontFamily: 'DM Sans',
                                     ),
-                                    border: InputBorder.none,
-                                    isDense: true,
-                                    contentPadding: EdgeInsets.zero,
-                                  ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _searchQuery = value.trim().toLowerCase();
-                                    });
-                                  },
-                                  maxLines: 1,
+                                    decoration: InputDecoration(
+                                      hintText: 'Search events...',
+                                      hintStyle: TextStyle(
+                                        fontSize: Responsive.text(16, context),
+                                        color: Color.fromRGBO(0, 0, 0, 0.4),
+                                        fontFamily: 'DM Sans',
                                       ),
+                                      border: InputBorder.none,
+                                      isDense: true,
+                                      contentPadding: EdgeInsets.zero,
                                     ),
-                                    SizedBox(width: Responsive.width(8, context)),
-                                    if (_searchQuery.isNotEmpty)
-                                      InkWell(
-                                        customBorder: const CircleBorder(),
-                                        onTap: () {
-                                          _searchController.clear();
-                                          _focusNode.unfocus();
-                                          setState(() {
-                                            _searchQuery = '';
-                                          });
-                                        },
-                                        child: Padding(
-                                          padding: EdgeInsets.all(1),
-                                          child: SvgPicture.asset(
-                                            'assets/explore/x.svg',
-                                            width: Responsive.width(24, context),
-                                            height:
-                                                Responsive.height(24, context),
-                                          ),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _searchQuery = value.trim().toLowerCase();
+                                      });
+                                    },
+                                    maxLines: 1,
+                                        ),
+                                      ),
+                                      SizedBox(width: Responsive.width(8, context)),
+                                      if (_searchQuery.isNotEmpty)
+                                        InkWell(
+                                          customBorder: const CircleBorder(),
+                                          onTap: () {
+                                            _searchController.clear();
+                                            _focusNode.unfocus();
+                                            setState(() {
+                                              _searchQuery = '';
+                                            });
+                                          },
+                                          child: Padding(
+                                            padding: EdgeInsets.all(1),
+                                            child: SvgPicture.asset(
+                                              'assets/explore/x.svg',
+                                              width: Responsive.width(24, context),
+                                              height:
+                                                  Responsive.height(24, context),
+                                            ),
+                                    ),
                                   ),
-                                ),
-                              SizedBox(width: Responsive.width(8, context)),
+                                SizedBox(width: Responsive.width(8, context)),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 140 + MediaQuery.of(context).padding.top,
+                          left: 32,
+                          right: 32,
+                          child: _buildHeaderTitle(context, theme),
+                        ),
+                        Positioned(
+                          top: 185 + MediaQuery.of(context).padding.top,
+                          left: 32,
+                          right: 32,
+                          child: _isLoading
+                        ? HeaderDescriptionShimmer()
+                        : Text(
+                            body?.bodyShortDescription ?? "",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: Responsive.width(16, context),
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    
+                    // Scrollable Body Section
+                    Expanded(
+                      child: Container(
+                        color: Color.fromRGBO(246, 246, 246, 1),
+                        child: _isLoading
+                          ? ListView.builder(
+                              padding: EdgeInsets.only(top: Responsive.height(20, context)),
+                              itemCount: 6,
+                              itemBuilder: (context, index) {
+                                return BodyTileShimmer();
+                              },
+                          ) :
+                          ListView(
+                            padding: EdgeInsets.only(top: Responsive.height(20, context)),
+                            children: [
+                              ...(_searchQuery.isEmpty
+                                        ? Childrens
+                                        : Childrens.where((body) {
+                                          final name =
+                                                body.bodyName?.toLowerCase() ?? "";
+                                          return name.contains(_searchQuery);
+                                        }).toList())
+                                    .map((b) {
+                                return _buildBodyTile(bloc, theme.textTheme, b);
+                              }).toList(),
+                              Divider(),
+                              SizedBox(height: Responsive.height(80, context)),
                             ],
                           ),
-                        ),
                       ),
-                      Positioned(
-                        top: 140 + MediaQuery.of(context).padding.top,
-                        left: 32,
-                        right: 32,
-                        child: _buildHeaderTitle(context, theme),
-                      ),
-                      Positioned(
-                        top: 185 + MediaQuery.of(context).padding.top,
-                        left: 32,
-                        right: 32,
-                        child: _isLoading
-                      ? HeaderDescriptionShimmer()
-                      : Text(
-                          body?.bodyShortDescription ?? "",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: Responsive.width(16, context),
-                            fontFamily: 'DM Sans',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                  // Scrollable Body Section
-                  Expanded(
-                    child: Container(
-                      color: Color.fromRGBO(246, 246, 246, 1),
-                      child: _isLoading
-                        ? ListView.builder(
-                            padding: EdgeInsets.only(top: Responsive.height(20, context)),
-                            itemCount: 6,
-                            itemBuilder: (context, index) {
-                              return BodyTileShimmer();
-                            },
-                        ) :
-                        ListView(
-                          padding: EdgeInsets.only(top: Responsive.height(20, context)),
-                          children: [
-                            ...(_searchQuery.isEmpty
-                                      ? Childrens
-                                      : Childrens.where((body) {
-                                        final name =
-                                              body.bodyName?.toLowerCase() ?? "";
-                                        return name.contains(_searchQuery);
-                                      }).toList())
-                                  .map((b) {
-                              return _buildBodyTile(bloc, theme.textTheme, b);
-                            }).toList(),
-                            Divider(),
-                            SizedBox(height: Responsive.height(80, context)),
-                          ],
-                        ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+        ),
       ),
     );
   }

@@ -5,6 +5,7 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 // import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/routes/eventpage.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:InstiApp/src/utils/responsivenew.dart';
 // import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -59,19 +60,23 @@ class _NotificationsPageState extends State<NotificationsPage> {
     bloc.updateNotifications();
 
     return Scaffold(
+      backgroundColor: Color.fromRGBO(246,246,246,1),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(52),
         child: AppBar(
           title: SizedBox(
             height: 31,
-            child: Center(
-              child: Text(
-                "Notifications",
-                style: TextStyle(
-                  fontFamily: 'DM Sans',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
-                  color: Colors.black,
+            child: Container(
+              margin: const EdgeInsets.only(right: 48),
+              child: Center(
+                child: Text(
+                  "Notifications",
+                  style: TextStyle(
+                    fontFamily: 'DM Sans',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
@@ -80,7 +85,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           centerTitle: true,
           elevation: 0,
           leading: Padding(
-            padding: const EdgeInsets.only(left: 12),
+            padding: const EdgeInsets.only(left: 12,),
             child: IconButton(
               iconSize: 52,
               padding: EdgeInsets.zero,
@@ -98,116 +103,116 @@ class _NotificationsPageState extends State<NotificationsPage> {
               },
             ),
           ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 12.0),
-              child: clearAllLoading
-                  ? SizedBox(
-                      width: 52,
-                      height: 52,
-                      child: Center(
-                        child: SizedBox(
-                          width: 28,
-                          height: 28,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      ),
-                    )
-                  : IconButton(
-                      iconSize: 52,
-                      padding: EdgeInsets.zero,
-                      icon: const CircleAvatar(
-                        backgroundColor: Color(0xCCEBEBEB),
-                        radius: 25,
-                        child: Icon(
-                          Icons.delete_outline,
-                          color: Colors.black,
-                          size: 28,
-                        ),
-                      ),
-                      onPressed: () async {
-                        await _clearAllNotifications();
-                      },
-                    ),
-            ),
-          ],
+          // actions: [
+          //   Padding(
+          //     padding: const EdgeInsets.only(right: 12.0),
+          //     child: clearAllLoading
+          //         ? SizedBox(
+          //             width: 52,
+          //             height: 52,
+          //             child: Center(
+          //               child: SizedBox(
+          //                 width: 28,
+          //                 height: 28,
+          //                 child: CircularProgressIndicator(strokeWidth: 2),
+          //               ),
+          //             ),
+          //           )
+          //         : IconButton(
+          //             iconSize: 52,
+          //             padding: EdgeInsets.zero,
+          //             icon: const CircleAvatar(
+          //               backgroundColor: Color(0xCCEBEBEB),
+          //               radius: 25,
+          //               child: Icon(
+          //                 Icons.delete_outline,
+          //                 color: Colors.black,
+          //                 size: 28,
+          //               ),
+          //             ),
+          //             onPressed: () async {
+          //               await _clearAllNotifications();
+          //             },
+          //           ),
+          //   ),
+          // ],
         ),
       ),
       key: _scaffoldKey,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.only(left:16.0, right: 16, bottom: 16.0, top: 4.0),
           child: Column(
             children: [
               // Personal/General Toggle Row
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF0A0E21),
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isPersonalSelected = true;
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          decoration: BoxDecoration(
-                            color: isPersonalSelected
-                                ? const Color(0xFF2979FF)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(40),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'Personal',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isPersonalSelected = false;
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          decoration: BoxDecoration(
-                            color: !isPersonalSelected
-                                ? const Color(0xFF2979FF)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(40),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'General',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   padding: const EdgeInsets.all(4),
+              //   decoration: BoxDecoration(
+              //     color: const Color(0xFF0A0E21),
+              //     borderRadius: BorderRadius.circular(50),
+              //   ),
+              //   child: Row(
+              //     children: [
+              //       Expanded(
+              //         child: GestureDetector(
+              //           onTap: () {
+              //             setState(() {
+              //               isPersonalSelected = true;
+              //             });
+              //           },
+              //           child: Container(
+              //             padding: const EdgeInsets.symmetric(vertical: 16),
+              //             decoration: BoxDecoration(
+              //               color: isPersonalSelected
+              //                   ? const Color(0xFF2979FF)
+              //                   : Colors.transparent,
+              //               borderRadius: BorderRadius.circular(40),
+              //             ),
+              //             child: const Center(
+              //               child: Text(
+              //                 'Personal',
+              //                 style: TextStyle(
+              //                   color: Colors.white,
+              //                   fontWeight: FontWeight.bold,
+              //                   fontSize: 16,
+              //                 ),
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //       Expanded(
+              //         child: GestureDetector(
+              //           onTap: () {
+              //             setState(() {
+              //               isPersonalSelected = false;
+              //             });
+              //           },
+              //           child: Container(
+              //             padding: const EdgeInsets.symmetric(vertical: 16),
+              //             decoration: BoxDecoration(
+              //               color: !isPersonalSelected
+              //                   ? const Color(0xFF2979FF)
+              //                   : Colors.transparent,
+              //               borderRadius: BorderRadius.circular(40),
+              //             ),
+              //             child: const Center(
+              //               child: Text(
+              //                 'General',
+              //                 style: TextStyle(
+              //                   color: Colors.white,
+              //                   fontSize: 16,
+              //                 ),
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
 
-              const SizedBox(height: 16),
+              // const SizedBox(height: 16),
 
               // Notification List with StreamBuilder
               Expanded(
@@ -290,7 +295,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       onDismissed: (direction) async {
         await ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(
-              content: Text("Marked \"${notification.getTitle()}\" as read"),
+              content: Text("${notification.getTitle()}" +" is deleted"),
               action: SnackBarAction(
                 label: "Undo",
                 onPressed: () {

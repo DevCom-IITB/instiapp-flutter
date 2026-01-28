@@ -453,7 +453,7 @@ Widget Feedpost(BuildContext context, InstiAppBloc bloc, Event event) {
                     event.eventBodies?[0].bodyImageURL ??
                     "",
                 width: double.infinity,
-                height: Responsive.height(440, context),
+                height: Responsive.height(475, context),
                 fit: BoxFit.fill,
                 placeholder: (context, url) =>
                     Center(child: CircularProgressIndicator()),
