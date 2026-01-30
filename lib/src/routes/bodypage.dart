@@ -593,7 +593,6 @@ class _BodyPageState extends State<BodyPage> {
                                 //     ),
                                 //   ],
                                 // ),
-                                SizedBox(height: responsive.h(0)),
                                 DefaultTabController(
                                   length: 3,
                                   child: Column(
@@ -658,7 +657,7 @@ class _BodyPageState extends State<BodyPage> {
                                                 // About Tab
                                                 SingleChildScrollView(
                                                   padding: EdgeInsets.only(
-                                                      top: responsive.h(24)),
+                                                      top: responsive.h(10)),
                                                   child: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
@@ -681,15 +680,11 @@ class _BodyPageState extends State<BodyPage> {
                                                               null
                                                           ? SizedBox(
                                                               height: responsive
-                                                                  .h(20.0),
+                                                                  .h(10.0),
                                                             )
                                                           : SizedBox(
                                                               height: 0.0,
                                                             ),
-                                                      //Divider(),
-                                                      SizedBox(
-                                                          height:
-                                                              responsive.h(20)),
 
                                                       // Photo Album Section
                                                       if (photoAlbumUrls !=
@@ -707,9 +702,6 @@ class _BodyPageState extends State<BodyPage> {
                                                                 'DM Sans',
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                            height: responsive
-                                                                .h(12)),
                                                         GestureDetector(
                                                           onTap: () {
                                                             if (photoAlbumUrls !=
@@ -739,9 +731,6 @@ class _BodyPageState extends State<BodyPage> {
                                                                   .shrink(),
                                                         ),
                                                       ],
-                                                      SizedBox(
-                                                          height:
-                                                              responsive.h(40)),
                                                       // Container(
                                                       //   height: 190,
                                                       //   width: 380,

@@ -218,7 +218,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                     Stack(
                       children: [
                         Container(
-                          height: Responsive.width(295, context),
+                          height: Responsive.width(280, context),
                           child: ClipRRect(
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(Responsive.width(20, context)),
@@ -389,7 +389,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                               },
                           ) :
                           ListView(
-                            padding: EdgeInsets.only(top: Responsive.height(20, context)),
+                            padding: EdgeInsets.only(top: Responsive.height(10, context)),
                             children: [
                               ...(_searchQuery.isEmpty
                                         ? Childrens
@@ -402,7 +402,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                                 return _buildBodyTile(bloc, theme.textTheme, b);
                               }).toList(),
                               Divider(),
-                              SizedBox(height: Responsive.height(80, context)),
+                              SizedBox(height: Responsive.height(0, context)),
                             ],
                           ),
                       ),

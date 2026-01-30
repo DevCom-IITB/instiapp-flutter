@@ -1533,9 +1533,10 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                                 builder: (context) => CustomDialog(
                                   title: 'Open Mess-I Dashboard?',
                                   content1:
-                                      'Would you like to open the other app?',
+                                      'This will redirect you to the Mess-I dashboard',
                                   content2:
-                                      'If it\'s not installed, you\'ll be redirected to the store.',
+                                      'where you can file rebates and check your mess stats. Click open to proceed.',
+                                  imageAssetPath: 'assets/homepage/images/plate.svg',
                                   options: [
                                     DialogOption(
                                       text: 'Cancel',
