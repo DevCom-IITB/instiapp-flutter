@@ -55,7 +55,7 @@ class ExploreClubPage extends StatefulWidget {
     },
     {
       "bodyname": "IIT Bombay",
-      "title": "Institute",
+      "title": "I.B.s",
     },
     {
       "bodyname": "DevCom",
@@ -108,6 +108,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
     "44fe710a-8ede-4d59-a25b-a86434373209": "assets/explore/scenes.png",
     "f3ae5230-4441-4586-81a8-bf75a2e47318": "assets/explore/hostels.png",
     "252ddc80-910b-4f63-b68a-de30a62a947e": "assets/explore/departments.png",
+    "de55aa06-7f0a-46d4-bad4-d0150671e56c": "assets/explore/ibs.png",
   };
 
   @override

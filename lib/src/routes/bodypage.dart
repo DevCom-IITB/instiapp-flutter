@@ -186,7 +186,7 @@ class _BodyPageState extends State<BodyPage> {
       "Culturals@IITB": "ICC",
       "IITB Sports": "ISC",
       "Tech@IITB": "ITC",
-      "IIT Bombay": "IITB",
+      "IIT Bombay": "I.B.",
       "Hostel Affairs": "HA",
       "Departments": "IITB",
       "DevCom": "DC",

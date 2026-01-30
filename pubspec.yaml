@@ -160,6 +160,7 @@ flutter:
 #           include_if_null: true
 
 dependency_overrides:
+  firebase_messaging_web: ^3.6.0
   # firebase_messaging_platform_interface: 3.1.6
   # firebase_crashlytics_platform_interface: 3.1.13
   # cloud_firestore_platform_interface: 5.4.13
