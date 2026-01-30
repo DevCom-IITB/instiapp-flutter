@@ -171,12 +171,12 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
       },
       child: RefreshIndicator(
         onRefresh: () async {
-          if (widget.bodyFuture != null) {
+          if (widget.loadBody != null) {
             setState(() {
               _isLoading = true;
             });
             try {
-              Body b = await widget.bodyFuture!;
+              Body b = await widget.loadBody!();
               Childrens = b.bodyChildren ?? [];
               Childrens.sort((a, b) =>
                   (b.bodyFollowersCount ?? 0).compareTo(a.bodyFollowersCount ?? 0));
