@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/dotted_divider.dart';
 import 'package:InstiApp/src/utils/responsive.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomDialog extends StatefulWidget {
   final String title;
@@ -40,7 +41,8 @@ class _CustomDialogState extends State<CustomDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RS.s(context, 20))),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(RS.s(context, 20))),
       backgroundColor: Colors.white,
       insetPadding: EdgeInsets.zero,
       child: Container(
@@ -59,11 +61,11 @@ class _CustomDialogState extends State<CustomDialog> {
                 fontFamily: 'DM Sans',
               ),
             ),
-            
+
             const SizedBox(height: 8),
             const DottedDivider(padding: EdgeInsets.zero),
             const SizedBox(height: 8),
-            
+
             // Content1
             Text(
               widget.content1,
@@ -87,7 +89,7 @@ class _CustomDialogState extends State<CustomDialog> {
                 ),
               ),
             ],
-            
+
             // Image (222x222)
             if (widget.imageAssetPath != null) ...[
               Center(
@@ -96,25 +98,33 @@ class _CustomDialogState extends State<CustomDialog> {
                     alignment: Alignment.center,
                     widthFactor: 0.8,
                     heightFactor: 0.85,
-                    child: Image.asset(
-                      widget.imageAssetPath!,
-                      width: RS.s(context, 220),
-                      height: RS.s(context, 220),
-                      fit: BoxFit.cover,
-                    ),
+                    child: widget.imageAssetPath!.endsWith('.svg')
+                        ? SvgPicture.asset(
+                            widget.imageAssetPath!,
+                            width: RS.s(context, 220),
+                            height: RS.s(context, 220),
+                            fit: BoxFit.cover,
+                          )
+                        : Image.asset(
+                            widget.imageAssetPath!,
+                            width: RS.s(context, 220),
+                            height: RS.s(context, 220),
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
               ),
             ],
 
             if (widget.imageAssetPath == null) const SizedBox(height: 16),
-            
+
             // Options/Buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: widget.options.map((option) => 
-                _buildDialogButton(option, context, _isProcessing)
-              ).toList(),
+              children: widget.options
+                  .map((option) =>
+                      _buildDialogButton(option, context, _isProcessing))
+                  .toList(),
             ),
           ],
         ),
@@ -122,34 +132,38 @@ class _CustomDialogState extends State<CustomDialog> {
     );
   }
 
-  Widget _buildDialogButton(DialogOption option, BuildContext context, bool isProcessing) {
+  Widget _buildDialogButton(
+      DialogOption option, BuildContext context, bool isProcessing) {
     final isDisabled = isProcessing && option.isPrimary;
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8),
       child: ElevatedButton(
-        onPressed: isDisabled ? null : () {
-          if (widget.showLoadingState && option.isPrimary) {
-            _setProcessingState(true);
-          }
-          option.onPressed(context, _setProcessingState);
-        },
+        onPressed: isDisabled
+            ? null
+            : () {
+                if (widget.showLoadingState && option.isPrimary) {
+                  _setProcessingState(true);
+                }
+                option.onPressed(context, _setProcessingState);
+              },
         style: ElevatedButton.styleFrom(
-          backgroundColor: isDisabled 
+          backgroundColor: isDisabled
               ? Colors.grey
-              : (option.isPrimary 
+              : (option.isPrimary
                   ? Color.fromRGBO(48, 111, 220, 1)
                   : Colors.white),
-          foregroundColor: isDisabled 
+          foregroundColor: isDisabled
               ? Colors.white
-              : (option.isPrimary 
-                  ? Colors.white 
+              : (option.isPrimary
+                  ? Colors.white
                   : Color.fromRGBO(48, 111, 220, 1)),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
-            side: isDisabled || option.isPrimary 
-                ? BorderSide.none 
-                : const BorderSide(color: Color.fromRGBO(48, 111, 220, 1), width: 1),
+            side: isDisabled || option.isPrimary
+                ? BorderSide.none
+                : const BorderSide(
+                    color: Color.fromRGBO(48, 111, 220, 1), width: 1),
           ),
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
           elevation: 0,
