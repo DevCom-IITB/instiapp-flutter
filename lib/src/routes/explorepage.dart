@@ -299,7 +299,15 @@ void initState() {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Bodycard(context, "Food", "assets/explore/food.png"),
-                          Bodycard(context, "I.Bs", "assets/explore/ibs.png"),
+                          // Bodycard(context, "I.Bs", "assets/explore/ibs.png"),
+                          InkWell(
+                            onTap: () {
+                              bodyID = "de55aa06-7f0a-46d4-bad4-d0150671e56c";
+                              setState(() {});
+                            },
+                            child: Bodycard(context, "I.B.s",
+                                "assets/explore/ibs.png"),
+                          ),
                         ],
                       ),
                       SizedBox(height: Responsive.height(80, context)),
@@ -349,6 +357,8 @@ String _resolveTitleFromBodyId(String id) {
       return "Hostels";
     case "252ddc80-910b-4f63-b68a-de30a62a947e":
       return "Departments";
+    case "de55aa06-7f0a-46d4-bad4-d0150671e56c":
+      return "I.B.s";
     default:  
       return "Explore";
   }
@@ -744,10 +754,10 @@ class _ExploresearchState extends State<Exploresearch> {
                       InkWell(
                         onTap: () {
                           Navigator.pop(context);
-                          widget.onBack('b6e2e0e2-9b7e-4e8c-8c2e-1f2e8b2e8c2e');
+                          widget.onBack('de55aa06-7f0a-46d4-bad4-d0150671e56c');
                         },
                         child: SearchBodycard(
-                            context, 'I.Bs', 'assets/explore/ibs.png'),
+                            context, 'I.B.s', 'assets/explore/ibs.png'),
                       ),
                       InkWell(
                         onTap: () {
