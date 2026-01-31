@@ -1735,7 +1735,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
           child: Center(
               child: Text(
             "Nothing here yet!",
-            style: TextStyle(fontSize: responsive.sp(18)),
+            style: TextStyle(fontSize: responsive.sp(18), fontFamily: 'DM Sans'),
           )),
         )
       ];

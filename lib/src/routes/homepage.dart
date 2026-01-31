@@ -33,10 +33,12 @@ class Responsive {
   final double baseHeight;
   final double bottomPadding;
 
-  Responsive(this.context, {this.baseWidth = 411, this.baseHeight = 914, this.bottomPadding = 0});
+  Responsive(this.context,
+      {this.baseWidth = 411, this.baseHeight = 914, this.bottomPadding = 0});
 
   double w(double px) => MediaQuery.of(context).size.width * (px / baseWidth);
-  double h(double px) => (MediaQuery.of(context).size.height - bottomPadding) * (px / baseHeight);
+  double h(double px) =>
+      (MediaQuery.of(context).size.height - bottomPadding) * (px / baseHeight);
   double sp(double px) => w(px); // scale text with width
 }
 
@@ -49,7 +51,7 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
-    GlobalKey<ScaffoldMessengerState>();
+      GlobalKey<ScaffoldMessengerState>();
 
   String currentpage = 'homepage';
   Constants myConstants = Constants();
@@ -96,11 +98,17 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   bool _offlineSnackShown = false;
 
   String _formatMeal(String? meal) {
-    return (meal ?? '')
+    if (meal == null || meal.trim().isEmpty) {
+      return 'No menu uploaded';
+    }
+    
+    final formatted = meal
         .split(RegExp(r'[\n,]'))
         .map((item) => item.trim())
         .where((item) => item.isNotEmpty)
         .join(' • ');
+    
+    return formatted.isEmpty ? 'No menu uploaded' : formatted;
   }
 
   String _mealString(List<Hostel> hostels) {
@@ -189,9 +197,9 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
     // Initialize QR stripe animation controller
     _qrStripeController = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 2000),
       vsync: this,
-    );
+    )..repeat();
 
     // Create animations
     _navIndicatorAnimation = Tween<double>(
@@ -213,10 +221,10 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     // QR stripe animation: from left (-1.0) to middle (0.0)
     _qrStripeAnimation = Tween<double>(
       begin: -1.0,
-      end: 0.2,
+      end: 1.0,
     ).animate(CurvedAnimation(
       parent: _qrStripeController,
-      curve: Curves.easeOut,
+      curve: Curves.linear,
     ));
 
     // Start with indicator at first position
@@ -227,11 +235,11 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     selectedMeal = getCurrentMealSlot();
 
     // Start QR stripe animation when app opens
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _qrStripeController.forward();
-      }
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   if (mounted) {
+    //     _qrStripeController.forward();
+    //   }
+    // });
   }
 
   void _onPageSwiped(int index) {
@@ -373,7 +381,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
 
     return ScaffoldMessenger(
       key: _scaffoldMessengerKey,
@@ -408,7 +417,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                 ),
               ],
             ),
-      
+
             // Bottom Navigation Bar
             Align(
               alignment: Alignment.bottomCenter,
@@ -446,7 +455,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       HostelMess.dayToName.values.map((d) => d.substring(0)).toList();
 
   void _openFilterBottomSheet(List<Hostel> hostels) {
-    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
     String tempSelectedDay = _selectedDay;
     String tempSelectedHostel = _selectedHostel;
     showModalBottomSheet(
@@ -614,12 +624,11 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  ...hostels.map((h) {
+                                  ...hostels.where((h) => h.shortName != 'qip').map((h) {
                                     final value = h.shortName!;
-                                    final name =
-                                        (value == 'tansa' || value == 'qip')
-                                            ? value
-                                            : 'Hostel ${value}';
+                                    final name = (value == 'tansa')
+                                        ? value
+                                        : 'Hostel ${value}';
                                     final isSelected =
                                         tempSelectedHostel == h.shortName;
                                     // return RadioListTile(
@@ -774,7 +783,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   Widget dayContainer(String day, bool isSelected, VoidCallback onTap) {
-    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -800,7 +810,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
   Widget services(
       String name, String path, Map<String, dynamic> services_icon) {
-    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
     return InkWell(
       onTap: () {
         if (name == "Buy & Sell") {
@@ -904,7 +915,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   PreferredSizeWidget customAppBar() {
-    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
     final bloc = BlocProvider.of(context)!.bloc;
 
     return AppBar(
@@ -1042,7 +1054,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   Widget Homepagewidget() {
-    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
     var bloc = BlocProvider.of(context)!.bloc;
     return Scaffold(
       backgroundColor: Color.fromRGBO(246, 246, 246, 1),
@@ -1074,8 +1087,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                         final hostels =
                             snapshot.data ?? UnmodifiableListView<Hostel>([]);
 
-                        final isLoading =
-                            snapshot.connectionState == ConnectionState.waiting &&
+                        final isLoading = snapshot.connectionState ==
+                                ConnectionState.waiting &&
                             hostels.isEmpty;
 
                         return Padding(
@@ -1133,7 +1146,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   Widget servicesWidget() {
-    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
     return Column(
       children: [
         Row(
@@ -1203,7 +1217,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     required bool error,
     required String qrString,
   }) {
-    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
     return Stack(
       children: [
         Center(
@@ -1355,7 +1370,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                 padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(10),
                     responsive.w(16), responsive.h(10)),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
@@ -1366,13 +1381,13 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                         fontWeight: FontWeight.w500,
                         fontSize: responsive.w(12.5),
                       ),
-                    )
-                    // SizedBox(width: 8),
-                    // Container(
-                    //   height: 20,
-                    //   width: 20,
-                    //   child: Icon(Icons.keyboard_arrow_down),
-                    // )
+                    ),
+                    SizedBox(width: responsive.w(4)),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      size: responsive.w(20),
+                      color: Color(0xCC0F1620),
+                    ),
                   ],
                 ),
               ),
@@ -1644,6 +1659,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           onTap: () {
             setState(() {
               showQR = true;
+              generateQR();
             });
           },
           child: Container(
