@@ -446,6 +446,7 @@ class _CommunitiesState extends State<Communities> {
       length: 3,
       child: SafeArea(
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           floatingActionButton: Stack(
             children: [
               // Scroll-to-top FAB

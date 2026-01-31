@@ -211,6 +211,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
         },
         child: Scaffold(
           extendBodyBehindAppBar: true,
+          resizeToAvoidBottomInset: false,
           backgroundColor: Color.fromRGBO(246, 246, 246, 1),
           key: _scaffoldKey,
           // drawer: NavDrawer(),

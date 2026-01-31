@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:InstiApp/main.dart' as main_app;
 
 class Responsive {
   static double baseWidth = 412.0;

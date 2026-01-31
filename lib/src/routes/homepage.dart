@@ -25,16 +25,18 @@ import '../widgets/custom_dialog.dart';
 import '../widgets/bottom_navbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:InstiApp/main.dart' as main_app;
 
 class Responsive {
   final BuildContext context;
   final double baseWidth;
   final double baseHeight;
+  final double bottomPadding;
 
-  Responsive(this.context, {this.baseWidth = 411, this.baseHeight = 914});
+  Responsive(this.context, {this.baseWidth = 411, this.baseHeight = 914, this.bottomPadding = 0});
 
   double w(double px) => MediaQuery.of(context).size.width * (px / baseWidth);
-  double h(double px) => MediaQuery.of(context).size.height * (px / baseHeight);
+  double h(double px) => (MediaQuery.of(context).size.height - bottomPadding) * (px / baseHeight);
   double sp(double px) => w(px); // scale text with width
 }
 
@@ -346,7 +348,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = Responsive(context);
+    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
 
     return ScaffoldMessenger(
       key: _scaffoldMessengerKey,
@@ -368,15 +370,15 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                   child: Homepagewidget(),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(bottom: responsive.h(90)),
+                  padding: EdgeInsets.only(bottom: responsive.h(50)),
                   child: FeedPage(),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(bottom: responsive.h(90)),
+                  padding: EdgeInsets.only(bottom: responsive.h(0)),
                   child: ExplorePage(),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(bottom: responsive.h(90)),
+                  padding: EdgeInsets.only(bottom: responsive.h(80)),
                   child: CommunityPage(),
                 ),
               ],
@@ -386,7 +388,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: EdgeInsets.only(bottom: responsive.h(0)),
+                padding: EdgeInsets.only(bottom: responsive.h(5)),
                 child: InstiBottomNavBar(
                   items: const [
                     NavBarItem(
@@ -419,7 +421,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       HostelMess.dayToName.values.map((d) => d.substring(0)).toList();
 
   void _openFilterBottomSheet(List<Hostel> hostels) {
-    final responsive = Responsive(context);
+    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
     String tempSelectedDay = _selectedDay;
     String tempSelectedHostel = _selectedHostel;
     showModalBottomSheet(
@@ -747,7 +749,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   Widget dayContainer(String day, bool isSelected, VoidCallback onTap) {
-    final responsive = Responsive(context);
+    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -773,7 +775,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
   Widget services(
       String name, String path, Map<String, dynamic> services_icon) {
-    final responsive = Responsive(context);
+    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
     return InkWell(
       onTap: () {
         if (name == "Buy & Sell") {
@@ -877,7 +879,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   PreferredSizeWidget customAppBar() {
-    final responsive = Responsive(context);
+    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
     final bloc = BlocProvider.of(context)!.bloc;
 
     return AppBar(
@@ -1015,7 +1017,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   Widget Homepagewidget() {
-    final responsive = Responsive(context);
+    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
     var bloc = BlocProvider.of(context)!.bloc;
     return Scaffold(
       backgroundColor: Color.fromRGBO(246, 246, 246, 1),
@@ -1106,7 +1108,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   Widget servicesWidget() {
-    final responsive = Responsive(context);
+    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
     return Column(
       children: [
         Row(
@@ -1176,7 +1178,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     required bool error,
     required String qrString,
   }) {
-    final responsive = Responsive(context);
+    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
     return Stack(
       children: [
         Center(
@@ -1298,7 +1300,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     bool isLoading = false,
     bool isRefreshing = false,
   }) {
-    final responsive = Responsive(context);
+    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
     return Column(
       children: [
         Row(
@@ -1616,7 +1618,6 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           onTap: () {
             setState(() {
               showQR = true;
-              generateQR();
             });
           },
           child: Container(
