@@ -86,14 +86,9 @@ class _BlogPageState extends State<BlogPage> {
     _searchFieldController = TextEditingController();
     _pageController = PageController(initialPage: 0);
     setUrl();
-    _hideButtonController = ScrollController()
-      ..addListener(() {
-        if (!mounted) return;
-        final visible = _hideButtonController!.position.userScrollDirection ==
-                ScrollDirection.forward &&
-            _hideButtonController!.offset > 100;
-        setState(() => isFabVisible = visible ? 1 : 0);
-      });
+    _placementScrollController = ScrollController()..addListener(_handleScroll);
+    _trainingScrollController = ScrollController()..addListener(_handleScroll);
+    _externalScrollController = ScrollController()..addListener(_handleScroll);
   }
 
   @override
@@ -116,7 +111,9 @@ class _BlogPageState extends State<BlogPage> {
     _searchFieldController?.dispose();
     _pageController?.dispose();
     _focusNode.dispose();
-    _hideButtonController?.dispose();
+    _placementScrollController?.dispose();
+    _trainingScrollController?.dispose();
+    _externalScrollController?.dispose();
     super.dispose();
   }
 
@@ -153,13 +150,28 @@ class _BlogPageState extends State<BlogPage> {
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
 
   FocusNode _focusNode = FocusNode();
-  ScrollController? _hideButtonController;
+  ScrollController? _placementScrollController;
+  ScrollController? _trainingScrollController;
+  ScrollController? _externalScrollController;
   double isFabVisible = 0;
   IconData actionIcon = Icons.search_outlined;
+
+  ScrollController? get _activeScrollController {
+    if (currentTabIndex == 0) return _placementScrollController;
+    if (currentTabIndex == 1) return _trainingScrollController;
+    return _externalScrollController;
+  }
+
+  void _handleScroll() {
+    final controller = _activeScrollController;
+    if (!mounted || controller == null || !controller.hasClients) return;
+    final visible =
+        controller.position.userScrollDirection == ScrollDirection.forward &&
+            controller.offset > 100;
+    setState(() => isFabVisible = visible ? 1 : 0);
+  }
 
   bool firstBuild = true;
   String? loadingReaction;
@@ -225,317 +237,304 @@ class _BlogPageState extends State<BlogPage> {
         _focusNode.unfocus();
       },
       child: Scaffold(
-            resizeToAvoidBottomInset: true,
-            key: _scaffoldKey,
-            body: StreamBuilder(
-              stream: bloc.session,
-              builder:
-                  (BuildContext context, AsyncSnapshot<Session?> snapshot) {
-                if ((snapshot.hasData && snapshot.data != null) && isLoggedIn) {
-                  return Scaffold(
-                    floatingActionButton: AnimatedOpacity(
-                      opacity: isFabVisible, // 1 = visible, 0 = hidden
-                      duration: Duration(milliseconds: 200),
-                      child: IgnorePointer(
-                        ignoring: isFabVisible == 0,
-                        child: FloatingActionButton(
-                          backgroundColor: Color.fromRGBO(48, 111, 220, 1),
-                          onPressed: () {
-                            _hideButtonController?.animateTo(
-                              0.0,
-                              duration: Duration(milliseconds: 400),
-                              curve: Curves.easeOut,
-                            );
-                          },
-                          child: Icon(Icons.arrow_upward),
-                        ),
+          resizeToAvoidBottomInset: true,
+          key: _scaffoldKey,
+          body: StreamBuilder(
+            stream: bloc.session,
+            builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
+              if ((snapshot.hasData && snapshot.data != null) && isLoggedIn) {
+                return Scaffold(
+                  floatingActionButton: AnimatedOpacity(
+                    opacity: isFabVisible, // 1 = visible, 0 = hidden
+                    duration: Duration(milliseconds: 200),
+                    child: IgnorePointer(
+                      ignoring: isFabVisible == 0,
+                      child: FloatingActionButton(
+                        backgroundColor: Color.fromRGBO(48, 111, 220, 1),
+                        onPressed: () {
+                          _activeScrollController?.animateTo(
+                            0.0,
+                            duration: Duration(milliseconds: 400),
+                            curve: Curves.easeOut,
+                          );
+                        },
+                        child: Icon(Icons.arrow_upward),
                       ),
                     ),
-                    backgroundColor: const Color.fromRGBO(246, 246, 246, 1),
-                    body: SafeArea(
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            height: Responsive.height(52.0, context),
-                            width: MediaQuery.of(context).size.width,
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    left: Responsive.width(16.0, context),
-                                  ),
-                                  child: Container(
-                                      height: Responsive.height(52.0, context),
-                                      width: Responsive.width(52.0, context),
-                                      decoration: BoxDecoration(
-                                        color: const Color.fromRGBO(
-                                            235, 235, 235, 0.8),
-                                        borderRadius: BorderRadius.circular(26),
-                                      ),
-                                      child: IconButton(
-                                          icon: SvgPicture.asset(
-                                            'assets/blogs/arrow-left.svg',
-                                            height: Responsive.height(
-                                                24.0, context),
-                                            width:
-                                                Responsive.width(24.0, context),
-                                            fit: BoxFit.none,
-                                          ),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          })),
+                  ),
+                  backgroundColor: const Color.fromRGBO(246, 246, 246, 1),
+                  body: SafeArea(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          height: Responsive.height(52.0, context),
+                          width: MediaQuery.of(context).size.width,
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: Responsive.width(16.0, context),
                                 ),
-                                Expanded(
-                                  child: Center(
-                                    child: Text(
-                                      'Blogs',
-                                      style: TextStyle(
-                                        fontSize:
-                                            Responsive.text(24.0, context),
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.black,
-                                        fontFamily: "DM Sans",
-                                        fontStyle: FontStyle.normal,
-                                      ),
+                                child: Container(
+                                    height: Responsive.height(52.0, context),
+                                    width: Responsive.width(52.0, context),
+                                    decoration: BoxDecoration(
+                                      color: const Color.fromRGBO(
+                                          235, 235, 235, 0.8),
+                                      borderRadius: BorderRadius.circular(26),
                                     ),
-                                  ),
-                                ),
-                                SizedBox(
-                                    width: Responsive.width(52.0, context)),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: Responsive.height(20.0, context)),
-                          Container(
-                            height: Responsive.height(60.0, context),
-                            margin: EdgeInsets.only(
-                                left: Responsive.width(16.0, context),
-                                right: Responsive.width(16.0, context)),
-                            padding:
-                                EdgeInsets.all(Responsive.height(6.0, context)),
-                            decoration: BoxDecoration(
-                              image: const DecorationImage(
-                                image:
-                                    AssetImage('assets/blogs/background.png'),
-                                fit: BoxFit.cover,
+                                    child: IconButton(
+                                        icon: SvgPicture.asset(
+                                          'assets/blogs/arrow-left.svg',
+                                          height:
+                                              Responsive.height(24.0, context),
+                                          width:
+                                              Responsive.width(24.0, context),
+                                          fit: BoxFit.none,
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        })),
                               ),
-                              borderRadius: BorderRadius.circular(
-                                  Responsive.height(30.0, context)),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Material(
-                                  color:
-                                      Color.fromRGBO(48, 111, 220, placement),
-                                  borderRadius: BorderRadius.circular(
-                                      Responsive.height(30.0, context)),
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(
-                                        Responsive.height(30.0, context)),
-                                    splashColor:
-                                        Color.fromRGBO(48, 111, 220, 1),
-                                    onTap: () {
-                                      _pageController?.animateToPage(
-                                        0,
-                                        duration: Duration(milliseconds: 300),
-                                        curve: Curves.easeInOut,
-                                      );
-                                    },
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          left: Responsive.width(20.0, context),
-                                          right:
-                                              Responsive.width(24.0, context),
-                                          top: Responsive.height(14.0, context),
-                                          bottom:
-                                              Responsive.height(13.0, context)),
-                                      child: Center(
-                                        child: Text(
-                                          'Placement',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontFamily: 'DM Sans',
-                                            fontSize:
-                                                Responsive.text(16.0, context),
-                                            fontWeight: placement == 1
-                                                ? FontWeight.w900
-                                                : FontWeight.w400,
-                                            fontStyle: FontStyle.normal,
-                                            height:
-                                                Responsive.height(1.0, context),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Material(
-                                  color:
-                                      Color.fromRGBO(48, 111, 220, internship),
-                                  borderRadius: BorderRadius.circular(
-                                      Responsive.height(30.0, context)),
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(
-                                        Responsive.height(30.0, context)),
-                                    splashColor:
-                                        Color.fromRGBO(48, 111, 220, 1),
-                                    onTap: () {
-                                      _pageController?.animateToPage(
-                                        1,
-                                        duration: Duration(milliseconds: 300),
-                                        curve: Curves.easeInOut,
-                                      );
-                                    },
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          left: Responsive.width(20.0, context),
-                                          right:
-                                              Responsive.width(24.0, context),
-                                          top: Responsive.height(14.0, context),
-                                          bottom:
-                                              Responsive.height(13.0, context)),
-                                      child: Center(
-                                        child: Text(
-                                          'Internship',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontFamily: 'DM Sans',
-                                            fontSize:
-                                                Responsive.text(16.0, context),
-                                            fontWeight: internship == 1
-                                                ? FontWeight.w900
-                                                : FontWeight.w400,
-                                            fontStyle: FontStyle.normal,
-                                            height:
-                                                Responsive.height(1.0, context),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Material(
-                                  color: Color.fromRGBO(48, 111, 220, external),
-                                  borderRadius: BorderRadius.circular(
-                                      Responsive.height(30.0, context)),
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(
-                                        Responsive.height(30.0, context)),
-                                    splashColor:
-                                        Color.fromRGBO(48, 111, 220, 1),
-                                    onTap: () {
-                                      _pageController?.animateToPage(
-                                        2,
-                                        duration: Duration(milliseconds: 300),
-                                        curve: Curves.easeInOut,
-                                      );
-                                    },
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          left: Responsive.width(20.0, context),
-                                          right:
-                                              Responsive.width(24.0, context),
-                                          top: Responsive.height(14.0, context),
-                                          bottom:
-                                              Responsive.height(13.0, context)),
-                                      child: Center(
-                                        child: Text(
-                                          'External',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontFamily: 'DM Sans',
-                                            fontSize:
-                                                Responsive.text(16.0, context),
-                                            fontWeight: external == 1
-                                                ? FontWeight.w900
-                                                : FontWeight.w400,
-                                            fontStyle: FontStyle.normal,
-                                            height:
-                                                Responsive.height(1.0, context),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(
-                                left: 16, right: 16, top: 16),
-                            height: Responsive.height(53.0, context),
-                            padding: EdgeInsets.only(
-                                left: Responsive.width(14.0, context),
-                                right: Responsive.width(14.0, context),
-                                top: Responsive.height(13.0, context),
-                                bottom: Responsive.height(13.0, context)),
-                            decoration: BoxDecoration(
-                              image: const DecorationImage(
-                                image: AssetImage('assets/blogs/searchbar.png'),
-                                fit: BoxFit.fill,
-                              ),
-                              borderRadius: BorderRadius.circular(
-                                  Responsive.height(2.0, context)),
-                            ),
-                            child: Row(
-                              children: [
-                                Image(
-                                  image: AssetImage('assets/blogs/search.png'),
-                                  height: Responsive.height(24.0, context),
-                                  width: Responsive.width(24.0, context),
-                                ),
-                                SizedBox(width: Responsive.width(8.0, context)),
-                                Expanded(
-                                  child: TextField(
-                                    controller: _searchFieldController,
-                                    focusNode: _focusNode,
+                              Expanded(
+                                child: Center(
+                                  child: Text(
+                                    'Blogs',
                                     style: TextStyle(
+                                      fontSize: Responsive.text(24.0, context),
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.black,
+                                      fontFamily: "DM Sans",
+                                      fontStyle: FontStyle.normal,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: Responsive.width(52.0, context)),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: Responsive.height(20.0, context)),
+                        Container(
+                          height: Responsive.height(60.0, context),
+                          margin: EdgeInsets.only(
+                              left: Responsive.width(16.0, context),
+                              right: Responsive.width(16.0, context)),
+                          padding:
+                              EdgeInsets.all(Responsive.height(6.0, context)),
+                          decoration: BoxDecoration(
+                            image: const DecorationImage(
+                              image: AssetImage('assets/blogs/background.png'),
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                                Responsive.height(30.0, context)),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Material(
+                                color: Color.fromRGBO(48, 111, 220, placement),
+                                borderRadius: BorderRadius.circular(
+                                    Responsive.height(30.0, context)),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(
+                                      Responsive.height(30.0, context)),
+                                  splashColor: Color.fromRGBO(48, 111, 220, 1),
+                                  onTap: () {
+                                    _pageController?.animateToPage(
+                                      0,
+                                      duration: Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut,
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: Responsive.width(20.0, context),
+                                        right: Responsive.width(24.0, context),
+                                        top: Responsive.height(14.0, context),
+                                        bottom:
+                                            Responsive.height(13.0, context)),
+                                    child: Center(
+                                      child: Text(
+                                        'Placement',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'DM Sans',
+                                          fontSize:
+                                              Responsive.text(16.0, context),
+                                          fontWeight: placement == 1
+                                              ? FontWeight.w900
+                                              : FontWeight.w400,
+                                          fontStyle: FontStyle.normal,
+                                          height:
+                                              Responsive.height(1.0, context),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Material(
+                                color: Color.fromRGBO(48, 111, 220, internship),
+                                borderRadius: BorderRadius.circular(
+                                    Responsive.height(30.0, context)),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(
+                                      Responsive.height(30.0, context)),
+                                  splashColor: Color.fromRGBO(48, 111, 220, 1),
+                                  onTap: () {
+                                    _pageController?.animateToPage(
+                                      1,
+                                      duration: Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut,
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: Responsive.width(20.0, context),
+                                        right: Responsive.width(24.0, context),
+                                        top: Responsive.height(14.0, context),
+                                        bottom:
+                                            Responsive.height(13.0, context)),
+                                    child: Center(
+                                      child: Text(
+                                        'Internship',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'DM Sans',
+                                          fontSize:
+                                              Responsive.text(16.0, context),
+                                          fontWeight: internship == 1
+                                              ? FontWeight.w900
+                                              : FontWeight.w400,
+                                          fontStyle: FontStyle.normal,
+                                          height:
+                                              Responsive.height(1.0, context),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Material(
+                                color: Color.fromRGBO(48, 111, 220, external),
+                                borderRadius: BorderRadius.circular(
+                                    Responsive.height(30.0, context)),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(
+                                      Responsive.height(30.0, context)),
+                                  splashColor: Color.fromRGBO(48, 111, 220, 1),
+                                  onTap: () {
+                                    _pageController?.animateToPage(
+                                      2,
+                                      duration: Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut,
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: Responsive.width(20.0, context),
+                                        right: Responsive.width(24.0, context),
+                                        top: Responsive.height(14.0, context),
+                                        bottom:
+                                            Responsive.height(13.0, context)),
+                                    child: Center(
+                                      child: Text(
+                                        'External',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'DM Sans',
+                                          fontSize:
+                                              Responsive.text(16.0, context),
+                                          fontWeight: external == 1
+                                              ? FontWeight.w900
+                                              : FontWeight.w400,
+                                          fontStyle: FontStyle.normal,
+                                          height:
+                                              Responsive.height(1.0, context),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(
+                              left: 16, right: 16, top: 16),
+                          height: Responsive.height(53.0, context),
+                          padding: EdgeInsets.only(
+                              left: Responsive.width(14.0, context),
+                              right: Responsive.width(14.0, context),
+                              top: Responsive.height(13.0, context),
+                              bottom: Responsive.height(13.0, context)),
+                          decoration: BoxDecoration(
+                            image: const DecorationImage(
+                              image: AssetImage('assets/blogs/searchbar.png'),
+                              fit: BoxFit.fill,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                                Responsive.height(2.0, context)),
+                          ),
+                          child: Row(
+                            children: [
+                              Image(
+                                image: AssetImage('assets/blogs/search.png'),
+                                height: Responsive.height(24.0, context),
+                                width: Responsive.width(24.0, context),
+                              ),
+                              SizedBox(width: Responsive.width(8.0, context)),
+                              Expanded(
+                                child: TextField(
+                                  controller: _searchFieldController,
+                                  focusNode: _focusNode,
+                                  style: TextStyle(
+                                    fontSize: Responsive.text(16.0, context),
+                                    color: Color.fromRGBO(0, 0, 0, 0.8),
+                                    fontFamily: 'DM Sans',
+                                  ),
+                                  decoration: InputDecoration(
+                                    hintText: 'Search blogs',
+                                    hintStyle: TextStyle(
                                       fontSize: Responsive.text(16.0, context),
-                                      color: Color.fromRGBO(0, 0, 0, 0.8),
+                                      color: Color.fromRGBO(0, 0, 0, 0.4),
                                       fontFamily: 'DM Sans',
                                     ),
-                                    decoration: InputDecoration(
-                                      hintText: 'Search blogs',
-                                      hintStyle: TextStyle(
-                                        fontSize:
-                                            Responsive.text(16.0, context),
-                                        color: Color.fromRGBO(0, 0, 0, 0.4),
-                                        fontFamily: 'DM Sans',
-                                      ),
-                                      border: InputBorder.none,
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.zero,
-                                    ),
-                                    onChanged: (query) async {
-                                      setState(() {
-                                        currquery = query;
-                                      });
-                                      if ((postType != PostType.ChatBot &&
-                                              query.length >= 4) ||
-                                          query.length == 0) {
-                                        blogBloc!.query = query;
-                                        await blogBloc.refresh(
-                                            force: query.isEmpty);
-                                      }
-                                    },
-                                    onSubmitted: (query) async {
-                                      setState(() {
-                                        currquery = query;
-                                      });
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.zero,
+                                  ),
+                                  onChanged: (query) async {
+                                    setState(() {
+                                      currquery = query;
+                                    });
+                                    if ((postType != PostType.ChatBot &&
+                                            query.length >= 4) ||
+                                        query.length == 0) {
                                       blogBloc!.query = query;
                                       await blogBloc.refresh(
                                           force: query.isEmpty);
-                                    },
-                                    // autofocus: true,
-                                    maxLines: 1,
-                                  ),
+                                    }
+                                  },
+                                  onSubmitted: (query) async {
+                                    setState(() {
+                                      currquery = query;
+                                    });
+                                    blogBloc!.query = query;
+                                    await blogBloc.refresh(
+                                        force: query.isEmpty);
+                                  },
+                                  // autofocus: true,
+                                  maxLines: 1,
                                 ),
-                                SizedBox(width: Responsive.width(8.0, context)),
-                                if(currquery != null && currquery!.isNotEmpty)
-                                InkWell(               
-                                  customBorder: const CircleBorder(),                                      
+                              ),
+                              SizedBox(width: Responsive.width(8.0, context)),
+                              if (currquery != null && currquery!.isNotEmpty)
+                                InkWell(
+                                  customBorder: const CircleBorder(),
                                   onTap: () {
                                     _searchFieldController?.clear();
                                     _focusNode.unfocus();
@@ -546,177 +545,179 @@ class _BlogPageState extends State<BlogPage> {
                                     });
                                   },
                                   child: Padding(
-                                    padding: EdgeInsets.all(Responsive.width(3,context)),
+                                    padding: EdgeInsets.all(
+                                        Responsive.width(3, context)),
                                     child: SvgPicture.asset(
                                         'assets/explore/x.svg',
                                         width: Responsive.width(24.0, context),
-                                        height: Responsive.height(24.0, context)),
+                                        height:
+                                            Responsive.height(24.0, context)),
                                   ),
                                 ),
-                              ],
-                            ),
+                            ],
                           ),
-                          SizedBox(height: Responsive.height(16.0, context)),
-                          // Container(
-                          //     margin:
-                          //         EdgeInsets.only(left: Responsive.width(16.0, context), right: Responsive.width(16.0, context)),
-                          //     child: Row(
-                          //         mainAxisAlignment:
-                          //             MainAxisAlignment.spaceBetween,
-                          //         children: [
-                          //           Container(
-                          //               decoration: BoxDecoration(
-                          //                 color: const Color.fromARGB(
-                          //                     255, 239, 239, 239),
-                          //                 borderRadius:
-                          //                     BorderRadius.circular(Responsive.height(50.0, context)),
-                          //                 border: Border.all(
-                          //                   color: Color.fromRGBO(
-                          //                       210, 213, 218, 1),
-                          //                   width: Responsive.height(1.0, context),
-                          //                 ),
-                          //               ),
-                          //               padding: EdgeInsets.only(
-                          //                   left: Responsive.width(16.0, context),
-                          //                   right: Responsive.width(16.0, context),
-                          //                   top: Responsive.height(8.0, context),
-                          //                   bottom: Responsive.height(8.0, context)),
-                          //               child: Row(
-                          //                 children: [
-                          //                   SvgPicture.asset(
-                          //                       'assets/blogs/box.svg'),
-                          //                   SizedBox(width: Responsive.width(8.0, context)),
-                          //                   Text(
-                          //                     'Filters',
-                          //                     style: TextStyle(
-                          //                       fontSize: Responsive.text(14.0, context),
-                          //                       fontWeight: FontWeight.w500,
-                          //                       color: Colors.black,
-                          //                       fontFamily: "DM Sans",
-                          //                       fontStyle: FontStyle.normal,
-                          //                     ),
-                          //                   ),
-                          //                   SizedBox(width: Responsive.width(8.0, context)),
-                          //                   SvgPicture.asset(
-                          //                       'assets/blogs/chevron-right.svg'),
-                          //                 ],
-                          //               )),
-                          //           Container(
-                          //               child: Row(
-                          //             children: [
-                          //               Container(
-                          //                 height: Responsive.height(36.0, context),
-                          //                 width: Responsive.width(36.0, context),
-                          //                 decoration: BoxDecoration(
-                          //                   color: view == 'normal'
-                          //                       ? const Color.fromRGBO(
-                          //                           48, 111, 220, 1)
-                          //                       : const Color.fromRGBO(
-                          //                           239, 239, 239, 1),
-                          //                   borderRadius:
-                          //                       BorderRadius.circular(Responsive.height(18.0, context)),
-                          //                 ),
-                          //                 child: IconButton(
-                          //                     icon: SvgPicture.asset(
-                          //                       'assets/blogs/list.svg',
-                          //                       color: view == 'normal'
-                          //                           ? Colors.white
-                          //                           : Colors.black,
-                          //                       fit: BoxFit.none,
-                          //                     ),
-                          //                     onPressed: () {
-                          //                       setState(() {
-                          //                         view = 'normal';
-                          //                       });
-                          //                     }),
-                          //               ),
-                          //               SizedBox(width: Responsive.width(8.0, context)),
-                          //               Container(
-                          //                 height: Responsive.height(36.0, context),
-                          //                 width: Responsive.width(36.0, context),
-                          //                 decoration: BoxDecoration(
-                          //                   color: view == 'company wise'
-                          //                       ? const Color.fromRGBO(
-                          //                           48, 111, 220, 1)
-                          //                       : const Color.fromRGBO(
-                          //                           239, 239, 239, 1),
-                          //                   borderRadius:
-                          //                       BorderRadius.circular(18),
-                          //                   border: Border.all(
-                          //                     color: Color.fromRGBO(
-                          //                         210, 213, 218, 1),
-                          //                     width: Responsive.width(1.0, context),
-                          //                   ),
-                          //                 ),
-                          //                 child: IconButton(
-                          //                     icon: SvgPicture.asset(
-                          //                       'assets/blogs/list2.svg',
-                          //                       color: view == 'company wise'
-                          //                           ? Colors.white
-                          //                           : Colors.black,
-                          //                       fit: BoxFit.none,
-                          //                     ),
-                          //                     onPressed: () {
-                          //                       setState(() {
-                          //                         view = 'company wise';
-                          //                       });
-                          //                     }),
-                          //               ),
-                          //             ],
-                          //           ))
-                          //         ])),
-                          // SizedBox(height: Responsive.height(24.0, context)),
-                          Expanded(
-                            child: PageView(
-                              controller: _pageController,
-                              onPageChanged: (index) {
-                                switchToTab(index);
-                              },
-                              children: [
-                                // Placement Tab
-                                _buildTabContent(PostType.Placement, context),
-                                // Internship Tab
-                                _buildTabContent(PostType.Training, context),
-                                // External Tab
-                                _buildTabContent(PostType.External, context),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
+                        ),
+                        SizedBox(height: Responsive.height(16.0, context)),
+                        // Container(
+                        //     margin:
+                        //         EdgeInsets.only(left: Responsive.width(16.0, context), right: Responsive.width(16.0, context)),
+                        //     child: Row(
+                        //         mainAxisAlignment:
+                        //             MainAxisAlignment.spaceBetween,
+                        //         children: [
+                        //           Container(
+                        //               decoration: BoxDecoration(
+                        //                 color: const Color.fromARGB(
+                        //                     255, 239, 239, 239),
+                        //                 borderRadius:
+                        //                     BorderRadius.circular(Responsive.height(50.0, context)),
+                        //                 border: Border.all(
+                        //                   color: Color.fromRGBO(
+                        //                       210, 213, 218, 1),
+                        //                   width: Responsive.height(1.0, context),
+                        //                 ),
+                        //               ),
+                        //               padding: EdgeInsets.only(
+                        //                   left: Responsive.width(16.0, context),
+                        //                   right: Responsive.width(16.0, context),
+                        //                   top: Responsive.height(8.0, context),
+                        //                   bottom: Responsive.height(8.0, context)),
+                        //               child: Row(
+                        //                 children: [
+                        //                   SvgPicture.asset(
+                        //                       'assets/blogs/box.svg'),
+                        //                   SizedBox(width: Responsive.width(8.0, context)),
+                        //                   Text(
+                        //                     'Filters',
+                        //                     style: TextStyle(
+                        //                       fontSize: Responsive.text(14.0, context),
+                        //                       fontWeight: FontWeight.w500,
+                        //                       color: Colors.black,
+                        //                       fontFamily: "DM Sans",
+                        //                       fontStyle: FontStyle.normal,
+                        //                     ),
+                        //                   ),
+                        //                   SizedBox(width: Responsive.width(8.0, context)),
+                        //                   SvgPicture.asset(
+                        //                       'assets/blogs/chevron-right.svg'),
+                        //                 ],
+                        //               )),
+                        //           Container(
+                        //               child: Row(
+                        //             children: [
+                        //               Container(
+                        //                 height: Responsive.height(36.0, context),
+                        //                 width: Responsive.width(36.0, context),
+                        //                 decoration: BoxDecoration(
+                        //                   color: view == 'normal'
+                        //                       ? const Color.fromRGBO(
+                        //                           48, 111, 220, 1)
+                        //                       : const Color.fromRGBO(
+                        //                           239, 239, 239, 1),
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(Responsive.height(18.0, context)),
+                        //                 ),
+                        //                 child: IconButton(
+                        //                     icon: SvgPicture.asset(
+                        //                       'assets/blogs/list.svg',
+                        //                       color: view == 'normal'
+                        //                           ? Colors.white
+                        //                           : Colors.black,
+                        //                       fit: BoxFit.none,
+                        //                     ),
+                        //                     onPressed: () {
+                        //                       setState(() {
+                        //                         view = 'normal';
+                        //                       });
+                        //                     }),
+                        //               ),
+                        //               SizedBox(width: Responsive.width(8.0, context)),
+                        //               Container(
+                        //                 height: Responsive.height(36.0, context),
+                        //                 width: Responsive.width(36.0, context),
+                        //                 decoration: BoxDecoration(
+                        //                   color: view == 'company wise'
+                        //                       ? const Color.fromRGBO(
+                        //                           48, 111, 220, 1)
+                        //                       : const Color.fromRGBO(
+                        //                           239, 239, 239, 1),
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(18),
+                        //                   border: Border.all(
+                        //                     color: Color.fromRGBO(
+                        //                         210, 213, 218, 1),
+                        //                     width: Responsive.width(1.0, context),
+                        //                   ),
+                        //                 ),
+                        //                 child: IconButton(
+                        //                     icon: SvgPicture.asset(
+                        //                       'assets/blogs/list2.svg',
+                        //                       color: view == 'company wise'
+                        //                           ? Colors.white
+                        //                           : Colors.black,
+                        //                       fit: BoxFit.none,
+                        //                     ),
+                        //                     onPressed: () {
+                        //                       setState(() {
+                        //                         view = 'company wise';
+                        //                       });
+                        //                     }),
+                        //               ),
+                        //             ],
+                        //           ))
+                        //         ])),
+                        // SizedBox(height: Responsive.height(24.0, context)),
+                        Expanded(
+                          child: PageView(
+                            controller: _pageController,
+                            onPageChanged: (index) {
+                              switchToTab(index);
+                            },
+                            children: [
+                              // Placement Tab
+                              _buildTabContent(PostType.Placement, context),
+                              // Internship Tab
+                              _buildTabContent(PostType.Training, context),
+                              // External Tab
+                              _buildTabContent(PostType.External, context),
+                            ],
+                          ),
+                        )
+                      ],
                     ),
-                  );
-                } else {
-                  return BlogsLogin();
-                  // return ListView(
-                  //   children: <Widget>[
-                  //     TitleWithBackButton(
-                  //       child: Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: <Widget>[
-                  //           Text(
-                  //             "Blogs",
-                  //             style: theme.textTheme.displaySmall,
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //     Center(
-                  //       child: Padding(
-                  //         padding: const EdgeInsets.all(28.0),
-                  //         child: Text(
-                  //           "You must be logged in to view Blogs",
-                  //           style: theme.textTheme.titleLarge,
-                  //           textAlign: TextAlign.center,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // );
-                }
-              },
-            )),
-      );
+                  ),
+                );
+              } else {
+                return BlogsLogin();
+                // return ListView(
+                //   children: <Widget>[
+                //     TitleWithBackButton(
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: <Widget>[
+                //           Text(
+                //             "Blogs",
+                //             style: theme.textTheme.displaySmall,
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //     Center(
+                //       child: Padding(
+                //         padding: const EdgeInsets.all(28.0),
+                //         child: Text(
+                //           "You must be logged in to view Blogs",
+                //           style: theme.textTheme.titleLarge,
+                //           textAlign: TextAlign.center,
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // );
+              }
+            },
+          )),
+    );
   }
 
   Map<String, List<Post>> groupPostsByCompany(List<Post> posts) {
@@ -734,11 +735,6 @@ class _BlogPageState extends State<BlogPage> {
       return title.split('|')[0].trim();
     }
     return title.trim();
-  }
-
-  Future<void> _handleRefresh() {
-    var blogbloc = BlocProvider.of(context)!.bloc.getPostsBloc(postType);
-    return blogbloc!.refresh(force: blogbloc.query.isEmpty);
   }
 
   Widget _buildTabContent(PostType tabPostType, BuildContext context) {
@@ -759,10 +755,14 @@ class _BlogPageState extends State<BlogPage> {
           final int totalItemCount = baseCount + 1;
 
           return RefreshIndicator(
-            key: _refreshIndicatorKey,
-            onRefresh: _handleRefresh,
+            onRefresh: () =>
+                tabBlogBloc.refresh(force: tabBlogBloc.query.isEmpty),
             child: ListView.builder(
-              controller: _hideButtonController,
+              controller: tabPostType == PostType.Placement
+                  ? _placementScrollController
+                  : tabPostType == PostType.Training
+                      ? _trainingScrollController
+                      : _externalScrollController,
               itemBuilder: (BuildContext context, int index) {
                 return _buildPost(tabBlogBloc, index, snapshot.data, context);
               },
@@ -779,18 +779,14 @@ class _BlogPageState extends State<BlogPage> {
             AsyncSnapshot<UnmodifiableListView<Post>> snapshot) {
           final List<Post> posts = snapshot.data?.toList() ?? [];
           final Map<String, List<Post>> companyMap = groupPostsByCompany(posts);
-          return RefreshIndicator(
-            key: _refreshIndicatorKey,
-            onRefresh: _handleRefresh,
-            child: ListView(
-              children: <Widget>[
-                for (final entry in companyMap.entries)
-                  Blogthread(
-                    entry.value,
-                    entry.key,
-                  ),
-              ],
-            ),
+          return ListView(
+            children: <Widget>[
+              for (final entry in companyMap.entries)
+                Blogthread(
+                  entry.value,
+                  entry.key,
+                ),
+            ],
           );
         },
       );
