@@ -1616,6 +1616,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           onTap: () {
             setState(() {
               showQR = true;
+              generateQR();
             });
           },
           child: Container(
