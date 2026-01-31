@@ -675,11 +675,14 @@ class _BlogPageState extends State<BlogPage> {
                             },
                             children: [
                               // Placement Tab
-                              _buildTabContent(PostType.Placement, context),
+                              _buildTabContent(
+                                  PostType.Placement, context, blogBloc),
                               // Internship Tab
-                              _buildTabContent(PostType.Training, context),
+                              _buildTabContent(
+                                  PostType.Training, context, blogBloc),
                               // External Tab
-                              _buildTabContent(PostType.External, context),
+                              _buildTabContent(
+                                  PostType.External, context, blogBloc),
                             ],
                           ),
                         )
@@ -737,7 +740,8 @@ class _BlogPageState extends State<BlogPage> {
     return title.trim();
   }
 
-  Widget _buildTabContent(PostType tabPostType, BuildContext context) {
+  Widget _buildTabContent(
+      PostType tabPostType, BuildContext context, blogBloc) {
     var bloc = BlocProvider.of(context)!.bloc;
     var tabBlogBloc = bloc.getPostsBloc(tabPostType);
 
@@ -756,7 +760,7 @@ class _BlogPageState extends State<BlogPage> {
 
           return RefreshIndicator(
             onRefresh: () =>
-                tabBlogBloc.refresh(force: tabBlogBloc.query.isEmpty),
+                blogBloc.refresh(force: tabBlogBloc.query.isEmpty),
             child: ListView.builder(
               controller: tabPostType == PostType.Placement
                   ? _placementScrollController
@@ -800,9 +804,7 @@ class _BlogPageState extends State<BlogPage> {
     final Post? post =
         (posts != null && posts.length > index) ? posts[index] : null;
 
-    if (post == null &&
-        (postType != PostType.ChatBot ||
-            (postType == PostType.ChatBot && bloc.query.isNotEmpty))) {
+    if (post == null) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(child: CircularProgressIndicator()),
