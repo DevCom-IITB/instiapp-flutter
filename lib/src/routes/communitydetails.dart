@@ -76,7 +76,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
       key: _scaffoldKey,
       // extendBodyBehindAppBar: true,
       appBar: CustomAppBar(
-        transparentBackground: true,
+        // transparentBackground: true,
         searchIcon: true,
         appBarSearchStyle:
             AppBarSearchStyle(hintText: "Search " + (community?.name ?? "")),
@@ -87,26 +87,6 @@ class _CommunityDetailsState extends State<CommunityDetails> {
               Navigator.of(context).pop();
             }),
       ),
-      // // drawer: NavDrawer(),
-      // bottomNavigationBar: MyBottomAppBar(
-      //   shape: RoundedNotchedRectangle(),
-      //   child: new Row(
-      //     mainAxisSize: MainAxisSize.max,
-      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //     children: <Widget>[
-      //       IconButton(
-      //         tooltip: "Show bottom sheet",
-      //         icon: Icon(
-      //           Icons.menu_outlined,
-      //           semanticLabel: "Show bottom sheet",
-      //         ),
-      //         onPressed: () {
-      //           _scaffoldKey.currentState?.openDrawer();
-      //         },
-      //       ),
-      //     ],
-      //   ),
-      // ),
       body: !isLoggedIn
           ? Container(
               alignment: Alignment.center,
@@ -129,118 +109,112 @@ class _CommunityDetailsState extends State<CommunityDetails> {
             )
           : RefreshIndicator(
               onRefresh: () async {
-                bloc.communityBloc
-                    .getCommunity(community!.id!)
-                    .then((community) {
-                  setState(() {
-                    this.community = community;
-                  });
-                });
+                print("Refreshing community details");
               },
-              child: SingleChildScrollView(
-                child: Stack(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+            child: SingleChildScrollView(
+              child: Stack(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      community?.coverImg != null
+                          ? Material(
+                              type: MaterialType.transparency,
+                              child: Ink.image(
+                                child: Container(),
+                                image: CachedNetworkImageProvider(
+                                  community?.coverImg ?? "",
+                                ),
+                                height: 200,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : SizedBox(height: 200),
+                      SizedBox(
+                        height: _avatarRadius + 5,
+                      ),
+                      _buildInfo(theme),
+                      CommunityAboutSection(community: community),
+                      CommunityPostSection(community: community),
+                    ],
+                  ),
+                  Positioned(
+                    top: 200 - _avatarRadius,
+                    left: 20,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        community?.coverImg != null
-                            ? Material(
-                                type: MaterialType.transparency,
-                                child: Ink.image(
-                                  child: Container(),
-                                  image: CachedNetworkImageProvider(
-                                    community?.coverImg ?? "",
-                                  ),
-                                  height: 200,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : SizedBox(height: 200),
-                        SizedBox(
-                          height: _avatarRadius + 5,
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                blurRadius: 3,
+                                color: Colors.black.withOpacity(0.25),
+                              ),
+                              BoxShadow(
+                                blurRadius: 10,
+                                color: Colors.black.withOpacity(0.25),
+                                spreadRadius: -2,
+                                offset: Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                          child: NullableCircleAvatar(
+                            community?.logoImg ?? "",
+                            Icons.person,
+                            radius: _avatarRadius,
+                          ),
                         ),
-                        _buildInfo(theme),
-                        CommunityAboutSection(community: community),
-                        CommunityPostSection(community: community),
-                      ],
-                    ),
-                    Positioned(
-                      top: 200 - _avatarRadius,
-                      left: 20,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
+                        SizedBox(width: 20),
+                        TextButton(
+                          child: Text(
+                            (community?.isUserFollowing ?? false)
+                                ? "Joined"
+                                : "Join",
+                            style: theme.textTheme.titleMedium?.copyWith(
                               color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  blurRadius: 3,
-                                  color: Colors.black.withOpacity(0.25),
-                                ),
-                                BoxShadow(
-                                  blurRadius: 10,
-                                  color: Colors.black.withOpacity(0.25),
-                                  spreadRadius: -2,
-                                  offset: Offset(0, 1),
-                                ),
-                              ],
-                            ),
-                            child: NullableCircleAvatar(
-                              community?.logoImg ?? "",
-                              Icons.person,
-                              radius: _avatarRadius,
+                              letterSpacing: 1.25,
                             ),
                           ),
-                          SizedBox(width: 20),
-                          TextButton(
-                            child: Text(
-                              (community?.isUserFollowing ?? false)
-                                  ? "Joined"
-                                  : "Join",
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                color: Colors.white,
-                                letterSpacing: 1.25,
-                              ),
-                            ),
-                            onPressed: () async {
-                              if (bloc.currSession == null) {
-                                return;
-                              }
-                              setState(() {
-                                loadingFollow = true;
-                              });
-                              if (community != null)
-                                await bloc.updateFollowCommunity(community!);
-                              setState(() {
-                                loadingFollow = false;
-                                // event has changes
-                              });
-                            },
-                            style: ButtonStyle(
-                                padding: WidgetStateProperty.all<EdgeInsets>(
-                                    EdgeInsets.symmetric(
-                                        horizontal: 24, vertical: 1)),
-                                foregroundColor: WidgetStateProperty.all<Color>(
-                                    Colors.white),
-                                backgroundColor: WidgetStateProperty.all<Color>(
-                                    (community?.isUserFollowing ?? false)
-                                        ? theme.colorScheme.primary
-                                        : theme.colorScheme.secondary),
-                                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(100.0),
-                                        side: BorderSide(color: Colors.transparent)))),
-                          )
-                        ],
-                      ),
+                          onPressed: () async {
+                            if (bloc.currSession == null) {
+                              return;
+                            }
+                            setState(() {
+                              loadingFollow = true;
+                            });
+                            if (community != null)
+                              await bloc.updateFollowCommunity(community!);
+                            setState(() {
+                              loadingFollow = false;
+                              // event has changes
+                            });
+                          },
+                          style: ButtonStyle(
+                              padding: WidgetStateProperty.all<EdgeInsets>(
+                                  EdgeInsets.symmetric(
+                                      horizontal: 24, vertical: 1)),
+                              foregroundColor: WidgetStateProperty.all<Color>(
+                                  Colors.white),
+                              backgroundColor: WidgetStateProperty.all<Color>(
+                                  (community?.isUserFollowing ?? false)
+                                      ? theme.colorScheme.primary
+                                      : theme.colorScheme.secondary),
+                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(100.0),
+                                      side: BorderSide(color: Colors.transparent)))),
+                        )
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
+          ),
       floatingActionButton: FloatingActionButton(
           child: Icon(
             Icons.mode_edit,

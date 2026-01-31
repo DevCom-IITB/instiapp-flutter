@@ -75,12 +75,12 @@ class ExploreClubPage extends StatefulWidget {
     this.headerDescription,
   });
 
+
   @override
   _ExploreClubPageState createState() => _ExploreClubPageState();
 }
 
 class _ExploreClubPageState extends State<ExploreClubPage> {
-  bool searchMode = false;
   TextEditingController _searchController = TextEditingController();
   String _searchQuery = "";
 
@@ -96,7 +96,6 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
   FocusNode _focusNode = FocusNode();
   // TextEditingController? _searchFieldController;
 
-  bool loadingFollow = false;
   List<Body> Childrens = [];
 
   bool _isLoading = true;
@@ -123,6 +122,8 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
   }
 
   Future<void> _loadBody() async {
+    if (widget.loadBody == null) return;
+    
     setState(() {
       _isLoading = true;
       _hasError = false;
