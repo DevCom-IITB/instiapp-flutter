@@ -84,6 +84,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   late Animation<double> _navIndicatorAnimation;
   late AnimationController _navScaleController;
   late Animation<double> _navScaleAnimation;
+  late AnimationController _qrStripeController;
+  late Animation<double> _qrStripeAnimation;
 
   // Track previous index for animation direction
   bool _isRefreshingHostels = false;
@@ -183,6 +185,12 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       vsync: this,
     );
 
+    // Initialize QR stripe animation controller
+    _qrStripeController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+
     // Create animations
     _navIndicatorAnimation = Tween<double>(
       begin: 0.0,
@@ -200,12 +208,28 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       curve: Curves.easeOut,
     ));
 
+    // QR stripe animation: from left (-1.0) to middle (0.0)
+    _qrStripeAnimation = Tween<double>(
+      begin: -1.0,
+      end: 0.2,
+    ).animate(CurvedAnimation(
+      parent: _qrStripeController,
+      curve: Curves.easeOut,
+    ));
+
     // Start with indicator at first position
     _navIndicatorController.forward();
 
     // Set initial values
     _selectedDay = getCurrentDay();
     selectedMeal = getCurrentMealSlot();
+
+    // Start QR stripe animation when app opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _qrStripeController.forward();
+      }
+    });
   }
 
   void _onPageSwiped(int index) {
@@ -341,6 +365,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     _pageController.dispose();
     _navIndicatorController.dispose();
     _navScaleController.dispose();
+    _qrStripeController.dispose();
     super.dispose();
   }
 
@@ -1199,7 +1224,6 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        print("clicked");
                         generateQR();
                       },
                       child: Container(
@@ -1294,7 +1318,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     );
   }
 
-  Widget qrClosed(List<Hostel> hostels, {
+  Widget qrClosed(
+    List<Hostel> hostels, {
     bool isLoading = false,
     bool isRefreshing = false,
   }) {
@@ -1489,19 +1514,19 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: (isLoading && hostels.isEmpty) || isRefreshing
-                      ? _mealShimmer(responsive)
-                      : SingleChildScrollView(
-                          child: Text(
-                            _mealString(hostels),
-                            style: TextStyle(
-                              color: const Color(0xFF1B3252),
-                              fontSize: responsive.w(14),
-                              fontFamily: 'DM Sans',
-                              fontWeight: FontWeight.w500,
-                              height: responsive.w(1.31),
+                          ? _mealShimmer(responsive)
+                          : SingleChildScrollView(
+                              child: Text(
+                                _mealString(hostels),
+                                style: TextStyle(
+                                  color: const Color(0xFF1B3252),
+                                  fontSize: responsive.w(14),
+                                  fontFamily: 'DM Sans',
+                                  fontWeight: FontWeight.w500,
+                                  height: responsive.w(1.31),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
                     ),
                     Container(
                       padding: EdgeInsets.symmetric(
@@ -1536,7 +1561,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                                       'This will redirect you to the Mess-I dashboard',
                                   content2:
                                       'where you can file rebates and check your mess stats. Click open to proceed.',
-                                  imageAssetPath: 'assets/homepage/images/plate.svg',
+                                  imageAssetPath:
+                                      'assets/homepage/images/plate.svg',
                                   options: [
                                     DialogOption(
                                       text: 'Cancel',
@@ -1624,48 +1650,80 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             width: responsive.w(380),
             child: Stack(
               children: [
-                SvgPicture.asset(
-                  'assets/homepage/icons/border.svg',
-                  width: responsive.w(368),
-                  fit: BoxFit.fill,
-                ),
+                // SvgPicture.asset(
+                //   'assets/homepage/icons/border.svg',
+                //   width: responsive.w(368),
+                //   fit: BoxFit.fill,
+                // ),
                 Container(
                   height: responsive.h(96),
                   width: responsive.w(368),
                   padding: EdgeInsets.fromLTRB(responsive.w(16),
-                      responsive.h(8), responsive.w(16), responsive.h(8)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            'My QR',
-                            style: TextStyle(
-                              color: Color(0xFF275489),
-                              fontSize: responsive.sp(20),
-                              fontWeight: FontWeight.w700,
+                      responsive.h(0), responsive.w(16), responsive.h(0)),
+                  decoration: ShapeDecoration(
+                    color: myConstants.instiappBlue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: Stack(
+                      children: [
+                        // Animated QR Stripe Background
+                        AnimatedBuilder(
+                          animation: _qrStripeAnimation,
+                          builder: (context, child) {
+                            return Positioned(
+                              left:
+                                  _qrStripeAnimation.value * responsive.w(368),
+                              top: 0,
+                              bottom: 0,
+                              child: SvgPicture.asset(
+                                'assets/homepage/icons/qr stripe.svg',
+                                height: responsive.h(96),
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          },
+                        ),
+                        // Content Row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                  'My QR',
+                                  style: TextStyle(
+                                    color: myConstants.instiappWhite,
+                                    fontSize: responsive.sp(20),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Text(
+                                  'Mess • Gym • Swimming & more...',
+                                  style: TextStyle(
+                                    color: myConstants.instiappWhite,
+                                    fontSize: responsive.sp(14),
+                                    fontFamily: 'DM Sans',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          Text(
-                            'Mess • Gym • Swimming & more...',
-                            style: TextStyle(
-                              color: const Color(0xFF15202D),
-                              fontSize: responsive.sp(14),
-                              fontFamily: 'DM Sans',
-                              fontWeight: FontWeight.w500,
+                            Container(
+                              height: responsive.h(75),
+                              width: responsive.w(75),
+                              child: SvgPicture.asset(
+                                  'assets/homepage/icons/qr.svg'),
                             ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        height: responsive.h(75),
-                        width: responsive.w(75),
-                        child: SvgPicture.asset('assets/homepage/icons/qr.svg'),
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],
