@@ -221,7 +221,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                     Stack(
                       children: [
                         Container(
-                          height: Responsive.width(280, context),
+                          height: Responsive.width(290, context),
                           child: ClipRRect(
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(Responsive.width(20, context)),
@@ -310,7 +310,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                                       fontFamily: 'DM Sans',
                                     ),
                                     decoration: InputDecoration(
-                                      hintText: 'Search events...',
+                                      hintText: 'Search...',
                                       hintStyle: TextStyle(
                                         fontSize: Responsive.text(16, context),
                                         color: Color.fromRGBO(0, 0, 0, 0.4),

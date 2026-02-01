@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jaguar/jaguar.dart' as jag;
 import 'package:flutter_webview_pro/webview_flutter.dart' as webview;
+import 'package:InstiApp/constants.dart';
 
 class MapPage extends StatefulWidget {
   final String? location;
@@ -24,6 +25,7 @@ class _MapPageState extends State<MapPage> {
 
   StreamSubscription<String>? onUrlChangedSub;
   webview.WebViewController? webViewController;
+  Constants myConstants = Constants();
 
   // Storing for dispose
   ThemeData? theme;
@@ -106,7 +108,7 @@ class _MapPageState extends State<MapPage> {
                 margin: EdgeInsets.symmetric(horizontal: Responsive.width(70, context)),
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Color.fromRGBO(235, 235, 235, 1),
+                  color: myConstants.instiappGrey,
                   borderRadius: BorderRadius.circular(32.0),
                   boxShadow: [
                     BoxShadow(
@@ -121,9 +123,10 @@ class _MapPageState extends State<MapPage> {
                   "This Page is Under Development",
                   textAlign: TextAlign.center,
                   style: TextStyle(
+                  fontFamily: 'DM Sans',
                   fontSize: Responsive.text(18, context),
                   fontWeight: FontWeight.w900,
-                  color: const Color.fromARGB(255, 242, 0, 0),
+                  color: myConstants.instiappBlue,
                 ),
                             ),
               ),

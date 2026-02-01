@@ -117,7 +117,7 @@ class _QuicklinksState extends State<Quicklinks> {
       "Devcom": {
         "Resobin": "https://resobin.gymkhana.iitb.ac.in/login",
         "Mess-I": "https://instamess.gymkhana.iitb.ac.in/dashboard/login",
-        "Reach": "http://10.195.160.190/login",
+        "Reach": "https://reach.gymkhana.iitb.ac.in/",
         "NewBee": "https://gymkhana.iitb.ac.in/newbee",
       },
       "Academic": {

@@ -646,7 +646,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 8.0),
             child: Text.rich(
-                TextSpan(style: theme.textTheme.titleLarge, children: [
+                TextSpan(style: theme.textTheme.titleLarge?.copyWith(fontFamily: 'DM Sans'),children: [
               TextSpan(text: "Nothing here yet!"),
               // TextSpan(
               //     text: "\"${communityPostBloc.query}\"",
