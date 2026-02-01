@@ -405,11 +405,12 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                                 return _buildBodyTile(bloc, theme.textTheme, b);
                               }).toList(),
                               Divider(),
-                              SizedBox(height: Responsive.height(0, context)),
+                              SizedBox(height: Responsive.height(70, context)),
                             ],
                           ),
                       ),
                     ),
+                    SizedBox(height: Responsive.height(5, context)),
                   ],
                 ),
         ),
