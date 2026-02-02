@@ -1441,19 +1441,27 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                         width: responsive.w(120),
                         decoration: BoxDecoration(
                           color: selectedMeal == i
-                              ? myConstants.instiappBlue
+                              ? myConstants.instiappGrey
                               : myConstants.instiappGrey,
                           borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: selectedMeal == i
+                                ? myConstants.instiappBlue // or any border color when selected
+                                : myConstants.instiappGrey, // border color when not selected
+                            width: 2, // border thickness
+                          ),
                         ),
                         child: Center(
                           child: Text(
                             meals[i],
                             style: TextStyle(
                               color: selectedMeal == i
-                                  ? Colors.white
+                                  ? myConstants.instiappBlue
                                   : Color(0xCC0F1620),
                               fontFamily: 'DM Sans',
-                              fontWeight: FontWeight.w500,
+                              fontWeight: selectedMeal == i
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
                               fontSize: responsive.sp(14),
                             ),
                           ),
