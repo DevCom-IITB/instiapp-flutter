@@ -115,9 +115,9 @@ class _QuicklinksState extends State<Quicklinks> {
 
     Map<String, Map<String, String>> quickLinks = {
       "Devcom": {
-        "Resobin": "https://resobin.gymkhana.iitb.ac.in/login",
+        "ResoBin": "https://resobin.gymkhana.iitb.ac.in/login",
         "Mess-I": "https://instamess.gymkhana.iitb.ac.in/dashboard/login",
-        "Reach": "https://reach.gymkhana.iitb.ac.in/",
+        "ReaCH": "https://reach.gymkhana.iitb.ac.in/",
         "NewBee": "https://gymkhana.iitb.ac.in/newbee",
       },
       "Academic": {
