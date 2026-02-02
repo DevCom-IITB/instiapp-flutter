@@ -1326,7 +1326,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                     border: Border.all(
                         color: Color(0xFF7E8287), width: responsive.h(1))),
                 padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(10),
-                    responsive.w(16), responsive.h(10)),
+                    responsive.w(7), responsive.h(3)),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1337,15 +1337,15 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                       style: TextStyle(
                         color: Color(0xCC0F1620),
                         fontWeight: FontWeight.w500,
-                        fontSize: responsive.w(12.5),
+                        fontSize: responsive.w(13),
                       ),
-                    )
-                    // SizedBox(width: 8),
-                    // Container(
-                    //   height: 20,
-                    //   width: 20,
-                    //   child: Icon(Icons.keyboard_arrow_down),
-                    // )
+                    ),
+                    SizedBox(width: 7),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      size: responsive.w(20),
+                      color: Color(0xCC0F1620),
+                    ),
                   ],
                 ),
               ),
