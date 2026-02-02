@@ -745,12 +745,26 @@ class _BodyPageState extends State<BodyPage> {
                                                               ? _buildImages(
                                                                   photoAlbumUrls)
                                                               : Center(
-                                                                child: SvgPicture.asset(
-                                                                  'assets/explore/Social.svg',
-                                                                  width: responsive.w(380),
-                                                                  height: responsive.h(190),
-                                                                  fit: BoxFit.cover,
-                                                                ),
+                                                                child: Column(
+                                                                  children: [
+                                                                    SvgPicture.asset(
+                                                                    'assets/explore/Social.svg',
+                                                                    width: responsive.w(380),
+                                                                    height: responsive.h(190),
+                                                                    fit: BoxFit.cover,),
+                                                                    Text(
+                                                                    'No Photos Uploaded',
+                                                                      style: TextStyle(
+                                                                        fontSize: responsive
+                                                                            .sp(16),
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                        fontFamily:
+                                                                            'DM Sans',
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                )
                                                               ),
                                                         ),
                                                       // Container(
