@@ -839,7 +839,7 @@ class _BuySellPageState extends State<BuySellPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(RS.s(context, 50)),
         image: DecorationImage(
-          image: AssetImage("assets/buynsell/searchborder.png"),
+          image: AssetImage("assets/blogs/searchbar.png"),
           fit: BoxFit.fill,
         ),
       ),

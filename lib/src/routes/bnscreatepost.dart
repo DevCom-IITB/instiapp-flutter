@@ -4,6 +4,7 @@ import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import '../bloc_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import '../widgets/appbar.dart';
 import '../widgets/dotted_divider.dart';
@@ -45,16 +46,16 @@ class _PostItemFlowState extends State<PostItemFlow> {
   bool isPosting = false;
 
   final List<Map<String, dynamic>> _categories = [
-    {'name': 'Gadgets', 'icon': 'assets/categories/gadgets.png'},
-    {'name': 'Appliances', 'icon': 'assets/categories/appliances.png'},
-    {'name': 'Mattress', 'icon': 'assets/categories/mattress.png'},
-    {'name': 'Bicycle', 'icon': 'assets/categories/bicycle.png'},
-    {'name': 'Tickets', 'icon': 'assets/categories/tickets.png'},
-    {'name': 'Academic', 'icon': 'assets/categories/academic.png'},
-    {'name': 'Clothes', 'icon': 'assets/categories/clothes.png'},
-    {'name': 'Sports', 'icon': 'assets/categories/sports.png'},
-    {'name': 'Furniture', 'icon': 'assets/categories/furniture.png'},
-    {'name': 'Others', 'icon': 'assets/categories/other.png'},
+    {'name': 'Gadgets', 'icon': 'assets/categories/gadgets.svg'},
+    {'name': 'Appliances', 'icon': 'assets/categories/appliances.svg'},
+    {'name': 'Mattress', 'icon': 'assets/categories/mattress.svg'},
+    {'name': 'Bicycle', 'icon': 'assets/categories/bicycle.svg'},
+    {'name': 'Tickets', 'icon': 'assets/categories/tickets.svg'},
+    {'name': 'Academic', 'icon': 'assets/categories/academic.svg'},
+    {'name': 'Clothes', 'icon': 'assets/categories/clothes.svg'},
+    {'name': 'Sports', 'icon': 'assets/categories/sports.svg'},
+    {'name': 'Furniture', 'icon': 'assets/categories/furniture.svg'},
+    {'name': 'Others', 'icon': 'assets/categories/other.svg'},
   ];
 
   void _nextStep() {
@@ -301,7 +302,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
             ),
           ],
         ),
-        Image.asset(
+        SvgPicture.asset(
           asset,
           width: RS.sw(context, 42),
           height: RS.sh(context, 36),
@@ -385,7 +386,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                     child: _buttonContent(
                       title1: 'Take',
                       title2: 'Image',
-                      asset: 'assets/buynsell/Camera.png',
+                      asset: 'assets/buynsell/Camera.svg',
                     ),
                   ),
                 ),
@@ -457,7 +458,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                     child: _buttonContent(
                       title1: 'Upload',
                       title2: 'Image',
-                      asset: 'assets/buynsell/Upload.png',
+                      asset: 'assets/buynsell/Upload.svg',
                     ),
                   ),
                 ),
@@ -731,7 +732,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
+                      SvgPicture.asset(
                         category['icon'],
                         width: RS.s(context, 64),
                         height: RS.s(context, 64),
@@ -921,7 +922,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Center(
-                        child: Image.asset(
+                        child: SvgPicture.asset(
                           _getCategoryIcon(_selectedCategory!),
                           // _categories.firstWhere(
                           //   (c) => c['name'] == _selectedCategory,
