@@ -393,8 +393,10 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           children: [
             // Main content with swipe navigation
             PageView(
+              
               controller: _pageController,
               onPageChanged: (index) {
+                FocusScope.of(context).unfocus();
                 _onPageSwiped(index);
               },
               physics: const ClampingScrollPhysics(),
@@ -422,7 +424,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: EdgeInsets.only(bottom: responsive.h(5)),
+                padding: EdgeInsets.only(bottom: responsive.h(5+ main_app.systemBottomPadding)),
                 child: InstiBottomNavBar(
                   items: const [
                     NavBarItem(

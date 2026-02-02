@@ -9,6 +9,7 @@ import 'package:InstiApp/src/utils/responsivenew.dart';
 // import 'package:InstiApp/src/utils/title_with_backbutton.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:InstiApp/src/api/model/notification.dart' as ntf;
 
 class NotificationsPage extends StatefulWidget {
@@ -65,7 +66,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
           title: SizedBox(
             height: 31,
             child: Container(
-              margin: const EdgeInsets.only(right: 48),
               child: Center(
                 child: Text(
                   "Notifications",
@@ -219,6 +219,56 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   builder: (BuildContext context,
                       AsyncSnapshot<UnmodifiableListView<ntf.Notification>>
                           snapshot) {
+                    if (snapshot.hasData && snapshot.data!.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/explore/Social.svg',
+                              width: 380,
+                              height: 190,
+                              fit: BoxFit.cover,
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              'No notifications right now',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                                fontFamily: 'DM Sans',
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/explore/Social.svg',
+                              width: 380,
+                              height: 190,
+                              fit: BoxFit.cover,
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              'No notifications right now',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                                fontFamily: 'DM Sans',
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    
                     return RefreshIndicator(
                       key: _refreshIndicatorKey,
                       onRefresh: () {

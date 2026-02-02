@@ -4,6 +4,7 @@ import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import '../bloc_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import '../widgets/appbar.dart';
 import '../widgets/dotted_divider.dart';
@@ -13,6 +14,7 @@ import 'package:path/path.dart' as path;
 import 'package:InstiApp/src/utils/responsive.dart';
 import 'package:InstiApp/src/widgets/custom_dialog.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class PostItemFlow extends StatefulWidget {
   final bool isEditable;
@@ -45,16 +47,16 @@ class _PostItemFlowState extends State<PostItemFlow> {
   bool isPosting = false;
 
   final List<Map<String, dynamic>> _categories = [
-    {'name': 'Gadgets', 'icon': 'assets/categories/gadgets.png'},
-    {'name': 'Appliances', 'icon': 'assets/categories/appliances.png'},
-    {'name': 'Mattress', 'icon': 'assets/categories/mattress.png'},
-    {'name': 'Bicycle', 'icon': 'assets/categories/bicycle.png'},
-    {'name': 'Tickets', 'icon': 'assets/categories/tickets.png'},
-    {'name': 'Academic', 'icon': 'assets/categories/academic.png'},
-    {'name': 'Clothes', 'icon': 'assets/categories/clothes.png'},
-    {'name': 'Sports', 'icon': 'assets/categories/sports.png'},
-    {'name': 'Furniture', 'icon': 'assets/categories/furniture.png'},
-    {'name': 'Others', 'icon': 'assets/categories/other.png'},
+    {'name': 'Gadgets', 'icon': 'assets/categories/gadgets.svg'},
+    {'name': 'Appliances', 'icon': 'assets/categories/appliances.svg'},
+    {'name': 'Mattress', 'icon': 'assets/categories/mattress.svg'},
+    {'name': 'Bicycle', 'icon': 'assets/categories/bicycle.svg'},
+    {'name': 'Tickets', 'icon': 'assets/categories/tickets.svg'},
+    {'name': 'Academic', 'icon': 'assets/categories/academic.svg'},
+    {'name': 'Clothes', 'icon': 'assets/categories/clothes.svg'},
+    {'name': 'Sports', 'icon': 'assets/categories/sports.svg'},
+    {'name': 'Furniture', 'icon': 'assets/categories/furniture.svg'},
+    {'name': 'Others', 'icon': 'assets/categories/other.svg'},
   ];
 
   void _nextStep() {
@@ -63,6 +65,26 @@ class _PostItemFlowState extends State<PostItemFlow> {
 
   void _prevStep() {
     setState(() => _currentStep--);
+  }
+
+  /// Compress image to 60% quality
+  Future<File> _compressImage(File imageFile) async {
+    final String targetPath = imageFile.absolute.path.replaceAll(
+      RegExp(r'\.(?=jpg|jpeg|png|gif|bmp)'),
+      '_compressed.',
+    );
+    
+    final XFile? result = await FlutterImageCompress.compressAndGetFile(
+      imageFile.absolute.path,
+      targetPath,
+      quality: 60, // 60% quality
+      format: CompressFormat.jpeg,
+    );
+
+    if (result != null) {
+      return File(result.path);
+    }
+    return imageFile; // Return original if compression fails
   }
 
   @override
@@ -301,7 +323,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
             ),
           ],
         ),
-        Image.asset(
+        SvgPicture.asset(
           asset,
           width: RS.sw(context, 42),
           height: RS.sh(context, 36),
@@ -367,7 +389,9 @@ class _PostItemFlowState extends State<PostItemFlow> {
                             await imagesDir.create(recursive: true);
                           }
 
-                          final savedFile = await file
+                          // Compress the image to 50% quality
+                          File compressedFile = await _compressImage(file);
+                          final savedFile = await compressedFile
                               .copy('${imagesDir.path}/$fileName');
 
                           setState(() => _images.add(XFile(savedFile.path)));
@@ -385,7 +409,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                     child: _buttonContent(
                       title1: 'Take',
                       title2: 'Image',
-                      asset: 'assets/buynsell/Camera.png',
+                      asset: 'assets/buynsell/Camera.svg',
                     ),
                   ),
                 ),
@@ -431,7 +455,9 @@ class _PostItemFlowState extends State<PostItemFlow> {
                           if (await file.exists()) {
                             final fileName =
                                 path.basename(image.path);
-                            final savedFile = await file.copy(
+                            // Compress the image to 50% quality
+                            File compressedFile = await _compressImage(file);
+                            final savedFile = await compressedFile.copy(
                                 '${imagesDir.path}/$fileName');
                             validImages.add(XFile(savedFile.path));
                           } else {
@@ -457,7 +483,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                     child: _buttonContent(
                       title1: 'Upload',
                       title2: 'Image',
-                      asset: 'assets/buynsell/Upload.png',
+                      asset: 'assets/buynsell/Upload.svg',
                     ),
                   ),
                 ),
@@ -731,7 +757,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
+                      SvgPicture.asset(
                         category['icon'],
                         width: RS.s(context, 64),
                         height: RS.s(context, 64),
@@ -921,7 +947,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Center(
-                        child: Image.asset(
+                        child: SvgPicture.asset(
                           _getCategoryIcon(_selectedCategory!),
                           // _categories.firstWhere(
                           //   (c) => c['name'] == _selectedCategory,
@@ -1433,19 +1459,13 @@ class _PostItemFlowState extends State<PostItemFlow> {
                             for (final XFile image in _images) {
                               final file = File(image.path);
 
-                              // if (await file.length() / 1000000 > 10) {
-                              //   ScaffoldMessenger.of(context).showSnackBar(
-                              //     const SnackBar(
-                              //       content: Text('Image size should be less than 10MB'),
-                              //     ),
-                              //   );
-                              //   continue;
-                              // }
+                              // Compress image to 50% quality before uploading
+                              final compressedFile = await _compressImage(file);
 
                               final ImageUploadResponse resp =
                                   await bloc.client.uploadImage(
                                 bloc.getSessionIdHeader(),
-                                file,
+                                compressedFile,
                               );
 
                               imageUrls.add(resp.pictureURL!);

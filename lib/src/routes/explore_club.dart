@@ -310,7 +310,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                                       fontFamily: 'DM Sans',
                                     ),
                                     decoration: InputDecoration(
-                                      hintText: 'Search...',
+                                      hintText: 'Search bodies...',
                                       hintStyle: TextStyle(
                                         fontSize: Responsive.text(16, context),
                                         color: Color.fromRGBO(0, 0, 0, 0.4),

@@ -344,8 +344,8 @@ class _BlogPageState extends State<BlogPage> {
                                   onTap: () {
                                     _pageController?.animateToPage(
                                       0,
-                                      duration: Duration(milliseconds: 300),
-                                      curve: Curves.easeInOut,
+                                      duration: Duration(milliseconds: 10),
+                                      curve: Curves.fastOutSlowIn,
                                     );
                                   },
                                   child: Padding(
