@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as path;
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class NavigateArguments {
   final Community? community;
@@ -54,6 +55,26 @@ class _CreatePostPage extends State<CreatePostPage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  /// Compress image to 50% quality
+  Future<File> _compressImage(File imageFile) async {
+    final String targetPath = imageFile.absolute.path.replaceAll(
+      RegExp(r'\.(?=jpg|jpeg|png|gif|bmp)'),
+      '_compressed.',
+    );
+
+    final XFile? result = await FlutterImageCompress.compressAndGetFile(
+      imageFile.absolute.path,
+      targetPath,
+      quality: 70, // 70% quality
+      format: CompressFormat.jpeg,
+    );
+
+    if (result != null) {
+      return File(result.path);
+    }
+    return imageFile; // Return original if compression fails
   }
 
   bool firstBuild = true;
@@ -231,29 +252,31 @@ class _CreatePostPage extends State<CreatePostPage> {
                                           for (int i = 0;
                                               i < imageFiles.length;
                                               i++) {
-                                                try{
-                                            ImageUploadResponse resp =
-                                                await bloc.client.uploadImage(
-                                                    bloc.getSessionIdHeader(),
-                                                    imageFiles[i]);
-                                            // Check if image URL already exists to avoid duplicates
-                                            if (!currRequest1.imageUrl!
-                                                .contains(resp.pictureURL!)) {
-                                              currRequest1.imageUrl!
-                                                  .add(resp.pictureURL!);
-                                            }} catch(e){
-                                                  ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                    'Error uploading image: ${e.toString()}'),
-                                                backgroundColor: Colors.red,
-                                                duration: Duration(seconds: 2),
-                                              ),
-                                            );
-                                                  posting = false;
-                                                  return;
-                                                }
+                                            try {
+                                              ImageUploadResponse resp =
+                                                  await bloc.client.uploadImage(
+                                                      bloc.getSessionIdHeader(),
+                                                      imageFiles[i]);
+                                              // Check if image URL already exists to avoid duplicates
+                                              if (!currRequest1.imageUrl!
+                                                  .contains(resp.pictureURL!)) {
+                                                currRequest1.imageUrl!
+                                                    .add(resp.pictureURL!);
+                                              }
+                                            } catch (e) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Error uploading image: ${e.toString()}'),
+                                                  backgroundColor: Colors.red,
+                                                  duration:
+                                                      Duration(seconds: 2),
+                                                ),
+                                              );
+                                              posting = false;
+                                              return;
+                                            }
                                           }
                                           // for (int i = 0;
                                           //     i < documentFiles.length;
@@ -292,7 +315,7 @@ class _CreatePostPage extends State<CreatePostPage> {
                                             if (isEditing) {
                                               bloc.communityPostBloc
                                                   .updateCommunityPost(
-                                                      currRequest1);                                              
+                                                      currRequest1);
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
                                                 SnackBar(
@@ -573,15 +596,17 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                 source: ImageSource.camera);
 
                                         if (pi != null) {
-                                          // ImageUploadResponse resp =
-                                          //     await bloc.client.uploadImage(
-                                          //         bloc.getSessionIdHeader(),
-                                          //         File(pi.path));
-                                          // print(resp.pictureURL);
-                                          if (await pi.length() / 1000000 <=
+                                          File originalFile = File(pi.path);
+
+                                          if (await originalFile.length() /
+                                                  1000000 <=
                                               10) {
+                                            // Compress the image to 75% quality
+                                            File compressedFile =
+                                                await _compressImage(
+                                                    originalFile);
                                             setState(() {
-                                              imageFiles.add(File(pi.path));
+                                              imageFiles.add(compressedFile);
                                             });
                                           } else {
                                             ScaffoldMessenger.of(context)
@@ -631,16 +656,24 @@ class _CreatePostPage extends State<CreatePostPage> {
                                                   source: ImageSource.gallery);
 
                                           if (pi != null) {
-                                            ImageUploadResponse resp =
-                                                await bloc.client.uploadImage(
-                                                    bloc.getSessionIdHeader(),
-                                                    File(pi.path));
-                                            print(resp.pictureURL);
-                                            if (await pi.length() / 1000000 <=
+                                            File originalFile = File(pi.path);
+
+                                            if (await originalFile.length() /
+                                                    1000000 <=
                                                 10) {
+                                              // Compress the image to 75% quality
+                                              File compressedFile =
+                                                  await _compressImage(
+                                                      originalFile);
                                               setState(() {
-                                                imageFiles.add(File(pi.path));
+                                                imageFiles.add(compressedFile);
                                               });
+
+                                              ImageUploadResponse resp =
+                                                  await bloc.client.uploadImage(
+                                                      bloc.getSessionIdHeader(),
+                                                      compressedFile);
+                                              print(resp.pictureURL);
                                             } else {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(SnackBar(

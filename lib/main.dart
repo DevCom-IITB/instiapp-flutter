@@ -145,7 +145,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     systemBottomPadding = MediaQuery.of(context).padding.bottom;
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         systemNavigationBarColor: Color.fromRGBO(246, 246,246, 1), 
@@ -153,7 +153,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         systemNavigationBarIconBrightness: Brightness.dark,
         statusBarColor:Color.fromRGBO(246, 246,246, 1),
         statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.dark,
       ),
     );
 
@@ -183,13 +182,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           textScaler: const TextScaler.linear(1.0),
           boldText: false,                          
         ),
-        child: SafeArea(
-        top: false,      // keep status bar edge-to-edge
-        left: false,
-        right: false,
-        bottom: true,    // ⛔ protect from navigation bar
         child: child!,
-      ),
       );
     },
         theme: ThemeData(

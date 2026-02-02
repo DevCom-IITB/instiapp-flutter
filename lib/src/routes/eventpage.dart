@@ -624,10 +624,26 @@ class _EventPageState extends State<EventPage> {
                                   width: Responsive.width(24, context),
                                   fit: BoxFit.none,
                                 ),
+                                // onPressed: () async {
+                                //   await Share.share(
+                                //       "Check this event: ${ShareURLMaker.getEventURL(event!)}");
+                                // }),
                                 onPressed: () async {
-                                  await Share.share(
-                                      "Check this event: ${ShareURLMaker.getEventURL(event!)}");
-                                }),
+                                String message = Uri.encodeComponent(
+                                    "Check this event: ${ShareURLMaker.getEventURL(event!)}");
+                                String whatsappUrl =
+                                    "https://wa.me/?text=$message";
+                                if (await canLaunchUrl(
+                                    Uri.parse(whatsappUrl))) {
+                                  await launchUrl(Uri.parse(whatsappUrl),
+                                      mode: LaunchMode.externalApplication);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content:
+                                              Text("Could not open WhatsApp")));
+                                }
+                              },),
                           ),
                           SizedBox(width: Responsive.width(8, context)),
                           Expanded(
@@ -688,48 +704,62 @@ class _EventPageState extends State<EventPage> {
                                             color: colour,
                                           ),
                                         ),
+                                        SizedBox(
+                                            width:
+                                                Responsive.width(11, context)),
+                                      // if (UES.Going == currentUes)
+                                      //   SvgPicture.asset(
+                                      //     'assets/feed/light.svg',
+                                      //     color: colour,
+                                      //     height:
+                                      //         Responsive.height(18.3, context),
+                                      //     width: Responsive.width(15, context),
+                                      //     fit: BoxFit.cover,
+                                      //   ),
                                       if (UES.Going == currentUes)
-                                        SvgPicture.asset(
-                                          'assets/feed/light.svg',
-                                          color: colour,
-                                          height:
-                                              Responsive.height(18.3, context),
-                                          width: Responsive.width(15, context),
-                                          fit: BoxFit.cover,
+                                        Text(
+                                          'Showing Enthu',
+                                          style: TextStyle(
+                                            fontSize:
+                                                Responsive.text(14, context),
+                                            fontWeight: FontWeight.w700,
+                                            fontFamily: 'DM Sans',
+                                            color: colour,
+                                          ),
                                         ),
                                     ])),
                           )),
                           SizedBox(width: Responsive.width(8, context)),
-                          Container(
-                            height: Responsive.height(52, context),
-                            width: Responsive.width(52, context),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(26),
-                              color: Color.fromRGBO(37, 211, 102, 1),
-                            ),
-                            child: IconButton(
-                              icon: SvgPicture.asset(
-                                'assets/feed/whatsapp.svg',
-                                fit: BoxFit.none,
-                              ),
-                              onPressed: () async {
-                                String message = Uri.encodeComponent(
-                                    "Check this event: ${ShareURLMaker.getEventURL(event!)}");
-                                String whatsappUrl =
-                                    "https://wa.me/?text=$message";
-                                if (await canLaunchUrl(
-                                    Uri.parse(whatsappUrl))) {
-                                  await launchUrl(Uri.parse(whatsappUrl),
-                                      mode: LaunchMode.externalApplication);
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content:
-                                              Text("Could not open WhatsApp")));
-                                }
-                              },
-                            ),
-                          ),
+                          // Container(
+                          //   height: Responsive.height(52, context),
+                          //   width: Responsive.width(52, context),
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(26),
+                          //     color: Color.fromRGBO(37, 211, 102, 1),
+                          //   ),
+                          //   child: IconButton(
+                          //     icon: SvgPicture.asset(
+                          //       'assets/feed/whatsapp.svg',
+                          //       fit: BoxFit.none,
+                          //     ),
+                          //     onPressed: () async {
+                          //       String message = Uri.encodeComponent(
+                          //           "Check this event: ${ShareURLMaker.getEventURL(event!)}");
+                          //       String whatsappUrl =
+                          //           "https://wa.me/?text=$message";
+                          //       if (await canLaunchUrl(
+                          //           Uri.parse(whatsappUrl))) {
+                          //         await launchUrl(Uri.parse(whatsappUrl),
+                          //             mode: LaunchMode.externalApplication);
+                          //       } else {
+                          //         ScaffoldMessenger.of(context).showSnackBar(
+                          //             SnackBar(
+                          //                 content:
+                          //                     Text("Could not open WhatsApp")));
+                          //       }
+                          //     },
+                          //   ),
+                          // ),
                         ],
                       )))
             ]),

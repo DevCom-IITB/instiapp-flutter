@@ -13,6 +13,7 @@ import 'package:path/path.dart' as path;
 import 'package:InstiApp/src/utils/responsive.dart';
 import 'package:InstiApp/src/widgets/custom_dialog.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class PostItemFlow extends StatefulWidget {
   final bool isEditable;
@@ -63,6 +64,26 @@ class _PostItemFlowState extends State<PostItemFlow> {
 
   void _prevStep() {
     setState(() => _currentStep--);
+  }
+
+  /// Compress image to 60% quality
+  Future<File> _compressImage(File imageFile) async {
+    final String targetPath = imageFile.absolute.path.replaceAll(
+      RegExp(r'\.(?=jpg|jpeg|png|gif|bmp)'),
+      '_compressed.',
+    );
+    
+    final XFile? result = await FlutterImageCompress.compressAndGetFile(
+      imageFile.absolute.path,
+      targetPath,
+      quality: 60, // 60% quality
+      format: CompressFormat.jpeg,
+    );
+
+    if (result != null) {
+      return File(result.path);
+    }
+    return imageFile; // Return original if compression fails
   }
 
   @override
@@ -367,7 +388,9 @@ class _PostItemFlowState extends State<PostItemFlow> {
                             await imagesDir.create(recursive: true);
                           }
 
-                          final savedFile = await file
+                          // Compress the image to 50% quality
+                          File compressedFile = await _compressImage(file);
+                          final savedFile = await compressedFile
                               .copy('${imagesDir.path}/$fileName');
 
                           setState(() => _images.add(XFile(savedFile.path)));
@@ -431,7 +454,9 @@ class _PostItemFlowState extends State<PostItemFlow> {
                           if (await file.exists()) {
                             final fileName =
                                 path.basename(image.path);
-                            final savedFile = await file.copy(
+                            // Compress the image to 50% quality
+                            File compressedFile = await _compressImage(file);
+                            final savedFile = await compressedFile.copy(
                                 '${imagesDir.path}/$fileName');
                             validImages.add(XFile(savedFile.path));
                           } else {
@@ -1433,19 +1458,13 @@ class _PostItemFlowState extends State<PostItemFlow> {
                             for (final XFile image in _images) {
                               final file = File(image.path);
 
-                              // if (await file.length() / 1000000 > 10) {
-                              //   ScaffoldMessenger.of(context).showSnackBar(
-                              //     const SnackBar(
-                              //       content: Text('Image size should be less than 10MB'),
-                              //     ),
-                              //   );
-                              //   continue;
-                              // }
+                              // Compress image to 50% quality before uploading
+                              final compressedFile = await _compressImage(file);
 
                               final ImageUploadResponse resp =
                                   await bloc.client.uploadImage(
                                 bloc.getSessionIdHeader(),
-                                file,
+                                compressedFile,
                               );
 
                               imageUrls.add(resp.pictureURL!);

@@ -343,7 +343,7 @@ class _FeedPageState extends State<FeedPage> {
                     //         ),
                     //   ],
                     // )),
-                    SizedBox(height: 15),
+                    SizedBox(height: Responsive.height(15,context)),
                   ]),
                 ),
                 Expanded(
