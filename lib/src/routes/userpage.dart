@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:InstiApp/src/widgets/appbar.dart';
 import 'package:InstiApp/src/widgets/buttons.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:InstiApp/src/utils/responsive.dart';
 import 'package:InstiApp/src/routes/aboutpage.dart';
@@ -39,8 +40,8 @@ class UserPage extends StatefulWidget {
   _UserPageState createState() => _UserPageState();
 }
 
-class _UserPageState extends State<UserPage>
-    with TickerProviderStateMixin { // Changed to TickerProviderStateMixin
+class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
+  // Changed to TickerProviderStateMixin
   User? user;
   bool cansee = false;
   TabController? _tabController;
@@ -62,10 +63,10 @@ class _UserPageState extends State<UserPage>
   @override
   void initState() {
     super.initState();
-    
+
     // Use cached data immediately
     user = widget.initialUser;
-    
+
     // Initialize with basic data (no bloc access yet)
     _initializeBasicData();
   }
@@ -73,7 +74,7 @@ class _UserPageState extends State<UserPage>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    
+
     if (!_initialized) {
       _bloc = BlocProvider.of(context)?.bloc;
       _initializeWithBloc();
@@ -96,15 +97,15 @@ class _UserPageState extends State<UserPage>
       _createTabController(); // Create tab controller even for guests
       return;
     }
-    
+
     // Determine if viewing own profile using cached session
     _checkIfViewingOwnProfileFromCache();
-    
+
     // Create tab controller based on permissions
     _createTabController();
-    
+
     _initialized = true;
-    
+
     // Try to load fresh data in background
     _loadUserData();
   }
@@ -114,13 +115,10 @@ class _UserPageState extends State<UserPage>
     if (_tabController != null) {
       _tabController!.dispose();
     }
-    
+
     // Create new controller based on current cansee state
     final length = cansee ? 3 : 2;
-    _tabController = TabController(
-      length: length, 
-      vsync: this
-    );
+    _tabController = TabController(length: length, vsync: this);
     _tabController?.addListener(_handleTabChange);
   }
 
@@ -130,17 +128,17 @@ class _UserPageState extends State<UserPage>
       cansee = false;
       return;
     }
-    
+
     // Check if user is guest (no session)
     if (_bloc!.currSession == null) {
       _isGuest = true;
       cansee = false;
       return;
     }
-    
+
     // User is not guest, we have a session
     _isGuest = false;
-    
+
     if (user == null) {
       cansee = false;
       return;
@@ -154,13 +152,14 @@ class _UserPageState extends State<UserPage>
         cansee = currentUserFromSession.userID == user!.userID;
         if (cansee) return;
       }
-      
+
       // Compare by LDAP ID as fallback
-      if (currentUserFromSession.userLDAPId != null && user!.userLDAPId != null) {
+      if (currentUserFromSession.userLDAPId != null &&
+          user!.userLDAPId != null) {
         cansee = currentUserFromSession.userLDAPId == user!.userLDAPId;
         if (cansee) return;
       }
-      
+
       // For "me" endpoint navigation
       if (user!.userID == "me" || widget.userFuture == null) {
         cansee = true;
@@ -190,7 +189,7 @@ class _UserPageState extends State<UserPage>
 
   Future<void> _loadUserData() async {
     if (!mounted || _bloc == null) return;
-    
+
     setState(() {
       _isLoading = true;
       _loadFailed = false;
@@ -225,7 +224,6 @@ class _UserPageState extends State<UserPage>
       if (!_isGuest) {
         await _verifyOwnProfileWithFreshData();
       }
-      
     } catch (e) {
       // If loading fails, keep cached data but mark as failed
       if (mounted) {
@@ -250,11 +248,13 @@ class _UserPageState extends State<UserPage>
       // Try to get fresh current user data
       final currentUser = await _bloc!.getUser("me");
       if (mounted) {
-        bool newCansee = (currentUser.userID != null && user!.userID != null && 
-                    currentUser.userID == user!.userID) ||
-                   (currentUser.userLDAPId != null && user!.userLDAPId != null && 
-                    currentUser.userLDAPId == user!.userLDAPId);
-        
+        bool newCansee = (currentUser.userID != null &&
+                user!.userID != null &&
+                currentUser.userID == user!.userID) ||
+            (currentUser.userLDAPId != null &&
+                user!.userLDAPId != null &&
+                currentUser.userLDAPId == user!.userLDAPId);
+
         // Only update if cansee state changed
         if (newCansee != cansee) {
           setState(() {
@@ -309,13 +309,13 @@ class _UserPageState extends State<UserPage>
   Widget _buildPortraitLayout() {
     if (_tabController == null) {
       return Center(
-        child: CircularProgressIndicatorExtended(
-          label: Text("Loading tabs...")
-        ),
+        child:
+            CircularProgressIndicatorExtended(label: Text("Loading tabs...")),
       );
     }
-    
-    final isGeneralTab = _tabController!.length == 3 && _tabController!.index == 0;
+
+    final isGeneralTab =
+        _tabController!.length == 3 && _tabController!.index == 0;
     final tabCount = _tabController!.length;
 
     return Column(
@@ -336,7 +336,7 @@ class _UserPageState extends State<UserPage>
             backgroundColor: Colors.transparent,
             minHeight: 2,
           ),
-        
+
         // Show appropriate profile card
         if (_isGuest)
           _buildGuestProfileCard()
@@ -351,7 +351,7 @@ class _UserPageState extends State<UserPage>
           )
         else
           _spectatingProfileCard(),
-        
+
         if (_loadFailed)
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -369,31 +369,28 @@ class _UserPageState extends State<UserPage>
           child: Column(
             children: [
               TabBar(
-                controller: _tabController,
-                labelColor: Color.fromRGBO(15, 22, 32, 0.8),
-                labelStyle: TextStyle(
-                    fontSize: RS.sp(context, 18),
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'DM Sans'),
-                labelPadding: EdgeInsets.all(0),
-                unselectedLabelColor: Color.fromRGBO(15, 22, 32, 0.8),
-                unselectedLabelStyle: TextStyle(
-                    fontSize: RS.sp(context, 18),
-                    fontWeight: FontWeight.w400,
-                    fontFamily: 'DM Sans'),
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicatorWeight: 3,
-                indicatorColor: Color.fromRGBO(48, 111, 220, 1),
-                tabs: _buildTabs(tabCount)
-              ),
+                  controller: _tabController,
+                  labelColor: const Color.fromRGBO(48, 111, 220, 1),
+                  labelStyle: TextStyle(
+                      fontSize: RS.sp(context, 18),
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'DM Sans'),
+                  labelPadding: EdgeInsets.all(0),
+                  unselectedLabelColor: Color.fromRGBO(15, 22, 32, 0.8),
+                  unselectedLabelStyle: TextStyle(
+                      fontSize: RS.sp(context, 18),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'DM Sans'),
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicatorWeight: 3,
+                  indicatorColor: Color.fromRGBO(48, 111, 220, 1),
+                  tabs: _buildTabs(tabCount)),
             ],
           ),
         ),
         Expanded(
           child: TabBarView(
-            controller: _tabController,
-            children: _buildTabViews(tabCount)
-          ),
+              controller: _tabController, children: _buildTabViews(tabCount)),
         ),
       ],
     );
@@ -449,12 +446,11 @@ class _UserPageState extends State<UserPage>
   Widget _buildLandscapeLayout() {
     if (_tabController == null) {
       return Center(
-        child: CircularProgressIndicatorExtended(
-          label: Text("Loading tabs...")
-        ),
+        child:
+            CircularProgressIndicatorExtended(label: Text("Loading tabs...")),
       );
     }
-    
+
     final tabCount = _tabController!.length;
 
     return SingleChildScrollView(
@@ -476,7 +472,7 @@ class _UserPageState extends State<UserPage>
               backgroundColor: Colors.transparent,
               minHeight: 2,
             ),
-          
+
           // Show appropriate profile card
           if (_isGuest)
             _buildGuestProfileCard()
@@ -484,7 +480,7 @@ class _UserPageState extends State<UserPage>
             _buildCompactProfileCard()
           else
             _spectatingProfileCard(),
-          
+
           if (_loadFailed)
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -502,23 +498,22 @@ class _UserPageState extends State<UserPage>
             child: Column(
               children: [
                 TabBar(
-                  controller: _tabController,
-                  labelColor: Color.fromRGBO(15, 22, 32, 0.8),
-                  labelStyle: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'DM Sans'),
-                  labelPadding: EdgeInsets.all(0),
-                  unselectedLabelColor: Color.fromRGBO(15, 22, 32, 0.8),
-                  unselectedLabelStyle: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'DM Sans'),
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  indicatorWeight: 3,
-                  indicatorColor: Color.fromRGBO(48, 111, 220, 1),
-                  tabs: _buildTabs(tabCount)
-                ),
+                    controller: _tabController,
+                    labelColor: Color.fromRGBO(15, 22, 32, 0.8),
+                    labelStyle: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: 'DM Sans'),
+                    labelPadding: EdgeInsets.all(0),
+                    unselectedLabelColor: Color.fromRGBO(15, 22, 32, 0.8),
+                    unselectedLabelStyle: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'DM Sans'),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicatorWeight: 3,
+                    indicatorColor: Color.fromRGBO(48, 111, 220, 1),
+                    tabs: _buildTabs(tabCount)),
               ],
             ),
           ),
@@ -531,10 +526,10 @@ class _UserPageState extends State<UserPage>
 
   Widget _buildCurrentTabContent() {
     if (_tabController == null) return Container();
-    
+
     final tabCount = _tabController!.length;
     final currentIndex = _tabController!.index;
-    
+
     if (tabCount == 3) {
       switch (currentIndex) {
         case 0:
@@ -635,9 +630,7 @@ class _UserPageState extends State<UserPage>
                   child: _buildProfileImage(),
                 ),
               ),
-
               const SizedBox(width: 16),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -673,9 +666,7 @@ class _UserPageState extends State<UserPage>
                   ],
                 ),
               ),
-              
               const SizedBox(width: 16),
-
               SizedBox(
                 width: RS.s(context, 50),
                 height: RS.s(context, 50),
@@ -733,9 +724,7 @@ class _UserPageState extends State<UserPage>
                   ),
                 ),
               ),
-
               const SizedBox(width: 16),
-
               Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -778,7 +767,6 @@ class _UserPageState extends State<UserPage>
                             ],
                           ),
                         ),
-
                         SizedBox(
                           width: RS.s(context, 35),
                           height: RS.s(context, 35),
@@ -797,9 +785,7 @@ class _UserPageState extends State<UserPage>
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 8),
-
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -809,7 +795,8 @@ class _UserPageState extends State<UserPage>
                       padding: EdgeInsets.all(6),
                       margin: EdgeInsets.only(bottom: 4),
                       child: ClipRRect(
-                        child: _buildRollNumberBarcode(height: RS.sh(context, 50)),
+                        child:
+                            _buildRollNumberBarcode(height: RS.sh(context, 50)),
                       ),
                     ),
                   ],
@@ -888,7 +875,8 @@ class _UserPageState extends State<UserPage>
                               child: Image.asset(
                                 'assets/profilepage/logo.png',
                                 fit: BoxFit.contain,
-                                errorBuilder: (context, error, stackTrace) => Icon(
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Icon(
                                   Icons.school,
                                   size: RS.s(context, 35),
                                   color: Colors.white54,
@@ -906,7 +894,8 @@ class _UserPageState extends State<UserPage>
                           ),
                         ],
                       ),
-                      _buildProfileInfoItem('Validity', user?.graduationYear ?? '-', 14),
+                      _buildProfileInfoItem(
+                          'Validity', user?.graduationYear ?? '-', 14),
                     ],
                   ),
                 ],
@@ -969,7 +958,9 @@ class _UserPageState extends State<UserPage>
             fontWeight: FontWeight.w400,
           ),
         ),
-        const SizedBox(height: 2,),
+        const SizedBox(
+          height: 2,
+        ),
         Text(
           value,
           style: TextStyle(
@@ -988,7 +979,7 @@ class _UserPageState extends State<UserPage>
 
   Widget _buildRollNumberBarcode({double? height}) {
     final rollNumber = user?.userRollNumber;
-    
+
     if (rollNumber == null || rollNumber.isEmpty) {
       return Container(
         height: height ?? RS.sh(context, 50),
@@ -1042,12 +1033,10 @@ class _UserPageState extends State<UserPage>
           ToggleItem(
             title: 'Notifications',
             value: NotificationVisibility,
-            onChanged: (val) =>
-                setState(() => NotificationVisibility = val),
+            onChanged: (val) => setState(() => NotificationVisibility = val),
             top: true,
             icon: Icons.notifications_none_outlined,
           ),
-
           SettingsItem(
             title: updatingProfile ? 'Opening...' : 'Edit Profile',
             icon: Icons.edit_outlined,
@@ -1067,7 +1056,6 @@ class _UserPageState extends State<UserPage>
               }
             },
           ),
-
           SettingsItem(
             title: sendingFeedback ? 'Opening...' : 'Feedback',
             icon: Icons.feedback_outlined,
@@ -1088,9 +1076,7 @@ class _UserPageState extends State<UserPage>
               }
             },
           ),
-
           SizedBox(height: RS.sh(context, 24)),
-
           SettingsItem(
             title: loggingOutLoading ? 'Logging out...' : 'Logout',
             icon: Icons.logout,
@@ -1126,7 +1112,7 @@ class _UserPageState extends State<UserPage>
         child: _settingsContent(),
       );
     }
-  
+
     return _settingsContent();
   }
 
@@ -1135,9 +1121,30 @@ class _UserPageState extends State<UserPage>
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text(
-            'No Associations Found',
-            style: TextStyle(color: Colors.grey),
+          // child: Text(
+          //   'No Associations Found',
+          //   style: TextStyle(color: Colors.grey),
+          // ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SvgPicture.asset(
+                'assets/profilepage/ghost.svg',
+                width: 280,
+                height: 280,
+                fit: BoxFit.contain,
+              ),
+              // SizedBox(height: responsive.h(5)),
+              Text(
+                'No Associations Found',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black,
+                  fontFamily: 'DM Sans',
+                ),
+              ),
+            ],
           ),
         ),
       );
@@ -1156,8 +1163,7 @@ class _UserPageState extends State<UserPage>
                 itemBuilder: (context, index) =>
                     _buildGroupCard(associations[index]),
                 separatorBuilder: (context, index) => Padding(
-                  padding: EdgeInsets.only(
-                      left: RS.sw(context, 88), right: 16),
+                  padding: EdgeInsets.only(left: RS.sw(context, 88), right: 16),
                 ),
               ),
             )
@@ -1187,9 +1193,26 @@ class _UserPageState extends State<UserPage>
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text(
-            'You are not following any groups',
-            style: TextStyle(color: Colors.grey),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SvgPicture.asset(
+                'assets/profilepage/ghost.svg',
+                width: 280,
+                height: 280,
+                fit: BoxFit.contain,
+              ),
+              // SizedBox(height: responsive.h(5)),
+              Text(
+                "You aren't following any clubs",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black,
+                  fontFamily: 'DM Sans',
+                ),
+              ),
+            ],
           ),
         ),
       );
@@ -1208,8 +1231,7 @@ class _UserPageState extends State<UserPage>
                 itemBuilder: (context, index) =>
                     _buildGroupCard(following[index]),
                 separatorBuilder: (context, index) => Padding(
-                  padding: EdgeInsets.only(
-                      left: RS.sw(context, 88), right: 16),
+                  padding: EdgeInsets.only(left: RS.sw(context, 88), right: 16),
                 ),
               ),
             )
@@ -1239,7 +1261,12 @@ class _UserPageState extends State<UserPage>
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: InkWell(
         onTap: () {
-          BodyPage.navigateWith(context, _bloc!, body: Body(bodyID: group.bodyId, bodyName: group.name, bodyShortDescription: group.about, bodyImageURL: group.photoUrl));
+          BodyPage.navigateWith(context, _bloc!,
+              body: Body(
+                  bodyID: group.bodyId,
+                  bodyName: group.name,
+                  bodyShortDescription: group.about,
+                  bodyImageURL: group.photoUrl));
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -1249,11 +1276,11 @@ class _UserPageState extends State<UserPage>
               height: RS.s(context, 64),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Color.fromRGBO(210, 213, 218, 1), width: 1),
+                // border: Border.all(color: Color.fromRGBO(210, 213, 218, 1), width: 1),
                 image: group.photoUrl != null
                     ? DecorationImage(
                         image: NetworkImage(group.photoUrl!),
-                        fit: BoxFit.contain,
+                        fit: BoxFit.cover,
                       )
                     : null,
               ),
@@ -1272,10 +1299,9 @@ class _UserPageState extends State<UserPage>
                         child: Text(
                           group.name,
                           style: TextStyle(
-                            fontSize: RS.sp(context, 20),
-                            fontWeight: FontWeight.w600,
-                            color: Color.fromRGBO(15, 22, 32, 1)
-                          ),
+                              fontSize: RS.sp(context, 20),
+                              fontWeight: FontWeight.w600,
+                              color: Color.fromRGBO(15, 22, 32, 1)),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -1289,10 +1315,9 @@ class _UserPageState extends State<UserPage>
                         child: Text(
                           group.about,
                           style: TextStyle(
-                            fontSize: RS.sp(context, 14),
-                            color: Color.fromRGBO(15, 22, 32, 1),
-                            fontWeight: FontWeight.w400
-                          ),
+                              fontSize: RS.sp(context, 14),
+                              color: Color.fromRGBO(15, 22, 32, 1),
+                              fontWeight: FontWeight.w400),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -1310,7 +1335,7 @@ class _UserPageState extends State<UserPage>
 
   List<Group> _convertBodiesToGroups() {
     final groups = <Group>[];
-    
+
     user?.userFollowedBodies?.forEach((body) {
       if (body.bodyID == null) return;
 
@@ -1321,7 +1346,7 @@ class _UserPageState extends State<UserPage>
         photoUrl: body.bodyImageURL,
       ));
     });
-    
+
     return groups;
   }
 
@@ -1331,7 +1356,7 @@ class _UserPageState extends State<UserPage>
     user?.userRoles?.forEach((role) {
       final body = role.roleBodyDetails;
       if (body?.bodyID == null) return;
-      
+
       groups.add(Group(
         bodyId: body!.bodyID!,
         name: body.bodyName ?? 'Unnamed Group',

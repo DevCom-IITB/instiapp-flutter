@@ -355,26 +355,26 @@ class _CommunityPageState extends State<CommunityPage> {
                                           // ...existing code...
                                           // Explore
                                           Padding(
-                                            padding: EdgeInsets.only(top: responsive.h(70)),
+                                            padding: EdgeInsets.only(top: responsive.h(20)),
                                             child: Center(
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
+                                                  SvgPicture.asset(
+                                                    'assets/communities/custom_communities.svg',
+                                                    width: responsive.w(280),
+                                                    height: responsive.h(280),
+                                                    fit: BoxFit.contain,
+                                                  ),
+                                                  // SizedBox(height: responsive.h(5)),
                                                   Text(
-                                                    'Coming soon',
+                                                    'Coming Soon',
                                                     style: TextStyle(
                                                       fontSize: responsive.sp(20),
                                                       fontWeight: FontWeight.w700,
-                                                      color: Colors.black54,
+                                                      color: Colors.black,
                                                       fontFamily: 'DM Sans',
                                                     ),
-                                                  ),
-                                                  SizedBox(height: responsive.h(20)),
-                                                  SvgPicture.asset(
-                                                    'assets/communities/custom_communities.svg',
-                                                    width: responsive.w(300),
-                                                    height: responsive.h(300),
-                                                    fit: BoxFit.contain,
                                                   ),
                                                 ],
                                               ),
@@ -382,26 +382,25 @@ class _CommunityPageState extends State<CommunityPage> {
                                           ),
                                           // My Groups
                                           Padding(
-                                            padding: EdgeInsets.only(top: responsive.h(70)),
+                                            padding: EdgeInsets.only(top: responsive.h(20)),
                                             child: Center(
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
-                                                  Text(
-                                                    'Coming soon',
-                                                    style: TextStyle(
-                                                      fontSize: responsive.sp(20),
-                                                      fontWeight: FontWeight.w700,
-                                                      color: Colors.black54,
-                                                      fontFamily: 'DM Sans',
-                                                    ),
-                                                  ),
-                                                  SizedBox(height: responsive.h(20)),
                                                   SvgPicture.asset(
                                                     'assets/communities/custom_communities.svg',
                                                     width: responsive.w(280),
                                                     height: responsive.h(280),
                                                     fit: BoxFit.contain,
+                                                  ),
+                                                  Text(
+                                                    'Coming Soon',
+                                                    style: TextStyle(
+                                                      fontSize: responsive.sp(20),
+                                                      fontWeight: FontWeight.w700,
+                                                      color: Colors.black,
+                                                      fontFamily: 'DM Sans',
+                                                    ),
                                                   ),
                                                 ],
                                               ),
