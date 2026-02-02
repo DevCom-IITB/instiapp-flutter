@@ -197,7 +197,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
     // Initialize QR stripe animation controller
     _qrStripeController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 5000),
       vsync: this,
     )..repeat();
 
@@ -1675,8 +1675,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                 Container(
                   height: responsive.h(96),
                   width: responsive.w(368),
-                  padding: EdgeInsets.fromLTRB(responsive.w(16),
-                      responsive.h(0), responsive.w(16), responsive.h(0)),
+                  // padding: EdgeInsets.fromLTRB(responsive.w(16),
+                  //     responsive.h(0), responsive.w(16), responsive.h(0)),
                   decoration: ShapeDecoration(
                     color: myConstants.instiappBlue,
                     shape: RoundedRectangleBorder(
@@ -1705,39 +1705,41 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                           },
                         ),
                         // Content Row
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  'My QR',
-                                  style: TextStyle(
-                                    color: myConstants.instiappWhite,
-                                    fontSize: responsive.sp(20),
-                                    fontWeight: FontWeight.w700,
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: responsive.w(16)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(
+                                    'My QR',
+                                    style: TextStyle(
+                                      color: myConstants.instiappWhite,
+                                      fontSize: responsive.sp(20),
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  'Mess • Gym • Swimming & more...',
-                                  style: TextStyle(
-                                    color: myConstants.instiappWhite,
-                                    fontSize: responsive.sp(14),
-                                    fontFamily: 'DM Sans',
-                                    fontWeight: FontWeight.w500,
+                                  Text(
+                                    'Mess • Gym • Swimming & more...',
+                                    style: TextStyle(
+                                      color: myConstants.instiappWhite,
+                                      fontSize: responsive.sp(14),
+                                      fontFamily: 'DM Sans',
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              height: responsive.h(75),
-                              width: responsive.w(75),
-                              child: SvgPicture.asset(
-                                  'assets/homepage/icons/qr.svg'),
-                            ),
-                          ],
+                                ],
+                              ),
+                              Container(
+                                height: responsive.h(75),
+                                width: responsive.w(75),
+                                child: SvgPicture.asset('assets/homepage/icons/qr.svg'),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
