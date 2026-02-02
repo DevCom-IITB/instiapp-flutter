@@ -6,7 +6,7 @@ import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/achievement_form.dart';
 import 'package:InstiApp/src/routes/alumniLoginPage.dart';
 import 'package:InstiApp/src/routes/alumni_OTP_Page.dart';
-import 'package:InstiApp/src/routes/bodypage.dart';
+import 'package:InstiApp/src/routes/bodypage.dart'; 
 import 'package:InstiApp/src/routes/buynsell_info.dart';
 import 'package:InstiApp/src/routes/buynsell_page.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
@@ -59,6 +59,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:uni_links/uni_links.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+double systemBottomPadding = 0.0;
 void main() async {
   GlobalKey<MyAppState> key = GlobalKey();
   WidgetsFlutterBinding.ensureInitialized();
@@ -131,6 +132,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     disposeNotification();
     super.dispose();
   }
+   
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -142,6 +144,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    systemBottomPadding = MediaQuery.of(context).padding.bottom;
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(

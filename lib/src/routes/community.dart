@@ -446,6 +446,7 @@ class _CommunitiesState extends State<Communities> {
       length: 3,
       child: SafeArea(
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           floatingActionButton: Stack(
             children: [
               // Scroll-to-top FAB
@@ -1734,7 +1735,7 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
           child: Center(
               child: Text(
             "Nothing here yet!",
-            style: TextStyle(fontSize: responsive.sp(18)),
+            style: TextStyle(fontSize: responsive.sp(18), fontFamily: 'DM Sans'),
           )),
         )
       ];

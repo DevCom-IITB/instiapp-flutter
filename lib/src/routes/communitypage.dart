@@ -99,7 +99,7 @@ class _CommunityPageState extends State<CommunityPage> {
 
     return Scaffold(
       backgroundColor: Color(0xFFF6F6F6),
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(responsive.h(52)),
@@ -466,7 +466,7 @@ class _CommunityPageState extends State<CommunityPage> {
             padding: EdgeInsets.symmetric(horizontal: responsive.w(28), vertical: responsive.h(8)),
             child: Text.rich(
               TextSpan(
-                style: theme.textTheme.titleLarge,
+                style: theme.textTheme.titleLarge?.copyWith(fontFamily: 'DM Sans'),
                 children: [
                   TextSpan(text: "Nothing here yet!"),
                 ],

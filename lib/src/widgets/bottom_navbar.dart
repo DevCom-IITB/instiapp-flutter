@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:InstiApp/constants.dart';
+import 'package:InstiApp/main.dart' as main_app;
 
 class NavBarItem {
   final String label;
@@ -16,11 +17,12 @@ class Responsive {
   final BuildContext context;
   final double baseWidth;
   final double baseHeight;
+  final double bottomPadding;
 
-  Responsive(this.context, {this.baseWidth = 411, this.baseHeight = 914});
+  Responsive(this.context, {this.baseWidth = 411, this.baseHeight = 914, this.bottomPadding = 0});
 
   double w(double px) => MediaQuery.of(context).size.width * (px / baseWidth);
-  double h(double px) => MediaQuery.of(context).size.height * (px / baseHeight);
+  double h(double px) => (MediaQuery.of(context).size.height - bottomPadding) * (px / baseHeight);
   double sp(double px) => w(px);
 }
 
@@ -36,13 +38,13 @@ class InstiBottomNavBar extends StatelessWidget {
     required this.items,
     required this.currentIndex,
     required this.onTap,
-    this.height = 80,
+    this.height = 90,
     this.width = 396,
   });
 
   @override
   Widget build(BuildContext context) {
-    final responsive = Responsive(context);
+    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
     final constants = Constants();
 
     final navBarHeight = responsive.h(height);
@@ -50,18 +52,20 @@ class InstiBottomNavBar extends StatelessWidget {
 
     // === EXACT ratios from original design ===
     final indicatorWidth = navBarWidth * (63 / 396);
-    final indicatorHeight = navBarHeight * (33 / 80);
+    final indicatorHeight = navBarHeight * (33 / 90);
     final iconSize = navBarWidth * (24 / 396);
 
-    return Container(
+    return Container(    
+      
       height: navBarHeight,
       width: navBarWidth,
       decoration: BoxDecoration(
+        border: Border.all(color: const Color.fromRGBO( 246,246, 246,1), width: 5),
         color: constants.instiappDark,
         borderRadius: BorderRadius.circular(navBarHeight / 2),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: EdgeInsets.symmetric(horizontal: responsive.w(16.0)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: List.generate(items.length, (index) {
@@ -92,7 +96,7 @@ class InstiBottomNavBar extends StatelessWidget {
                               height: indicatorHeight,
                               decoration: BoxDecoration(
                                 color: constants.instiappBlue,
-                                borderRadius: BorderRadius.circular(79.67),
+                                borderRadius: BorderRadius.circular(responsive.h(79.67)),
                               ),
                             ),
                           ),

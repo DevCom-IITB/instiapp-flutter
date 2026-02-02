@@ -74,6 +74,7 @@ void initState() {
       statusBarColor: Colors.transparent,
     ));
     return Scaffold(
+      backgroundColor: Color.fromRGBO(246, 246, 246, 1),
         extendBodyBehindAppBar: true,
         body: Stack(children: [
           Container(
@@ -215,9 +216,9 @@ void initState() {
               ),
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.only(top: Responsive.height(10, context)),
+                  padding: EdgeInsets.only(top: Responsive.height(10, context), ),
                   child: ListView(
-                    controller: _listController,
+                    // controller: _listController,
                     physics: ClampingScrollPhysics(),
                     shrinkWrap: true,
                     padding: EdgeInsets.zero,
@@ -310,12 +311,11 @@ void initState() {
                           ),
                         ],
                       ),
-                      SizedBox(height: Responsive.height(80, context)),
+                      SizedBox(height: Responsive.height(100, context)),
                     ],
                   ),
                 ),
-              ),
-              // SizedBox(height: Responsive.height(16, context)),
+              ),     
             ],
           )),
           // if (searchMode)

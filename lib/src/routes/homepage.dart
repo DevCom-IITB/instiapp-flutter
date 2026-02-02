@@ -25,16 +25,20 @@ import '../widgets/custom_dialog.dart';
 import '../widgets/bottom_navbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:InstiApp/main.dart' as main_app;
 
 class Responsive {
   final BuildContext context;
   final double baseWidth;
   final double baseHeight;
+  final double bottomPadding;
 
-  Responsive(this.context, {this.baseWidth = 411, this.baseHeight = 914});
+  Responsive(this.context,
+      {this.baseWidth = 411, this.baseHeight = 914, this.bottomPadding = 0});
 
   double w(double px) => MediaQuery.of(context).size.width * (px / baseWidth);
-  double h(double px) => MediaQuery.of(context).size.height * (px / baseHeight);
+  double h(double px) =>
+      (MediaQuery.of(context).size.height - bottomPadding) * (px / baseHeight);
   double sp(double px) => w(px); // scale text with width
 }
 
@@ -47,7 +51,7 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
-    GlobalKey<ScaffoldMessengerState>();
+      GlobalKey<ScaffoldMessengerState>();
 
   String currentpage = 'homepage';
   Constants myConstants = Constants();
@@ -84,6 +88,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   late Animation<double> _navIndicatorAnimation;
   late AnimationController _navScaleController;
   late Animation<double> _navScaleAnimation;
+  late AnimationController _qrStripeController;
+  late Animation<double> _qrStripeAnimation;
 
   // Track previous index for animation direction
   bool _isRefreshingHostels = false;
@@ -92,11 +98,17 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   bool _offlineSnackShown = false;
 
   String _formatMeal(String? meal) {
-    return (meal ?? '')
+    if (meal == null || meal.trim().isEmpty) {
+      return 'No menu uploaded';
+    }
+    
+    final formatted = meal
         .split(RegExp(r'[\n,]'))
         .map((item) => item.trim())
         .where((item) => item.isNotEmpty)
         .join(' • ');
+    
+    return formatted.isEmpty ? 'No menu uploaded' : formatted;
   }
 
   String _mealString(List<Hostel> hostels) {
@@ -183,6 +195,12 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       vsync: this,
     );
 
+    // Initialize QR stripe animation controller
+    _qrStripeController = AnimationController(
+      duration: const Duration(milliseconds: 5000),
+      vsync: this,
+    )..repeat();
+
     // Create animations
     _navIndicatorAnimation = Tween<double>(
       begin: 0.0,
@@ -200,12 +218,28 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       curve: Curves.easeOut,
     ));
 
+    // QR stripe animation: from left (-1.0) to middle (0.0)
+    _qrStripeAnimation = Tween<double>(
+      begin: -1.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _qrStripeController,
+      curve: Curves.linear,
+    ));
+
     // Start with indicator at first position
     _navIndicatorController.forward();
 
     // Set initial values
     _selectedDay = getCurrentDay();
     selectedMeal = getCurrentMealSlot();
+
+    // Start QR stripe animation when app opens
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   if (mounted) {
+    //     _qrStripeController.forward();
+    //   }
+    // });
   }
 
   void _onPageSwiped(int index) {
@@ -341,12 +375,14 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     _pageController.dispose();
     _navIndicatorController.dispose();
     _navScaleController.dispose();
+    _qrStripeController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final responsive = Responsive(context);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
 
     return ScaffoldMessenger(
       key: _scaffoldMessengerKey,
@@ -368,25 +404,25 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                   child: Homepagewidget(),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(bottom: responsive.h(90)),
+                  padding: EdgeInsets.only(bottom: responsive.h(50)),
                   child: FeedPage(),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(bottom: responsive.h(90)),
+                  padding: EdgeInsets.only(bottom: responsive.h(0)),
                   child: ExplorePage(),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(bottom: responsive.h(90)),
+                  padding: EdgeInsets.only(bottom: responsive.h(80)),
                   child: CommunityPage(),
                 ),
               ],
             ),
-      
+
             // Bottom Navigation Bar
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: EdgeInsets.only(bottom: responsive.h(0)),
+                padding: EdgeInsets.only(bottom: responsive.h(5)),
                 child: InstiBottomNavBar(
                   items: const [
                     NavBarItem(
@@ -419,7 +455,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       HostelMess.dayToName.values.map((d) => d.substring(0)).toList();
 
   void _openFilterBottomSheet(List<Hostel> hostels) {
-    final responsive = Responsive(context);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
     String tempSelectedDay = _selectedDay;
     String tempSelectedHostel = _selectedHostel;
     showModalBottomSheet(
@@ -587,12 +624,11 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  ...hostels.map((h) {
+                                  ...hostels.where((h) => h.shortName != 'qip').map((h) {
                                     final value = h.shortName!;
-                                    final name =
-                                        (value == 'tansa' || value == 'qip')
-                                            ? value
-                                            : 'Hostel ${value}';
+                                    final name = (value == 'tansa')
+                                        ? value
+                                        : 'Hostel ${value}';
                                     final isSelected =
                                         tempSelectedHostel == h.shortName;
                                     // return RadioListTile(
@@ -747,7 +783,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   Widget dayContainer(String day, bool isSelected, VoidCallback onTap) {
-    final responsive = Responsive(context);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -773,7 +810,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
   Widget services(
       String name, String path, Map<String, dynamic> services_icon) {
-    final responsive = Responsive(context);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
     return InkWell(
       onTap: () {
         if (name == "Buy & Sell") {
@@ -877,7 +915,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   PreferredSizeWidget customAppBar() {
-    final responsive = Responsive(context);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
     final bloc = BlocProvider.of(context)!.bloc;
 
     return AppBar(
@@ -1015,7 +1054,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   Widget Homepagewidget() {
-    final responsive = Responsive(context);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
     var bloc = BlocProvider.of(context)!.bloc;
     return Scaffold(
       backgroundColor: Color.fromRGBO(246, 246, 246, 1),
@@ -1047,8 +1087,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                         final hostels =
                             snapshot.data ?? UnmodifiableListView<Hostel>([]);
 
-                        final isLoading =
-                            snapshot.connectionState == ConnectionState.waiting &&
+                        final isLoading = snapshot.connectionState ==
+                                ConnectionState.waiting &&
                             hostels.isEmpty;
 
                         return Padding(
@@ -1106,7 +1146,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   Widget servicesWidget() {
-    final responsive = Responsive(context);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
     return Column(
       children: [
         Row(
@@ -1176,7 +1217,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     required bool error,
     required String qrString,
   }) {
-    final responsive = Responsive(context);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
     return Stack(
       children: [
         Center(
@@ -1199,7 +1241,6 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        print("clicked");
                         generateQR();
                       },
                       child: Container(
@@ -1294,11 +1335,12 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     );
   }
 
-  Widget qrClosed(List<Hostel> hostels, {
+  Widget qrClosed(
+    List<Hostel> hostels, {
     bool isLoading = false,
     bool isRefreshing = false,
   }) {
-    final responsive = Responsive(context);
+    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
     return Column(
       children: [
         Row(
@@ -1328,7 +1370,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                 padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(10),
                     responsive.w(7), responsive.h(3)),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
@@ -1497,19 +1539,19 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: (isLoading && hostels.isEmpty) || isRefreshing
-                      ? _mealShimmer(responsive)
-                      : SingleChildScrollView(
-                          child: Text(
-                            _mealString(hostels),
-                            style: TextStyle(
-                              color: const Color(0xFF1B3252),
-                              fontSize: responsive.w(14),
-                              fontFamily: 'DM Sans',
-                              fontWeight: FontWeight.w500,
-                              height: responsive.w(1.31),
+                          ? _mealShimmer(responsive)
+                          : SingleChildScrollView(
+                              child: Text(
+                                _mealString(hostels),
+                                style: TextStyle(
+                                  color: const Color(0xFF1B3252),
+                                  fontSize: responsive.w(14),
+                                  fontFamily: 'DM Sans',
+                                  fontWeight: FontWeight.w500,
+                                  height: responsive.w(1.31),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
                     ),
                     Container(
                       padding: EdgeInsets.symmetric(
@@ -1544,7 +1586,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                                       'This will redirect you to the Mess-I dashboard',
                                   content2:
                                       'where you can file rebates and check your mess stats. Click open to proceed.',
-                                  imageAssetPath: 'assets/homepage/images/plate.svg',
+                                  imageAssetPath:
+                                      'assets/homepage/images/plate.svg',
                                   options: [
                                     DialogOption(
                                       text: 'Cancel',
@@ -1632,48 +1675,82 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             width: responsive.w(380),
             child: Stack(
               children: [
-                SvgPicture.asset(
-                  'assets/homepage/icons/border.svg',
-                  width: responsive.w(368),
-                  fit: BoxFit.fill,
-                ),
+                // SvgPicture.asset(
+                //   'assets/homepage/icons/border.svg',
+                //   width: responsive.w(368),
+                //   fit: BoxFit.fill,
+                // ),
                 Container(
                   height: responsive.h(96),
                   width: responsive.w(368),
-                  padding: EdgeInsets.fromLTRB(responsive.w(16),
-                      responsive.h(8), responsive.w(16), responsive.h(8)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            'My QR',
-                            style: TextStyle(
-                              color: Color(0xFF275489),
-                              fontSize: responsive.sp(20),
-                              fontWeight: FontWeight.w700,
-                            ),
+                  // padding: EdgeInsets.fromLTRB(responsive.w(16),
+                  //     responsive.h(0), responsive.w(16), responsive.h(0)),
+                  decoration: ShapeDecoration(
+                    color: myConstants.instiappBlue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: Stack(
+                      children: [
+                        // Animated QR Stripe Background
+                        AnimatedBuilder(
+                          animation: _qrStripeAnimation,
+                          builder: (context, child) {
+                            return Positioned(
+                              left:
+                                  _qrStripeAnimation.value * responsive.w(368),
+                              top: 0,
+                              bottom: 0,
+                              child: SvgPicture.asset(
+                                'assets/homepage/icons/qr stripe.svg',
+                                height: responsive.h(96),
+                                fit: BoxFit.cover,
+                              ),
+                            );
+                          },
+                        ),
+                        // Content Row
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: responsive.w(16)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(
+                                    'My QR',
+                                    style: TextStyle(
+                                      color: myConstants.instiappWhite,
+                                      fontSize: responsive.sp(20),
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Mess • Gym • Swimming & more...',
+                                    style: TextStyle(
+                                      color: myConstants.instiappWhite,
+                                      fontSize: responsive.sp(14),
+                                      fontFamily: 'DM Sans',
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                height: responsive.h(75),
+                                width: responsive.w(75),
+                                child: SvgPicture.asset('assets/homepage/icons/qr.svg'),
+                              ),
+                            ],
                           ),
-                          Text(
-                            'Mess • Gym • Swimming & more...',
-                            style: TextStyle(
-                              color: const Color(0xFF15202D),
-                              fontSize: responsive.sp(14),
-                              fontFamily: 'DM Sans',
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        height: responsive.h(75),
-                        width: responsive.w(75),
-                        child: SvgPicture.asset('assets/homepage/icons/qr.svg'),
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],
