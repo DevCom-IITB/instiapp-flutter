@@ -125,9 +125,9 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildShareButton(post),
+              _buildShareButton(post, phoneNumber),
               _buildCopyNumberButton(phoneNumber),
-              _buildWhatsAppButton(phoneNumber),
+              // _buildWhatsAppButton(phoneNumber),
             ],
           ),
         ),
@@ -135,7 +135,7 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
     );
   }
 
-  Widget _buildShareButton(BuynSellPost post) {
+  Widget _buildShareButton(BuynSellPost post,String phoneNumber) {
     return Container(
       width: RS.sw(context, 48),
       height: RS.sh(context, 48),
@@ -146,17 +146,35 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
       ),
       child: IconButton(
         icon: Icon(Icons.share_outlined, color: Colors.white),
+        // onPressed: () async {
+        //   final deepLink = 'https://www.insti.app/buynsell/${post.id}';
+
+        //   final shareText = '${post.name}\n'
+        //       '${post.price != null ? '₹${post.price}' : 'Giveaway'}\n'
+        //       'Check it out: $deepLink';
+
+        //   await Share.share(
+        //     shareText,
+        //     subject: '${post.name} on InstiApp',
+        //   );
+        // },
         onPressed: () async {
-          final deepLink = 'https://www.insti.app/buynsell/${post.id}';
+          if (phoneNumber.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("No phone number available")),
+            );
+            return;
+          }
 
-          final shareText = '${post.name}\n'
-              '${post.price != null ? '₹${post.price}' : 'Giveaway'}\n'
-              'Check it out: $deepLink';
-
-          await Share.share(
-            shareText,
-            subject: '${post.name} on InstiApp',
-          );
+          final whatsappNumber = _getWhatsAppNumber(phoneNumber);
+          final url = 'https://wa.me/$whatsappNumber';
+          if (await canLaunchUrl(Uri.parse(url))) {
+            await launchUrl(Uri.parse(url));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Could not launch WhatsApp')),
+            );
+          }
         },
       ),
     );
