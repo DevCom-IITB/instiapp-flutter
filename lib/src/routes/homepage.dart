@@ -83,6 +83,20 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   late PageController _pageController;
   int _currentPageIndex = 0;
 
+  final GlobalKey _homepageContentKey = GlobalKey();
+  bool _homepageCanScroll = false;
+
+  void _updateHomepageScrollability() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final contentHeight = _homepageContentKey.currentContext?.size?.height ?? 0;
+        final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
+        final availableHeight = MediaQuery.of(context).size.height - responsive.h(52) - responsive.h(115);
+        final canScroll = contentHeight > availableHeight;
+        if (canScroll != _homepageCanScroll) setState(() => _homepageCanScroll = canScroll);
+      });
+  }
+
   // Animation controllers for navbar
   late AnimationController _navIndicatorController;
   late Animation<double> _navIndicatorAnimation;
@@ -1033,13 +1047,17 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
               height: responsive.h(52),
               child: Stack(
                 children: [
-                  Container(
-                      height: responsive.h(52),
+                  StreamBuilder<UnmodifiableListView<dynamic>>(
+                    stream: bloc.notifications,
+                    builder: (context, snapshot) {
+                      final count = snapshot.data?.length ?? 0;
+                      return Container(
+                        height: responsive.h(52),
                       width: responsive.w(52),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(22),
                           color: myConstants.instiappGrey),
-                      child: Stack(
+                        child: Stack(
                         children: [
                           GestureDetector(
                             onTap: () {
@@ -1055,9 +1073,46 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                                 ),
                               ),
                             ),
-                          )
+                          ),
+                          if (count > 0)
+                            Positioned(
+                              right: responsive.w(2),
+                              top: responsive.h(4),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: responsive.w(5),
+                                    vertical: responsive.h(1)),
+                                constraints: BoxConstraints(
+                                  minWidth: responsive.w(18),
+                                  minHeight: responsive.h(18),
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFE53935),
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 2,
+                                      offset: Offset(0, 1),
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    count > 99 ? '99+' : '$count',
+                                    style: TextStyle(
+                                      color: const Color(0xFFFFFFFF),
+                                      fontSize: responsive.sp(10),
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                         ],
-                      ))
+                      ));
+                    },
+                  )
                 ],
               ),
             ),
@@ -1071,6 +1126,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     final responsive =
         Responsive(context, bottomPadding: main_app.systemBottomPadding);
     var bloc = BlocProvider.of(context)!.bloc;
+    _updateHomepageScrollability();
     return Scaffold(
       backgroundColor: Color.fromRGBO(246, 246, 246, 1),
       appBar: PreferredSize(
@@ -1079,10 +1135,11 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       body: Stack(
         children: [
           SingleChildScrollView(
-            physics: const NeverScrollableScrollPhysics(),
+            physics: _homepageCanScroll ? const ClampingScrollPhysics() : const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.only(bottom: responsive.h(115)),
             //margin: EdgeInsets.only(left: 10,right: 0),
             child: Column(
+              key: _homepageContentKey,
               children: [
                 SizedBox(height: responsive.h(20)),
                 Dash(

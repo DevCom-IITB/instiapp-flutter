@@ -101,12 +101,12 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
   bool _isLoading = true;
   bool _hasError = false;
   Map<String, String> bodyIdToImage = {
-    "91199c20-7488-41c5-9f6b-6f6c7c5b897d": "assets/explore/cult.png",
-    "81e05a1a-7fd1-45b5-84f6-074e52c0f085": "assets/explore/tech.png",
-    "a9f81e69-fcc9-4fe3-b261-9e5e7a13f898": "assets/explore/sport.png",
-    "44fe710a-8ede-4d59-a25b-a86434373209": "assets/explore/scenes.png",
-    "f3ae5230-4441-4586-81a8-bf75a2e47318": "assets/explore/hostels.png",
-    "252ddc80-910b-4f63-b68a-de30a62a947e": "assets/explore/departments.png",
+    "91199c20-7488-41c5-9f6b-6f6c7c5b897d": "assets/explore/cultBG.png",
+    "81e05a1a-7fd1-45b5-84f6-074e52c0f085": "assets/explore/techBG.png",
+    "a9f81e69-fcc9-4fe3-b261-9e5e7a13f898": "assets/explore/sportsBG.png",
+    "44fe710a-8ede-4d59-a25b-a86434373209": "assets/explore/acadsBG.png",
+    "f3ae5230-4441-4586-81a8-bf75a2e47318": "assets/explore/hostelsBG.png",
+    "252ddc80-910b-4f63-b68a-de30a62a947e": "assets/explore/deptsBG.png",
     "de55aa06-7f0a-46d4-bad4-d0150671e56c": "assets/explore/ibs.png",
   };
 
@@ -228,8 +228,8 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                               bottomRight: Radius.circular(Responsive.width(20, context)),
                             ),
                             child: Image.asset(
-                              // bodyIdToImage[widget.heroTag] ?? 'assets/explore/culturals.png',
-                              'assets/explore/culturals.png',
+                              bodyIdToImage[widget.heroTag] ?? 'assets/explore/culturals.png',
+                              // 'assets/explore/culturals.png',
                               height: Responsive.width(295, context),
                               width: double.infinity,
                               fit: BoxFit.cover,

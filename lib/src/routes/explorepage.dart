@@ -34,7 +34,7 @@ class _ExplorePageState extends State<ExplorePage> {
 // inside _ExplorePageState
   final ScrollController _listController = ScrollController();
   double _maxScrollOffset = double.infinity;
-  final double _clampFraction = 0.3; // change to desired fraction (0.0 - 1.0)
+  final double _clampFraction = 0.4; // change to desired fraction (0.0 - 1.0)
 
   @override
   void initState() {
