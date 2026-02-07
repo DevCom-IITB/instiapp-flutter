@@ -301,6 +301,7 @@ class CommonHtml extends StatelessWidget {
     return data != null
         ? HtmlWidget(
             data ?? "",
+            textStyle: defaultTextStyle,
             factoryBuilder: () => SelectableWidgetFactory(),
             onTapUrl: (link) async {
               if (await canLaunchUrl(Uri.parse(link))) {

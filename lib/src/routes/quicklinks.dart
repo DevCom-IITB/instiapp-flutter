@@ -114,11 +114,12 @@ class _QuicklinksState extends State<Quicklinks> {
         "Emulator screen size → width: ${size.width}, height: ${size.height}");
 
     Map<String, Map<String, String>> quickLinks = {
-      "Devcom": {
-        "ResoBin": "https://resobin.gymkhana.iitb.ac.in/login",
+      "DevCom": {
+        "Resobin": "https://resobin.gymkhana.iitb.ac.in/login",
         "Mess-I": "https://instamess.gymkhana.iitb.ac.in/dashboard/login",
         "ReaCH": "https://reach.gymkhana.iitb.ac.in/",
         "NewBee": "https://gymkhana.iitb.ac.in/newbee",
+        "DevCom Website":"https://devcom.gymkhana.iitb.ac.in/", 
       },
       "Academic": {
         "ASC": "https://asc.iitb.ac.in/",

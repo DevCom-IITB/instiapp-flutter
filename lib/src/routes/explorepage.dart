@@ -89,7 +89,7 @@ class _ExplorePageState extends State<ExplorePage> {
                         Radius.circular(Responsive.height(24, context)),
                   ),
                   image: DecorationImage(
-                    image: AssetImage('assets/explore/searchbar.png'),
+                    image: AssetImage('assets/explore/searchbackground.png'),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -302,7 +302,6 @@ class _ExplorePageState extends State<ExplorePage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Bodycard(context, "Food", "assets/explore/food.png"),
                           // Bodycard(context, "I.Bs", "assets/explore/ibs.png"),
                           InkWell(
                             onTap: () {
@@ -312,6 +311,7 @@ class _ExplorePageState extends State<ExplorePage> {
                             child: Bodycard(
                                 context, "I.B.s", "assets/explore/ibs.png"),
                           ),
+                          Bodycard(context, "Coming Soon!", "assets/explore/food_coming_soon.jpg"),
                         ],
                       ),
                       SizedBox(height: Responsive.height(100, context)),

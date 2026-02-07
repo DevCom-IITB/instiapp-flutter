@@ -828,91 +828,101 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           Navigator.of(context).pushNamed('/quicklinks');
         }
       },
-      child: Container(
-        height: responsive.h(94),
-        width: responsive.w(180),
-        decoration: BoxDecoration(
-            color: myConstants.instiappGrey,
-            borderRadius: BorderRadius.circular(12)),
-        child: Stack(
-          children: [
-            Positioned(
-                left: responsive.w(12),
-                top: responsive.h(12),
-                //right: 72,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      services_icon["Title"],
-                      style: TextStyle(
-                        color: const Color(0xFF0F1620),
-                        fontSize: responsive.sp(16),
-                        fontFamily: 'DM Sans',
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Text(
-                      services_icon["Subtitle"],
-                      style: TextStyle(
-                          color: Colors.grey[700],
-                          fontSize: responsive.sp(11),
-                          fontWeight: FontWeight.w500),
-                    )
-                  ],
-                )),
-            services_icon["Title"] == "Buy & Sell"
-                ? Positioned(
-                    bottom: responsive.h(12),
-                    left: responsive.w(12),
-                    child: Container(
-                      width: responsive.w(37),
-                      height: responsive.h(16),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: myConstants.instiappBlue),
-                      child: Center(
-                        child: Text(
-                          "New!",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: responsive.sp(10),
-                          ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          height: responsive.h(94),
+          width: responsive.w(180),
+          decoration: BoxDecoration(
+              color: myConstants.instiappGrey,
+              borderRadius: BorderRadius.circular(12)),
+          child: Stack(
+            clipBehavior: Clip.hardEdge,
+            children: [
+              Positioned(
+                  left: responsive.w(12),
+                  top: responsive.h(12),
+                  //right: 72,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        services_icon["Title"],
+                        style: TextStyle(
+                          color: const Color(0xFF0F1620),
+                          fontSize: responsive.sp(16),
+                          fontFamily: 'DM Sans',
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ))
-                : SizedBox(),
-            Positioned(
+                      Text(
+                        services_icon["Subtitle"],
+                        style: TextStyle(
+                            color: Colors.grey[700],
+                            fontSize: responsive.sp(11),
+                            fontWeight: FontWeight.w500),
+                      )
+                    ],
+                  )),
+              services_icon["Title"] == "Buy & Sell"
+                  ? Positioned(
+                      bottom: responsive.h(12),
+                      left: responsive.w(12),
+                      child: Container(
+                        width: responsive.w(37),
+                        height: responsive.h(16),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: myConstants.instiappBlue),
+                        child: Center(
+                          child: Text(
+                            "New!",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: responsive.sp(10),
+                            ),
+                          ),
+                        ),
+                      ))
+                  : SizedBox(),
+              Positioned(
                 right: services_icon["Positions"][2],
                 left: services_icon["Positions"][0],
                 bottom: services_icon["Positions"][3],
                 top: services_icon["Positions"][1],
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                child: SizedBox(
+                  width: services_icon["IconWidth"],
+                  height: services_icon["IconHeight"],
                   child: services_icon["Title"] == "Quick Links"
-                      ? Image.asset(services_icon["Path"])
+                      ? Image.asset(
+                          services_icon["Path"],
+                          fit: BoxFit.contain,
+                        )
                       : SvgPicture.asset(
                           services_icon["Path"],
+                          fit: BoxFit.contain,
                         ),
-                )),
-            // Positioned(
-            //     left: 95,
-            //     top: 12,
-            //     right: 0,
-            //     bottom: 0,
-            //     child: ClipRRect(
-            //       borderRadius: BorderRadius.circular(12),
-            //       child: SvgPicture.asset(
-            //         'assets/homepage/icons/star.svg',
-            //       ),
-            //     )),
-            // Positioned(
-            //     left: 122,
-            //     top: 31,
-            //     right: 0,
-            //     bottom: 0,
-            //     child: SvgPicture.asset('assets/homepage/icons/${path}.svg'))
-          ],
+                ),
+              ),
+              // Positioned(
+              //     left: 95,
+              //     top: 12,
+              //     right: 0,
+              //     bottom: 0,
+              //     child: ClipRRect(
+              //       borderRadius: BorderRadius.circular(12),
+              //       child: SvgPicture.asset(
+              //         'assets/homepage/icons/star.svg',
+              //       ),
+              //     )),
+              // Positioned(
+              //     left: 122,
+              //     top: 31,
+              //     right: 0,
+              //     bottom: 0,
+              //     child: SvgPicture.asset('assets/homepage/icons/${path}.svg'))
+            ],
+          ),
         ),
       ),
     );
@@ -1174,8 +1184,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
               "Title": "Buy & Sell",
               "Path": 'assets/homepage/icons/bns_new.svg',
               "Subtitle": "Deals made easy",
-              // "Icon Height": 75.67,
-              // "Icon Width": 90.8,
+              "Icon Height": responsive.h(75.67),
+              "Icon Width": responsive.w(90.8),
               "Positions": [97.0, 14.5, -11.0, -7.8, -7.81]
             }),
             SizedBox(width: responsive.w(8)),
@@ -1183,8 +1193,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
               "Title": "Maps",
               "Path": 'assets/homepage/icons/maps_new.svg',
               "Subtitle": "Navigate Insti",
-              // "Icon Height": 72.0,
-              // "Icon Width": 76.0,
+              "Icon Height": responsive.h(72.0),
+              "Icon Width": responsive.w(76.0),
               "Positions": [111.0, 28.0, -1.0, -6.0, 0.0]
             })
           ],
@@ -1196,9 +1206,9 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             services("Blogs", "blogs_new", {
               "Title": "Blogs",
               "Path": 'assets/homepage/icons/blogs_new.svg',
-              "Subtitle": "",
-              // "Icon Height": 77.54,
-              // "Icon Width": 72.0,
+              "Subtitle": "Updates",
+              "Icon Height": responsive.h(77.54),
+              "Icon Width": responsive.w(72.0),
               "Positions": [107.46, 23.0, -1.0, -1.0, 0.0]
             }),
             SizedBox(width: responsive.w(8)),
@@ -1206,8 +1216,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
               "Title": "Quick Links",
               "Path": 'assets/homepage/images/quicklinks_new.png',
               "Subtitle": "Useful Insti Links",
-              // "Icon Height": 77.7,
-              // "Icon Width": 80.18,
+              "Icon Height": responsive.h(77.7),
+              "Icon Width": responsive.w(80.18),
               "Positions": [107.72, 16.52, -6.0, -6.5, 4.71]
             })
           ],
@@ -1380,8 +1390,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                     color: myConstants.instiappGrey,
                     border: Border.all(
                         color: Color(0xFF7E8287), width: responsive.h(1))),
-                padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(10),
-                    responsive.w(16), responsive.h(10)),
+                padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(5),
+                    responsive.w(7), responsive.h(3)),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1392,10 +1402,10 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                       style: TextStyle(
                         color: Color(0xCC0F1620),
                         fontWeight: FontWeight.w500,
-                        fontSize: responsive.w(12.5),
+                        fontSize: responsive.w(13),
                       ),
                     ),
-                    SizedBox(width: responsive.w(4)),
+                    SizedBox(width: 7),
                     Icon(
                       Icons.keyboard_arrow_down,
                       size: responsive.w(20),
@@ -1496,19 +1506,29 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                         width: responsive.w(120),
                         decoration: BoxDecoration(
                           color: selectedMeal == i
-                              ? myConstants.instiappBlue
+                              ? myConstants.instiappGrey
                               : myConstants.instiappGrey,
                           borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: selectedMeal == i
+                                ? myConstants
+                                    .instiappBlue // or any border color when selected
+                                : myConstants
+                                    .instiappGrey, // border color when not selected
+                            width: 2, // border thickness
+                          ),
                         ),
                         child: Center(
                           child: Text(
                             meals[i],
                             style: TextStyle(
                               color: selectedMeal == i
-                                  ? Colors.white
+                                  ? myConstants.instiappBlue
                                   : Color(0xCC0F1620),
                               fontFamily: 'DM Sans',
-                              fontWeight: FontWeight.w500,
+                              fontWeight: selectedMeal == i
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
                               fontSize: responsive.sp(14),
                             ),
                           ),
