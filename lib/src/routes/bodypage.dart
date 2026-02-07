@@ -123,7 +123,6 @@ class _BodyPageState extends State<BodyPage> {
             } else {
               url = body?.bodyWebsiteURL;
             }
-            // final url = body?.bodyWebsiteURL;
             if (url != null && url.isNotEmpty) {
               final uri = Uri.parse(url);
               if (await canLaunchUrl(uri)) {
@@ -131,7 +130,11 @@ class _BodyPageState extends State<BodyPage> {
                   uri,
                   mode: LaunchMode.externalApplication,
                 );
+              } else {
+                showlinknotavailabel(context);
               }
+            } else {
+              showlinknotavailabel(context);
             }
           },
           child: Container(
@@ -142,6 +145,36 @@ class _BodyPageState extends State<BodyPage> {
           ),
         ),
       ],
+    );
+  }
+
+  void showlinknotavailabel(BuildContext context) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    final r = Responsive(context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        elevation: 10,
+        duration: const Duration(milliseconds: 800),
+        backgroundColor: const Color(0xFF1E1E1E),
+        margin: EdgeInsets.symmetric(
+          horizontal: r.w(16),
+          vertical: r.h(14),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(r.h(24)),
+        ),
+        content: Text(
+                'Link not uploaded by the body',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: r.h(15),
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'DM Sans',
+                ),
+              ),
+      ),
     );
   }
 
@@ -236,27 +269,8 @@ class _BodyPageState extends State<BodyPage> {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      //backgroundColor: Colors.blue[300],
       backgroundColor: Color(0xFFF6F6F6),
       key: _scaffoldKey,
-      // drawer: NavDrawer(),
-      // bottomNavigationBar: MyBottomAppBar(
-      //   child: new Row(
-      //     mainAxisSize: MainAxisSize.max,
-      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //     children: <Widget>[
-      //       IconButton(
-      //         icon: Icon(
-      //           Icons.menu_outlined,
-      //           semanticLabel: "Show bottom sheet",
-      //         ),
-      //         onPressed: () {
-      //           _scaffoldKey.currentState?.openDrawer();
-      //         },
-      //       ),
-      //     ],
-      //   ),
-      // ),
       body: body == null
           ? Center(
               child: CircularProgressIndicatorExtended(
@@ -274,9 +288,8 @@ class _BodyPageState extends State<BodyPage> {
                     });
                   },
                   child: Container(
-                    child: ListView(
-                        padding: EdgeInsets.zero, // Add padding for the button
-                        children: <Widget>[
+                    child: Column(                        
+                        children:[
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -557,275 +570,330 @@ class _BodyPageState extends State<BodyPage> {
                               )
                             ],
                           ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: responsive.h(10),
-                                horizontal: responsive.w(16)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // const SizedBox(height: 30),
-                                // Row(
-                                //   crossAxisAlignment: CrossAxisAlignment.start,
-                                //   children: [
-                                //     Expanded(
-                                //       child: Column(
-                                //         crossAxisAlignment:
-                                //             CrossAxisAlignment.start,
-                                //         children: [
-                                //           Text(
-                                //             body?.bodyName ?? "",
-                                //             style: const TextStyle(
-                                //               fontSize: 24,
-                                //               fontWeight: FontWeight.bold,
-                                //               fontFamily: 'DM Sans',
-                                //             ),
-                                //           ),
-                                //           const SizedBox(height: 6),
-                                //           Text(
-                                //             body?.bodyShortDescription ?? "",
-                                //             style: const TextStyle(
-                                //               fontSize: 18,
-                                //               color: Colors.black54,
-                                //             ),
-                                //           ),
-                                //         ],
-                                //       ),
-                                //     ),
-                                //   ],
-                                // ),
-                                DefaultTabController(
-                                  length: 3,
-                                  child: Column(
-                                    children: [
-                                      Stack(
-                                        children: [
-                                          Positioned(
-                                            bottom: 0,
-                                            left: 0,
-                                            right: 0,
-                                            child: Container(
-                                              height: responsive.h(1.5),
-                                              color: Color(
-                                                  0xFFD0D5DD), // light grey line
-                                            ),
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: responsive.h(10),
+                                  horizontal: responsive.w(16)),
+                              child: DefaultTabController(
+                                length: 3,
+                                child: Column(
+                                  children: [
+                                    Stack(
+                                      children: [
+                                        Positioned(
+                                          bottom: 0,
+                                          left: 0,
+                                          right: 0,
+                                          child: Container(
+                                            height: responsive.h(1.5),
+                                            color: Color(
+                                                0xFFD0D5DD), // light grey line
                                           ),
-                                          TabBar(
-                                            indicatorColor:
-                                                myConstants.instiappBlue,
-                                            labelColor:
-                                                myConstants.instiappBlue,
-                                            unselectedLabelColor:
-                                                Colors.black54,
-                                            labelStyle: TextStyle(
-                                              fontSize: responsive.sp(16),
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: 'DM Sans',
-                                            ),
-                                            tabs: const [
-                                              Tab(text: 'About'),
-                                              Tab(text: 'Events'),
-                                              Tab(text: 'People'),
-                                            ],
-                                            onTap: (index) {
-                                              Future.delayed(
-                                                  const Duration(
-                                                      milliseconds: 150), () {
-                                                if (!mounted) return;
-                                                setState(() {
-                                                  showLinks = false;
-                                                });
+                                        ),
+                                        TabBar(
+                                          indicatorColor:
+                                              myConstants.instiappBlue,
+                                          labelColor:
+                                              myConstants.instiappBlue,
+                                          unselectedLabelColor:
+                                              Colors.black54,
+                                          labelStyle: TextStyle(
+                                            fontSize: responsive.sp(16),
+                                            fontWeight: FontWeight.w600,
+                                            fontFamily: 'DM Sans',
+                                          ),
+                                          tabs: const [
+                                            Tab(text: 'About'),
+                                            Tab(text: 'Events'),
+                                            Tab(text: 'People'),
+                                          ],
+                                          onTap: (index) {
+                                            Future.delayed(
+                                                const Duration(
+                                                    milliseconds: 150), () {
+                                              if (!mounted) return;
+                                              setState(() {
+                                                showLinks = false;
                                               });
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: responsive.h(410),
-                                        child: Builder(
-                                          builder: (context) {
-                                            final people = body?.bodyRoles
-                                                    ?.expand((r) =>
-                                                        (r.roleUsersDetail ??
-                                                                [])
-                                                            .map((u) => u
-                                                              ..currentRole =
-                                                                  r.roleName))
-                                                    .toList() ??
-                                                [];
-                                            return TabBarView(
-                                              children: [
-                                                // About Tab
-                                                SingleChildScrollView(
-                                                  padding: EdgeInsets.only(
-                                                      top: responsive.h(20)),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      CommonHtml(
-                                                        data:
-                                                            body?.bodyDescription ??
-                                                                "",
-                                                        defaultTextStyle: (theme
-                                                                    .textTheme
-                                                                    .titleMedium ??
-                                                                TextStyle())
-                                                            .copyWith(
-                                                                fontSize:
-                                                                    responsive
-                                                                        .sp(24)),
-                                                      ),
-                                                      body?.bodyDescription != null && body?.bodyDescription != ""
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    Expanded(
+                                      child: Builder(
+                                        builder: (context) {
+                                          final people = body?.bodyRoles
+                                                  ?.expand((r) =>
+                                                      (r.roleUsersDetail ??
+                                                              [])
+                                                          .map((u) => u
+                                                            ..currentRole =
+                                                                r.roleName))
+                                                  .toList() ??
+                                              [];
+                                          return TabBarView(
+                                            children: [
+                                              // About Tab
+                                              SingleChildScrollView(
+                                                padding: EdgeInsets.only(
+                                                    top: responsive.h(20)),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .start,
+                                                  children: [
+                                                    CommonHtml(
+                                                      data:
+                                                          body?.bodyDescription ??
+                                                              "",
+                                                      defaultTextStyle: (theme
+                                                                  .textTheme
+                                                                  .titleMedium ??
+                                                              TextStyle())
+                                                          .copyWith(
+                                                              fontSize:
+                                                                  responsive
+                                                                      .sp(24)),
+                                                    ),
+                                                    body?.bodyDescription !=
+                                                                null &&
+                                                            body?.bodyDescription !=
+                                                                ""
                                                         ? CommonHtml(
-                                                            data: body?.bodyDescription ?? "",
-                                                            defaultTextStyle: (theme.textTheme.titleMedium ?? TextStyle())
-                                                                .copyWith(fontSize: responsive.sp(24)),
+                                                            data:
+                                                                body?.bodyDescription ??
+                                                                    "",
+                                                            defaultTextStyle: (theme
+                                                                        .textTheme
+                                                                        .titleMedium ??
+                                                                    TextStyle())
+                                                                .copyWith(
+                                                                    fontSize:
+                                                                        responsive
+                                                                            .sp(24)),
                                                           )
                                                         : Shimmer.fromColors(
-                                                            baseColor: Colors.grey[300]!,
-                                                            highlightColor: Colors.grey[100]!,
+                                                            baseColor: Colors
+                                                                .grey[300]!,
+                                                            highlightColor:
+                                                                Colors.grey[
+                                                                    100]!,
                                                             child: Column(
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: List.generate(4, (index) {
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: List
+                                                                  .generate(4,
+                                                                      (index) {
                                                                 return Padding(
-                                                                  padding: EdgeInsets.only(bottom: responsive.h(8)),
-                                                                  child: Container(
-                                                                    width: index == 3 
-                                                                        ? responsive.w(200) 
-                                                                        : double.infinity,
-                                                                    height: responsive.h(16),
-                                                                    decoration: BoxDecoration(
-                                                                      color: Colors.white,
-                                                                      borderRadius: BorderRadius.circular(4),
+                                                                  padding: EdgeInsets.only(
+                                                                      bottom:
+                                                                          responsive.h(8)),
+                                                                  child:
+                                                                      Container(
+                                                                    width: index ==
+                                                                            3
+                                                                        ? responsive.w(
+                                                                            200)
+                                                                        : double
+                                                                            .infinity,
+                                                                    height: responsive
+                                                                        .h(16),
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(4),
                                                                     ),
                                                                   ),
                                                                 );
                                                               }),
                                                             ),
                                                           ),
-                                                    SizedBox(height: responsive.h(20.0)),
-
-                                                      // Photo Album Section
-                                                        Text(
-                                                          'Photo Album',
-                                                          style: TextStyle(
-                                                            fontSize: responsive
-                                                                .sp(16),
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                            fontFamily:
-                                                                'DM Sans',
-                                                          ),
-                                                        ),
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            if (photoAlbumUrls !=
-                                                                    null &&
-                                                                photoAlbumUrls
-                                                                    .isNotEmpty) {
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          ExploreImagePreview(
-                                                                    imageUrls:
-                                                                        photoAlbumUrls,
+                                                    SizedBox(
+                                                        height: responsive
+                                                            .h(20.0)),
+                                      
+                                                    // Photo Album Section
+                                                    Text(
+                                                      'Photo Album',
+                                                      style: TextStyle(
+                                                        fontSize:
+                                                            responsive.sp(16),
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        fontFamily: 'DM Sans',
+                                                      ),
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        if (photoAlbumUrls !=
+                                                                null &&
+                                                            photoAlbumUrls
+                                                                .isNotEmpty) {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      ExploreImagePreview(
+                                                                imageUrls:
+                                                                    photoAlbumUrls,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }
+                                                      },
+                                                      child: (photoAlbumUrls !=
+                                                                  null &&
+                                                              photoAlbumUrls
+                                                                  .isNotEmpty)
+                                                          ? _buildImages(
+                                                              photoAlbumUrls)
+                                                          : Center(
+                                                              child: Column(
+                                                              children: [
+                                                                SvgPicture
+                                                                    .asset(
+                                                                  'assets/explore/Social.svg',
+                                                                  width: responsive
+                                                                      .w(380),
+                                                                  height: responsive
+                                                                      .h(190),
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                ),
+                                                                Text(
+                                                                  'No Photos Uploaded',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        responsive
+                                                                            .sp(16),
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    fontFamily:
+                                                                        'DM Sans',
                                                                   ),
                                                                 ),
-                                                              );
-                                                            }
-                                                          },
-                                                          child: (photoAlbumUrls !=
-                                                                      null &&
-                                                                  photoAlbumUrls
-                                                                      .isNotEmpty)
-                                                              ? _buildImages(
-                                                                  photoAlbumUrls)
-                                                              : Center(
-                                                                child: Column(
-                                                                  children: [
-                                                                    SvgPicture.asset(
-                                                                    'assets/explore/Social.svg',
-                                                                    width: responsive.w(380),
-                                                                    height: responsive.h(190),
-                                                                    fit: BoxFit.cover,),
-                                                                    Text(
-                                                                    'No Photos Uploaded',
-                                                                      style: TextStyle(
-                                                                        fontSize: responsive
-                                                                            .sp(16),
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
-                                                                        fontFamily:
-                                                                            'DM Sans',
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                )
-                                                              ),
-                                                        ),
-                                                      // Container(
-                                                      //   height: 190,
-                                                      //   width: 380,
-                                                      // child: ListView.separated(
-                                                      //   scrollDirection:
-                                                      //       Axis.horizontal,
-                                                      //   itemCount: 5,
-                                                      //   separatorBuilder: (_, __) =>
-                                                      //       const SizedBox(
-                                                      //           width: 8),
-                                                      //   itemBuilder:
-                                                      //       (context, index) {
-                                                      //     return Container(
-                                                      //       width: 100,
-                                                      //       decoration:
-                                                      //           BoxDecoration(
-                                                      //         color: Colors.grey
-                                                      //             .shade300,
-                                                      //         borderRadius:
-                                                      //             BorderRadius
-                                                      //                 .circular(
-                                                      //                     8),
-                                                      //       ),
-                                                      //     );
-                                                      //   },
-                                                      // ),
-                                                      // ),
-
-                                                      // Part Of Section
-                                                      // const Text(
-                                                      //   'Part of',
-                                                      //   style: TextStyle(
-                                                      //     fontSize: 20,
-                                                      //     fontWeight:
-                                                      //         FontWeight.w600,
-                                                      //     fontFamily: 'DM Sans',
-                                                      //   ),
-                                                      // ),
-                                                      // const SizedBox(height: 12),
-                                                      // ...(body?.bodyParents
-                                                      //         ?.map((b) =>
-                                                      //             _buildBodyTile(
-                                                      //                 bloc,
-                                                      //                 theme
-                                                      //                     .textTheme,
-                                                      //                 b))
-                                                      //         .toList() ??
-                                                      //     [])
-                                                    ],
-                                                  ),
+                                                              ],
+                                                            )),
+                                                    ),
+                                                    // Container(
+                                                    //   height: 190,
+                                                    //   width: 380,
+                                                    // child: ListView.separated(
+                                                    //   scrollDirection:
+                                                    //       Axis.horizontal,
+                                                    //   itemCount: 5,
+                                                    //   separatorBuilder: (_, __) =>
+                                                    //       const SizedBox(
+                                                    //           width: 8),
+                                                    //   itemBuilder:
+                                                    //       (context, index) {
+                                                    //     return Container(
+                                                    //       width: 100,
+                                                    //       decoration:
+                                                    //           BoxDecoration(
+                                                    //         color: Colors.grey
+                                                    //             .shade300,
+                                                    //         borderRadius:
+                                                    //             BorderRadius
+                                                    //                 .circular(
+                                                    //                     8),
+                                                    //       ),
+                                                    //     );
+                                                    //   },
+                                                    // ),
+                                                    // ),
+                                      
+                                                    // Part Of Section
+                                                    // const Text(
+                                                    //   'Part of',
+                                                    //   style: TextStyle(
+                                                    //     fontSize: 20,
+                                                    //     fontWeight:
+                                                    //         FontWeight.w600,
+                                                    //     fontFamily: 'DM Sans',
+                                                    //   ),
+                                                    // ),
+                                                    // const SizedBox(height: 12),
+                                                    // ...(body?.bodyParents
+                                                    //         ?.map((b) =>
+                                                    //             _buildBodyTile(
+                                                    //                 bloc,
+                                                    //                 theme
+                                                    //                     .textTheme,
+                                                    //                 b))
+                                                    //         .toList() ??
+                                                    //     [])
+                                                    SizedBox(height: responsive.h(45))
+                                                  ],
                                                 ),
-
-                                                // Events Tab
-                                                body?.bodyEvents == null ||
-                                                        body!
-                                                            .bodyEvents!.isEmpty
+                                              ),
+                                      
+                                              // Events Tab
+                                              body?.bodyEvents == null ||
+                                                      body!
+                                                          .bodyEvents!.isEmpty
+                                                  ? const Center(
+                                                      child: Text(
+                                                          "No events yet."))
+                                                  : ListView(
+                                                      padding: EdgeInsets
+                                                          .symmetric(
+                                                              vertical:
+                                                                  responsive
+                                                                      .h(16)),
+                                                      children: [
+                                                        // Padding(
+                                                        //   padding:
+                                                        //       const EdgeInsets
+                                                        //           .symmetric(
+                                                        //           horizontal:
+                                                        //               28.0,
+                                                        //           vertical:
+                                                        //               8.0),
+                                                        //   child: Text(
+                                                        //     "Events",
+                                                        //     style: theme
+                                                        //         .textTheme
+                                                        //         .headlineSmall,
+                                                        //   ),
+                                                        // ),
+                                                        ...body!.bodyEvents!
+                                                            .map((e) =>
+                                                                _buildEventTile(
+                                                                    bloc,
+                                                                    theme,
+                                                                    e)),
+                                                        SizedBox(
+                                                            height: responsive
+                                                                .h(50))
+                                                      ],
+                                                    ),
+                                      
+                                              // People Tab
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Future.delayed(
+                                                      const Duration(
+                                                          milliseconds: 150),
+                                                      () {
+                                                    if (!mounted) return;
+                                                    setState(() {
+                                                      showLinks = false;
+                                                    });
+                                                  });
+                                                },
+                                                child: people.isEmpty
                                                     ? const Center(
                                                         child: Text(
-                                                            "No events yet."))
+                                                            "No people listed."))
                                                     : ListView(
                                                         padding: EdgeInsets
                                                             .symmetric(
@@ -833,110 +901,31 @@ class _BodyPageState extends State<BodyPage> {
                                                                     responsive
                                                                         .h(16)),
                                                         children: [
-                                                          // Padding(
-                                                          //   padding:
-                                                          //       const EdgeInsets
-                                                          //           .symmetric(
-                                                          //           horizontal:
-                                                          //               28.0,
-                                                          //           vertical:
-                                                          //               8.0),
-                                                          //   child: Text(
-                                                          //     "Events",
-                                                          //     style: theme
-                                                          //         .textTheme
-                                                          //         .headlineSmall,
-                                                          //   ),
-                                                          // ),
-                                                          ...body!.bodyEvents!
-                                                              .map((e) =>
-                                                                  _buildEventTile(
+                                                          ...people
+                                                              .map((u) =>
+                                                                  _buildUserTile(
                                                                       bloc,
                                                                       theme,
-                                                                      e)),
+                                                                      u))
+                                                              .toList(),
                                                           SizedBox(
-                                                              height: responsive
-                                                                  .h(50))
+                                                              height:
+                                                                  responsive
+                                                                      .h(50))
                                                         ],
                                                       ),
-
-                                                // People Tab
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Future.delayed(
-                                                        const Duration(
-                                                            milliseconds: 150),
-                                                        () {
-                                                      if (!mounted) return;
-                                                      setState(() {
-                                                        showLinks = false;
-                                                      });
-                                                    });
-                                                  },
-                                                  child: people.isEmpty
-                                                      ? const Center(
-                                                          child: Text(
-                                                              "No people listed."))
-                                                      : ListView(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  vertical:
-                                                                      responsive
-                                                                          .h(16)),
-                                                          children: [
-                                                            ...people
-                                                                .map((u) =>
-                                                                    _buildUserTile(
-                                                                        bloc,
-                                                                        theme,
-                                                                        u))
-                                                                .toList(),
-                                                            SizedBox(
-                                                                height:
-                                                                    responsive
-                                                                        .h(50))
-                                                          ],
-                                                        ),
-                                                )
-                                              ],
-                                            );
-                                          },
-                                        ),
+                                              )
+                                            ],
+                                          );
+                                        },
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                // const SizedBox(height: 10),
-                                // const Text(
-                                //   'Photo Album',
-                                //   style: TextStyle(
-                                //     fontSize: 20,
-                                //     fontWeight: FontWeight.w600,
-                                //     fontFamily: 'DM Sans',
-                                //   ),
-                                // ),
-                                // const SizedBox(height: 12),
-                                // SizedBox(
-                                //   height: 100,
-                                //   child: ListView.separated(
-                                //     scrollDirection: Axis.horizontal,
-                                //     itemCount: 5,
-                                //     separatorBuilder: (_, __) =>
-                                //         const SizedBox(width: 8),
-                                //     itemBuilder: (context, index) {
-                                //       return Container(
-                                //         width: 100,
-                                //         decoration: BoxDecoration(
-                                //           color: Colors.grey.shade300,
-                                //           borderRadius: BorderRadius.circular(8),
-                                //         ),
-                                //       );
-                                //     },
-                                //   ),
-                                // ),
-                              ],
+                              ),
                             ),
-                          )
+                          ),
+                          SizedBox(height: responsive.h(32)),
                         ]
                         // Events
                         // ..addAll(_nonEmptyListWithHeaderOrEmpty(
@@ -1020,88 +1009,71 @@ class _BodyPageState extends State<BodyPage> {
                         right: responsive.w(16)),
                     child: Stack(
                       children: [
-                          Align(
+                        Align(
                           alignment: Alignment.bottomCenter,
-                            child: AnimatedContainer(
-                              duration: Duration(milliseconds: 300),
-                              height: showLinks ? responsive.h(244) : 0,
-                              child: Container(
-                                margin: EdgeInsets.only(
-                                    bottom: responsive.h(32)), // To avoid FAB
-                                padding: EdgeInsets.fromLTRB(
-                                    responsive.w(20),
-                                    responsive.h(16),
-                                    responsive.w(20),
-                                    responsive.h(0)),
-                                // height: responsive.h(256),
-                                width: responsive.w(380),
-                                decoration: BoxDecoration(
-                                    color: myConstants.instiappDark,
-                                    borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20))),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Quick Links",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: responsive.sp(18),
-                                              fontWeight: FontWeight.w700),
-                                        ),
-                                        // GestureDetector(
-                                        //   onTap: () {
-                                        //     Future.delayed(
-                                        //         const Duration(milliseconds: 150), () {
-                                        //       if (!mounted) return;
-                                        //       setState(() {
-                                        //         showLinks = false;
-                                        //       });
-                                        //     });
-                                        //   },
-                                        //   child: Container(
-                                        //     height: responsive.h(21),
-                                        //     width: responsive.w(21),
-                                        //     child: SvgPicture.asset(
-                                        //         'assets/explore_new/x.svg'),
-                                        //   ),
-                                        // )
-                                      ],
-                                    ),
-                                    SizedBox(height: responsive.h(16)),
-                                    Dash(
-                                      direction: Axis.horizontal,
-                                      length: responsive.w(339),
-                                      dashLength: 6,
-                                      dashGap: 7,
-                                      dashColor: Colors.white.withOpacity(0.10),
-                                    ),
-                                    SizedBox(height: responsive.h(16)),
-                                    for (int i = 0; i <= 2; i++) ...[
-                                      clubQuickLinkContainer(
-                                          linkIcon[i], linkLabel[i]),
-                                      if (i != 3)
-                                        SizedBox(height: responsive.h(12))
-                                    ]
-                                  ],
-                                ),
+                          child: AnimatedContainer(
+                            duration: Duration(milliseconds: 300),
+                            height: showLinks ? responsive.h(244) : 0,
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                  bottom: responsive.h(32)), // To avoid FAB
+                              padding: EdgeInsets.fromLTRB(
+                                  responsive.w(20),
+                                  responsive.h(16),
+                                  responsive.w(20),
+                                  responsive.h(0)),
+                              // height: responsive.h(256),
+                              width: responsive.w(380),
+                              decoration: BoxDecoration(
+                                  color: myConstants.instiappDark,
+                                  borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(20))),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Quick Links",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: responsive.sp(18),
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: responsive.h(16)),
+                                  Dash(
+                                    direction: Axis.horizontal,
+                                    length: responsive.w(339),
+                                    dashLength: 6,
+                                    dashGap: 7,
+                                    dashColor: Colors.white.withOpacity(0.10),
+                                  ),
+                                  SizedBox(height: responsive.h(16)),
+                                  for (int i = 0; i <= 2; i++) ...[
+                                    clubQuickLinkContainer(
+                                        linkIcon[i], linkLabel[i]),
+                                    if (i != 3)
+                                      SizedBox(height: responsive.h(12))
+                                  ]
+                                ],
                               ),
                             ),
                           ),
+                        ),
                         Align(
                           alignment: Alignment.bottomCenter,
                           child: Container(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: responsive.w(6)),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: responsive.w(6)),
                             height: responsive.h(64),
                             width: responsive.w(380),
                             decoration: BoxDecoration(
-                                color: myConstants.instiappDark,
-                                borderRadius: BorderRadius.circular(50),
-                                ),
+                              color: myConstants.instiappDark,
+                              borderRadius: BorderRadius.circular(50),
+                            ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               //mainAxisAlignment: MainAxisAlignment.center,
@@ -1121,7 +1093,8 @@ class _BodyPageState extends State<BodyPage> {
                                     width: responsive.w(52),
                                     decoration: BoxDecoration(
                                         color: Color(0xFF2B4E83),
-                                        borderRadius: BorderRadius.circular(50)),
+                                        borderRadius:
+                                            BorderRadius.circular(50)),
                                     child: Container(
                                       height: responsive.h(24),
                                       width: responsive.w(24),
@@ -1148,7 +1121,8 @@ class _BodyPageState extends State<BodyPage> {
                                         padding: EdgeInsets.symmetric(
                                             vertical: responsive.h(14)),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(50),
+                                          borderRadius:
+                                              BorderRadius.circular(50),
                                         ),
                                       ),
                                       onPressed: () async {

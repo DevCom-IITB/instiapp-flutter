@@ -344,8 +344,8 @@ class _BlogPageState extends State<BlogPage> {
                                   onTap: () {
                                     _pageController?.animateToPage(
                                       0,
-                                      duration: Duration(milliseconds: 10),
-                                      curve: Curves.fastOutSlowIn,
+                                      duration: Duration(milliseconds: 1),
+                                      curve: Curves.linear,
                                     );
                                   },
                                   child: Padding(
@@ -386,8 +386,8 @@ class _BlogPageState extends State<BlogPage> {
                                   onTap: () {
                                     _pageController?.animateToPage(
                                       1,
-                                      duration: Duration(milliseconds: 300),
-                                      curve: Curves.easeInOut,
+                                      duration: Duration(milliseconds:1),
+                                      curve: Curves.linear,
                                     );
                                   },
                                   child: Padding(

@@ -622,7 +622,7 @@ class _EventPageState extends State<EventPage> {
                                   'assets/feed/share.svg',
                                   height: Responsive.height(24, context),
                                   width: Responsive.width(24, context),
-                                  fit: BoxFit.none,
+                                  fit: BoxFit.fill,
                                 ),
                                 // onPressed: () async {
                                 //   await Share.share(

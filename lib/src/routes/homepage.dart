@@ -101,13 +101,13 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     if (meal == null || meal.trim().isEmpty) {
       return 'No menu uploaded';
     }
-    
+
     final formatted = meal
         .split(RegExp(r'[\n,]'))
         .map((item) => item.trim())
         .where((item) => item.isNotEmpty)
         .join(' • ');
-    
+
     return formatted.isEmpty ? 'No menu uploaded' : formatted;
   }
 
@@ -197,7 +197,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
     // Initialize QR stripe animation controller
     _qrStripeController = AnimationController(
-      duration: const Duration(milliseconds: 5000),
+      duration: const Duration(milliseconds: 2000),
       vsync: this,
     )..repeat();
 
@@ -393,7 +393,6 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           children: [
             // Main content with swipe navigation
             PageView(
-              
               controller: _pageController,
               onPageChanged: (index) {
                 FocusScope.of(context).unfocus();
@@ -424,7 +423,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: EdgeInsets.only(bottom: responsive.h(5+ main_app.systemBottomPadding)),
+                padding: EdgeInsets.only(
+                    bottom: responsive.h(5 + main_app.systemBottomPadding)),
                 child: InstiBottomNavBar(
                   items: const [
                     NavBarItem(
@@ -626,7 +626,9 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  ...hostels.where((h) => h.shortName != 'qip').map((h) {
+                                  ...hostels
+                                      .where((h) => h.shortName != 'qip')
+                                      .map((h) {
                                     final value = h.shortName!;
                                     final name = (value == 'tansa')
                                         ? value
@@ -1221,119 +1223,127 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }) {
     final responsive =
         Responsive(context, bottomPadding: main_app.systemBottomPadding);
-    return Stack(
+    return Stack(      
       children: [
-        Center(
-          child: SvgPicture.asset('assets/homepage/icons/bigborder.svg',
-              height: responsive.h(380),
-              width: responsive.w(382),
-              fit: BoxFit.fill),
+        SizedBox(
+          height: responsive.h(382),
+          width: double.infinity,
+          child: SvgPicture.asset(
+            'assets/homepage/icons/bigborder.svg',
+            width: double.infinity,
+            fit: BoxFit.fill,
+          ),
         ),
+        // FULL WIDTH BORDER BACKGROUND
+        // CONTENT OVER THE BORDER (no side margin shrink)
         Container(
-          width: responsive.w(380),
-          height: responsive.h(380),
+          height: responsive.h(382),
+          width: double.infinity,
           child: Padding(
-            padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(16),
-                responsive.w(16), responsive.h(0)),
+            padding: EdgeInsets.only(
+              top: responsive.h(16),
+              bottom: responsive.h(16),
+            ),
             child: Column(
-              //mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        generateQR();
-                      },
-                      child: Container(
-                        width: responsive.h(50),
-                        height: responsive.h(50),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFEBEBEB),
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        child: Center(
-                          child: SizedBox(
-                            width: responsive.h(24),
-                            height: responsive.h(24),
-                            child: SvgPicture.asset(
-                                'assets/homepage/icons/refresh.svg'),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      'My QR',
-                      style: TextStyle(
-                        color: myConstants.instiappBlue,
-                        fontSize: responsive.sp(20),
-                        fontFamily: 'DM Sans',
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          showQR = false;
-                        });
-                      },
-                      child: Container(
-                        width: responsive.h(50),
-                        height: responsive.h(50),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFEBEBEB),
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        child: Center(
-                          child: SizedBox(
-                            width: responsive.h(29),
-                            height: responsive.h(29),
-                            child: SvgPicture.asset(
-                                'assets/homepage/icons/arrow_down.svg'),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                // TOP BAR
                 Padding(
-                  padding: EdgeInsets.only(
-                      top: responsive.h(26), bottom: responsive.h(28)),
-                  child: Container(
-                    width: responsive.w(197),
-                    height: responsive.h(197),
-                    child: loading
-                        ? Center(child: CircularProgressIndicator())
-                        : error
-                            ? Center(child: Text("Please log in to view QR"))
-                            : QrImageView(
-                                data: qrString,
-                                size: responsive.w(197),
-                                embeddedImage: AssetImage(
-                                    'assets/buynsell/DevcomLogo.png'),
-                              ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: responsive.w(16),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _iconButton(
+                        responsive,
+                        'assets/homepage/icons/refresh.svg',
+                        generateQR,
+                      ),
+                      Text(
+                        'My QR',
+                        style: TextStyle(
+                          color: myConstants.instiappBlue,
+                          fontSize: responsive.sp(20),
+                          fontFamily: 'DM Sans',
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      _iconButton(
+                        responsive,
+                        'assets/homepage/icons/arrow_down.svg',
+                        () {
+                          setState(() => showQR = false);
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                Center(
+
+                SizedBox(height: responsive.h(26)),
+
+                // QR BOX
+                SizedBox(
+                  width: responsive.w(197),
+                  height: responsive.h(197),
                   child: loading
-                      ? CircularProgressIndicator()
+                      ? const Center(child: CircularProgressIndicator())
                       : error
-                          ? SizedBox()
-                          : Text(
-                              'Mess • Gym • Swimming & more...',
-                              style: TextStyle(
-                                color: const Color(0xFF15202D),
-                                fontSize: responsive.sp(14),
-                                fontFamily: 'DM Sans',
-                                fontWeight: FontWeight.w500,
+                          ? const Center(
+                              child: Text("Please log in to view QR"))
+                          : QrImageView(
+                              data: qrString,
+                              size: responsive.w(197),
+                              embeddedImage: const AssetImage(
+                                'assets/buynsell/DevcomLogo.png',
                               ),
                             ),
                 ),
+
+                SizedBox(height: responsive.h(28)),
+
+                // FOOTER TEXT
+                if (!loading && !error)
+                  Text(
+                    'Mess • Gym • Swimming & more...',
+                    style: TextStyle(
+                      color: const Color(0xFF15202D),
+                      fontSize: responsive.sp(14),
+                      fontFamily: 'DM Sans',
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
               ],
             ),
           ),
-        )
+        ),
       ],
+    );
+  }
+
+  Widget _iconButton(
+    dynamic responsive,
+    String asset,
+    VoidCallback onTap,
+  ) {
+    return InkWell(
+      onTap: onTap,
+      customBorder: const CircleBorder(),
+      child: Container(
+        // Add .0 to ensure these are doubles
+        width: responsive.h(50.0),
+        height: responsive.h(50.0),
+        decoration: const BoxDecoration(
+          color: Color(0xFFEBEBEB),
+          shape: BoxShape.circle,
+        ),
+        child: Center(
+          child: SvgPicture.asset(
+            asset,
+            width: responsive.h(24.0),
+            height: responsive.h(24.0),
+          ),
+        ),
+      ),
     );
   }
 
@@ -1342,7 +1352,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     bool isLoading = false,
     bool isRefreshing = false,
   }) {
-    final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
+    final responsive =
+        Responsive(context, bottomPadding: main_app.systemBottomPadding);
     return Column(
       children: [
         Row(
@@ -1677,8 +1688,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                 Container(
                   height: responsive.h(96),
                   width: responsive.w(368),
-                  // padding: EdgeInsets.fromLTRB(responsive.w(16),
-                  //     responsive.h(0), responsive.w(16), responsive.h(0)),
+                  padding: EdgeInsets.fromLTRB(responsive.w(16),
+                      responsive.h(0), responsive.w(16), responsive.h(0)),
                   decoration: ShapeDecoration(
                     color: myConstants.instiappBlue,
                     shape: RoundedRectangleBorder(
@@ -1707,41 +1718,39 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                           },
                         ),
                         // Content Row
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: responsive.w(16)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(
-                                    'My QR',
-                                    style: TextStyle(
-                                      color: myConstants.instiappWhite,
-                                      fontSize: responsive.sp(20),
-                                      fontWeight: FontWeight.w700,
-                                    ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                  'My QR',
+                                  style: TextStyle(
+                                    color: myConstants.instiappWhite,
+                                    fontSize: responsive.sp(20),
+                                    fontWeight: FontWeight.w700,
                                   ),
-                                  Text(
-                                    'Mess • Gym • Swimming & more...',
-                                    style: TextStyle(
-                                      color: myConstants.instiappWhite,
-                                      fontSize: responsive.sp(14),
-                                      fontFamily: 'DM Sans',
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                ),
+                                Text(
+                                  'Mess • Gym • Swimming & more...',
+                                  style: TextStyle(
+                                    color: myConstants.instiappWhite,
+                                    fontSize: responsive.sp(14),
+                                    fontFamily: 'DM Sans',
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                ],
-                              ),
-                              Container(
-                                height: responsive.h(75),
-                                width: responsive.w(75),
-                                child: SvgPicture.asset('assets/homepage/icons/qr.svg'),
-                              ),
-                            ],
-                          ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              height: responsive.h(75),
+                              width: responsive.w(75),
+                              child: SvgPicture.asset(
+                                  'assets/homepage/icons/qr.svg'),
+                            ),
+                          ],
                         ),
                       ],
                     ),
