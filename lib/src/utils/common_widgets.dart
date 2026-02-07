@@ -179,7 +179,7 @@ class HeroPhotoViewWrapperState extends State<HeroPhotoViewWrapper> {
   void initState() {
     super.initState();
     // saveStyle = SystemChrome.latestStyle!;
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+    // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
   }
 
   @override

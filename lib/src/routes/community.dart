@@ -13,11 +13,13 @@ import 'package:InstiApp/src/utils/communitypostwidget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/user.dart';
+import 'package:InstiApp/main.dart' as main_app;
 
 class Responsive {
   final BuildContext context;
@@ -356,6 +358,10 @@ class _CommunitiesState extends State<Communities> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent, // transparent bar
+      statusBarIconBrightness: Brightness.light, // white icons
+    ));
     community = widget.initialCommunity;
     _scrollcontroller.addListener(() {
       if (!_scrollcontroller.hasClients) return;
@@ -405,7 +411,6 @@ class _CommunitiesState extends State<Communities> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
     bool isLoggedIn = bloc.currSession != null;
     final responsive = Responsive(context);
@@ -444,429 +449,442 @@ class _CommunitiesState extends State<Communities> {
     List<Map<String, String>> links = quickLinks.values.toList();
     return DefaultTabController(
       length: 3,
-      child: SafeArea(
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          floatingActionButton: Stack(
-            children: [
-              // Scroll-to-top FAB
-              Positioned(
-                right: 0,
-                bottom: responsive.h(70),
-                child: AnimatedOpacity(
-                  opacity: isFabVisible,
-                  duration: Duration(milliseconds: 200),
-                  child: IgnorePointer(
-                    ignoring: isFabVisible == 0,
-                    child: FloatingActionButton(
-                      heroTag: 'scrollToTop',
-                      backgroundColor: Color.fromRGBO(48, 111, 220, 1),
-                      onPressed: () {
-                        _scrollcontroller.animateTo(
-                          0.0,
-                          duration: Duration(milliseconds: 400),
-                          curve: Curves.easeOut,
-                        );
-                      },
-                      child: Icon(Icons.arrow_upward),
-                    ),
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        resizeToAvoidBottomInset: false,
+        floatingActionButton: Stack(
+          children: [
+            // Scroll-to-top FAB
+            Positioned(
+              right: 0,
+              bottom: responsive.h(70),
+              child: AnimatedOpacity(
+                opacity: isFabVisible,
+                duration: Duration(milliseconds: 200),
+                child: IgnorePointer(
+                  ignoring: isFabVisible == 0,
+                  child: FloatingActionButton(
+                    heroTag: 'scrollToTop',
+                    backgroundColor: Color.fromRGBO(48, 111, 220, 1),
+                    onPressed: () {
+                      _scrollcontroller.animateTo(
+                        0.0,
+                        duration: Duration(milliseconds: 400),
+                        curve: Curves.easeOut,
+                      );
+                    },
+                    child: Icon(Icons.arrow_upward),
                   ),
                 ),
               ),
-              // Create post FAB
-              Positioned(
-                right: 0,
-                bottom: 0,
-                child: FloatingActionButton(
-                  heroTag: 'createPost',
-                  child: SvgPicture.asset(
-                    "assets/communities/system-uicons_write.svg",
-                    height: responsive.h(24),
-                    width: responsive.w(24),
-                    color: Colors.white,
-                  ),
-                  backgroundColor: Color.fromRGBO(48, 111, 220, 1),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed("/posts/add",
-                        arguments: NavigateArguments(community: community!));
-                  },
+            ),
+            // Create post FAB
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: FloatingActionButton(
+                heroTag: 'createPost',
+                child: SvgPicture.asset(
+                  "assets/communities/system-uicons_write.svg",
+                  height: responsive.h(24),
+                  width: responsive.w(24),
+                  color: Colors.white,
                 ),
+                backgroundColor: Color.fromRGBO(48, 111, 220, 1),
+                onPressed: () {
+                  Navigator.of(context).pushNamed("/posts/add",
+                      arguments: NavigateArguments(community: community!));
+                },
               ),
-            ],
-          ),
-          body: !isLoggedIn
-              ? Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.all(50),
-                  child: Text("Login to Continue"),
-                )
-              : RefreshIndicator(
-                  onRefresh: () async {
-                    bloc.communityBloc
-                        .getCommunity(community!.id!)
-                        .then((community) {
-                      setState(() {
-                        this.community = community;
-                      });
+            ),
+          ],
+        ),
+        body: !isLoggedIn
+            ? Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(50),
+                child: Text("Login to Continue"),
+              )
+            : RefreshIndicator(
+                onRefresh: () async {
+                  bloc.communityBloc
+                      .getCommunity(community!.id!)
+                      .then((community) {
+                    setState(() {
+                      this.community = community;
                     });
-                  },
-                  child: Column(
-                    children: [
-                      // --- Banner with buttons ---
-                      // if (!_headerCollapsed)
-                      ClipRect(
-                        child: AnimatedContainer(
-                          duration: Duration(milliseconds: 800),
-                          height: _headerCollapsed ? 0 : responsive.h(153),
-                          child: Stack(
-                            children: [
-                              SizedBox(
-                                height: responsive.h(32),
+                  });
+                },
+                child: Column(
+                  children: [
+                    // --- Banner with buttons ---
+                    // if (!_headerCollapsed)
+                    ClipRect(
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 800),
+                        height: _headerCollapsed ? 0 : responsive.h(153),
+                        child: Stack(
+                          children: [
+                            SizedBox(
+                              height: responsive.h(32),
+                            ),
+                            GestureDetector(
+                              // onTap: () {
+                              //   Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //     builder: (context) => ExploreImagePreview(
+                              //       imageUrls: images,
+                              //       initialIndex: 0,
+                              //     ),
+                              //   ),
+                              // );
+                              // },
+                              child: Container(
+                                height: responsive.h(153),
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade300,
+                                  image: community?.coverImg != null &&
+                                          community!.coverImg!.isNotEmpty
+                                      ? DecorationImage(
+                                          image: CachedNetworkImageProvider(
+                                              community!.coverImg!),
+                                          fit: BoxFit.cover,
+                                          //alignment: Alignment.topCenter,
+                                        )
+                                      : const DecorationImage(
+                                          image: AssetImage(
+                                              'assets/explore/symphony.png'),
+                                          fit: BoxFit.cover,
+                                        ),
+                                ),
                               ),
-                              GestureDetector(
-                                // onTap: () {
-                                //   Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //     builder: (context) => ExploreImagePreview(
-                                //       imageUrls: images,
-                                //       initialIndex: 0,
+                            ),
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              child: ClipRect(
+                                child: BackdropFilter(
+                                  filter:
+                                      ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                  child: Container(
+                                    height: MediaQuery.of(context).padding.top,
+                                    color: Colors.white.withOpacity(0.1),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: responsive.w(16),
+                                      top: responsive.h(
+                                          MediaQuery.of(context).padding.top+2)),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(50),
+                                      child: BackdropFilter(
+                                        filter: ImageFilter.blur(
+                                            sigmaX: 12, sigmaY: 12),
+                                        child: Container(
+                                          height: responsive.h(52),
+                                          width: responsive.w(52),
+                                          decoration: BoxDecoration(
+                                              color: const Color.fromRGBO(
+                                                  255, 255, 255, 0.4),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      responsive.w(25))),
+                                          child: Center(
+                                            child: SizedBox(
+                                              height: responsive.h(24),
+                                              width: responsive.w(24),
+                                              child: SvgPicture.asset(
+                                                  'assets/quicklinks/icons/arrow_left.svg'),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                // Padding(
+                                //   padding:
+                                //       EdgeInsets.only(right: responsive.w(16)),
+                                //   child: GestureDetector(
+                                //     onTap: () {
+                                //       Navigator.of(context).pop();
+                                //     },
+                                //     child: Container(
+                                //       height: 52,
+                                //       width: 52,
+                                //       decoration: BoxDecoration(
+                                //           color: const Color(0x99FFFFFF),
+                                //           borderRadius:
+                                //               BorderRadius.circular(25)),
+                                //       child: Center(
+                                //         child: Container(
+                                //           height: responsive.h(24),
+                                //           width: responsive.w(24),
+                                //           child: SvgPicture.asset(
+                                //               'assets/homepage/icons/bell.svg'),
+                                //         ),
+                                //       ),
                                 //     ),
                                 //   ),
-                                // );
-                                // },
-                                child: Container(
-                                  height: responsive.h(153),
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade300,
-                                    image: community?.coverImg != null &&
-                                            community!.coverImg!.isNotEmpty
-                                        ? DecorationImage(
-                                            image: CachedNetworkImageProvider(
-                                                community!.coverImg!),
-                                            fit: BoxFit.cover,
-                                            //alignment: Alignment.topCenter,
-                                          )
-                                        : const DecorationImage(
-                                            image: AssetImage(
-                                                'assets/explore/symphony.png'),
-                                            fit: BoxFit.cover,
-                                          ),
-                                  ),
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.only(left: responsive.w(16)),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(50),
-                                        child: BackdropFilter(
-                                          filter: ImageFilter.blur(
-                                              sigmaX: 12, sigmaY: 12),
-                                          child: Container(
-                                            height: responsive.h(52),
-                                            width: responsive.w(52),
-                                            decoration: BoxDecoration(
-                                                color: const Color.fromRGBO(
-                                                    255, 255, 255, 0.4),
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        responsive.w(25))),
-                                            child: Center(
-                                              child: SizedBox(
-                                                height: responsive.h(24),
-                                                width: responsive.w(24),
-                                                child: SvgPicture.asset(
-                                                    'assets/quicklinks/icons/arrow_left.svg'),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  // Padding(
-                                  //   padding:
-                                  //       EdgeInsets.only(right: responsive.w(16)),
-                                  //   child: GestureDetector(
-                                  //     onTap: () {
-                                  //       Navigator.of(context).pop();
-                                  //     },
-                                  //     child: Container(
-                                  //       height: 52,
-                                  //       width: 52,
-                                  //       decoration: BoxDecoration(
-                                  //           color: const Color(0x99FFFFFF),
-                                  //           borderRadius:
-                                  //               BorderRadius.circular(25)),
-                                  //       child: Center(
-                                  //         child: Container(
-                                  //           height: responsive.h(24),
-                                  //           width: responsive.w(24),
-                                  //           child: SvgPicture.asset(
-                                  //               'assets/homepage/icons/bell.svg'),
-                                  //         ),
-                                  //       ),
-                                  //     ),
-                                  //   ),
-                                  // ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      if (!_headerCollapsed) SizedBox(height: responsive.h(16)),
-
-                      // --- Club Info ---
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                SizedBox(
-                                  height: responsive.h(63),
-                                  width: responsive.w(63),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        responsive.w(31.5)),
-                                    child: NullableCircleAvatar(
-                                      community?.logoImg ?? "",
-                                      Icons.person,
-                                      radius: 31.5,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: responsive.w(16)),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        community?.name ?? "",
-                                        style: TextStyle(
-                                          fontSize: responsive.sp(20),
-                                          fontWeight: FontWeight.w700,
-                                          color: Color(0xFF0F1620),
-                                        ),
-                                      ),
-                                      // Text(
-                                      //   "Music Club of IITB",
-                                      //   style: TextStyle(
-                                      //     fontSize: 14,
-                                      //     fontWeight: FontWeight.w400,
-                                      //     color: Color(0xFF0F1620),
-                                      //   ),
-                                      // ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            (community?.followersCount ?? 0)
-                                                .toString(),
-                                            style: TextStyle(
-                                              fontSize: responsive.sp(14),
-                                              fontWeight: FontWeight.w700,
-                                              color: Color(0xFF306FDC),
-                                            ),
-                                          ),
-                                          SizedBox(width: responsive.w(4)),
-                                          Text(
-                                            "Members",
-                                            style: TextStyle(
-                                              fontSize: responsive.sp(14),
-                                              fontWeight: FontWeight.w400,
-                                              color: Color(0xFF306FDC),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(width: responsive.w(25)),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () async {
-                                        if (bloc.currSession == null) {
-                                          return;
-                                        }
-                                        setState(() {
-                                          loadingFollow = true;
-                                        });
-                                        if (community != null)
-                                          await bloc.updateFollowCommunity(
-                                              community!);
-                                        setState(() {
-                                          loadingFollow = false;
-                                        });
-                                      },
-                                      child: Container(
-                                        height: responsive.h(35),
-                                        width: responsive.w(61),
-                                        decoration: BoxDecoration(
-                                          color: (community?.isUserFollowing ??
-                                                    false) ?  Colors.grey[500]:Color(0xFF306FDC),
-                                          borderRadius: BorderRadius.circular(
-                                              responsive.w(100)),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            (community?.isUserFollowing ??
-                                                    false)
-                                                ? "Joined"
-                                                : "Join",
-                                            style: TextStyle(
-                                              fontSize: responsive.sp(14),
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: responsive.h(6)),
-                                    // Container(
-                                    //   height: 30,
-                                    //   width: 30,
-                                    //   decoration: BoxDecoration(
-                                    //     color: Color(0xFFF6F6F6),
-                                    //     borderRadius: BorderRadius.circular(25),
-                                    //   ),
-                                    //   child:
-                                    //       Center(child: Icon(Icons.more_vert)),
-                                    // ),
-                                  ],
-                                )
+                                // ),
                               ],
                             ),
-                            if (!_headerCollapsed)
-                              Container(
-                                  //height: aboutExpanded?192:72,
-                                  child: _buildAbout(theme)),
                           ],
                         ),
                       ),
-
-                      SizedBox(height: responsive.h(10)),
-
-                      // --- Tabs ---
-
-                      if (!_headerCollapsed)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Stack(
+                    ),
+                    if (!_headerCollapsed) SizedBox(height: responsive.h(16)),
+                    if(_headerCollapsed) SizedBox(height: responsive.h(2+MediaQuery.of(context).padding.top)),
+                    // --- Club Info ---
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: Container(
-                                      height: responsive.h(1.5),
-                                      color: Color(0xFFD0D5DD))),
-                              TabBar(
-                                indicatorColor: myConstants.instiappBlue,
-                                labelColor: myConstants.instiappBlue,
-                                unselectedLabelColor: Colors.black54,
-                                labelStyle: TextStyle(
-                                  fontSize: responsive.sp(16),
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'DM Sans',
+                              SizedBox(
+                                height: responsive.h(63),
+                                width: responsive.w(63),
+                                child: ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.circular(responsive.w(31.5)),
+                                  child: NullableCircleAvatar(
+                                    community?.logoImg ?? "",
+                                    Icons.person,
+                                    radius: 31.5,
+                                  ),
                                 ),
-                                tabs: const [
-                                  Tab(text: 'Posts'),
-                                  Tab(text: 'Links'),
-                                  Tab(text: 'Members'),
-                                ],
                               ),
+                              SizedBox(width: responsive.w(16)),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      community?.name ?? "",
+                                      style: TextStyle(
+                                        fontSize: responsive.sp(20),
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFF0F1620),
+                                      ),
+                                    ),
+                                    // Text(
+                                    //   "Music Club of IITB",
+                                    //   style: TextStyle(
+                                    //     fontSize: 14,
+                                    //     fontWeight: FontWeight.w400,
+                                    //     color: Color(0xFF0F1620),
+                                    //   ),
+                                    // ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          (community?.followersCount ?? 0)
+                                              .toString(),
+                                          style: TextStyle(
+                                            fontSize: responsive.sp(14),
+                                            fontWeight: FontWeight.w700,
+                                            color: Color(0xFF306FDC),
+                                          ),
+                                        ),
+                                        SizedBox(width: responsive.w(4)),
+                                        Text(
+                                          "Members",
+                                          style: TextStyle(
+                                            fontSize: responsive.sp(14),
+                                            fontWeight: FontWeight.w400,
+                                            color: Color(0xFF306FDC),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(width: responsive.w(25)),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      if (bloc.currSession == null) {
+                                        return;
+                                      }
+                                      setState(() {
+                                        loadingFollow = true;
+                                      });
+                                      if (community != null)
+                                        await bloc
+                                            .updateFollowCommunity(community!);
+                                      setState(() {
+                                        loadingFollow = false;
+                                      });
+                                    },
+                                    child: Container(
+                                      height: responsive.h(35),
+                                      width: responsive.w(61),
+                                      decoration: BoxDecoration(
+                                        color: (community?.isUserFollowing ??
+                                                false)
+                                            ? Colors.grey[500]
+                                            : Color(0xFF306FDC),
+                                        borderRadius: BorderRadius.circular(
+                                            responsive.w(100)),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          (community?.isUserFollowing ?? false)
+                                              ? "Joined"
+                                              : "Join",
+                                          style: TextStyle(
+                                            fontSize: responsive.sp(14),
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: responsive.h(6)),
+                                  // Container(
+                                  //   height: 30,
+                                  //   width: 30,
+                                  //   decoration: BoxDecoration(
+                                  //     color: Color(0xFFF6F6F6),
+                                  //     borderRadius: BorderRadius.circular(25),
+                                  //   ),
+                                  //   child:
+                                  //       Center(child: Icon(Icons.more_vert)),
+                                  // ),
+                                ],
+                              )
                             ],
                           ),
-                        ),
+                          if (!_headerCollapsed)
+                            Container(
+                                //height: aboutExpanded?192:72,
+                                child: _buildAbout()),
+                        ],
+                      ),
+                    ),
 
-                      // --- Tab Content (fills remaining space) ---
-                      Expanded(
-                        child: TabBarView(
+                    SizedBox(height: responsive.h(10)),
+
+                    // --- Tabs ---
+
+                    if (!_headerCollapsed)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Stack(
                           children: [
-                            //posts
-                            SingleChildScrollView(
-                              controller: _scrollcontroller,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 0),
-                                child: Column(
-                                  children: [
-                                    // Communitypostwidget(c: cPost),
-                                    // Communitypostwidget(c: cPost),
-                                    // Communitypostwidget(c: cPost),
-                                    CommunityPostSection(community: community),
-                                    //SizedBox(height: 100,)
-                                  ],
-                                ),
+                            Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: Container(
+                                    height: responsive.h(1.5),
+                                    color: Color(0xFFD0D5DD))),
+                            TabBar(
+                              indicatorColor: myConstants.instiappBlue,
+                              labelColor: myConstants.instiappBlue,
+                              unselectedLabelColor: Colors.black54,
+                              labelStyle: TextStyle(
+                                fontSize: responsive.sp(16),
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'DM Sans',
                               ),
+                              tabs: const [
+                                Tab(text: 'Posts'),
+                                Tab(text: 'Links'),
+                                Tab(text: 'Members'),
+                              ],
                             ),
-                            //links
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: responsive.h(24)),
-                                  for (int i = 0;
-                                      i < linkLabel.length;
-                                      i++) ...[
-                                    LinkSection(linkLabel[i], links[i]),
-                                  ],
-                                  SizedBox(height: responsive.h(12))
-                                ],
-                              ),
-                            ),
-                            //members
-                            //_membersTab(),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Column(
-                                children: [
-                                  SizedBox(height: responsive.h(24)),
-                                  Row(
-                                    children: [
-                                      // sort(),
-                                    ],
-                                  ),
-                                  // SizedBox(
-                                  //   height: 26,
-                                  // ),
-                                  //members(memberList),
-                                  _buildMembers(theme)
-                                ],
-                              ),
-                            )
                           ],
                         ),
                       ),
-                    ],
-                  ),
+
+                    // --- Tab Content (fills remaining space) ---
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          //posts
+                          SingleChildScrollView(
+                            controller: _scrollcontroller,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 0),
+                              child: Column(
+                                children: [
+                                  // Communitypostwidget(c: cPost),
+                                  // Communitypostwidget(c: cPost),
+                                  // Communitypostwidget(c: cPost),
+                                  CommunityPostSection(community: community),
+                                  //SizedBox(height: 100,)
+                                ],
+                              ),
+                            ),
+                          ),
+                          //links
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: responsive.h(24)),
+                                for (int i = 0; i < linkLabel.length; i++) ...[
+                                  LinkSection(linkLabel[i], links[i]),
+                                ],
+                                SizedBox(height: responsive.h(12))
+                              ],
+                            ),
+                          ),
+                          //members
+                          //_membersTab(),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Column(
+                              children: [
+                                SizedBox(height: responsive.h(24)),
+                                Row(
+                                  children: [
+                                    // sort(),
+                                  ],
+                                ),
+                                // SizedBox(
+                                //   height: 26,
+                                // ),
+                                //members(memberList),
+                                _buildMembers(),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                        height: responsive.h(main_app.systemBottomPadding)),
+                  ],
                 ),
-        ),
+              ),
       ),
     );
   }
 
-  Widget _buildAbout(ThemeData theme) {
+  Widget _buildAbout() {
     String about = community?.description ?? "";
     final responsive = Responsive(context);
     if (about.trim().isEmpty) {
@@ -935,7 +953,7 @@ class _CommunitiesState extends State<Communities> {
     );
   }
 
-  Widget _buildMembers(ThemeData theme) {
+  Widget _buildMembers() {
     return Container(
       padding: const EdgeInsets.all(5.0),
 
@@ -966,7 +984,7 @@ class _CommunitiesState extends State<Communities> {
                             .toList();
                       }
                       return [];
-                    }).map((u) => _buildUserTile(theme, u)) ??
+                    }).map((u) => _buildUserTile(u)) ??
                     [],
               ),
           ),
@@ -997,7 +1015,7 @@ class _CommunitiesState extends State<Communities> {
   //     horizontalTitleGap: 4,
   //   );
   // }
-  Widget _buildUserTile(ThemeData theme, User u) {
+  Widget _buildUserTile(User u) {
     final isAdmin = (u.currentRole?.toLowerCase() == "admin");
     final responsive = Responsive(context);
 
@@ -1735,7 +1753,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
           child: Center(
               child: Text(
             "Nothing here yet!",
-            style: TextStyle(fontSize: responsive.sp(18), fontFamily: 'DM Sans'),
+            style:
+                TextStyle(fontSize: responsive.sp(18), fontFamily: 'DM Sans'),
           )),
         )
       ];

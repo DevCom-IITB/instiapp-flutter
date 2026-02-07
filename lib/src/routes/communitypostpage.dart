@@ -6,7 +6,6 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/utils/communitypostwidget.dart';
 // import 'package:InstiApp/src/utils/share_url_maker.dart';
 import 'package:flutter/material.dart';
-import 'package:InstiApp/src/utils/customappbar.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:flutter/services.dart';
@@ -81,7 +80,6 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Color.fromRGBO(255, 255, 255, 1),
     ));
-    ThemeData theme = Theme.of(context);
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
 
     if (firstBuild) {
@@ -174,7 +172,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                             ),
                             Column(
                               children: _buildCommentList(
-                                  theme, communityPost!, bloc),
+                                 communityPost!, bloc),
                             ),
                             SizedBox(height: responsive.h(150))
                           ],
@@ -196,7 +194,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                               clipBehavior: Clip.antiAlias,
                               child: TextField(
                                 controller: _commentController,
-                                cursorColor: theme.textTheme.bodyMedium?.color,
+                                cursorColor: Color.fromARGB(255, 0, 0, 0),
                                 style: TextStyle(
                                   color: const Color.fromARGB(255, 0, 0, 0),
                                   fontSize: responsive.sp(16),
@@ -219,7 +217,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                                       borderSide: BorderSide.none,
                                       borderRadius: BorderRadius.circular(5)),
                                   filled: true,
-                                  fillColor: theme.colorScheme.surface,
+                                  fillColor: Color.fromRGBO(255, 255, 255, 1),
                                   hintText: communityPost!.id ==
                                           currentlyCommentingPost!.id
                                       ? "Add a comment"
@@ -241,12 +239,12 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
                             margin: EdgeInsets.only(left: responsive.w(10)),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
-                              color: theme.colorScheme.surface,
+                              color: Color.fromRGBO(255, 255, 255, 1),
                             ),
                             child: IconButton(
                               padding: EdgeInsets.zero,
                               constraints: BoxConstraints(),
-                              color: theme.colorScheme.onSurfaceVariant,
+                              color: Color.fromRGBO(126, 130, 135, 1),
                               splashColor: Colors.transparent,
                               tooltip: "Post",
                               icon: Icon(
@@ -305,7 +303,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
   }
 
   List<Widget> _buildCommentList(
-      ThemeData theme, CommunityPost communityPost, InstiAppBloc bloc) {
+      CommunityPost communityPost, InstiAppBloc bloc) {
     if (communityPost.comments == null &&
         (communityPost.commentsCount ?? 0) > 0) {
       return [
@@ -365,8 +363,6 @@ class _CommentState extends State<Comment> {
     if (comment!.deleted == true) {
       return Container();
     }
-
-    ThemeData theme = Theme.of(context);
     InstiAppBloc bloc = BlocProvider.of(context)!.bloc;
 
     String timeToShow = "";
@@ -646,7 +642,7 @@ class _CommentState extends State<Comment> {
                                           margin: EdgeInsets.only(
                                               left: responsive.w(11)),
                                           child: _buildFooter(
-                                              theme, bloc, comment!)),
+                                               bloc, comment!)),
                                     ],
                                   ),
                                 ],
@@ -660,7 +656,7 @@ class _CommentState extends State<Comment> {
                             SizedBox(width: responsive.w(18)),
                             Expanded(
                                 child: Column(
-                              children: [..._buildCommentList(theme, comment!)],
+                              children: [..._buildCommentList( comment!)],
                             )),
                           ],
                         ),
@@ -860,7 +856,7 @@ class _CommentState extends State<Comment> {
         : Container();
   }
 
-  List<Widget> _buildCommentList(ThemeData theme, CommunityPost communityPost) {
+  List<Widget> _buildCommentList(CommunityPost communityPost) {
     final responsive = Responsive(context);
     if (showingComments) {
       if (loading) {
@@ -940,8 +936,10 @@ class _CommentState extends State<Comment> {
                   flex: 3,
                   child: Text(
                     "View ${communityPost.commentsCount} Replies",
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
+                    style: TextStyle(
+                      color: Color.fromRGBO(126, 130, 135, 1),
+                      fontSize: 14,
+                      fontFamily: 'DM Sans',
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -966,7 +964,7 @@ class _CommentState extends State<Comment> {
   ];
 
   Widget _buildFooter(
-      ThemeData theme, InstiAppBloc bloc, CommunityPost communityPost) {
+       InstiAppBloc bloc, CommunityPost communityPost) {
     final responsive = Responsive(context);
     int numReactions = communityPost.reactionCount?.values
             .reduce((sum, element) => sum + element) ??

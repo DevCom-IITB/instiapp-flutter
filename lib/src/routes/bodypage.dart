@@ -123,7 +123,6 @@ class _BodyPageState extends State<BodyPage> {
             } else {
               url = body?.bodyWebsiteURL;
             }
-            // final url = body?.bodyWebsiteURL;
             if (url != null && url.isNotEmpty) {
               final uri = Uri.parse(url);
               if (await canLaunchUrl(uri)) {
@@ -131,7 +130,11 @@ class _BodyPageState extends State<BodyPage> {
                   uri,
                   mode: LaunchMode.externalApplication,
                 );
+              } else {
+                showlinknotavailabel(context);
               }
+            } else {
+              showlinknotavailabel(context);
             }
           },
           child: Container(
@@ -142,6 +145,36 @@ class _BodyPageState extends State<BodyPage> {
           ),
         ),
       ],
+    );
+  }
+
+  void showlinknotavailabel(BuildContext context) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    final r = Responsive(context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        elevation: 10,
+        duration: const Duration(milliseconds: 800),
+        backgroundColor: const Color(0xFF1E1E1E),
+        margin: EdgeInsets.symmetric(
+          horizontal: r.w(16),
+          vertical: r.h(14),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(r.h(24)),
+        ),
+        content: Text(
+                'Link not uploaded by the body',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: r.h(15),
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'DM Sans',
+                ),
+              ),
+      ),
     );
   }
 
@@ -236,27 +269,8 @@ class _BodyPageState extends State<BodyPage> {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      //backgroundColor: Colors.blue[300],
       backgroundColor: Color(0xFFF6F6F6),
       key: _scaffoldKey,
-      // drawer: NavDrawer(),
-      // bottomNavigationBar: MyBottomAppBar(
-      //   child: new Row(
-      //     mainAxisSize: MainAxisSize.max,
-      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //     children: <Widget>[
-      //       IconButton(
-      //         icon: Icon(
-      //           Icons.menu_outlined,
-      //           semanticLabel: "Show bottom sheet",
-      //         ),
-      //         onPressed: () {
-      //           _scaffoldKey.currentState?.openDrawer();
-      //         },
-      //       ),
-      //     ],
-      //   ),
-      // ),
       body: body == null
           ? Center(
               child: CircularProgressIndicatorExtended(
@@ -274,9 +288,8 @@ class _BodyPageState extends State<BodyPage> {
                     });
                   },
                   child: Container(
-                    child: ListView(
-                        padding: EdgeInsets.zero, // Add padding for the button
-                        children: <Widget>[
+                    child: Column(                        
+                        children:[
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -557,346 +570,330 @@ class _BodyPageState extends State<BodyPage> {
                               )
                             ],
                           ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: responsive.h(10),
-                                horizontal: responsive.w(16)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // const SizedBox(height: 30),
-                                // Row(
-                                //   crossAxisAlignment: CrossAxisAlignment.start,
-                                //   children: [
-                                //     Expanded(
-                                //       child: Column(
-                                //         crossAxisAlignment:
-                                //             CrossAxisAlignment.start,
-                                //         children: [
-                                //           Text(
-                                //             body?.bodyName ?? "",
-                                //             style: const TextStyle(
-                                //               fontSize: 24,
-                                //               fontWeight: FontWeight.bold,
-                                //               fontFamily: 'DM Sans',
-                                //             ),
-                                //           ),
-                                //           const SizedBox(height: 6),
-                                //           Text(
-                                //             body?.bodyShortDescription ?? "",
-                                //             style: const TextStyle(
-                                //               fontSize: 18,
-                                //               color: Colors.black54,
-                                //             ),
-                                //           ),
-                                //         ],
-                                //       ),
-                                //     ),
-                                //   ],
-                                // ),
-                                DefaultTabController(
-                                  length: 3,
-                                  child: Column(
-                                    children: [
-                                      Stack(
-                                        children: [
-                                          Positioned(
-                                            bottom: 0,
-                                            left: 0,
-                                            right: 0,
-                                            child: Container(
-                                              height: responsive.h(1.5),
-                                              color: Color(
-                                                  0xFFD0D5DD), // light grey line
-                                            ),
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: responsive.h(10),
+                                  horizontal: responsive.w(16)),
+                              child: DefaultTabController(
+                                length: 3,
+                                child: Column(
+                                  children: [
+                                    Stack(
+                                      children: [
+                                        Positioned(
+                                          bottom: 0,
+                                          left: 0,
+                                          right: 0,
+                                          child: Container(
+                                            height: responsive.h(1.5),
+                                            color: Color(
+                                                0xFFD0D5DD), // light grey line
                                           ),
-                                          TabBar(
-                                            indicatorColor:
-                                                myConstants.instiappBlue,
-                                            labelColor:
-                                                myConstants.instiappBlue,
-                                            unselectedLabelColor:
-                                                Colors.black54,
-                                            labelStyle: TextStyle(
-                                              fontSize: responsive.sp(16),
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: 'DM Sans',
-                                            ),
-                                            tabs: const [
-                                              Tab(text: 'About'),
-                                              Tab(text: 'Events'),
-                                              Tab(text: 'People'),
-                                            ],
-                                            onTap: (index) {
-                                              Future.delayed(
-                                                  const Duration(
-                                                      milliseconds: 150), () {
-                                                if (!mounted) return;
-                                                setState(() {
-                                                  showLinks = false;
-                                                });
+                                        ),
+                                        TabBar(
+                                          indicatorColor:
+                                              myConstants.instiappBlue,
+                                          labelColor:
+                                              myConstants.instiappBlue,
+                                          unselectedLabelColor:
+                                              Colors.black54,
+                                          labelStyle: TextStyle(
+                                            fontSize: responsive.sp(16),
+                                            fontWeight: FontWeight.w600,
+                                            fontFamily: 'DM Sans',
+                                          ),
+                                          tabs: const [
+                                            Tab(text: 'About'),
+                                            Tab(text: 'Events'),
+                                            Tab(text: 'People'),
+                                          ],
+                                          onTap: (index) {
+                                            Future.delayed(
+                                                const Duration(
+                                                    milliseconds: 150), () {
+                                              if (!mounted) return;
+                                              setState(() {
+                                                showLinks = false;
                                               });
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: responsive.h(410),
-                                        child: Builder(
-                                          builder: (context) {
-                                            final people = body?.bodyRoles
-                                                    ?.expand((r) =>
-                                                        (r.roleUsersDetail ??
-                                                                [])
-                                                            .map((u) => u
-                                                              ..currentRole =
-                                                                  r.roleName))
-                                                    .toList() ??
-                                                [];
-                                            return TabBarView(
-                                              children: [
-                                                // About Tab
-                                                SingleChildScrollView(
-                                                  padding: EdgeInsets.only(
-                                                      top: responsive.h(20)),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      // CommonHtml(
-                                                      //   data:
-                                                      //       body?.bodyDescription ??
-                                                      //           "",
-                                                      //   defaultTextStyle: (theme
-                                                      //               .textTheme
-                                                      //               .titleMedium ??
-                                                      //           TextStyle())
-                                                      //       .copyWith(
-                                                      //           fontSize:
-                                                      //               responsive
-                                                      //                   .sp(16)),
-                                                      // ),
-                                                      body?.bodyDescription !=
-                                                                  null &&
-                                                              body?.bodyDescription !=
-                                                                  ""
-                                                          ? CommonHtml(
-                                                              data:
-                                                                  body?.bodyDescription ??
-                                                                      "",
-                                                              defaultTextStyle: (theme
-                                                                          .textTheme
-                                                                          .titleMedium ??
-                                                                      TextStyle())
-                                                                  .copyWith(
-                                                                      fontSize:
-                                                                          responsive
-                                                                              .sp(16)),
-                                                            )
-                                                          : Shimmer.fromColors(
-                                                              baseColor: Colors
-                                                                  .grey[300]!,
-                                                              highlightColor:
-                                                                  Colors.grey[
-                                                                      100]!,
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: List
-                                                                    .generate(4,
-                                                                        (index) {
-                                                                  return Padding(
-                                                                    padding: EdgeInsets.only(
-                                                                        bottom:
-                                                                            responsive.h(8)),
-                                                                    child:
-                                                                        Container(
-                                                                      width: index ==
-                                                                              3
-                                                                          ? responsive.w(
-                                                                              200)
-                                                                          : double
-                                                                              .infinity,
-                                                                      height: responsive
-                                                                          .h(16),
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(4),
-                                                                      ),
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    Expanded(
+                                      child: Builder(
+                                        builder: (context) {
+                                          final people = body?.bodyRoles
+                                                  ?.expand((r) =>
+                                                      (r.roleUsersDetail ??
+                                                              [])
+                                                          .map((u) => u
+                                                            ..currentRole =
+                                                                r.roleName))
+                                                  .toList() ??
+                                              [];
+                                          return TabBarView(
+                                            children: [
+                                              // About Tab
+                                              SingleChildScrollView(
+                                                padding: EdgeInsets.only(
+                                                    top: responsive.h(20)),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .start,
+                                                  children: [
+                                                    CommonHtml(
+                                                      data:
+                                                          body?.bodyDescription ??
+                                                              "",
+                                                      defaultTextStyle: (theme
+                                                                  .textTheme
+                                                                  .titleMedium ??
+                                                              TextStyle())
+                                                          .copyWith(
+                                                              fontSize:
+                                                                  responsive
+                                                                      .sp(24)),
+                                                    ),
+                                                    body?.bodyDescription !=
+                                                                null &&
+                                                            body?.bodyDescription !=
+                                                                ""
+                                                        ? CommonHtml(
+                                                            data:
+                                                                body?.bodyDescription ??
+                                                                    "",
+                                                            defaultTextStyle: (theme
+                                                                        .textTheme
+                                                                        .titleMedium ??
+                                                                    TextStyle())
+                                                                .copyWith(
+                                                                    fontSize:
+                                                                        responsive
+                                                                            .sp(24)),
+                                                          )
+                                                        : Shimmer.fromColors(
+                                                            baseColor: Colors
+                                                                .grey[300]!,
+                                                            highlightColor:
+                                                                Colors.grey[
+                                                                    100]!,
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: List
+                                                                  .generate(4,
+                                                                      (index) {
+                                                                return Padding(
+                                                                  padding: EdgeInsets.only(
+                                                                      bottom:
+                                                                          responsive.h(8)),
+                                                                  child:
+                                                                      Container(
+                                                                    width: index ==
+                                                                            3
+                                                                        ? responsive.w(
+                                                                            200)
+                                                                        : double
+                                                                            .infinity,
+                                                                    height: responsive
+                                                                        .h(16),
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(4),
                                                                     ),
-                                                                  );
-                                                                }),
+                                                                  ),
+                                                                );
+                                                              }),
+                                                            ),
+                                                          ),
+                                                    SizedBox(
+                                                        height: responsive
+                                                            .h(20.0)),
+                                      
+                                                    // Photo Album Section
+                                                    Text(
+                                                      'Photo Album',
+                                                      style: TextStyle(
+                                                        fontSize:
+                                                            responsive.sp(16),
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        fontFamily: 'DM Sans',
+                                                      ),
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        if (photoAlbumUrls !=
+                                                                null &&
+                                                            photoAlbumUrls
+                                                                .isNotEmpty) {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      ExploreImagePreview(
+                                                                imageUrls:
+                                                                    photoAlbumUrls,
                                                               ),
                                                             ),
-                                                      SizedBox(
-                                                          height: responsive
-                                                              .h(20.0)),
-
-                                                      // Photo Album Section
-                                                      Text(
-                                                        'Photo Album',
-                                                        style: TextStyle(
-                                                          fontSize:
-                                                              responsive.sp(16),
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                          fontFamily: 'DM Sans',
-                                                        ),
-                                                      ),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          if (photoAlbumUrls !=
+                                                          );
+                                                        }
+                                                      },
+                                                      child: (photoAlbumUrls !=
                                                                   null &&
                                                               photoAlbumUrls
-                                                                  .isNotEmpty) {
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        ExploreImagePreview(
-                                                                  imageUrls:
-                                                                      photoAlbumUrls,
+                                                                  .isNotEmpty)
+                                                          ? _buildImages(
+                                                              photoAlbumUrls)
+                                                          : Center(
+                                                              child: Column(
+                                                              children: [
+                                                                SvgPicture
+                                                                    .asset(
+                                                                  'assets/explore/Social.svg',
+                                                                  width: responsive
+                                                                      .w(380),
+                                                                  height: responsive
+                                                                      .h(190),
+                                                                  fit: BoxFit
+                                                                      .cover,
                                                                 ),
-                                                              ),
-                                                            );
-                                                          }
-                                                        },
-                                                        child: (photoAlbumUrls !=
-                                                                    null &&
-                                                                photoAlbumUrls
-                                                                    .isNotEmpty)
-                                                            ? _buildImages(
-                                                                photoAlbumUrls)
-                                                            : Center(
-                                                                child: Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .min,
-                                                                  children: [
-                                                                    SvgPicture
-                                                                        .asset(
-                                                                      'assets/explore/Social.svg',
-                                                                      width: responsive
-                                                                          .w(380),
-                                                                      height: responsive
-                                                                          .h(190),
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                    ),
-                                                                    SizedBox(
-                                                                        height:
-                                                                            responsive.h(12)),
-                                                                    Text(
-                                                                      'No photos yet',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontSize:
-                                                                            responsive.sp(16),
-                                                                        fontWeight:
-                                                                            FontWeight.w700,
-                                                                        color: Colors
-                                                                            .black,
-                                                                        fontFamily:
-                                                                            'DM Sans',
-                                                                      ),
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .center,
-                                                                    ),
-                                                                  ],
+                                                                Text(
+                                                                  'No Photos Uploaded',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        responsive
+                                                                            .sp(16),
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    fontFamily:
+                                                                        'DM Sans',
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                      ),
-                                                      // Container(
-                                                      //   height: 190,
-                                                      //   width: 380,
-                                                      // child: ListView.separated(
-                                                      //   scrollDirection:
-                                                      //       Axis.horizontal,
-                                                      //   itemCount: 5,
-                                                      //   separatorBuilder: (_, __) =>
-                                                      //       const SizedBox(
-                                                      //           width: 8),
-                                                      //   itemBuilder:
-                                                      //       (context, index) {
-                                                      //     return Container(
-                                                      //       width: 100,
-                                                      //       decoration:
-                                                      //           BoxDecoration(
-                                                      //         color: Colors.grey
-                                                      //             .shade300,
-                                                      //         borderRadius:
-                                                      //             BorderRadius
-                                                      //                 .circular(
-                                                      //                     8),
-                                                      //       ),
-                                                      //     );
-                                                      //   },
-                                                      // ),
-                                                      // ),
-
-                                                      // Part Of Section
-                                                      // const Text(
-                                                      //   'Part of',
-                                                      //   style: TextStyle(
-                                                      //     fontSize: 20,
-                                                      //     fontWeight:
-                                                      //         FontWeight.w600,
-                                                      //     fontFamily: 'DM Sans',
-                                                      //   ),
-                                                      // ),
-                                                      // const SizedBox(height: 12),
-                                                      // ...(body?.bodyParents
-                                                      //         ?.map((b) =>
-                                                      //             _buildBodyTile(
-                                                      //                 bloc,
-                                                      //                 theme
-                                                      //                     .textTheme,
-                                                      //                 b))
-                                                      //         .toList() ??
-                                                      //     [])
-                                                    ],
-                                                  ),
+                                                              ],
+                                                            )),
+                                                    ),
+                                                    // Container(
+                                                    //   height: 190,
+                                                    //   width: 380,
+                                                    // child: ListView.separated(
+                                                    //   scrollDirection:
+                                                    //       Axis.horizontal,
+                                                    //   itemCount: 5,
+                                                    //   separatorBuilder: (_, __) =>
+                                                    //       const SizedBox(
+                                                    //           width: 8),
+                                                    //   itemBuilder:
+                                                    //       (context, index) {
+                                                    //     return Container(
+                                                    //       width: 100,
+                                                    //       decoration:
+                                                    //           BoxDecoration(
+                                                    //         color: Colors.grey
+                                                    //             .shade300,
+                                                    //         borderRadius:
+                                                    //             BorderRadius
+                                                    //                 .circular(
+                                                    //                     8),
+                                                    //       ),
+                                                    //     );
+                                                    //   },
+                                                    // ),
+                                                    // ),
+                                      
+                                                    // Part Of Section
+                                                    // const Text(
+                                                    //   'Part of',
+                                                    //   style: TextStyle(
+                                                    //     fontSize: 20,
+                                                    //     fontWeight:
+                                                    //         FontWeight.w600,
+                                                    //     fontFamily: 'DM Sans',
+                                                    //   ),
+                                                    // ),
+                                                    // const SizedBox(height: 12),
+                                                    // ...(body?.bodyParents
+                                                    //         ?.map((b) =>
+                                                    //             _buildBodyTile(
+                                                    //                 bloc,
+                                                    //                 theme
+                                                    //                     .textTheme,
+                                                    //                 b))
+                                                    //         .toList() ??
+                                                    //     [])
+                                                    SizedBox(height: responsive.h(45))
+                                                  ],
                                                 ),
-
-                                                // Events Tab
-                                                body?.bodyEvents == null ||
-                                                        body!
-                                                            .bodyEvents!.isEmpty
-                                                    ? Center(
-                                                        child:
-                                                            Column(children: [
+                                              ),
+                                      
+                                              // Events Tab
+                                              body?.bodyEvents == null ||
+                                                      body!
+                                                          .bodyEvents!.isEmpty
+                                                  ? const Center(
+                                                      child: Text(
+                                                          "No events yet."))
+                                                  : ListView(
+                                                      padding: EdgeInsets
+                                                          .symmetric(
+                                                              vertical:
+                                                                  responsive
+                                                                      .h(16)),
+                                                      children: [
+                                                        // Padding(
+                                                        //   padding:
+                                                        //       const EdgeInsets
+                                                        //           .symmetric(
+                                                        //           horizontal:
+                                                        //               28.0,
+                                                        //           vertical:
+                                                        //               8.0),
+                                                        //   child: Text(
+                                                        //     "Events",
+                                                        //     style: theme
+                                                        //         .textTheme
+                                                        //         .headlineSmall,
+                                                        //   ),
+                                                        // ),
+                                                        ...body!.bodyEvents!
+                                                            .map((e) =>
+                                                                _buildEventTile(
+                                                                    bloc,
+                                                                    theme,
+                                                                    e)),
                                                         SizedBox(
                                                             height: responsive
-                                                                .h(40)),
-                                                        SvgPicture.asset(
-                                                          'assets/profilepage/ghost.svg',
-                                                          width:
-                                                              responsive.w(250),
-                                                          height:
-                                                              responsive.h(250),
-                                                          fit: BoxFit.contain,
-                                                        ),
-                                                        // SizedBox(height: responsive.h(5)),
-                                                        Text(
-                                                          'No Events Found',
-                                                          style: TextStyle(
-                                                            fontSize: responsive
-                                                                .sp(16),
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                            color: Colors.black,
-                                                            fontFamily:
-                                                                'DM Sans',
-                                                          ),
-                                                        ),
-                                                      ]))
+                                                                .h(50))
+                                                      ],
+                                                    ),
+                                      
+                                              // People Tab
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Future.delayed(
+                                                      const Duration(
+                                                          milliseconds: 150),
+                                                      () {
+                                                    if (!mounted) return;
+                                                    setState(() {
+                                                      showLinks = false;
+                                                    });
+                                                  });
+                                                },
+                                                child: people.isEmpty
+                                                    ? const Center(
+                                                        child: Text(
+                                                            "No people listed."))
                                                     : ListView(
                                                         padding: EdgeInsets
                                                             .symmetric(
@@ -904,138 +901,31 @@ class _BodyPageState extends State<BodyPage> {
                                                                     responsive
                                                                         .h(16)),
                                                         children: [
-                                                          // Padding(
-                                                          //   padding:
-                                                          //       const EdgeInsets
-                                                          //           .symmetric(
-                                                          //           horizontal:
-                                                          //               28.0,
-                                                          //           vertical:
-                                                          //               8.0),
-                                                          //   child: Text(
-                                                          //     "Events",
-                                                          //     style: theme
-                                                          //         .textTheme
-                                                          //         .headlineSmall,
-                                                          //   ),
-                                                          // ),
-                                                          ...body!.bodyEvents!
-                                                              .map((e) =>
-                                                                  _buildEventTile(
+                                                          ...people
+                                                              .map((u) =>
+                                                                  _buildUserTile(
                                                                       bloc,
                                                                       theme,
-                                                                      e)),
+                                                                      u))
+                                                              .toList(),
                                                           SizedBox(
-                                                              height: responsive
-                                                                  .h(50))
+                                                              height:
+                                                                  responsive
+                                                                      .h(50))
                                                         ],
                                                       ),
-
-                                                // People Tab
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Future.delayed(
-                                                        const Duration(
-                                                            milliseconds: 150),
-                                                        () {
-                                                      if (!mounted) return;
-                                                      setState(() {
-                                                        showLinks = false;
-                                                      });
-                                                    });
-                                                  },
-                                                  child: people.isEmpty
-                                                      ? Center(
-                                                          child:
-                                                              Column(children: [
-                                                          SizedBox(
-                                                              height: responsive
-                                                                  .h(40)),
-                                                          SvgPicture.asset(
-                                                            'assets/profilepage/ghost.svg',
-                                                            width: responsive
-                                                                .w(250),
-                                                            height: responsive
-                                                                .h(250),
-                                                            fit: BoxFit.contain,
-                                                          ),
-                                                          // SizedBox(height: responsive.h(5)),
-                                                          Text(
-                                                            'No People Listed',
-                                                            style: TextStyle(
-                                                              fontSize:
-                                                                  responsive
-                                                                      .sp(16),
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                              color:
-                                                                  Colors.black,
-                                                              fontFamily:
-                                                                  'DM Sans',
-                                                            ),
-                                                          ),
-                                                        ]))
-                                                      : ListView(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  vertical:
-                                                                      responsive
-                                                                          .h(16)),
-                                                          children: [
-                                                            ...people
-                                                                .map((u) =>
-                                                                    _buildUserTile(
-                                                                        bloc,
-                                                                        theme,
-                                                                        u))
-                                                                .toList(),
-                                                            SizedBox(
-                                                                height:
-                                                                    responsive
-                                                                        .h(50))
-                                                          ],
-                                                        ),
-                                                )
-                                              ],
-                                            );
-                                          },
-                                        ),
+                                              )
+                                            ],
+                                          );
+                                        },
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                // const SizedBox(height: 10),
-                                // const Text(
-                                //   'Photo Album',
-                                //   style: TextStyle(
-                                //     fontSize: 20,
-                                //     fontWeight: FontWeight.w600,
-                                //     fontFamily: 'DM Sans',
-                                //   ),
-                                // ),
-                                // const SizedBox(height: 12),
-                                // SizedBox(
-                                //   height: 100,
-                                //   child: ListView.separated(
-                                //     scrollDirection: Axis.horizontal,
-                                //     itemCount: 5,
-                                //     separatorBuilder: (_, __) =>
-                                //         const SizedBox(width: 8),
-                                //     itemBuilder: (context, index) {
-                                //       return Container(
-                                //         width: 100,
-                                //         decoration: BoxDecoration(
-                                //           color: Colors.grey.shade300,
-                                //           borderRadius: BorderRadius.circular(8),
-                                //         ),
-                                //       );
-                                //     },
-                                //   ),
-                                // ),
-                              ],
+                              ),
                             ),
-                          )
+                          ),
+                          SizedBox(height: responsive.h(32)),
                         ]
                         // Events
                         // ..addAll(_nonEmptyListWithHeaderOrEmpty(
@@ -1151,23 +1041,6 @@ class _BodyPageState extends State<BodyPage> {
                                             fontSize: responsive.sp(18),
                                             fontWeight: FontWeight.w700),
                                       ),
-                                      // GestureDetector(
-                                      //   onTap: () {
-                                      //     Future.delayed(
-                                      //         const Duration(milliseconds: 150), () {
-                                      //       if (!mounted) return;
-                                      //       setState(() {
-                                      //         showLinks = false;
-                                      //       });
-                                      //     });
-                                      //   },
-                                      //   child: Container(
-                                      //     height: responsive.h(21),
-                                      //     width: responsive.w(21),
-                                      //     child: SvgPicture.asset(
-                                      //         'assets/explore_new/x.svg'),
-                                      //   ),
-                                      // )
                                     ],
                                   ),
                                   SizedBox(height: responsive.h(16)),
@@ -1494,193 +1367,145 @@ class _BodyPageState extends State<BodyPage> {
           },
         );
 
-      // case 2:
-      //   return FutureBuilder<List<ImageInfo?>>(
-      //     future: Future.wait([
-      //       _getImageInfo(images[0]),
-      //       _getImageInfo(images[1]),
-      //     ]),
-      //     builder: (context, snapshot) {
-      //       if (snapshot.connectionState != ConnectionState.done) {
-      //         return Container(
-      //           height: 200,
-      //           child: Row(
-      //             children: [
-      //               Expanded(child: _buildImagePlaceholder()),
-      //               SizedBox(width: 4),
-      //               Expanded(child: _buildImagePlaceholder()),
-      //             ],
-      //           ),
-      //         );
-      //       }
-
-      //       final imageInfos = snapshot.data!;
-      //       final aspectRatio1 = imageInfos[0] != null
-      //           ? imageInfos[0]!.image.width / imageInfos[0]!.image.height
-      //           : 1.0;
-      //       final aspectRatio2 = imageInfos[1] != null
-      //           ? imageInfos[1]!.image.width / imageInfos[1]!.image.height
-      //           : 1.0;
-
-      //       // Calculate height that maintains both aspect ratios
-      //       final availableWidth = MediaQuery.of(context).size.width -
-      //           92; // 60px avatar + 32px padding
-      //       final gapWidth = 4.0;
-      //       final totalWidth = availableWidth - gapWidth;
-
-      //       final width1 =
-      //           totalWidth * (aspectRatio1 / (aspectRatio1 + aspectRatio2));
-      //       final width2 = totalWidth - width1;
-      //       final height1 = width1 / aspectRatio1;
-      //       final height2 = width2 / aspectRatio2;
-
-      //       final containerHeight = height1 > height2 ? height1 : height2;
-
-      //       return Container(
-      //         height: containerHeight,
-      //         child: Row(
-      //           children: [
-      //             Expanded(
-      //               child: ClipRRect(
-      //                 borderRadius: BorderRadius.circular(8),
-      //                 child: Image.network(
-      //                   images[0],
-      //                   fit: BoxFit.contain,
-      //                   errorBuilder: (context, error, stackTrace) {
-      //                     return _buildImagePlaceholder();
-      //                   },
-      //                 ),
-      //               ),
-      //             ),
-      //             SizedBox(width: gapWidth),
-      //             Expanded(
-      //               child: ClipRRect(
-      //                 borderRadius: BorderRadius.circular(8),
-      //                 child: Image.network(
-      //                   images[1],
-      //                   fit: BoxFit.contain,
-      //                   errorBuilder: (context, error, stackTrace) {
-      //                     return _buildImagePlaceholder();
-      //                   },
-      //                 ),
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //       );
-      //     },
-      //   );
       case 2:
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            final totalWidth = constraints.maxWidth;
-            final spacing = 4.0;
-
-            final itemWidth = (totalWidth - spacing) / 2;
-
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Left big image
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    bottomLeft: Radius.circular(12),
-                  ),
-                  child: Image.network(
-                    images[0],
-                    width: itemWidth,
-                    height: itemWidth, // square
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _buildImagePlaceholder(),
-                  ),
+        return FutureBuilder<List<ImageInfo?>>(
+          future: Future.wait([
+            _getImageInfo(images[0]),
+            _getImageInfo(images[1]),
+          ]),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return Container(
+                height: 200,
+                child: Row(
+                  children: [
+                    Expanded(child: _buildImagePlaceholder()),
+                    SizedBox(width: 4),
+                    Expanded(child: _buildImagePlaceholder()),
+                  ],
                 ),
-                SizedBox(width: spacing),
+              );
+            }
 
-                // Right big image
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(12),
-                    bottomRight: Radius.circular(12),
+            final imageInfos = snapshot.data!;
+            final aspectRatio1 = imageInfos[0] != null
+                ? imageInfos[0]!.image.width / imageInfos[0]!.image.height
+                : 1.0;
+            final aspectRatio2 = imageInfos[1] != null
+                ? imageInfos[1]!.image.width / imageInfos[1]!.image.height
+                : 1.0;
+
+            // Calculate height that maintains both aspect ratios
+            final availableWidth = MediaQuery.of(context).size.width -
+                92; // 60px avatar + 32px padding
+            final gapWidth = 4.0;
+            final totalWidth = availableWidth - gapWidth;
+
+            final width1 =
+                totalWidth * (aspectRatio1 / (aspectRatio1 + aspectRatio2));
+            final width2 = totalWidth - width1;
+            final height1 = width1 / aspectRatio1;
+            final height2 = width2 / aspectRatio2;
+
+            final containerHeight = height1 > height2 ? height1 : height2;
+
+            return Container(
+              height: containerHeight,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        images[0],
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return _buildImagePlaceholder();
+                        },
+                      ),
+                    ),
                   ),
-                  child: Image.network(
-                    images[1],
-                    width: itemWidth,
-                    height: itemWidth, // square
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _buildImagePlaceholder(),
+                  SizedBox(width: gapWidth),
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        images[1],
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return _buildImagePlaceholder();
+                        },
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           },
         );
 
       case 3:
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            final totalWidth = constraints.maxWidth;
-            final spacing = 4.0;
-
-            final leftWidth = (totalWidth - spacing) / 2;
-            final rightWidth = (totalWidth - spacing) / 2;
-
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Big left image
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    bottomLeft: Radius.circular(12),
+        return Container(
+          height: 200,
+          child: Row(
+            children: [
+              // Big image on left (50% width)
+              Expanded(
+                flex: 2,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    bottomLeft: Radius.circular(8),
                   ),
                   child: Image.network(
                     images[0],
-                    width: leftWidth,
-                    height: leftWidth, // square
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        _buildImagePlaceholder(),
+                    errorBuilder: (context, error, stackTrace) {
+                      return _buildImagePlaceholder();
+                    },
                   ),
                 ),
-                SizedBox(width: spacing),
-                // Big right image with +1 overlay
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(12),
-                    bottomRight: Radius.circular(12),
-                  ),
-                  child: Stack(
-                    children: [
-                      Image.network(
-                        images[1],
-                        width: rightWidth,
-                        height: leftWidth,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            _buildImagePlaceholder(),
-                      ),
-                      Positioned.fill(
-                        child: Container(
-                          color: Color(0xB3000000), // semi-transparent black
-                          child: Center(
-                            child: Text(
-                              "+1",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: responsive.w(15.29),
-                              ),
-                            ),
-                          ),
+              ),
+              SizedBox(width: 4),
+              // Two small images on right (50% width total)
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(8),
+                        ),
+                        child: Image.network(
+                          images[1],
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildImagePlaceholder();
+                          },
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 4),
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(8),
+                        ),
+                        child: Image.network(
+                          images[2],
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildImagePlaceholder();
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            );
-          },
+              ),
+            ],
+          ),
         );
 
       case 4:
@@ -2052,21 +1877,13 @@ class _BodyPageState extends State<BodyPage> {
                         // color: Colors.pink[100],
                         borderRadius:
                             BorderRadius.circular(responsive.w(35.5))),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                          responsive.w(16)), // rounded square
-                      child: Image.network(
-                        event.eventImageURL ??
-                            event.eventBodies?[0].bodyImageURL ??
-                            "",
-                        width: responsive.w(71),
-                        height: responsive.h(71),
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                          color: Colors.grey[300],
-                          child: Icon(Icons.event_outlined),
-                        ),
-                      ),
+                    child: NullableCircleAvatar(
+                      event.eventImageURL ??
+                          event.eventBodies?[0].bodyImageURL ??
+                          "",
+                      Icons.event_outlined,
+                      radius: responsive.w(35.5),
+                      heroTag: event.eventID ?? "",
                     ),
                   ),
                   SizedBox(width: responsive.w(16)),

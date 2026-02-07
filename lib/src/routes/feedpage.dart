@@ -92,7 +92,6 @@ class _FeedPageState extends State<FeedPage> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Color.fromRGBO(246, 246, 246, 1),
     ));
-    var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
     if (firstBuild) {
       bloc.updateEvents();
@@ -178,7 +177,7 @@ class _FeedPageState extends State<FeedPage> {
                             SizedBox(height: Responsive.height(2, context)),
                             Dash(
                               direction: Axis.horizontal,
-                              length: Responsive.width(368, context),
+                              length: MediaQuery.of(context).size.width,
                               dashLength: Responsive.width(6, context),
                               dashGap: Responsive.width(7, context),
                               dashColor: Color(0xFFDADADA),
