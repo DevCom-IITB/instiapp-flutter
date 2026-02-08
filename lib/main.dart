@@ -24,6 +24,7 @@ import 'package:InstiApp/src/routes/explorepage.dart';
 // import 'package:InstiApp/src/routes/externalblogpage.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:InstiApp/src/routes/homepage.dart';
+import 'package:InstiApp/src/routes/loadingpage.dart';
 import 'package:InstiApp/src/routes/loginpage.dart';
 import 'package:InstiApp/src/routes/lostandfoundfeedpage.dart';
 import 'package:InstiApp/src/routes/lostandfoundinfo.dart';
@@ -407,6 +408,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 //   return _buildRoute(settings, BlogPage());
                 case "/quicklinks":
                   return _buildRoute(settings, Quicklinks());
+                  // return _buildRoute(settings, Loadingpage());
                 case "/groups":
                   return _buildRoute(settings, CommunityPage());
                 case "/explore":

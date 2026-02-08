@@ -927,7 +927,7 @@ class _BodyPageState extends State<BodyPage> {
                                                                       e)),
                                                           SizedBox(
                                                               height: responsive
-                                                                  .h(50))
+                                                                  .h(10))
                                                         ],
                                                       ),
 
@@ -993,7 +993,7 @@ class _BodyPageState extends State<BodyPage> {
                                                             SizedBox(
                                                                 height:
                                                                     responsive
-                                                                        .h(50))
+                                                                        .h(10))
                                                           ],
                                                         ),
                                                 )
@@ -2105,82 +2105,102 @@ class _BodyPageState extends State<BodyPage> {
   }
 
   Widget _buildUserTile(InstiAppBloc bloc, ThemeData theme, User u) {
-    final responsive = Responsive(context);
-    // return ListTile(
-    //   leading: NullableCircleAvatar(
-    //     u.userProfilePictureUrl ?? "",
-    //     Icons.person_outline_outlined,
-    //     heroTag: u.userID ?? "",
-    //   ),
-    //   title: Text(
-    //     u.userName ?? "",
-    //     style: theme.textTheme.titleLarge,
-    //   ),
-    //   subtitle: Text(u.getSubTitle() ?? ""),
-    //   onTap: () {
-    //     UserPage.navigateWith(context, bloc, u);
-    //   },
-    // );
-    return GestureDetector(
-      onTap: () {
-        UserPage.navigateWith(context, bloc, u);
-      },
-      child: Padding(
-        padding: EdgeInsets.only(left: responsive.w(16)),
-        child: Column(
-          children: [
-            Container(
-              // height: 72,
-              width: responsive.w(364),
-              child: Row(
-                children: [
-                  Container(
-                    height: responsive.h(71),
-                    width: responsive.w(71),
-                    decoration: BoxDecoration(
-                        // color: Colors.pink[100],
-                        borderRadius: BorderRadius.circular(35.5)),
-                    child: NullableCircleAvatar(
-                      u.userProfilePictureUrl ?? "",
-                      Icons.person_outline_outlined,
-                      radius: 35.5,
-                      heroTag: u.userID ?? "",
-                    ),
+  final responsive = Responsive(context);
+  
+  return GestureDetector(
+    onTap: () {
+      UserPage.navigateWith(context, bloc, u);
+    },
+    child: Padding(
+      padding: EdgeInsets.only(left: responsive.w(16)),
+      child: Column(
+        children: [
+          Container(
+            width: responsive.w(364),
+            child: Row(
+              children: [
+                Container(
+                  height: responsive.h(71),
+                  width: responsive.w(71),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(responsive.w(16)), // Rounded corners
+                    color: Colors.grey[200], // Optional background color
                   ),
-                  SizedBox(width: responsive.w(16)),
-                  Container(
-                    width: responsive.w(242),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          u.userName ?? "",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontSize: responsive.sp(20)),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(responsive.w(16)),
+                    child: u.userProfilePictureUrl != null && u.userProfilePictureUrl!.isNotEmpty
+                        ? Image.network(
+                            u.userProfilePictureUrl!,
+                            width: responsive.w(71),
+                            height: responsive.h(71),
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: responsive.w(71),
+                                height: responsive.h(71),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(responsive.w(16)),
+                                ),
+                                child: Icon(
+                                  Icons.person_outline_outlined,
+                                  size: responsive.w(35),
+                                  color: Colors.grey[600],
+                                ),
+                              );
+                            },
+                          )
+                        : Container(
+                            width: responsive.w(71),
+                            height: responsive.h(71),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(responsive.w(16)),
+                            ),
+                            child: Icon(
+                              Icons.person_outline_outlined,
+                              size: responsive.w(35),
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                  ),
+                ),
+                SizedBox(width: responsive.w(16)),
+                Container(
+                  width: responsive.w(242),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        u.userName ?? "",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                          fontSize: responsive.sp(20),
                         ),
-                        SizedBox(height: responsive.h(4)),
-                        Text(
-                          u.getSubTitle() ?? "",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400,
-                              fontSize: responsive.w(14)),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                      ),
+                      SizedBox(height: responsive.h(4)),
+                      Text(
+                        u.getSubTitle() ?? "",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400,
+                          fontSize: responsive.w(14),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
             ),
-            SizedBox(height: responsive.h(16))
-          ],
-        ),
+          ),
+          SizedBox(height: responsive.h(16))
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class PhotoAlbumGrid extends StatelessWidget {

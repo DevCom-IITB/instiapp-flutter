@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:flutter_webview_pro/webview_flutter.dart' as webview;
 
 import 'package:InstiApp/src/api/apiclient.dart';
@@ -12,7 +13,17 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:InstiApp/src/utils/common_widgets.dart';
 import 'package:InstiApp/src/utils/notif_settings.dart';
 import 'package:InstiApp/src/utils/responsive.dart';
+double figmaFontSize(
+  BuildContext context,
+  double figmaPx, {
+  double baseWidth = 375,
+}) {
+  final media = MediaQuery.of(context);
+  final screenWidth = media.size.width;
+  final scaleFactor = screenWidth / baseWidth;
 
+  return figmaPx * scaleFactor * media.textScaleFactor;
+}
 class LoginPage extends StatefulWidget {
   final InstiAppBloc bloc;
   final GlobalKey<ScaffoldMessengerState>? scaffoldMessengerKey;
@@ -39,6 +50,7 @@ class _OnboardingLoginPageState extends State<LoginPage>
   bool _showWelcome = false;
   bool _showLoginOptions = false;
   bool _isExitingToHome = false;
+  bool _showLoadingDesign = false;
 
   final String successUrl = "https://www.insti.app/login-android.html";
   final String guestUrl = "https://guesturi";
@@ -138,6 +150,39 @@ class _OnboardingLoginPageState extends State<LoginPage>
       }
     }
   }
+//   Future<void> _restoreSessionAndAnimate() async {
+//   await _bloc?.restorePrefs();
+
+//   if (_bloc?.currSession == null) {
+//     // No session - show splash animation
+//     await Future.delayed(const Duration(milliseconds: 500));
+//     await _resizeController.forward();
+//     await Future.delayed(const Duration(milliseconds: 300));
+//     setState(() => _showWelcome = true);
+//     _moveController.forward();
+//     _welcomeController.forward();
+//   } else {
+//     // User is already logged in - immediately show loading design
+//     setState(() {
+//       _showLoadingDesign = true;
+//     });
+
+//     // Keep the loading design on screen for 3-4 seconds
+//     await Future.delayed(const Duration(milliseconds: 1000)); // 3.5 seconds
+
+//     // Start fade transition
+//     await _homeTransitionController.forward();
+
+//     await Future.wait([
+//       safeNetworkCall(() => _bloc!.patchFcmKey()),
+//       safeNetworkCall(() => _bloc!.reloadCurrentUser()),
+//     ]);
+
+//     if (mounted) {
+//       Navigator.of(context).pushReplacementNamed(_bloc!.homepageName);
+//     }
+//   }
+// }
 
   @override
   void dispose() {
@@ -154,7 +199,20 @@ class _OnboardingLoginPageState extends State<LoginPage>
 
     if (_processingSSO) return _buildLoadingScreen(context);
     if (_isWebViewVisible) return _buildWebView();
-
+    
+  // Show loading design for logged-in users
+  // if (_showLoadingDesign) {
+  //   return AnimatedBuilder(
+  //     animation: _homeTransitionController,
+  //     builder: (context, child) {
+  //       return AnimatedOpacity(
+  //         opacity: 1.0 - _homeTransitionController.value,
+  //         duration: Duration(milliseconds: 500),
+  //         child: _buildLoadingPageDesign(),
+  //       );
+  //     },
+  //   );
+  // }
     return AnimatedSwitcher(
       
       duration: const Duration(milliseconds: 800),
@@ -165,7 +223,8 @@ class _OnboardingLoginPageState extends State<LoginPage>
         );
       },
       child: _showLoginOptions
-          ? _buildLoginOptionsPage(context)
+          // ? _buildLoginOptionsPage(context)
+          ? _buildNewLoginOptions(context)
           : _buildSplashOnboarding(context),
     );
   }
@@ -294,16 +353,16 @@ class _OnboardingLoginPageState extends State<LoginPage>
                             TextSpan(
                               text: 'Insti',
                               style: TextStyle(
-                                fontSize: fontSize,
-                                fontWeight: FontWeight.bold,
+                                fontSize: figmaFontSize(context, 40),
+                                fontWeight: FontWeight.w800,
                                 color: Colors.blue,
                               ),
                             ),
                             TextSpan(
                               text: 'App',
                               style: TextStyle(
-                                fontSize: fontSize,
-                                fontWeight: FontWeight.bold,
+                                fontSize: figmaFontSize(context, 40),
+                                fontWeight: FontWeight.w800,
                                 color: Colors.black,
                               ),
                             ),
@@ -398,96 +457,182 @@ class _OnboardingLoginPageState extends State<LoginPage>
     );
   }
 
-  Widget _buildClippedIllustrationWithWhiteBackground() {
-    return Stack(
-      alignment: Alignment.topCenter,
-      children: [
-        Container(
+  // Widget _buildClippedIllustrationWithWhiteBackground() {
+  //   return Stack(
+  //     alignment: Alignment.topCenter,
+  //     children: [
+  //       Container(
+  //         width: MediaQuery.of(context).size.width,
+  //         height: RS.sh(context, 412 + 250),
+  //         color: Colors.white,
+  //       ),
+  //       ClipPath(
+  //         clipper: BottomCurveClipper(curveDepth: 25),
+  //         child: Image.asset(
+  //           'assets/login/campus_illustration.png',
+  //           width: MediaQuery.of(context).size.width,
+  //           height: RS.sh(context, 412),
+  //           fit: BoxFit.cover,
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
+Widget _buildClippedIllustrationWithWhiteBackground() {
+  return Stack(
+    alignment: Alignment.topCenter,
+    children: [
+      Container(
+        width: MediaQuery.of(context).size.width,
+        height: RS.sh(context, 412 + 250),
+        color: Colors.white,
+      ),
+      ClipPath(
+        clipper: BottomCurveClipper(curveDepth: 25),
+        child: Image.asset(
+          'assets/login/campus_illustration.png',
           width: MediaQuery.of(context).size.width,
-          height: RS.sh(context, 412 + 250),
-          color: Colors.white,
+          height: RS.sh(context, 412),
+          fit: BoxFit.cover,
         ),
-        ClipPath(
-          clipper: BottomCurveClipper(curveDepth: 25),
-          child: Image.asset(
-            'assets/login/campus_illustration.png',
-            width: MediaQuery.of(context).size.width,
-            height: RS.sh(context, 412),
-            fit: BoxFit.cover,
-          ),
-        ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
+  // Widget _buildGetStartedScreen() {
+  //   return Column(
+  //     mainAxisSize: MainAxisSize.min,
+  //     children: [
+  //       const Text(
+  //         "Making Student Life",
+  //         style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+  //       ),
+  //       Text.rich(
+  //         TextSpan(
+  //           children: [
+  //             TextSpan(
+  //               text: 'Simpler ',
+  //               style: TextStyle(
+  //                 color: Color(0xFF306FDC), // Hex: #306FDC
+  //                 fontSize: 28,
+  //                 fontWeight: FontWeight.w600,
+  //               ),
+  //             ),
+  //             TextSpan(
+  //               text: 'and ',
+  //               style: TextStyle(
+  //                 color: Colors.black,
+  //                 fontSize: 28,
+  //                 fontWeight: FontWeight.w600,
+  //               ),
+  //             ),
+  //             TextSpan(
+  //               text: 'Smarter',
+  //               style: TextStyle(
+  //                 color: Color(0xFF306FDC),
+  //                 fontSize: 28,
+  //                 fontWeight: FontWeight.w600,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //       const SizedBox(height: 40),
+  //       SizedBox(
+  //         width: RS.sw(context, 300),
+  //         height: RS.sh(context, 64),
+  //         child: ElevatedButton(
+  //           onPressed: () async {
+  //             setState(() {
+  //               _showLoginOptions = true;
+  //             });
 
+  //             await Future.delayed(const Duration(milliseconds: 100));
+
+  //             await _transitionController.forward();
+  //           },
+  //           style: ElevatedButton.styleFrom(
+  //             backgroundColor: Colors.blue.shade700,
+  //             shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.circular(20),
+  //             ),
+  //           ),
+  //           child: const Text(
+  //             "Get Started",
+  //             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+  //           ),
+  //         ),
+  //       ),
+  //       SizedBox(height: RS.sh(context, 60)),
+  //     ],
+  //   );
+  // }
   Widget _buildGetStartedScreen() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Text(
-          "Making Student Life",
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
-        ),
-        Text.rich(
-          TextSpan(
-            children: [
-              TextSpan(
-                text: 'Simpler ',
-                style: TextStyle(
-                  color: Color(0xFF306FDC), // Hex: #306FDC
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              TextSpan(
-                text: 'and ',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              TextSpan(
-                text: 'Smarter',
-                style: TextStyle(
-                  color: Color(0xFF306FDC),
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 40),
-        SizedBox(
-          width: RS.sw(context, 300),
-          height: RS.sh(context, 64),
-          child: ElevatedButton(
-            onPressed: () async {
-              setState(() {
-                _showLoginOptions = true;
-              });
-
-              await Future.delayed(const Duration(milliseconds: 100));
-
-              await _transitionController.forward();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue.shade700,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      const Text(
+        "Making Student Life",
+        style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+      ),
+      Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: 'Simpler ',
+              style: TextStyle(
+                color: Color(0xFF306FDC),
+                fontSize: 28,
+                fontWeight: FontWeight.w600,
               ),
             ),
-            child: const Text(
-              "Get Started",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            TextSpan(
+              text: 'and ',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 28,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            TextSpan(
+              text: 'Smarter',
+              style: TextStyle(
+                color: Color(0xFF306FDC),
+                fontSize: 28,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 40),
+      SizedBox(
+        width: RS.sw(context, 300),
+        height: RS.sh(context, 64),
+        child: ElevatedButton(
+          onPressed: () async {
+            setState(() {
+              _showLoginOptions = true;
+            });
+            await Future.delayed(const Duration(milliseconds: 100));
+            await _transitionController.forward();
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue.shade700,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
             ),
           ),
+          child: const Text(
+            "Get Started",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
         ),
-        SizedBox(height: RS.sh(context, 60)),
-      ],
-    );
-  }
+      ),
+      SizedBox(height: RS.sh(context, 60)),
+    ],
+  );
+}
 
   Widget _buildLoginOptionsPage(BuildContext context) {
     final screen = MediaQuery.of(context).size;
@@ -606,6 +751,547 @@ class _OnboardingLoginPageState extends State<LoginPage>
     );
   }
 
+// Widget _buildNewLoginOptions(BuildContext context) {
+//   return Scaffold(
+//     body: SafeArea(
+//       child: Stack(
+//         children: [
+//           // LOGO (240 from top)
+//           Positioned(
+//             top: 240,
+//             left: 0,
+//             right: 0,
+//             child: Column(
+//               children: [
+//                 Stack(
+//                   alignment: Alignment.center,
+//                   clipBehavior: Clip.none,
+//                   children: [
+//                     Image.asset(
+//                       'assets/login/logo.png',
+//                       width: 193,
+//                       height: 193,
+//                       fit: BoxFit.contain,
+//                     ),
+//                     Positioned(
+//                       top: 173,
+//                       child: Row(
+//                         mainAxisSize: MainAxisSize.min,
+//                         children: [
+//                           Text(
+//                             "Insti",
+//                             style: TextStyle(
+//                               fontFamily: 'DMSans',
+//                               fontWeight: FontWeight.w800,
+//                               fontSize: figmaFontSize(context, 40),
+//                               letterSpacing: 1.3,
+//                               color: const Color(0xFF306FDC),
+//                             ),
+//                           ),
+//                           Text(
+//                             "App",
+//                             style: TextStyle(
+//                               fontFamily: 'DMSans',
+//                               fontWeight: FontWeight.w800,
+//                               fontSize: figmaFontSize(context, 40),
+//                               letterSpacing: 1.3,
+//                               color: Colors.black,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           ),
+
+//           // LOGIN OPTIONS (fully at bottom)
+//           Positioned(
+//             left: 0,
+//             right: 0,
+//             bottom: 0,
+//             child: Container(
+//               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+//               child: Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: [
+//                   GestureDetector(
+//                     onTap: _handleSSOLogin,
+//                     child: Container(
+//                       width: 364,
+//                       height: 52,
+//                       decoration: BoxDecoration(
+//                         color: Color(0xFF306FDC),
+//                         borderRadius: BorderRadius.circular(50),
+//                       ),
+//                       child: const Center(
+//                         child: Text(
+//                           "Log In via SSO",
+//                           style: TextStyle(
+//                             fontFamily: 'DMSans',
+//                             fontWeight: FontWeight.w700,
+//                             fontSize: 16,
+//                             color: Colors.white,
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                   const SizedBox(height: 24),
+//                   GestureDetector(
+//                     onTap: _handleAlumniLogin,
+//                     child: Container(
+//                       width: 364,
+//                       height: 52,
+//                       decoration: BoxDecoration(
+//                         color: Color(0xFF306FDC),
+//                         borderRadius: BorderRadius.circular(50),
+//                       ),
+//                       child: const Center(
+//                         child: Text(
+//                           "Log In as an Alumnus",
+//                           style: TextStyle(
+//                             fontFamily: 'DMSans',
+//                             fontWeight: FontWeight.w700,
+//                             fontSize: 16,
+//                             color: Colors.white,
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                   const SizedBox(height: 27),
+//                   Row(
+//                     children: const [
+//                       Expanded(child: Divider(thickness: 1, color: Color(0xFFDADADA))),
+//                       Padding(
+//                         padding: EdgeInsets.symmetric(horizontal: 10),
+//                         child: Text(
+//                           "or",
+//                           style: TextStyle(
+//                             fontSize: 13,
+//                             color: Color(0xFF8A8A8A),
+//                             fontWeight: FontWeight.w500,
+//                           ),
+//                         ),
+//                       ),
+//                       Expanded(child: Divider(thickness: 1, color: Color(0xFFDADADA))),
+//                     ],
+//                   ),
+//                   const SizedBox(height: 27),
+//                   GestureDetector(
+//                     onTap: _handleGuestLogin,
+//                     child: Container(
+//                       width: 364,
+//                       height: 52,
+//                       decoration: BoxDecoration(
+//                         color: Colors.white,
+//                         borderRadius: BorderRadius.circular(50),
+//                         border: Border.all(
+//                           color: Color(0xFF306FDC),
+//                           width: 2,
+//                         ),
+//                       ),
+//                       child: const Center(
+//                         child: Text(
+//                           "Continue as guest",
+//                           style: TextStyle(
+//                             fontFamily: 'DMSans',
+//                             fontWeight: FontWeight.w700,
+//                             fontSize: 16,
+//                             color: Color(0xFF306FDC),
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     ),
+//   );
+// }
+// Widget _buildNewLoginOptions(BuildContext context) {
+//   return AnimatedBuilder(
+//     animation: _transitionController,
+//     builder: (context, child) {
+//       final t = Curves.easeInOut.transform(_transitionController.value);
+//       final slideOffset = lerpDouble(1, 0, t)!; // Slide from bottom to position
+      
+//       return Transform.translate(
+//         offset: Offset(0, slideOffset * MediaQuery.of(context).size.height),
+//         child: Scaffold(
+//           body: SafeArea(
+//             child: Stack(
+//               children: [
+//                 // LOGO (responsive top positioning)
+//                 Positioned(
+//                   top: RS.sh(context, 240),
+//                   left: 0,
+//                   right: 0,
+//                   child: Column(
+//                     children: [
+//                       Stack(
+//                         alignment: Alignment.center,
+//                         clipBehavior: Clip.none,
+//                         children: [
+//                           Image.asset(
+//                             'assets/login/logo.png',
+//                             width: RS.sw(context, 193),
+//                             height: RS.sh(context, 193),
+//                             fit: BoxFit.contain,
+//                           ),
+//                           Positioned(
+//                             top: RS.sh(context, 173),
+//                             child: Row(
+//                               mainAxisSize: MainAxisSize.min,
+//                               children: [
+//                                 Text(
+//                                   "Insti",
+//                                   style: TextStyle(
+//                                     fontFamily: 'DMSans',
+//                                     fontWeight: FontWeight.w800,
+//                                     fontSize: RS.sp(context, 40),
+//                                     letterSpacing: 1.3,
+//                                     color: const Color(0xFF306FDC),
+//                                   ),
+//                                 ),
+//                                 Text(
+//                                   "App",
+//                                   style: TextStyle(
+//                                     fontFamily: 'DMSans',
+//                                     fontWeight: FontWeight.w800,
+//                                     fontSize: RS.sp(context, 40),
+//                                     letterSpacing: 1.3,
+//                                     color: Colors.black,
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//                 // LOGIN OPTIONS (responsive positioning and sizing)
+//                 Positioned(
+//                   left: 0,
+//                   right: 0,
+//                   bottom: 0,
+//                   child: Container(
+//                     padding: EdgeInsets.symmetric(
+//                       horizontal: RS.sw(context, 24), 
+//                       vertical: RS.sh(context, 48)
+//                     ),
+//                     child: Column(
+//                       mainAxisSize: MainAxisSize.min,
+//                       children: [
+//                         GestureDetector(
+//                           onTap: _handleSSOLogin,
+//                           child: Container(
+//                             width: RS.sw(context, 364),
+//                             height: RS.sh(context, 52),
+//                             decoration: BoxDecoration(
+//                               color: Color(0xFF306FDC),
+//                               borderRadius: BorderRadius.circular(RS.s(context, 50)),
+//                             ),
+//                             child: Center(
+//                               child: Text(
+//                                 "Log In via SSO",
+//                                 style: TextStyle(
+//                                   fontFamily: 'DMSans',
+//                                   fontWeight: FontWeight.w700,
+//                                   fontSize: RS.sp(context, 16),
+//                                   color: Colors.white,
+//                                 ),
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                         SizedBox(height: RS.sh(context, 24)),
+//                         GestureDetector(
+//                           onTap: _handleAlumniLogin,
+//                           child: Container(
+//                             width: RS.sw(context, 364),
+//                             height: RS.sh(context, 52),
+//                             decoration: BoxDecoration(
+//                               color: Color(0xFF306FDC),
+//                               borderRadius: BorderRadius.circular(RS.s(context, 50)),
+//                             ),
+//                             child: Center(
+//                               child: Text(
+//                                 "Log In as an Alumnus",
+//                                 style: TextStyle(
+//                                   fontFamily: 'DMSans',
+//                                   fontWeight: FontWeight.w700,
+//                                   fontSize: RS.sp(context, 16),
+//                                   color: Colors.white,
+//                                 ),
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                         SizedBox(height: RS.sh(context, 27)),
+//                         Row(
+//                           children: [
+//                             Expanded(
+//                               child: Divider(
+//                                 thickness: 1, 
+//                                 color: Color(0xFFDADADA)
+//                               )
+//                             ),
+//                             Padding(
+//                               padding: EdgeInsets.symmetric(horizontal: RS.sw(context, 10)),
+//                               child: Text(
+//                                 "or",
+//                                 style: TextStyle(
+//                                   fontSize: RS.sp(context, 13),
+//                                   color: Color(0xFF8A8A8A),
+//                                   fontWeight: FontWeight.w500,
+//                                 ),
+//                               ),
+//                             ),
+//                             Expanded(
+//                               child: Divider(
+//                                 thickness: 1, 
+//                                 color: Color(0xFFDADADA)
+//                               )
+//                             ),
+//                           ],
+//                         ),
+//                         SizedBox(height: RS.sh(context, 27)),
+//                         GestureDetector(
+//                           onTap: _handleGuestLogin,
+//                           child: Container(
+//                             width: RS.sw(context, 364),
+//                             height: RS.sh(context, 52),
+//                             decoration: BoxDecoration(
+//                               color: Colors.white,
+//                               borderRadius: BorderRadius.circular(RS.s(context, 50)),
+//                               border: Border.all(
+//                                 color: Color(0xFF306FDC),
+//                                 width: 2,
+//                               ),
+//                             ),
+//                             child: Center(
+//                               child: Text(
+//                                 "Continue as guest",
+//                                 style: TextStyle(
+//                                   fontFamily: 'DMSans',
+//                                   fontWeight: FontWeight.w700,
+//                                   fontSize: RS.sp(context, 16),
+//                                   color: Color(0xFF306FDC),
+//                                 ),
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       );
+//     },
+//   );
+// }
+Widget _buildNewLoginOptions(BuildContext context) {
+  return AnimatedBuilder(
+    animation: _transitionController,
+    builder: (context, child) {
+      final t = Curves.easeInOut.transform(_transitionController.value);
+      final fadeOpacity = lerpDouble(0, 1, t)!; // Fade from 0 to 1
+      
+      return Opacity(
+        opacity: fadeOpacity,
+        child: Scaffold(
+          body: SafeArea(
+            child: Stack(
+              children: [
+                // LOGO (responsive top positioning)
+                Positioned(
+                  top: RS.sh(context, 240),
+                  left: 0,
+                  right: 0,
+                  child: Column(
+                    children: [
+                      Stack(
+                        alignment: Alignment.center,
+                        clipBehavior: Clip.none,
+                        children: [
+                          Image.asset(
+                            'assets/login/logo.png',
+                            width: RS.sw(context, 193),
+                            height: RS.sh(context, 193),
+                            fit: BoxFit.contain,
+                          ),
+                          Positioned(
+                            top: RS.sh(context, 173),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "Insti",
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: RS.sp(context, 40),
+                                    letterSpacing: 1.3,
+                                    color: const Color(0xFF306FDC),
+                                  ),
+                                ),
+                                Text(
+                                  "App",
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: RS.sp(context, 40),
+                                    letterSpacing: 1.3,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                // LOGIN OPTIONS (responsive positioning and sizing)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: RS.sw(context, 24), 
+                      vertical: RS.sh(context, 48)
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: _handleSSOLogin,
+                          child: Container(
+                            width: RS.sw(context, 364),
+                            height: RS.sh(context, 52),
+                            decoration: BoxDecoration(
+                              color: Color(0xFF306FDC),
+                              borderRadius: BorderRadius.circular(RS.s(context, 50)),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Log In via SSO",
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: RS.sp(context, 16),
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: RS.sh(context, 24)),
+                        GestureDetector(
+                          onTap: _handleAlumniLogin,
+                          child: Container(
+                            width: RS.sw(context, 364),
+                            height: RS.sh(context, 52),
+                            decoration: BoxDecoration(
+                              color: Color(0xFF306FDC),
+                              borderRadius: BorderRadius.circular(RS.s(context, 50)),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Log In as an Alumnus",
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: RS.sp(context, 16),
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: RS.sh(context, 27)),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Divider(
+                                thickness: 1, 
+                                color: Color(0xFFDADADA)
+                              )
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: RS.sw(context, 10)),
+                              child: Text(
+                                "or",
+                                style: TextStyle(
+                                  fontSize: RS.sp(context, 13),
+                                  color: Color(0xFF8A8A8A),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Divider(
+                                thickness: 1, 
+                                color: Color(0xFFDADADA)
+                              )
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: RS.sh(context, 27)),
+                        GestureDetector(
+                          onTap: _handleGuestLogin,
+                          child: Container(
+                            width: RS.sw(context, 364),
+                            height: RS.sh(context, 52),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(RS.s(context, 50)),
+                              border: Border.all(
+                                color: Color(0xFF306FDC),
+                                width: 2,
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Continue as guest",
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: RS.sp(context, 16),
+                                  color: Color(0xFF306FDC),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
   Widget _buildLoginOptions(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
@@ -754,7 +1440,76 @@ class _OnboardingLoginPageState extends State<LoginPage>
       ),
     );
   }
-
+  Widget _buildLoadingPageDesign() {
+  return Scaffold(
+    body: SafeArea(
+      child: Stack(
+        children: [
+          // LOGO (240 from top)
+          Positioned(
+            top: RS.sh(context, 240),
+            left: 0,
+            right: 0,
+            child: Column(
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  clipBehavior: Clip.none,
+                  children: [
+                    Image.asset(
+                      'assets/login/logo.png',
+                      width: RS.sw(context, 193),
+                      height: RS.sh(context, 193),
+                      fit: BoxFit.contain,
+                    ),
+                    Positioned(
+                      top: RS.sh(context, 173),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "Insti",
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontWeight: FontWeight.w800,
+                              fontSize: RS.sp(context, 40),
+                              letterSpacing: 1.3,
+                              color: const Color(0xFF306FDC),
+                            ),
+                          ),
+                          Text(
+                            "App",
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontWeight: FontWeight.w800,
+                              fontSize: RS.sp(context, 40),
+                              letterSpacing: 1.3,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          // Bottom illustration
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: SvgPicture.asset(
+              'assets/login/bottomillustration.svg', // Use .png if .svg doesn't work
+              fit: BoxFit.cover,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
   Widget _buildWebView() {
     return Scaffold(
       body: webview.WebView(
