@@ -1439,7 +1439,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                     color: myConstants.instiappGrey,
                     border: Border.all(
                         color: Color(0xFF7E8287), width: responsive.h(1))),
-                padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(10),
+                padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(5),
                     responsive.w(7), responsive.h(3)),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
