@@ -228,7 +228,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                               bottomRight: Radius.circular(Responsive.width(20, context)),
                             ),
                             child: Image.asset(
-                              bodyIdToImage[widget.heroTag] ?? 'assets/explore/culturals.png',
+                              bodyIdToImage[widget.heroTag] ?? 'assets/explore/cultBG.png',
                               // 'assets/explore/culturals.png',
                               height: Responsive.width(295, context),
                               width: double.infinity,

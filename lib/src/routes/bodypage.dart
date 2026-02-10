@@ -123,7 +123,6 @@ class _BodyPageState extends State<BodyPage> {
             } else {
               url = body?.bodyWebsiteURL;
             }
-            // final url = body?.bodyWebsiteURL;
             if (url != null && url.isNotEmpty) {
               final uri = Uri.parse(url);
               if (await canLaunchUrl(uri)) {
@@ -131,7 +130,11 @@ class _BodyPageState extends State<BodyPage> {
                   uri,
                   mode: LaunchMode.externalApplication,
                 );
+              } else {
+                _showLinkNotAvailable(context);
               }
+            } else {
+              _showLinkNotAvailable(context);
             }
           },
           child: Container(
@@ -142,6 +145,36 @@ class _BodyPageState extends State<BodyPage> {
           ),
         ),
       ],
+    );
+  }
+
+  void _showLinkNotAvailable(BuildContext context) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    final r = Responsive(context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        elevation: 10,
+        duration: const Duration(milliseconds: 800),
+        backgroundColor: const Color(0xFF1E1E1E),
+        margin: EdgeInsets.symmetric(
+          horizontal: r.w(16),
+          vertical: r.h(14),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(r.h(24)),
+        ),
+        content: Text(
+          'Link not updated by the body yet',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: r.h(15),
+            fontWeight: FontWeight.w500,
+            fontFamily: 'DM Sans',
+          ),
+        ),
+      ),
     );
   }
 
@@ -2105,102 +2138,106 @@ class _BodyPageState extends State<BodyPage> {
   }
 
   Widget _buildUserTile(InstiAppBloc bloc, ThemeData theme, User u) {
-  final responsive = Responsive(context);
-  
-  return GestureDetector(
-    onTap: () {
-      UserPage.navigateWith(context, bloc, u);
-    },
-    child: Padding(
-      padding: EdgeInsets.only(left: responsive.w(16)),
-      child: Column(
-        children: [
-          Container(
-            width: responsive.w(364),
-            child: Row(
-              children: [
-                Container(
-                  height: responsive.h(71),
-                  width: responsive.w(71),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(responsive.w(16)), // Rounded corners
-                    color: Colors.grey[200], // Optional background color
+    final responsive = Responsive(context);
+
+    return GestureDetector(
+      onTap: () {
+        UserPage.navigateWith(context, bloc, u);
+      },
+      child: Padding(
+        padding: EdgeInsets.only(left: responsive.w(16)),
+        child: Column(
+          children: [
+            Container(
+              width: responsive.w(364),
+              child: Row(
+                children: [
+                  Container(
+                    height: responsive.h(71),
+                    width: responsive.w(71),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                          responsive.w(16)), // Rounded corners
+                      color: Colors.grey[200], // Optional background color
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(responsive.w(16)),
+                      child: u.userProfilePictureUrl != null &&
+                              u.userProfilePictureUrl!.isNotEmpty
+                          ? Image.network(
+                              u.userProfilePictureUrl!,
+                              width: responsive.w(71),
+                              height: responsive.h(71),
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  width: responsive.w(71),
+                                  height: responsive.h(71),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                    borderRadius:
+                                        BorderRadius.circular(responsive.w(16)),
+                                  ),
+                                  child: Icon(
+                                    Icons.person_outline_outlined,
+                                    size: responsive.w(35),
+                                    color: Colors.grey[600],
+                                  ),
+                                );
+                              },
+                            )
+                          : Container(
+                              width: responsive.w(71),
+                              height: responsive.h(71),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius:
+                                    BorderRadius.circular(responsive.w(16)),
+                              ),
+                              child: Icon(
+                                Icons.person_outline_outlined,
+                                size: responsive.w(35),
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                    ),
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(responsive.w(16)),
-                    child: u.userProfilePictureUrl != null && u.userProfilePictureUrl!.isNotEmpty
-                        ? Image.network(
-                            u.userProfilePictureUrl!,
-                            width: responsive.w(71),
-                            height: responsive.h(71),
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                width: responsive.w(71),
-                                height: responsive.h(71),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(responsive.w(16)),
-                                ),
-                                child: Icon(
-                                  Icons.person_outline_outlined,
-                                  size: responsive.w(35),
-                                  color: Colors.grey[600],
-                                ),
-                              );
-                            },
-                          )
-                        : Container(
-                            width: responsive.w(71),
-                            height: responsive.h(71),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(responsive.w(16)),
-                            ),
-                            child: Icon(
-                              Icons.person_outline_outlined,
-                              size: responsive.w(35),
-                              color: Colors.grey[600],
-                            ),
+                  SizedBox(width: responsive.w(16)),
+                  Container(
+                    width: responsive.w(242),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          u.userName ?? "",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontSize: responsive.sp(20),
                           ),
-                  ),
-                ),
-                SizedBox(width: responsive.w(16)),
-                Container(
-                  width: responsive.w(242),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        u.userName ?? "",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
-                          fontSize: responsive.sp(20),
                         ),
-                      ),
-                      SizedBox(height: responsive.h(4)),
-                      Text(
-                        u.getSubTitle() ?? "",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400,
-                          fontSize: responsive.w(14),
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
+                        SizedBox(height: responsive.h(4)),
+                        Text(
+                          u.getSubTitle() ?? "",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400,
+                            fontSize: responsive.w(14),
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: responsive.h(16))
-        ],
+            SizedBox(height: responsive.h(16))
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
 
 class PhotoAlbumGrid extends StatelessWidget {
