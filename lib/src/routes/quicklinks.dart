@@ -110,19 +110,17 @@ class _QuicklinksState extends State<Quicklinks> {
   Widget build(BuildContext context) {
     final responsive = Responsive(context);
     final size = MediaQuery.of(context).size;
-    print(
-        "Emulator screen size → width: ${size.width}, height: ${size.height}");
 
     Map<String, Map<String, String>> quickLinks = {
       "DevCom": {
-        "Resobin": "https://resobin.gymkhana.iitb.ac.in/login",
+        "ResoBin": "https://resobin.gymkhana.iitb.ac.in/login",
         "Mess-I": "https://instamess.gymkhana.iitb.ac.in/dashboard/login",
         "ReaCH": "https://reach.gymkhana.iitb.ac.in/",
         "NewBee": "https://gymkhana.iitb.ac.in/newbee",
         "DevCom Website":"https://devcom.gymkhana.iitb.ac.in/", 
       },
       "Academic": {
-        "ASC": "https://asc.iitb.ac.in/",
+        "Internal ASC": "https://asc.iitb.ac.in/",
         "External ASC": "https://portal.iitb.ac.in/asc/",
         "Moodle": "https://moodle.iitb.ac.in",
         "Placement Blog": "https://campus.placements.iitb.ac.in/",

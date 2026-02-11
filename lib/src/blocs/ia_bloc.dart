@@ -491,6 +491,19 @@ class InstiAppBloc {
     updateSession(currSession!);
   }
 
+  Future<void> refreshUserProfile() async {
+    if (currSession == null || currSession!.sessionid == null) return;
+
+    try {
+      final userMe = await client.getUserMe(getSessionIdHeader());
+      currSession!.profile = userMe;
+      _sessionSubject.add(currSession);
+      _persistSession(currSession); // update cached session
+    } catch (e) {
+      print("Error refreshing profile: $e");
+    }
+  }
+
   // Section
   // User/Body/Event updates
   Future<void> updateUesEvent(Event e, UES ues) async {

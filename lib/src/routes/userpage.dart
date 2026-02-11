@@ -13,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:InstiApp/src/utils/responsive.dart';
 import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
+import 'package:InstiApp/src/blocs/ia_bloc.dart';
 
 class UserPage extends StatefulWidget {
   final User? initialUser;
@@ -58,7 +59,7 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
   InstiAppBloc? _bloc;
 
   final String updateProfileUrl = "https://gymkhana.iitb.ac.in/sso/user";
-  final String feedbackUrl = "https://insti.app/feedback";
+  final String feedbackUrl = "https://forms.gle/DpdTthdP51xbrjGd9";
 
   @override
   void initState() {
@@ -1030,13 +1031,32 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Column(
         children: [
-          ToggleItem(
-            title: 'Notifications',
-            value: NotificationVisibility,
-            onChanged: (val) => setState(() => NotificationVisibility = val),
-            top: true,
-            icon: Icons.notifications_none_outlined,
-          ),
+          // ToggleItem(
+          //   title: 'Notifications',
+          //   value: NotificationVisibility,
+          //   onChanged: (val) => setState(() => NotificationVisibility = val),
+          //   top: true,
+          //   icon: Icons.notifications_none_outlined,
+          // ),
+          // SettingsItem(
+          //   title: updatingProfile ? 'Opening...' : 'Edit Profile',
+          //   icon: Icons.edit_outlined,
+          //   color: updatingProfile ? Colors.grey : null,
+          //   onTap: () async {
+          //     setState(() => updatingProfile = true);
+          //     try {
+          //       await Future.delayed(const Duration(milliseconds: 300));
+          //       if (await canLaunchUrl(Uri.parse(updateProfileUrl))) {
+          //         await launchUrl(
+          //           Uri.parse(updateProfileUrl),
+          //           mode: LaunchMode.externalApplication,
+          //         );
+          //       }
+          //     } finally {
+          //       setState(() => updatingProfile = false);
+          //     }
+          //   },
+          // ),
           SettingsItem(
             title: updatingProfile ? 'Opening...' : 'Edit Profile',
             icon: Icons.edit_outlined,
@@ -1050,6 +1070,23 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                     Uri.parse(updateProfileUrl),
                     mode: LaunchMode.externalApplication,
                   );
+
+                  // Wait for the user to return from the browser
+                  late final AppLifecycleListener listener;
+                  listener = AppLifecycleListener(
+                    onResume: () async {
+                      listener.dispose();
+                      if (_bloc != null && mounted) {
+                        await _bloc!.refreshUserProfile();
+                        // Also update the local user variable from the refreshed session
+                        setState(() {
+                          user = _bloc!.currSession?.profile;
+                          associations = _convertRolesToGroups();
+                          following = _convertBodiesToGroups();
+                        });
+                      }
+                    },
+                  );
                 }
               } finally {
                 setState(() => updatingProfile = false);
@@ -1057,7 +1094,7 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
             },
           ),
           SettingsItem(
-            title: sendingFeedback ? 'Opening...' : 'Feedback',
+            title: sendingFeedback ? 'Opening...' : 'Report Issues',
             icon: Icons.feedback_outlined,
             bottom: true,
             color: sendingFeedback ? Colors.grey : null,
@@ -1074,6 +1111,14 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
               } finally {
                 setState(() => sendingFeedback = false);
               }
+            },
+          ),
+          SettingsItem(
+            title: 'About Us',
+            icon: Icons.info_outline,
+            bottom: true,
+            onTap: () {
+              BodyPage.navigateWith(context, _bloc!, body: Body(bodyID: '571c2d81-2206-46e6-825f-6b87b286863c'));
             },
           ),
           SizedBox(height: RS.sh(context, 24)),
@@ -1099,6 +1144,19 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
                 setState(() => loggingOutLoading = false);
               }
             },
+          ),
+          Padding(
+            padding: EdgeInsets.only(
+                top: RS.sh(context, 8), left: RS.sw(context, 4)),
+            child: Text(
+              "Disclaimer : Please log out and log in again to view updated profile",
+              style: TextStyle(
+                fontSize: RS.sp(context, 12),
+                color: Colors.black54,
+                fontFamily: 'DM Sans',
+              ),
+              textAlign: TextAlign.left,
+            ),
           ),
         ],
       ),

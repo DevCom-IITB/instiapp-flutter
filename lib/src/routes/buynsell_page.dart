@@ -182,12 +182,6 @@ class _BuySellPageState extends State<BuySellPage> {
                     : Column(
                         children: [
                           SizedBox(height: RS.sh(context, 4)),
-                          CustomAppBar(
-                            title: _currentTab == 0
-                                ? 'Buy & Sell'
-                                : 'Posted By You',
-                            other: Icons.bookmark_border_rounded,
-                          ),
                           _buildSearchBar(),
                           _buildFilterChips(),
                           SizedBox(height: RS.sh(context, 16)),

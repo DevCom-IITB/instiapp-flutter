@@ -936,8 +936,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                 bottom: services_icon["Positions"][3],
                 top: services_icon["Positions"][1],
                 child: SizedBox(
-                  width: services_icon["IconWidth"],
-                  height: services_icon["IconHeight"],
+                  width: responsive.w(37),
+                  height: responsive.h(16),
                   child: services_icon["Title"] == "Quick Links"
                       ? Image.asset(
                           services_icon["Path"],
