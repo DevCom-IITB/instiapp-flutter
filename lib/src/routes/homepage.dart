@@ -938,14 +938,9 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                 child: SizedBox(
                   width: responsive.w(37),
                   height: responsive.h(16),
-                  child: services_icon["Title"] == "Quick Links"
-                      ? Image.asset(
+                  child: SvgPicture.asset(
                           services_icon["Path"],
-                          fit: BoxFit.contain,
-                        )
-                      : SvgPicture.asset(
-                          services_icon["Path"],
-                          fit: BoxFit.contain,
+                          fit: BoxFit.fill,
                         ),
                 ),
               ),
@@ -1037,20 +1032,48 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                     }
                   },
                   child: Container(
-                    width: responsive.h(52),
-                    height: responsive.h(52),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(22),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 4,
-                          offset: Offset(0, 2),
-                        )
+                    width: 78,
+                    height: 40,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: ShapeDecoration(
+                      color: const Color(0xFF121D2C),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          left: 46,
+                          top: 12,
+                          child: Text(
+                            'ID',
+                            style: TextStyle(
+                              color: const Color(0xFFE2E2E2),
+                              fontSize: 16,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: 5,
+                          top: 5,
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(width: 1, color: Colors.white),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                            ),
+                            child: avatarContent,
+                          ),
+                        ),
                       ],
                     ),
-                    child: avatarContent,
                   ),
                 );
               },
@@ -1292,7 +1315,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
               "Subtitle": "Navigate Insti",
               "Icon Height": responsive.h(72.0),
               "Icon Width": responsive.w(76.0),
-              "Positions": [111.0, 28.0, -1.0, -6.0, 0.0]
+              "Positions": [97.0, 14.5, -11.0, -7.8, -7.81]
             })
           ],
         ),
@@ -1306,16 +1329,16 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
               "Subtitle": "Updates",
               "Icon Height": responsive.h(77.54),
               "Icon Width": responsive.w(72.0),
-              "Positions": [107.46, 23.0, -1.0, -1.0, 0.0]
+              "Positions": [97.0, 14.5, -11.0, -7.8, -7.81]
             }),
             SizedBox(width: responsive.w(8)),
-            services("Quick Links", "blogs_new", {
+            services("Quick Links", "quick_links", {
               "Title": "Quick Links",
-              "Path": 'assets/homepage/images/quicklinks_new.png',
+              "Path": 'assets/homepage/icons/quick_links.svg',
               "Subtitle": "Useful Insti Links",
               "Icon Height": responsive.h(77.7),
               "Icon Width": responsive.w(80.18),
-              "Positions": [107.72, 16.52, -6.0, -6.5, 4.71]
+              "Positions": [97.0, 14.5, -11.0, -7.8, -7.81]
             })
           ],
         ),
@@ -1643,13 +1666,13 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             ),
             SizedBox(width: responsive.w(8)),
             SizedBox(
-              width: responsive.w(250),
+              width: responsive.w(245),
               height: responsive.h(184),
               child: Container(
-                padding: EdgeInsets.all(4),
+                padding: EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   color: myConstants.instiappBlue,
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(13),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1657,7 +1680,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                   children: [
                     Container(
                       padding: EdgeInsets.all(16),
-                      width: responsive.w(242),
+                      width: responsive.w(241),
                       height: responsive.h(129),
                       decoration: BoxDecoration(
                         color: myConstants.instiappWhite,

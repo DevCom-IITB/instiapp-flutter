@@ -358,7 +358,7 @@ class _CommunitiesState extends State<Communities> {
   @override
   void initState() {
     super.initState();
-     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent, // transparent bar
       statusBarIconBrightness: Brightness.light, // white icons
     ));
@@ -563,27 +563,29 @@ class _CommunitiesState extends State<Communities> {
                               ),
                             ),
                             Positioned(
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            child: ClipRect(
-                              child: BackdropFilter(
-                                filter:
-                                    ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                                child: Container(
-                                  height: MediaQuery.of(context).padding.top,
-                                  color: Colors.white.withOpacity(0.1),
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              child: ClipRect(
+                                child: BackdropFilter(
+                                  filter:
+                                      ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                  child: Container(
+                                    height: MediaQuery.of(context).padding.top,
+                                    color: Colors.white.withOpacity(0.1),
+                                  ),
                                 ),
                               ),
-                            ),),
+                            ),
                             Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Padding(
-                                  padding:
-                                      EdgeInsets.only(left: responsive.w(16),top: responsive.h(
-                                        MediaQuery.of(context).padding.top+2)),
+                                  padding: EdgeInsets.only(
+                                      left: responsive.w(16),
+                                      top: responsive.h(
+                                          MediaQuery.of(context).padding.top +
+                                              2)),
                                   child: GestureDetector(
                                     onTap: () {
                                       Navigator.of(context).pop();
@@ -615,7 +617,7 @@ class _CommunitiesState extends State<Communities> {
                                     ),
                                   ),
                                 ),
-                                
+
                                 // Padding(
                                 //   padding:
                                 //       EdgeInsets.only(right: responsive.w(16)),
@@ -648,8 +650,11 @@ class _CommunitiesState extends State<Communities> {
                       ),
                     ),
                     if (!_headerCollapsed) SizedBox(height: responsive.h(16)),
-                    if(_headerCollapsed) SizedBox(height: responsive.h(2+MediaQuery.of(context).padding.top)),
-      
+                    if (_headerCollapsed)
+                      SizedBox(
+                          height: responsive
+                              .h(2 + MediaQuery.of(context).padding.top)),
+
                     // --- Club Info ---
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -662,8 +667,8 @@ class _CommunitiesState extends State<Communities> {
                                 height: responsive.h(63),
                                 width: responsive.w(63),
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(
-                                      responsive.w(31.5)),
+                                  borderRadius:
+                                      BorderRadius.circular(responsive.w(31.5)),
                                   child: NullableCircleAvatar(
                                     community?.logoImg ?? "",
                                     Icons.person,
@@ -674,8 +679,7 @@ class _CommunitiesState extends State<Communities> {
                               SizedBox(width: responsive.w(16)),
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       community?.name ?? "",
@@ -731,8 +735,8 @@ class _CommunitiesState extends State<Communities> {
                                         loadingFollow = true;
                                       });
                                       if (community != null)
-                                        await bloc.updateFollowCommunity(
-                                            community!);
+                                        await bloc
+                                            .updateFollowCommunity(community!);
                                       setState(() {
                                         loadingFollow = false;
                                       });
@@ -742,14 +746,15 @@ class _CommunitiesState extends State<Communities> {
                                       width: responsive.w(61),
                                       decoration: BoxDecoration(
                                         color: (community?.isUserFollowing ??
-                                                  false) ?  Colors.grey[500]:Color(0xFF306FDC),
+                                                false)
+                                            ? Colors.grey[500]
+                                            : Color(0xFF306FDC),
                                         borderRadius: BorderRadius.circular(
                                             responsive.w(100)),
                                       ),
                                       child: Center(
                                         child: Text(
-                                          (community?.isUserFollowing ??
-                                                  false)
+                                          (community?.isUserFollowing ?? false)
                                               ? "Joined"
                                               : "Join",
                                           style: TextStyle(
@@ -783,11 +788,11 @@ class _CommunitiesState extends State<Communities> {
                         ],
                       ),
                     ),
-      
+
                     SizedBox(height: responsive.h(10)),
-      
+
                     // --- Tabs ---
-      
+
                     if (!_headerCollapsed)
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -811,14 +816,14 @@ class _CommunitiesState extends State<Communities> {
                               ),
                               tabs: const [
                                 Tab(text: 'Posts'),
-                                Tab(text: 'Links'),
+                                // Tab(text: 'Links'),
                                 Tab(text: 'Members'),
                               ],
                             ),
                           ],
                         ),
                       ),
-      
+
                     // --- Tab Content (fills remaining space) ---
                     Expanded(
                       child: TabBarView(
@@ -841,27 +846,26 @@ class _CommunitiesState extends State<Communities> {
                             ),
                           ),
                           //links
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: responsive.h(24)),
-                                for (int i = 0;
-                                    i < linkLabel.length;
-                                    i++) ...[
-                                  LinkSection(linkLabel[i], links[i]),
-                                ],
-                                SizedBox(height: responsive.h(12))
-                              ],
-                            ),
-                          ),
+                          // Padding(
+                          //   padding:
+                          //       const EdgeInsets.symmetric(horizontal: 16),
+                          //   child: Column(
+                          //     crossAxisAlignment: CrossAxisAlignment.start,
+                          //     children: [
+                          //       SizedBox(height: responsive.h(24)),
+                          //       for (int i = 0;
+                          //           i < linkLabel.length;
+                          //           i++) ...[
+                          //         LinkSection(linkLabel[i], links[i]),
+                          //       ],
+                          //       SizedBox(height: responsive.h(12))
+                          //     ],
+                          //   ),
+                          // ),
                           //members
                           //_membersTab(),
                           Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Column(
                               children: [
                                 SizedBox(height: responsive.h(24)),
@@ -1759,7 +1763,8 @@ class _CommunityPostSectionState extends State<CommunityPostSection> {
           child: Center(
               child: Text(
             "Nothing here yet!",
-            style: TextStyle(fontSize: responsive.sp(18), fontFamily: 'DM Sans'),
+            style:
+                TextStyle(fontSize: responsive.sp(18), fontFamily: 'DM Sans'),
           )),
         )
       ];
