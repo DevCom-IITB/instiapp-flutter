@@ -200,6 +200,7 @@ class _FeedPageState extends State<FeedPage> {
                           top: Responsive.height(13, context),
                           bottom: Responsive.height(13, context)),
                       decoration: BoxDecoration(
+                        color: Colors.white,
                         image: const DecorationImage(
                           image: AssetImage('assets/blogs/searchbar.png'),
                           fit: BoxFit.fill,

@@ -107,58 +107,93 @@ class _ExplorePageState extends State<ExplorePage> {
                               ))),
                       SizedBox(height: Responsive.height(18, context)),
                       InkWell(
-                        onTap: () {
-                          setState(() {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Exploresearch(
-                                  onBack: (String id) {
-                                    setState(() {
-                                      bodyID = id;
-                                      // searchMode = false;
-                                    });
-                                  },
+                          onTap: () {
+                            setState(() {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Exploresearch(
+                                    onBack: (String id) {
+                                      setState(() {
+                                        bodyID = id;
+                                        // searchMode = false;
+                                      });
+                                    },
+                                  ),
                                 ),
+                              );
+                            });
+                          },
+                          child:
+                              // Container(
+                              //   margin: EdgeInsets.only(
+                              //       left: Responsive.width(16, context),
+                              //       right: Responsive.width(16, context)),
+                              //   height: Responsive.height(50, context),
+                              //   padding: EdgeInsets.only(
+                              //       left: Responsive.width(14, context),
+                              //       right: Responsive.width(14, context),
+                              //       top: Responsive.height(13, context),
+                              //       bottom: Responsive.height(13, context)),
+                              //   decoration: BoxDecoration(
+                              //     color: Colors.white,
+                              //     borderRadius: BorderRadius.circular(
+                              //         Responsive.height(25, context)),
+                              //   ),
+                              //   child: Row(
+                              //     mainAxisAlignment: MainAxisAlignment.start,
+                              //     children: [
+                              //       Image(
+                              //         image: AssetImage('assets/blogs/search.png'),
+                              //         height: Responsive.height(24, context),
+                              //         width: Responsive.width(24, context),
+                              //       ),
+                              //       SizedBox(width: Responsive.width(20, context)),
+                              //       Text('Search clubs, events, users...',
+                              //           style: TextStyle(
+                              //             fontSize: Responsive.text(16, context),
+                              //             fontWeight: FontWeight.w400,
+                              //             fontFamily: 'DM Sans',
+                              //             color: Color.fromRGBO(0, 0, 0, 0.4),
+                              //           )),
+                              //     ],
+                              //   ),
+                              // ),
+                              Container(
+                            margin: const EdgeInsets.all(16),
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            height: Responsive.height(50, context),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(
+                                  Responsive.height(50, context)),
+                              image: DecorationImage(
+                                image: AssetImage("assets/blogs/searchbar.png"),
+                                fit: BoxFit.fill,
                               ),
-                            );
-                          });
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(
-                              left: Responsive.width(16, context),
-                              right: Responsive.width(16, context)),
-                          height: Responsive.height(50, context),
-                          padding: EdgeInsets.only(
-                              left: Responsive.width(14, context),
-                              right: Responsive.width(14, context),
-                              top: Responsive.height(13, context),
-                              bottom: Responsive.height(13, context)),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(
-                                Responsive.height(25, context)),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Image(
-                                image: AssetImage('assets/blogs/search.png'),
-                                height: Responsive.height(24, context),
-                                width: Responsive.width(24, context),
+                            ),
+                            child: Center(
+                              child: Row(
+                                children: [
+                                  Image(
+                                    image:
+                                        AssetImage('assets/blogs/search.png'),
+                                    height: Responsive.height(24, context),
+                                    width: Responsive.width(24, context),
+                                  ),
+                                  SizedBox(
+                                      width: Responsive.width(20, context)),
+                                  Text('Search clubs, events, users...',
+                                      style: TextStyle(
+                                        fontSize: Responsive.text(16, context),
+                                        fontWeight: FontWeight.w400,
+                                        fontFamily: 'DM Sans',
+                                        color: Color.fromRGBO(0, 0, 0, 0.4),
+                                      )),
+                                ],
                               ),
-                              SizedBox(width: Responsive.width(20, context)),
-                              Text('Search clubs, events, users...',
-                                  style: TextStyle(
-                                    fontSize: Responsive.text(16, context),
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: 'DM Sans',
-                                    color: Color.fromRGBO(0, 0, 0, 0.4),
-                                  )),
-                            ],
-                          ),
-                        ),
-                      ),
+                            ),
+                          )),
                       Container(
                           margin: EdgeInsets.only(
                               left: Responsive.width(32, context),
@@ -311,7 +346,8 @@ class _ExplorePageState extends State<ExplorePage> {
                             child: Bodycard(
                                 context, "I.B.s", "assets/explore/ibs.png"),
                           ),
-                          Bodycard(context, "Coming Soon!", "assets/explore/food_explore.png"),
+                          Bodycard(context, "Coming Soon!",
+                              "assets/explore/food_explore.png"),
                         ],
                       ),
                       SizedBox(height: Responsive.height(100, context)),
