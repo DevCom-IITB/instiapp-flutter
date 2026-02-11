@@ -671,10 +671,10 @@ class _EventPageState extends State<EventPage> {
                                 decoration: BoxDecoration(
                                   color: currentUes == UES.NotGoing
                                       ? Color.fromRGBO(48, 111, 220, 1)
-                                      : Color.fromRGBO(15, 22, 32, 1),
+                                      : Color.fromRGBO(21, 32, 46, 1),
                                   borderRadius: BorderRadius.circular(50),
                                   border: Border.all(
-                                    color: Color.fromRGBO(48, 111, 220, 1),
+                                    color: currentUes == UES.NotGoing ? Color.fromRGBO(48, 111, 220, 1) : const Color(0xFF7E8287),
                                     width: Responsive.width(2, context),
                                   ),
                                 ),
@@ -683,7 +683,7 @@ class _EventPageState extends State<EventPage> {
                                     children: [
                                       SvgPicture.asset(
                                         'assets/feed/light.svg',
-                                        color: colour,
+                                        colorFilter: currentUes == UES.NotGoing ? ColorFilter.mode(Color.fromRGBO(48, 111, 220, 1), BlendMode.srcIn) : ColorFilter.mode(const Color(0xFF7E8287), BlendMode.srcIn),
                                         height:
                                             Responsive.height(18.3, context),
                                         width: Responsive.width(15, context),
@@ -724,7 +724,7 @@ class _EventPageState extends State<EventPage> {
                                                 Responsive.text(14, context),
                                             fontWeight: FontWeight.w700,
                                             fontFamily: 'DM Sans',
-                                            color: colour,
+                                            color: const Color(0xFF7E8287),
                                           ),
                                         ),
                                     ])),

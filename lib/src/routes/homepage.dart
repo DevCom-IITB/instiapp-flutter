@@ -229,7 +229,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
     // Initialize QR stripe animation controller
     _qrStripeController = AnimationController(
-      duration: const Duration(milliseconds: 5000),
+      duration: const Duration(milliseconds: 4000),
       vsync: this,
     )..repeat();
 
@@ -938,15 +938,10 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                 child: SizedBox(
                   width: responsive.w(37),
                   height: responsive.h(16),
-                  child: services_icon["Title"] == "Quick Links"
-                      ? Image.asset(
-                          services_icon["Path"],
-                          fit: BoxFit.contain,
-                        )
-                      : SvgPicture.asset(
-                          services_icon["Path"],
-                          fit: BoxFit.contain,
-                        ),
+                  child : SvgPicture.asset(
+                        services_icon["Path"],
+                        fit: BoxFit.cover,
+                      ),
                 ),
               ),
               // Positioned(
@@ -1037,20 +1032,48 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                     }
                   },
                   child: Container(
-                    width: responsive.h(52),
-                    height: responsive.h(52),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(22),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 4,
-                          offset: Offset(0, 2),
-                        )
+                    width: 78,
+                    height: 40,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: ShapeDecoration(
+                      color: const Color(0xFF121D2C),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          left: 46,
+                          top: 12,
+                          child: Text(
+                            'ID',
+                            style: TextStyle(
+                              color: const Color(0xFFE2E2E2),
+                              fontSize: 16,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: 5,
+                          top: 5,
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(width: 1, color: Colors.white),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                            ),
+                            child: avatarContent,
+                          ),
+                        ),
                       ],
                     ),
-                    child: avatarContent,
                   ),
                 );
               },
@@ -1311,7 +1334,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             SizedBox(width: responsive.w(8)),
             services("Quick Links", "blogs_new", {
               "Title": "Quick Links",
-              "Path": 'assets/homepage/images/quicklinks_new.png',
+              "Path": 'assets/homepage/images/QuickLinks.svg',
               "Subtitle": "Useful Insti Links",
               "Icon Height": responsive.h(77.7),
               "Icon Width": responsive.w(80.18),
@@ -1612,7 +1635,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                                     .instiappBlue // or any border color when selected
                                 : myConstants
                                     .instiappGrey, // border color when not selected
-                            width: 2, // border thickness
+                            width: responsive.w(2), // border thickness
                           ),
                         ),
                         child: Center(
@@ -1640,13 +1663,13 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             ),
             SizedBox(width: responsive.w(8)),
             SizedBox(
-              width: responsive.w(250),
+              width: responsive.w(245),
               height: responsive.h(184),
               child: Container(
-                padding: EdgeInsets.all(4),
+                padding: EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   color: myConstants.instiappBlue,
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(13),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1654,7 +1677,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                   children: [
                     Container(
                       padding: EdgeInsets.all(16),
-                      width: responsive.w(242),
+                      width: responsive.w(241),
                       height: responsive.h(129),
                       decoration: BoxDecoration(
                         color: myConstants.instiappWhite,
