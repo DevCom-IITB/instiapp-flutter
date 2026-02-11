@@ -18,6 +18,7 @@ import 'package:intl/intl.dart';
 // import 'package:share/share.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../widgets/custom_dialog.dart';
 
 class Responsive {
   final BuildContext context;
@@ -364,54 +365,119 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
         ),
 
         // Right side: delete button (only for "Your Posts")
+        // if (widget.postType == CPType.YourPosts)
+        //   GestureDetector(
+        //     onTap: () async {
+        //       final confirm = await showDialog<bool>(
+        //             context: context,
+        //             builder: (ctx) => AlertDialog(
+        //               title: Text("Delete post?"),
+        //               content: Text(
+        //                   "Are you sure you want to delete this post? This action cannot be undone."),
+        //               actions: [
+        //                 TextButton(
+        //                   onPressed: () => Navigator.of(ctx).pop(false),
+        //                   child: Text("Cancel"),
+        //                 ),
+        //                 TextButton(
+        //                   onPressed: () => Navigator.of(ctx).pop(true),
+        //                   style: TextButton.styleFrom(
+        //                     foregroundColor: Color(0xFFF8471B),
+        //                   ),
+        //                   child: Text("Delete"),
+        //                 ),
+        //               ],
+        //             ),
+        //           ) ??
+        //           false;
+
+        //       if (!confirm) return;
+
+        //       try {
+        //         // await BlocProvider.of(context)!
+        //         //     .bloc
+        //         //     .communityPostBloc
+        //         //     .updateCommunityPostStatus(communityPost.id!, 2);
+        //         await BlocProvider.of(context)!
+        //              .bloc.communityPostBloc
+        //             .deleteCommunityPost(communityPost.id ?? "");
+        //         setState(() {
+        //           communityPost.deleted = true;
+        //         });
+
+        //         ScaffoldMessenger.of(context).showSnackBar(
+        //           SnackBar(content: Text('Post deleted')),
+        //         );
+        //       } catch (e) {
+        //         ScaffoldMessenger.of(context).showSnackBar(
+        //           SnackBar(content: Text('Failed to delete post')),
+        //         );
+        //       }
+        //     },
+        //     child: Container(
+        //       height: responsive.h(24),
+        //       width: responsive.w(24),
+        //       decoration: BoxDecoration(
+        //         borderRadius: BorderRadius.circular(12),
+        //         color: myConstants.instiappGrey,
+        //       ),
+        //       child: Icon(
+        //         Icons.delete_outline,
+        //         color: Color(0xFFF8471B),
+        //         size: responsive.sp(20),
+        //       ),
+        //     ),
+        //   ),
+        // Right side: delete button (only for "Your Posts")
         if (widget.postType == CPType.YourPosts)
           GestureDetector(
-            onTap: () async {
-              final confirm = await showDialog<bool>(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: Text("Delete post?"),
-                      content: Text(
-                          "Are you sure you want to delete this post? This action cannot be undone."),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(ctx).pop(false),
-                          child: Text("Cancel"),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.of(ctx).pop(true),
-                          style: TextButton.styleFrom(
-                            foregroundColor: Color(0xFFF8471B),
-                          ),
-                          child: Text("Delete"),
-                        ),
-                      ],
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => CustomDialog(
+                  title: 'Delete Post?',
+                  content1:
+                      'Are you sure you want to delete this post?',
+                  content2:
+                      'This action cannot be undone.',
+                  imageAssetPath:
+                      'assets/buynsell/discard.png', // change if needed
+                  options: [
+                    DialogOption(
+                      text: 'Cancel',
+                      onPressed: (ctx, setProcessing) =>
+                          Navigator.of(ctx).pop(),
                     ),
-                  ) ??
-                  false;
+                    DialogOption(
+                      text: 'Delete',
+                      isPrimary: true,
+                      onPressed: (ctx, setProcessing) async {
+                        Navigator.of(ctx).pop(); // close dialog
 
-              if (!confirm) return;
+                        try {
+                          await BlocProvider.of(context)!
+                              .bloc
+                              .communityPostBloc
+                              .deleteCommunityPost(communityPost.id ?? "");
 
-              try {
-                // await BlocProvider.of(context)!
-                //     .bloc
-                //     .communityPostBloc
-                //     .updateCommunityPostStatus(communityPost.id!, 2);
-                await BlocProvider.of(context)!
-                     .bloc.communityPostBloc
-                    .deleteCommunityPost(communityPost.id ?? "");
-                setState(() {
-                  communityPost.deleted = true;
-                });
+                          setState(() {
+                            communityPost.deleted = true;
+                          });
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Post deleted')),
-                );
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to delete post')),
-                );
-              }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Post deleted')),
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Failed to delete post')),
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              );
             },
             child: Container(
               height: responsive.h(24),
@@ -422,7 +488,7 @@ class _CommunitypostwidgetState extends State<Communitypostwidget> {
               ),
               child: Icon(
                 Icons.delete_outline,
-                color: Color(0xFFF8471B),
+                color: const Color(0xFFF8471B),
                 size: responsive.sp(20),
               ),
             ),
