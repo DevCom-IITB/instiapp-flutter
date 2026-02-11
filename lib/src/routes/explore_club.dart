@@ -220,7 +220,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
               Stack(
                 children: [
                   Container(
-                    height: Responsive.width(290, context),
+                    height: Responsive.width(270, context),
                     child: ClipRRect(
                       borderRadius: BorderRadius.only(
                         bottomLeft:
@@ -234,7 +234,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                             bodyIdToImage[widget.heroTag] ??
                                 'assets/explore/cultBG.png',
                             // 'assets/explore/culturals.png',
-                            height: Responsive.width(295, context),
+                            height: Responsive.width(275, context),
                             width: double.infinity,
                             fit: BoxFit.cover,
                           ),
@@ -302,7 +302,7 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                     ),
                   ),
                   Positioned(
-                    top: 70 + MediaQuery.of(context).padding.top,
+                    top: Responsive.height(70, context) + MediaQuery.of(context).padding.top,
                     left: Responsive.width(16, context),
                     right: Responsive.width(16, context),
                     child: Container(
@@ -379,15 +379,15 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                     ),
                   ),
                   Positioned(
-                    top: 140 + MediaQuery.of(context).padding.top,
-                    left: 32,
-                    right: 32,
+                    top: Responsive.height(140,context) + MediaQuery.of(context).padding.top,
+                    left: Responsive.width(32,context),
+                    right: Responsive.width(32,context),
                     child: _buildHeaderTitle(context, theme),
                   ),
                   Positioned(
-                    top: 185 + MediaQuery.of(context).padding.top,
-                    left: 32,
-                    right: 32,
+                    top: Responsive.height(185,context) + MediaQuery.of(context).padding.top,
+                    left: Responsive.width(32,context), 
+                    right: Responsive.width(32,context),
                     child: _isLoading
                         ? HeaderDescriptionShimmer()
                         : Text(

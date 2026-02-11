@@ -229,7 +229,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
     // Initialize QR stripe animation controller
     _qrStripeController = AnimationController(
-      duration: const Duration(milliseconds: 4000),
+      duration: const Duration(milliseconds: 5000),
       vsync: this,
     )..repeat();
 
@@ -938,10 +938,15 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                 child: SizedBox(
                   width: responsive.w(37),
                   height: responsive.h(16),
-                  child : SvgPicture.asset(
-                        services_icon["Path"],
-                        fit: BoxFit.cover,
-                      ),
+                  child: services_icon["Title"] == "Quick Links"
+                      ? Image.asset(
+                          services_icon["Path"],
+                          fit: BoxFit.contain,
+                        )
+                      : SvgPicture.asset(
+                          services_icon["Path"],
+                          fit: BoxFit.contain,
+                        ),
                 ),
               ),
               // Positioned(
@@ -1032,48 +1037,20 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                     }
                   },
                   child: Container(
-                    width: 78,
-                    height: 40,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: ShapeDecoration(
-                      color: const Color(0xFF121D2C),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          left: 46,
-                          top: 12,
-                          child: Text(
-                            'ID',
-                            style: TextStyle(
-                              color: const Color(0xFFE2E2E2),
-                              fontSize: 16,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 5,
-                          top: 5,
-                          child: Container(
-                            width: 30,
-                            height: 30,
-                            clipBehavior: Clip.antiAlias,
-                            decoration: ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(width: 1, color: Colors.white),
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                            ),
-                            child: avatarContent,
-                          ),
-                        ),
+                    width: responsive.h(52),
+                    height: responsive.h(52),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(22),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        )
                       ],
                     ),
+                    child: avatarContent,
                   ),
                 );
               },
@@ -1334,7 +1311,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             SizedBox(width: responsive.w(8)),
             services("Quick Links", "blogs_new", {
               "Title": "Quick Links",
-              "Path": 'assets/homepage/images/QuickLinks.svg',
+              "Path": 'assets/homepage/images/quicklinks_new.png',
               "Subtitle": "Useful Insti Links",
               "Icon Height": responsive.h(77.7),
               "Icon Width": responsive.w(80.18),
@@ -1356,7 +1333,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     return Stack(
       children: [
         SizedBox(
-          height: responsive.h(382),
+          height: responsive.h(384),
           width: double.infinity,
           child: SvgPicture.asset(
             'assets/homepage/icons/bigborder.svg',
@@ -1502,36 +1479,39 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
               onTap: () {
                 _openFilterBottomSheet(hostels);
               },
-              child: Container(
-                // width: responsive.w(94),
-                height: responsive.h(40),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: myConstants.instiappGrey,
-                    border: Border.all(
-                        color: Color(0xFF7E8287), width: responsive.h(1))),
-                padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(5),
-                    responsive.w(7), responsive.h(3)),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "${_selectedDay.substring(0, 3)}, "
-                      "${(_selectedHostel == 'tansa' || _selectedHostel == 'qip') ? _selectedHostel : 'H-${_selectedHostel}'}",
-                      style: TextStyle(
-                        color: Color(0xCC0F1620),
-                        fontWeight: FontWeight.w500,
-                        fontSize: responsive.w(13),
+              child: Padding(
+                padding: EdgeInsets.only(top: responsive.h(2)),
+                child: Container(
+                  // width: responsive.w(94),
+                  height: responsive.h(40),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: myConstants.instiappGrey,
+                      border: Border.all(
+                          color: Color(0xFF7E8287), width: responsive.h(1))),
+                  padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(5),
+                      responsive.w(7), responsive.h(3)),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "${_selectedDay.substring(0, 3)}, "
+                        "${(_selectedHostel == 'tansa' || _selectedHostel == 'qip') ? _selectedHostel : 'H-${_selectedHostel}'}",
+                        style: TextStyle(
+                          color: Color(0xCC0F1620),
+                          fontWeight: FontWeight.w500,
+                          fontSize: responsive.w(13),
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 7),
-                    Icon(
-                      Icons.keyboard_arrow_down,
-                      size: responsive.w(20),
-                      color: Color(0xCC0F1620),
-                    ),
-                  ],
+                      SizedBox(width: 7),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        size: responsive.w(20),
+                        color: Color(0xCC0F1620),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             )
@@ -1635,7 +1615,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                                     .instiappBlue // or any border color when selected
                                 : myConstants
                                     .instiappGrey, // border color when not selected
-                            width: responsive.w(2), // border thickness
+                            width: 2, // border thickness
                           ),
                         ),
                         child: Center(
@@ -1663,13 +1643,13 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             ),
             SizedBox(width: responsive.w(8)),
             SizedBox(
-              width: responsive.w(245),
+              width: responsive.w(250),
               height: responsive.h(184),
               child: Container(
-                padding: EdgeInsets.all(2),
+                padding: EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   color: myConstants.instiappBlue,
-                  borderRadius: BorderRadius.circular(13),
+                  borderRadius: BorderRadius.circular(15),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1677,7 +1657,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                   children: [
                     Container(
                       padding: EdgeInsets.all(16),
-                      width: responsive.w(241),
+                      width: responsive.w(242),
                       height: responsive.h(129),
                       decoration: BoxDecoration(
                         color: myConstants.instiappWhite,
