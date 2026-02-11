@@ -1032,20 +1032,48 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                     }
                   },
                   child: Container(
-                    width: responsive.h(52),
-                    height: responsive.h(52),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(22),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 4,
-                          offset: Offset(0, 2),
-                        )
+                    width: 78,
+                    height: 40,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: ShapeDecoration(
+                      color: const Color(0xFF121D2C),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          left: 46,
+                          top: 12,
+                          child: Text(
+                            'ID',
+                            style: TextStyle(
+                              color: const Color(0xFFE2E2E2),
+                              fontSize: 16,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: 5,
+                          top: 5,
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(width: 1, color: Colors.white),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                            ),
+                            child: avatarContent,
+                          ),
+                        ),
                       ],
                     ),
-                    child: avatarContent,
                   ),
                 );
               },

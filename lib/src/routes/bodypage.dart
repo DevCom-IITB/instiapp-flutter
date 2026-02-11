@@ -1267,39 +1267,65 @@ class _BodyPageState extends State<BodyPage> {
                                   ),
                                 ),
                                 SizedBox(width: responsive.w(8)),
-                                Expanded(
+                                                                Expanded(
                                     child: SizedBox(
                                   height: responsive.h(52),
-                                  child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            (body!.bodyUserFollows ?? false)
-                                                ? Color.fromRGBO(43, 78, 131, 1)
-                                                : Color(0xFF306FDC),
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: responsive.h(14)),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                        ),
+                                  child: Container(
+                                    padding: EdgeInsets.only(
+                                        left: responsive.w(16),
+                                        right: responsive.w(16),
+                                        top: responsive.h(13),
+                                        bottom: responsive.h(13)),
+                                    decoration: BoxDecoration(
+                                      color: (body!.bodyUserFollows ?? false)
+                                          ? Color.fromRGBO(21, 32, 46, 1)
+                                          : Color.fromRGBO(48, 111, 220, 1),
+                                      borderRadius: BorderRadius.circular(50),
+                                      border: Border.all(
+                                        color: (body!.bodyUserFollows ?? false)
+                                            ? const Color(0xFF7E8287)
+                                            : Color.fromRGBO(48, 111, 220, 1),
+                                        width: responsive.w(2),
                                       ),
-                                      onPressed: () async {
+                                    ),
+                                    child: GestureDetector(
+                                      onTap: () async {
                                         if (body != null) {
                                           await bloc.updateFollowBody(body!);
                                           setState(() {});
                                         }
                                       },
-                                      child: Text(
-                                        (body!.bodyUserFollows ?? false)
-                                            ? 'Joined'
-                                            : 'Join',
-                                        style: TextStyle(
-                                          fontSize: responsive.h(16),
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'DM Sans',
-                                          color: Colors.white,
-                                        ),
-                                      )),
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            if ((body!.bodyUserFollows ??
+                                                    false) ==
+                                                false)
+                                              Text(
+                                                'Join',
+                                                style: TextStyle(
+                                                  fontSize: responsive.h(16),
+                                                  fontWeight: FontWeight.w700,
+                                                  fontFamily: 'DM Sans',
+                                                  color: Color.fromRGBO(255, 255, 255, 1),
+                                                ),
+                                              ),
+                                            if ((body!.bodyUserFollows ??
+                                                    false) ==
+                                                true)
+                                              Text(
+                                                'Joined',
+                                                style: TextStyle(
+                                                  fontSize: responsive.h(16),
+                                                  fontWeight: FontWeight.w700,
+                                                  fontFamily: 'DM Sans',
+                                                  color: const Color(0xFF7E8287),
+                                                ),
+                                              ),
+                                          ]),
+                                    ),
+                                  ),
                                 )),
                               ],
                             ),
