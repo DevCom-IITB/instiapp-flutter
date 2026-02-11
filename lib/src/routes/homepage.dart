@@ -88,13 +88,18 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
   void _updateHomepageScrollability() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        final contentHeight = _homepageContentKey.currentContext?.size?.height ?? 0;
-        final responsive = Responsive(context, bottomPadding: main_app.systemBottomPadding);
-        final availableHeight = MediaQuery.of(context).size.height - responsive.h(52) - responsive.h(115);
-        final canScroll = contentHeight > availableHeight;
-        if (canScroll != _homepageCanScroll) setState(() => _homepageCanScroll = canScroll);
-      });
+      if (!mounted) return;
+      final contentHeight =
+          _homepageContentKey.currentContext?.size?.height ?? 0;
+      final responsive =
+          Responsive(context, bottomPadding: main_app.systemBottomPadding);
+      final availableHeight = MediaQuery.of(context).size.height -
+          responsive.h(52) -
+          responsive.h(115);
+      final canScroll = contentHeight > availableHeight;
+      if (canScroll != _homepageCanScroll)
+        setState(() => _homepageCanScroll = canScroll);
+    });
   }
 
   // Animation controllers for navbar
@@ -104,6 +109,10 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   late Animation<double> _navScaleAnimation;
   late AnimationController _qrStripeController;
   late Animation<double> _qrStripeAnimation;
+  //added for fadein
+  late AnimationController _fadeInController;
+  late Animation<double> _fadeInAnimation;
+  bool _shouldFadeIn = false;
 
   // Track previous index for animation direction
   bool _isRefreshingHostels = false;
@@ -194,6 +203,15 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
+    _fadeInController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+    _fadeInAnimation = CurvedAnimation(
+      parent: _fadeInController,
+      curve: Curves.easeIn,
+    );
 
     // Initialize page controller
     _pageController = PageController(initialPage: _currentPageIndex);
@@ -289,7 +307,16 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
+    if (firstBuild) {
+      final args =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      if (args != null && args['fadeIn'] == true) {
+        _shouldFadeIn = true;
+        _fadeInController.forward();
+      } else {
+        _fadeInController.value = 1.0; // Skip animation, show immediately
+      }
+    }
     if (firstBuild) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final bloc = BlocProvider.of(context)!.bloc;
@@ -385,6 +412,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    _fadeInController.dispose(); //added for fadein
     _hostelErrorSub?.cancel();
     _pageController.dispose();
     _navIndicatorController.dispose();
@@ -398,68 +426,71 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     final responsive =
         Responsive(context, bottomPadding: main_app.systemBottomPadding);
 
-    return ScaffoldMessenger(
-      key: _scaffoldMessengerKey,
-      child: Scaffold(
-        backgroundColor: Color.fromRGBO(246, 246, 246, 1),
-        resizeToAvoidBottomInset: false,
-        body: Stack(
-          children: [
-            // Main content with swipe navigation
-            PageView(
-              
-              controller: _pageController,
-              onPageChanged: (index) {
-                FocusScope.of(context).unfocus();
-                _onPageSwiped(index);
-              },
-              physics: const ClampingScrollPhysics(),
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(bottom: responsive.h(90)),
-                  child: Homepagewidget(),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: responsive.h(50)),
-                  child: FeedPage(),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: responsive.h(0)),
-                  child: ExplorePage(),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: responsive.h(80)),
-                  child: CommunityPage(),
-                ),
-              ],
-            ),
-
-            // Bottom Navigation Bar
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: EdgeInsets.only(bottom: responsive.h(5+ main_app.systemBottomPadding)),
-                child: InstiBottomNavBar(
-                  items: const [
-                    NavBarItem(
-                        label: 'Home',
-                        iconPath: 'assets/homepage/icons/home.svg'),
-                    NavBarItem(
-                        label: 'Feed',
-                        iconPath: 'assets/homepage/icons/loader.svg'),
-                    NavBarItem(
-                        label: 'Explore',
-                        iconPath: 'assets/homepage/icons/search.svg'),
-                    NavBarItem(
-                        label: 'Communities',
-                        iconPath: 'assets/homepage/icons/message-square.svg'),
-                  ],
-                  currentIndex: _currentPageIndex,
-                  onTap: _onNavTap,
+    return FadeTransition(
+      opacity: _fadeInAnimation,
+      child: ScaffoldMessenger(
+        key: _scaffoldMessengerKey,
+        child: Scaffold(
+          backgroundColor: Color.fromRGBO(246, 246, 246, 1),
+          resizeToAvoidBottomInset: false,
+          body: Stack(
+            children: [
+              // Main content with swipe navigation
+              PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  FocusScope.of(context).unfocus();
+                  _onPageSwiped(index);
+                },
+                physics: const ClampingScrollPhysics(),
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: responsive.h(90)),
+                    child: Homepagewidget(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: responsive.h(50)),
+                    child: FeedPage(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: responsive.h(0)),
+                    child: ExplorePage(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: responsive.h(80)),
+                    child: CommunityPage(),
+                  ),
+                ],
+              ),
+      
+              // Bottom Navigation Bar
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      bottom: responsive.h(5 + main_app.systemBottomPadding)),
+                  child: InstiBottomNavBar(
+                    items: const [
+                      NavBarItem(
+                          label: 'Home',
+                          iconPath: 'assets/homepage/icons/home.svg'),
+                      NavBarItem(
+                          label: 'Feed',
+                          iconPath: 'assets/homepage/icons/loader.svg'),
+                      NavBarItem(
+                          label: 'Explore',
+                          iconPath: 'assets/homepage/icons/search.svg'),
+                      NavBarItem(
+                          label: 'Communities',
+                          iconPath: 'assets/homepage/icons/message-square.svg'),
+                    ],
+                    currentIndex: _currentPageIndex,
+                    onTap: _onNavTap,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -1052,65 +1083,66 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                     builder: (context, snapshot) {
                       final count = snapshot.data?.length ?? 0;
                       return Container(
-                        height: responsive.h(52),
-                      width: responsive.w(52),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(22),
-                          color: myConstants.instiappGrey),
-                        child: Stack(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => NotificationsPage()));
-                            },
-                            child: Center(
-                              child: Container(
-                                width: responsive.h(24),
-                                height: responsive.h(24),
-                                child: SvgPicture.asset(
-                                  'assets/homepage/icons/bell.svg',
-                                ),
-                              ),
-                            ),
-                          ),
-                          if (count > 0)
-                            Positioned(
-                              right: responsive.w(2),
-                              top: responsive.h(4),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: responsive.w(5),
-                                    vertical: responsive.h(1)),
-                                constraints: BoxConstraints(
-                                  minWidth: responsive.w(18),
-                                  minHeight: responsive.h(18),
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFE53935),
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black26,
-                                      blurRadius: 2,
-                                      offset: Offset(0, 1),
-                                    ),
-                                  ],
-                                ),
+                          height: responsive.h(52),
+                          width: responsive.w(52),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(22),
+                              color: myConstants.instiappGrey),
+                          child: Stack(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          NotificationsPage()));
+                                },
                                 child: Center(
-                                  child: Text(
-                                    count > 99 ? '99+' : '$count',
-                                    style: TextStyle(
-                                      color: const Color(0xFFFFFFFF),
-                                      fontSize: responsive.sp(10),
-                                      fontWeight: FontWeight.w700,
+                                  child: Container(
+                                    width: responsive.h(24),
+                                    height: responsive.h(24),
+                                    child: SvgPicture.asset(
+                                      'assets/homepage/icons/bell.svg',
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                        ],
-                      ));
+                              if (count > 0)
+                                Positioned(
+                                  right: responsive.w(2),
+                                  top: responsive.h(4),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: responsive.w(5),
+                                        vertical: responsive.h(1)),
+                                    constraints: BoxConstraints(
+                                      minWidth: responsive.w(18),
+                                      minHeight: responsive.h(18),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFE53935),
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black26,
+                                          blurRadius: 2,
+                                          offset: Offset(0, 1),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        count > 99 ? '99+' : '$count',
+                                        style: TextStyle(
+                                          color: const Color(0xFFFFFFFF),
+                                          fontSize: responsive.sp(10),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ));
                     },
                   )
                 ],
@@ -1135,7 +1167,9 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       body: Stack(
         children: [
           SingleChildScrollView(
-            physics: _homepageCanScroll ? const ClampingScrollPhysics() : const NeverScrollableScrollPhysics(),
+            physics: _homepageCanScroll
+                ? const ClampingScrollPhysics()
+                : const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.only(bottom: responsive.h(115)),
             //margin: EdgeInsets.only(left: 10,right: 0),
             child: Column(
