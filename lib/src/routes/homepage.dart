@@ -1628,13 +1628,13 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             ),
             SizedBox(width: responsive.w(8)),
             SizedBox(
-              width: responsive.w(250),
+              width: responsive.w(245),
               height: responsive.h(184),
               child: Container(
-                padding: EdgeInsets.all(4),
+                padding: EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   color: myConstants.instiappBlue,
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(13),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1642,7 +1642,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                   children: [
                     Container(
                       padding: EdgeInsets.all(16),
-                      width: responsive.w(242),
+                      width: responsive.w(241),
                       height: responsive.h(129),
                       decoration: BoxDecoration(
                         color: myConstants.instiappWhite,
