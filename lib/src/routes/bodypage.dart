@@ -215,6 +215,14 @@ class _BodyPageState extends State<BodyPage> {
         : null;
     final imageUrl = parent?.bodyImageURL;
     final title = parent?.bodyName;
+
+    // compute available space for tab content so it fills to bottom
+    final screenHeight = MediaQuery.of(context).size.height;
+    final topUsed = responsive.h(200) // cover image
+        + responsive.h(199) // profile card approximate
+        + MediaQuery.of(context).padding.top
+        + responsive.h(20); // extra paddings, adjust if needed
+    final tabViewHeight = (screenHeight - topUsed).clamp(responsive.h(240), screenHeight * 0.8);
     Constants myConstants = Constants();
     Map<String, String> parentBody = {
       "Culturals@IITB": "ICC",
@@ -461,7 +469,7 @@ class _BodyPageState extends State<BodyPage> {
                                                     ? NetworkImage(
                                                         body!.bodyImageURL!)
                                                     : const AssetImage(
-                                                            'assets/symphony.png')
+                                                            'assets/profilepage/default_profile.png')
                                                         as ImageProvider,
                                               ),
                                             ),
@@ -477,7 +485,7 @@ class _BodyPageState extends State<BodyPage> {
                                                   MainAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  body?.bodyName ?? 'Symphony',
+                                                  body?.bodyName ?? '',
                                                   style: TextStyle(
                                                     fontSize: responsive.sp(24),
                                                     fontWeight: FontWeight.bold,
@@ -487,8 +495,7 @@ class _BodyPageState extends State<BodyPage> {
                                                 SizedBox(
                                                     height: responsive.h(6)),
                                                 Text(
-                                                  body?.bodyShortDescription ??
-                                                      'Music Club of IITB',
+                                                  body?.bodyShortDescription ?? '',
                                                   style: TextStyle(
                                                     fontSize: responsive.sp(16),
                                                     color: myConstants
@@ -504,7 +511,7 @@ class _BodyPageState extends State<BodyPage> {
                                                         text: (body
                                                                 ?.bodyFollowersCount
                                                                 ?.toString() ??
-                                                            '422'),
+                                                            '0'),
                                                         style: TextStyle(
                                                           fontSize:
                                                               responsive.sp(16),
@@ -674,7 +681,7 @@ class _BodyPageState extends State<BodyPage> {
                                         ],
                                       ),
                                       SizedBox(
-                                        height: responsive.h(410),
+                                        height: tabViewHeight,
                                         child: Builder(
                                           builder: (context) {
                                             final people = body?.bodyRoles
@@ -1147,7 +1154,7 @@ class _BodyPageState extends State<BodyPage> {
                   child: Container(
                     margin: EdgeInsets.only(
                         bottom: responsive.h(16), // Adjust as needed
-                        top: responsive.h(16),
+                        // top: responsive.h(16),
                         left: responsive.w(16),
                         right: responsive.w(16)),
                     child: Stack(
@@ -1184,23 +1191,23 @@ class _BodyPageState extends State<BodyPage> {
                                             fontSize: responsive.sp(18),
                                             fontWeight: FontWeight.w700),
                                       ),
-                                      // GestureDetector(
-                                      //   onTap: () {
-                                      //     Future.delayed(
-                                      //         const Duration(milliseconds: 150), () {
-                                      //       if (!mounted) return;
-                                      //       setState(() {
-                                      //         showLinks = false;
-                                      //       });
-                                      //     });
-                                      //   },
-                                      //   child: Container(
-                                      //     height: responsive.h(21),
-                                      //     width: responsive.w(21),
-                                      //     child: SvgPicture.asset(
-                                      //         'assets/explore_new/x.svg'),
-                                      //   ),
-                                      // )
+                                      GestureDetector(
+                                        onTap: () {
+                                          Future.delayed(
+                                              const Duration(milliseconds: 150), () {
+                                            if (!mounted) return;
+                                            setState(() {
+                                              showLinks = false;
+                                            });
+                                          });
+                                        },
+                                        child: Container(
+                                          height: responsive.h(21),
+                                          width: responsive.w(21),
+                                          child: SvgPicture.asset(
+                                              'assets/explore_new/x.svg'),
+                                        ),
+                                      )
                                     ],
                                   ),
                                   SizedBox(height: responsive.h(16)),
@@ -1211,7 +1218,7 @@ class _BodyPageState extends State<BodyPage> {
                                     dashGap: 7,
                                     dashColor: Colors.white.withOpacity(0.10),
                                   ),
-                                  SizedBox(height: responsive.h(16)),
+                                  // SizedBox(height: responsive.h(16)),
                                   for (int i = 0; i <= 2; i++) ...[
                                     clubQuickLinkContainer(
                                         linkIcon[i], linkLabel[i]),
@@ -1227,7 +1234,7 @@ class _BodyPageState extends State<BodyPage> {
                           alignment: Alignment.bottomCenter,
                           child: Container(
                             padding: EdgeInsets.symmetric(
-                                horizontal: responsive.w(6)),
+                                horizontal: responsive.w(06)),
                             height: responsive.h(64),
                             width: responsive.w(380),
                             decoration: BoxDecoration(

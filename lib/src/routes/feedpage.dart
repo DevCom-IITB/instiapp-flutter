@@ -108,7 +108,7 @@ class _FeedPageState extends State<FeedPage> {
         child: IgnorePointer(
           ignoring: isFabVisible == 0,
           child: Container(
-            padding: EdgeInsets.only(bottom: Responsive.height(16.0, context)),
+            padding: EdgeInsets.only(bottom: Responsive.height(35.0, context)),
             child: FloatingActionButton(
               backgroundColor: Color.fromRGBO(48, 111, 220, 1),
               onPressed: () {

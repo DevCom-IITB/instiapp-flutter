@@ -152,12 +152,51 @@ class _OnboardingLoginPageState extends State<LoginPage>
   //     }
   //   }
   // }
+  // Future<void> _restoreSessionAndAnimate() async {
+  //   await _bloc?.restorePrefs();
+
+  //   if (_bloc?.currSession == null) {
+  //     // No session - show splash animation
+  //     await Future.delayed(const Duration(milliseconds: 500));
+  //     await _resizeController.forward();
+  //     await Future.delayed(const Duration(milliseconds: 300));
+  //     setState(() => _showWelcome = true);
+  //     _moveController.forward();
+  //     _welcomeController.forward();
+  //   } else {
+  //     // User is already logged in - immediately show loading design
+  //     setState(() {
+  //       _showLoadingDesign = true;
+  //     });
+
+  //     // Keep the loading design on screen for 3-4 seconds
+  //     await Future.delayed(const Duration(milliseconds: 500)); // 3.5 seconds
+
+  //     // Start fade transition
+  //     await _homeTransitionController.forward();
+
+  //     await Future.wait([
+  //       safeNetworkCall(() => _bloc!.patchFcmKey()),
+  //       safeNetworkCall(() => _bloc!.reloadCurrentUser()),
+  //     ]);
+
+  //     // if (mounted) {
+  //     //   Navigator.of(context).pushReplacementNamed(_bloc!.homepageName);
+  //     // }
+  //     if (mounted) {
+  //       Navigator.of(context).pushReplacementNamed(
+  //         _bloc!.homepageName,
+  //         arguments: {'fadeIn': false},
+  //       );
+  //     }
+  //   }
+  // }
   Future<void> _restoreSessionAndAnimate() async {
     await _bloc?.restorePrefs();
 
     if (_bloc?.currSession == null) {
       // No session - show splash animation
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 300));
       await _resizeController.forward();
       await Future.delayed(const Duration(milliseconds: 300));
       setState(() => _showWelcome = true);
@@ -169,24 +208,19 @@ class _OnboardingLoginPageState extends State<LoginPage>
         _showLoadingDesign = true;
       });
 
-      // Keep the loading design on screen for 3-4 seconds
-      await Future.delayed(const Duration(milliseconds: 1000)); // 3.5 seconds
+      // Keep the loading design on screen for a short time (optional)
+      await Future.delayed(const Duration(milliseconds: 500));
 
-      // Start fade transition
-      await _homeTransitionController.forward();
-
+      // NO fade-out here; stay on loading screen while doing work
       await Future.wait([
         safeNetworkCall(() => _bloc!.patchFcmKey()),
         safeNetworkCall(() => _bloc!.reloadCurrentUser()),
       ]);
 
-      // if (mounted) {
-      //   Navigator.of(context).pushReplacementNamed(_bloc!.homepageName);
-      // }
       if (mounted) {
         Navigator.of(context).pushReplacementNamed(
           _bloc!.homepageName,
-          arguments: {'fadeIn': true},
+          arguments: {'fadeIn': false},
         );
       }
     }
@@ -209,19 +243,20 @@ class _OnboardingLoginPageState extends State<LoginPage>
 
     // Show loading design for logged-in users
     if (_showLoadingDesign) {
-      return AnimatedBuilder(
-        animation: _homeTransitionController,
-        builder: (context, child) {
-          return AnimatedOpacity(
-            opacity: 1.0 - _homeTransitionController.value,
-            duration: Duration(milliseconds: 1000),
-            child: _buildLoadingPageDesign(),
-          );
-        },
-      );
+      // return AnimatedBuilder(
+      //   animation: _homeTransitionController,
+      //   builder: (context, child) {
+      //     return AnimatedOpacity(
+      //       opacity: 1.0 - _homeTransitionController.value,
+      //       duration: Duration(milliseconds: 50),
+      //       child: _buildLoadingPageDesign(),
+      //     );
+      //   },
+      // );
+      return _buildLoadingPageDesign();
     }
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 10),
       transitionBuilder: (child, animation) {
         return FadeTransition(
           opacity: animation,
