@@ -219,10 +219,13 @@ class _BodyPageState extends State<BodyPage> {
     // compute available space for tab content so it fills to bottom
     final screenHeight = MediaQuery.of(context).size.height;
     final topUsed = responsive.h(200) // cover image
-        + responsive.h(199) // profile card approximate
-        + MediaQuery.of(context).padding.top
-        + responsive.h(20); // extra paddings, adjust if needed
-    final tabViewHeight = (screenHeight - topUsed).clamp(responsive.h(240), screenHeight * 0.8);
+        +
+        responsive.h(199) // profile card approximate
+        +
+        MediaQuery.of(context).padding.top +
+        responsive.h(20); // extra paddings, adjust if needed
+    final tabViewHeight =
+        (screenHeight - topUsed).clamp(responsive.h(240), screenHeight * 0.8);
     Constants myConstants = Constants();
     Map<String, String> parentBody = {
       "Culturals@IITB": "ICC",
@@ -495,7 +498,8 @@ class _BodyPageState extends State<BodyPage> {
                                                 SizedBox(
                                                     height: responsive.h(6)),
                                                 Text(
-                                                  body?.bodyShortDescription ?? '',
+                                                  body?.bodyShortDescription ??
+                                                      '',
                                                   style: TextStyle(
                                                     fontSize: responsive.sp(16),
                                                     color: myConstants
@@ -938,33 +942,19 @@ class _BodyPageState extends State<BodyPage> {
                                                         ),
                                                       ]))
                                                     : ListView(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                vertical:
-                                                                    responsive
-                                                                        .h(16)),
+                                                      padding: EdgeInsets.only(
+                                                        top: responsive.h(11), // Reduce this value to decrease top spacing
+                                                      ),
                                                         children: [
-                                                          // Padding(
-                                                          //   padding:
-                                                          //       const EdgeInsets
-                                                          //           .symmetric(
-                                                          //           horizontal:
-                                                          //               28.0,
-                                                          //           vertical:
-                                                          //               8.0),
-                                                          //   child: Text(
-                                                          //     "Events",
-                                                          //     style: theme
-                                                          //         .textTheme
-                                                          //         .headlineSmall,
-                                                          //   ),
-                                                          // ),
                                                           ...body!.bodyEvents!
                                                               .map((e) =>
-                                                                  _buildEventTile(
-                                                                      bloc,
-                                                                      theme,
-                                                                      e)),
+                                                                  Transform.translate(
+                                                                    offset: Offset(responsive.w(-16), 0), // Shift left by 16
+                                                                    child: _buildEventTile(
+                                                                        bloc,
+                                                                        theme,
+                                                                        e),
+                                                                  )),
                                                           SizedBox(
                                                               height: responsive
                                                                   .h(10))
@@ -1194,7 +1184,8 @@ class _BodyPageState extends State<BodyPage> {
                                       GestureDetector(
                                         onTap: () {
                                           Future.delayed(
-                                              const Duration(milliseconds: 150), () {
+                                              const Duration(milliseconds: 150),
+                                              () {
                                             if (!mounted) return;
                                             setState(() {
                                               showLinks = false;
