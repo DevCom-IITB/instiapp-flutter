@@ -755,15 +755,16 @@ class _PostItemFlowState extends State<PostItemFlow> {
                     horizontal: 4,
                   ), // Your control
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
+                      const SizedBox(width: 13),
                       SvgPicture.asset(
                         category['icon'],
                         width: RS.s(context, 64),
                         height: RS.s(context, 64),
                         fit: BoxFit.contain,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 13),
                       Flexible(
                         child: Text(
                           category['name'],
