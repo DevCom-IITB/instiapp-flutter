@@ -12,6 +12,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:InstiApp/src/utils/responsive.dart';
 // import 'package:share/share.dart';
 import 'package:share_plus/share_plus.dart';
 import 'dart:ui';
@@ -164,24 +165,23 @@ class _CommunityPageState extends State<CommunityPage> {
       body: SafeArea(
         child: !isLoggedIn
             ? Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(50),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.cloud,
-                      size: responsive.sp(200),
-                      color: Colors.grey[600],
-                    ),
-                    Text(
-                      "Login To View Communities",
-                      style: theme.textTheme.headlineSmall,
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              )
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(RS.sw(context, 50)),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.cloud,
+                        size: RS.sw(context, 200),
+                        color: Colors.grey[600],
+                      ),
+                      Text(
+                        "Login To View Communities",
+                        textAlign: TextAlign.center,
+                      )
+                    ],
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                  ),
+                )
             : GestureDetector(
                 onTap: () {
                   _focusNode.unfocus();

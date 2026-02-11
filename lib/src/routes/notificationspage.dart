@@ -369,11 +369,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
         ),
         onTap: () {
           if (notification.isBlogPost) {
-            Navigator.of(context).pushNamed(
-                (notification.getBlogPost().link?.contains("internship") ??
-                        false)
-                    ? "/trainblog"
-                    : "/placeblog");
+            Navigator.of(context).pushNamed("/placeblog");
           } else if (notification.isEvent) {
             EventPage.navigateWith(context, bloc, notification.getEvent());
           } else if (notification.isNews) {

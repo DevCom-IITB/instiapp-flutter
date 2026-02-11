@@ -256,7 +256,7 @@ class _BlogsLoginState extends State<BlogsLogin> {
                 ),
               ),
             ),
-            SizedBox(height: 136.36),
+            SizedBox(height: 20),
             GestureDetector(
               onTap: (){
                 Navigator.of(context).pushReplacementNamed('/');
