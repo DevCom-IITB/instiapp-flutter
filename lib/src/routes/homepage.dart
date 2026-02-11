@@ -938,15 +938,10 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                 child: SizedBox(
                   width: responsive.w(37),
                   height: responsive.h(16),
-                  child: services_icon["Title"] == "Quick Links"
-                      ? Image.asset(
-                          services_icon["Path"],
-                          fit: BoxFit.contain,
-                        )
-                      : SvgPicture.asset(
-                          services_icon["Path"],
-                          fit: BoxFit.contain,
-                        ),
+                  child : SvgPicture.asset(
+                        services_icon["Path"],
+                        fit: BoxFit.cover,
+                      ),
                 ),
               ),
               // Positioned(
@@ -1305,7 +1300,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             SizedBox(width: responsive.w(8)),
             services("Quick Links", "blogs_new", {
               "Title": "Quick Links",
-              "Path": 'assets/homepage/images/quicklinks_new.png',
+              "Path": 'assets/homepage/images/QuickLinks.svg',
               "Subtitle": "Useful Insti Links",
               "Icon Height": responsive.h(77.7),
               "Icon Width": responsive.w(80.18),
@@ -1633,13 +1628,13 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
             ),
             SizedBox(width: responsive.w(8)),
             SizedBox(
-              width: responsive.w(250),
+              width: responsive.w(245),
               height: responsive.h(184),
               child: Container(
-                padding: EdgeInsets.all(4),
+                padding: EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   color: myConstants.instiappBlue,
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(13),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1647,7 +1642,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                   children: [
                     Container(
                       padding: EdgeInsets.all(16),
-                      width: responsive.w(242),
+                      width: responsive.w(241),
                       height: responsive.h(129),
                       decoration: BoxDecoration(
                         color: myConstants.instiappWhite,
