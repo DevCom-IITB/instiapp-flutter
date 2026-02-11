@@ -311,7 +311,7 @@ class _ExplorePageState extends State<ExplorePage> {
                             child: Bodycard(
                                 context, "I.B.s", "assets/explore/ibs.png"),
                           ),
-                          Bodycard(context, "Coming Soon!", "assets/explore/food_coming_soon.jpg"),
+                          Bodycard(context, "Coming Soon!", "assets/explore/food_explore.png"),
                         ],
                       ),
                       SizedBox(height: Responsive.height(100, context)),
@@ -544,7 +544,7 @@ class _ExploresearchState extends State<Exploresearch> {
                             fontWeight: FontWeight.w400,
                           ),
                           decoration: InputDecoration(
-                            hintText: 'Search clubs',
+                            hintText: 'Search clubs, events, users...',
                             hintStyle: TextStyle(
                               fontSize: Responsive.text(16, context),
                               color: Color.fromRGBO(0, 0, 0, 0.4),
@@ -782,15 +782,15 @@ class _ExploresearchState extends State<Exploresearch> {
                                 child: SearchBodycard(
                                     context, 'I.B.s', 'assets/explore/ibs.png'),
                               ),
-                              InkWell(
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  widget.onBack(
-                                      'd1f2e3c4-b5a6-7d8e-9f0a-b1c2d3e4f5a6');
-                                },
-                                child: SearchBodycard(
-                                    context, 'Food', 'assets/explore/food.png'),
-                              ),
+                              // InkWell(
+                              //   onTap: () {
+                              //     Navigator.pop(context);
+                              //     widget.onBack(
+                              //         'd1f2e3c4-b5a6-7d8e-9f0a-b1c2d3e4f5a6');
+                              //   },
+                              //   child: SearchBodycard(
+                              //       context, 'Food', 'assets/explore/food.png'),
+                              // ),
                             ]),
                       ),
                     if (exploreBloc.query == '')
