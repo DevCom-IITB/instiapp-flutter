@@ -229,7 +229,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
     // Initialize QR stripe animation controller
     _qrStripeController = AnimationController(
-      duration: const Duration(milliseconds: 5000),
+      duration: const Duration(milliseconds: 4000),
       vsync: this,
     )..repeat();
 
@@ -1605,7 +1605,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                                     .instiappBlue // or any border color when selected
                                 : myConstants
                                     .instiappGrey, // border color when not selected
-                            width: 2, // border thickness
+                            width: responsive.w(2), // border thickness
                           ),
                         ),
                         child: Center(
