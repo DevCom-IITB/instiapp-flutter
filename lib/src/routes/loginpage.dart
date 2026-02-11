@@ -195,13 +195,14 @@ class _OnboardingLoginPageState extends State<LoginPage>
     await _bloc?.restorePrefs();
 
     if (_bloc?.currSession == null) {
-      // No session - show splash animation
+      // No session - show splash animation then go directly to login options
       await Future.delayed(const Duration(milliseconds: 300));
       await _resizeController.forward();
       await Future.delayed(const Duration(milliseconds: 300));
-      setState(() => _showWelcome = true);
-      _moveController.forward();
-      _welcomeController.forward();
+      setState(() {
+        _showLoginOptions = true;
+      });
+      await _transitionController.forward();
     } else {
       // User is already logged in - immediately show loading design
       setState(() {
@@ -266,7 +267,7 @@ class _OnboardingLoginPageState extends State<LoginPage>
       child: _showLoginOptions
           // ? _buildLoginOptionsPage(context)
           ? _buildNewLoginOptions(context)
-          : _buildSplashOnboarding(context),
+          : _buildLoadingPageDesign(),
     );
   }
 
@@ -762,17 +763,6 @@ class _OnboardingLoginPageState extends State<LoginPage>
           body: Stack(
             children: [
               // top doodle (animated from above)
-              Positioned(
-                top: doodleTop,
-                left: -20,
-                child: Opacity(
-                  opacity: fadeT,
-                  child: Image.asset(
-                    'assets/login/doodle.png',
-                    height: RS.sh(context, 600),
-                  ),
-                ),
-              ),
 
               // logo (warping)
               Positioned(
@@ -1189,72 +1179,56 @@ class _OnboardingLoginPageState extends State<LoginPage>
               child: Stack(
                 children: [
                   Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    child: Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.identity()..scale(1.0, -1.0),
-                      child: SvgPicture.asset(
-                        'assets/login/bottomillustration.svg',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
+                      top: RS.sh(context, 97),
+                      right: RS.sw(context, 70),
+                      child: SizedBox(
+                        width: RS.sw(context, 268),
+                        height: RS.sh(context, 69),
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Your Digital ',
+                                style: TextStyle(
+                                  color: const Color(0xFF0F1620),
+                                  fontSize: RS.sp(context, 28),
+                                  fontFamily: 'DM Sans',
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'Wingie',
+                                style: TextStyle(
+                                  color: const Color(0xFF306FDC),
+                                  fontSize: RS.sp(context, 28),
+                                  fontFamily: 'DM Sans',
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                              TextSpan(
+                                text: ' at Insti.',
+                                style: TextStyle(
+                                  color: const Color(0xFF0F1620),
+                                  fontSize: RS.sp(context, 28),
+                                  fontFamily: 'DM Sans',
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      )),
                   // LOGO (responsive top positioning)
                   Positioned(
-                    top: RS.sh(context, 240),
+                    top: RS.sh(context, 200),
                     left: 0,
                     right: 0,
-                    child: Column(
-                      children: [
-                        Stack(
-                          alignment: Alignment.center,
-                          clipBehavior: Clip.none,
-                          children: [
-                            Image.asset(
-                              'assets/login/logo.png',
-                              width: RS.sw(context, 193),
-                              height: RS.sh(context, 193),
-                              fit: BoxFit.contain,
-                            ),
-                            // SvgPicture.asset(
-                            //   'assets/login/logo.svg',
-                            //   width: RS.sw(context, 193),
-                            //   height: RS.sh(context, 193),
-                            //   fit: BoxFit.contain,
-                            // ),
-                            Positioned(
-                              top: RS.sh(context, 173),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    "Insti",
-                                    style: TextStyle(
-                                      fontFamily: 'DMSans',
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: figmaFontSize(context, 34),
-                                      letterSpacing: 1.3,
-                                      color: const Color(0xFF306FDC),
-                                    ),
-                                  ),
-                                  Text(
-                                    "App",
-                                    style: TextStyle(
-                                      fontFamily: 'DMSans',
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: figmaFontSize(context, 34),
-                                      letterSpacing: 1.3,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                    child: SvgPicture.asset(
+                      'assets/login/loginillus.svg',
+                      width: RS.sw(context, 410),
+                      height: RS.sh(context, 316),
+                      fit: BoxFit.contain,
                     ),
                   ),
                   // LOGIN OPTIONS (responsive positioning and sizing)
@@ -1263,9 +1237,11 @@ class _OnboardingLoginPageState extends State<LoginPage>
                     right: 0,
                     bottom: 0,
                     child: Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: RS.sw(context, 24),
-                          vertical: RS.sh(context, 48)),
+                      padding: EdgeInsets.only(
+                          left: RS.sw(context, 24),
+                          right: RS.sw(context, 24),
+                          top: RS.sh(context, 48),
+                          bottom: RS.sh(context, 32)),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -1280,43 +1256,31 @@ class _OnboardingLoginPageState extends State<LoginPage>
                                     BorderRadius.circular(RS.s(context, 50)),
                               ),
                               child: Center(
-                                child: Text(
-                                  "Log In via SSO",
-                                  style: TextStyle(
-                                    fontFamily: 'DMSans',
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: RS.sp(context, 16),
-                                    color: Colors.white,
-                                  ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.vpn_key,
+                                      color: Colors.white,
+                                      size: RS.sp(context, 20),
+                                    ),
+                                    SizedBox(width: RS.sw(context, 8)),
+                                    Text(
+                                      "Log In via SSO",
+                                      style: TextStyle(
+                                        fontFamily: 'DMSans',
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: RS.sp(context, 16),
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                           ),
                           SizedBox(height: RS.sh(context, 24)),
-                          GestureDetector(
-                            onTap: _handleAlumniLogin,
-                            child: Container(
-                              width: RS.sw(context, 364),
-                              height: RS.sh(context, 52),
-                              decoration: BoxDecoration(
-                                color: Color(0xFF306FDC),
-                                borderRadius:
-                                    BorderRadius.circular(RS.s(context, 50)),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Log In as an Alumnus",
-                                  style: TextStyle(
-                                    fontFamily: 'DMSans',
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: RS.sp(context, 16),
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: RS.sh(context, 27)),
+                          // "or" divider
                           Row(
                             children: [
                               Expanded(
@@ -1339,7 +1303,37 @@ class _OnboardingLoginPageState extends State<LoginPage>
                                       thickness: 1, color: Color(0xFFDADADA))),
                             ],
                           ),
-                          SizedBox(height: RS.sh(context, 27)),
+                          SizedBox(height: RS.sh(context, 24)),
+                          // Log In as an Alumnus - outlined button
+                          GestureDetector(
+                            onTap: _handleAlumniLogin,
+                            child: Container(
+                              width: RS.sw(context, 364),
+                              height: RS.sh(context, 52),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.circular(RS.s(context, 50)),
+                                border: Border.all(
+                                  color: Color(0xFF306FDC),
+                                  width: 2,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Log In as an Alumnus",
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: RS.sp(context, 16),
+                                    color: Color(0xFF306FDC),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: RS.sh(context, 16)),
+                          // Continue as guest - outlined button
                           GestureDetector(
                             onTap: _handleGuestLogin,
                             child: Container(
@@ -1532,69 +1526,78 @@ class _OnboardingLoginPageState extends State<LoginPage>
   Widget _buildLoadingPageDesign() {
     return Scaffold(
       body: SafeArea(
-        child: Stack(
-          children: [
-            // LOGO (240 from top)
-            Positioned(
-              top: RS.sh(context, 240),
-              left: 0,
-              right: 0,
-              child: Column(
-                children: [
-                  Stack(
-                    alignment: Alignment.center,
-                    clipBehavior: Clip.none,
-                    children: [
-                      Image.asset(
-                        'assets/login/logo.png',
-                        width: RS.sw(context, 193),
-                        height: RS.sh(context, 193),
-                        fit: BoxFit.contain,
-                      ),
-                      Positioned(
-                        top: RS.sh(context, 173),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "Insti",
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontWeight: FontWeight.w800,
-                                fontSize: figmaFontSize(context, 40),
-                                letterSpacing: 1.3,
-                                color: const Color(0xFF306FDC),
-                              ),
-                            ),
-                            Text(
-                              "App",
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontWeight: FontWeight.w800,
-                                fontSize: figmaFontSize(context, 40),
-                                letterSpacing: 1.3,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
+        child: TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0.0, end: 1.0),
+          duration: const Duration(milliseconds: 1),
+          curve: Curves.easeIn,
+          builder: (context, opacity, child) {
+            return Opacity(
+              opacity: opacity,
+              child: child,
+            );
+          },
+          child: Stack(
+            children: [
+              // LOGO (240 from top)
+              Positioned(
+                top: RS.sh(context, 280),
+                left: 0,
+                right: 0,
+                child: Column(
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      clipBehavior: Clip.none,
+                      children: [
+                        Image.asset(
+                          'assets/login/logo2.png',
+                          width: RS.sw(context, 146),
+                          height: RS.sh(context, 121),
+                          fit: BoxFit.contain,
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        Positioned(
+                          top: RS.sh(context, 110),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Insti',
+                                style: TextStyle(
+                                  color: const Color(0xFF306FDC),
+                                  fontSize: 34,
+                                  fontFamily: 'DM Sans',
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                              Text(
+                                'App',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 34,
+                                  fontFamily: 'DM Sans',
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            // Bottom illustration
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: -310,
-              child: Image.asset(
-                'assets/login/illustration.png', // Use .png if .svg doesn't work
-                fit: BoxFit.cover,
+              // Bottom illustration
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: SvgPicture.asset(
+                  'assets/login/Union.svg', // Use .png if .svg doesn't work
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

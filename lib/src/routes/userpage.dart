@@ -1061,6 +1061,7 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
             title: updatingProfile ? 'Opening...' : 'Edit Profile',
             icon: Icons.edit_outlined,
             color: updatingProfile ? Colors.grey : null,
+            top: true,
             onTap: () async {
               setState(() => updatingProfile = true);
               try {
@@ -1096,7 +1097,7 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
           SettingsItem(
             title: sendingFeedback ? 'Opening...' : 'Report Issues',
             icon: Icons.feedback_outlined,
-            bottom: true,
+            bottom: false,
             color: sendingFeedback ? Colors.grey : null,
             onTap: () async {
               setState(() => sendingFeedback = true);

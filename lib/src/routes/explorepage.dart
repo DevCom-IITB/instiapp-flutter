@@ -89,7 +89,7 @@ class _ExplorePageState extends State<ExplorePage> {
                         Radius.circular(Responsive.height(24, context)),
                   ),
                   image: DecorationImage(
-                    image: AssetImage('assets/explore/searchbackground.png'),
+                    image: AssetImage('assets/explore/bgnew.png'),
                     fit: BoxFit.cover,
                   ),
                 ),

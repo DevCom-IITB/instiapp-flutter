@@ -462,7 +462,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                   ),
                 ],
               ),
-      
+
               // Bottom Navigation Bar
               Align(
                 alignment: Alignment.bottomCenter,
@@ -1208,12 +1208,18 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                       },
                     ),
                     AnimatedSwitcher(
-                      duration: Duration(milliseconds: 400),
+                      duration: Duration(milliseconds: 300),
+                      switchInCurve: Curves.fastOutSlowIn,
+                      switchOutCurve: Curves.fastOutSlowIn,
                       transitionBuilder: (child, animation) {
                         final offsetAnimation = Tween<Offset>(
-                          begin: Offset(0, 0.9), // start below
+                          begin: Offset(0,
+                              1.0), // start completely below (like bottom sheet)
                           end: Offset(0, 0), // end at its normal position
-                        ).animate(animation);
+                        ).animate(CurvedAnimation(
+                          parent: animation,
+                          curve: Curves.fastOutSlowIn,
+                        ));
 
                         return ClipRect(
                           child: SlideTransition(
@@ -1324,7 +1330,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   }) {
     final responsive =
         Responsive(context, bottomPadding: main_app.systemBottomPadding);
-    return Stack(      
+    return Stack(
       children: [
         SizedBox(
           height: responsive.h(382),
@@ -1447,6 +1453,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
       ),
     );
   }
+
   Widget qrClosed(
     List<Hostel> hostels, {
     bool isLoading = false,
