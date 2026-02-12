@@ -239,24 +239,24 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                             fit: BoxFit.cover,
                           ),
                           // Black gradient at bottom
-                          Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: Container(
-                              height: Responsive.width(150, context),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment(1, 0),  // Middle left
-                                  end: Alignment(0, 0),     // Middle bottom
-                                  colors: [
-                                    Colors.transparent,
-                                    Colors.black.withOpacity(0.6),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+                          // Positioned(
+                          //   bottom: 0,
+                          //   left: 0,
+                          //   right: 0,
+                          //   child: Container(
+                          //     height: Responsive.width(150, context),
+                          //     decoration: BoxDecoration(
+                          //       gradient: LinearGradient(
+                          //         begin: Alignment(1, 0), // Middle left
+                          //         end: Alignment(0, 0), // Middle bottom
+                          //         colors: [
+                          //           Colors.transparent,
+                          //           Colors.black.withOpacity(0.6),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
@@ -265,14 +265,8 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                     top: 0,
                     left: 0,
                     right: 0,
-                    child: ClipRect(
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                        child: Container(
-                          height: MediaQuery.of(context).padding.top,
-                          color: Colors.white.withOpacity(0.2),
-                        ),
-                      ),
+                    child: Container(
+                      height: MediaQuery.of(context).padding.top,
                     ),
                   ),
                   Padding(
@@ -302,7 +296,8 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                     ),
                   ),
                   Positioned(
-                    top: Responsive.height(70, context) + MediaQuery.of(context).padding.top,
+                    top: Responsive.height(70, context) +
+                        MediaQuery.of(context).padding.top,
                     left: Responsive.width(16, context),
                     right: Responsive.width(16, context),
                     child: Container(
@@ -379,15 +374,17 @@ class _ExploreClubPageState extends State<ExploreClubPage> {
                     ),
                   ),
                   Positioned(
-                    top: Responsive.height(140,context) + MediaQuery.of(context).padding.top,
-                    left: Responsive.width(32,context),
-                    right: Responsive.width(32,context),
+                    top: Responsive.height(140, context) +
+                        MediaQuery.of(context).padding.top,
+                    left: Responsive.width(32, context),
+                    right: Responsive.width(32, context),
                     child: _buildHeaderTitle(context, theme),
                   ),
                   Positioned(
-                    top: Responsive.height(185,context) + MediaQuery.of(context).padding.top,
-                    left: Responsive.width(32,context), 
-                    right: Responsive.width(32,context),
+                    top: Responsive.height(185, context) +
+                        MediaQuery.of(context).padding.top,
+                    left: Responsive.width(32, context),
+                    right: Responsive.width(32, context),
                     child: _isLoading
                         ? HeaderDescriptionShimmer()
                         : Text(

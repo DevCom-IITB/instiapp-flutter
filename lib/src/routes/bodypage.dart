@@ -942,14 +942,20 @@ class _BodyPageState extends State<BodyPage> {
                                                         ),
                                                       ]))
                                                     : ListView(
-                                                      padding: EdgeInsets.only(
-                                                        top: responsive.h(11), // Reduce this value to decrease top spacing
-                                                      ),
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          top: responsive.h(
+                                                              11), // Reduce this value to decrease top spacing
+                                                        ),
                                                         children: [
                                                           ...body!.bodyEvents!
                                                               .map((e) =>
-                                                                  Transform.translate(
-                                                                    offset: Offset(responsive.w(-16), 0), // Shift left by 16
+                                                                  Transform
+                                                                      .translate(
+                                                                    offset: Offset(
+                                                                        responsive
+                                                                            .w(-16),
+                                                                        0), // Shift left by 16
                                                                     child: _buildEventTile(
                                                                         bloc,
                                                                         theme,
@@ -1267,34 +1273,35 @@ class _BodyPageState extends State<BodyPage> {
                                   ),
                                 ),
                                 SizedBox(width: responsive.w(8)),
-                                                                Expanded(
-                                    child: SizedBox(
-                                  height: responsive.h(52),
-                                  child: Container(
-                                    padding: EdgeInsets.only(
-                                        left: responsive.w(16),
-                                        right: responsive.w(16),
-                                        top: responsive.h(13),
-                                        bottom: responsive.h(13)),
-                                    decoration: BoxDecoration(
-                                      color: (body!.bodyUserFollows ?? false)
-                                          ? Color.fromRGBO(21, 32, 46, 1)
-                                          : Color.fromRGBO(48, 111, 220, 1),
-                                      borderRadius: BorderRadius.circular(50),
-                                      border: Border.all(
-                                        color: (body!.bodyUserFollows ?? false)
-                                            ? const Color(0xFF7E8287)
-                                            : Color.fromRGBO(48, 111, 220, 1),
-                                        width: responsive.w(2),
-                                      ),
-                                    ),
+                                Expanded(
                                     child: GestureDetector(
-                                      onTap: () async {
-                                        if (body != null) {
-                                          await bloc.updateFollowBody(body!);
-                                          setState(() {});
-                                        }
-                                      },
+                                  onTap: () async {
+                                    if (body != null) {
+                                      await bloc.updateFollowBody(body!);
+                                      setState(() {});
+                                    }
+                                  },
+                                  child: SizedBox(
+                                    height: responsive.h(52),
+                                    child: Container(
+                                      padding: EdgeInsets.only(
+                                          left: responsive.w(16),
+                                          right: responsive.w(16),
+                                          top: responsive.h(13),
+                                          bottom: responsive.h(13)),
+                                      decoration: BoxDecoration(
+                                        color: (body!.bodyUserFollows ?? false)
+                                            ? Color.fromRGBO(21, 32, 46, 1)
+                                            : Color.fromRGBO(48, 111, 220, 1),
+                                        borderRadius: BorderRadius.circular(50),
+                                        border: Border.all(
+                                          color: (body!.bodyUserFollows ??
+                                                  false)
+                                              ? const Color(0xFF7E8287)
+                                              : Color.fromRGBO(48, 111, 220, 1),
+                                          width: responsive.w(2),
+                                        ),
+                                      ),
                                       child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -1308,7 +1315,8 @@ class _BodyPageState extends State<BodyPage> {
                                                   fontSize: responsive.h(16),
                                                   fontWeight: FontWeight.w700,
                                                   fontFamily: 'DM Sans',
-                                                  color: Color.fromRGBO(255, 255, 255, 1),
+                                                  color: Color.fromRGBO(
+                                                      255, 255, 255, 1),
                                                 ),
                                               ),
                                             if ((body!.bodyUserFollows ??
@@ -1320,7 +1328,8 @@ class _BodyPageState extends State<BodyPage> {
                                                   fontSize: responsive.h(16),
                                                   fontWeight: FontWeight.w700,
                                                   fontFamily: 'DM Sans',
-                                                  color: const Color(0xFF7E8287),
+                                                  color:
+                                                      const Color(0xFF7E8287),
                                                 ),
                                               ),
                                           ]),

@@ -238,7 +238,7 @@ class _ExplorePageState extends State<ExplorePage> {
                                 Container(
                                   width: double.infinity,
                                   child: Text(
-                                    'Heard about the new hostels',
+                                    'Discover Your Campus',
                                     style: TextStyle(
                                       fontSize: Responsive.text(16, context),
                                       fontWeight: FontWeight.w500,

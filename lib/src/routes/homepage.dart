@@ -1231,9 +1231,9 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                       },
                     ),
                     AnimatedSwitcher(
-                      duration: Duration(milliseconds: 300),
-                      switchInCurve: Curves.fastOutSlowIn,
-                      switchOutCurve: Curves.fastOutSlowIn,
+                      duration: Duration(milliseconds: 500),
+                      switchInCurve: Curves.easeIn,
+                      switchOutCurve: Curves.easeOut,
                       transitionBuilder: (child, animation) {
                         final offsetAnimation = Tween<Offset>(
                           begin: Offset(0,
