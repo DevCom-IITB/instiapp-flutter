@@ -360,25 +360,25 @@ class _BodyPageState extends State<BodyPage> {
                                       ),
                                     ),
                                   ),
-                                  Positioned(
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    child: ClipRect(
-                                      child: BackdropFilter(
-                                        filter: ImageFilter.blur(
-                                            sigmaX: 7,
-                                            sigmaY: 7), // adjust blur
-                                        child: Container(
-                                          height: MediaQuery.of(context)
-                                              .padding
-                                              .top,
-                                          color: Colors.white.withOpacity(
-                                              0.2), // translucent layer
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                  // Positioned(
+                                  //   top: 0,
+                                  //   left: 0,
+                                  //   right: 0,
+                                  //   child: ClipRect(
+                                  //     child: BackdropFilter(
+                                  //       filter: ImageFilter.blur(
+                                  //           sigmaX: 7,
+                                  //           sigmaY: 7), // adjust blur
+                                  //       child: Container(
+                                  //         height: MediaQuery.of(context)
+                                  //             .padding
+                                  //             .top,
+                                  //         color: Colors.white.withOpacity(
+                                  //             0.2), // translucent layer
+                                  //       ),
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   Padding(
                                     padding: EdgeInsets.only(
                                         left: responsive.w(12),
