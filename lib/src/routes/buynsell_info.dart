@@ -791,7 +791,11 @@ class _BuyAndSellInfoPageState extends State<BuyAndSellInfoPage> {
         shape: BoxShape.circle,
       ),
       child: IconButton(
-        icon: Icon(Icons.share_outlined, color: Colors.white),
+        icon: Image.asset(
+          'assets/buynsell/whatsapp.png',
+          width: 28,
+          height: 28,
+        ),
         // onPressed: () async {
         //   final deepLink = 'https://www.insti.app/buynsell/${post.id}';
 
