@@ -89,7 +89,7 @@ class _CreatePostPage extends State<CreatePostPage> {
         await FlutterImageCompress.compressAndGetFile(
       imageFile.absolute.path,
       targetPath,
-      quality: 35,
+      quality: 10,
       minWidth: 1080,
       minHeight: 1080,
       format: CompressFormat.jpeg,
@@ -716,39 +716,118 @@ class _CreatePostPage extends State<CreatePostPage> {
                                     color: Colors.transparent,
                                     child: InkWell(
                                         onTap: () async {
-                                          final ImagePicker _picker =
-                                              ImagePicker();
+                                          // final ImagePicker _picker =
+                                          //     ImagePicker();
+                                          // final XFile? pi =
+                                          //     await _picker.pickImage(
+                                          //         source: ImageSource.gallery);
+
+                                          // if (pi != null) {
+                                          //   File originalFile = File(pi.path);
+
+                                          //   if (await originalFile.length() /
+                                          //           1000000 <=
+                                          //       10) {
+                                          //     // Compress the image to 75% quality
+                                          //     File compressedFile =
+                                          //         await _compressImage(
+                                          //             originalFile);
+                                          //     setState(() {
+                                          //       imageFiles.add(compressedFile);
+                                          //     });
+
+                                          //     ImageUploadResponse resp =
+                                          //         await bloc.client.uploadImage(
+                                          //             bloc.getSessionIdHeader(),
+                                          //             compressedFile);
+                                          //     print(resp.pictureURL);
+                                          //   } else {
+                                          //     ScaffoldMessenger.of(context)
+                                          //         .showSnackBar(SnackBar(
+                                          //       content: Text(
+                                          //           "Image size should be less than 10MB"),
+                                          //     ));
+                                          //   }
+                                          // }
+                                          final ImagePicker _picker = ImagePicker();
                                           final XFile? pi =
-                                              await _picker.pickImage(
-                                                  source: ImageSource.gallery);
+                                              await _picker.pickImage(source: ImageSource.gallery);
 
-                                          if (pi != null) {
-                                            File originalFile = File(pi.path);
+                                          if (pi == null) return;
 
-                                            if (await originalFile.length() /
-                                                    1000000 <=
-                                                10) {
-                                              // Compress the image to 75% quality
-                                              File compressedFile =
-                                                  await _compressImage(
-                                                      originalFile);
-                                              setState(() {
-                                                imageFiles.add(compressedFile);
-                                              });
+                                          final File originalFile = File(pi.path);
 
-                                              ImageUploadResponse resp =
-                                                  await bloc.client.uploadImage(
-                                                      bloc.getSessionIdHeader(),
-                                                      compressedFile);
-                                              print(resp.pictureURL);
-                                            } else {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(
-                                                content: Text(
-                                                    "Image size should be less than 10MB"),
-                                              ));
-                                            }
+                                          if (!await originalFile.exists()) {
+                                            if (!mounted) return;
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text("Could not access selected image."),
+                                              ),
+                                            );
+                                            return;
                                           }
+
+                                          // Step 1: Compress FIRST
+                                          final File compressedFile =
+                                              await _compressImage(originalFile);
+
+                                          if (!await compressedFile.exists()) {
+                                            if (!mounted) return;
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text("Image compression failed."),
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          // Step 2: Check compressed size (max 1MB)
+                                          final double sizeInMB =
+                                              await compressedFile.length() / (1024 * 1024);
+
+                                          if (sizeInMB > 1) {
+                                            if (!mounted) return;
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  "Image is too large after compression (max 1MB).",
+                                                ),
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          if (!mounted) return;
+
+                                          // Add locally first
+                                          setState(() {
+                                            imageFiles.add(compressedFile);
+                                          });
+
+                                          // Step 3: Upload safely
+                                          try {
+                                            final ImageUploadResponse resp =
+                                                await bloc.client.uploadImage(
+                                              bloc.getSessionIdHeader(),
+                                              compressedFile,
+                                            );
+
+                                            if (resp.pictureURL != null) {
+                                              print("Uploaded URL: ${resp.pictureURL}");
+                                            } else {
+                                              throw Exception("Upload succeeded but URL is null.");
+                                            }
+                                          } catch (e) {
+                                            print("Upload failed: $e");
+
+                                            if (!mounted) return;
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text("Image upload failed. Please try again."),
+                                              ),
+                                            );
+                                          }
+
                                         },
                                         borderRadius: BorderRadius.circular(
                                             Responsive.width(6, context)),

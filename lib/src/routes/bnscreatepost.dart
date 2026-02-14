@@ -95,7 +95,7 @@ class _PostItemFlowState extends State<PostItemFlow> {
         await FlutterImageCompress.compressAndGetFile(
       imageFile.path,
       targetPath,
-      quality: 40, // Better clarity for products
+      quality: 35, // Better clarity for products
       minWidth: 1280,
       minHeight: 1280,
       format: CompressFormat.jpeg,
