@@ -68,23 +68,44 @@ class _PostItemFlowState extends State<PostItemFlow> {
   }
 
   /// Compress image to 60% quality
-  Future<File> _compressImage(File imageFile) async {
-    final String targetPath = imageFile.absolute.path.replaceAll(
-      RegExp(r'\.(?=jpg|jpeg|png|gif|bmp)'),
-      '_compressed.',
-    );
+  // Future<File> _compressImage(File imageFile) async {
+  //   final String targetPath = imageFile.absolute.path.replaceAll(
+  //     RegExp(r'\.(?=jpg|jpeg|png|gif|bmp)'),
+  //     '_compressed.',
+  //   );
     
-    final XFile? result = await FlutterImageCompress.compressAndGetFile(
-      imageFile.absolute.path,
+  //   final XFile? result = await FlutterImageCompress.compressAndGetFile(
+  //     imageFile.absolute.path,
+  //     targetPath,
+  //     quality: 60, // 60% quality
+  //     format: CompressFormat.jpeg,
+  //   );
+
+  //   if (result != null) {
+  //     return File(result.path);
+  //   }
+  //   return imageFile; // Return original if compression fails
+  // }
+  Future<File> _compressImage(File imageFile) async {
+    final tempDir = await getTemporaryDirectory();
+    final targetPath =
+        '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+    final XFile? result =
+        await FlutterImageCompress.compressAndGetFile(
+      imageFile.path,
       targetPath,
-      quality: 60, // 60% quality
+      quality: 40, // Better clarity for products
+      minWidth: 1280,
+      minHeight: 1280,
       format: CompressFormat.jpeg,
     );
 
-    if (result != null) {
-      return File(result.path);
+    if (result == null) {
+      return imageFile;
     }
-    return imageFile; // Return original if compression fails
+
+    return File(result.path);
   }
 
   @override
@@ -370,40 +391,87 @@ class _PostItemFlowState extends State<PostItemFlow> {
                       side: BorderSide.none,
                     ),
                     onPressed: () async {
+                      // final picker = ImagePicker();
+                      // final image =
+                      //     await picker.pickImage(source: ImageSource.camera);
+
+                      // if (image != null) {
+                      //   await Future.delayed(const Duration(milliseconds: 100));
+
+                      //   final file = File(image.path);
+                      //   if (await file.exists()) {
+                      //     final appDir =
+                      //         await getApplicationDocumentsDirectory();
+                      //     final fileName = path.basename(image.path);
+
+                      //     final imagesDir =
+                      //         Directory('${appDir.path}/user_images');
+                      //     if (!await imagesDir.exists()) {
+                      //       await imagesDir.create(recursive: true);
+                      //     }
+
+                      //     // Compress the image to 50% quality
+                      //     File compressedFile = await _compressImage(file);
+                      //     final savedFile = await compressedFile
+                      //         .copy('${imagesDir.path}/$fileName');
+
+                      //     setState(() => _images.add(XFile(savedFile.path)));
+                      //   } else {
+                      //     ScaffoldMessenger.of(context).showSnackBar(
+                      //       const SnackBar(
+                      //         content:
+                      //             Text("Could not access the captured image."),
+                      //         duration: Duration(seconds: 2),
+                      //       ),
+                      //     );
+                      //   }
+                      // }
                       final picker = ImagePicker();
                       final image =
                           await picker.pickImage(source: ImageSource.camera);
 
                       if (image != null) {
-                        await Future.delayed(const Duration(milliseconds: 100));
-
                         final file = File(image.path);
-                        if (await file.exists()) {
-                          final appDir =
-                              await getApplicationDocumentsDirectory();
-                          final fileName = path.basename(image.path);
 
-                          final imagesDir =
-                              Directory('${appDir.path}/user_images');
-                          if (!await imagesDir.exists()) {
-                            await imagesDir.create(recursive: true);
-                          }
-
-                          // Compress the image to 50% quality
-                          File compressedFile = await _compressImage(file);
-                          final savedFile = await compressedFile
-                              .copy('${imagesDir.path}/$fileName');
-
-                          setState(() => _images.add(XFile(savedFile.path)));
-                        } else {
+                        if (!await file.exists()) {
+                          if (!mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content:
-                                  Text("Could not access the captured image."),
-                              duration: Duration(seconds: 2),
+                              content: Text("Could not access the captured image."),
                             ),
                           );
+                          return;
                         }
+
+                        // Step 1: Compress first
+                        File compressedFile = await _compressImage(file);
+
+                        if (!mounted) return;
+
+                        if (!await compressedFile.exists()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Image compression failed."),
+                            ),
+                          );
+                          return;
+                        }
+
+                        // Step 2: Save permanently
+                        final appDir = await getApplicationDocumentsDirectory();
+                        final imagesDir = Directory('${appDir.path}/user_images');
+
+                        if (!await imagesDir.exists()) {
+                          await imagesDir.create(recursive: true);
+                        }
+
+                        final fileName =
+                            '${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+                        final savedFile =
+                            await compressedFile.copy('${imagesDir.path}/$fileName');
+
+                        setState(() => _images.add(XFile(savedFile.path)));
                       }
                     },
                     child: _buttonContent(
@@ -434,6 +502,51 @@ class _PostItemFlowState extends State<PostItemFlow> {
                       side: BorderSide.none,
                     ),
                     onPressed: () async {
+                      // final picker = ImagePicker();
+                      // final pickedImages = await picker.pickMultiImage();
+
+                      // if (pickedImages.isNotEmpty) {
+                      //   final validImages = <XFile>[];
+                      //   int skipped = 0;
+
+                      //   final appDir =
+                      //       await getApplicationDocumentsDirectory();
+                      //   final imagesDir =
+                      //       Directory('${appDir.path}/user_images');
+
+                      //   if (!await imagesDir.exists()) {
+                      //     await imagesDir.create(recursive: true);
+                      //   }
+
+                      //   for (final image in pickedImages) {
+                      //     final file = File(image.path);
+                      //     if (await file.exists()) {
+                      //       final fileName =
+                      //           path.basename(image.path);
+                      //       // Compress the image to 50% quality
+                      //       File compressedFile = await _compressImage(file);
+                      //       final savedFile = await compressedFile.copy(
+                      //           '${imagesDir.path}/$fileName');
+                      //       validImages.add(XFile(savedFile.path));
+                      //     } else {
+                      //       skipped++;
+                      //     }
+                      //   }
+
+                      //   if (validImages.isNotEmpty) {
+                      //     setState(() => _images.addAll(validImages));
+                      //   }
+
+                      //   if (skipped > 0) {
+                      //     ScaffoldMessenger.of(context).showSnackBar(
+                      //       SnackBar(
+                      //         content: Text(
+                      //             "Skipped $skipped image(s) that could not be loaded."),
+                      //         duration: const Duration(seconds: 2),
+                      //       ),
+                      //     );
+                      //   }
+                      // }
                       final picker = ImagePicker();
                       final pickedImages = await picker.pickMultiImage();
 
@@ -441,10 +554,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
                         final validImages = <XFile>[];
                         int skipped = 0;
 
-                        final appDir =
-                            await getApplicationDocumentsDirectory();
-                        final imagesDir =
-                            Directory('${appDir.path}/user_images');
+                        final appDir = await getApplicationDocumentsDirectory();
+                        final imagesDir = Directory('${appDir.path}/user_images');
 
                         if (!await imagesDir.exists()) {
                           await imagesDir.create(recursive: true);
@@ -452,18 +563,40 @@ class _PostItemFlowState extends State<PostItemFlow> {
 
                         for (final image in pickedImages) {
                           final file = File(image.path);
-                          if (await file.exists()) {
-                            final fileName =
-                                path.basename(image.path);
-                            // Compress the image to 50% quality
-                            File compressedFile = await _compressImage(file);
-                            final savedFile = await compressedFile.copy(
-                                '${imagesDir.path}/$fileName');
-                            validImages.add(XFile(savedFile.path));
-                          } else {
+
+                          if (!await file.exists()) {
                             skipped++;
+                            continue;
                           }
+
+                          // Step 1: Compress
+                          final compressedFile = await _compressImage(file);
+
+                          if (!await compressedFile.exists()) {
+                            skipped++;
+                            continue;
+                          }
+
+                          // Step 2: Check size (max 1MB)
+                          final sizeInMB =
+                              await compressedFile.length() / (1024 * 1024);
+
+                          if (sizeInMB > 1) {
+                            skipped++;
+                            continue;
+                          }
+
+                          // Step 3: Save permanently with UNIQUE name
+                          final fileName =
+                              '${DateTime.now().millisecondsSinceEpoch}_${validImages.length}.jpg';
+
+                          final savedFile =
+                              await compressedFile.copy('${imagesDir.path}/$fileName');
+
+                          validImages.add(XFile(savedFile.path));
                         }
+
+                        if (!mounted) return;
 
                         if (validImages.isNotEmpty) {
                           setState(() => _images.addAll(validImages));
@@ -473,7 +606,8 @@ class _PostItemFlowState extends State<PostItemFlow> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                  "Skipped $skipped image(s) that could not be loaded."),
+                                "Skipped $skipped image(s) due to processing issues or size limit.",
+                              ),
                               duration: const Duration(seconds: 2),
                             ),
                           );
@@ -1458,18 +1592,56 @@ class _PostItemFlowState extends State<PostItemFlow> {
                             }
 
                             for (final XFile image in _images) {
+                              // final file = File(image.path);
+
+                              // // Compress image to 50% quality before uploading
+                              // final compressedFile = await _compressImage(file);
+
+                              // final ImageUploadResponse resp =
+                              //     await bloc.client.uploadImage(
+                              //   bloc.getSessionIdHeader(),
+                              //   compressedFile,
+                              // );
+
+                              // imageUrls.add(resp.pictureURL!);
                               final file = File(image.path);
 
-                              // Compress image to 50% quality before uploading
+                              if (!await file.exists()) {
+                                throw Exception("Original image not found.");
+                              }
+
+                              // Step 1: Compress
                               final compressedFile = await _compressImage(file);
 
-                              final ImageUploadResponse resp =
-                                  await bloc.client.uploadImage(
-                                bloc.getSessionIdHeader(),
-                                compressedFile,
-                              );
+                              if (!await compressedFile.exists()) {
+                                throw Exception("Image compression failed.");
+                              }
 
-                              imageUrls.add(resp.pictureURL!);
+                              // Step 2: Check size (max 1MB)
+                              final sizeInMB =
+                                  await compressedFile.length() / (1024 * 1024);
+
+                              if (sizeInMB > 1) {
+                                throw Exception("Image too large after compression.");
+                              }
+
+                              try {
+                                final ImageUploadResponse resp =
+                                    await bloc.client.uploadImage(
+                                  bloc.getSessionIdHeader(),
+                                  compressedFile,
+                                );
+
+                                if (resp.pictureURL != null) {
+                                  imageUrls.add(resp.pictureURL!);
+                                } else {
+                                  throw Exception("Upload succeeded but URL is null.");
+                                }
+                              } catch (e) {
+                                print("Upload failed: $e");
+                                rethrow; // or show snackbar
+                              }
+
                             }
 
                             bnsPost.imageUrl = imageUrls;

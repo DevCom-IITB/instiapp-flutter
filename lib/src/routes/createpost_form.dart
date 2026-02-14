@@ -18,6 +18,7 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
 
 class NavigateArguments {
   final Community? community;
@@ -57,24 +58,48 @@ class _CreatePostPage extends State<CreatePostPage> {
     super.initState();
   }
 
-  /// Compress image to 50% quality
-  Future<File> _compressImage(File imageFile) async {
-    final String targetPath = imageFile.absolute.path.replaceAll(
-      RegExp(r'\.(?=jpg|jpeg|png|gif|bmp)'),
-      '_compressed.',
-    );
+  /// Compress image to 35% quality
+  // Future<File> _compressImage(File imageFile) async {
+  //   final String targetPath = imageFile.absolute.path.replaceAll(
+  //     RegExp(r'\.(?=jpg|jpeg|png|gif|bmp)'),
+  //     '_compressed.',
+  //   );
 
-    final XFile? result = await FlutterImageCompress.compressAndGetFile(
+  //   final XFile? result = await FlutterImageCompress.compressAndGetFile(
+  //     imageFile.absolute.path,
+  //     targetPath,
+  //     quality: 35, // 35% quality
+  //     minWidth: 1080,           // resize large images
+  //     minHeight: 1080,
+  //     format: CompressFormat.jpeg,
+  //   );
+
+  //   if (result != null) {
+  //     return File(result.path);
+  //   }
+  //   return imageFile; // Return original if compression fails
+  // }
+  
+  Future<File> _compressImage(File imageFile) async {
+    final tempDir = await getTemporaryDirectory();
+    final targetPath =
+        '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+    final XFile? result =
+        await FlutterImageCompress.compressAndGetFile(
       imageFile.absolute.path,
       targetPath,
-      quality: 70, // 70% quality
+      quality: 35,
+      minWidth: 1080,
+      minHeight: 1080,
       format: CompressFormat.jpeg,
     );
 
     if (result != null) {
       return File(result.path);
     }
-    return imageFile; // Return original if compression fails
+
+    return imageFile;
   }
 
   bool firstBuild = true;
@@ -589,33 +614,75 @@ class _CreatePostPage extends State<CreatePostPage> {
                                     color: Colors.transparent,
                                     child: InkWell(
                                       onTap: () async {
-                                        final ImagePicker _picker =
-                                            ImagePicker();
+                                        // final ImagePicker _picker =
+                                        //     ImagePicker();
+                                        // final XFile? pi =
+                                        //     await _picker.pickImage(
+                                        //         source: ImageSource.camera);
+
+                                        // if (pi != null) {
+                                        //   File originalFile = File(pi.path);
+
+                                        //   if (await originalFile.length() /
+                                        //           1000000 <=
+                                        //       10) {
+                                        //     // Compress the image to 75% quality
+                                        //     File compressedFile =
+                                        //         await _compressImage(
+                                        //             originalFile);
+                                        //     setState(() {
+                                        //       imageFiles.add(compressedFile);
+                                        //     });
+                                        //   } else {
+                                        //     ScaffoldMessenger.of(context)
+                                        //         .showSnackBar(SnackBar(
+                                        //       content: Text(
+                                        //           "Image size should be less than 10MB"),
+                                        //     ));
+                                        //   }
+                                        // }
+                                        final ImagePicker _picker = ImagePicker();
                                         final XFile? pi =
-                                            await _picker.pickImage(
-                                                source: ImageSource.camera);
+                                            await _picker.pickImage(source: ImageSource.camera);
 
                                         if (pi != null) {
                                           File originalFile = File(pi.path);
 
-                                          if (await originalFile.length() /
-                                                  1000000 <=
-                                              10) {
-                                            // Compress the image to 75% quality
-                                            File compressedFile =
-                                                await _compressImage(
-                                                    originalFile);
+                                          // Step 1: Compress FIRST
+                                          File compressedFile = await _compressImage(originalFile);
+
+                                          // Safety: ensure widget still exists
+                                          if (!mounted) return;
+
+                                          // Safety: ensure file actually exists
+                                          if (!await compressedFile.exists()) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text("Image processing failed. Please try again."),
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          // Step 2: Check compressed size (in MB)
+                                          final double sizeInMB =
+                                              await compressedFile.length() / (1024 * 1024);
+
+                                          if (sizeInMB <= 1) {
                                             setState(() {
                                               imageFiles.add(compressedFile);
                                             });
                                           } else {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(SnackBar(
-                                              content: Text(
-                                                  "Image size should be less than 10MB"),
-                                            ));
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  "Image is too large even after compression. Please try another image.",
+                                                ),
+                                              ),
+                                            );
                                           }
                                         }
+
                                       },
                                       borderRadius: BorderRadius.circular(
                                           Responsive.width(6, context)),
