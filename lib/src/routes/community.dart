@@ -562,21 +562,21 @@ class _CommunitiesState extends State<Communities> {
                                 ),
                               ),
                             ),
-                            Positioned(
-                              top: 0,
-                              left: 0,
-                              right: 0,
-                              child: ClipRect(
-                                child: BackdropFilter(
-                                  filter:
-                                      ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                                  child: Container(
-                                    height: MediaQuery.of(context).padding.top,
-                                    color: Colors.white.withOpacity(0.1),
-                                  ),
-                                ),
-                              ),
-                            ),
+                            // Positioned(
+                            //   top: 0,
+                            //   left: 0,
+                            //   right: 0,
+                            //   child: ClipRect(
+                            //     child: BackdropFilter(
+                            //       filter:
+                            //           ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            //       child: Container(
+                            //         height: MediaQuery.of(context).padding.top,
+                            //         color: Colors.white.withOpacity(0.1),
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
