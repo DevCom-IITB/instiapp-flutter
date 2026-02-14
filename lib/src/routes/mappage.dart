@@ -104,9 +104,9 @@ class _MapPageState extends State<MapPage> {
             top: 8,
             child: SafeArea(
               child: Container(
-                width: Responsive.width(300, context),
-                margin: EdgeInsets.symmetric(horizontal: Responsive.width(70, context)),
-                padding: EdgeInsets.all(10),
+                width: Responsive.width(250, context),
+                margin: EdgeInsets.symmetric(horizontal: Responsive.width(100, context)),
+                padding: EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   color: myConstants.instiappGrey,
                   borderRadius: BorderRadius.circular(32.0),
@@ -124,7 +124,7 @@ class _MapPageState extends State<MapPage> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                   fontFamily: 'DM Sans',
-                  fontSize: Responsive.text(18, context),
+                  fontSize: Responsive.text(15, context),
                   fontWeight: FontWeight.w900,
                   color: myConstants.instiappBlue,
                 ),
