@@ -610,242 +610,242 @@ class _CreatePostPage extends State<CreatePostPage> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      onTap: () async {
-                                        // final ImagePicker _picker =
-                                        //     ImagePicker();
-                                        // final XFile? pi =
-                                        //     await _picker.pickImage(
-                                        //         source: ImageSource.camera);
+                                  // Material(
+                                  //   color: Colors.transparent,
+                                    // child: InkWell(
+                                    //   onTap: () async {
+                                    //     // final ImagePicker _picker =
+                                    //     //     ImagePicker();
+                                    //     // final XFile? pi =
+                                    //     //     await _picker.pickImage(
+                                    //     //         source: ImageSource.camera);
 
-                                        // if (pi != null) {
-                                        //   File originalFile = File(pi.path);
+                                    //     // if (pi != null) {
+                                    //     //   File originalFile = File(pi.path);
 
-                                        //   if (await originalFile.length() /
-                                        //           1000000 <=
-                                        //       10) {
-                                        //     // Compress the image to 75% quality
-                                        //     File compressedFile =
-                                        //         await _compressImage(
-                                        //             originalFile);
-                                        //     setState(() {
-                                        //       imageFiles.add(compressedFile);
-                                        //     });
-                                        //   } else {
-                                        //     ScaffoldMessenger.of(context)
-                                        //         .showSnackBar(SnackBar(
-                                        //       content: Text(
-                                        //           "Image size should be less than 10MB"),
-                                        //     ));
-                                        //   }
-                                        // }
-                                        final ImagePicker _picker = ImagePicker();
-                                        final XFile? pi =
-                                            await _picker.pickImage(source: ImageSource.camera);
+                                    //     //   if (await originalFile.length() /
+                                    //     //           1000000 <=
+                                    //     //       10) {
+                                    //     //     // Compress the image to 75% quality
+                                    //     //     File compressedFile =
+                                    //     //         await _compressImage(
+                                    //     //             originalFile);
+                                    //     //     setState(() {
+                                    //     //       imageFiles.add(compressedFile);
+                                    //     //     });
+                                    //     //   } else {
+                                    //     //     ScaffoldMessenger.of(context)
+                                    //     //         .showSnackBar(SnackBar(
+                                    //     //       content: Text(
+                                    //     //           "Image size should be less than 10MB"),
+                                    //     //     ));
+                                    //     //   }
+                                    //     // }
+                                    //     final ImagePicker _picker = ImagePicker();
+                                    //     final XFile? pi =
+                                    //         await _picker.pickImage(source: ImageSource.camera);
 
-                                        if (pi != null) {
-                                          File originalFile = File(pi.path);
+                                    //     if (pi != null) {
+                                    //       File originalFile = File(pi.path);
 
-                                          // Step 1: Compress FIRST
-                                          File compressedFile = await _compressImage(originalFile);
+                                    //       // Step 1: Compress FIRST
+                                    //       File compressedFile = await _compressImage(originalFile);
 
-                                          // Safety: ensure widget still exists
-                                          if (!mounted) return;
+                                    //       // Safety: ensure widget still exists
+                                    //       if (!mounted) return;
 
-                                          // Safety: ensure file actually exists
-                                          if (!await compressedFile.exists()) {
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              const SnackBar(
-                                                content: Text("Image processing failed. Please try again."),
-                                              ),
-                                            );
-                                            return;
-                                          }
+                                    //       // Safety: ensure file actually exists
+                                    //       if (!await compressedFile.exists()) {
+                                    //         ScaffoldMessenger.of(context).showSnackBar(
+                                    //           const SnackBar(
+                                    //             content: Text("Image processing failed. Please try again."),
+                                    //           ),
+                                    //         );
+                                    //         return;
+                                    //       }
 
-                                          // Step 2: Check compressed size (in MB)
-                                          final double sizeInMB =
-                                              await compressedFile.length() / (1024 * 1024);
+                                    //       // Step 2: Check compressed size (in MB)
+                                    //       final double sizeInMB =
+                                    //           await compressedFile.length() / (1024 * 1024);
 
-                                          if (sizeInMB <= 1) {
-                                            setState(() {
-                                              imageFiles.add(compressedFile);
-                                            });
-                                          } else {
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
-                                                  "Image is too large even after compression. Please try another image.",
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                        }
+                                    //       if (sizeInMB <= 1) {
+                                    //         setState(() {
+                                    //           imageFiles.add(compressedFile);
+                                    //         });
+                                    //       } else {
+                                    //         ScaffoldMessenger.of(context).showSnackBar(
+                                    //           const SnackBar(
+                                    //             content: Text(
+                                    //               "Image is too large even after compression. Please try another image.",
+                                    //             ),
+                                    //           ),
+                                    //         );
+                                    //       }
+                                    //     }
 
-                                      },
-                                      borderRadius: BorderRadius.circular(
-                                          Responsive.width(6, context)),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal:
-                                                Responsive.width(8, context),
-                                            vertical:
-                                                Responsive.height(6, context)),
-                                        child: SvgPicture.asset(
-                                          'assets/communities/camera.svg',
-                                          height:
-                                              Responsive.height(26, context),
-                                          width: Responsive.width(26, context),
-                                          color:
-                                              Color.fromRGBO(48, 111, 220, 1),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: Responsive.width(1, context),
-                                    height: Responsive.height(20, context),
-                                    decoration: BoxDecoration(
-                                      color: Color.fromRGBO(210, 213, 218, 1),
-                                      borderRadius: BorderRadius.circular(
-                                          Responsive.width(2, context)),
-                                    ),
-                                  ),
-                                  Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                        onTap: () async {
-                                          // final ImagePicker _picker =
-                                          //     ImagePicker();
-                                          // final XFile? pi =
-                                          //     await _picker.pickImage(
-                                          //         source: ImageSource.gallery);
+                                    //   },
+                                    //   borderRadius: BorderRadius.circular(
+                                    //       Responsive.width(6, context)),
+                                    //   child: Container(
+                                    //     padding: EdgeInsets.symmetric(
+                                    //         horizontal:
+                                    //             Responsive.width(8, context),
+                                    //         vertical:
+                                    //             Responsive.height(6, context)),
+                                    //     child: SvgPicture.asset(
+                                    //       'assets/communities/camera.svg',
+                                    //       height:
+                                    //           Responsive.height(26, context),
+                                    //       width: Responsive.width(26, context),
+                                    //       color:
+                                    //           Color.fromRGBO(48, 111, 220, 1),
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                  // ),
+                                  // Container(
+                                  //   width: Responsive.width(1, context),
+                                  //   height: Responsive.height(20, context),
+                                  //   decoration: BoxDecoration(
+                                  //     color: Color.fromRGBO(210, 213, 218, 1),
+                                  //     borderRadius: BorderRadius.circular(
+                                  //         Responsive.width(2, context)),
+                                  //   ),
+                                  // ),
+                                  // Material(
+                                  //   color: Colors.transparent,
+                                  //   child: InkWell(
+                                  //       onTap: () async {
+                                  //         // final ImagePicker _picker =
+                                  //         //     ImagePicker();
+                                  //         // final XFile? pi =
+                                  //         //     await _picker.pickImage(
+                                  //         //         source: ImageSource.gallery);
 
-                                          // if (pi != null) {
-                                          //   File originalFile = File(pi.path);
+                                  //         // if (pi != null) {
+                                  //         //   File originalFile = File(pi.path);
 
-                                          //   if (await originalFile.length() /
-                                          //           1000000 <=
-                                          //       10) {
-                                          //     // Compress the image to 75% quality
-                                          //     File compressedFile =
-                                          //         await _compressImage(
-                                          //             originalFile);
-                                          //     setState(() {
-                                          //       imageFiles.add(compressedFile);
-                                          //     });
+                                  //         //   if (await originalFile.length() /
+                                  //         //           1000000 <=
+                                  //         //       10) {
+                                  //         //     // Compress the image to 75% quality
+                                  //         //     File compressedFile =
+                                  //         //         await _compressImage(
+                                  //         //             originalFile);
+                                  //         //     setState(() {
+                                  //         //       imageFiles.add(compressedFile);
+                                  //         //     });
 
-                                          //     ImageUploadResponse resp =
-                                          //         await bloc.client.uploadImage(
-                                          //             bloc.getSessionIdHeader(),
-                                          //             compressedFile);
-                                          //     print(resp.pictureURL);
-                                          //   } else {
-                                          //     ScaffoldMessenger.of(context)
-                                          //         .showSnackBar(SnackBar(
-                                          //       content: Text(
-                                          //           "Image size should be less than 10MB"),
-                                          //     ));
-                                          //   }
-                                          // }
-                                          final ImagePicker _picker = ImagePicker();
-                                          final XFile? pi =
-                                              await _picker.pickImage(source: ImageSource.gallery);
+                                  //         //     ImageUploadResponse resp =
+                                  //         //         await bloc.client.uploadImage(
+                                  //         //             bloc.getSessionIdHeader(),
+                                  //         //             compressedFile);
+                                  //         //     print(resp.pictureURL);
+                                  //         //   } else {
+                                  //         //     ScaffoldMessenger.of(context)
+                                  //         //         .showSnackBar(SnackBar(
+                                  //         //       content: Text(
+                                  //         //           "Image size should be less than 10MB"),
+                                  //         //     ));
+                                  //         //   }
+                                  //         // }
+                                  //         final ImagePicker _picker = ImagePicker();
+                                  //         final XFile? pi =
+                                  //             await _picker.pickImage(source: ImageSource.gallery);
 
-                                          if (pi == null) return;
+                                  //         if (pi == null) return;
 
-                                          final File originalFile = File(pi.path);
+                                  //         final File originalFile = File(pi.path);
 
-                                          if (!await originalFile.exists()) {
-                                            if (!mounted) return;
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              const SnackBar(
-                                                content: Text("Could not access selected image."),
-                                              ),
-                                            );
-                                            return;
-                                          }
+                                  //         if (!await originalFile.exists()) {
+                                  //           if (!mounted) return;
+                                  //           ScaffoldMessenger.of(context).showSnackBar(
+                                  //             const SnackBar(
+                                  //               content: Text("Could not access selected image."),
+                                  //             ),
+                                  //           );
+                                  //           return;
+                                  //         }
 
-                                          // Step 1: Compress FIRST
-                                          final File compressedFile =
-                                              await _compressImage(originalFile);
+                                  //         // Step 1: Compress FIRST
+                                  //         final File compressedFile =
+                                  //             await _compressImage(originalFile);
 
-                                          if (!await compressedFile.exists()) {
-                                            if (!mounted) return;
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              const SnackBar(
-                                                content: Text("Image compression failed."),
-                                              ),
-                                            );
-                                            return;
-                                          }
+                                  //         if (!await compressedFile.exists()) {
+                                  //           if (!mounted) return;
+                                  //           ScaffoldMessenger.of(context).showSnackBar(
+                                  //             const SnackBar(
+                                  //               content: Text("Image compression failed."),
+                                  //             ),
+                                  //           );
+                                  //           return;
+                                  //         }
 
-                                          // Step 2: Check compressed size (max 1MB)
-                                          final double sizeInMB =
-                                              await compressedFile.length() / (1024 * 1024);
+                                  //         // Step 2: Check compressed size (max 1MB)
+                                  //         final double sizeInMB =
+                                  //             await compressedFile.length() / (1024 * 1024);
 
-                                          if (sizeInMB > 1) {
-                                            if (!mounted) return;
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
-                                                  "Image is too large after compression (max 1MB).",
-                                                ),
-                                              ),
-                                            );
-                                            return;
-                                          }
+                                  //         if (sizeInMB > 1) {
+                                  //           if (!mounted) return;
+                                  //           ScaffoldMessenger.of(context).showSnackBar(
+                                  //             const SnackBar(
+                                  //               content: Text(
+                                  //                 "Image is too large after compression (max 1MB).",
+                                  //               ),
+                                  //             ),
+                                  //           );
+                                  //           return;
+                                  //         }
 
-                                          if (!mounted) return;
+                                  //         if (!mounted) return;
 
-                                          // Add locally first
-                                          setState(() {
-                                            imageFiles.add(compressedFile);
-                                          });
+                                  //         // Add locally first
+                                  //         setState(() {
+                                  //           imageFiles.add(compressedFile);
+                                  //         });
 
-                                          // Step 3: Upload safely
-                                          try {
-                                            final ImageUploadResponse resp =
-                                                await bloc.client.uploadImage(
-                                              bloc.getSessionIdHeader(),
-                                              compressedFile,
-                                            );
+                                  //         // Step 3: Upload safely
+                                  //         try {
+                                  //           final ImageUploadResponse resp =
+                                  //               await bloc.client.uploadImage(
+                                  //             bloc.getSessionIdHeader(),
+                                  //             compressedFile,
+                                  //           );
 
-                                            if (resp.pictureURL != null) {
-                                              print("Uploaded URL: ${resp.pictureURL}");
-                                            } else {
-                                              throw Exception("Upload succeeded but URL is null.");
-                                            }
-                                          } catch (e) {
-                                            print("Upload failed: $e");
+                                  //           if (resp.pictureURL != null) {
+                                  //             print("Uploaded URL: ${resp.pictureURL}");
+                                  //           } else {
+                                  //             throw Exception("Upload succeeded but URL is null.");
+                                  //           }
+                                  //         } catch (e) {
+                                  //           print("Upload failed: $e");
 
-                                            if (!mounted) return;
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              const SnackBar(
-                                                content: Text("Image upload failed. Please try again."),
-                                              ),
-                                            );
-                                          }
+                                  //           if (!mounted) return;
+                                  //           ScaffoldMessenger.of(context).showSnackBar(
+                                  //             const SnackBar(
+                                  //               content: Text("Image upload failed. Please try again."),
+                                  //             ),
+                                  //           );
+                                  //         }
 
-                                        },
-                                        borderRadius: BorderRadius.circular(
-                                            Responsive.width(6, context)),
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal:
-                                                  Responsive.width(8, context),
-                                              vertical: Responsive.height(
-                                                  6, context)),
-                                          child: SvgPicture.asset(
-                                            'assets/communities/image.svg',
-                                            height:
-                                                Responsive.height(26, context),
-                                            width:
-                                                Responsive.width(26, context),
-                                          ),
-                                        )),
-                                  ),
+                                  //       },
+                                  //       borderRadius: BorderRadius.circular(
+                                  //           Responsive.width(6, context)),
+                                  //       child: Container(
+                                  //         padding: EdgeInsets.symmetric(
+                                  //             horizontal:
+                                  //                 Responsive.width(8, context),
+                                  //             vertical: Responsive.height(
+                                  //                 6, context)),
+                                  //         child: SvgPicture.asset(
+                                  //           'assets/communities/image.svg',
+                                  //           height:
+                                  //               Responsive.height(26, context),
+                                  //           width:
+                                  //               Responsive.width(26, context),
+                                  //         ),
+                                  //       )),
+                                  // ),
 
                                   // Material(
                                   //   color: Colors.transparent,
