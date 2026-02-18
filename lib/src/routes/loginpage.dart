@@ -1303,35 +1303,35 @@ class _OnboardingLoginPageState extends State<LoginPage>
                                       thickness: 1, color: Color(0xFFDADADA))),
                             ],
                           ),
-                          // SizedBox(height: RS.sh(context, 24)),
+                          SizedBox(height: RS.sh(context, 24)),
                           // Log In as an Alumnus - outlined button
-                          // GestureDetector(
-                          //   onTap: _handleAlumniLogin,
-                          //   child: Container(
-                          //     width: RS.sw(context, 364),
-                          //     height: RS.sh(context, 52),
-                          //     decoration: BoxDecoration(
-                          //       color: Colors.white,
-                          //       borderRadius:
-                          //           BorderRadius.circular(RS.s(context, 50)),
-                          //       border: Border.all(
-                          //         color: Color(0xFF306FDC),
-                          //         width: 2,
-                          //       ),
-                          //     ),
-                          //     child: Center(
-                          //       child: Text(
-                          //         "Log In as an Alumnus",
-                          //         style: TextStyle(
-                          //           fontFamily: 'DMSans',
-                          //           fontWeight: FontWeight.w700,
-                          //           fontSize: RS.sp(context, 16),
-                          //           color: Color(0xFF306FDC),
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
+                          GestureDetector(
+                            onTap: _handleAlumniLogin,
+                            child: Container(
+                              width: RS.sw(context, 364),
+                              height: RS.sh(context, 52),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.circular(RS.s(context, 50)),
+                                border: Border.all(
+                                  color: Color(0xFF306FDC),
+                                  width: 2,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Log In as an Alumnus",
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: RS.sp(context, 16),
+                                    color: Color(0xFF306FDC),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                           SizedBox(height: RS.sh(context, 16)),
                           // Continue as guest - outlined button
                           GestureDetector(
@@ -1453,28 +1453,28 @@ class _OnboardingLoginPageState extends State<LoginPage>
 
             SizedBox(height: RS.s(context, 8)), // Uniform spacing
 
-            // SizedBox(
-            //   width: RS.sw(context, 260), // Responsive button width
-            //   height: RS.s(context, 53), // Responsive button height
-            //   child: ElevatedButton(
-            //     style: ElevatedButton.styleFrom(
-            //       backgroundColor: const Color.fromRGBO(48, 111, 220, 1),
-            //       shape: RoundedRectangleBorder(
-            //         borderRadius: BorderRadius.circular(
-            //             RS.s(context, 16)), // Responsive radius
-            //       ),
-            //     ),
-            //     onPressed: _handleAlumniLogin,
-            //     child: Text(
-            //       "Log in as an Alumnus",
-            //       style: TextStyle(
-            //         fontSize: RS.sp(context, 20), // Responsive text
-            //         fontWeight: FontWeight.w600,
-            //         fontFamily: 'DM Sans',
-            //       ),
-            //     ),
-            //   ),
-            // ),
+            SizedBox(
+              width: RS.sw(context, 260), // Responsive button width
+              height: RS.s(context, 53), // Responsive button height
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromRGBO(48, 111, 220, 1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        RS.s(context, 16)), // Responsive radius
+                  ),
+                ),
+                onPressed: _handleAlumniLogin,
+                child: Text(
+                  "Log in as an Alumnus",
+                  style: TextStyle(
+                    fontSize: RS.sp(context, 20), // Responsive text
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'DM Sans',
+                  ),
+                ),
+              ),
+            ),
 
             SizedBox(height: RS.s(context, 8)), // Uniform spacing
 
