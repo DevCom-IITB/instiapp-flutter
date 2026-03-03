@@ -1423,9 +1423,9 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                           : QrImageView(
                               data: qrString,
                               size: responsive.w(197),
-                              embeddedImage: const AssetImage(
-                                'assets/buynsell/DevcomLogo.png',
-                              ),
+                              // embeddedImage: const AssetImage(
+                              //   'assets/buynsell/DevcomLogo.png',
+                              // ),
                             ),
                 ),
 

@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
@@ -26,35 +28,35 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_dartobservatory._tcp</string>
+	</array>
 	<key>NSCalendarsUsageDescription</key>
 	<string>To add your interested/going events to your phone calendar</string>
 	<key>NSCameraUsageDescription</key>
-	<string>This app needs camera access to scan QR codes and to upload product images</string>
+	<string>This app needs camera access to take photos and upload them</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Allow the app to discover devices on the local network for debugging.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app uses your location for navigation in instimap</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app uses your location for navigation in instimap</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app uses your location for navigation in instimap</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>This app uses your location for navigation in instimap</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string></string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This app needs permission to save photos to your library</string>
-	<key>NSCameraUsageDescription</key>
-	<string>This app needs camera access to take photos and upload them</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>To upload photo from the gallery</string>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>Allow the app to discover devices on the local network for debugging.</string>
-	<key>NSBonjourServices</key>
-	<array>
-		<string>_dartobservatory._tcp</string>
-	</array>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>Hostel_numberIntent</string>
 		<string>IntentIntent</string>
 	</array>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -67,24 +69,17 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
-	<true/>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 </dict>
 </plist>
