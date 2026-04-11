@@ -44,6 +44,7 @@ import 'package:InstiApp/src/routes/quicklinkspage.dart';
 import 'package:InstiApp/src/routes/settingspage.dart';
 // import 'package:InstiApp/src/routes/trainingblogpage.dart';
 import 'package:InstiApp/src/routes/blogpage.dart';
+import 'package:InstiApp/src/routes/researchblogpage.dart'; // new
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/routes/your_achievements.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
@@ -391,6 +392,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   return _buildRoute(settings, MessPage());
                 case "/placeblog":
                   return _buildRoute(settings, BlogPage());
+                case "/researchblog":
+                  return _buildRoute(settings, ResearchBlogPage());
                 // case "/trainblog":
                 //   return _buildRoute(settings, BlogPage());
                 case "/feed":
