@@ -382,13 +382,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 case "/":
                   return _buildRoute(
                       settings,
-                      LoginPage(
+                      /*LoginPage(
                         widget.bloc,
                         scaffoldMessengerKey: scaffoldMessengerKey,
                         navigatorKey: navigatorKey,
-                      ));
-                      // ResearchBlogPage(),  // temporarily shown for testing
-                      // );
+                      */
+                      ResearchBlogPage());
+                      // temporarily shown for testing
                 case "/mess":
                   // print("Entereing here mess");
                   return _buildRoute(settings, MessPage());
