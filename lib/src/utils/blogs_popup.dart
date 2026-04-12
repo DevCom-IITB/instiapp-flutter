@@ -196,25 +196,25 @@ class _PlacementCard extends StatelessWidget {
               ),
               SizedBox(height: Responsive.height(10, context)),
               // "Name mentioned!" badge
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Responsive.width(8, context),
-                  vertical: Responsive.height(4, context),
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF306FDC),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  'Name mentioned!',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: Responsive.width(10, context),
-                    fontFamily: 'DM Sans',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+              // Container(
+              //   padding: EdgeInsets.symmetric(
+              //     horizontal: Responsive.width(8, context),
+              //     vertical: Responsive.height(4, context),
+              //   ),
+              //   decoration: BoxDecoration(
+              //     color: const Color(0xFF306FDC),
+              //     borderRadius: BorderRadius.circular(4),
+              //   ),
+              //   child: Text(
+              //     'Name mentioned!',
+              //     style: TextStyle(
+              //       color: Colors.white,
+              //       fontSize: Responsive.width(10, context),
+              //       fontFamily: 'DM Sans',
+              //       fontWeight: FontWeight.w600,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
           // Illustration at bottom
