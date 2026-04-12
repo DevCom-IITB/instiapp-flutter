@@ -26,6 +26,10 @@ import '../widgets/bottom_navbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:InstiApp/main.dart' as main_app;
+import 'package:InstiApp/src/utils/blogs_popup.dart';
+
+
+bool blogsPopupShown = true;
 
 class Responsive {
   final BuildContext context;
@@ -830,6 +834,21 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           });
         });
   }
+  void _openBlogsBottomSheet() {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setModalState) {
+            return FractionallySizedBox(
+              heightFactor: 0.52,
+              child: BlogsPopup(),
+            );
+          });
+        });
+  }
 
   Widget dayContainer(String day, bool isSelected, VoidCallback onTap) {
     final responsive =
@@ -868,7 +887,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         } else if (name == "Maps") {
           Navigator.of(context).pushNamed('/map');
         } else if (name == "Blogs") {
-          Navigator.of(context).pushNamed('/placeblog');
+          // Navigator.of(context).pushNamed('/placeblog');
+          _openBlogsBottomSheet();
         } else if (name == "Quick Links") {
           Navigator.of(context).pushNamed('/quicklinks');
         }

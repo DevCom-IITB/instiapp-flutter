@@ -60,6 +60,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:uni_links/uni_links.dart';
 
+
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 double systemBottomPadding = 0.0;
 void main() async {
@@ -387,8 +388,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                         scaffoldMessengerKey: scaffoldMessengerKey,
                         navigatorKey: navigatorKey,
                       ));
-                      // ResearchBlogPage(),  // temporarily shown for testing
-                      // );
+                      // ResearchBlogPage(),);  // temporarily shown for testing
                 case "/mess":
                   // print("Entereing here mess");
                   return _buildRoute(settings, MessPage());

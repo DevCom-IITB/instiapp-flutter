@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:InstiApp/src/utils/research_blog_card.dart';
 import 'package:InstiApp/src/utils/responsivenew.dart';
 
+import 'package:InstiApp/src/utils/blogs_popup.dart';
+
 class ResearchBlogPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,7 @@ class ResearchBlogPage extends StatelessWidget {
       description: 'Working on cutting edge Optimisation Techniques to enhance performance of energy systems...',
       imageUrl: 'https://placehold.co/113x189',
     ),
+    BlogsPopup(),
     ResearchCard(
       title: 'lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut .',
       professor: 'Prof. Alpha Delta Omega',
