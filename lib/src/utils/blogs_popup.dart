@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:InstiApp/src/utils/responsivenew.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_dash/flutter_dash.dart';
+import 'package:InstiApp/src/routes/blogpage.dart';
+import 'package:InstiApp/src/routes/researchblogpage.dart';
 
 
 class BlogsPopup extends StatelessWidget {
@@ -88,7 +90,16 @@ class BlogsPopup extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ── LEFT: Placement card (tall) ──
-              _PlacementCard(context: context),
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => BlogPage(blogState: 0),
+                    ),
+                  );
+                },
+                child: _PlacementCard(context: context),
+              ),
 
               SizedBox(width: Responsive.width(16, context)),
 
@@ -97,18 +108,36 @@ class BlogsPopup extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _SmallCard(
-                      context: context,
-                      title: 'Internship',
-                      subtitle: 'Internship Shortlist\nUpdates',
-                      imageWidget: SvgPicture.asset('assets/blogs/internship_blog_icon.svg', width: Responsive.width(140, context)),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => BlogPage(blogState: 1),
+                          ),
+                        );
+                      },
+                      child: _SmallCard(
+                        context: context,
+                        title: 'Internship',
+                        subtitle: 'Internship Shortlist\nUpdates',
+                        imageWidget: SvgPicture.asset('assets/blogs/internship_blog_icon.svg', width: Responsive.width(140, context)),
+                      ),
                     ),
                     SizedBox(height: Responsive.height(16, context)),
-                    _SmallCard(
-                      context: context,
-                      title: 'Research',
-                      subtitle: 'Explore Research\nProjects',
-                      imageWidget: SvgPicture.asset('assets/blogs/research_blog_icon.svg', width: Responsive.width(80, context)),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ResearchBlogPage(),
+                          ),
+                        );
+                      },
+                      child: _SmallCard(
+                        context: context,
+                        title: 'Research',
+                        subtitle: 'Explore Research\nProjects',
+                        imageWidget: SvgPicture.asset('assets/blogs/research_blog_icon.svg', width: Responsive.width(80, context)),
+                      ),
                     ),
                   ],
                 ),
