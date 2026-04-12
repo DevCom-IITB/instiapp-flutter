@@ -11,6 +11,35 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:InstiApp/src/widgets/custom_dialog.dart'; // adjust to wherever CustomDialog is defined in your project
 import '../widgets/dotted_divider.dart';
 
+const String base = "assets/reach_images/";
+
+final Map<String, String> domainImages = {
+  'AI/ML': 'Cminds.png',
+  'BSBE': 'bsbe.jpeg',
+  'CHEMISTRY': 'chemistry.jpg',
+  'CHEMICAL': 'chemical.jpeg',
+  'CLIMATE STUDIES': 'climate_studies.png',
+  'COMPUTER SCIENCE': 'computer_science.jpeg',
+  'CTARA': 'ctara.jpg',
+  'ELECTRICAL': 'electrical.jpg',
+  'ENERGY': 'energy.png',
+  'ENVIRONMENTAL STUDIES': 'environmental_studies.png',
+  'EARTH SCIENCES': 'earth_sciences.jpeg',
+  'MATHEMATICS': 'mathematics.png',
+  'MECHANICAL': 'mechanical_engineering.jpg',
+  'CIVIL': 'civil.jpeg',
+  'MEMS': 'mems.png',
+  'SYSCON': 'syscon.png',
+  'PHYSICS': 'physics.png',
+  'MANAGEMENT (SOM)': 'som.jpg',
+  'MULTIDISCIPLINARY': 'idp.jpg',
+};
+
+String getDomainImage(String domain) {
+  final key = domain.trim().toUpperCase();
+  return base + (domainImages[key] ?? 'computer_science.jpeg');
+}
+
 class ResearchBlogPage extends StatefulWidget {
   @override
   _ResearchBlogPageState createState() => _ResearchBlogPageState();
@@ -405,8 +434,7 @@ class _ResearchBlogPageState extends State<ResearchBlogPage> {
                             professor: item.professorName,
                             tag: item.domain,
                             description: item.description,
-                            imageUrl:
-                                item.image ?? 'https://picsum.photos/113/189',
+                            imageUrl: item.image ?? getDomainImage(item.domain),
                           ),
                         );
                       },

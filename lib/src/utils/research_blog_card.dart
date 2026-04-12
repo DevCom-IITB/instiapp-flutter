@@ -48,7 +48,8 @@ class ResearchCard extends StatelessWidget {
                     color: const Color(0xFF306FDC),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(Responsive.width(10, context)),
-                      bottomLeft: Radius.circular(Responsive.width(10, context)),
+                      bottomLeft:
+                          Radius.circular(Responsive.width(10, context)),
                     ),
                   ),
                 ),
@@ -57,7 +58,9 @@ class ResearchCard extends StatelessWidget {
                   height: Responsive.height(189, context),
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: NetworkImage(imageUrl),
+                      image: imageUrl.startsWith('http')
+                          ? NetworkImage(imageUrl)
+                          : AssetImage(imageUrl) as ImageProvider,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -109,7 +112,8 @@ class ResearchCard extends StatelessWidget {
                   ),
                   SizedBox(height: Responsive.height(8, context)),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: ShapeDecoration(
                       color: const Color(0xFF1B3252),
                       shape: StadiumBorder(),
