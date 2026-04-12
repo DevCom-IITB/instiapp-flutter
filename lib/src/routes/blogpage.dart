@@ -67,6 +67,10 @@ TextSpan highlight(String result, String query, BuildContext context) {
 }
 
 class BlogPage extends StatefulWidget {
+  final int blogState; // 0: Placement, 1: Internship
+
+  const BlogPage({Key? key, this.blogState = 0}) : super(key: key);
+
   @override
   _BlogPageState createState() => _BlogPageState();
 }
@@ -74,8 +78,6 @@ class BlogPage extends StatefulWidget {
 class _BlogPageState extends State<BlogPage> {
   String view = 'normal'; // 'normal' or 'company wise'
   TextEditingController? _searchFieldController;
-  PageController? _pageController;
-  int currentTabIndex = 0; // 0: Placement, 1: Internship, 2: External
 
   late PostType postType;
   String? selectedDepartment;
@@ -84,11 +86,10 @@ class _BlogPageState extends State<BlogPage> {
   void initState() {
     super.initState();
     _searchFieldController = TextEditingController();
-    _pageController = PageController(initialPage: 0);
+    postType = widget.blogState == 1 ? PostType.Training : PostType.Placement;
     setUrl();
     _placementScrollController = ScrollController()..addListener(_handleScroll);
     _trainingScrollController = ScrollController()..addListener(_handleScroll);
-    _externalScrollController = ScrollController()..addListener(_handleScroll);
   }
 
   @override
@@ -109,44 +110,14 @@ class _BlogPageState extends State<BlogPage> {
   @override
   void dispose() {
     _searchFieldController?.dispose();
-    _pageController?.dispose();
     _focusNode.dispose();
     _placementScrollController?.dispose();
     _trainingScrollController?.dispose();
-    _externalScrollController?.dispose();
     super.dispose();
   }
 
-  double placement = 1, internship = 0, external = 0;
-
-  void switchToTab(int index) {
-    setState(() {
-      currentTabIndex = index;
-      placement = index == 0 ? 1 : 0;
-      internship = index == 1 ? 1 : 0;
-      external = index == 2 ? 1 : 0;
-
-      _searchFieldController?.clear();
-      _focusNode.unfocus();
-      setUrl();
-    });
-
-    var bloc = BlocProvider.of(context)?.bloc;
-    var blogBloc = bloc?.getPostsBloc(postType);
-    if (blogBloc != null) {
-      blogBloc.query = '';
-      blogBloc.refresh();
-    }
-  }
-
   void setUrl() {
-    if (placement == 1) {
-      postType = PostType.Placement;
-    } else if (internship == 1) {
-      postType = PostType.Training;
-    } else if (external == 1) {
-      postType = PostType.External;
-    }
+    postType = widget.blogState == 1 ? PostType.Training : PostType.Placement;
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
@@ -154,14 +125,13 @@ class _BlogPageState extends State<BlogPage> {
   FocusNode _focusNode = FocusNode();
   ScrollController? _placementScrollController;
   ScrollController? _trainingScrollController;
-  ScrollController? _externalScrollController;
   double isFabVisible = 0;
   IconData actionIcon = Icons.search_outlined;
 
   ScrollController? get _activeScrollController {
-    if (currentTabIndex == 0) return _placementScrollController;
-    if (currentTabIndex == 1) return _trainingScrollController;
-    return _externalScrollController;
+    return postType == PostType.Placement
+        ? _placementScrollController
+        : _trainingScrollController;
   }
 
   void _handleScroll() {
@@ -179,7 +149,7 @@ class _BlogPageState extends State<BlogPage> {
   List<Post>? threads;
   // ...existing code...
   String highlightHtml(String html, String? query) {
-    if (html == null || html.isEmpty) return html;
+    if (html.isEmpty) return html;
     if (query == null) query = "";
     if (query.length < 4) return html;
     if (query.length > 32) return html;
@@ -299,7 +269,9 @@ class _BlogPageState extends State<BlogPage> {
                               Expanded(
                                 child: Center(
                                   child: Text(
-                                    'Blogs',
+                                    postType == PostType.Placement
+                                        ? 'Placement'
+                                        : 'Internship',
                                     style: TextStyle(
                                       fontSize: Responsive.text(24.0, context),
                                       fontWeight: FontWeight.w700,
@@ -314,154 +286,7 @@ class _BlogPageState extends State<BlogPage> {
                             ],
                           ),
                         ),
-                        SizedBox(height: Responsive.height(20.0, context)),
-                        Container(
-                          height: Responsive.height(60.0, context),
-                          margin: EdgeInsets.only(
-                              left: Responsive.width(16.0, context),
-                              right: Responsive.width(16.0, context)),
-                          padding:
-                              EdgeInsets.all(Responsive.height(6.0, context)),
-                          decoration: BoxDecoration(
-                            image: const DecorationImage(
-                              image: AssetImage('assets/blogs/background.png'),
-                              fit: BoxFit.cover,
-                            ),
-                            borderRadius: BorderRadius.circular(
-                                Responsive.height(30.0, context)),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Material(
-                                color: Color.fromRGBO(48, 111, 220, placement),
-                                borderRadius: BorderRadius.circular(
-                                    Responsive.height(30.0, context)),
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(
-                                      Responsive.height(30.0, context)),
-                                  splashColor: Color.fromRGBO(48, 111, 220, 1),
-                                  onTap: () {
-                                    _pageController?.animateToPage(
-                                      0,
-                                      duration: Duration(milliseconds: 1),
-                                      curve: Curves.linear,
-                                    );
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        left: Responsive.width(20.0, context),
-                                        right: Responsive.width(24.0, context),
-                                        top: Responsive.height(14.0, context),
-                                        bottom:
-                                            Responsive.height(13.0, context)),
-                                    child: Center(
-                                      child: Text(
-                                        'Placement',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'DM Sans',
-                                          fontSize:
-                                              Responsive.text(16.0, context),
-                                          fontWeight: placement == 1
-                                              ? FontWeight.w900
-                                              : FontWeight.w400,
-                                          fontStyle: FontStyle.normal,
-                                          height:
-                                              Responsive.height(1.0, context),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Material(
-                                color: Color.fromRGBO(48, 111, 220, internship),
-                                borderRadius: BorderRadius.circular(
-                                    Responsive.height(30.0, context)),
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(
-                                      Responsive.height(30.0, context)),
-                                  splashColor: Color.fromRGBO(48, 111, 220, 1),
-                                  onTap: () {
-                                    _pageController?.animateToPage(
-                                      1,
-                                      duration: Duration(milliseconds: 300),
-                                      curve: Curves.easeInOut,
-                                    );
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        left: Responsive.width(20.0, context),
-                                        right: Responsive.width(24.0, context),
-                                        top: Responsive.height(14.0, context),
-                                        bottom:
-                                            Responsive.height(13.0, context)),
-                                    child: Center(
-                                      child: Text(
-                                        'Internship',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'DM Sans',
-                                          fontSize:
-                                              Responsive.text(16.0, context),
-                                          fontWeight: internship == 1
-                                              ? FontWeight.w900
-                                              : FontWeight.w400,
-                                          fontStyle: FontStyle.normal,
-                                          height:
-                                              Responsive.height(1.0, context),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Material(
-                                color: Color.fromRGBO(48, 111, 220, external),
-                                borderRadius: BorderRadius.circular(
-                                    Responsive.height(30.0, context)),
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(
-                                      Responsive.height(30.0, context)),
-                                  splashColor: Color.fromRGBO(48, 111, 220, 1),
-                                  onTap: () {
-                                    _pageController?.animateToPage(
-                                      2,
-                                      duration: Duration(milliseconds: 1),
-                                      curve: Curves.linear,
-                                    );
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        left: Responsive.width(20.0, context),
-                                        right: Responsive.width(24.0, context),
-                                        top: Responsive.height(14.0, context),
-                                        bottom:
-                                            Responsive.height(13.0, context)),
-                                    child: Center(
-                                      child: Text(
-                                        'External',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'DM Sans',
-                                          fontSize:
-                                              Responsive.text(16.0, context),
-                                          fontWeight: external == 1
-                                              ? FontWeight.w900
-                                              : FontWeight.w400,
-                                          fontStyle: FontStyle.normal,
-                                          height:
-                                              Responsive.height(1.0, context),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        SizedBox(height: Responsive.height(4.0, context)),
                         Container(
                           margin: const EdgeInsets.only(
                               left: 16, right: 16, top: 16),
@@ -668,23 +493,7 @@ class _BlogPageState extends State<BlogPage> {
                         //         ])),
                         // SizedBox(height: Responsive.height(24.0, context)),
                         Expanded(
-                          child: PageView(
-                            controller: _pageController,
-                            onPageChanged: (index) {
-                              switchToTab(index);
-                            },
-                            children: [
-                              // Placement Tab
-                              _buildTabContent(
-                                  PostType.Placement, context, blogBloc),
-                              // Internship Tab
-                              _buildTabContent(
-                                  PostType.Training, context, blogBloc),
-                              // External Tab
-                              _buildTabContent(
-                                  PostType.External, context, blogBloc),
-                            ],
-                          ),
+                          child: _buildTabContent(postType, context, blogBloc),
                         )
                       ],
                     ),
@@ -764,9 +573,7 @@ class _BlogPageState extends State<BlogPage> {
             child: ListView.builder(
               controller: tabPostType == PostType.Placement
                   ? _placementScrollController
-                  : tabPostType == PostType.Training
-                      ? _trainingScrollController
-                      : _externalScrollController,
+                  : _trainingScrollController,
               itemBuilder: (BuildContext context, int index) {
                 return _buildPost(tabBlogBloc, index, snapshot.data, context);
               },
@@ -810,7 +617,7 @@ class _BlogPageState extends State<BlogPage> {
         child: Center(child: CircularProgressIndicator()),
       );
     }
-    if (post?.content == null) {
+    if (post.content == null) {
       return Container(
           child: Padding(
         padding: EdgeInsets.symmetric(

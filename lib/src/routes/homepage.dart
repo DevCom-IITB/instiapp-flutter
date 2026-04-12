@@ -868,7 +868,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         } else if (name == "Maps") {
           Navigator.of(context).pushNamed('/map');
         } else if (name == "Blogs") {
-          Navigator.of(context).pushNamed('/placeblog');
+          Navigator.of(context).pushNamed('/trainblog');
         } else if (name == "Quick Links") {
           Navigator.of(context).pushNamed('/quicklinks');
         }
