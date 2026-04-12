@@ -390,9 +390,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   // print("Entereing here mess");
                   return _buildRoute(settings, MessPage());
                 case "/placeblog":
-                  return _buildRoute(settings, BlogPage());
-                // case "/trainblog":
-                //   return _buildRoute(settings, BlogPage());
+                  return _buildRoute(settings, BlogPage(blogState: 0));
+                case "/trainblog":
+                  return _buildRoute(settings, BlogPage(blogState: 1));
                 case "/feed":
                   return _buildRoute(settings, Homepage());
                 //return _buildRoute(settings, FeedPage());
