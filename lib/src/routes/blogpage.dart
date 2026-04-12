@@ -254,17 +254,21 @@ class _BlogPageState extends State<BlogPage> {
                                       borderRadius: BorderRadius.circular(26),
                                     ),
                                     child: IconButton(
-                                        icon: SvgPicture.asset(
-                                          'assets/blogs/arrow-left.svg',
-                                          height:
-                                              Responsive.height(24.0, context),
-                                          width:
-                                              Responsive.width(24.0, context),
-                                          fit: BoxFit.none,
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        })),
+                                      icon: SvgPicture.asset(
+                                        'assets/blogs/arrow-left.svg',
+                                        height:
+                                            Responsive.height(24.0, context),
+                                        width: Responsive.width(24.0, context),
+                                        fit: BoxFit.none,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pushNamedAndRemoveUntil(
+                                          '/feed', //navigate to homepage
+                                          (route) => false,
+                                        );
+                                      },
+                                    )),
                               ),
                               Expanded(
                                 child: Center(
@@ -568,8 +572,7 @@ class _BlogPageState extends State<BlogPage> {
           final int totalItemCount = baseCount + 1;
 
           return RefreshIndicator(
-            onRefresh: () =>
-                blogBloc.refresh(force: tabBlogBloc.query.isEmpty),
+            onRefresh: () => blogBloc.refresh(force: tabBlogBloc.query.isEmpty),
             child: ListView.builder(
               controller: tabPostType == PostType.Placement
                   ? _placementScrollController

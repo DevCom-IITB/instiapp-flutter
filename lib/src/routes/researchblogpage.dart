@@ -142,7 +142,13 @@ class _ResearchBlogPageState extends State<ResearchBlogPage> {
                             width: Responsive.width(24.0, context),
                             fit: BoxFit.none,
                           ),
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () {
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              '/feed', //navigate to homepage
+                              (route) =>
+                                  false, 
+                            );
+                          },
                         ),
                       ),
                     ),
