@@ -1,0 +1,39 @@
+name: app_links_example
+description: Demonstrates how to use the app_links plugin.
+version: 1.0.0
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+environment:
+  sdk: ^3.5.0
+  flutter: ">=3.24.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  app_links: ^6.1.3
+
+  ffi: ^2.1.0
+  win32: ^5.1.0
+
+dev_dependencies:
+  msix: ^3.16.8
+  
+  # linter rules (https://pub.dev/packages/flutter_lints)
+  flutter_lints: ^5.0.0
+
+# The following section is specific to Flutter.
+flutter:
+  uses-material-design: true
+
+# Windows only (packaged app)
+msix_config:
+  display_name: app_links_example
+  msix_version: 1.0.0.0
+  protocol_activation: https, sample # Add the protocol activation for the app
+  app_uri_handler_hosts: www.example.com, example.com # Add the app uri handler hosts

@@ -7,6 +7,18 @@ import 'package:InstiApp/src/routes/researchblogpage.dart';
 
 
 class BlogsPopup extends StatelessWidget {
+  final BuildContext hostContext;
+
+  const BlogsPopup({Key? key, required this.hostContext}) : super(key: key);
+
+  void _closeSheetAndNavigate(BuildContext sheetContext, Widget page) {
+    Navigator.of(sheetContext).pop();
+    Future.microtask(() {
+      Navigator.of(hostContext).push(
+        MaterialPageRoute(builder: (context) => page),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,11 +104,7 @@ class BlogsPopup extends StatelessWidget {
               // ── LEFT: Placement card (tall) ──
               GestureDetector(
                 onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => BlogPage(blogState: 0),
-                    ),
-                  );
+                  _closeSheetAndNavigate(context, BlogPage(blogState: 0));
                 },
                 child: _PlacementCard(context: context),
               ),
@@ -110,11 +118,7 @@ class BlogsPopup extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => BlogPage(blogState: 1),
-                          ),
-                        );
+                        _closeSheetAndNavigate(context, BlogPage(blogState: 1));
                       },
                       child: _SmallCard(
                         context: context,
@@ -126,11 +130,7 @@ class BlogsPopup extends StatelessWidget {
                     SizedBox(height: Responsive.height(16, context)),
                     GestureDetector(
                       onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ResearchBlogPage(),
-                          ),
-                        );
+                        _closeSheetAndNavigate(context, ResearchBlogPage());
                       },
                       child: _SmallCard(
                         context: context,

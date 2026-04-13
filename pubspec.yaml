@@ -1,5 +1,6 @@
 name: InstiApp
 description: Flutter App for Indian Institute of Technology, Bombay
+publish_to: 'none'
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -7,7 +8,7 @@ description: Flutter App for Indian Institute of Technology, Bombay
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 3.0.1+7
+version: 3.0.1+8
 
 environment:
   sdk: '>=2.17.0 <4.0.0'
@@ -48,7 +49,8 @@ dependencies:
   path_provider: ^2.0.8
   cached_network_image: ^3.2.0
   flutter_image_compress: ^2.3.0
-  uni_links: ^0.5.1
+  app_links:
+    path: local_plugins/app_links
   analyzer: ^6.4.1
   flutter_dynamic_icon: ^2.0.0
   device_calendar: ^4.3.2

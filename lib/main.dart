@@ -58,7 +58,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:uni_links/uni_links.dart';
+import 'package:app_links/app_links.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 double systemBottomPadding = 0.0;
@@ -110,6 +110,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   
   GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
+  final AppLinks _appLinks = AppLinks();
   late StreamSubscription _appLinksSub;
   final ThemeData theme = ThemeData();
 
@@ -508,7 +509,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future initAppLinksState() async {
-    _appLinksSub = uriLinkStream.listen((Uri? uri) {
+    _appLinksSub = _appLinks.uriLinkStream.listen((Uri uri) {
       if (!mounted) return;
       // print(uri);
       handleAppLink(uri);
@@ -517,7 +518,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       // print('Failed to get latest link: $err.');
     });
     try {
-      Uri? initialUri = await getInitialUri();
+      Uri? initialUri = await _appLinks.getInitialLink();
       // Parse the link and warn the user, if it is not correct,
       // but keep in mind it could be `null`.
       handleAppLink(initialUri);

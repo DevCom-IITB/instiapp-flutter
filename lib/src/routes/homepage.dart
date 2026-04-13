@@ -835,6 +835,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         });
   }
   void _openBlogsBottomSheet() {
+    final hostContext = context;
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -844,7 +845,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
               builder: (BuildContext context, StateSetter setModalState) {
             return FractionallySizedBox(
               heightFactor: 0.52,
-              child: BlogsPopup(),
+              child: BlogsPopup(hostContext: hostContext),
             );
           });
         });
