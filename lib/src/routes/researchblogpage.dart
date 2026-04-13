@@ -145,8 +145,7 @@ class _ResearchBlogPageState extends State<ResearchBlogPage> {
                           onPressed: () {
                             Navigator.of(context).pushNamedAndRemoveUntil(
                               '/feed', //navigate to homepage
-                              (route) =>
-                                  false, 
+                              (route) => false,
                             );
                           },
                         ),
@@ -375,29 +374,38 @@ class _ResearchBlogPageState extends State<ResearchBlogPage> {
                                               BorderRadius.circular(25),
                                           onTap: () async {
                                             Navigator.of(context).pop();
-                                            const String websiteUrl =
+                                            // Base URL
+                                            const String baseUrl =
                                                 'https://reach.gymkhana.iitb.ac.in/projects';
+                                            // Append item.id as a query parameter
+                                            final String websiteUrl =
+                                                "$baseUrl?id=${item.id}";
                                             final Uri uri =
                                                 Uri.parse(websiteUrl);
+
                                             try {
                                               if (await canLaunchUrl(uri)) {
-                                                await launchUrl(uri,
-                                                    mode: LaunchMode
-                                                        .externalApplication);
+                                                await launchUrl(
+                                                  uri,
+                                                  mode: LaunchMode
+                                                      .externalApplication,
+                                                );
                                               } else {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   const SnackBar(
-                                                      content: Text(
-                                                          'Could not open ReaCH')),
+                                                    content: Text(
+                                                        'Could not open ReaCH'),
+                                                  ),
                                                 );
                                               }
                                             } catch (e) {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
                                                 const SnackBar(
-                                                    content: Text(
-                                                        'Error opening ReaCH')),
+                                                  content: Text(
+                                                      'Error opening ReaCH'),
+                                                ),
                                               );
                                             }
                                           },
