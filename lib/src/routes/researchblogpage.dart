@@ -106,221 +106,395 @@ class _ResearchBlogPageState extends State<ResearchBlogPage> {
     });
   }
 
-  void _openFiltersSheet(List<ResearchProject> projects) {
-    final domains = _distinctValues(projects.map((p) => p.domain));
-    double tempMaxCpi = _selectedMaxCpi;
-    final tempDomains = <String>{..._selectedDomains};
+void _openFiltersSheet(List<ResearchProject> projects) {
+  final domains = _distinctValues(projects.map((p) => p.domain));
+  double tempMaxCpi = _selectedMaxCpi;
+  final tempDomains = <String>{..._selectedDomains};
+  String _activeTab = 'filter'; // 'sort' or 'filter'
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (sheetContext) {
-        return StatefulBuilder(
-          builder: (context, setSheetState) {
-            Widget buildChip({
-              required String label,
-              required bool selected,
-              required VoidCallback onTap,
-            }) {
-              return ChoiceChip(
-                label: Text(
-                  label,
-                  style: TextStyle(
-                    fontFamily: 'DM Sans',
-                    fontWeight: FontWeight.w600,
-                    color: selected ? Colors.white : const Color(0xFF0F1620),
-                  ),
-                ),
-                selected: selected,
-                onSelected: (_) => onTap(),
-                selectedColor: const Color(0xFF306FDC),
-                backgroundColor: const Color.fromARGB(255, 239, 239, 239),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  side: BorderSide(
-                    color: selected
-                        ? const Color(0xFF306FDC)
-                        : const Color.fromRGBO(210, 213, 218, 1),
-                  ),
-                ),
-              );
-            }
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (sheetContext) {
+      return StatefulBuilder(
+        builder: (context, setSheetState) {
+          // Group domains alphabetically
+          final Map<String, List<String>> grouped = {};
+          for (final domain in domains) {
+            final letter = domain.trim().isNotEmpty
+                ? domain.trim()[0].toUpperCase()
+                : '#';
+            grouped.putIfAbsent(letter, () => []).add(domain);
+          }
+          final sortedLetters = grouped.keys.toList()..sort();
 
-            bool isSelectedDomain(String domain) {
-              return tempDomains.contains(_normalizeValue(domain));
-            }
-
-            return Container(
+          return FractionallySizedBox(
+            heightFactor: 0.75,
+            child: Container(
               decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                color: Color(0xFFF6F6F6),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
-              padding: EdgeInsets.only(
-                left: Responsive.width(20.0, context),
-                right: Responsive.width(20.0, context),
-                top: Responsive.height(18.0, context),
-                bottom: MediaQuery.of(sheetContext).viewInsets.bottom +
-                    Responsive.height(18.0, context),
-              ),
-              child: SafeArea(
-                top: false,
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Filters',
-                              style: TextStyle(
-                                fontSize: Responsive.text(22.0, context),
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF0F1620),
-                                fontFamily: 'DM Sans',
-                              ),
-                            ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ── Title Row ──
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Responsive.width(16, context),
+                      vertical: Responsive.height(24, context),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Filter By',
+                          style: TextStyle(
+                            fontSize: Responsive.text(20, context),
+                            fontWeight: FontWeight.w700,
+                            fontFamily: 'DM Sans',
+                            color: const Color(0xFF282828),
                           ),
-                          IconButton(
-                            onPressed: () => Navigator.of(sheetContext).pop(),
-                            icon: const Icon(Icons.close),
-                            color: const Color(0xFF0F1620),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: Responsive.height(8.0, context)),
-                      Text(
-                        'Domains',
-                        style: TextStyle(
-                          fontSize: Responsive.text(16.0, context),
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF0F1620),
-                          fontFamily: 'DM Sans',
                         ),
-                      ),
-                      SizedBox(height: Responsive.height(12.0, context)),
-                      Wrap(
-                        spacing: Responsive.width(8.0, context),
-                        runSpacing: Responsive.height(8.0, context),
-                        children: [
-                          buildChip(
-                            label: 'All',
-                            selected: tempDomains.isEmpty,
-                            onTap: () => setSheetState(() => tempDomains.clear()),
+                        Text(
+                          '${_filterProjects(projects).length} results',
+                          style: TextStyle(
+                            fontSize: Responsive.text(14, context),
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'DM Sans',
+                            color: const Color(0xFF7E8287),
                           ),
-                          ...domains.map(
-                            (domain) => buildChip(
-                              label: domain,
-                              selected: isSelectedDomain(domain),
-                              onTap: () => setSheetState(() {
-                                final key = _normalizeValue(domain);
-                                if (!tempDomains.add(key)) {
-                                  tempDomains.remove(key);
-                                }
-                              }),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: Responsive.height(20.0, context)),
-                      Text(
-                        'CPI Criteria',
-                        style: TextStyle(
-                          fontSize: Responsive.text(16.0, context),
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF0F1620),
-                          fontFamily: 'DM Sans',
                         ),
-                      ),
-                      SizedBox(height: Responsive.height(12.0, context)),
-                      Wrap(
-                        spacing: Responsive.width(8.0, context),
-                        runSpacing: Responsive.height(8.0, context),
-                        children: [
-                          ...[0.0, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0].map(
-                            (cpi) => buildChip(
-                              label: _formatCpiLabel(cpi),
-                              selected: tempMaxCpi == cpi,
-                              onTap: () => setSheetState(() => tempMaxCpi = cpi),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: Responsive.height(24.0, context)),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: () {
-                                setSheetState(() {
-                                  tempDomains.clear();
-                                  tempMaxCpi = 0;
-                                });
-                              },
-                              style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Color(0xFF306FDC)),
-                                foregroundColor: const Color(0xFF306FDC),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  vertical: Responsive.height(14.0, context),
-                                ),
+                      ],
+                    ),
+                  ),
+
+                  // ── Two-Panel Body ──
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // ── Left Sidebar ──
+                        SizedBox(
+                          width: Responsive.width(125, context),
+                          child: Column(
+                            children: [
+                              _buildSidebarTab(
+                                label: 'CPI',
+                                isActive: _activeTab == 'sort',
+                                onTap: () => setSheetState(() => _activeTab = 'sort'),
+                                context: context,
                               ),
+                              _buildSidebarTab(
+                                label: 'Domain',
+                                isActive: _activeTab == 'filter',
+                                onTap: () => setSheetState(() => _activeTab = 'filter'),
+                                context: context,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // ── Right Content Panel ──
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(                              
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: _activeTab == 'sort'? Radius.circular(0) :Radius.circular(16),
+                              ),
+                              color: const Color(0xFFEFEFEF),
+                            ),                            
+                            child: _activeTab == 'sort'
+                                // CPI Panel
+                                ? Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: Responsive.width(12, context),
+                                      vertical: Responsive.height(12, context),
+                                    ),
+                                    child: Wrap(
+                                      spacing: Responsive.width(8, context),
+                                      runSpacing: Responsive.height(8, context),
+                                      children: [0.0, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0].map((cpi) {
+                                        final isSelected = tempMaxCpi == cpi;
+                                        return GestureDetector(
+                                          onTap: () => setSheetState(() => tempMaxCpi = cpi),
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: Responsive.width(14, context),
+                                              vertical: Responsive.height(7, context),
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: isSelected
+                                                  ? const Color(0xFF306FDC)
+                                                  : const Color(0xFFEFEFEF),
+                                              borderRadius: BorderRadius.circular(50),
+                                              border: Border.all(
+                                                color: isSelected
+                                                    ? const Color(0xFF306FDC)
+                                                    : const Color(0xFFD2D5DA),
+                                              ),
+                                            ),
+                                            child: Text(
+                                              _formatCpiLabel(cpi),
+                                              style: TextStyle(
+                                                color: isSelected ? Colors.white : const Color(0xFF0F1620),
+                                                fontSize: Responsive.text(13, context),
+                                                fontFamily: 'DM Sans',
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  )
+                                // Domain Panel - alphabetically grouped
+                                : ListView.builder(
+                                    padding: EdgeInsets.only(
+                                      top: Responsive.height(16, context),
+                                      left: Responsive.width(20, context),
+                                      right: Responsive.width(12, context),
+                                      bottom: Responsive.height(16, context),
+                                    ),
+                                    itemCount: sortedLetters.length,
+                                    itemBuilder: (context, index) {
+                                      final letter = sortedLetters[index];
+                                      final domainGroup = grouped[letter]!;
+                                      return ClipRect(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              letter,
+                                              style: TextStyle(
+                                                color: const Color(0xFF7E8287),
+                                                fontSize: Responsive.text(12, context),
+                                                fontFamily: 'DM Sans',
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            SizedBox(height: Responsive.height(6, context)),
+                                            ...domainGroup.map((domain) {
+                                              final key = _normalizeValue(domain);
+                                              final isSelected = tempDomains.contains(key);
+                                              return GestureDetector(
+                                                onTap: () => setSheetState(() {
+                                                  if (!tempDomains.add(key)) {
+                                                    tempDomains.remove(key);
+                                                  }
+                                                }),
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: Responsive.height(12, context)),
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                        width: Responsive.width(24, context),
+                                                        height: Responsive.height(24, context),
+                                                        decoration: BoxDecoration(
+                                                          shape: BoxShape.circle,
+                                                          border: Border.all(
+                                                            color: isSelected
+                                                                ? const Color(0xFF306FDC)
+                                                                : const Color(0xFFD2D5DA),
+                                                            width: 1.5,
+                                                          ),
+                                                          color: isSelected
+                                                              ? const Color(0xFF306FDC)
+                                                              : Colors.transparent,
+                                                        ),
+                                                        child: isSelected
+                                                            ? const Icon(
+                                                                Icons.check,
+                                                                size: 16,
+                                                                color: Colors.white,
+                                                              )
+                                                            : null,
+                                                      ),
+                                                      SizedBox(width: Responsive.width(12, context)),
+                                                      Expanded(
+                                                        child: Text(
+                                                          domain,
+                                                          style: TextStyle(
+                                                            color: const Color(0xFF0F1620),
+                                                            fontSize: Responsive.text(14, context),
+                                                            fontFamily: 'DM Sans',
+                                                            fontWeight: FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                            SizedBox(height: Responsive.height(4, context)),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // ── Bottom Buttons ──
+                  Container(
+                    color: const Color.fromARGB(255, 246, 246, 246),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Responsive.width(16, context),
+                      vertical: Responsive.height(16, context),
+                    ),
+                    child: Row(
+                      children: [
+                        // Reset button
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setSheetState(() {
+                                tempDomains.clear();
+                                tempMaxCpi = 0;
+                              });
+                            },
+                            child: Container(
+                              height: Responsive.height(60, context),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(color: const Color(0xFF0F1620)),
+                              ),
+                              alignment: Alignment.center,
                               child: Text(
                                 'Reset',
                                 style: TextStyle(
+                                  color: const Color(0xFF0F1620),
+                                  fontSize: Responsive.text(18, context),
                                   fontFamily: 'DM Sans',
                                   fontWeight: FontWeight.w700,
-                                  fontSize: Responsive.text(16.0, context),
                                 ),
                               ),
                             ),
                           ),
-                          SizedBox(width: Responsive.width(12.0, context)),
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  _selectedDomains = <String>{...tempDomains};
-                                  _selectedMaxCpi = tempMaxCpi;
-                                });
-                                Navigator.of(sheetContext).pop();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF306FDC),
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  vertical: Responsive.height(14.0, context),
+                        ),
+                        SizedBox(width: Responsive.width(12, context)),
+                        // Apply button
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedDomains = <String>{...tempDomains};
+                                _selectedMaxCpi = tempMaxCpi;
+                              });
+                              Navigator.of(sheetContext).pop();
+                            },
+                            child: Container(
+                              height: Responsive.height(60, context),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF0F1620),
+                                borderRadius: BorderRadius.circular(50),
+                                image: const DecorationImage(
+                                  image: AssetImage('assets/blogs/reachapply.png'),
+                                  fit: BoxFit.cover,
                                 ),
                               ),
+                              alignment: Alignment.center,
                               child: Text(
                                 'Apply',
                                 style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: Responsive.text(18, context),
                                   fontFamily: 'DM Sans',
                                   fontWeight: FontWeight.w700,
-                                  fontSize: Responsive.text(16.0, context),
                                 ),
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: MediaQuery.of(sheetContext).viewInsets.bottom),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+// Helper widget for sidebar tabs
+Widget _buildSidebarTab({
+  required String label,
+  required bool isActive,
+  required VoidCallback onTap,
+  required BuildContext context,
+}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      width: Responsive.width(125, context),
+      height: Responsive.height(52, context),
+      color: const Color(0xFFEFEFEF),
+      child: Stack(
+        children: [
+          if (isActive)
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              child: Container(
+                width: Responsive.width(4, context),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF306FDC),
+                  borderRadius: const BorderRadius.horizontal(
+                    right: Radius.circular(5),
                   ),
                 ),
               ),
-            );
-          },
-        );
-      },
-    );
-  }
+            ),
+          if (isActive)
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              child: Container(
+                width: Responsive.width(104, context),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment(0.0, 0.53),
+                    end: Alignment(0.90, 0.53),
+                    colors: [Color(0x33306FDC), Color(0x33EFEFEF)],
+                  ),
+                ),
+              ),
+            ),
+          Padding(
+            padding: EdgeInsets.only(
+              left: Responsive.width(16, context),
+              top: Responsive.height(16, context),
+            ),
+            child: Text(
+              label,
+              style: TextStyle(
+                color: const Color(0xFF0F1620),
+                fontSize: Responsive.text(16, context),
+                fontFamily: 'DM Sans',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 
   @override
   void initState() {
@@ -533,113 +707,64 @@ class _ResearchBlogPageState extends State<ResearchBlogPage> {
                     final filteredProjects = _filterProjects(projects);
 
                     return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: Responsive.width(16.0, context),
                           ),
-                          child: Row(
-                            children: [
-                              InkWell(
-                                borderRadius: BorderRadius.circular(
-                                    Responsive.height(50.0, context)),
-                                onTap: () => _openFiltersSheet(projects),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: const Color.fromARGB(
-                                        255, 239, 239, 239),
-                                    borderRadius: BorderRadius.circular(
-                                        Responsive.height(50.0, context)),
-                                    border: Border.all(
-                                      color: const Color.fromRGBO(
-                                          210, 213, 218, 1),
-                                      width: Responsive.height(1.0, context),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                InkWell(
+                                  borderRadius: BorderRadius.circular(
+                                      Responsive.height(50.0, context)),
+                                  onTap: () => _openFiltersSheet(projects),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color.fromARGB(
+                                          255, 239, 239, 239),
+                                      borderRadius: BorderRadius.circular(
+                                          Responsive.height(50.0, context)),
+                                      border: Border.all(
+                                        color: const Color.fromRGBO(
+                                            210, 213, 218, 1),
+                                        width: Responsive.height(1.0, context),
+                                      ),
                                     ),
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: Responsive.width(16.0, context),
-                                    vertical: Responsive.height(8.0, context),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.tune,
-                                        size: 18,
-                                        color: Colors.black,
-                                      ),
-                                      SizedBox(
-                                          width:
-                                              Responsive.width(8.0, context)),
-                                      Text(
-                                        'Filters',
-                                        style: TextStyle(
-                                          fontSize:
-                                              Responsive.text(14.0, context),
-                                          fontWeight: FontWeight.w500,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: Responsive.width(16.0, context),
+                                      vertical: Responsive.height(8.0, context),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.tune,
+                                          size: 18,
                                           color: Colors.black,
-                                          fontFamily: 'DM Sans',
-                                          fontStyle: FontStyle.normal,
                                         ),
-                                      ),
-                                      if (_hasActiveFilters()) ...[
                                         SizedBox(
-                                            width: Responsive.width(
-                                                8.0, context)),
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal:
-                                                Responsive.width(6.0, context),
-                                            vertical:
-                                                Responsive.height(2.0, context),
-                                          ),
-                                          decoration: const BoxDecoration(
-                                            color: Color(0xFF306FDC),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Text(
-                                            '${_activeFilterCount()}',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize:
-                                                  Responsive.text(12.0, context),
-                                              fontFamily: 'DM Sans',
-                                              fontWeight: FontWeight.w700,
-                                            ),
+                                            width:
+                                                Responsive.width(8.0, context)),
+                                        Text(
+                                          'Filters',
+                                          style: TextStyle(
+                                            fontSize:
+                                                Responsive.text(14.0, context),
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.black,
+                                            fontFamily: 'DM Sans',
+                                            fontStyle: FontStyle.normal,
                                           ),
                                         ),
                                       ],
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const Spacer(),
-                              if (_hasActiveFilters())
-                                TextButton(
-                                  onPressed: _clearFilters,
-                                  child: Text(
-                                    'Clear all',
-                                    style: TextStyle(
-                                      color: const Color(0xFF306FDC),
-                                      fontFamily: 'DM Sans',
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: Responsive.text(14.0, context),
                                     ),
                                   ),
-                                ),
-                            ],
-                          ),
-                        ),
-                        if (_hasActiveFilters())
-                          Padding(
-                            padding: EdgeInsets.only(
-                              left: Responsive.width(16.0, context),
-                              right: Responsive.width(16.0, context),
-                              top: Responsive.height(6.0, context),
-                            ),
-                            child: Wrap(
-                              spacing: Responsive.width(8.0, context),
-                              runSpacing: Responsive.height(8.0, context),
-                              children: [
+                                ),   
+                                 SizedBox(width: Responsive.width(12.0, context)),                                    
                                 if (_selectedDomains.isNotEmpty)
                                   ..._selectedDomains.map(
                                     (domain) => _buildActiveFilterChip(
@@ -653,10 +778,12 @@ class _ResearchBlogPageState extends State<ResearchBlogPage> {
                                   _buildActiveFilterChip(
                                     'CPI: ${_formatCpiLabel(_selectedMaxCpi)}',
                                     () => setState(() => _selectedMaxCpi = 0),
-                                  ),
+                                  ),                         
                               ],
                             ),
                           ),
+                        ),
+                        
                         SizedBox(height: Responsive.height(8.0, context)),
                         Expanded(
                           child: filteredProjects.isEmpty
@@ -897,15 +1024,15 @@ class _ResearchBlogPageState extends State<ResearchBlogPage> {
   Widget _buildActiveFilterChip(String label, VoidCallback onClear) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color.fromRGBO(235, 241, 255, 1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF306FDC).withOpacity(0.18)),
+        color: const Color(0xFF306FDC),
+        borderRadius: BorderRadius.circular(20),      
       ),
+      margin: EdgeInsets.only(right: Responsive.width(8.0, context)),
       padding: EdgeInsets.only(
-        left: Responsive.width(12.0, context),
-        right: Responsive.width(8.0, context),
-        top: Responsive.height(6.0, context),
-        bottom: Responsive.height(6.0, context),
+        left: Responsive.width(16.0, context),
+        right: Responsive.width(16.0, context),
+        top: Responsive.height(8.0, context),
+        bottom: Responsive.height(8.0, context),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -913,10 +1040,10 @@ class _ResearchBlogPageState extends State<ResearchBlogPage> {
           Text(
             label,
             style: TextStyle(
-              color: const Color(0xFF306FDC),
+              color: const Color.fromARGB(255, 255, 255, 255),
               fontFamily: 'DM Sans',
               fontWeight: FontWeight.w600,
-              fontSize: Responsive.text(13.0, context),
+              fontSize: Responsive.text(14.0, context),
             ),
           ),
           SizedBox(width: Responsive.width(4.0, context)),
@@ -925,8 +1052,8 @@ class _ResearchBlogPageState extends State<ResearchBlogPage> {
             borderRadius: BorderRadius.circular(999),
             child: const Icon(
               Icons.close,
-              size: 16,
-              color: Color(0xFF306FDC),
+              size: 18,
+              color: Color.fromARGB(255, 255, 255, 255),
             ),
           ),
         ],

@@ -111,6 +111,17 @@ class ResearchCard extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: Responsive.height(8, context)),
+                  Text(
+                    description,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: const Color(0xFF3C424A),
+                      fontSize: Responsive.text(12, context),
+                      fontFamily: 'DM Sans',
+                    ),
+                  ),
+                  SizedBox(height: Responsive.height(8, context)),
                   Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -126,17 +137,6 @@ class ResearchCard extends StatelessWidget {
                         fontFamily: 'DM Sans',
                         fontWeight: FontWeight.w700,
                       ),
-                    ),
-                  ),
-                  SizedBox(height: Responsive.height(8, context)),
-                  Text(
-                    description,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: const Color(0xFF3C424A),
-                      fontSize: Responsive.text(12, context),
-                      fontFamily: 'DM Sans',
                     ),
                   ),
                 ],
