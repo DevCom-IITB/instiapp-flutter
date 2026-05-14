@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'package:InstiApp/constants.dart';
 import 'package:InstiApp/src/routes/community.dart';
 import 'package:InstiApp/src/routes/communitypage.dart';
+import 'package:InstiApp/src/routes/newCalendarPage.dart';
 import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
@@ -459,9 +460,13 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                     padding: EdgeInsets.only(bottom: responsive.h(0)),
                     child: ExplorePage(),
                   ),
+                  // Padding(
+                  //   padding: EdgeInsets.only(bottom: responsive.h(80)),
+                  //   child: CommunityPage(),
+                  // ),
                   Padding(
                     padding: EdgeInsets.only(bottom: responsive.h(80)),
-                    child: CommunityPage(),
+                    child: CalendarPage(),
                   ),
                 ],
               ),

@@ -121,6 +121,7 @@ flutter:
     - assets/explore_new/images/
     - assets/blogslogin/
     - assets/reach_images/
+    - assets/calendar/
   fonts:
     - family: IBMPlexSans
       fonts:
