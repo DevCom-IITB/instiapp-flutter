@@ -28,7 +28,6 @@ import 'package:shimmer/shimmer.dart';
 import 'package:InstiApp/main.dart' as main_app;
 import 'package:InstiApp/src/utils/blogs_popup.dart';
 
-
 bool blogsPopupShown = true;
 
 class Responsive {
@@ -484,9 +483,12 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                       NavBarItem(
                           label: 'Explore',
                           iconPath: 'assets/homepage/icons/search.svg'),
+                      // NavBarItem(
+                      //     label: 'Communities',
+                      //     iconPath: 'assets/homepage/icons/message-square.svg'),
                       NavBarItem(
-                          label: 'Communities',
-                          iconPath: 'assets/homepage/icons/message-square.svg'),
+                          label: 'Calendar',
+                          iconPath: 'assets/homepage/icons/calendar.svg'),
                     ],
                     currentIndex: _currentPageIndex,
                     onTap: _onNavTap,
@@ -834,6 +836,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           });
         });
   }
+
   void _openBlogsBottomSheet() {
     final hostContext = context;
     showModalBottomSheet(
@@ -960,9 +963,9 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                   width: responsive.w(37),
                   height: responsive.h(16),
                   child: SvgPicture.asset(
-                          services_icon["Path"],
-                          fit: BoxFit.fill,
-                        ),
+                    services_icon["Path"],
+                    fit: BoxFit.fill,
+                  ),
                 ),
               ),
               // Positioned(
@@ -1533,8 +1536,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                       color: myConstants.instiappGrey,
                       border: Border.all(
                           color: Color(0xFF7E8287), width: responsive.h(1))),
-                  padding: EdgeInsets.fromLTRB(responsive.w(16), responsive.h(5),
-                      responsive.w(7), responsive.h(3)),
+                  padding: EdgeInsets.fromLTRB(responsive.w(16),
+                      responsive.h(5), responsive.w(7), responsive.h(3)),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
