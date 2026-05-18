@@ -15,7 +15,7 @@ class _InstiAppApi implements InstiAppApi {
   }) {
     // baseUrl ??= 'https://f6ba722a576a.ngrok-free.app/api';
     baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
-    // baseUrl ??= 'https://5427-103-21-126-76.ngrok-free.app/api';
+    // baseUrl ??= 'https://035b-2401-4900-aa02-ddb0-5df9-3d94-6b84-937f.ngrok-free.app/api';
   }
 
   final Dio _dio;

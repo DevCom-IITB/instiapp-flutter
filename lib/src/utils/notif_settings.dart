@@ -252,50 +252,28 @@ String routeFromNotification(RichNotification fromMap) {
 /// [context] is the [BuildContext] of the app
 /// [bloc] is the instance of [InstiAppBloc] used in the app
 /// [_navigatorKey] is the [GlobalKey] of the [Navigator] used in the app
+bool _firebaseMessagingListenersAttached = false;
+
 void setupNotifications(BuildContext context, InstiAppBloc bloc) async {
   // Check for permission (if not granted, request it)
   if (await bloc.hasNotificationPermission() == null)
     requestNotificationPermission(context, bloc);
 
   /// Listen for incoming notifs and send a notification to the user
-  FirebaseMessaging.onMessage.listen(sendMessage);
+  if (!_firebaseMessagingListenersAttached) {
+    _firebaseMessagingListenersAttached = true;
 
-  /// Handle what action to take depending on key
-  // void _handleActionKey(String actionKey, RichNotification notif) async {
-  //   // Open browser
-  //   if (actionKey == ActionKeys.OPEN_BROWSER) {
-  //     if (notif.notificationExtra != null) {
-  //       Uri uri = Uri.parse(notif.notificationExtra!);
-  //       if (await canLaunchUrl(uri)) {
-  //         await launchUrl(uri);
-  //       }
-  //     }
-  //   }
-  // }
+    FirebaseMessaging.onMessage.listen(
+      (RemoteMessage message) async {
+        await sendMessage(message);
+      },
+      onError: (error, stackTrace) {},
+    );
 
-  /// Handle notification on press
-  // void _handleNotification(ReceivedAction notification) {
-  //   if (notification.payload != null) {
-  //     // Getting notification payload
-  //     RichNotification notif = RichNotification.fromJson(notification.payload!);
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
 
-  //     // Getting route depending on payload
-  //     String routeName = routeFromNotification(notif);
-
-  //     // Get action button key if any
-  //     String actionKey = notification.buttonKeyPressed;
-
-  //     // Navigate to Route
-  //     Navigator.of(context).pushReplacementNamed(routeName,
-  //         arguments: NotificationRouteArguments(actionKey, notif));
-
-  //     // marking the notification as read
-  //     bloc.clearNotificationUsingID(notif.notificationID!);
-
-  //     // Handling action key
-  //     _handleActionKey(actionKey, notif);
-  //   }
-  // }
+    FirebaseMessaging.instance.getInitialMessage().then((message) {});
+  }
 
   AwesomeNotifications().setListeners(
     onActionReceivedMethod: NotificationController.onActionReceivedMethod,
@@ -356,8 +334,31 @@ void requestNotificationPermission(
 ///
 /// [message] is the message recieved from firebase
 Future<void> sendMessage(RemoteMessage message) async {
-  // Get notif from message data
-  RichNotification notif = RichNotification.fromJson(message.data);
+  final payload = Map<String, dynamic>.from(message.data);
+  final notification = message.notification;
+
+  if (notification != null) {
+    payload.putIfAbsent("title", () => notification.title ?? "");
+    payload.putIfAbsent("verb", () => notification.body ?? "");
+    payload.putIfAbsent("large_content", () => notification.body ?? "");
+
+    final imageUrl = notification.android?.imageUrl ??
+        notification.apple?.imageUrl;
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      payload.putIfAbsent("image_url", () => imageUrl);
+    }
+  }
+
+  RichNotification notif = RichNotification.fromJson(payload);
+
+  if ((notif.notificationTitle == null || notif.notificationTitle!.isEmpty) &&
+      notification?.title != null) {
+    notif.notificationTitle = notification!.title;
+  }
+  if ((notif.notificationVerb == null || notif.notificationVerb!.isEmpty) &&
+      notification?.body != null) {
+    notif.notificationVerb = notification!.body;
+  }
 
   // change notification type for blogs.
   if (notif.notificationType == NotificationType.BLOG) {

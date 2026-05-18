@@ -994,7 +994,7 @@ class DatesRowWidget extends StatelessWidget {
                         child: SizedBox(
                           width: Responsive.width(26.86, context),
                           child: Text(
-                            datesArray[4],
+                            datesArray[3],
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.black,
@@ -1021,7 +1021,7 @@ class DatesRowWidget extends StatelessWidget {
                         child: SizedBox(
                           width: Responsive.width(26.86, context),
                           child: Text(
-                            datesArray[5],
+                            datesArray[4],
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.black,
@@ -1049,7 +1049,7 @@ class DatesRowWidget extends StatelessWidget {
                           width: Responsive.width(26.86, context),
                           height: Responsive.width(26.86, context),
                           child: Text(
-                            datesArray[6],
+                            datesArray[5],
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.black,
@@ -1129,7 +1129,7 @@ class MonthViewWidget extends StatelessWidget {
             datesArray: ['20', '21', '22', '23', '24', '25', '26'],
           ),
           DatesRowWidget(
-            datesArray: ['27', '28', '29', '30', '31', '', ''],
+            datesArray: ['27', '28', '29', '30', '', '', ''],
           ),
         ],
       ),

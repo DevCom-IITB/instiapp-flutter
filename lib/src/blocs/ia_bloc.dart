@@ -483,12 +483,22 @@ class InstiAppBloc {
   // Section
   // Send FCM key
   Future<void> patchFcmKey() async {
-    var req = UserFCMPatchRequest()
-      ..userAndroidVersion = 28;
-      // ..userFCMId = await firebaseMessaging.getToken();
-    var userMe = await client.patchFCMUserMe(getSessionIdHeader(), req);
-    currSession?.profile = userMe;
-    updateSession(currSession!);
+    if (currSession == null || currSession?.sessionid == null) return;
+
+    try {
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token == null || token.isEmpty) return;
+
+      var req = UserFCMPatchRequest()
+        ..userAndroidVersion = 28
+        ..userFCMId = token;
+
+      var userMe = await client.patchFCMUserMe(getSessionIdHeader(), req);
+      currSession?.profile = userMe;
+      updateSession(currSession!);
+    } catch (e, st) {
+      print("patchFcmKey failed: $e\n$st");
+    }
   }
 
   Future<void> refreshUserProfile() async {

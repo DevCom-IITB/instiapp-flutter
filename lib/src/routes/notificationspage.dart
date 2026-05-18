@@ -45,7 +45,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       await Future.wait(list.map((n) => bloc.clearNotification(n)));
       await bloc.updateNotifications();
     } catch (e) {
-      // ignore or log
+      // ignore
     } finally {
       if (mounted) setState(() => clearAllLoading = false);
     }
@@ -142,76 +142,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
           padding: const EdgeInsets.only(left:16.0, right: 16, bottom: 16.0, top: 4.0),
           child: Column(
             children: [
-              // Personal/General Toggle Row
-              // Container(
-              //   padding: const EdgeInsets.all(4),
-              //   decoration: BoxDecoration(
-              //     color: const Color(0xFF0A0E21),
-              //     borderRadius: BorderRadius.circular(50),
-              //   ),
-              //   child: Row(
-              //     children: [
-              //       Expanded(
-              //         child: GestureDetector(
-              //           onTap: () {
-              //             setState(() {
-              //               isPersonalSelected = true;
-              //             });
-              //           },
-              //           child: Container(
-              //             padding: const EdgeInsets.symmetric(vertical: 16),
-              //             decoration: BoxDecoration(
-              //               color: isPersonalSelected
-              //                   ? const Color(0xFF2979FF)
-              //                   : Colors.transparent,
-              //               borderRadius: BorderRadius.circular(40),
-              //             ),
-              //             child: const Center(
-              //               child: Text(
-              //                 'Personal',
-              //                 style: TextStyle(
-              //                   color: Colors.white,
-              //                   fontWeight: FontWeight.bold,
-              //                   fontSize: 16,
-              //                 ),
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //       Expanded(
-              //         child: GestureDetector(
-              //           onTap: () {
-              //             setState(() {
-              //               isPersonalSelected = false;
-              //             });
-              //           },
-              //           child: Container(
-              //             padding: const EdgeInsets.symmetric(vertical: 16),
-              //             decoration: BoxDecoration(
-              //               color: !isPersonalSelected
-              //                   ? const Color(0xFF2979FF)
-              //                   : Colors.transparent,
-              //               borderRadius: BorderRadius.circular(40),
-              //             ),
-              //             child: const Center(
-              //               child: Text(
-              //                 'General',
-              //                 style: TextStyle(
-              //                   color: Colors.white,
-              //                   fontSize: 16,
-              //                 ),
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-
-              // const SizedBox(height: 16),
-
               // Notification List with StreamBuilder
               Expanded(
                 child: StreamBuilder<UnmodifiableListView<ntf.Notification>>(
