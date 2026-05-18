@@ -1,6 +1,6 @@
 name: InstiApp
 description: Flutter App for Indian Institute of Technology, Bombay
-publish_to: 'none'
+publish_to: "none"
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -11,7 +11,7 @@ publish_to: 'none'
 version: 3.0.1+8
 
 environment:
-  sdk: '>=2.17.0 <4.0.0'
+  sdk: ">=2.17.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -82,13 +82,13 @@ dependencies:
   file_picker: ^8.0.0+1
 
   shimmer: ^2.0.0
-  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  retrofit_generator: '>=7.0.0 <8.0.0'
-  build_runner: '>=2.3.0 <4.0.0'
+  retrofit_generator: ">=7.0.0 <8.0.0"
+  build_runner: ">=2.3.0 <4.0.0"
   json_serializable: ^6.6.2
   json_model: any
 
@@ -98,8 +98,7 @@ dev_dependencies:
 # The following section is specific to Flutter.
 flutter:
   assets:
-    - .env
-    - .env.dev
+    - assets/config/env
     - assets/
     - assets/login/
     - assets/map/
@@ -165,6 +164,8 @@ flutter:
 
 dependency_overrides:
   firebase_messaging_web: ^3.6.0
+  webview_pro_platform_interface:
+    path: local_plugins/webview_pro_platform_interface
   # firebase_messaging_platform_interface: 3.1.6
   # firebase_crashlytics_platform_interface: 3.1.13
   # cloud_firestore_platform_interface: 5.4.13

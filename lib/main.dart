@@ -6,7 +6,7 @@ import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/achievement_form.dart';
 import 'package:InstiApp/src/routes/alumniLoginPage.dart';
 import 'package:InstiApp/src/routes/alumni_OTP_Page.dart';
-import 'package:InstiApp/src/routes/bodypage.dart'; 
+import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/buynsell_info.dart';
 import 'package:InstiApp/src/routes/buynsell_page.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
@@ -68,7 +68,7 @@ void main() async {
   // await Firebase.initializeApp();
   InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
   // FirebaseMessaging.onBackgroundMessage(sendMessage);
-  await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: "assets/config/env");
 
   AwesomeNotifications().initialize(
     'resource://drawable/ic_launcher_foreground',
@@ -82,7 +82,7 @@ void main() async {
   //   print("========================================");
   //   print("FCM TOKEN: $token");
   //   print("========================================");
-  // }); 
+  // });
   runApp(MyApp(
     key: key,
     bloc: bloc,
@@ -107,7 +107,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       new FlutterLocalNotificationsPlugin();
 
-  
   GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
   final AppLinks _appLinks = AppLinks();
@@ -135,7 +134,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     disposeNotification();
     super.dispose();
   }
-   
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -151,10 +149,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        systemNavigationBarColor: Color.fromRGBO(246, 246,246, 1), 
-        systemNavigationBarDividerColor: Color.fromRGBO(246, 246,246, 1),
+        systemNavigationBarColor: Color.fromRGBO(246, 246, 246, 1),
+        systemNavigationBarDividerColor: Color.fromRGBO(246, 246, 246, 1),
         systemNavigationBarIconBrightness: Brightness.dark,
-        statusBarColor:Color.fromRGBO(246, 246,246, 1),
+        statusBarColor: Color.fromRGBO(246, 246, 246, 1),
         statusBarIconBrightness: Brightness.dark,
       ),
     );
@@ -179,15 +177,15 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         navigatorKey: navigatorKey,
         title: 'InstiApp',
         builder: (context, child) {
-      final mediaQuery = MediaQuery.of(context);
-      return MediaQuery(
-        data: mediaQuery.copyWith(
-          textScaler: const TextScaler.linear(1.0),
-          boldText: false,                          
-        ),
-        child: child!,
-      );
-    },
+          final mediaQuery = MediaQuery.of(context);
+          return MediaQuery(
+            data: mediaQuery.copyWith(
+              textScaler: const TextScaler.linear(1.0),
+              boldText: false,
+            ),
+            child: child!,
+          );
+        },
         theme: ThemeData(
           // fontFamily: "SourceSansPro",
           fontFamily: "DM Sans",
@@ -388,8 +386,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                         scaffoldMessengerKey: scaffoldMessengerKey,
                         navigatorKey: navigatorKey,
                       ));
-                      // ResearchBlogPage(),  // temporarily shown for testing
-                      // );
+                // ResearchBlogPage(),  // temporarily shown for testing
+                // );
                 case "/mess":
                   // print("Entereing here mess");
                   return _buildRoute(settings, MessPage());
@@ -414,13 +412,17 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 //   return _buildRoute(settings, BlogPage());
                 case "/quicklinks":
                   return _buildRoute(settings, Quicklinks());
-                  // return _buildRoute(settings, Loadingpage());
+                // return _buildRoute(settings, Loadingpage());
                 case "/groups":
                   return _buildRoute(settings, CommunityPage());
                 case "/explore":
                   return _buildRoute(settings, ExplorePage());
                 case "/explore-club":
-                  return _buildRoute(settings, ExploreClubPage(onBack: () {  },));
+                  return _buildRoute(
+                      settings,
+                      ExploreClubPage(
+                        onBack: () {},
+                      ));
                 case "/calendar":
                   return _buildRoute(settings, CalendarPage());
 

@@ -1,3 +1,4 @@
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:InstiApp/src/utils/responsivenew.dart';
@@ -281,511 +282,16 @@ class _CalendarPageState extends State<CalendarPage> {
                               ],
                             ),
                           ),
-                          Container(
-                            width: double.infinity,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              spacing: Responsive.width(6, context),
-                              children: [
-                                Container(
-                                  width: double.infinity,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    spacing: Responsive.width(18.47, context),
-                                    children: [
-                                      Container(
-                                        width: Responsive.width(28, context),
-                                        height: Responsive.width(15, context),
-                                        child: Stack(
-                                          children: [
-                                            Positioned(
-                                              left: Responsive.width(
-                                                  10.68, context),
-                                              top: 0,
-                                              child: Text(
-                                                'S',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color:
-                                                      const Color(0x4C3C3C43),
-                                                  fontSize: Responsive.width(
-                                                      14, context),
-                                                  fontFamily: 'DM Sans',
-                                                  fontWeight: FontWeight.w600,
-                                                  height: 1.08,
-                                                  letterSpacing: -0.07,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width: Responsive.width(33, context),
-                                        height: Responsive.width(15, context),
-                                        child: Stack(
-                                          children: [
-                                            Positioned(
-                                              left: Responsive.width(
-                                                  11.68, context),
-                                              top: 0,
-                                              child: Text(
-                                                'M',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color:
-                                                      const Color(0x4C3C3C43),
-                                                  fontSize: Responsive.width(
-                                                      14, context),
-                                                  fontFamily: 'DM Sans',
-                                                  fontWeight: FontWeight.w600,
-                                                  height: 1.08,
-                                                  letterSpacing: -0.07,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width: Responsive.width(26.86, context),
-                                        height:
-                                            Responsive.width(15.11, context),
-                                        child: Stack(
-                                          children: [
-                                            Positioned(
-                                              left: Responsive.width(
-                                                  9.52, context),
-                                              top: 0,
-                                              child: Text(
-                                                'T',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color:
-                                                      const Color(0x4C3C3C43),
-                                                  fontSize: Responsive.width(
-                                                      14, context),
-                                                  fontFamily: 'DM Sans',
-                                                  fontWeight: FontWeight.w600,
-                                                  height: 1.08,
-                                                  letterSpacing: -0.07,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width: Responsive.width(25, context),
-                                        height: Responsive.width(15, context),
-                                        child: Stack(
-                                          children: [
-                                            Positioned(
-                                              left: Responsive.width(
-                                                  5.58, context),
-                                              top: 0,
-                                              child: Text(
-                                                'W',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color:
-                                                      const Color(0x4C3C3C43),
-                                                  fontSize: Responsive.width(
-                                                      14, context),
-                                                  fontFamily: 'DM Sans',
-                                                  fontWeight: FontWeight.w600,
-                                                  height: 1.08,
-                                                  letterSpacing: -0.07,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width: Responsive.width(26.86, context),
-                                        height:
-                                            Responsive.width(15.11, context),
-                                        child: Stack(
-                                          children: [
-                                            Positioned(
-                                              left: Responsive.width(
-                                                  8.68, context),
-                                              top: 0,
-                                              child: Text(
-                                                'T',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color:
-                                                      const Color(0x4C3C3C43),
-                                                  fontSize: Responsive.width(
-                                                      14, context),
-                                                  fontFamily: 'DM Sans',
-                                                  fontWeight: FontWeight.w600,
-                                                  height: 1.08,
-                                                  letterSpacing: -0.07,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width: Responsive.width(23, context),
-                                        height: Responsive.width(15, context),
-                                        child: Stack(
-                                          children: [
-                                            Positioned(
-                                              left: Responsive.width(
-                                                  7.62, context),
-                                              top: 0,
-                                              child: Text(
-                                                'F',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color:
-                                                      const Color(0x4C3C3C43),
-                                                  fontSize: Responsive.width(
-                                                      14, context),
-                                                  fontFamily: 'DM Sans',
-                                                  fontWeight: FontWeight.w600,
-                                                  height: 1.08,
-                                                  letterSpacing: -0.07,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        width: Responsive.width(26.86, context),
-                                        height:
-                                            Responsive.width(15.11, context),
-                                        child: Stack(
-                                          children: [
-                                            Positioned(
-                                              left: Responsive.width(
-                                                  9.52, context),
-                                              top: 0,
-                                              child: Text(
-                                                'S',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color:
-                                                      const Color(0x4C3C3C43),
-                                                  fontSize: Responsive.width(
-                                                      14, context),
-                                                  fontFamily: 'DM Sans',
-                                                  fontWeight: FontWeight.w600,
-                                                  height: 1.08,
-                                                  letterSpacing: -0.07,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: double.infinity,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: double.infinity,
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          spacing: 24.34,
-                                          children: [
-                                            Container(
-                                              width: Responsive.width(
-                                                  26.86, context),
-                                              height: Responsive.width(
-                                                  26.86, context),
-                                              child: Stack(
-                                                children: [
-                                                  Positioned(
-                                                    left: Responsive.width(
-                                                        0, context),
-                                                    top: Responsive.width(
-                                                        3.36, context),
-                                                    child: SizedBox(
-                                                      width: Responsive.width(
-                                                          26.86, context),
-                                                      child: Text(
-                                                        '6',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize:
-                                                              Responsive.width(
-                                                                  20, context),
-                                                          fontFamily: 'DM Sans',
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          height: 1.01,
-                                                          letterSpacing: 0.32,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              width:
-                                                  Responsive.width(44, context),
-                                              height:
-                                                  Responsive.width(44, context),
-                                              decoration: ShapeDecoration(
-                                                color: const Color(
-                                                    0xFF306FDC) /* InstiApp-blue */,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          83.95),
-                                                ),
-                                              ),
-                                              child: Stack(
-                                                children: [
-                                                  Positioned(
-                                                    left: Responsive.width(
-                                                        0, context),
-                                                    top: Responsive.width(
-                                                        12.36, context),
-                                                    child: SizedBox(
-                                                      width: Responsive.width(
-                                                          43.86, context),
-                                                      child: Text(
-                                                        '7',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize:
-                                                              Responsive.width(
-                                                                  20, context),
-                                                          fontFamily: 'DM Sans',
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                          height: 1.01,
-                                                          letterSpacing: 0.32,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              width: Responsive.width(
-                                                  26.86, context),
-                                              height: Responsive.width(
-                                                  26.86, context),
-                                              child: Stack(
-                                                children: [
-                                                  Positioned(
-                                                    left: Responsive.width(
-                                                        0, context),
-                                                    top: Responsive.width(
-                                                        3.36, context),
-                                                    child: SizedBox(
-                                                      width: Responsive.width(
-                                                          26.86, context),
-                                                      child: Text(
-                                                        '8',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize:
-                                                              Responsive.width(
-                                                                  20, context),
-                                                          fontFamily: 'DM Sans',
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          height: 1.01,
-                                                          letterSpacing: 0.32,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              width: Responsive.width(
-                                                  26.86, context),
-                                              height: Responsive.width(
-                                                  26.86, context),
-                                              child: Stack(
-                                                children: [
-                                                  Positioned(
-                                                    left: Responsive.width(
-                                                        0, context),
-                                                    top: Responsive.width(
-                                                        3.36, context),
-                                                    child: SizedBox(
-                                                      width: Responsive.width(
-                                                          26.86, context),
-                                                      child: Text(
-                                                        '9',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize:
-                                                              Responsive.width(
-                                                                  20, context),
-                                                          fontFamily: 'DM Sans',
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          height: 1.01,
-                                                          letterSpacing: 0.32,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              width: Responsive.width(
-                                                  26.86, context),
-                                              height: Responsive.width(
-                                                  26.86, context),
-                                              child: Stack(
-                                                children: [
-                                                  Positioned(
-                                                    left: Responsive.width(
-                                                        0, context),
-                                                    top: Responsive.width(
-                                                        3.36, context),
-                                                    child: SizedBox(
-                                                      width: Responsive.width(
-                                                          26.86, context),
-                                                      child: Text(
-                                                        '10',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize:
-                                                              Responsive.width(
-                                                                  20, context),
-                                                          fontFamily: 'DM Sans',
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          height: 1.01,
-                                                          letterSpacing: 0.32,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              width: Responsive.width(
-                                                  26.86, context),
-                                              height: Responsive.width(
-                                                  26.86, context),
-                                              child: Stack(
-                                                children: [
-                                                  Positioned(
-                                                    left: Responsive.width(
-                                                        0, context),
-                                                    top: Responsive.width(
-                                                        0, context),
-                                                    child: SizedBox(
-                                                      width: Responsive.width(
-                                                          26.86, context),
-                                                      height: Responsive.width(
-                                                          26.86, context),
-                                                      child: Text(
-                                                        '11',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize:
-                                                              Responsive.width(
-                                                                  20, context),
-                                                          fontFamily: 'DM Sans',
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          height: 1.01,
-                                                          letterSpacing: 0.32,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              width: Responsive.width(
-                                                  26.86, context),
-                                              height: Responsive.width(
-                                                  26.86, context),
-                                              child: Stack(
-                                                children: [
-                                                  Positioned(
-                                                    left: Responsive.width(
-                                                        0, context),
-                                                    top: Responsive.width(
-                                                        3.36, context),
-                                                    child: SizedBox(
-                                                      width: Responsive.width(
-                                                          26.86, context),
-                                                      height: Responsive.width(
-                                                          26.86, context),
-                                                      child: Text(
-                                                        '12',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize:
-                                                              Responsive.width(
-                                                                  20, context),
-                                                          fontFamily: 'DM Sans',
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          height: 1.01,
-                                                          letterSpacing: 0.32,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+
+                          // month names shown view
+                          // MonthNameViewWidget(),
+
+                          // week view including days of week and dates
+                          // WeekViewWidget(),
+
+
+                          // month view
+                          MonthViewWidget(),
                         ],
                       ),
                     ),
@@ -999,23 +505,22 @@ class _CalendarPageState extends State<CalendarPage> {
                               'Mood I Meet',
                               style: TextStyle(
                                 color: Colors.black,
-                                fontSize: Responsive.height(16,context),
+                                fontSize: Responsive.height(16, context),
                                 fontFamily: 'DM Sans',
                                 fontWeight: FontWeight.w600,
                                 height: 1.50,
                               ),
                             ),
-                          Text(
-                                '7 AM- 8 AM',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: Responsive.height(12, context),
-                                  fontFamily: 'DM Sans',
-                                  fontWeight: FontWeight.w400,
-                                  letterSpacing: 0.38,
-                                ),
+                            Text(
+                              '7 AM- 8 AM',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: Responsive.height(12, context),
+                                fontFamily: 'DM Sans',
+                                fontWeight: FontWeight.w400,
+                                letterSpacing: 0.38,
                               ),
-                          
+                            ),
                           ],
                         ),
                       ),
@@ -1051,23 +556,22 @@ class _CalendarPageState extends State<CalendarPage> {
                               'Devcom Orientation',
                               style: TextStyle(
                                 color: Colors.black,
-                                fontSize: Responsive.height(16,context),
+                                fontSize: Responsive.height(16, context),
                                 fontFamily: 'DM Sans',
                                 fontWeight: FontWeight.w600,
                                 height: 1.50,
                               ),
                             ),
-                          Text(
-                                '9 PM - 10:30 PM',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: Responsive.height(12, context),
-                                  fontFamily: 'DM Sans',
-                                  fontWeight: FontWeight.w400,
-                                  letterSpacing: 0.38,
-                                ),
+                            Text(
+                              '9 PM - 10:30 PM',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: Responsive.height(12, context),
+                                fontFamily: 'DM Sans',
+                                fontWeight: FontWeight.w400,
+                                letterSpacing: 0.38,
                               ),
-                          
+                            ),
                           ],
                         ),
                       ),
@@ -1078,5 +582,557 @@ class _CalendarPageState extends State<CalendarPage> {
             ],
           )),
         ]));
+  }
+}
+
+// week view widget
+class WeekViewWidget extends StatelessWidget {
+  const WeekViewWidget({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: Responsive.width(6, context),
+        children: [
+          // days of week
+          DaysOfWeekWidget(),
+          // dates
+          DatesRowWidget(
+            datesArray: ['6', '7', '8', '9', '10', '11', '12'],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// new widget for month name box
+class MonthNameBox extends StatelessWidget {
+  final String monthName;
+  const MonthNameBox({Key? key, required this.monthName}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        height: Responsive.height(36, context),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 10.80, vertical: 3.60),
+        decoration: ShapeDecoration(
+          color: const Color(0xFFEFEFEF),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        child: Text(monthName),
+      ),
+    );
+  }
+}
+
+// new widget for month view
+
+class MonthNameViewWidget extends StatelessWidget {
+  const MonthNameViewWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: Responsive.height(12, context),
+          children: [
+            Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: Responsive.width(6.43, context),
+                children: [
+                  MonthNameBox(monthName: 'Jan'),
+                  MonthNameBox(monthName: 'Feb'),
+                  MonthNameBox(monthName: 'Mar'),
+                  MonthNameBox(monthName: 'Apr'),
+                ]),
+            Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: Responsive.width(6.43, context),
+                children: [
+                  MonthNameBox(monthName: 'May'),
+                  MonthNameBox(monthName: 'Jun'),
+                  MonthNameBox(monthName: 'Jul'),
+                  MonthNameBox(monthName: 'Aug'),
+                ]),
+            Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: Responsive.width(6.43, context),
+                children: [
+                  MonthNameBox(monthName: 'Sep'),
+                  MonthNameBox(monthName: 'Oct'),
+                  MonthNameBox(monthName: 'Nov'),
+                  MonthNameBox(monthName: 'Dec'),
+                ]),
+          ]),
+    );
+  }
+}
+
+class DaysOfWeekWidget extends StatelessWidget {
+  const DaysOfWeekWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: Responsive.width(18.47, context),
+        children: [
+          Container(
+            width: Responsive.width(28, context),
+            height: Responsive.width(15, context),
+            child: Stack(
+              children: [
+                Positioned(
+                  left: Responsive.width(10.68, context),
+                  top: 0,
+                  child: Text(
+                    'S',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: const Color(0x4C3C3C43),
+                      fontSize: Responsive.width(14, context),
+                      fontFamily: 'DM Sans',
+                      fontWeight: FontWeight.w600,
+                      height: 1.08,
+                      letterSpacing: -0.07,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: Responsive.width(33, context),
+            height: Responsive.width(15, context),
+            child: Stack(
+              children: [
+                Positioned(
+                  left: Responsive.width(11.68, context),
+                  top: 0,
+                  child: Text(
+                    'M',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: const Color(0x4C3C3C43),
+                      fontSize: Responsive.width(14, context),
+                      fontFamily: 'DM Sans',
+                      fontWeight: FontWeight.w600,
+                      height: 1.08,
+                      letterSpacing: -0.07,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: Responsive.width(26.86, context),
+            height: Responsive.width(15.11, context),
+            child: Stack(
+              children: [
+                Positioned(
+                  left: Responsive.width(9.52, context),
+                  top: 0,
+                  child: Text(
+                    'T',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: const Color(0x4C3C3C43),
+                      fontSize: Responsive.width(14, context),
+                      fontFamily: 'DM Sans',
+                      fontWeight: FontWeight.w600,
+                      height: 1.08,
+                      letterSpacing: -0.07,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: Responsive.width(25, context),
+            height: Responsive.width(15, context),
+            child: Stack(
+              children: [
+                Positioned(
+                  left: Responsive.width(5.58, context),
+                  top: 0,
+                  child: Text(
+                    'W',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: const Color(0x4C3C3C43),
+                      fontSize: Responsive.width(14, context),
+                      fontFamily: 'DM Sans',
+                      fontWeight: FontWeight.w600,
+                      height: 1.08,
+                      letterSpacing: -0.07,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: Responsive.width(26.86, context),
+            height: Responsive.width(15.11, context),
+            child: Stack(
+              children: [
+                Positioned(
+                  left: Responsive.width(8.68, context),
+                  top: 0,
+                  child: Text(
+                    'T',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: const Color(0x4C3C3C43),
+                      fontSize: Responsive.width(14, context),
+                      fontFamily: 'DM Sans',
+                      fontWeight: FontWeight.w600,
+                      height: 1.08,
+                      letterSpacing: -0.07,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: Responsive.width(23, context),
+            height: Responsive.width(15, context),
+            child: Stack(
+              children: [
+                Positioned(
+                  left: Responsive.width(7.62, context),
+                  top: 0,
+                  child: Text(
+                    'F',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: const Color(0x4C3C3C43),
+                      fontSize: Responsive.width(14, context),
+                      fontFamily: 'DM Sans',
+                      fontWeight: FontWeight.w600,
+                      height: 1.08,
+                      letterSpacing: -0.07,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: Responsive.width(26.86, context),
+            height: Responsive.width(15.11, context),
+            child: Stack(
+              children: [
+                Positioned(
+                  left: Responsive.width(9.52, context),
+                  top: 0,
+                  child: Text(
+                    'S',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: const Color(0x4C3C3C43),
+                      fontSize: Responsive.width(14, context),
+                      fontFamily: 'DM Sans',
+                      fontWeight: FontWeight.w600,
+                      height: 1.08,
+                      letterSpacing: -0.07,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class DatesRowWidget extends StatelessWidget {
+  final List<String> datesArray;
+  const DatesRowWidget({Key? key, required this.datesArray}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: double.infinity,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              spacing: 24.34,
+              children: [
+                Container(
+                  width: Responsive.width(26.86, context),
+                  height: Responsive.width(26.86, context),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: Responsive.width(0, context),
+                        top: Responsive.width(3.36, context),
+                        child: SizedBox(
+                          width: Responsive.width(26.86, context),
+                          child: Text(
+                            datesArray[0],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: Responsive.width(20, context),
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w400,
+                              height: 1.01,
+                              letterSpacing: 0.32,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: Responsive.width(44, context),
+                  height: Responsive.width(44, context),
+                  decoration: ShapeDecoration(
+                    // color: const Color(0xFF306FDC) /* InstiApp-blue */,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(83.95),
+                    ),
+                  ),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: Responsive.width(0, context),
+                        top: Responsive.width(12.36, context),
+                        child: SizedBox(
+                          width: Responsive.width(43.86, context),
+                          child: Text(
+                            datesArray[1],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              // color: Colors.white,
+                              fontSize: Responsive.width(20, context),
+                              fontFamily: 'DM Sans',
+                              // fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w400,
+                              height: 1.01,
+                              letterSpacing: 0.32,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: Responsive.width(26.86, context),
+                  height: Responsive.width(26.86, context),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: Responsive.width(0, context),
+                        top: Responsive.width(3.36, context),
+                        child: SizedBox(
+                          width: Responsive.width(26.86, context),
+                          child: Text(
+                            datesArray[2],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: Responsive.width(20, context),
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w400,
+                              height: 1.01,
+                              letterSpacing: 0.32,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: Responsive.width(26.86, context),
+                  height: Responsive.width(26.86, context),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: Responsive.width(0, context),
+                        top: Responsive.width(3.36, context),
+                        child: SizedBox(
+                          width: Responsive.width(26.86, context),
+                          child: Text(
+                            datesArray[4],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: Responsive.width(20, context),
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w400,
+                              height: 1.01,
+                              letterSpacing: 0.32,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: Responsive.width(26.86, context),
+                  height: Responsive.width(26.86, context),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: Responsive.width(0, context),
+                        top: Responsive.width(3.36, context),
+                        child: SizedBox(
+                          width: Responsive.width(26.86, context),
+                          child: Text(
+                            datesArray[5],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: Responsive.width(20, context),
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w400,
+                              height: 1.01,
+                              letterSpacing: 0.32,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: Responsive.width(26.86, context),
+                  height: Responsive.width(26.86, context),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: Responsive.width(0, context),
+                        top: Responsive.width(3.36, context),
+                        child: SizedBox(
+                          width: Responsive.width(26.86, context),
+                          height: Responsive.width(26.86, context),
+                          child: Text(
+                            datesArray[6],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: Responsive.width(20, context),
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w400,
+                              height: 1.01,
+                              letterSpacing: 0.32,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: Responsive.width(26.86, context),
+                  height: Responsive.width(26.86, context),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: Responsive.width(0, context),
+                        top: Responsive.width(3.36, context),
+                        child: SizedBox(
+                          width: Responsive.width(26.86, context),
+                          height: Responsive.width(26.86, context),
+                          child: Text(
+                            datesArray[6],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: Responsive.width(20, context),
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w400,
+                              height: 1.01,
+                              letterSpacing: 0.32,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MonthViewWidget extends StatelessWidget {
+  const MonthViewWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: Responsive.height(12, context),
+        children: [
+          DaysOfWeekWidget(),
+          // dates
+          DatesRowWidget(
+            datesArray: ['', '', '1', '2', '3', '4', '5'],
+          ),
+          DatesRowWidget(
+            datesArray: ['6', '7', '8', '9', '10', '11', '12'],
+          ),
+          DatesRowWidget(
+            datesArray: ['13', '14', '15', '16', '17', '18', '19'],
+          ),
+          DatesRowWidget(
+            datesArray: ['20', '21', '22', '23', '24', '25', '26'],
+          ),
+          DatesRowWidget(
+            datesArray: ['27', '28', '29', '30', '31', '', ''],
+          ),
+        ],
+      ),
+    );
   }
 }
