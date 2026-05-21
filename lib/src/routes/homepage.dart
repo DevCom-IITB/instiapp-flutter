@@ -460,14 +460,14 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                     padding: EdgeInsets.only(bottom: responsive.h(0)),
                     child: ExplorePage(),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: responsive.h(80)),
-                    child: CommunityPage(),
-                  ),
                   // Padding(
                   //   padding: EdgeInsets.only(bottom: responsive.h(80)),
-                  //   child: CalendarPage(),
+                  //   child: CommunityPage(),
                   // ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: responsive.h(80)),
+                    child: CalendarPage(),
+                  ),
                 ],
               ),
 
@@ -488,12 +488,12 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                       NavBarItem(
                           label: 'Explore',
                           iconPath: 'assets/homepage/icons/search.svg'),
-                      NavBarItem(
-                          label: 'Communities',
-                          iconPath: 'assets/homepage/icons/message-square.svg'),
                       // NavBarItem(
-                      //     label: 'Calendar',
-                      //     iconPath: 'assets/homepage/icons/calendar.svg'),
+                      //     label: 'Communities',
+                      //     iconPath: 'assets/homepage/icons/message-square.svg'),
+                      NavBarItem(
+                          label: 'Calendar',
+                          iconPath: 'assets/homepage/icons/calendar.svg'),
                     ],
                     currentIndex: _currentPageIndex,
                     onTap: _onNavTap,
