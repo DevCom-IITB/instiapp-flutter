@@ -5,7 +5,17 @@ import 'package:InstiApp/src/utils/responsivenew.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../components/calendarPage/monthViewWidget.dart';
+import '../components/calendarPage/weekViewWidget.dart';
+import '../components/calendarPage/monthSelectMenuWidget.dart';
 import '../components/calendarPage/calendarHeaderRow.dart';
+import '../components/calendarPage/calendarFilters.dart';
+import '../components/calendarPage/listView.dart';
+
+String selected = 'day';
+bool showMonthSelector = false;
+double calendarHeight = 10;
+bool monthViewExpanded = false;
+
 class CalendarPage extends StatefulWidget {
   @override
   _CalendarPageState createState() => _CalendarPageState();
@@ -82,23 +92,123 @@ class _CalendarPageState extends State<CalendarPage> {
                           Align(
                             alignment: Alignment.centerRight,
                             child: Container(
-                              width: Responsive.width(52, context),
-                              height: Responsive.height(52, context),
-                              decoration: ShapeDecoration(
-                                color: const Color(0xCCEBEBEB),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25),
+                                width: Responsive.width(52, context),
+                                height: Responsive.height(52, context),
+                                decoration: ShapeDecoration(
+                                  color: const Color(0xCCEBEBEB),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25),
+                                  ),
                                 ),
-                              ),
-                              child: SizedBox(
-                                width: Responsive.width(16, context),
-                                height: Responsive.height(16, context),
-                                child: SvgPicture.asset(
-                                  'assets/calendar/list.svg',
-                                  fit: BoxFit.scaleDown,
-                                ),
-                              ),
-                            ),
+                                // child: SizedBox(
+                                //   width: Responsive.width(16, context),
+                                //   height: Responsive.height(16, context),
+                                //   child: SvgPicture.asset(
+                                //     'assets/calendar/list.svg',
+                                //     fit: BoxFit.scaleDown,
+                                //   ),
+                                // ),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    // Handle tap event here
+                                    print('Icon tapped!');
+
+                                    final value = await showMenu<String>(
+                                      context: context,
+                                      position: RelativeRect.fromLTRB(
+                                        MediaQuery.of(context).size.width,
+                                        kToolbarHeight,
+                                        0,
+                                        0,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(24),
+                                      ),
+                                      items: <PopupMenuEntry<String>>[
+                                        PopupMenuItem(
+                                          value: 'day',
+                                          height: 45,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                          ),
+                                          child: Row(
+                                            children: const [
+                                              Icon(Icons.view_day, size: 28),
+                                              SizedBox(width: 12),
+                                              Text(
+                                                "Day",
+                                                style: TextStyle(
+                                                  // fontSize: 20,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        PopupMenuItem(
+                                          value: 'month',
+                                          height: 45,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                          ),
+                                          child: Row(
+                                            children: const [
+                                              Icon(Icons.calendar_view_month,
+                                                  size: 28),
+                                              SizedBox(width: 12),
+                                              Text(
+                                                "Month",
+                                                style: TextStyle(
+                                                  // fontSize: 20,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const PopupMenuDivider(
+                                          height: 2,
+                                          // thickness: 5,      // why no work :(
+                                        ),
+                                        PopupMenuItem(
+                                          value: 'list',
+                                          height: 45,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                          ),
+                                          child: Row(
+                                            children: const [
+                                              Icon(Icons.list, size: 28),
+                                              SizedBox(width: 12),
+                                              Text(
+                                                "List",
+                                                style: TextStyle(
+                                                  // fontSize: 20,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                    if (value != null) {
+                                      setState(() {
+                                        selected = value;
+                                      });
+                                    }
+                                    print(
+                                        'Selected: $selected and value: $value');
+                                  },
+                                  child: SizedBox(
+                                    width: Responsive.width(16, context),
+                                    height: Responsive.height(16, context),
+                                    child: SvgPicture.asset(
+                                      'assets/calendar/list.svg',
+                                      fit: BoxFit.scaleDown,
+                                    ),
+                                  ),
+                                )),
                           )
                         ],
                       ),
@@ -106,72 +216,139 @@ class _CalendarPageState extends State<CalendarPage> {
               ),
               Container(
                 width: double.infinity,
-                padding:
-                    EdgeInsets.only(bottom: Responsive.height(12, context)),
+                padding: selected == 'list'
+                    ? EdgeInsets.zero
+                    : EdgeInsets.only(bottom: Responsive.height(12, context)),
                 decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: const Color(0xFFD2D5DA),
-                      width: Responsive.height(1, context),
-                    ),
-                  ),
+                  border: (selected != 'list')
+                      ? Border(
+                          bottom: BorderSide(
+                            color: const Color(0xFFD2D5DA),
+                            width: Responsive.height(1, context),
+                          ),
+                        )
+                      : null,
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  spacing: Responsive.height(16, context),
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(
-                          horizontal: Responsive.width(16, context)),
-                      child: Column(
+                child: selected == 'list'
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: Responsive.width(16, context)),
+                        child: CalendarHeaderRow(
+                          onMonthTap: () {
+                            print('Month header tapped');
+                            setState(() {
+                              showMonthSelector = !showMonthSelector;
+                            });
+                          },
+                          onFilterTap: () {
+                            showCalendarFiltersBottomSheet(context);
+                          },
+                        ),
+                      )
+                    : Column(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         spacing: Responsive.height(16, context),
                         children: [
-                          CalendarHeaderRow(),
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: Responsive.width(16, context)),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              spacing: Responsive.height(16, context),
+                              children: [
+                                CalendarHeaderRow(
+                                  onMonthTap: () {
+                                    print('Month header tapped');
+                                    setState(() {
+                                      showMonthSelector = !showMonthSelector;
+                                    });
+                                  },
+                                  onFilterTap: () {
+                                    showCalendarFiltersBottomSheet(context);
+                                  },
+                                ),
 
-                          // month names shown view
-                          // MonthSelectMenuWidget(),
+                                AnimatedSize(
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                  child: showMonthSelector
+                                      ? MonthSelectMenuWidget()
+                                      : const SizedBox(),
+                                ),
 
-                          // week view including days of week and dates
-                          // WeekViewWidget(),
+                                if (selected == 'day')
+                                  WeekViewWidget()
+                                else if (selected == 'month')
+                                  MonthViewWidget(),
+                                // month names shown view
+                                // MonthSelectMenuWidget(),
 
+                                // week view including days of week and dates
+                                // WeekViewWidget(),
 
-                          // month view
-                          MonthViewWidget(),
-                        ],
-                      ),
-                    ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      spacing: Responsive.height(12, context),
-                      children: [
-                        Container(
-                          width: Responsive.width(50, context),
-                          height: Responsive.height(5, context),
-                          clipBehavior: Clip.antiAlias,
-                          decoration: ShapeDecoration(
-                            color: const Color(0xFFD2D5DA),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  Responsive.width(100, context)),
+                                // month view
+                                // MonthViewWidget(),
+
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeOutCubic,
+                                  height: calendarHeight,
+                                  child: Column(
+                                    children: [
+                                      if (monthViewExpanded) MonthViewWidget(),
+                                      if (selected != 'list')
+                                        DragHandleWidget(),
+                                    ],
+                                  ),
+                                ),
+
+                                // DragHandleWidget(),
+                              ],
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                        ],
+                      ),
               ),
-              EventsSectionWidget(),
+              if (selected == 'list')
+                Expanded(
+                  child: ListViewWidget(controller: _listController),
+                )
+              else
+                EventsSectionWidget(),
             ],
           )),
         ]));
+  }
+}
+
+// empty widget
+class DragHandleWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      spacing: Responsive.height(12, context),
+      children: [
+        Container(
+          width: Responsive.width(50, context),
+          height: Responsive.height(5, context),
+          clipBehavior: Clip.antiAlias,
+          decoration: ShapeDecoration(
+            color: const Color(0xFFD2D5DA),
+            shape: RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(Responsive.width(100, context)),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

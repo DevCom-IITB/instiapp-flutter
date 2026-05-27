@@ -5,7 +5,9 @@ import '../../utils/responsivenew.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class CalendarHeaderRow extends StatelessWidget {
-  const CalendarHeaderRow({Key? key}) : super(key: key);
+  final VoidCallback onMonthTap;
+  final VoidCallback onFilterTap;
+  const CalendarHeaderRow({Key? key, required this.onMonthTap, required this.onFilterTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +19,9 @@ class CalendarHeaderRow extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               spacing: Responsive.height(8, context),
                               children: [
-                                Container(
+                                GestureDetector(
+                                  onTap: onMonthTap,
+                                  child:Container(
                                   clipBehavior: Clip.antiAlias,
                                   decoration: BoxDecoration(),
                                   child: Row(
@@ -54,6 +58,8 @@ class CalendarHeaderRow extends StatelessWidget {
                                     ],
                                   ),
                                 ),
+                                ),
+                                
                                 Container(
                                   width: Responsive.width(197, context),
                                   child: Row(
@@ -109,7 +115,22 @@ class CalendarHeaderRow extends StatelessWidget {
                                           ],
                                         ),
                                       ),
-                                      Container(
+                                      GestureDetector(
+                                        onTap: onFilterTap,
+                                        // onTap: (){
+                                        //   showModalBottomSheet(
+                                        //     context: context, 
+                                        //     builder: (BuildContext context) {
+                                        //       return Container(
+                                        //         height: 200,
+                                        //         child: Center(
+                                        //           child: Text('Filter options go here'),
+                                        //         ),
+                                        //       );
+                                        //     }
+                                        //   );
+                                        // },
+                                        child:Container(
                                         height: Responsive.height(40, context),
                                         padding: EdgeInsets.symmetric(
                                             horizontal:
@@ -155,6 +176,8 @@ class CalendarHeaderRow extends StatelessWidget {
                                           ],
                                         ),
                                       ),
+                                      ),
+                                      
                                     ],
                                   ),
                                 ),

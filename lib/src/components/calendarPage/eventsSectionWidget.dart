@@ -15,6 +15,7 @@ class EventsSectionWidget extends StatelessWidget {
                 children: [
                   Container(
                     width: Responsive.width(380, context),
+                    margin: EdgeInsets.only(top: Responsive.height(20, context)),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.start,
