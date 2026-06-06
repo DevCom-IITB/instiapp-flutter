@@ -13,9 +13,9 @@ class _InstiAppApi implements InstiAppApi {
     this._dio, {
     this.baseUrl,
   }) {
-    // baseUrl ??= 'https://f6ba722a576a.ngrok-free.app/api';
-    baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
-    // baseUrl ??= 'https://035b-2401-4900-aa02-ddb0-5df9-3d94-6b84-937f.ngrok-free.app/api';
+    // baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
+    // baseUrl ??= 'http://10.195.160.117/api';
+    baseUrl ??= 'http://10.0.2.2:3000/api';
   }
 
   final Dio _dio;
@@ -2689,6 +2689,42 @@ class _InstiAppApi implements InstiAppApi {
               baseUrl,
             ))));
     final value = LostAndFoundPost.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<CalendarFeedResponse> getCalendarFeed(
+    String sessionId,
+    String start,
+    String end,
+    String tz,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'start': start,
+      r'end': end,
+      r'tz': tz,
+    };
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<CalendarFeedResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/calendar/feed',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = CalendarFeedResponse.fromJson(_result.data!);
     return value;
   }
 

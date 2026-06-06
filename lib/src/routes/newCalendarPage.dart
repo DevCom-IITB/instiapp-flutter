@@ -1,9 +1,12 @@
+import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:InstiApp/src/components/calendarPage/eventsSectionWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:InstiApp/src/utils/responsivenew.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter_svg/svg.dart';
-
+import 'package:dio/dio.dart';
+import 'package:InstiApp/src/api/response/calendar_feed_response.dart';
 import '../components/calendarPage/monthViewWidget.dart';
 import '../components/calendarPage/weekViewWidget.dart';
 import '../components/calendarPage/monthSelectMenuWidget.dart';
@@ -24,6 +27,7 @@ class CalendarPage extends StatefulWidget {
 class _CalendarPageState extends State<CalendarPage> {
   String bodyID = "";
   bool searchMode = false;
+  CalendarFeedResponse? _calendarResponse;
 // inside _ExplorePageState
   final ScrollController _listController = ScrollController();
   double _maxScrollOffset = double.infinity;
@@ -32,6 +36,36 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final bloc = BlocProvider.of(context)!.bloc;
+
+      final now = DateTime.now();
+      final start = DateTime(now.year, now.month, 1);
+      final end = DateTime(now.year, now.month + 1, 1);
+      final isoFormat = [yyyy, '-', mm, '-', dd];
+      try {
+        final response = await bloc.client.getCalendarFeed(
+          bloc.getSessionIdHeader(),
+          formatDate(start, isoFormat),
+          formatDate(end, isoFormat),
+          'Asia/Kolkata',
+        );
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _calendarResponse = response;
+        });
+        // debugPrint('Calendar feed response items: ${response.items}');
+      } on DioException catch (e) {
+        debugPrint('Dio error type: ${e.type}');
+        debugPrint('Dio message: ${e.message}');
+        debugPrint('URL: ${e.requestOptions.uri}');
+        debugPrint('Status: ${e.response?.statusCode}');
+        debugPrint('Body: ${e.response?.data}');
+      }
+    });
 
     // compute allowed max after first layout (the ListView's maxScrollExtent becomes available)
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -280,7 +314,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                       ? MonthSelectMenuWidget()
                                       : const SizedBox(),
                                 ),
-
+                                
                                 if (selected == 'day')
                                   WeekViewWidget()
                                 else if (selected == 'month')
@@ -316,10 +350,15 @@ class _CalendarPageState extends State<CalendarPage> {
               ),
               if (selected == 'list')
                 Expanded(
-                  child: ListViewWidget(controller: _listController),
+                  child: ListViewWidget(controller: _listController, response: _calendarResponse),
                 )
               else
-                EventsSectionWidget(),
+                _calendarResponse == null
+                    ? const Padding(
+                        padding: EdgeInsets.only(top: 24),
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    : Expanded(child: SingleChildScrollView(child: EventsSectionWidget(response: _calendarResponse))),
             ],
           )),
         ]));

@@ -52,6 +52,7 @@ import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/api/response/news_feed_response.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:InstiApp/src/api/response/user_tags_reach_response.dart';
+import 'package:InstiApp/src/api/response/calendar_feed_response.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart' as rt;
 
@@ -59,9 +60,10 @@ import 'model/offersecret.dart';
 
 part 'apiclient.g.dart';
 
-// @rt.RestApi(baseUrl: "http://127.0.0.1:8000/api")
+@rt.RestApi(baseUrl: "http://10.0.2.2:3000/api")
 // @rt.RestApi(baseUrl: "https://035b-2401-4900-aa02-ddb0-5df9-3d94-6b84-937f.ngrok-free.app/api")
-@rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
+// @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
+// @rt.RestApi(baseUrl: "http://10.195.160.117/api")
 //@rt.RestApi(baseUrl: "https://nayeli-nonbulbar-denominationally.ngrok-free.dev/api")
 // @rt.RestApi(baseUrl: "https://f6ba722a576a.ngrok-free.app/api")
 abstract class InstiAppApi {
@@ -192,8 +194,8 @@ abstract class InstiAppApi {
   // Image upload
   @rt.POST("/upload")
   @rt.MultiPart()
-  Future<ImageUploadResponse> uploadImage(
-      @rt.Header("Cookie") String sessionID, @rt.Part(name: "picture") File file);
+  Future<ImageUploadResponse> uploadImage(@rt.Header("Cookie") String sessionID,
+      @rt.Part(name: "picture") File file);
 
   // @rt.POST("/upload")
   // @rt.MultiPart()
@@ -457,4 +459,12 @@ abstract class InstiAppApi {
   @rt.GET('/lnf/products/{id}')
   Future<LostAndFoundPost> getLostAndFoundPost(
       @rt.Header("Cookie") String sessionId, @rt.Path() String id);
+
+  @rt.GET('/calendar/feed')
+  Future<CalendarFeedResponse> getCalendarFeed(
+    @rt.Header("Cookie") String sessionId,
+    @rt.Query('start') String start,
+    @rt.Query('end') String end,
+    @rt.Query('tz') String tz,
+  );
 }
