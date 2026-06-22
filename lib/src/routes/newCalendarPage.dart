@@ -25,7 +25,8 @@ class CalendarPage extends StatefulWidget {
   _CalendarPageState createState() => _CalendarPageState();
 }
 
-class _CalendarPageState extends State<CalendarPage> {
+class _CalendarPageState extends State<CalendarPage>
+    with SingleTickerProviderStateMixin {
   String bodyID = "";
   bool searchMode = false;
   CalendarFeedResponse? _calendarResponse;
@@ -43,9 +44,7 @@ class _CalendarPageState extends State<CalendarPage> {
         await bloc.session
             .firstWhere((session) => session?.sessionid?.isNotEmpty == true)
             .timeout(const Duration(seconds: 5));
-      } catch (_) {
-        // Keep going to log a clear auth failure below.
-      }
+      } catch (_) {}
       sessionHeader = bloc.getSessionIdHeader();
     }
 
@@ -91,15 +90,24 @@ class _CalendarPageState extends State<CalendarPage> {
     }
   }
 
+  late AnimationController _controller;
+
+  // Maximum height the new widget can expand to
+  final double _maxHeight = 330.0;
+  // Initial height of the Week View widget
+  final double _weekViewHeight = 80.0;
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchCalendarFeed();
     });
 
-    // compute allowed max after first layout (the ListView's maxScrollExtent becomes available)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_listController.hasClients) {
         final maxExtent = _listController.position.maxScrollExtent;
@@ -118,8 +126,23 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   void dispose() {
+    _controller.dispose();
     _listController.dispose();
-    super.dispose();
+
+    super.initState();
+  }
+
+  void _handleDragUpdate(DragUpdateDetails details) {
+    _controller.value += details.primaryDelta! / _maxHeight;
+  }
+
+  void _handleDragEnd(DragEndDetails details) {
+    // Snap to expanded or collapsed state based on how far the user dragged
+    if (_controller.value > 0.5) {
+      _controller.forward();
+    } else {
+      _controller.reverse();
+    }
   }
 
   @override
@@ -349,9 +372,53 @@ class _CalendarPageState extends State<CalendarPage> {
 
                                 if (selected == 'day')
                                   // WeekViewWidget(weekOffset: 0)
-                                  WeekCalendarScroll()
-                                else if (selected == 'month')
-                                  MonthViewWidget(),
+                                  AnimatedBuilder(
+                                  animation: _controller,
+                                  builder: (context, child) {
+                                    // Smoothly interpolate heights
+                                    double currentHeight = _weekViewHeight +
+                                        (_controller.value *
+                                            (_maxHeight - _weekViewHeight));
+
+                                    return Container(
+                                      height: currentHeight,
+                                      width: double.infinity,
+                                      color: Colors.grey[50],
+                                      child: Stack(
+                                        children: [
+                                          // week widget, opacity decreases as pulled
+                                          Opacity(
+                                            opacity: (1.0 - _controller.value)
+                                                .clamp(0.0, 1.0),
+                                            child: _controller.value < 0.9
+                                                ? WeekCalendarScroll()
+                                                : const SizedBox.shrink(),
+                                          ),
+
+                                          // month widget, opacity increases as pulled
+                                          Opacity(
+                                            opacity: _controller.value
+                                                .clamp(0.0, 1.0),
+                                            child: _controller.value > 0.1
+                                                ? SingleChildScrollView(
+                                                    child:
+                                                        MonthViewWidget()) // Replace with your new widget
+                                                : const SizedBox.shrink(),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                )
+
+
+                                else if (selected == 'month') MonthViewWidget(),
+
+                                GestureDetector(
+                                    onVerticalDragUpdate: _handleDragUpdate,
+                                    onVerticalDragEnd: _handleDragEnd,
+                                    child: DragHandleWidget()),
+
                                 // month names shown view
                                 // MonthSelectMenuWidget(),
 
@@ -360,21 +427,6 @@ class _CalendarPageState extends State<CalendarPage> {
 
                                 // month view
                                 // MonthViewWidget(),
-
-                                AnimatedContainer(
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeOutCubic,
-                                  height: calendarHeight,
-                                  child: Column(
-                                    children: [
-                                      if (monthViewExpanded) MonthViewWidget(),
-                                      if (selected != 'list')
-                                        DragHandleWidget(),
-                                    ],
-                                  ),
-                                ),
-
-                                // DragHandleWidget(),
                               ],
                             ),
                           ),
