@@ -13,6 +13,7 @@ import '../components/calendarPage/monthSelectMenuWidget.dart';
 import '../components/calendarPage/calendarHeaderRow.dart';
 import '../components/calendarPage/calendarFilters.dart';
 import '../components/calendarPage/listView.dart';
+import '../components/calendarPage/weekViewScroll.dart';
 
 String selected = 'day';
 bool showMonthSelector = false;
@@ -33,38 +34,69 @@ class _CalendarPageState extends State<CalendarPage> {
   double _maxScrollOffset = double.infinity;
   final double _clampFraction = 0.4; // change to desired fraction (0.0 - 1.0)
 
+  Future<void> _fetchCalendarFeed() async {
+    final bloc = BlocProvider.of(context)!.bloc;
+
+    var sessionHeader = bloc.getSessionIdHeader();
+    if (sessionHeader.isEmpty) {
+      try {
+        await bloc.session
+            .firstWhere((session) => session?.sessionid?.isNotEmpty == true)
+            .timeout(const Duration(seconds: 5));
+      } catch (_) {
+        // Keep going to log a clear auth failure below.
+      }
+      sessionHeader = bloc.getSessionIdHeader();
+    }
+
+    if (sessionHeader.isEmpty) {
+      debugPrint('Calendar feed skipped: missing session cookie.');
+      if (mounted) {
+        setState(() {
+          _calendarResponse = CalendarFeedResponse(items: []);
+        });
+      }
+      return;
+    }
+
+    final now = DateTime.now();
+    final start = DateTime(now.year, now.month, 1);
+    final end = DateTime(now.year, now.month + 1, 1);
+    final isoFormat = [yyyy, '-', mm, '-', dd];
+
+    try {
+      final response = await bloc.client.getCalendarFeed(
+        sessionHeader,
+        formatDate(start, isoFormat),
+        formatDate(end, isoFormat),
+        'Asia/Kolkata',
+      );
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _calendarResponse = response;
+      });
+    } on DioException catch (e) {
+      debugPrint('Dio error type: ${e.type}');
+      debugPrint('Dio message: ${e.message}');
+      debugPrint('URL: ${e.requestOptions.uri}');
+      debugPrint('Status: ${e.response?.statusCode}');
+      debugPrint('Body: ${e.response?.data}');
+      if (mounted) {
+        setState(() {
+          _calendarResponse = CalendarFeedResponse(items: []);
+        });
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final bloc = BlocProvider.of(context)!.bloc;
-
-      final now = DateTime.now();
-      final start = DateTime(now.year, now.month, 1);
-      final end = DateTime(now.year, now.month + 1, 1);
-      final isoFormat = [yyyy, '-', mm, '-', dd];
-      try {
-        final response = await bloc.client.getCalendarFeed(
-          bloc.getSessionIdHeader(),
-          formatDate(start, isoFormat),
-          formatDate(end, isoFormat),
-          'Asia/Kolkata',
-        );
-        if (!mounted) {
-          return;
-        }
-        setState(() {
-          _calendarResponse = response;
-        });
-        // debugPrint('Calendar feed response items: ${response.items}');
-      } on DioException catch (e) {
-        debugPrint('Dio error type: ${e.type}');
-        debugPrint('Dio message: ${e.message}');
-        debugPrint('URL: ${e.requestOptions.uri}');
-        debugPrint('Status: ${e.response?.statusCode}');
-        debugPrint('Body: ${e.response?.data}');
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchCalendarFeed();
     });
 
     // compute allowed max after first layout (the ListView's maxScrollExtent becomes available)
@@ -314,9 +346,10 @@ class _CalendarPageState extends State<CalendarPage> {
                                       ? MonthSelectMenuWidget()
                                       : const SizedBox(),
                                 ),
-                                
+
                                 if (selected == 'day')
-                                  WeekViewWidget()
+                                  // WeekViewWidget(weekOffset: 0)
+                                  WeekCalendarScroll()
                                 else if (selected == 'month')
                                   MonthViewWidget(),
                                 // month names shown view
@@ -350,7 +383,10 @@ class _CalendarPageState extends State<CalendarPage> {
               ),
               if (selected == 'list')
                 Expanded(
-                  child: ListViewWidget(controller: _listController, response: _calendarResponse),
+                  child: ListViewWidget(
+                    controller: _listController,
+                    response: _calendarResponse,
+                  ),
                 )
               else
                 _calendarResponse == null
@@ -358,7 +394,12 @@ class _CalendarPageState extends State<CalendarPage> {
                         padding: EdgeInsets.only(top: 24),
                         child: Center(child: CircularProgressIndicator()),
                       )
-                    : Expanded(child: SingleChildScrollView(child: EventsSectionWidget(response: _calendarResponse))),
+                    : Expanded(
+                        child: SingleChildScrollView(
+                          child:
+                              EventsSectionWidget(response: _calendarResponse),
+                        ),
+                      ),
             ],
           )),
         ]));

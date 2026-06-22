@@ -12,9 +12,10 @@ class DaysOfWeekWidget extends StatelessWidget {
       width: double.infinity,
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: Responsive.width(18.47, context),
+        spacing: Responsive.width(29.47, context),
+        // spacing:12.47,
         children: [
           Container(
             width: Responsive.width(28, context),

@@ -88,16 +88,19 @@ class _FeedPageState extends State<FeedPage> {
   }
 
   @override
+// final token = getSessionToken();
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Color.fromRGBO(246, 246, 246, 1),
     ));
-    var theme = Theme.of(context);
+    // var theme = Theme.of(context);
     var bloc = BlocProvider.of(context)!.bloc;
     if (firstBuild) {
       bloc.updateEvents();
       firstBuild = false;
     }
+
+// debugPrint('session token: $token');
     return Scaffold(
       backgroundColor: Color.fromRGBO(246, 246, 246, 1),
       key: _scaffoldKey,

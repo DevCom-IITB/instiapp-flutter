@@ -32,7 +32,7 @@ class CalendarHeaderRow extends StatelessWidget {
                                     spacing: Responsive.width(12, context),
                                     children: [
                                       Text(
-                                        'June 2025',
+                                        'June 2026',
                                         style: TextStyle(
                                           color: const Color(
                                               0xFF306FDC) /* InstiApp-blue */,
