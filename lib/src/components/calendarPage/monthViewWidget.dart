@@ -3,11 +3,51 @@ import '../../utils/responsivenew.dart';
 import './datesRowWidget.dart';
 import './daysOfWeekWidget.dart';
 
+class MonthDateUtils {
+  /// Finds the closest past Sunday for any given date
+  static DateTime _findSunday(DateTime date) {
+    return date.subtract(Duration(days: date.weekday % 7));
+  }
+
+  /// Generates 35 days (5 weeks) for a specific month offset
+  static List<DateTime> getDaysOfMonth(int monthOffset) {
+    final DateTime now = DateTime.now();
+    
+    // 1. Calculate the target year and month based on the offset
+    int targetMonth = now.month + monthOffset;
+    int targetYear = now.year;
+
+    // Handle year transitions (e.g., month 13 becomes January of next year)
+    while (targetMonth > 12) {
+      targetMonth -= 12;
+      targetYear += 1;
+    }
+    while (targetMonth < 1) {
+      targetMonth += 12;
+      targetYear -= 1;
+    }
+
+    // 2. Get the exact 1st day of that target month at midnight
+    final DateTime firstDayOfMonth = DateTime(targetYear, targetMonth, 1);
+
+    // 3. Find the Sunday that starts the grid (even if it belongs to the previous month)
+    final DateTime startSunday = _findSunday(firstDayOfMonth);
+
+    // 4. Generate exactly 35 days (5 rows of 7 days)
+    return List.generate(35, (index) => startSunday.add(Duration(days: index)));
+  }
+}
+
 class MonthViewWidget extends StatelessWidget {
-  const MonthViewWidget({Key? key}) : super(key: key);
+    final int monthOffset; // 0 for current month, -1 for last month, 1 for next month, etc.
+
+  const MonthViewWidget({Key? key, required this.monthOffset}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+final List<DateTime> monthDays = MonthDateUtils.getDaysOfMonth(monthOffset);
+final formattedDays = monthDays.map((date) => date.day.toString()).toList();
+print(monthDays);
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -18,19 +58,19 @@ class MonthViewWidget extends StatelessWidget {
           DaysOfWeekWidget(),
           // dates
           DatesRowWidget(
-            datesArray: ['', '', '1', '2', '3', '4', '5'],
+            datesArray: formattedDays.sublist(0,7),
           ),
           DatesRowWidget(
-            datesArray: ['6', '7', '8', '9', '10', '11', '12'],
+            datesArray: formattedDays.sublist(7,14),
           ),
           DatesRowWidget(
-            datesArray: ['13', '14', '15', '16', '17', '18', '19'],
+            datesArray: formattedDays.sublist(14,21),
           ),
           DatesRowWidget(
-            datesArray: ['20', '21', '22', '23', '24', '25', '26'],
+            datesArray: formattedDays.sublist(21,28),
           ),
           DatesRowWidget(
-            datesArray: ['27', '28', '29', '30', '', '', ''],
+            datesArray: formattedDays.sublist(28,35),
           ),
         ],
       ),

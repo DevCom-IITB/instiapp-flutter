@@ -14,6 +14,7 @@ import '../components/calendarPage/calendarHeaderRow.dart';
 import '../components/calendarPage/calendarFilters.dart';
 import '../components/calendarPage/listView.dart';
 import '../components/calendarPage/weekViewScroll.dart';
+import '../components/calendarPage/monthViewScroll.dart';
 
 String selected = 'day';
 bool showMonthSelector = false;
@@ -402,7 +403,10 @@ class _CalendarPageState extends State<CalendarPage>
                                             child: _controller.value > 0.1
                                                 ? SingleChildScrollView(
                                                     child:
-                                                        MonthViewWidget()) // Replace with your new widget
+                                                        MonthCalendarScroll()) 
+                                                // ? SingleChildScrollView(
+                                                //     child:
+                                                //         MonthViewWidget(monthOffset: 0)) 
                                                 : const SizedBox.shrink(),
                                           ),
                                         ],
@@ -412,7 +416,7 @@ class _CalendarPageState extends State<CalendarPage>
                                 )
 
 
-                                else if (selected == 'month') MonthViewWidget(),
+                                else if (selected == 'month') MonthViewWidget(monthOffset: 0),
 
                                 GestureDetector(
                                     onVerticalDragUpdate: _handleDragUpdate,
