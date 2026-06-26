@@ -2,11 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.insti.flutter">
 
-    <!--
-         The INTERNET permission is required for development. Specifically,
-         flutter needs it to communicate with the running application
-         to allow setting breakpoints, to provide hot reload, etc.
-    -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -39,6 +34,18 @@
 
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/mess_menu_widget_info" />
+        </receiver>
+
+        <service
+            android:name=".MessMenuRemoteViewsService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <receiver android:name=".MessMenuWidgetReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="app.insti.flutter.ACTION_MEAL_OVERRIDE" />
+            </intent-filter>
         </receiver>
 
         <meta-data android:name="flutterEmbedding"
