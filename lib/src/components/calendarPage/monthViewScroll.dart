@@ -3,7 +3,16 @@ import 'package:flutter/material.dart';
 import '../../utils/responsivenew.dart';
 
 class MonthCalendarScroll extends StatefulWidget {
-  const MonthCalendarScroll({Key? key}) : super(key: key);
+  final ValueChanged<DateTime>? onDateSelected;
+  final ValueChanged<DateTime>? onVisibleDateChanged;
+  final PageController? pageController;
+
+  const MonthCalendarScroll({
+    Key? key,
+    this.onDateSelected,
+    this.onVisibleDateChanged,
+    this.pageController,
+  }) : super(key: key);
 
   @override
   State<MonthCalendarScroll> createState() => _MonthCalendarScrollState();
@@ -17,7 +26,15 @@ class _MonthCalendarScrollState extends State<MonthCalendarScroll> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: _initialPage);
+    _pageController = widget.pageController ?? PageController(initialPage: _initialPage);
+  }
+
+  @override
+  void didUpdateWidget(covariant MonthCalendarScroll oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.pageController != oldWidget.pageController) {
+      _pageController = widget.pageController ?? PageController(initialPage: _initialPage);
+    }
   }
 
   @override
@@ -30,6 +47,9 @@ class _MonthCalendarScrollState extends State<MonthCalendarScroll> {
           int monthOffset = index - _initialPage;
           // monthOffset is 0 for current month, -1 for last month, 1 for next month
           print("Selected month offset: $monthOffset");
+          final now = DateTime.now();
+          final visibleMonth = DateTime(now.year, now.month + monthOffset, 1);
+          widget.onVisibleDateChanged?.call(visibleMonth);
         },
         itemBuilder: (context, index) {
           int monthOffset = index - _initialPage;
@@ -40,6 +60,9 @@ class _MonthCalendarScrollState extends State<MonthCalendarScroll> {
   }
 
   Widget _buildMonthWidget(int monthOffset) {
-    return MonthViewWidget(monthOffset: monthOffset);
+    return MonthViewWidget(
+      monthOffset: monthOffset,
+      onDateSelected: widget.onDateSelected,
+    );
   }
 }

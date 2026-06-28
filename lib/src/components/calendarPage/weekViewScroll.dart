@@ -3,7 +3,16 @@ import 'package:flutter/material.dart';
 import '../../utils/responsivenew.dart';
 
 class WeekCalendarScroll extends StatefulWidget {
-  const WeekCalendarScroll({Key? key}) : super(key: key);
+  final ValueChanged<DateTime>? onDateSelected;
+  final ValueChanged<DateTime>? onVisibleDateChanged;
+  final PageController? pageController;
+
+  const WeekCalendarScroll({
+    Key? key,
+    this.onDateSelected,
+    this.onVisibleDateChanged,
+    this.pageController,
+  }) : super(key: key);
 
   @override
   State<WeekCalendarScroll> createState() => _WeekCalendarScrollState();
@@ -11,25 +20,37 @@ class WeekCalendarScroll extends StatefulWidget {
 
 class _WeekCalendarScrollState extends State<WeekCalendarScroll> {
   // A large number to simulate infinite scrolling
-  final int _initialPage = 10000; 
+  final int _initialPage = 10000;
   late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: _initialPage);
+    _pageController = widget.pageController ?? PageController(initialPage: _initialPage);
+  }
+
+  @override
+  void didUpdateWidget(covariant WeekCalendarScroll oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.pageController != oldWidget.pageController) {
+      _pageController = widget.pageController ?? PageController(initialPage: _initialPage);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: Responsive.height(70, context), // Adjust based on your week widget design
+      height: Responsive.height(
+          70, context), // Adjust based on your week widget design
       child: PageView.builder(
         controller: _pageController,
         onPageChanged: (int index) {
           int weekOffset = index - _initialPage;
           // weekOffset is 0 for current week, -1 for last week, 1 for next week
           print("Selected week offset: $weekOffset");
+          final visibleWeek = WeekDateUtils.getDaysOfWeek(weekOffset - 1);
+          final focusDay = visibleWeek[3];
+          widget.onVisibleDateChanged?.call(focusDay);
         },
         itemBuilder: (context, index) {
           int weekOffset = index - _initialPage;
@@ -40,9 +61,9 @@ class _WeekCalendarScrollState extends State<WeekCalendarScroll> {
   }
 
   Widget _buildWeekWidget(int weekOffset) {
-    // 1. Calculate the target week's Monday based on DateTime.now()
-    // 2. Render your 7-day row item here
-
-    return WeekViewWidget(weekOffset: weekOffset);
+    return WeekViewWidget(
+      weekOffset: weekOffset,
+      onDateSelected: widget.onDateSelected,
+    );
   }
 }

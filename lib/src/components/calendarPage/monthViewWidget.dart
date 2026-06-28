@@ -12,7 +12,7 @@ class MonthDateUtils {
   /// Generates 35 days (5 weeks) for a specific month offset
   static List<DateTime> getDaysOfMonth(int monthOffset) {
     final DateTime now = DateTime.now();
-    
+
     // 1. Calculate the target year and month based on the offset
     int targetMonth = now.month + monthOffset;
     int targetYear = now.year;
@@ -39,15 +39,18 @@ class MonthDateUtils {
 }
 
 class MonthViewWidget extends StatelessWidget {
-    final int monthOffset; // 0 for current month, -1 for last month, 1 for next month, etc.
+  final int
+      monthOffset; // 0 for current month, -1 for last month, 1 for next month, etc.
+  final ValueChanged<DateTime>? onDateSelected;
 
-  const MonthViewWidget({Key? key, required this.monthOffset}) : super(key: key);
+  const MonthViewWidget(
+      {Key? key, required this.monthOffset, this.onDateSelected})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-final List<DateTime> monthDays = MonthDateUtils.getDaysOfMonth(monthOffset);
-final formattedDays = monthDays.map((date) => date.day.toString()).toList();
-print(monthDays);
+    final List<DateTime> monthDays = MonthDateUtils.getDaysOfMonth(monthOffset);
+    print(monthDays);
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -58,19 +61,24 @@ print(monthDays);
           DaysOfWeekWidget(),
           // dates
           DatesRowWidget(
-            datesArray: formattedDays.sublist(0,7),
+            datesArray: monthDays.sublist(0, 7),
+            onDateSelected: onDateSelected,
           ),
           DatesRowWidget(
-            datesArray: formattedDays.sublist(7,14),
+            datesArray: monthDays.sublist(7, 14),
+            onDateSelected: onDateSelected,
           ),
           DatesRowWidget(
-            datesArray: formattedDays.sublist(14,21),
+            datesArray: monthDays.sublist(14, 21),
+            onDateSelected: onDateSelected,
           ),
           DatesRowWidget(
-            datesArray: formattedDays.sublist(21,28),
+            datesArray: monthDays.sublist(21, 28),
+            onDateSelected: onDateSelected,
           ),
           DatesRowWidget(
-            datesArray: formattedDays.sublist(28,35),
+            datesArray: monthDays.sublist(28, 35),
+            onDateSelected: onDateSelected,
           ),
         ],
       ),
