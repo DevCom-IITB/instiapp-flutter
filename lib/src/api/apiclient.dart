@@ -53,6 +53,7 @@ import 'package:InstiApp/src/api/response/news_feed_response.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:InstiApp/src/api/response/user_tags_reach_response.dart';
 import 'package:InstiApp/src/api/response/calendar_feed_response.dart';
+import 'package:InstiApp/src/api/response/calendar_preference_response.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart' as rt;
 
@@ -467,5 +468,16 @@ abstract class InstiAppApi {
     @rt.Query('end') String end,
     @rt.Query('tz') String tz,
   );
+
+  @rt.GET('/calendar/preferences')
+  Future<CalendarPreferencesResponse> getCalendarPreferences(
+    @rt.Header("Cookie") String sessionId,
+  );
+
+  // @rt.PATCH('/calendar/preferences')
+  // Future<CalendarPreferencesResponse> updateCalendarPreferences(
+  //   @rt.Header("Cookie") String sessionId,
+  //   @rt.Body() CalendarPreferencesResponse preferences,
+  // );
 
 }
