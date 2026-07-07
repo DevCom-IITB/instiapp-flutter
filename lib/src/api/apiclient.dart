@@ -54,6 +54,9 @@ import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:InstiApp/src/api/response/user_tags_reach_response.dart';
 import 'package:InstiApp/src/api/response/calendar_feed_response.dart';
 import 'package:InstiApp/src/api/response/calendar_preference_response.dart';
+import 'package:InstiApp/src/api/response/calendar_pref_body_response.dart';
+import 'package:InstiApp/src/api/response/calendar_share_response.dart';
+import 'package:InstiApp/src/api/response/calendar_info_response.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart' as rt;
 
@@ -474,10 +477,78 @@ abstract class InstiAppApi {
     @rt.Header("Cookie") String sessionId,
   );
 
-  // @rt.PATCH('/calendar/preferences')
-  // Future<CalendarPreferencesResponse> updateCalendarPreferences(
-  //   @rt.Header("Cookie") String sessionId,
-  //   @rt.Body() CalendarPreferencesResponse preferences,
-  // );
+  @rt.PATCH('/calendar/preferences')
+  Future<CalendarPreferencesResponse> updateCalendarPreferences(
+    @rt.Header("Cookie") String sessionId,
+    @rt.Body() CalendarPreferencesResponse preferences,
+  );
 
+  @rt.GET('/calendar/preferences/bodies')
+  Future<CalendarPrefBodyResponse> getCalendarPrefBodies(
+    @rt.Header("Cookie") String sessionId,
+  );
+
+  @rt.PATCH('/calendar/preferences/bodies/{id}')
+  Future<CalendarPrefBodyResponse> updateCalendarPrefBody(
+    @rt.Header("Cookie") String sessionId,
+    @rt.Path() String id,
+    @rt.Body() CalendarPrefBodyResponse body,
+  );
+
+  @rt.GET('/calendar/shared')
+  Future<CalendarShareResponse> getCalendarShared(
+    @rt.Header("Cookie") String sessionId,
+  );
+
+//  response is like
+// {
+//   "id":"d67f9ff0-d34a-45ec-9edd-e073c3765678",
+//    "name":"IIT Bombay Academic Calendar 2025-26",
+//    "slug":"iitb-academic-2025-26",
+//    "description":"Official academic calendar",
+//    "color":"#E53935",
+//    "is_public":true,
+//    "is_active":true,
+//    "created_at":"2026-05-21T23:40:56.986943+05:30",
+//    "updated_at":"2026-05-21T23:40:56.986943+05:30",
+//    "upcoming_events":[]
+// }
+  @rt.GET('/calendar/shared/{slug}')
+  Future<CalendarInfoResponse> getCalendarSharedBySlug(
+    @rt.Header("Cookie") String sessionId,
+    @rt.Path() String slug,
+  );
+
+  @rt.PATCH('/calendar/shared/{slug}')
+  Future<void> updateCalendarShared(
+    @rt.Header("Cookie") String sessionId,
+    @rt.Path() String slug,
+    @rt.Body() CalendarInfoResponse calendar,
+  );
+
+  @rt.POST('/calendar/shared/{slug}/events')
+  Future<void> addEventsToSharedCalendar(
+    @rt.Header("Cookie") String sessionId,
+    @rt.Path() String slug,
+    @rt.Body() List<dynamic> events,
+  );
+
+  @rt.POST('/calendar/shared/{slug}/subscribe')
+  Future<void> subscribeToSharedCalendar(
+    @rt.Header("Cookie") String sessionId,
+    @rt.Path() String slug,
+  );
+
+  @rt.POST('/calendar/shared/{slug}/unsubscribe')
+  Future<void> unsubscribeFromSharedCalendar(
+    @rt.Header("Cookie") String sessionId,
+    @rt.Path() String slug,
+  );
+
+  @rt.PATCH('/calendar/shared/{slug}/toggle')
+  Future<void> toggleSharedCalendar(
+    @rt.Header("Cookie") String sessionId,
+    @rt.Path() String slug,
+    @rt.Body() bool enabled,
+  );
 }
