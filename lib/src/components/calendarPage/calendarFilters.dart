@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../utils/responsivenew.dart';
+import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/api/response/calendar_preference_response.dart';
+import 'package:InstiApp/src/api/model/calendar_body_preference.dart';
+import 'package:InstiApp/src/api/model/calendar_body.dart';
 
-
-void showCalendarFiltersBottomSheet(BuildContext context) {
-  showModalBottomSheet(
+Future<void> showCalendarFiltersBottomSheet(BuildContext context) {
+  return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -36,20 +39,37 @@ class FilterBottomSheet extends StatefulWidget {
 }
 
 class _FilterBottomSheetState extends State<FilterBottomSheet> {
-  bool eventsExpanded = true;
-  bool academicsExpanded = false;
+  bool _loading = true;
+  late CalendarPreferencesResponse _preferences;
+  List<CalendarBodyPreference> _bodies = [];
+  List<CalendarBody> _sharedCalendars = [];
+  bool _bodiesExpanded = false;
+  bool _sharedExpanded = false;
+  String _selectedTab = 'Preferences';
 
-
-  bool eventsAll = false;
-  bool cultural = false;
-  bool tech1 = false;
-  bool ib = false;
-  bool tech2 = false;
-  bool academics = false;
-  bool reminders = false;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final bloc = BlocProvider.of(context)!.bloc;
+      final prefs = await bloc.getOrFetchCalendarPreferences();
+      final bodies = await bloc.getOrFetchCalendarPrefBodies();
+      final shared = await bloc.getOrFetchCalendarShared();
+      if (mounted) {
+        setState(() {
+          _preferences = prefs;
+          _bodies = bodies;
+          _sharedCalendars = shared;
+          _loading = false;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final bloc = BlocProvider.of(context)!.bloc;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -69,7 +89,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         // Body: sidebar + content
         Expanded(
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Left sidebar tab
               Container(
@@ -90,7 +110,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 ),
                 child: Column(
                   children: [
-                    _SidebarTab(label: 'Categories', isSelected: true),
+                    _SidebarTab(label: 'Preferences', isSelected: true),
                   ],
                 ),
               ),
@@ -103,88 +123,230 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     vertical: Responsive.height(8, context),
                   ),
                   decoration:  BoxDecoration(
-                  color: const Color(0xFFEEEEEE),
+                    color: const Color(0xFFEEEEEE),
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(Responsive.width(16, context)),
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _ExpandableCategory(
-                        label: 'Events and Announcements',
-                        isChecked: eventsAll,
-                        isExpanded: eventsExpanded,
-                        onCheckChanged: (val) => setState(() => eventsAll = val ?? false),
-                        onToggleExpand: () => setState(() => eventsExpanded = !eventsExpanded),
-                      ),
-                      if (eventsExpanded) ...[
-                        _SubCheckbox(
-                          label: 'Cultural',
-                          value: cultural,
-                          onChanged: (val) => setState(() => cultural = val ?? false),
-                        ),
-                        _SubCheckbox(
-                          label: 'Tech',
-                          value: tech1,
-                          onChanged: (val) => setState(() => tech1 = val ?? false),
-                        ),
-                        _SubCheckbox(
-                          label: 'IB',
-                          value: ib,
-                          onChanged: (val) => setState(() => ib = val ?? false),
-                        ),
-                        _SubCheckbox(
-                          label: 'Tech',
-                          value: tech2,
-                          onChanged: (val) => setState(() => tech2 = val ?? false),
-                        ),
-                         SizedBox(height: Responsive.height(8, context)),
-                      ],
-
-
-                      _ExpandableCategory(
-                        label: 'Academics',
-                        isChecked: academics,
-                        isExpanded: academicsExpanded,
-                        onCheckChanged: (val) => setState(() => academics = val ?? false),
-                        onToggleExpand: () => setState(() => academicsExpanded = !academicsExpanded),
-                      ),
-                       SizedBox(height: Responsive.height(4, context)),
-
-
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: reminders,
-                            onChanged: (val) => setState(() => reminders = val ?? false),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(Responsive.width(4, context)),
-                            ),
-                            side: const BorderSide(color: Colors.grey),
-                            activeColor: const Color(0xFF1A56DB),
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            visualDensity: VisualDensity.compact,
+                  child: _loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    value: _preferences.showInstiappFollowedBodies ?? true,
+                                    onChanged: (val) {
+                                      setState(() {
+                                        _preferences.showInstiappFollowedBodies = val ?? false;
+                                      });
+                                      bloc.updateCalendarPreferences(_preferences);
+                                    },
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(Responsive.width(4, context)),
+                                    ),
+                                    side: const BorderSide(color: Colors.grey),
+                                    activeColor: const Color(0xFF1A56DB),
+                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                  SizedBox(width: Responsive.width(6, context)),
+                                  Expanded(
+                                    child: Text(
+                                      'Followed Bodies',
+                                      style: TextStyle(
+                                        fontSize: Responsive.width(15, context),
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _bodiesExpanded = !_bodiesExpanded;
+                                      });
+                                    },
+                                    child: Icon(
+                                      _bodiesExpanded
+                                          ? Icons.keyboard_arrow_up
+                                          : Icons.keyboard_arrow_down,
+                                      color: Colors.black54,
+                                      size: Responsive.width(22, context),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              if (_bodiesExpanded && (_preferences.showInstiappFollowedBodies ?? true)) ...[
+                                const SizedBox(height: 8),
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxHeight: Responsive.height(150, context),
+                                  ),
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: _bodies.length,
+                                    itemBuilder: (context, idx) {
+                                      final body = _bodies[idx];
+                                      return Padding(
+                                        padding: const EdgeInsets.only(left: 20, bottom: 4),
+                                        child: Row(
+                                          children: [
+                                            Checkbox(
+                                              value: body.enabled ?? false,
+                                              onChanged: (val) {
+                                                setState(() {
+                                                  body.enabled = val ?? false;
+                                                });
+                                                if (body.bodyId != null) {
+                                                  bloc.updateSingleCalendarPrefBody(body.bodyId!, body);
+                                                }
+                                              },
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(Responsive.width(4, context)),
+                                              ),
+                                              side: const BorderSide(color: Colors.grey),
+                                              activeColor: const Color(0xFF1A56DB),
+                                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                              visualDensity: VisualDensity.compact,
+                                            ),
+                                            SizedBox(width: Responsive.width(6, context)),
+                                            Expanded(
+                                              child: Text(
+                                                body.bodyName ?? '',
+                                                style: TextStyle(
+                                                  fontSize: Responsive.width(13, context),
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                              SizedBox(height: Responsive.height(16, context)),
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    value: _preferences.showResobin ?? true,
+                                    onChanged: (val) {
+                                      setState(() {
+                                        _preferences.showResobin = val ?? false;
+                                      });
+                                      bloc.updateCalendarPreferences(_preferences);
+                                    },
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(Responsive.width(4, context)),
+                                    ),
+                                    side: const BorderSide(color: Colors.grey),
+                                    activeColor: const Color(0xFF1A56DB),
+                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                  SizedBox(width: Responsive.width(6, context)),
+                                  Text(
+                                    'Resobin',
+                                    style: TextStyle(
+                                      fontSize: Responsive.width(15, context),
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: Responsive.height(16, context)),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      'Shared Calendars',
+                                      style: TextStyle(
+                                        fontSize: Responsive.width(15, context),
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _sharedExpanded = !_sharedExpanded;
+                                      });
+                                    },
+                                    child: Icon(
+                                      _sharedExpanded
+                                          ? Icons.keyboard_arrow_up
+                                          : Icons.keyboard_arrow_down,
+                                      color: Colors.black54,
+                                      size: Responsive.width(22, context),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              if (_sharedExpanded) ...[
+                                const SizedBox(height: 8),
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxHeight: Responsive.height(200, context),
+                                  ),
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: _sharedCalendars.length,
+                                    itemBuilder: (context, idx) {
+                                      final cal = _sharedCalendars[idx];
+                                      return Padding(
+                                        padding: const EdgeInsets.only(left: 20, bottom: 4),
+                                        child: Row(
+                                          children: [
+                                            Checkbox(
+                                              value: cal.isActive ?? false,
+                                              onChanged: (val) {
+                                                setState(() {
+                                                  cal.isActive = val ?? false;
+                                                });
+                                                if (cal.slug != null) {
+                                                  bloc.toggleSharedCalendar(cal.slug!, val ?? false);
+                                                }
+                                              },
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(Responsive.width(4, context)),
+                                              ),
+                                              side: const BorderSide(color: Colors.grey),
+                                              activeColor: const Color(0xFF1A56DB),
+                                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                              visualDensity: VisualDensity.compact,
+                                            ),
+                                            SizedBox(width: Responsive.width(6, context)),
+                                            Expanded(
+                                              child: Text(
+                                                cal.name ?? '',
+                                                style: TextStyle(
+                                                  fontSize: Responsive.width(13, context),
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
-                           SizedBox(width: Responsive.width(6, context)),
-                           Text(
-                            'Reminders',
-                            style: TextStyle(
-                              fontSize: Responsive.width(15, context),
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
                 ),
               ),
             ],
           ),
         ),
-
 
         Container(
           padding: EdgeInsets.symmetric(
@@ -197,18 +359,24 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Clear All btnn
+              // Clear All btn
               GestureDetector(
                 onTap: () {
-                  setState(() {
-                    eventsAll = false;
-                    cultural = false;
-                    tech1 = false;
-                    ib = false;
-                    tech2 = false;
-                    academics = false;
-                    reminders = false;
-                  });
+                  if (!_loading) {
+                    setState(() {
+                      _preferences.showInstiappFollowedBodies = false;
+                      _preferences.showResobin = false;
+                      bloc.updateCalendarPreferences(_preferences);
+                      for (var cal in _sharedCalendars) {
+                        if (cal.isActive == true) {
+                          cal.isActive = false;
+                          if (cal.slug != null) {
+                            bloc.toggleSharedCalendar(cal.slug!, false);
+                          }
+                        }
+                      }
+                    });
+                  }
                 },
                 child:  Text(
                   'Clear All',
@@ -268,6 +436,7 @@ class _SidebarTab extends StatelessWidget {
         horizontal: Responsive.width(12, context),
       ),
       decoration: BoxDecoration(
+        color: isSelected ? const Color(0xFFEEEEEE) : Colors.white,
         border: isSelected
             ? const Border(left: BorderSide(color: Color(0xFF1A56DB), width: 5))
             : null,

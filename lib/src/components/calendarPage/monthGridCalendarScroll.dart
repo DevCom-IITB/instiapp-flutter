@@ -5,12 +5,14 @@ class MonthGridCalendarScroll extends StatefulWidget {
   final ValueChanged<DateTime>? onDateSelected;
   final ValueChanged<DateTime>? onVisibleDateChanged;
   final PageController? pageController;
+  final int filterVersion;
 
   const MonthGridCalendarScroll({
     Key? key,
     this.onDateSelected,
     this.onVisibleDateChanged,
     this.pageController,
+    this.filterVersion = 0,
   }) : super(key: key);
 
   @override
@@ -49,6 +51,7 @@ class _MonthGridCalendarScrollState extends State<MonthGridCalendarScroll> {
         int monthOffset = index - _initialPage;
         return MonthGridWithEventsWidget(
           monthOffset: monthOffset,
+          filterVersion: widget.filterVersion,
         );
       },
     );

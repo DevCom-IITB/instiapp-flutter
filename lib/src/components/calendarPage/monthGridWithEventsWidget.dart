@@ -8,7 +8,12 @@ import '../../blocs/new_calendar_bloc.dart';
 
 class MonthGridWithEventsWidget extends StatefulWidget {
   final int monthOffset;
-  const MonthGridWithEventsWidget({Key? key, required this.monthOffset}) : super(key: key);
+  final int filterVersion;
+  const MonthGridWithEventsWidget({
+    Key? key,
+    required this.monthOffset,
+    this.filterVersion = 0,
+  }) : super(key: key);
 
   @override
   State<MonthGridWithEventsWidget> createState() => _MonthGridWithEventsWidgetState();
@@ -18,6 +23,7 @@ class _MonthGridWithEventsWidgetState extends State<MonthGridWithEventsWidget> {
   static const List<String> _dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   
   DateTime? _lastFetchedMonth;
+  int? _lastFilterVersion;
   Future<CalendarFeedResponse?>? _eventsFuture;
 
   Future<CalendarFeedResponse?> _fetchEventsForMonth(DateTime currentDate) async {
@@ -64,8 +70,10 @@ class _MonthGridWithEventsWidgetState extends State<MonthGridWithEventsWidget> {
 
     if (_lastFetchedMonth == null ||
         _lastFetchedMonth!.year != currentDate.year ||
-        _lastFetchedMonth!.month != currentDate.month) {
+        _lastFetchedMonth!.month != currentDate.month ||
+        _lastFilterVersion != widget.filterVersion) {
       _lastFetchedMonth = currentDate;
+      _lastFilterVersion = widget.filterVersion;
       _eventsFuture = _fetchEventsForMonth(currentDate);
     }
 

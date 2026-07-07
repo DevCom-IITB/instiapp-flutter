@@ -29,6 +29,7 @@ class _CalendarPageState extends State<CalendarPage>
   late final NewCalendarCubit _calendarCubit;
   String _selectedView = 'day';
   bool _showMonthSelector = false;
+  int _filterVersion = 0;
 // inside _ExplorePageState
   final ScrollController _listController = ScrollController();
   double _maxScrollOffset = double.infinity;
@@ -389,9 +390,14 @@ class _CalendarPageState extends State<CalendarPage>
                                             !_showMonthSelector;
                                       });
                                     },
-                                    onFilterTap: () {
-                                      showCalendarFiltersBottomSheet(context);
-                                    },
+                                    onFilterTap: () async {
+                                       await showCalendarFiltersBottomSheet(context);
+                                       if (mounted) {
+                                         setState(() {
+                                           _filterVersion++;
+                                         });
+                                       }
+                                     },
                                     onTodayTap: _onTodayTap,
                                   ),
                                   AnimatedSize(
@@ -482,10 +488,15 @@ class _CalendarPageState extends State<CalendarPage>
                                                 !_showMonthSelector;
                                           });
                                         },
-                                        onFilterTap: () {
-                                          showCalendarFiltersBottomSheet(
-                                              context);
-                                        },
+                                        onFilterTap: () async {
+                                           await showCalendarFiltersBottomSheet(
+                                               context);
+                                           if (mounted) {
+                                             setState(() {
+                                               _filterVersion++;
+                                             });
+                                           }
+                                         },
                                         onTodayTap: _onTodayTap,
                                       ),
                                       AnimatedSize(
@@ -645,6 +656,7 @@ class _CalendarPageState extends State<CalendarPage>
                                                 : Responsive.height(575, context),
                                           ),
                                           child: MonthGridCalendarScroll(
+                                            filterVersion: _filterVersion,
                                             pageController: _monthPageController,
                                             onVisibleDateChanged: (DateTime date) {
                                               calendarCubit.setVisibleDate(date);
@@ -666,7 +678,7 @@ class _CalendarPageState extends State<CalendarPage>
                     if (_selectedView == 'list')
                       Expanded(
                         child: ListViewWidget(
-                          key: ValueKey(calendarCubit.selectedDate),
+                          key: ValueKey('${calendarCubit.selectedDate}_$_filterVersion'),
                           controller: _listController,
                           selectedDate: calendarCubit.selectedDate,
                         ),
@@ -675,7 +687,7 @@ class _CalendarPageState extends State<CalendarPage>
                       Expanded(
                         child: SingleChildScrollView(
                           child: EventsSectionWidget(
-                            key: ValueKey(calendarCubit.selectedDate),
+                            key: ValueKey('${calendarCubit.selectedDate}_$_filterVersion'),
                             day: calendarCubit.selectedDate,
                           ),
                         ),

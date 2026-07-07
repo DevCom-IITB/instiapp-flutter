@@ -37,6 +37,8 @@ import 'package:InstiApp/src/blocs/mess_calendar_bloc.dart';
 import 'package:InstiApp/src/api/response/calendar_feed_response.dart';
 import 'package:InstiApp/src/api/model/calendar_item.dart';
 import 'package:InstiApp/src/api/model/resobin_course.dart';
+import 'package:InstiApp/src/api/model/calendar_body_preference.dart';
+import 'package:InstiApp/src/api/model/calendar_body.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -49,6 +51,7 @@ import 'package:rxdart/rxdart.dart';
 // import 'package:http/io_client.dart';
 // import 'package:http/browser_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:InstiApp/src/api/response/calendar_preference_response.dart';
 
 enum AddToCalendar { AlwaysAsk, Yes, No }
 
@@ -140,6 +143,9 @@ class InstiAppBloc {
   late LostAndFoundPostBloc lostAndFoundPostBloc;
   // actual current state
   Session? currSession;
+  CalendarPreferencesResponse? calendarPreferences;
+  List<CalendarBodyPreference>? calendarPrefBodies;
+  List<CalendarBody>? calendarShared;
   var _hostels = <Hostel>[];
   var _events = <Event>[];
   var _achievements = <Achievement>[];
@@ -726,22 +732,154 @@ class InstiAppBloc {
         : "";
   }
 
+  Future<CalendarPreferencesResponse> getOrFetchCalendarPreferences() async {
+    if (calendarPreferences != null) {
+      return calendarPreferences!;
+    }
+    final sessionHeader = getSessionIdHeader();
+    if (sessionHeader.isEmpty) {
+      debugPrint('getOrFetchCalendarPreferences: sessionHeader is empty');
+      return CalendarPreferencesResponse(
+        showInstiappGoing: true,
+        showInstiappFollowedBodies: true,
+        showResobin: true,
+        notificationsEnabled: true,
+      );
+    }
+    try {
+      final prefsList = await client.getCalendarPreferences(sessionHeader);
+      debugPrint('getOrFetchCalendarPreferences: prefsList fetched successfully. Length=${prefsList.length}');
+      if (prefsList.isNotEmpty) {
+        calendarPreferences = prefsList.first;
+        debugPrint('getOrFetchCalendarPreferences: first pref showGoing=${calendarPreferences!.showInstiappGoing}, showFollowed=${calendarPreferences!.showInstiappFollowedBodies}, showResobin=${calendarPreferences!.showResobin}');
+      }
+    } catch (e) {
+      debugPrint('getOrFetchCalendarPreferences: Error fetching calendar preferences: $e');
+    }
+    calendarPreferences ??= CalendarPreferencesResponse();
+    calendarPreferences!.showInstiappGoing = true;
+    calendarPreferences!.showInstiappFollowedBodies ??= true;
+    calendarPreferences!.showResobin ??= true;
+    calendarPreferences!.notificationsEnabled ??= true;
+    return calendarPreferences!;
+  }
+
+  Future<void> updateCalendarPreferences(CalendarPreferencesResponse prefs) async {
+    prefs.showInstiappGoing = true;
+    calendarPreferences = prefs;
+    final sessionHeader = getSessionIdHeader();
+    if (sessionHeader.isNotEmpty) {
+      try {
+        await client.updateCalendarPreferences(sessionHeader, prefs);
+      } catch (e) {
+        debugPrint('Error updating calendar preferences: $e');
+      }
+    }
+  }
+
+  Future<List<CalendarBodyPreference>> getOrFetchCalendarPrefBodies() async {
+    if (calendarPrefBodies != null) {
+      return calendarPrefBodies!;
+    }
+    final sessionHeader = getSessionIdHeader();
+    if (sessionHeader.isEmpty) {
+      return [];
+    }
+    try {
+      final list = await client.getCalendarPrefBodies(sessionHeader);
+      calendarPrefBodies = list;
+    } catch (e) {
+      debugPrint('Error fetching calendar body preferences: $e');
+    }
+    calendarPrefBodies ??= [];
+    return calendarPrefBodies!;
+  }
+
+  Future<void> updateSingleCalendarPrefBody(String id, CalendarBodyPreference body) async {
+    final sessionHeader = getSessionIdHeader();
+    if (sessionHeader.isNotEmpty) {
+      try {
+        await client.updateCalendarPrefBody(sessionHeader, id, body);
+        if (calendarPrefBodies != null) {
+          final idx = calendarPrefBodies!.indexWhere((element) => element.bodyId == id);
+          if (idx != -1) {
+            calendarPrefBodies![idx] = body;
+          }
+        }
+      } catch (e) {
+        debugPrint('Error updating single calendar body preference: $e');
+      }
+    }
+  }
+
+  Future<List<CalendarBody>> getOrFetchCalendarShared() async {
+    if (calendarShared != null) {
+      return calendarShared!;
+    }
+    final sessionHeader = getSessionIdHeader();
+    if (sessionHeader.isEmpty) {
+      return [];
+    }
+    try {
+      final list = await client.getCalendarShared(sessionHeader);
+      for (var item in list) {
+        item.isActive ??= true;
+      }
+      calendarShared = list;
+    } catch (e) {
+      debugPrint('Error fetching shared calendars: $e');
+    }
+    calendarShared ??= [];
+    return calendarShared!;
+  }
+
+  Future<void> toggleSharedCalendar(String slug, bool enabled) async {
+    if (calendarShared != null) {
+      final idx = calendarShared!.indexWhere((element) => element.slug == slug);
+      if (idx != -1) {
+        calendarShared![idx].isActive = enabled;
+      }
+    }
+    final sessionHeader = getSessionIdHeader();
+    if (sessionHeader.isNotEmpty) {
+      try {
+        await client.toggleSharedCalendar(sessionHeader, slug, {"is_active": enabled});
+      } catch (e) {
+        debugPrint('Error toggling shared calendar: $e');
+      }
+    }
+  }
+
   Future<CalendarFeedResponse> getCalendarFeedCombined(
     String sessionId,
     String start,
     String end,
     String tz,
   ) async {
+    final prefs = await getOrFetchCalendarPreferences();
+    debugPrint('getCalendarFeedCombined: prefs showInstiappGoing=${prefs.showInstiappGoing}, showInstiappFollowedBodies=${prefs.showInstiappFollowedBodies}, showResobin=${prefs.showResobin}');
+
     CalendarFeedResponse originalFeed;
     try {
       originalFeed = await client.getCalendarFeed(sessionId, start, end, tz);
+      debugPrint('getCalendarFeedCombined: originalFeed fetched successfully with ${originalFeed.items.length} items');
     } catch (e) {
-      debugPrint('Error fetching base calendar feed: $e');
+      if (e is DioException) {
+        debugPrint('getCalendarFeedCombined: request uri: ${e.requestOptions.uri}');
+        debugPrint('getCalendarFeedCombined: request headers: ${e.requestOptions.headers}');
+      }
+      debugPrint('getCalendarFeedCombined: Error fetching base calendar feed: $e');
       originalFeed = CalendarFeedResponse(items: []);
+    }
+
+    if (prefs.showResobin == false) {
+      debugPrint('getCalendarFeedCombined: showResobin is false, returning original feed directly');
+      return originalFeed;
     }
 
     final rollNo = currSession?.profile?.userRollNumber;
     if (rollNo == null || rollNo.isEmpty) {
+      debugPrint('getCalendarFeedCombined: rollNo is null/empty, returning original feed');
       return originalFeed;
     }
 

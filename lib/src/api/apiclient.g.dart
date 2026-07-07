@@ -13,7 +13,7 @@ class _InstiAppApi implements InstiAppApi {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
+    baseUrl ??= 'http://10.0.2.2:8000/api';
   }
 
   final Dio _dio;
@@ -2761,15 +2761,15 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
-  Future<CalendarPreferencesResponse> getCalendarPreferences(
+  Future<List<CalendarPreferencesResponse>> getCalendarPreferences(
       String sessionId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<CalendarPreferencesResponse>(Options(
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<List<CalendarPreferencesResponse>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -2785,12 +2785,15 @@ class _InstiAppApi implements InstiAppApi {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = CalendarPreferencesResponse.fromJson(_result.data!);
+    var value = _result.data!
+        .map((dynamic i) =>
+            CalendarPreferencesResponse.fromJson(i as Map<String, dynamic>))
+        .toList();
     return value;
   }
 
   @override
-  Future<CalendarPreferencesResponse> updateCalendarPreferences(
+  Future<List<CalendarPreferencesResponse>> updateCalendarPreferences(
     String sessionId,
     CalendarPreferencesResponse preferences,
   ) async {
@@ -2798,9 +2801,10 @@ class _InstiAppApi implements InstiAppApi {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
-    final _data = preferences;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<CalendarPreferencesResponse>(Options(
+    final _data = <String, dynamic>{};
+    _data.addAll(preferences.toJson());
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<List<CalendarPreferencesResponse>>(Options(
       method: 'PATCH',
       headers: _headers,
       extra: _extra,
@@ -2816,20 +2820,23 @@ class _InstiAppApi implements InstiAppApi {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = CalendarPreferencesResponse.fromJson(_result.data!);
+    var value = _result.data!
+        .map((dynamic i) =>
+            CalendarPreferencesResponse.fromJson(i as Map<String, dynamic>))
+        .toList();
     return value;
   }
 
   @override
-  Future<CalendarPrefBodyResponse> getCalendarPrefBodies(
+  Future<List<CalendarBodyPreference>> getCalendarPrefBodies(
       String sessionId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<CalendarPrefBodyResponse>(Options(
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<List<CalendarBodyPreference>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -2845,15 +2852,18 @@ class _InstiAppApi implements InstiAppApi {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = CalendarPrefBodyResponse.fromJson(_result.data!);
+    var value = _result.data!
+        .map((dynamic i) =>
+            CalendarBodyPreference.fromJson(i as Map<String, dynamic>))
+        .toList();
     return value;
   }
 
   @override
-  Future<CalendarPrefBodyResponse> updateCalendarPrefBody(
+  Future<CalendarBodyPreference> updateCalendarPrefBody(
     String sessionId,
     String id,
-    CalendarPrefBodyResponse body,
+    CalendarBodyPreference body,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -2862,7 +2872,7 @@ class _InstiAppApi implements InstiAppApi {
     final _data = <String, dynamic>{};
     _data.addAll(body.toJson());
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<CalendarPrefBodyResponse>(Options(
+        _setStreamType<CalendarBodyPreference>(Options(
       method: 'PATCH',
       headers: _headers,
       extra: _extra,
@@ -2878,19 +2888,19 @@ class _InstiAppApi implements InstiAppApi {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = CalendarPrefBodyResponse.fromJson(_result.data!);
+    final value = CalendarBodyPreference.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<CalendarShareResponse> getCalendarShared(String sessionId) async {
+  Future<List<CalendarBody>> getCalendarShared(String sessionId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
     final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<CalendarShareResponse>(Options(
+    final _result = await _dio
+        .fetch<List<dynamic>>(_setStreamType<List<CalendarBody>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -2906,7 +2916,9 @@ class _InstiAppApi implements InstiAppApi {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = CalendarShareResponse.fromJson(_result.data!);
+    var value = _result.data!
+        .map((dynamic i) => CalendarBody.fromJson(i as Map<String, dynamic>))
+        .toList();
     return value;
   }
 
@@ -3060,13 +3072,14 @@ class _InstiAppApi implements InstiAppApi {
   Future<void> toggleSharedCalendar(
     String sessionId,
     String slug,
-    bool enabled,
+    Map<String, dynamic> body,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Cookie': sessionId};
     _headers.removeWhere((k, v) => v == null);
-    final _data = enabled;
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
     await _dio.fetch<void>(_setStreamType<void>(Options(
       method: 'PATCH',
       headers: _headers,

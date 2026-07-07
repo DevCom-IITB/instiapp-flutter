@@ -1,8 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:InstiApp/src/api/model/calendar_item.dart';
 
 part 'calendar_preference_response.g.dart';
-
 
 // response format is
 // [
@@ -17,15 +15,29 @@ part 'calendar_preference_response.g.dart';
 
 @JsonSerializable()
 class CalendarPreferencesResponse {
-  
-  final List<CalendarItem> items;
+  @JsonKey(name: "show_instiapp_going")
+  bool? showInstiappGoing;
+
+  @JsonKey(name: "show_instiapp_followed_bodies")
+  bool? showInstiappFollowedBodies;
+
+  @JsonKey(name: "show_resobin")
+  bool? showResobin;
+
+  @JsonKey(name: "notifications_enabled")
+  bool? notificationsEnabled;
 
   CalendarPreferencesResponse({
-    required this.items,
+    this.showInstiappGoing,
+    this.showInstiappFollowedBodies,
+    this.showResobin,
+    this.notificationsEnabled,
   });
 
   factory CalendarPreferencesResponse.fromJson(
     Map<String, dynamic> json,
   ) =>
       _$CalendarPreferencesResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CalendarPreferencesResponseToJson(this);
 }

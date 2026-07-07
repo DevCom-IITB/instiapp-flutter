@@ -4,6 +4,7 @@ import 'package:InstiApp/src/api/model/UserTag.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/buynsellPost.dart';
+import 'package:InstiApp/src/api/model/calendar_body.dart';
 import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/event.dart';
@@ -62,12 +63,13 @@ import 'package:retrofit/retrofit.dart' as rt;
 
 import 'model/offersecret.dart';
 import 'model/resobin_course.dart';
+import 'model/calendar_body_preference.dart';
 
 part 'apiclient.g.dart';
 
-// @rt.RestApi(baseUrl: "http://10.0.2.2:3000/api")
+@rt.RestApi(baseUrl: "http://10.0.2.2:8000/api")
 // @rt.RestApi(baseUrl: "https://035b-2401-4900-aa02-ddb0-5df9-3d94-6b84-937f.ngrok-free.app/api")
-@rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
+// @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
 // @rt.RestApi(baseUrl: "http://10.195.160.117/api")
 //@rt.RestApi(baseUrl: "https://nayeli-nonbulbar-denominationally.ngrok-free.dev/api")
 // @rt.RestApi(baseUrl: "https://f6ba722a576a.ngrok-free.app/api")
@@ -465,7 +467,7 @@ abstract class InstiAppApi {
   Future<LostAndFoundPost> getLostAndFoundPost(
       @rt.Header("Cookie") String sessionId, @rt.Path() String id);
 
-
+  // Resobin Calendar Daily Schedule Endpoint
   @rt.GET("https://resobin.gymkhana.iitb.ac.in/api/todays-schedule/{roll_no}/")
   Future<List<ResobinCourse>> getResobinSchedule(
     @rt.Path("roll_no") String rollNo,
@@ -483,30 +485,30 @@ abstract class InstiAppApi {
   );
 
   @rt.GET('/calendar/preferences')
-  Future<CalendarPreferencesResponse> getCalendarPreferences(
+  Future<List<CalendarPreferencesResponse>> getCalendarPreferences(
     @rt.Header("Cookie") String sessionId,
   );
 
   @rt.PATCH('/calendar/preferences')
-  Future<CalendarPreferencesResponse> updateCalendarPreferences(
+  Future<List<CalendarPreferencesResponse>> updateCalendarPreferences(
     @rt.Header("Cookie") String sessionId,
     @rt.Body() CalendarPreferencesResponse preferences,
   );
 
   @rt.GET('/calendar/preferences/bodies')
-  Future<CalendarPrefBodyResponse> getCalendarPrefBodies(
+  Future<List<CalendarBodyPreference>> getCalendarPrefBodies(
     @rt.Header("Cookie") String sessionId,
   );
 
   @rt.PATCH('/calendar/preferences/bodies/{id}')
-  Future<CalendarPrefBodyResponse> updateCalendarPrefBody(
+  Future<CalendarBodyPreference> updateCalendarPrefBody(
     @rt.Header("Cookie") String sessionId,
-    @rt.Path() String id,
-    @rt.Body() CalendarPrefBodyResponse body,
+    @rt.Path("id") String id,
+    @rt.Body() CalendarBodyPreference body,
   );
 
   @rt.GET('/calendar/shared')
-  Future<CalendarShareResponse> getCalendarShared(
+  Future<List<CalendarBody>> getCalendarShared(
     @rt.Header("Cookie") String sessionId,
   );
 
@@ -558,7 +560,7 @@ abstract class InstiAppApi {
   @rt.PATCH('/calendar/shared/{slug}/toggle')
   Future<void> toggleSharedCalendar(
     @rt.Header("Cookie") String sessionId,
-    @rt.Path() String slug,
-    @rt.Body() bool enabled,
+    @rt.Path("slug") String slug,
+    @rt.Body() Map<String, dynamic> body,
   );
 }
