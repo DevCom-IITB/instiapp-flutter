@@ -34,6 +34,9 @@ import 'package:InstiApp/src/blocs/explore_bloc.dart';
 import 'package:InstiApp/src/blocs/lost_and_found_bloc.dart';
 import 'package:InstiApp/src/blocs/map_bloc.dart';
 import 'package:InstiApp/src/blocs/mess_calendar_bloc.dart';
+import 'package:InstiApp/src/api/response/calendar_feed_response.dart';
+import 'package:InstiApp/src/api/model/calendar_item.dart';
+import 'package:InstiApp/src/api/model/resobin_course.dart';
 import 'package:InstiApp/src/drawer.dart';
 import 'package:InstiApp/src/utils/app_brightness.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -721,6 +724,84 @@ class InstiAppBloc {
     return currSession?.sessionid != null
         ? "sessionid=${currSession?.sessionid}"
         : "";
+  }
+
+  Future<CalendarFeedResponse> getCalendarFeedCombined(
+    String sessionId,
+    String start,
+    String end,
+    String tz,
+  ) async {
+    CalendarFeedResponse originalFeed;
+    try {
+      originalFeed = await client.getCalendarFeed(sessionId, start, end, tz);
+    } catch (e) {
+      debugPrint('Error fetching base calendar feed: $e');
+      originalFeed = CalendarFeedResponse(items: []);
+    }
+
+    final rollNo = currSession?.profile?.userRollNumber;
+    if (rollNo == null || rollNo.isEmpty) {
+      return originalFeed;
+    }
+
+    List<ResobinCourse> resobinFeed = [];
+    try {
+      resobinFeed = await client.getResobinSchedule(rollNo, "ResInstiance");
+    } catch (e) {
+      debugPrint('Error fetching Resobin schedule: $e');
+    }
+
+    if (resobinFeed.isEmpty) {
+      return originalFeed;
+    }
+
+    final items = List<CalendarItem>.from(originalFeed.items);
+    final startDate = DateTime.tryParse(start);
+    final endDate = DateTime.tryParse(end);
+
+    if (startDate != null && endDate != null) {
+      for (var date = startDate; date.isBefore(endDate); date = date.add(const Duration(days: 1))) {
+        final weekdayStr = date.weekday.toString();
+        
+        for (final course in resobinFeed) {
+          if (course.lectureSlots != null) {
+            for (final slot in course.lectureSlots!) {
+              if (slot.day == weekdayStr && slot.startTime != null && slot.endTime != null) {
+                final dateStr = "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+                final startIso = "${dateStr}T${slot.startTime}+05:30";
+                final endIso = "${dateStr}T${slot.endTime}+05:30";
+                items.add(CalendarItem(
+                  uid: "resobin-lec-${course.id}-${slot.slot ?? ''}-${dateStr}",
+                  title: "${course.course?.code ?? ''} - ${course.course?.title ?? ''} (Lec: ${course.lectureVenue ?? ''})",
+                  startTime: startIso,
+                  endTime: endIso,
+                  all_day: false,
+                ));
+              }
+            }
+          }
+          if (course.tutorialSlots != null) {
+            for (final slot in course.tutorialSlots!) {
+              if (slot.day == weekdayStr && slot.startTime != null && slot.endTime != null) {
+                final dateStr = "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+                final startIso = "${dateStr}T${slot.startTime}+05:30";
+                final endIso = "${dateStr}T${slot.endTime}+05:30";
+                items.add(CalendarItem(
+                  uid: "resobin-tut-${course.id}-${slot.slot ?? ''}-${dateStr}",
+                  title: "${course.course?.code ?? ''} - ${course.course?.title ?? ''} (Tut: ${course.lectureVenue ?? ''})",
+                  startTime: startIso,
+                  endTime: endIso,
+                  all_day: false,
+                ));
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return CalendarFeedResponse(items: items);
   }
 
   Future<void> logout() async {

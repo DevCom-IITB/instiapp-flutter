@@ -115,7 +115,7 @@ class NewCalendarBloc {
     String start,
     String end,
   ) async {
-    final response = await bloc.client.getCalendarFeed(
+    final response = await bloc.getCalendarFeedCombined(
       sessionId,
       start,
       end,

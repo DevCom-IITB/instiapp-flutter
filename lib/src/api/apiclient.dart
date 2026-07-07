@@ -61,6 +61,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart' as rt;
 
 import 'model/offersecret.dart';
+import 'model/resobin_course.dart';
 
 part 'apiclient.g.dart';
 
@@ -464,6 +465,15 @@ abstract class InstiAppApi {
   Future<LostAndFoundPost> getLostAndFoundPost(
       @rt.Header("Cookie") String sessionId, @rt.Path() String id);
 
+
+  @rt.GET("https://resobin.gymkhana.iitb.ac.in/api/todays-schedule/{roll_no}/")
+  Future<List<ResobinCourse>> getResobinSchedule(
+    @rt.Path("roll_no") String rollNo,
+    @rt.Header("X-API-Key") String apiKey,
+  );
+
+  // Calendar Endpoints
+
   @rt.GET('/calendar/feed')
   Future<CalendarFeedResponse> getCalendarFeed(
     @rt.Header("Cookie") String sessionId,
@@ -500,7 +510,7 @@ abstract class InstiAppApi {
     @rt.Header("Cookie") String sessionId,
   );
 
-//  response is like
+//  response 
 // {
 //   "id":"d67f9ff0-d34a-45ec-9edd-e073c3765678",
 //    "name":"IIT Bombay Academic Calendar 2025-26",

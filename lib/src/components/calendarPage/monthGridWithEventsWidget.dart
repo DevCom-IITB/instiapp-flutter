@@ -43,7 +43,7 @@ class _MonthGridWithEventsWidgetState extends State<MonthGridWithEventsWidget> {
     final isoFormat = [yyyy, '-', mm, '-', dd];
 
     try {
-      final response = await bloc.client.getCalendarFeed(
+      final response = await bloc.getCalendarFeedCombined(
         sessionHeader,
         formatDate(start, isoFormat),
         formatDate(end, isoFormat),

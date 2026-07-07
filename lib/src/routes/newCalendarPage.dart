@@ -104,7 +104,7 @@ class _CalendarPageState extends State<CalendarPage>
       print(end);
       print(isoFormat);
 
-      final response = await bloc.client.getCalendarFeed(
+      final response = await bloc.getCalendarFeedCombined(
         sessionHeader,
         formatDate(start, isoFormat),
         formatDate(end, isoFormat),
