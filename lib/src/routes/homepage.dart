@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import "notificationspage.dart";
 import 'feedpage.dart';
 
@@ -24,6 +25,7 @@ import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:intl/intl.dart';
 import '../widgets/custom_dialog.dart';
 import '../widgets/bottom_navbar.dart';
+import '../widgets/calendar_update_popup.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:InstiApp/main.dart' as main_app;
@@ -56,6 +58,8 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
+
+  // static const String _calendarUpdatePopupSeenKey;
 
   String currentpage = 'homepage';
   Constants myConstants = Constants();
@@ -365,6 +369,11 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         setState(() {
           firstBuild = false;
         });
+
+        // Show the "Insti-Calendar is out!" popup once, on the very first
+        // time the app is opened. Persisted via shared_preferences so it
+        // never shows again after the user has dismissed/acted on it.
+        _maybeShowCalendarUpdatePopup();
       });
     }
   }
@@ -380,6 +389,23 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
         ),
       );
     });
+  }
+
+  /// Shows the calendar-update popup every time the homepage is opened.
+  Future<void> _maybeShowCalendarUpdatePopup() async {
+    // cross button needed
+    if (!mounted) return;
+
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (dialogContext) => CalendarUpdatePopup(
+        onLater: () => Navigator.of(dialogContext).pop(),
+        onUpdateNow: () {
+          // idhar app store play store link aayega?
+        },
+      ),
+    );
   }
 
   int getCurrentMealSlot() {
@@ -1567,74 +1593,6 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                 ),
               ),
             )
-            // Row(
-            //   children: [
-            //     Container(
-            //       height: 40,
-            //       width: 78.5,
-            //       decoration: BoxDecoration(
-            //         color: myConstants.instiappGrey,
-            //         borderRadius: BorderRadius.circular(20),
-            //       ),
-            //       child: Center(
-            //         child: DropdownButton(
-            //           items: HostelMess.dayToName.values
-            //                   .map((d) => DropdownMenuItem(value: d.substring(0,3), child: Text(d.substring(0,3))))
-            //                   .toList(),
-            //           onChanged: (String? newDay) {
-            //             setState(() {
-            //               _dropdownDay = newDay!;
-            //             });
-            //           },
-            //           value: _dropdownDay,
-            //           icon: Icon(Icons.keyboard_arrow_down),
-            //           style: TextStyle(
-            //             color: Colors.grey[800],
-            //             fontWeight: FontWeight.w400,
-            //           ),
-            //           underline: SizedBox(),
-            //         ),
-            //       ),
-            //     ),
-            //     SizedBox(width: 8),
-            //     Container(
-            //       height: 40,
-            //       width: 78.5,
-            //       decoration: BoxDecoration(
-            //         color: myConstants.instiappGrey,
-            //         borderRadius: BorderRadius.circular(20),
-            //       ),
-            //       padding: EdgeInsets.only(left: 10),
-            //       child: DropdownButton(
-            //         items: hostels.map((h){
-            //           final name=(h.shortName! =='tansa'||h.shortName! =='qip')
-            //           ? h.shortName!
-            //           : 'H-${h.shortName!}';
-            //           return DropdownMenuItem(
-            //             value: h.shortName!,
-            //             child: Text(name)
-            //             );
-            //         }).toList(),
-            //         onChanged: (String? newValue) {
-            //           setState(() {
-            //             _dropdownHostel = newValue!;
-            //           });
-            //         },
-            //         value: _dropdownHostel,
-            //         icon: Padding(
-            //           padding: const EdgeInsets.only(left: 7),
-            //           child: Icon(Icons.keyboard_arrow_down),
-            //         ),
-            //         style: TextStyle(
-            //           color: Colors.grey[800],
-            //           fontWeight: FontWeight.w400,
-            //         ),
-            //         underline: SizedBox(),
-
-            //       ),
-            //     ),
-            //   ],
-            // )
           ],
         ),
         SizedBox(height: responsive.h(20)),
