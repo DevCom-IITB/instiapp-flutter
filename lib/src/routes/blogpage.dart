@@ -1,6 +1,7 @@
-// import 'dart:async';
+import 'dart:async';
 import 'dart:core';
 import 'dart:collection';
+import 'dart:math' as math;
 import 'package:InstiApp/src/routes/blogslogin.dart';
 import 'package:flutter/material.dart';
 import 'package:InstiApp/src/api/model/post.dart';
@@ -17,6 +18,91 @@ import 'package:html/parser.dart' as html_parser;
 import 'package:InstiApp/src/utils/responsivenew.dart';
 import 'dart:convert';
 import 'package:html/dom.dart' as html_dom;
+
+// How recent a post has to be to get the "New" pill.
+const Duration kNewPostWindow = Duration(hours: 12);
+
+/// Best-effort "is this post new" check.
+///
+/// Confirmed from post.dart: `Post.published` is just a plain `String?` --
+/// there's no separate raw/ISO timestamp field on the model, and no
+/// "mention" field either. So this has to work off the display string
+/// itself (e.g. "Thur, Nov 28, 22:53:02"), which has NO YEAR in it.
+///
+/// This is a workaround, not a proper fix: it assumes the current year,
+/// and rolls back a year if that would place the post in the future. That
+/// mostly works, but is ambiguous right at year boundaries (e.g. a post
+/// from ~12 months ago could misfire). The real fix is to have the API
+/// expose a raw ISO timestamp on Post -- worth flagging to whoever owns
+/// the backend if the "New" pill needs to be reliable.
+bool isPostNew(Post? post) {
+  final DateTime? parsed = _parsePublishedDate(post?.published);
+  if (parsed == null) return false;
+  return DateTime.now().difference(parsed) <= kNewPostWindow;
+}
+
+DateTime? _parsePublishedDate(String? raw) {
+  if (raw == null || raw.isEmpty) return null;
+
+  // In case `published` is ever a proper ISO 8601 / RFC 3339 string.
+  final DateTime? iso = DateTime.tryParse(raw);
+  if (iso != null) return iso;
+
+  // Fallback: parse the "EEE, MMM d, HH:mm:ss" shape seen in the UI today
+  // (e.g. "Thur, Nov 28, 22:53:02"), assuming the current year.
+  const Map<String, int> monthMap = {
+    'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
+    'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12,
+  };
+  final RegExpMatch? match = RegExp(
+    r'^\s*\w+,\s*([A-Za-z]{3})[a-z]*\s+(\d{1,2}),\s*(\d{1,2}):(\d{2}):(\d{2})\s*$',
+  ).firstMatch(raw);
+  if (match == null) return null;
+
+  final int? month = monthMap[match.group(1)!.toLowerCase()];
+  final int? day = int.tryParse(match.group(2)!);
+  final int? hour = int.tryParse(match.group(3)!);
+  final int? minute = int.tryParse(match.group(4)!);
+  final int? second = int.tryParse(match.group(5)!);
+  if (month == null || day == null || hour == null || minute == null || second == null) {
+    return null;
+  }
+
+  final DateTime now = DateTime.now();
+  DateTime candidate = DateTime(now.year, month, day, hour, minute, second);
+  if (candidate.isAfter(now.add(const Duration(days: 1)))) {
+    candidate = DateTime(now.year - 1, month, day, hour, minute, second);
+  }
+  return candidate;
+}
+
+// Small pill used for the "New" / "Mention" tags on a post header.
+class BlogTagPill extends StatelessWidget {
+  final String label;
+  final Color color;
+  const BlogTagPill({Key? key, required this.label, required this.color})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        border: Border.all(color: color, width: 1.33),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 10,
+          fontFamily: 'Inter',
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+}
 
 TextSpan highlight(String result, String query, BuildContext context) {
   TextStyle posRes = TextStyle(
@@ -111,6 +197,7 @@ class _BlogPageState extends State<BlogPage> {
     _focusNode.dispose();
     _placementScrollController?.dispose();
     _trainingScrollController?.dispose();
+    _yearPillHideTimer?.cancel();
     super.dispose();
   }
 
@@ -126,6 +213,16 @@ class _BlogPageState extends State<BlogPage> {
   double isFabVisible = 0;
   IconData actionIcon = Icons.search_outlined;
 
+  // Floating "current year" pill for the company-wise view.
+  // Keys let us measure where each year header actually ended up on screen
+  // (no sticky-header package needed for a "fade in/out while scrolling"
+  // indicator -- we just need to know which section is at the top).
+  final Map<int, GlobalKey> _companyYearHeaderKeys = {};
+  final GlobalKey _companyListViewportKey = GlobalKey();
+  int? _visibleYear;
+  double _yearPillOpacity = 0;
+  Timer? _yearPillHideTimer;
+
   ScrollController? get _activeScrollController {
     return postType == PostType.Placement
         ? _placementScrollController
@@ -139,6 +236,48 @@ class _BlogPageState extends State<BlogPage> {
         controller.position.userScrollDirection == ScrollDirection.forward &&
             controller.offset > 100;
     setState(() => isFabVisible = visible ? 1 : 0);
+
+    if (view == 'company') {
+      _updateVisibleYearIndicator();
+    }
+  }
+
+  // Finds the year header that's scrolled up to (or past) the top of the
+  // list viewport, shows the floating pill for it, and schedules the pill
+  // to fade back out shortly after scrolling settles.
+  void _updateVisibleYearIndicator() {
+    const double topThreshold = 12; // relative to the list's own viewport
+    final RenderObject? viewport =
+    _companyListViewportKey.currentContext?.findRenderObject();
+    if (viewport is! RenderBox || !viewport.attached) return;
+
+    int? matchedYear;
+    double? matchedY;
+
+    for (final entry in _companyYearHeaderKeys.entries) {
+      final renderObject = entry.value.currentContext?.findRenderObject();
+      if (renderObject is! RenderBox || !renderObject.attached) continue;
+      final double y =
+          renderObject.localToGlobal(Offset.zero, ancestor: viewport).dy;
+      if (y <= topThreshold && (matchedY == null || y > matchedY!)) {
+        matchedYear = entry.key;
+        matchedY = y;
+      }
+    }
+
+    if (matchedYear == null) return;
+
+    if (matchedYear != _visibleYear || _yearPillOpacity == 0) {
+      setState(() {
+        _visibleYear = matchedYear;
+        _yearPillOpacity = 1;
+      });
+    }
+
+    _yearPillHideTimer?.cancel();
+    _yearPillHideTimer = Timer(const Duration(milliseconds: 900), () {
+      if (mounted) setState(() => _yearPillOpacity = 0);
+    });
   }
 
   bool firstBuild = true;
@@ -241,7 +380,7 @@ class _BlogPageState extends State<BlogPage> {
                                   label: 'Department',
                                   isActive: activeTab == 'department',
                                   onTap: () => setSheetState(
-                                      () => activeTab = 'department'),
+                                          () => activeTab = 'department'),
                                   context: context,
                                 ),
                               ],
@@ -273,7 +412,7 @@ class _BlogPageState extends State<BlogPage> {
                                       ? tempRoles
                                       : tempDepartments;
                                   final isSelected =
-                                      selectedSet.contains(option);
+                                  selectedSet.contains(option);
                                   return GestureDetector(
                                     onTap: () => setSheetState(() {
                                       if (!selectedSet.add(option)) {
@@ -288,13 +427,13 @@ class _BlogPageState extends State<BlogPage> {
                                         children: [
                                           Container(
                                             width:
-                                                Responsive.width(18, context),
+                                            Responsive.width(18, context),
                                             height:
-                                                Responsive.height(18, context),
+                                            Responsive.height(18, context),
                                             decoration: BoxDecoration(
                                               // shape: BoxShape.circle,
                                               borderRadius:
-                                                  BorderRadius.circular(4),
+                                              BorderRadius.circular(4),
                                               border: Border.all(
                                                 color: isSelected
                                                     ? const Color(0xFF306FDC)
@@ -307,10 +446,10 @@ class _BlogPageState extends State<BlogPage> {
                                             ),
                                             child: isSelected
                                                 ? const Icon(
-                                                    Icons.check,
-                                                    size: 16,
-                                                    color: Colors.white,
-                                                  )
+                                              Icons.check,
+                                              size: 16,
+                                              color: Colors.white,
+                                            )
                                                 : null,
                                           ),
                                           SizedBox(
@@ -603,7 +742,7 @@ class _BlogPageState extends State<BlogPage> {
                                       icon: SvgPicture.asset(
                                         'assets/blogs/arrow-left.svg',
                                         height:
-                                            Responsive.height(24.0, context),
+                                        Responsive.height(24.0, context),
                                         width: Responsive.width(24.0, context),
                                         fit: BoxFit.none,
                                       ),
@@ -611,7 +750,7 @@ class _BlogPageState extends State<BlogPage> {
                                         Navigator.of(context)
                                             .pushNamedAndRemoveUntil(
                                           '/feed', //navigate to homepage
-                                          (route) => false,
+                                              (route) => false,
                                         );
                                       },
                                     )),
@@ -687,7 +826,7 @@ class _BlogPageState extends State<BlogPage> {
                                       currquery = query;
                                     });
                                     if ((postType != PostType.ChatBot &&
-                                            query.length >= 4) ||
+                                        query.length >= 4) ||
                                         query.length == 0) {
                                       blogBloc!.query = query;
                                       await blogBloc.refresh(
@@ -726,7 +865,7 @@ class _BlogPageState extends State<BlogPage> {
                                         'assets/explore/x.svg',
                                         width: Responsive.width(24.0, context),
                                         height:
-                                            Responsive.height(24.0, context)),
+                                        Responsive.height(24.0, context)),
                                   ),
                                 ),
                             ],
@@ -739,7 +878,7 @@ class _BlogPageState extends State<BlogPage> {
                                 right: Responsive.width(16.0, context)),
                             child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   InkWell(
                                       borderRadius: BorderRadius.circular(
@@ -794,17 +933,17 @@ class _BlogPageState extends State<BlogPage> {
                                                 Container(
                                                   padding: EdgeInsets.symmetric(
                                                     horizontal:
-                                                        Responsive.width(
-                                                            8.0, context),
+                                                    Responsive.width(
+                                                        8.0, context),
                                                     vertical: Responsive.height(
                                                         2.0, context),
                                                   ),
                                                   decoration: BoxDecoration(
                                                     color:
-                                                        const Color(0xFF306FDC),
+                                                    const Color(0xFF306FDC),
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            999),
+                                                    BorderRadius.circular(
+                                                        999),
                                                   ),
                                                   child: Text(
                                                     _activeBlogFilterCount()
@@ -815,7 +954,7 @@ class _BlogPageState extends State<BlogPage> {
                                                           12.0, context),
                                                       fontFamily: 'DM Sans',
                                                       fontWeight:
-                                                          FontWeight.w700,
+                                                      FontWeight.w700,
                                                     ),
                                                   ),
                                                 ),
@@ -829,72 +968,72 @@ class _BlogPageState extends State<BlogPage> {
                                           ))),
                                   Container(
                                       child: Row(
-                                    children: [
-                                      Container(
-                                        height:
+                                        children: [
+                                          Container(
+                                            height:
                                             Responsive.height(36.0, context),
-                                        width: Responsive.width(36.0, context),
-                                        decoration: BoxDecoration(
-                                          color: view == 'normal'
-                                              ? const Color.fromRGBO(
-                                                  48, 111, 220, 1)
-                                              : const Color.fromRGBO(
-                                                  239, 239, 239, 1),
-                                          borderRadius: BorderRadius.circular(
-                                              Responsive.height(18.0, context)),
-                                        ),
-                                        child: IconButton(
-                                            icon: SvgPicture.asset(
-                                              'assets/blogs/list2.svg',
+                                            width: Responsive.width(36.0, context),
+                                            decoration: BoxDecoration(
                                               color: view == 'normal'
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                              fit: BoxFit.none,
-                                            ),
-                                            onPressed: () {
-                                              setState(() {
-                                                view = 'normal';
-                                              });
-                                            }),
-                                      ),
-                                      SizedBox(
-                                          width:
-                                              Responsive.width(8.0, context)),
-                                      Container(
-                                        height:
-                                            Responsive.height(36.0, context),
-                                        width: Responsive.width(36.0, context),
-                                        decoration: BoxDecoration(
-                                          color: view == 'company wise'
-                                              ? const Color.fromRGBO(
+                                                  ? const Color.fromRGBO(
                                                   48, 111, 220, 1)
-                                              : const Color.fromRGBO(
+                                                  : const Color.fromRGBO(
                                                   239, 239, 239, 1),
-                                          borderRadius:
-                                              BorderRadius.circular(18),
-                                          border: Border.all(
-                                            color: Color.fromRGBO(
-                                                210, 213, 218, 1),
-                                            width:
-                                                Responsive.width(1.0, context),
-                                          ),
-                                        ),
-                                        child: IconButton(
-                                            icon: SvgPicture.asset(
-                                              'assets/blogs/list.svg',
-                                              color: view == 'company wise'
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                              fit: BoxFit.none,
+                                              borderRadius: BorderRadius.circular(
+                                                  Responsive.height(18.0, context)),
                                             ),
-                                            onPressed: () {
-                                              setState(() {
-                                                view = 'company wise';
-                                              });
-                                            }),
-                                      ),
-                                    ],
-                                  ))
+                                            child: IconButton(
+                                                icon: SvgPicture.asset(
+                                                  'assets/blogs/list2.svg',
+                                                  color: view == 'normal'
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                  fit: BoxFit.none,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    view = 'normal';
+                                                  });
+                                                }),
+                                          ),
+                                          SizedBox(
+                                              width:
+                                              Responsive.width(8.0, context)),
+                                          Container(
+                                            height:
+                                            Responsive.height(36.0, context),
+                                            width: Responsive.width(36.0, context),
+                                            decoration: BoxDecoration(
+                                              color: view == 'company wise'
+                                                  ? const Color.fromRGBO(
+                                                  48, 111, 220, 1)
+                                                  : const Color.fromRGBO(
+                                                  239, 239, 239, 1),
+                                              borderRadius:
+                                              BorderRadius.circular(18),
+                                              border: Border.all(
+                                                color: Color.fromRGBO(
+                                                    210, 213, 218, 1),
+                                                width:
+                                                Responsive.width(1.0, context),
+                                              ),
+                                            ),
+                                            child: IconButton(
+                                                icon: SvgPicture.asset(
+                                                  'assets/blogs/list.svg',
+                                                  color: view == 'company wise'
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                  fit: BoxFit.none,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    view = 'company wise';
+                                                  });
+                                                }),
+                                          ),
+                                        ],
+                                      ))
                                 ])),
                         SizedBox(height: Responsive.height(24.0, context)),
                         Expanded(
@@ -937,14 +1076,25 @@ class _BlogPageState extends State<BlogPage> {
     );
   }
 
-  Map<String, List<Post>> groupPostsByCompany(List<Post> posts) {
-    final Map<String, List<Post>> companyMap = {};
+  // Groups posts first by year, then by company within each year.
+  //
+  // Same caveat as `isPostNew`: `published` has no year in it, so this
+  // reuses the same best-effort parser and can really only distinguish
+  // "this year" vs "last year" reliably, not a true multi-year archive.
+  // Posts with an unparseable date fall back to the current year.
+  Map<int, Map<String, List<Post>>> groupPostsByYearAndCompany(
+      List<Post> posts) {
+    final Map<int, Map<String, List<Post>>> result = {};
+    final int fallbackYear = DateTime.now().year;
     for (final post in posts) {
-      final company = extractCompanyName(post.title!);
-      companyMap.putIfAbsent(company, () => []);
-      companyMap[company]!.add(post);
+      final DateTime? parsed = _parsePublishedDate(post.published);
+      final int year = parsed?.year ?? fallbackYear;
+      final String company = extractCompanyName(post.title ?? '');
+      result.putIfAbsent(year, () => <String, List<Post>>{});
+      result[year]!.putIfAbsent(company, () => <Post>[]);
+      result[year]![company]!.add(post);
     }
-    return companyMap;
+    return result;
   }
 
   String extractCompanyName(String title) {
@@ -968,8 +1118,8 @@ class _BlogPageState extends State<BlogPage> {
           final int baseCount = (posts == null || posts.isEmpty)
               ? 0
               : ((posts.isNotEmpty && posts.last.content == null)
-                  ? posts.length - 1
-                  : posts.length);
+              ? posts.length - 1
+              : posts.length);
           final int totalItemCount = baseCount + 1;
 
           return RefreshIndicator(
@@ -993,14 +1143,86 @@ class _BlogPageState extends State<BlogPage> {
         builder: (BuildContext context,
             AsyncSnapshot<UnmodifiableListView<Post>> snapshot) {
           final List<Post> posts = snapshot.data?.toList() ?? [];
-          final Map<String, List<Post>> companyMap = groupPostsByCompany(posts);
-          return ListView(
-            children: <Widget>[
-              for (final entry in companyMap.entries)
-                Blogthread(
-                  entry.value,
-                  entry.key,
+          final Map<int, Map<String, List<Post>>> yearMap =
+          groupPostsByYearAndCompany(posts);
+          final List<int> years = yearMap.keys.toList()
+            ..sort((a, b) => b.compareTo(a));
+
+          // Keep the header-key map in sync with what's actually on screen
+          // right now, so the scroll listener isn't measuring stale keys.
+          _companyYearHeaderKeys
+              .removeWhere((year, _) => !years.contains(year));
+          for (final year in years) {
+            _companyYearHeaderKeys.putIfAbsent(year, () => GlobalKey());
+          }
+
+          return Stack(
+            key: _companyListViewportKey,
+            children: [
+              ListView(
+                controller: tabPostType == PostType.Placement
+                    ? _placementScrollController
+                    : _trainingScrollController,
+                children: <Widget>[
+                  for (final year in years) ...[
+                    Container(
+                      key: _companyYearHeaderKeys[year],
+                      margin: EdgeInsets.only(
+                        left: Responsive.width(19.0, context),
+                        top: Responsive.height(8.0, context),
+                        bottom: Responsive.height(8.0, context),
+                      ),
+                      child: Text(
+                        '$year',
+                        style: TextStyle(
+                          fontSize: Responsive.text(20.0, context),
+                          fontFamily: 'DM Sans',
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                    for (final entry in yearMap[year]!.entries)
+                      Blogthread(entry.value, entry.key),
+                  ],
+                ],
+              ),
+              Positioned(
+                top: Responsive.height(8.0, context),
+                right: Responsive.width(16.0, context),
+                child: IgnorePointer(
+                  child: AnimatedOpacity(
+                    opacity: _yearPillOpacity,
+                    duration: const Duration(milliseconds: 200),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Responsive.width(14.0, context),
+                        vertical: Responsive.height(8.0, context),
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.12),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        '${_visibleYear ?? (years.isNotEmpty ? years.first : '')}',
+                        style: TextStyle(
+                          fontSize: Responsive.text(14.0, context),
+                          fontFamily: 'DM Sans',
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
+              ),
             ],
           );
         },
@@ -1013,7 +1235,7 @@ class _BlogPageState extends State<BlogPage> {
     bloc.inPostIndex.add(index);
 
     final Post? post =
-        (posts != null && posts.length > index) ? posts[index] : null;
+    (posts != null && posts.length > index) ? posts[index] : null;
 
     if (post == null) {
       return Padding(
@@ -1024,19 +1246,19 @@ class _BlogPageState extends State<BlogPage> {
     if (post.content == null) {
       return Container(
           child: Padding(
-        padding: EdgeInsets.symmetric(
-            vertical: Responsive.height(4.0, context),
-            horizontal: Responsive.width(4.0, context)),
-        child: Center(
-          child: Text("End of Results",
-              style: TextStyle(
-                fontSize: Responsive.text(16.0, context),
-                fontFamily: 'DM Sans',
-                fontWeight: FontWeight.w500,
-                color: Colors.black,
-              )),
-        ),
-      ));
+            padding: EdgeInsets.symmetric(
+                vertical: Responsive.height(4.0, context),
+                horizontal: Responsive.width(4.0, context)),
+            child: Center(
+              child: Text("End of Results",
+                  style: TextStyle(
+                    fontSize: Responsive.text(16.0, context),
+                    fontFamily: 'DM Sans',
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                  )),
+            ),
+          ));
     }
     return _post(post, bloc, context);
   }
@@ -1055,7 +1277,7 @@ class _BlogPageState extends State<BlogPage> {
         ),
         child: ClipRRect(
             borderRadius:
-                BorderRadius.circular(Responsive.height(14.0, context)),
+            BorderRadius.circular(Responsive.height(14.0, context)),
             child: Container(
                 width: double.infinity,
                 padding: EdgeInsets.only(
@@ -1116,7 +1338,7 @@ class _BlogPageState extends State<BlogPage> {
                                     strutStyle: StrutStyle.fromTextStyle(
                                       TextStyle(
                                         fontSize:
-                                            Responsive.text(14.0, context),
+                                        Responsive.text(14.0, context),
                                         fontFamily: 'DM Sans',
                                         fontWeight: FontWeight.w700,
                                       ),
@@ -1156,14 +1378,14 @@ class _BlogPageState extends State<BlogPage> {
                     ),
                     Container(
                         child: Text(
-                      post.published,
-                      style: TextStyle(
-                        fontSize: Responsive.text(16.0, context),
-                        fontFamily: 'DM Sans',
-                        fontWeight: FontWeight.w700,
-                        color: const Color.fromRGBO(48, 111, 220, 1),
-                      ),
-                    )),
+                          post.published,
+                          style: TextStyle(
+                            fontSize: Responsive.text(16.0, context),
+                            fontFamily: 'DM Sans',
+                            fontWeight: FontWeight.w700,
+                            color: const Color.fromRGBO(48, 111, 220, 1),
+                          ),
+                        )),
                     SizedBox(
                       height: Responsive.height(8.0, context),
                     ),
@@ -1172,8 +1394,8 @@ class _BlogPageState extends State<BlogPage> {
                         data: wrapTableWithDiv(
                             highlightHtml(post.content ?? "", bloc.query)),
                         defaultTextStyle:
-                            Theme.of(context).textTheme.bodyMedium ??
-                                TextStyle(),
+                        Theme.of(context).textTheme.bodyMedium ??
+                            TextStyle(),
                       ),
                     ),
                   ],
@@ -1187,7 +1409,7 @@ String wrapTableWithDiv(String html) {
   return html.replaceAllMapped(
     RegExp(r'(<table[\s\S]*?>[\s\S]*?<\/table>)',
         multiLine: true, caseSensitive: false),
-    (match) => '<div class="table-radius">${match.group(0)}</div>',
+        (match) => '<div class="table-radius">${match.group(0)}</div>',
   );
 }
 
@@ -1201,53 +1423,53 @@ class CommonHtml extends StatelessWidget {
   Widget build(BuildContext context) {
     return data != null
         ? HtmlWidget(
-            data ?? "",
-            customStylesBuilder: (element) {
-              if (element.classes.contains('hl')) {
-                return {
-                  'background-color': '#ffd54f',
-                  'padding': '0px',
-                  'border-radius': '2px',
-                };
-              }
-              if (element.classes.contains('table-radius')) {
-                return {
-                  'border-radius': '8px',
-                  'overflow': 'hidden',
-                };
-              }
-              if (element.localName == 'table') {
-                return {
-                  'background-color': '#f6f6f6',
-                  'padding': '16px',
-                };
-              }
-              return null;
-            },
-            factoryBuilder: () => SelectableWidgetFactory(),
-            onTapUrl: (link) async {
-              if (await canLaunchUrl(Uri.parse(link))) {
-                await launchUrl(
-                  Uri.parse(link),
-                  mode: LaunchMode.externalApplication,
-                );
-                return true;
-              } else {
-                throw "Couldn't launch $link";
-              }
-            },
-          )
-        : CircularProgressIndicatorExtended(
-            label: Text("Loading content"),
+      data ?? "",
+      customStylesBuilder: (element) {
+        if (element.classes.contains('hl')) {
+          return {
+            'background-color': '#ffd54f',
+            'padding': '0px',
+            'border-radius': '2px',
+          };
+        }
+        if (element.classes.contains('table-radius')) {
+          return {
+            'border-radius': '8px',
+            'overflow': 'hidden',
+          };
+        }
+        if (element.localName == 'table') {
+          return {
+            'background-color': '#f6f6f6',
+            'padding': '16px',
+          };
+        }
+        return null;
+      },
+      factoryBuilder: () => SelectableWidgetFactory(),
+      onTapUrl: (link) async {
+        if (await canLaunchUrl(Uri.parse(link))) {
+          await launchUrl(
+            Uri.parse(link),
+            mode: LaunchMode.externalApplication,
           );
+          return true;
+        } else {
+          throw "Couldn't launch $link";
+        }
+      },
+    )
+        : CircularProgressIndicatorExtended(
+      label: Text("Loading content"),
+    );
   }
 }
 
 class SelectableWidgetFactory extends WidgetFactory with SelectableTextFactory {
   @override
   SelectionChangedCallback? get selectableTextOnChanged => (selection, cause) {
-        // do something when the selection changes
-      };
+    // do something when the selection changes
+  };
 }
 
 class CircularProgressIndicatorExtended extends StatelessWidget {
@@ -1272,17 +1494,17 @@ class CircularProgressIndicatorExtended extends StatelessWidget {
           width: size,
           child: CircularProgressIndicator(
             valueColor:
-                new AlwaysStoppedAnimation<Color>(theme.colorScheme.secondary),
+            new AlwaysStoppedAnimation<Color>(theme.colorScheme.secondary),
             strokeWidth: 2,
           ),
         ),
       ]..addAll(label != null
           ? [
-              SizedBox(
-                width: Responsive.width(12.0, context),
-              ),
-              label!
-            ]
+        SizedBox(
+          width: Responsive.width(12.0, context),
+        ),
+        label!
+      ]
           : []),
     );
   }
@@ -1297,6 +1519,10 @@ class Blogthread extends StatefulWidget {
 }
 
 class _BlogthreadState extends State<Blogthread> {
+  // Index of the post currently expanded within the shared card.
+  // -1 means all posts are collapsed.
+  int expandedIndex = 0;
+
   String extractDepartmentName(String title) {
     if (title.contains('|')) {
       return title.split('|')[1].trim();
@@ -1304,8 +1530,21 @@ class _BlogthreadState extends State<Blogthread> {
     return '';
   }
 
+  // Subject/label shown on each post row, e.g. "Interview Shortlist",
+  // "Interview Waitlist", "Second Round Shortlist".
+  // NOTE: reusing the same '|' split as extractDepartmentName for now --
+  // this will be revisited in the "post card header redesign" part.
+  String extractSubject(String title) {
+    if (title.contains('|')) {
+      final parts = title.split('|');
+      return parts.length > 1 ? parts[1].trim() : title.trim();
+    }
+    return title.trim();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final posts = widget.posts ?? <Post>[];
     return Container(
         margin: const EdgeInsets.only(left: 15, right: 16, bottom: 16),
         child: Stack(children: [
@@ -1349,48 +1588,50 @@ class _BlogthreadState extends State<Blogthread> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                          Text(
-                            widget.CompanyName,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'DM Sans',
-                              fontWeight: FontWeight.w700,
-                              height: 1,
-                            ),
-                          ),
-                          Text(
-                            extractDepartmentName(widget.posts!.first.title!),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontFamily: 'DM Sans',
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-
-                          Row(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/blogs/clock.svg',
-                                height: 18,
-                                width: 18,
-                                fit: BoxFit.none,
-                              ),
-                              const SizedBox(width: 4),
                               Text(
-                                'view company timeline',
+                                widget.CompanyName,
                                 style: TextStyle(
-                                  color: const Color.fromRGBO(48, 111, 220, 1),
+                                  fontSize: 20,
+                                  fontFamily: 'DM Sans',
+                                  fontWeight: FontWeight.w700,
+                                  height: 1,
+                                ),
+                              ),
+                              Text(
+                                extractDepartmentName(
+                                    posts.isNotEmpty ? (posts.first.title ?? '') : ''),
+                                style: TextStyle(
                                   fontSize: 16,
                                   fontFamily: 'DM Sans',
                                   fontWeight: FontWeight.w700,
-                                  decoration: TextDecoration.underline,
-                              
                                 ),
-                                
                               ),
-                            ],
-                          ),
-                        ])),
+
+                              // "view company timeline" row -- removed from
+                              // the UI for now (kept here, commented out, in
+                              // case it needs to come back).
+                              // Row(
+                              //   children: [
+                              //     SvgPicture.asset(
+                              //       'assets/blogs/clock.svg',
+                              //       height: 18,
+                              //       width: 18,
+                              //       fit: BoxFit.none,
+                              //     ),
+                              //     const SizedBox(width: 4),
+                              //     Text(
+                              //       'view company timeline',
+                              //       style: TextStyle(
+                              //         color: const Color.fromRGBO(48, 111, 220, 1),
+                              //         fontSize: 16,
+                              //         fontFamily: 'DM Sans',
+                              //         fontWeight: FontWeight.w700,
+                              //         decoration: TextDecoration.underline,
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
+                            ])),
                     const SizedBox(width: 16),
                     SizedBox(
                       width: 40,
@@ -1412,228 +1653,202 @@ class _BlogthreadState extends State<Blogthread> {
                       ),
                     )
                   ])),
-              for (int i = 0; i < widget.posts!.length; i++)
-                Companywiseblog(widget.posts![i]),
+              const SizedBox(height: 12),
+              // All posts for this company now live inside ONE shared card,
+              // instead of each post getting its own bordered box.
+              if (posts.isNotEmpty) _buildSharedCard(context, posts),
             ],
           ),
         ]));
   }
+
+  Widget _buildSharedCard(BuildContext context, List<Post> posts) {
+    return Container(
+      margin: const EdgeInsets.only(left: 19),
+      decoration: BoxDecoration(
+        color: const Color.fromRGBO(48, 111, 220, 1),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          margin: const EdgeInsets.only(left: 6),
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            color: Color.fromRGBO(239, 239, 239, 1),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (int i = 0; i < posts.length; i++) ...[
+                Companywiseblog(
+                  post: posts[i],
+                  isExpanded: i == expandedIndex,
+                  subject: extractSubject(posts[i].title ?? ''),
+                  onToggle: () {
+                    setState(() {
+                      expandedIndex = (expandedIndex == i) ? -1 : i;
+                    });
+                  },
+                ),
+                if (i != posts.length - 1)
+                  const Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: Color.fromRGBO(0, 0, 0, 0.08),
+                    indent: 18,
+                    endIndent: 16,
+                  ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
-class Companywiseblog extends StatefulWidget {
+// A single post's row within the shared company card.
+// Controlled component: expansion state lives in _BlogthreadState so only
+// one (or zero) posts are expanded at a time within the card.
+class Companywiseblog extends StatelessWidget {
   final Post? post;
-  const Companywiseblog(this.post);
-  @override
-  _CompanywiseblogState createState() => _CompanywiseblogState();
-}
+  final bool isExpanded;
+  final String subject;
+  final VoidCallback onToggle;
+  // TODO: post.dart has no "mention" field at all, so this is always false
+  // for now. Once you decide what defines a mention (tagged role/dept on
+  // the post? current user's roll no. in the content?), wire it in here.
+  final bool isMention;
 
-class _CompanywiseblogState extends State<Companywiseblog> {
+  const Companywiseblog({
+    Key? key,
+    required this.post,
+    required this.isExpanded,
+    required this.subject,
+    required this.onToggle,
+    this.isMention = false,
+  }) : super(key: key);
+
   String htmlToPlainText(String htmlData) {
     final document = html_parser.parse(htmlData);
     return document.body?.text ?? '';
   }
 
-  String getFirstLine(String document) {
-    return document.split('\n').first;
-  }
-
-  bool expandedview = false;
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Column(children: [
-      if (!expandedview)
-        Container(
-            margin: const EdgeInsets.only(
-              left: 19,
-              top: 20,
-            ),
-            decoration: BoxDecoration(
-              color: const Color.fromRGBO(48, 111, 220, 1),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(left: 6),
-                    decoration: BoxDecoration(
-                      color: const Color.fromRGBO(239, 239, 239, 1),
-                    ),
-                    padding: const EdgeInsets.only(
-                        left: 17, right: 16, top: 15, bottom: 18),
-                    child: Row(
-                      children: [
-                        Expanded(
-                            child: Column(children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.post!.published ?? "",
-                                  style: TextStyle(
-                                    color:
-                                        const Color.fromRGBO(48, 111, 220, 1),
-                                    fontSize: 16,
-                                    fontFamily: 'DM Sans',
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(width: 14),
-
-                                // tags icons
-                                Container(
-                                  margin: const EdgeInsets.only(right: 4),
-                                  padding: const EdgeInsets.only(
-                                      left: 8, right: 8, top: 4, bottom: 4),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: const Color.fromRGBO(
-                                            104, 189, 0, 1),
-                                        width: 1.33),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    'New',
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(104, 189, 0, 1),
-                                      fontSize: 10,
-                                      fontFamily: 'Inter',
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(right: 4),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: const Color.fromRGBO(
-                                            255, 171, 81, 1),
-                                        width: 1.33),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    'Mention',
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(255, 171, 81, 1),
-                                      fontSize: 10,
-                                      fontFamily: 'Inter',
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                )
-                              ]),
-                          SizedBox(height: 8),
-                          Container(
-                              child: Text(
-                                  // getFirstLine(htmlToPlainText(
-                                  //     widget.post?.content ?? "") == "" ? htmlToPlainText(widget.post?.content ?? "") : getFirstLine(htmlToPlainText(
-                                  //     widget.post?.content ?? ""))),
-                                  //     maxLines: 2,
-                                  htmlToPlainText(widget.post?.content ?? ""),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontFamily: 'DM Sans',
-                                    fontWeight: FontWeight.w400,
-                                  ))),
-                        ])),
-                        InkWell(
-                          child: SvgPicture.asset(
-                            'assets/blogs/chevron-right.svg',
-                            height: 24,
-                            width: 24,
-                            fit: BoxFit.none,
-                          ),
-                          onTap: () {
-                            setState(() {
-                              expandedview = true;
-                            });
-                          },
-                        ),
-                      ],
-                    )))),
-      if (expandedview)
-        Container(
-          margin: const EdgeInsets.only(
-            left: 19,
-            top: 20,
-          ),
-          decoration: BoxDecoration(
-            color: const Color.fromRGBO(48, 111, 220, 1),
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(14),
-            child: Container(
-                margin: const EdgeInsets.only(left: 6),
-                decoration: BoxDecoration(
-                  color: const Color.fromRGBO(239, 239, 239, 1),
+    if (!isExpanded) {
+      // Collapsed: flat row, just the subject label + a chevron pointing down.
+      return InkWell(
+        onTap: onToggle,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  subject,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontFamily: 'DM Sans',
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                padding: const EdgeInsets.only(
-                    left: 18, right: 16, top: 16, bottom: 16),
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                  child: Text(
-                                widget.post!.published ?? "",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'DM Sans',
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color.fromRGBO(48, 111, 220, 1),
-                                ),
-                              )),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                            ],
-                          ),
-                        ),
-                        InkWell(
-                          child: SvgPicture.asset(
-                            'assets/blogs/chevron-right.svg',
-                            height: 24,
-                            width: 24,
-                            fit: BoxFit.none,
-                          ),
-                          onTap: () {
-                            setState(() {
-                              expandedview = false;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Container(
-                      child: CommonHtml(
-                        data: widget.post?.content,
-                        defaultTextStyle:
-                            Theme.of(context).textTheme.bodyMedium ??
-                                TextStyle(),
-                      ),
-                    ),
-                  ],
-                )),
+              ),
+              // TODO: swap for a proper chevron-down.svg asset if you have
+              // one -- rotating chevron-right.svg as a stand-in for now.
+              Transform.rotate(
+                angle: 0,
+                child: SvgPicture.asset(
+                  'assets/blogs/chevron-right.svg',
+                  height: 20,
+                  width: 20,
+                  fit: BoxFit.none,
+                ),
+              ),
+            ],
           ),
-        )
-    ]));
+        ),
+      );
+    }
+
+    // Expanded: subject header (tap chevron to collapse) + date + content.
+    return Padding(
+      padding: const EdgeInsets.only(left: 18, right: 16, top: 16, bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Builder(builder: (context) {
+            final bool showNew = isPostNew(post);
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      Text(
+                        subject,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontFamily: 'DM Sans',
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
+                        ),
+                      ),
+                      if (showNew)
+                        const BlogTagPill(
+                          label: 'New',
+                          color: Color.fromRGBO(104, 189, 0, 1),
+                        ),
+                      if (isMention)
+                        const BlogTagPill(
+                          label: 'Mention',
+                          color: Color.fromRGBO(255, 171, 81, 1),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                InkWell(
+                  onTap: onToggle,
+                  child: Transform.rotate(
+                    angle: math.pi,
+                    child: SvgPicture.asset(
+                      'assets/blogs/chevron-right.svg',
+                      height: 24,
+                      width: 24,
+                      fit: BoxFit.none,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }),
+          const SizedBox(height: 4),
+          Text(
+            post?.published ?? "",
+            style: TextStyle(
+              fontSize: 14,
+              fontFamily: 'DM Sans',
+              fontWeight: FontWeight.w700,
+              color: const Color.fromRGBO(48, 111, 220, 1),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            child: CommonHtml(
+              data: post?.content,
+              defaultTextStyle:
+              Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
