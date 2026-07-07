@@ -58,7 +58,7 @@ class _CalendarPageState extends State<CalendarPage>
   }
 
   DateTime _findSunday(DateTime date) {
-    return date.subtract(Duration(days: date.weekday - DateTime.sunday));
+    return date.subtract(Duration(days: date.weekday % 7));
   }
 
   int _getWeekOffset(DateTime targetDate) {
@@ -585,7 +585,7 @@ class _CalendarPageState extends State<CalendarPage>
                                             return Container(
                                               height: currentHeight,
                                               width: double.infinity,
-                                              color: Colors.grey[50],
+                                              color: const Color(0xFFF6F6F6),
                                               child: Stack(
                                                 children: [
                                                   Opacity(
@@ -686,6 +686,7 @@ class _CalendarPageState extends State<CalendarPage>
                     else if (_selectedView == 'day')
                       Expanded(
                         child: SingleChildScrollView(
+                          padding: EdgeInsets.only(bottom: Responsive.height(100, context)),
                           child: EventsSectionWidget(
                             key: ValueKey('${calendarCubit.selectedDate}_$_filterVersion'),
                             day: calendarCubit.selectedDate,

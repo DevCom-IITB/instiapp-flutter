@@ -262,7 +262,7 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
                   );
                 })
               ],
-            )
+            ),
           ],
         );
       },

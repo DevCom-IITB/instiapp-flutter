@@ -8,7 +8,7 @@ import './daysOfWeekWidget.dart';
 
 class WeekDateUtils {
   static DateTime _findSunday(DateTime date) {
-    return date.subtract(Duration(days: date.weekday - DateTime.sunday));
+    return date.subtract(Duration(days: date.weekday % 7));
   }
 
   static List<DateTime> getDaysOfWeek(int weekOffset) {

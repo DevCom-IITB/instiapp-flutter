@@ -63,7 +63,7 @@ class ListViewWidget extends StatelessWidget {
         Responsive.width(16, context),
         Responsive.height(0, context),
         Responsive.width(16, context),
-        Responsive.height(50, context),
+        Responsive.height(100, context),
       ),
       // fetch events here for each day and if no event then dont add widget
       children: [
