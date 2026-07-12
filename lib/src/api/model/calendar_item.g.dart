@@ -12,6 +12,7 @@ CalendarItem _$CalendarItemFromJson(Map<String, dynamic> json) => CalendarItem(
       startTime: json['start_time'] as String,
       endTime: json['end_time'] as String,
       all_day: json['all_day'] as bool,
+      location: json['location'] as String?,
     );
 
 Map<String, dynamic> _$CalendarItemToJson(CalendarItem instance) =>
@@ -21,4 +22,5 @@ Map<String, dynamic> _$CalendarItemToJson(CalendarItem instance) =>
       'start_time': instance.startTime,
       'end_time': instance.endTime,
       'all_day': instance.all_day,
+      'location': instance.location,
     };

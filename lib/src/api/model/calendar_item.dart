@@ -14,12 +14,16 @@ class CalendarItem {
   @JsonKey(name: 'end_time')
   final String endTime;
 
+  @JsonKey(name: 'location')
+  final String? location;
+
   CalendarItem({
     required this.uid,
     required this.title,
     required this.startTime,
     required this.endTime,
     required this.all_day,
+    this.location,
   });
 
   factory CalendarItem.fromJson(

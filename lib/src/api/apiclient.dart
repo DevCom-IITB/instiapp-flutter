@@ -476,7 +476,7 @@ abstract class InstiAppApi {
 
   // Calendar Endpoints
 
-  @rt.GET('/calendar/feed')
+  @rt.GET('/calendar/feed/')
   Future<CalendarFeedResponse> getCalendarFeed(
     @rt.Header("Cookie") String sessionId,
     @rt.Query('start') String start,
@@ -484,35 +484,35 @@ abstract class InstiAppApi {
     @rt.Query('tz') String tz,
   );
 
-  @rt.GET('/calendar/preferences')
+  @rt.GET('/calendar/preferences/')
   Future<List<CalendarPreferencesResponse>> getCalendarPreferences(
     @rt.Header("Cookie") String sessionId,
   );
 
-  @rt.PATCH('/calendar/preferences')
+  @rt.PATCH('/calendar/preferences/')
   Future<List<CalendarPreferencesResponse>> updateCalendarPreferences(
     @rt.Header("Cookie") String sessionId,
     @rt.Body() CalendarPreferencesResponse preferences,
   );
 
-  @rt.GET('/calendar/preferences/bodies')
+  @rt.GET('/calendar/preferences/bodies/')
   Future<List<CalendarBodyPreference>> getCalendarPrefBodies(
     @rt.Header("Cookie") String sessionId,
   );
 
-  @rt.PATCH('/calendar/preferences/bodies/{id}')
+  @rt.PATCH('/calendar/preferences/bodies/{id}/')
   Future<CalendarBodyPreference> updateCalendarPrefBody(
     @rt.Header("Cookie") String sessionId,
     @rt.Path("id") String id,
     @rt.Body() CalendarBodyPreference body,
   );
 
-  @rt.GET('/calendar/shared')
+  @rt.GET('/calendar/shared/')
   Future<List<CalendarBody>> getCalendarShared(
     @rt.Header("Cookie") String sessionId,
   );
 
-//  response 
+//  response
 // {
 //   "id":"d67f9ff0-d34a-45ec-9edd-e073c3765678",
 //    "name":"IIT Bombay Academic Calendar 2025-26",
@@ -525,39 +525,39 @@ abstract class InstiAppApi {
 //    "updated_at":"2026-05-21T23:40:56.986943+05:30",
 //    "upcoming_events":[]
 // }
-  @rt.GET('/calendar/shared/{slug}')
+  @rt.GET('/calendar/shared/{slug}/')
   Future<CalendarInfoResponse> getCalendarSharedBySlug(
     @rt.Header("Cookie") String sessionId,
     @rt.Path() String slug,
   );
 
-  @rt.PATCH('/calendar/shared/{slug}')
+  @rt.PATCH('/calendar/shared/{slug}/')
   Future<void> updateCalendarShared(
     @rt.Header("Cookie") String sessionId,
     @rt.Path() String slug,
     @rt.Body() CalendarInfoResponse calendar,
   );
 
-  @rt.POST('/calendar/shared/{slug}/events')
+  @rt.POST('/calendar/shared/{slug}/events/')
   Future<void> addEventsToSharedCalendar(
     @rt.Header("Cookie") String sessionId,
     @rt.Path() String slug,
     @rt.Body() List<dynamic> events,
   );
 
-  @rt.POST('/calendar/shared/{slug}/subscribe')
+  @rt.POST('/calendar/shared/{slug}/subscribe/')
   Future<void> subscribeToSharedCalendar(
     @rt.Header("Cookie") String sessionId,
     @rt.Path() String slug,
   );
 
-  @rt.POST('/calendar/shared/{slug}/unsubscribe')
+  @rt.POST('/calendar/shared/{slug}/unsubscribe/')
   Future<void> unsubscribeFromSharedCalendar(
     @rt.Header("Cookie") String sessionId,
     @rt.Path() String slug,
   );
 
-  @rt.PATCH('/calendar/shared/{slug}/toggle')
+  @rt.PATCH('/calendar/shared/{slug}/toggle/')
   Future<void> toggleSharedCalendar(
     @rt.Header("Cookie") String sessionId,
     @rt.Path("slug") String slug,

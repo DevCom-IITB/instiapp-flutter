@@ -566,109 +566,127 @@ class _CalendarPageState extends State<CalendarPage>
                                               )
                                             : const SizedBox(),
                                       ),
-                                      if (_selectedView == 'day'
-                                          // ||
-                                          //     _selectedView == 'month'
-                                          )
-                                        AnimatedBuilder(
-                                          animation: _controller,
-                                          builder: (context, child) {
-                                            // if (_selectedView == 'month') {
-                                            //   _controller.value = 0.2;
-                                            // }
-                                            double currentHeight =
-                                                _weekViewHeight +
-                                                    (_controller.value *
-                                                        (_maxHeight -
-                                                            _weekViewHeight));
+                                      Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        spacing: 0,
+                                        children: [
+                                          if (_selectedView == 'day'
+                                              // ||
+                                              //     _selectedView == 'month'
+                                              )
+                                            AnimatedBuilder(
+                                              animation: _controller,
+                                              builder: (context, child) {
+                                                // if (_selectedView == 'month') {
+                                                //   _controller.value = 0.2;
+                                                // }
+                                                double currentHeight =
+                                                    _weekViewHeight +
+                                                        (_controller.value *
+                                                            (_maxHeight -
+                                                                _weekViewHeight));
 
-                                            return Container(
-                                              height: currentHeight,
-                                              width: double.infinity,
-                                              color: const Color(0xFFF6F6F6),
-                                              child: Stack(
-                                                children: [
-                                                  Opacity(
-                                                    opacity: (1.0 -
-                                                            _controller.value)
-                                                        .clamp(0.0, 1.0),
-                                                    child: _controller.value <
-                                                            0.9
-                                                        ? WeekCalendarScroll(
-                                                            pageController:
-                                                                _weekPageController,
-                                                            onDateSelected:
-                                                                (DateTime
-                                                                    date) {
-                                                              calendarCubit
-                                                                  .selectDate(
-                                                                      date);
-                                                            },
-                                                            onVisibleDateChanged:
-                                                                (DateTime
-                                                                    date) {
-                                                              calendarCubit
-                                                                  .setVisibleDate(
-                                                                      date);
-                                                            },
-                                                          )
-                                                        : const SizedBox
-                                                            .shrink(),
+                                                return Container(
+                                                  height: currentHeight,
+                                                  width: double.infinity,
+                                                  color: const Color(0xFFF6F6F6),
+                                                  child: Stack(
+                                                    children: [
+                                                      Opacity(
+                                                        opacity: (1.0 -
+                                                                _controller.value)
+                                                            .clamp(0.0, 1.0),
+                                                        child: _controller.value <
+                                                                0.9
+                                                            ? WeekCalendarScroll(
+                                                                pageController:
+                                                                    _weekPageController,
+                                                                onDateSelected:
+                                                                    (DateTime
+                                                                        date) {
+                                                                  calendarCubit
+                                                                      .selectDate(
+                                                                          date);
+                                                                },
+                                                                onVisibleDateChanged:
+                                                                    (DateTime
+                                                                        date) {
+                                                                  calendarCubit
+                                                                      .setVisibleDate(
+                                                                          date);
+                                                                },
+                                                              )
+                                                            : const SizedBox
+                                                                .shrink(),
+                                                      ),
+                                                      Opacity(
+                                                        opacity: _controller.value
+                                                            .clamp(0.0, 1.0),
+                                                        child: _controller.value >
+                                                                0.1
+                                                            ? SingleChildScrollView(
+                                                                child:
+                                                                    MonthCalendarScroll(
+                                                                pageController:
+                                                                    _monthPageController,
+                                                                onDateSelected:
+                                                                    (DateTime
+                                                                        date) {
+                                                                  calendarCubit
+                                                                      .selectDate(
+                                                                          date);
+                                                                },
+                                                                onVisibleDateChanged:
+                                                                    (DateTime
+                                                                        date) {
+                                                                  calendarCubit
+                                                                      .setVisibleDate(
+                                                                          date);
+                                                                },
+                                                              ))
+                                                            : const SizedBox
+                                                                .shrink(),
+                                                      ),
+                                                    ],
                                                   ),
-                                                  Opacity(
-                                                    opacity: _controller.value
-                                                        .clamp(0.0, 1.0),
-                                                    child: _controller.value >
-                                                            0.1
-                                                        ? SingleChildScrollView(
-                                                            child:
-                                                                MonthCalendarScroll(
-                                                            pageController:
-                                                                _monthPageController,
-                                                            onDateSelected:
-                                                                (DateTime
-                                                                    date) {
-                                                              calendarCubit
-                                                                  .selectDate(
-                                                                      date);
-                                                            },
-                                                            onVisibleDateChanged:
-                                                                (DateTime
-                                                                    date) {
-                                                              calendarCubit
-                                                                  .setVisibleDate(
-                                                                      date);
-                                                            },
-                                                          ))
-                                                        : const SizedBox
-                                                            .shrink(),
-                                                  ),
-                                                ],
+                                                );
+                                              },
+                                            )
+                                          else if (_selectedView == 'month')
+                                            ConstrainedBox(
+                                              constraints: BoxConstraints(
+                                                maxHeight: _showMonthSelector
+                                                    ? Responsive.height(500, context)
+                                                    : Responsive.height(580, context),
                                               ),
-                                            );
-                                          },
-                                        )
-                                      else if (_selectedView == 'month')
-                                        ConstrainedBox(
-                                          constraints: BoxConstraints(
-                                            maxHeight: _showMonthSelector
-                                                ? Responsive.height(500, context)
-                                                : Responsive.height(575, context),
-                                          ),
-                                          child: MonthGridCalendarScroll(
-                                            filterVersion: _filterVersion,
-                                            pageController: _monthPageController,
-                                            onVisibleDateChanged: (DateTime date) {
-                                              calendarCubit.setVisibleDate(date);
-                                            },
-                                          ),
-                                        ),
-                                      if (_selectedView != 'month' || (_selectedView == 'month' && !_showMonthSelector))
-                                        GestureDetector(
-                                          onVerticalDragUpdate:
-                                              _handleDragUpdate,
-                                          onVerticalDragEnd: _handleDragEnd,
-                                          child: DragHandleWidget()),
+                                              child: MonthGridCalendarScroll(
+                                                filterVersion: _filterVersion,
+                                                pageController: _monthPageController,
+                                                onDateSelected: (DateTime date) {
+                                                  calendarCubit.selectDate(date);
+                                                  final int weekOffset = _getWeekOffset(date);
+                                                  setState(() {
+                                                    _selectedView = 'day';
+                                                  });
+                                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                    if (_weekPageController.hasClients) {
+                                                      _weekPageController.jumpToPage(10000 + weekOffset);
+                                                    }
+                                                  });
+                                                },
+                                                onVisibleDateChanged: (DateTime date) {
+                                                  calendarCubit.setVisibleDate(date);
+                                                },
+                                              ),
+                                            ),
+                                          if (_selectedView != 'month' || (_selectedView == 'month' && !_showMonthSelector))
+                                            GestureDetector(
+                                              onVerticalDragUpdate:
+                                                  _handleDragUpdate,
+                                              onVerticalDragEnd: _handleDragEnd,
+                                              child: DragHandleWidget()),
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -702,20 +720,19 @@ class _CalendarPageState extends State<CalendarPage>
   }
 }
 
-// empty widget
 class DragHandleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      spacing: Responsive.height(12, context),
-      children: [
-        Container(
-          width: Responsive.width(50, context),
-          height: Responsive.height(5, context),
-          clipBehavior: Clip.antiAlias,
+    return Container(
+      width: double.infinity,
+      color: Colors.transparent, // Makes the entire width interactive
+      padding: EdgeInsets.symmetric(
+        vertical: Responsive.height(14, context),
+      ),
+      child: Center(
+        child: Container(
+          width: Responsive.width(60, context),
+          height: Responsive.height(8, context),
           decoration: ShapeDecoration(
             color: const Color(0xFFD2D5DA),
             shape: RoundedRectangleBorder(
@@ -724,7 +741,7 @@ class DragHandleWidget extends StatelessWidget {
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 }

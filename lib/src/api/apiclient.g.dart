@@ -2747,7 +2747,7 @@ class _InstiAppApi implements InstiAppApi {
     )
             .compose(
               _dio.options,
-              '/calendar/feed',
+              '/calendar/feed/',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2776,7 +2776,7 @@ class _InstiAppApi implements InstiAppApi {
     )
             .compose(
               _dio.options,
-              '/calendar/preferences',
+              '/calendar/preferences/',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2811,7 +2811,7 @@ class _InstiAppApi implements InstiAppApi {
     )
             .compose(
               _dio.options,
-              '/calendar/preferences',
+              '/calendar/preferences/',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2843,7 +2843,7 @@ class _InstiAppApi implements InstiAppApi {
     )
             .compose(
               _dio.options,
-              '/calendar/preferences/bodies',
+              '/calendar/preferences/bodies/',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2879,7 +2879,7 @@ class _InstiAppApi implements InstiAppApi {
     )
             .compose(
               _dio.options,
-              '/calendar/preferences/bodies/${id}',
+              '/calendar/preferences/bodies/${id}/',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2907,7 +2907,7 @@ class _InstiAppApi implements InstiAppApi {
     )
             .compose(
               _dio.options,
-              '/calendar/shared',
+              '/calendar/shared/',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2940,7 +2940,7 @@ class _InstiAppApi implements InstiAppApi {
     )
             .compose(
               _dio.options,
-              '/calendar/shared/${slug}',
+              '/calendar/shared/${slug}/',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2972,7 +2972,7 @@ class _InstiAppApi implements InstiAppApi {
     )
         .compose(
           _dio.options,
-          '/calendar/shared/${slug}',
+          '/calendar/shared/${slug}/',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -3001,7 +3001,7 @@ class _InstiAppApi implements InstiAppApi {
     )
         .compose(
           _dio.options,
-          '/calendar/shared/${slug}/events',
+          '/calendar/shared/${slug}/events/',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -3029,7 +3029,7 @@ class _InstiAppApi implements InstiAppApi {
     )
         .compose(
           _dio.options,
-          '/calendar/shared/${slug}/subscribe',
+          '/calendar/shared/${slug}/subscribe/',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -3057,7 +3057,7 @@ class _InstiAppApi implements InstiAppApi {
     )
         .compose(
           _dio.options,
-          '/calendar/shared/${slug}/unsubscribe',
+          '/calendar/shared/${slug}/unsubscribe/',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -3087,7 +3087,7 @@ class _InstiAppApi implements InstiAppApi {
     )
         .compose(
           _dio.options,
-          '/calendar/shared/${slug}/toggle',
+          '/calendar/shared/${slug}/toggle/',
           queryParameters: queryParameters,
           data: _data,
         )

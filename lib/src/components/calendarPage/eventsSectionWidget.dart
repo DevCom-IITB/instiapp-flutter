@@ -247,6 +247,17 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
                             height: 1.50,
                           ),
                         ),
+                        if (item.location != null && item.location!.isNotEmpty)
+                          Text(
+                            item.location!,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: Responsive.height(12, context),
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w400,
+                              letterSpacing: 0.38,
+                            ),
+                          ),
                         Text(
                           '${eventStartTimeString} - ${eventEndTimeString}',
                           style: TextStyle(

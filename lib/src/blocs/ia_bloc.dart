@@ -748,24 +748,27 @@ class InstiAppBloc {
     }
     try {
       final prefsList = await client.getCalendarPreferences(sessionHeader);
-      debugPrint('getOrFetchCalendarPreferences: prefsList fetched successfully. Length=${prefsList.length}');
+      debugPrint(
+          'getOrFetchCalendarPreferences: prefsList fetched successfully. Length=${prefsList.length}');
       if (prefsList.isNotEmpty) {
         calendarPreferences = prefsList.first;
-        debugPrint('getOrFetchCalendarPreferences: first pref showGoing=${calendarPreferences!.showInstiappGoing}, showFollowed=${calendarPreferences!.showInstiappFollowedBodies}, showResobin=${calendarPreferences!.showResobin}');
+        debugPrint(
+            'getOrFetchCalendarPreferences: first pref showGoing=${calendarPreferences!.showInstiappGoing}, showFollowed=${calendarPreferences!.showInstiappFollowedBodies}, showResobin=${calendarPreferences!.showResobin}');
       }
     } catch (e) {
-      debugPrint('getOrFetchCalendarPreferences: Error fetching calendar preferences: $e');
+      debugPrint(
+          'getOrFetchCalendarPreferences: Error fetching calendar preferences: $e');
     }
     calendarPreferences ??= CalendarPreferencesResponse();
-    calendarPreferences!.showInstiappGoing = true;
+    calendarPreferences!.showInstiappGoing ??= true;
     calendarPreferences!.showInstiappFollowedBodies ??= true;
     calendarPreferences!.showResobin ??= true;
     calendarPreferences!.notificationsEnabled ??= true;
     return calendarPreferences!;
   }
 
-  Future<void> updateCalendarPreferences(CalendarPreferencesResponse prefs) async {
-    prefs.showInstiappGoing = true;
+  Future<void> updateCalendarPreferences(
+      CalendarPreferencesResponse prefs) async {
     calendarPreferences = prefs;
     final sessionHeader = getSessionIdHeader();
     if (sessionHeader.isNotEmpty) {
@@ -795,13 +798,15 @@ class InstiAppBloc {
     return calendarPrefBodies!;
   }
 
-  Future<void> updateSingleCalendarPrefBody(String id, CalendarBodyPreference body) async {
+  Future<void> updateSingleCalendarPrefBody(
+      String id, CalendarBodyPreference body) async {
     final sessionHeader = getSessionIdHeader();
     if (sessionHeader.isNotEmpty) {
       try {
         await client.updateCalendarPrefBody(sessionHeader, id, body);
         if (calendarPrefBodies != null) {
-          final idx = calendarPrefBodies!.indexWhere((element) => element.bodyId == id);
+          final idx =
+              calendarPrefBodies!.indexWhere((element) => element.bodyId == id);
           if (idx != -1) {
             calendarPrefBodies![idx] = body;
           }
@@ -843,7 +848,8 @@ class InstiAppBloc {
     final sessionHeader = getSessionIdHeader();
     if (sessionHeader.isNotEmpty) {
       try {
-        await client.toggleSharedCalendar(sessionHeader, slug, {"is_active": enabled});
+        await client
+            .toggleSharedCalendar(sessionHeader, slug, {"is_active": enabled});
       } catch (e) {
         debugPrint('Error toggling shared calendar: $e');
       }
@@ -857,29 +863,36 @@ class InstiAppBloc {
     String tz,
   ) async {
     final prefs = await getOrFetchCalendarPreferences();
-    debugPrint('getCalendarFeedCombined: prefs showInstiappGoing=${prefs.showInstiappGoing}, showInstiappFollowedBodies=${prefs.showInstiappFollowedBodies}, showResobin=${prefs.showResobin}');
+    debugPrint(
+        'getCalendarFeedCombined: prefs showInstiappGoing=${prefs.showInstiappGoing}, showInstiappFollowedBodies=${prefs.showInstiappFollowedBodies}, showResobin=${prefs.showResobin}');
 
     CalendarFeedResponse originalFeed;
     try {
       originalFeed = await client.getCalendarFeed(sessionId, start, end, tz);
-      debugPrint('getCalendarFeedCombined: originalFeed fetched successfully with ${originalFeed.items.length} items');
+      debugPrint(
+          'getCalendarFeedCombined: originalFeed fetched successfully with ${originalFeed.items.length} items');
     } catch (e) {
       if (e is DioException) {
-        debugPrint('getCalendarFeedCombined: request uri: ${e.requestOptions.uri}');
-        debugPrint('getCalendarFeedCombined: request headers: ${e.requestOptions.headers}');
+        debugPrint(
+            'getCalendarFeedCombined: request uri: ${e.requestOptions.uri}');
+        debugPrint(
+            'getCalendarFeedCombined: request headers: ${e.requestOptions.headers}');
       }
-      debugPrint('getCalendarFeedCombined: Error fetching base calendar feed: $e');
+      debugPrint(
+          'getCalendarFeedCombined: Error fetching base calendar feed: $e');
       originalFeed = CalendarFeedResponse(items: []);
     }
 
     if (prefs.showResobin == false) {
-      debugPrint('getCalendarFeedCombined: showResobin is false, returning original feed directly');
+      debugPrint(
+          'getCalendarFeedCombined: showResobin is false, returning original feed directly');
       return originalFeed;
     }
 
     final rollNo = currSession?.profile?.userRollNumber;
     if (rollNo == null || rollNo.isEmpty) {
-      debugPrint('getCalendarFeedCombined: rollNo is null/empty, returning original feed');
+      debugPrint(
+          'getCalendarFeedCombined: rollNo is null/empty, returning original feed');
       return originalFeed;
     }
 
@@ -899,38 +912,50 @@ class InstiAppBloc {
     final endDate = DateTime.tryParse(end);
 
     if (startDate != null && endDate != null) {
-      for (var date = startDate; date.isBefore(endDate); date = date.add(const Duration(days: 1))) {
+      for (var date = startDate;
+          date.isBefore(endDate);
+          date = date.add(const Duration(days: 1))) {
         final weekdayStr = date.weekday.toString();
-        
+
         for (final course in resobinFeed) {
           if (course.lectureSlots != null) {
             for (final slot in course.lectureSlots!) {
-              if (slot.day == weekdayStr && slot.startTime != null && slot.endTime != null) {
-                final dateStr = "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+              if (slot.day == weekdayStr &&
+                  slot.startTime != null &&
+                  slot.endTime != null) {
+                final dateStr =
+                    "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
                 final startIso = "${dateStr}T${slot.startTime}+05:30";
                 final endIso = "${dateStr}T${slot.endTime}+05:30";
                 items.add(CalendarItem(
                   uid: "resobin-lec-${course.id}-${slot.slot ?? ''}-${dateStr}",
-                  title: "${course.course?.code ?? ''} - ${course.course?.title ?? ''} (Lec: ${course.lectureVenue ?? ''})",
+                  title:
+                      "${course.course?.code ?? ''} - ${course.course?.title ?? ''}",
                   startTime: startIso,
                   endTime: endIso,
                   all_day: false,
+                  location: course.lectureVenue,
                 ));
               }
             }
           }
           if (course.tutorialSlots != null) {
             for (final slot in course.tutorialSlots!) {
-              if (slot.day == weekdayStr && slot.startTime != null && slot.endTime != null) {
-                final dateStr = "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+              if (slot.day == weekdayStr &&
+                  slot.startTime != null &&
+                  slot.endTime != null) {
+                final dateStr =
+                    "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
                 final startIso = "${dateStr}T${slot.startTime}+05:30";
                 final endIso = "${dateStr}T${slot.endTime}+05:30";
                 items.add(CalendarItem(
                   uid: "resobin-tut-${course.id}-${slot.slot ?? ''}-${dateStr}",
-                  title: "${course.course?.code ?? ''} - ${course.course?.title ?? ''} (Tut: ${course.lectureVenue ?? ''})",
+                  title:
+                      "${course.course?.code ?? ''} - ${course.course?.title ?? ''}",
                   startTime: startIso,
                   endTime: endIso,
                   all_day: false,
+                  location: course.lectureVenue,
                 ));
               }
             }

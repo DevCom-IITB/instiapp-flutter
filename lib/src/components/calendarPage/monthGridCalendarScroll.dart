@@ -52,6 +52,7 @@ class _MonthGridCalendarScrollState extends State<MonthGridCalendarScroll> {
         return MonthGridWithEventsWidget(
           monthOffset: monthOffset,
           filterVersion: widget.filterVersion,
+          onDateSelected: widget.onDateSelected,
         );
       },
     );

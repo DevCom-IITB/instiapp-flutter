@@ -9,10 +9,12 @@ import '../../blocs/new_calendar_bloc.dart';
 class MonthGridWithEventsWidget extends StatefulWidget {
   final int monthOffset;
   final int filterVersion;
+  final ValueChanged<DateTime>? onDateSelected;
   const MonthGridWithEventsWidget({
     Key? key,
     required this.monthOffset,
     this.filterVersion = 0,
+    this.onDateSelected,
   }) : super(key: key);
 
   @override
@@ -202,6 +204,7 @@ class _MonthGridWithEventsWidgetState extends State<MonthGridWithEventsWidget> {
                   isToday: isToday,
                   onTap: () {
                     cubit.selectDate(cellDate);
+                    widget.onDateSelected?.call(cellDate);
                   },
                 ),
               );
@@ -227,21 +230,24 @@ class _DateCell extends StatelessWidget {
     required this.onTap,
   });
 
-  static final List<Color> _eventColors = [
-    const Color(0xFFB7DC89),
-    const Color(0xFFF6D88A),
-    const Color(0xFF306FDC),
-    const Color(0xFFECA3A3),
-    const Color(0xFFA1E3F9),
-  ];
-
   Color _getColorForEvent(CalendarItem item) {
-    final index = item.uid.hashCode.abs() % _eventColors.length;
-    return _eventColors[index];
+    if (item.uid.startsWith('resobin-')) {
+      return const Color(0xFF9B5DE5); // Purple for Resobin
+    }
+    return const Color(0xFF306FDC); // Blue for others
   }
 
   @override
   Widget build(BuildContext context) {
+    final allDayEvents = events.where((e) => e.all_day).toList();
+    final timedEvents = events.where((e) => !e.all_day).toList();
+
+    final List<CalendarItem> processedEvents = [];
+    if (allDayEvents.isNotEmpty) {
+      processedEvents.add(allDayEvents.first);
+    }
+    processedEvents.addAll(timedEvents);
+
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -283,17 +289,17 @@ class _DateCell extends StatelessWidget {
                 ),
               ),
             ),
-            ...events.take(3).map((e) => Padding(
+            ...processedEvents.take(3).map((e) => Padding(
                   padding: EdgeInsets.only(bottom: Responsive.height(3, context)),
                   child: e.all_day
                       ? _PillEventLabel(event: e, color: _getColorForEvent(e))
                       : _BulletEventLabel(event: e, color: _getColorForEvent(e)),
                 )),
-            if (events.length > 3)
+            if (processedEvents.length > 3)
               Padding(
                 padding: EdgeInsets.only(left: Responsive.width(4, context)),
                 child: Text(
-                  '+${events.length - 3} more',
+                  '+${processedEvents.length - 3} more',
                   style: TextStyle(
                     fontSize: Responsive.width(9, context),
                     color: Colors.grey,
@@ -332,7 +338,7 @@ class _PillEventLabel extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          color: Colors.black,
+          color: Colors.white,
           fontSize: Responsive.width(10, context),
           fontFamily: 'DM Sans',
           fontWeight: FontWeight.w700,

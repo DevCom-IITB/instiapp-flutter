@@ -24,75 +24,54 @@ class DatesRowWidget extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            width: double.infinity,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              spacing: 12.34,
-              children: [
-                for (int i = 0; i < datesArray.length; i++)
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () {
-                        // Handle date tap here
-                        final selectedDate = datesArray[i];
-                        print('Tapped on date: $selectedDate');
-                        calendarCubit.selectDate(selectedDate);
-                        onDateSelected?.call(selectedDate);
-                      },
-                      child: Container(
-                        width: Responsive.width(44, context),
-                        height: Responsive.width(44, context),
-                        decoration: ShapeDecoration(
-                          // color: const Color(0xFF306FDC) /* InstiApp-blue */,
-                          color: selectedIndex == i
-                              ? const Color(0xFF306FDC)
-                              : Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(83.95),
-                          ),
+          for (int i = 0; i < datesArray.length; i++)
+            Expanded(
+              child: Center(
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      final selectedDate = datesArray[i];
+                      print('Tapped on date: $selectedDate');
+                      calendarCubit.selectDate(selectedDate);
+                      onDateSelected?.call(selectedDate);
+                    },
+                    child: Container(
+                      width: Responsive.width(44, context),
+                      height: Responsive.width(44, context),
+                      decoration: ShapeDecoration(
+                        color: selectedIndex == i
+                            ? const Color(0xFF306FDC)
+                            : Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(83.95),
                         ),
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              left: Responsive.width(0, context),
-                              top: Responsive.width(12.36, context),
-                              child: SizedBox(
-                                width: Responsive.width(43.86, context),
-                                child: Text(
-                                  datesArray[i].day.toString(),
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    // color: Colors.white,
-                                    color: selectedIndex == i
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontSize: Responsive.width(20, context),
-                                    fontFamily: 'DM Sans',
-                                    // fontWeight: FontWeight.w700,
-                                    fontWeight: FontWeight.w400,
-                                    height: 1.01,
-                                    letterSpacing: 0.32,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          datesArray[i].day.toString(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: selectedIndex == i
+                                ? Colors.white
+                                : Colors.black,
+                            fontSize: Responsive.width(20, context),
+                            fontFamily: 'DM Sans',
+                            fontWeight: FontWeight.w400,
+                            height: 1.01,
+                            letterSpacing: 0.32,
+                          ),
                         ),
                       ),
                     ),
-                  )
-              ],
-            ),
-          ),
+                  ),
+                ),
+              ),
+            )
         ],
       ),
     );

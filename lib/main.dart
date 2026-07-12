@@ -103,8 +103,7 @@ void main() async {
     sound: true,
     provisional: false,
   );
-  debugPrint(
-      "FCM permission status: ${permission.authorizationStatus.name}");
+  debugPrint("FCM permission status: ${permission.authorizationStatus.name}");
 
   final token = await fcm.getToken();
   debugPrint("========================================");
