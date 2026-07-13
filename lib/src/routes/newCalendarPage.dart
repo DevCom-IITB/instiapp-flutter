@@ -130,9 +130,9 @@ class _CalendarPageState extends State<CalendarPage>
   late AnimationController _controller;
 
   // Maximum height the new widget can expand to
-  final double _maxHeight = 330.0;
+  double get _maxHeight => Responsive.width(340, context);
   // Initial height of the Week View widget
-  final double _weekViewHeight = 80.0;
+  double get _weekViewHeight => Responsive.width(80, context);
   @override
   void initState() {
     super.initState();
@@ -538,30 +538,24 @@ class _CalendarPageState extends State<CalendarPage>
                                                               12 +
                                                           (monthIndex -
                                                               now.month);
-                                                  if (_monthPageController
-                                                      .hasClients) {
-                                                    _monthPageController
-                                                        .animateToPage(
-                                                      10000 + monthOffset,
-                                                      duration: const Duration(
-                                                          milliseconds: 300),
-                                                      curve: Curves.easeInOut,
-                                                    );
-                                                  }
+                                                    if (_monthPageController
+                                                        .hasClients) {
+                                                      _monthPageController
+                                                          .jumpToPage(
+                                                        10000 + monthOffset,
+                                                      );
+                                                    }
 
-                                                  final int weekOffset =
-                                                      _getWeekOffset(
-                                                          targetDate);
-                                                  if (_weekPageController
-                                                      .hasClients) {
-                                                    _weekPageController
-                                                        .animateToPage(
-                                                      10000 + weekOffset,
-                                                      duration: const Duration(
-                                                          milliseconds: 300),
-                                                      curve: Curves.easeInOut,
-                                                    );
-                                                  }
+                                                    final int weekOffset =
+                                                        _getWeekOffset(
+                                                            targetDate);
+                                                    if (_weekPageController
+                                                        .hasClients) {
+                                                      _weekPageController
+                                                          .jumpToPage(
+                                                        10000 + weekOffset,
+                                                      );
+                                                    }
                                                 },
                                               )
                                             : const SizedBox(),
@@ -656,8 +650,8 @@ class _CalendarPageState extends State<CalendarPage>
                                             ConstrainedBox(
                                               constraints: BoxConstraints(
                                                 maxHeight: _showMonthSelector
-                                                    ? Responsive.height(500, context)
-                                                    : Responsive.height(580, context),
+                                                    ? Responsive.width(500, context)
+                                                    : Responsive.width(580, context),
                                               ),
                                               child: MonthGridCalendarScroll(
                                                 filterVersion: _filterVersion,

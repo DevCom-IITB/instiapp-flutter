@@ -26,14 +26,16 @@ class _WeekCalendarScrollState extends State<WeekCalendarScroll> {
   @override
   void initState() {
     super.initState();
-    _pageController = widget.pageController ?? PageController(initialPage: _initialPage);
+    _pageController =
+        widget.pageController ?? PageController(initialPage: _initialPage);
   }
 
   @override
   void didUpdateWidget(covariant WeekCalendarScroll oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.pageController != oldWidget.pageController) {
-      _pageController = widget.pageController ?? PageController(initialPage: _initialPage);
+      _pageController =
+          widget.pageController ?? PageController(initialPage: _initialPage);
     }
   }
 

@@ -11,10 +11,12 @@ import '../../blocs/new_calendar_bloc.dart';
 class EventsSectionWidget extends StatefulWidget {
   final DateTime day;
   final String? mode;
-  const EventsSectionWidget({Key? key, required this.day, this.mode}) : super(key: key);
+  const EventsSectionWidget({Key? key, required this.day, this.mode})
+      : super(key: key);
 
   @override
-  State<EventsSectionWidget> createState() => _EventsSectionWidgetState(day, mode);
+  State<EventsSectionWidget> createState() =>
+      _EventsSectionWidgetState(day, mode);
 }
 
 class _EventsSectionWidgetState extends State<EventsSectionWidget> {
@@ -77,7 +79,6 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
 
   @override
   Widget build(BuildContext context) {
-
     return FutureBuilder<CalendarFeedResponse?>(
       future: _eventsFuture,
       builder: (context, snapshot) {
@@ -89,7 +90,7 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
         }
 
         final response = snapshot.data!;
-        
+
         return Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -119,7 +120,15 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                '${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][day.weekday - 1]}, ${day.day}${day.day.toString().endsWith('1') ? 'st' : day.day.toString().endsWith('2') ? 'nd' : day.day.toString().endsWith('3') ? 'rd' : 'th'} ${DateFormat('MMM').format(day)}',
+                                '${[
+                                  'Mon',
+                                  'Tue',
+                                  'Wed',
+                                  'Thu',
+                                  'Fri',
+                                  'Sat',
+                                  'Sun'
+                                ][day.weekday - 1]}, ${day.day}${day.day.toString().endsWith('1') ? 'st' : day.day.toString().endsWith('2') ? 'nd' : day.day.toString().endsWith('3') ? 'rd' : 'th'} ${DateFormat('MMM').format(day)}',
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: Responsive.width(16, context),
@@ -132,7 +141,8 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
                               Text(
                                 '${response.items.length} events',
                                 style: TextStyle(
-                                  color: const Color(0xFF7E8287) /* instiappgrey */,
+                                  color: const Color(
+                                      0xFF7E8287) /* instiappgrey */,
                                   fontSize: Responsive.width(16, context),
                                   fontFamily: 'DM Sans',
                                   fontWeight: FontWeight.w400,
@@ -149,55 +159,58 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
                 ],
               ),
             ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: Responsive.width(4, context),
-              children: [
-                // All day events
-                ...response.items.map((item) {
-                  if (!item.all_day) return SizedBox.shrink();
-                  return Container(
-                    height: 32,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                    decoration: ShapeDecoration(
-                      color: const Color(0xFFEFEFEF),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      spacing: 4,
-                      children: [
-                        Container(
-                          width: 10,
-                          height: 10,
-                          decoration: ShapeDecoration(
-                            color: const Color(0xFFB7DC89),
-                            shape: OvalBorder(),
+            if (response.items.any((item) => item.all_day))
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: Responsive.width(4, context),
+                  children: [
+                    ...response.items.where((item) => item.all_day).map((item) {
+                      return Container(
+                        height: 32,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 4),
+                        decoration: ShapeDecoration(
+                          color: const Color(0xFFEFEFEF),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
                           ),
                         ),
-                        Text(
-                          item.title,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: const Color(0xFF000000),
-                            fontSize: 12,
-                            fontFamily: 'DM Sans',
-                            fontWeight: FontWeight.w700,
-                          ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          spacing: 4,
+                          children: [
+                            Container(
+                              width: 10,
+                              height: 10,
+                              decoration: ShapeDecoration(
+                                color: const Color(0xFFB7DC89),
+                                shape: OvalBorder(),
+                              ),
+                            ),
+                            Text(
+                              item.title,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: const Color(0xFF000000),
+                                fontSize: 12,
+                                fontFamily: 'DM Sans',
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  );
-                })
-              ],
-            ),
+                      );
+                    })
+                  ],
+                ),
+              ),
             Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -206,11 +219,13 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
               children: [
                 // all events
                 ...response.items.map((item) {
-                  DateTime eventStart = DateTime.parse(item.startTime).toLocal();
+                  DateTime eventStart =
+                      DateTime.parse(item.startTime).toLocal();
                   String eventStartTimeString =
                       DateFormat('hh:mma').format(eventStart);
                   DateTime eventEnd = DateTime.parse(item.endTime).toLocal();
-                  String eventEndTimeString = DateFormat('hh:mma').format(eventEnd);
+                  String eventEndTimeString =
+                      DateFormat('hh:mma').format(eventEnd);
                   return Container(
                     width: Responsive.width(380, context),
                     padding: EdgeInsets.only(
@@ -230,6 +245,8 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(15),
                         bottomLeft: Radius.circular(15),
+                        topRight: Radius.circular(15),
+                        bottomRight: Radius.circular(15)
                       ),
                     ),
                     child: Column(

@@ -89,6 +89,17 @@ class InstiAppBloc {
   // Dio instance
   final dio = Dio();
 
+  // Cache for calendar feeds: key is "start_end_showInstiappGoing_showInstiappFollowedBodies_showResobin" -> response
+  final Map<String, CalendarFeedResponse> _calendarFeedCache = {};
+
+  // Cache for Resobin schedule
+  List<ResobinCourse>? _cachedResobinFeed;
+
+  void clearCalendarFeedCache() {
+    _calendarFeedCache.clear();
+    debugPrint('InstiAppBloc: cleared calendar feed cache');
+  }
+
   // Events StorageID
   static String eventStorageID = "events";
   // Mess StorageID
@@ -770,6 +781,7 @@ class InstiAppBloc {
   Future<void> updateCalendarPreferences(
       CalendarPreferencesResponse prefs) async {
     calendarPreferences = prefs;
+    clearCalendarFeedCache();
     final sessionHeader = getSessionIdHeader();
     if (sessionHeader.isNotEmpty) {
       try {
@@ -800,6 +812,7 @@ class InstiAppBloc {
 
   Future<void> updateSingleCalendarPrefBody(
       String id, CalendarBodyPreference body) async {
+    clearCalendarFeedCache();
     final sessionHeader = getSessionIdHeader();
     if (sessionHeader.isNotEmpty) {
       try {
@@ -845,6 +858,7 @@ class InstiAppBloc {
         calendarShared![idx].isActive = enabled;
       }
     }
+    clearCalendarFeedCache();
     final sessionHeader = getSessionIdHeader();
     if (sessionHeader.isNotEmpty) {
       try {
@@ -863,6 +877,12 @@ class InstiAppBloc {
     String tz,
   ) async {
     final prefs = await getOrFetchCalendarPreferences();
+    final cacheKey = "${start}_${end}_${prefs.showInstiappGoing}_${prefs.showInstiappFollowedBodies}_${prefs.showResobin}";
+    if (_calendarFeedCache.containsKey(cacheKey)) {
+      debugPrint('getCalendarFeedCombined: cache hit for key $cacheKey');
+      return _calendarFeedCache[cacheKey]!;
+    }
+
     debugPrint(
         'getCalendarFeedCombined: prefs showInstiappGoing=${prefs.showInstiappGoing}, showInstiappFollowedBodies=${prefs.showInstiappFollowedBodies}, showResobin=${prefs.showResobin}');
 
@@ -886,6 +906,7 @@ class InstiAppBloc {
     if (prefs.showResobin == false) {
       debugPrint(
           'getCalendarFeedCombined: showResobin is false, returning original feed directly');
+      _calendarFeedCache[cacheKey] = originalFeed;
       return originalFeed;
     }
 
@@ -893,17 +914,24 @@ class InstiAppBloc {
     if (rollNo == null || rollNo.isEmpty) {
       debugPrint(
           'getCalendarFeedCombined: rollNo is null/empty, returning original feed');
+      _calendarFeedCache[cacheKey] = originalFeed;
       return originalFeed;
     }
 
     List<ResobinCourse> resobinFeed = [];
-    try {
-      resobinFeed = await client.getResobinSchedule(rollNo, "ResInstiance");
-    } catch (e) {
-      debugPrint('Error fetching Resobin schedule: $e');
+    if (_cachedResobinFeed != null) {
+      resobinFeed = _cachedResobinFeed!;
+    } else {
+      try {
+        resobinFeed = await client.getResobinSchedule(rollNo, "ResInstiance");
+        _cachedResobinFeed = resobinFeed;
+      } catch (e) {
+        debugPrint('Error fetching Resobin schedule: $e');
+      }
     }
 
     if (resobinFeed.isEmpty) {
+      _calendarFeedCache[cacheKey] = originalFeed;
       return originalFeed;
     }
 
@@ -964,13 +992,17 @@ class InstiAppBloc {
       }
     }
 
-    return CalendarFeedResponse(items: items);
+    final combinedResponse = CalendarFeedResponse(items: items);
+    _calendarFeedCache[cacheKey] = combinedResponse;
+    return combinedResponse;
   }
 
   Future<void> logout() async {
     await client.logout(getSessionIdHeader());
     updateSession(null);
     _notificationsSubject.add(UnmodifiableListView([]));
+    _cachedResobinFeed = null;
+    clearCalendarFeedCache();
   }
 
   Future saveToCache({SharedPreferences? sharedPrefs}) async {

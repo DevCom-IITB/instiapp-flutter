@@ -122,13 +122,16 @@ class _MonthGridWithEventsWidgetState extends State<MonthGridWithEventsWidget> {
 
         return Container(
           width: double.infinity,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildDayHeader(context),
-              ...weeks.map((week) => _buildWeekRow(context, week, currentDate, response, calendarCubit)),
-            ],
+          child: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildDayHeader(context),
+                ...weeks.map((week) => _buildWeekRow(context, week, currentDate, response, calendarCubit)),
+              ],
+            ),
           ),
         );
       },
@@ -327,7 +330,7 @@ class _PillEventLabel extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.symmetric(
         horizontal: Responsive.width(5, context),
-        vertical: Responsive.height(3, context),
+        vertical: Responsive.width(3, context),
       ),
       decoration: BoxDecoration(
         color: color,
@@ -362,7 +365,7 @@ class _BulletEventLabel extends StatelessWidget {
       children: [
         Container(
           width: Responsive.width(3, context),
-          height: Responsive.height(11, context),
+          height: Responsive.width(11, context),
           color: color,
         ),
         SizedBox(width: Responsive.width(4, context)),
