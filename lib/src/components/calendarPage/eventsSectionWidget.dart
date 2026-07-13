@@ -94,7 +94,7 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
         return Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           spacing: Responsive.height(20, context),
           children: [
             Container(
