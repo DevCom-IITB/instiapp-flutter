@@ -14,7 +14,8 @@ class _InstiAppApi implements InstiAppApi {
     this.baseUrl,
   }) {
     // baseUrl ??= 'http://10.0.2.2:8000/api';
-    baseUrl ??= 'http://10.249.155.236:8000/api';
+    // baseUrl ??= 'http://10.249.155.236:8000/api';
+    baseUrl ??= 'http://192.168.145.236:8000/api';
   }
 
   final Dio _dio;

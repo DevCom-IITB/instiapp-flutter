@@ -8,6 +8,7 @@ import '../../api/response/calendar_feed_response.dart';
 import 'package:intl/intl.dart';
 import '../../blocs/new_calendar_bloc.dart';
 
+
 class EventsSectionWidget extends StatefulWidget {
   final DateTime day;
   final String? mode;
@@ -70,6 +71,11 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
         formatDate(end, isoFormat),
         'Asia/Kolkata',
       );
+      if (response != null && response.items != null) {
+        for (var item in response.items) {
+          print(item.toJson());
+        }
+      }
       return response;
     } catch (e) {
       debugPrint('Error fetching events for date: $e');
@@ -94,7 +100,7 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
         return Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           spacing: Responsive.height(20, context),
           children: [
             Container(
@@ -160,55 +166,64 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
               ),
             ),
             if (response.items.any((item) => item.all_day))
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: Responsive.width(4, context),
-                  children: [
-                    ...response.items.where((item) => item.all_day).map((item) {
-                      return Container(
-                        height: 32,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 4),
-                        decoration: ShapeDecoration(
-                          color: const Color(0xFFEFEFEF),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
+              SizedBox(
+                width: Responsive.width(380, context),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  // padding: EdgeInsets.only(left: ),
+                  physics: const BouncingScrollPhysics(),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: Responsive.width(4, context),
+                    children: [
+                      ...response.items.where((item) => item.all_day).map((item) {
+                        final style = item.pillStyle;
+                        return Container(
+                          height: 32,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 4),
+                          decoration: ShapeDecoration(
+                            color: style.backgroundColor,
+                            shape: RoundedRectangleBorder(
+                              side: style.borderColor != null
+                                  ? BorderSide(color: style.borderColor!, width: 1.5)
+                                  : BorderSide.none,
+                              borderRadius: BorderRadius.circular(50),
+                            ),
                           ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          spacing: 4,
-                          children: [
-                            Container(
-                              width: 10,
-                              height: 10,
-                              decoration: ShapeDecoration(
-                                color: const Color(0xFFB7DC89),
-                                shape: OvalBorder(),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            spacing: 4,
+                            children: [
+                              if (style.dotColor != null)
+                                Container(
+                                  width: 10,
+                                  height: 10,
+                                  decoration: ShapeDecoration(
+                                    color: style.dotColor,
+                                    shape: OvalBorder(),
+                                  ),
+                                ),
+                              Text(
+                                item.title,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: style.textColor,
+                                  fontSize: 12,
+                                  fontFamily: 'DM Sans',
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
-                            ),
-                            Text(
-                              item.title,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: const Color(0xFF000000),
-                                fontSize: 12,
-                                fontFamily: 'DM Sans',
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    })
-                  ],
+                            ],
+                          ),
+                        );
+                      })
+                    ],
+                  ),
                 ),
               ),
             Column(
@@ -226,6 +241,9 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
                   DateTime eventEnd = DateTime.parse(item.endTime).toLocal();
                   String eventEndTimeString =
                       DateFormat('hh:mma').format(eventEnd);
+                  final style = item.pillStyle;
+                  final indicatorColor = style.borderColor ?? style.dotColor ?? (style.backgroundColor == const Color(0xFFEFEFEF) ? const Color(0xFF7E8287) : style.backgroundColor);
+
                   return Container(
                     width: Responsive.width(380, context),
                     padding: EdgeInsets.only(
@@ -243,11 +261,10 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
                         ),
                       ),
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(15),
-                        bottomLeft: Radius.circular(15),
-                        topRight: Radius.circular(15),
-                        bottomRight: Radius.circular(15)
-                      ),
+                          topLeft: Radius.circular(15),
+                          bottomLeft: Radius.circular(15),
+                          topRight: Radius.circular(15),
+                          bottomRight: Radius.circular(15)),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,

@@ -233,13 +233,6 @@ class _DateCell extends StatelessWidget {
     required this.onTap,
   });
 
-  Color _getColorForEvent(CalendarItem item) {
-    if (item.uid.startsWith('resobin-')) {
-      return const Color(0xFF9B5DE5); // Purple for Resobin
-    }
-    return const Color(0xFF306FDC); // Blue for others
-  }
-
   @override
   Widget build(BuildContext context) {
     final allDayEvents = events.where((e) => e.all_day).toList();
@@ -292,12 +285,15 @@ class _DateCell extends StatelessWidget {
                 ),
               ),
             ),
-            ...processedEvents.take(3).map((e) => Padding(
-                  padding: EdgeInsets.only(bottom: Responsive.height(3, context)),
-                  child: e.all_day
-                      ? _PillEventLabel(event: e, color: _getColorForEvent(e))
-                      : _BulletEventLabel(event: e, color: _getColorForEvent(e)),
-                )),
+            ...processedEvents.take(3).map((e) {
+              final style = e.pillStyle;
+              return Padding(
+                padding: EdgeInsets.only(bottom: Responsive.height(3, context)),
+                child: e.all_day
+                    ? _PillEventLabel(event: e, style: style)
+                    : _BulletEventLabel(event: e, style: style),
+              );
+            }),
             if (processedEvents.length > 3)
               Padding(
                 padding: EdgeInsets.only(left: Responsive.width(4, context)),
@@ -320,9 +316,9 @@ class _DateCell extends StatelessWidget {
 // All-day style chip — solid rounded pill
 class _PillEventLabel extends StatelessWidget {
   final CalendarItem event;
-  final Color color;
+  final PillStyle style;
 
-  const _PillEventLabel({required this.event, required this.color});
+  const _PillEventLabel({required this.event, required this.style});
 
   @override
   Widget build(BuildContext context) {
@@ -333,19 +329,39 @@ class _PillEventLabel extends StatelessWidget {
         vertical: Responsive.width(3, context),
       ),
       decoration: BoxDecoration(
-        color: color,
+        color: style.backgroundColor,
+        border: style.borderColor != null
+            ? Border.all(color: style.borderColor!, width: 1.0)
+            : null,
         borderRadius: BorderRadius.circular(Responsive.width(6, context)),
       ),
-      child: Text(
-        event.title,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: Responsive.width(10, context),
-          fontFamily: 'DM Sans',
-          fontWeight: FontWeight.w700,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (style.dotColor != null)
+            Container(
+              width: Responsive.width(4, context),
+              height: Responsive.width(4, context),
+              margin: EdgeInsets.only(right: Responsive.width(3, context)),
+              decoration: BoxDecoration(
+                color: style.dotColor,
+                shape: BoxShape.circle,
+              ),
+            ),
+          Expanded(
+            child: Text(
+              event.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: style.textColor,
+                fontSize: Responsive.width(10, context),
+                fontFamily: 'DM Sans',
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -354,19 +370,22 @@ class _PillEventLabel extends StatelessWidget {
 // Timed-event style chip — left bar + label
 class _BulletEventLabel extends StatelessWidget {
   final CalendarItem event;
-  final Color color;
+  final PillStyle style;
 
-  const _BulletEventLabel({required this.event, required this.color});
+  const _BulletEventLabel({required this.event, required this.style});
 
   @override
   Widget build(BuildContext context) {
+    // For bullets, use the main fill/dot/border color as the indicator color
+    final indicatorColor = style.borderColor ?? style.dotColor ?? (style.backgroundColor == const Color(0xFFEFEFEF) ? const Color(0xFF7E8287) : style.backgroundColor);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
           width: Responsive.width(3, context),
           height: Responsive.width(11, context),
-          color: color,
+          color: indicatorColor,
         ),
         SizedBox(width: Responsive.width(4, context)),
         Expanded(
