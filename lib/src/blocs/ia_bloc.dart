@@ -862,8 +862,11 @@ class InstiAppBloc {
     final sessionHeader = getSessionIdHeader();
     if (sessionHeader.isNotEmpty) {
       try {
-        await client
-            .toggleSharedCalendar(sessionHeader, slug, {"is_active": enabled});
+        if (enabled) {
+          await client.subscribeToSharedCalendar(sessionHeader, slug);
+        } else {
+          await client.unsubscribeFromSharedCalendar(sessionHeader, slug);
+        }
       } catch (e) {
         debugPrint('Error toggling shared calendar: $e');
       }

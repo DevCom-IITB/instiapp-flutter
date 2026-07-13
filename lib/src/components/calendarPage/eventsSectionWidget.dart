@@ -233,7 +233,7 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
               spacing: Responsive.height(10, context),
               children: [
                 // all events
-                ...response.items.map((item) {
+                ...response.items.where((item) => !item.all_day).map((item) {
                   DateTime eventStart =
                       DateTime.parse(item.startTime).toLocal();
                   String eventStartTimeString =
@@ -256,7 +256,7 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
                       color: Colors.white,
                       border: Border(
                         left: BorderSide(
-                          color: const Color(0xFF306FDC),
+                          color: indicatorColor,
                           width: 6,
                         ),
                       ),
@@ -293,7 +293,9 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
                             ),
                           ),
                         Text(
-                          '${eventStartTimeString} - ${eventEndTimeString}',
+                          item.all_day
+                              ? 'All Day'
+                              : '${eventStartTimeString} - ${eventEndTimeString}',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: Responsive.height(12, context),
