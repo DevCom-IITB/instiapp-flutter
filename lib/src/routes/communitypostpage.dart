@@ -68,6 +68,7 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
   int aboutIndex = 0;
 
   bool firstBuild = true;
+  bool postLoadFailed = false;
 
   @override
   void initState() {
@@ -88,10 +89,22 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
       communityPost = widget.initialCommunityPost;
       currentlyCommentingPost = communityPost;
       widget.communityPostFuture.then((communityPost) {
+        if (!this.mounted) return;
         setState(() {
-          this.communityPost = communityPost;
-          currentlyCommentingPost = communityPost;
-          this.threadRank = communityPost?.threadRank;
+          if (communityPost != null) {
+            this.communityPost = communityPost;
+            currentlyCommentingPost = communityPost;
+            this.threadRank = communityPost.threadRank;
+          } else if (this.communityPost == null) {
+            postLoadFailed = true;
+          }
+        });
+      }).catchError((_) {
+        // Opened from a notification/deep link and the fetch failed:
+        // show an error instead of a blank screen forever
+        if (!this.mounted || this.communityPost != null) return;
+        setState(() {
+          postLoadFailed = true;
         });
       });
       firstBuild = false;
@@ -301,7 +314,24 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
               ),
             ),
           )
-        : Container();
+        : Scaffold(
+            appBar: AppBar(
+              elevation: 0,
+              backgroundColor: theme.scaffoldBackgroundColor,
+              iconTheme: theme.iconTheme,
+            ),
+            body: Center(
+              child: postLoadFailed
+                  ? Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Text(
+                        "Couldn't load this post.\nPlease try again later.",
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  : CircularProgressIndicator(),
+            ),
+          );
   }
 
   List<Widget> _buildCommentList(
@@ -513,10 +543,12 @@ class _CommentState extends State<Comment> {
                                           itemBuilder: (context) {
                                             List<PopupMenuItem<int>> items = [];
 
-                                            bool isAuthor =
+                                            bool isAuthor = comment!
+                                                        .postedBy?.userID !=
+                                                    null &&
                                                 comment!.postedBy?.userID ==
-                                                    bloc.currSession!.profile!
-                                                        .userID;
+                                                    bloc.currSession?.profile
+                                                        ?.userID;
 
                                             bool isAdmin = bloc.hasPermission(
                                                 comment!.community?.body ?? "",

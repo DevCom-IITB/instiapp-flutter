@@ -168,6 +168,10 @@ void main() async {
 
   // Everything FCM runs AFTER app is up
   Future.microtask(() async {
+    // Attach message/tap listeners as early as possible so notification
+    // taps (including the one that may have launched the app) are handled
+    attachNotificationListeners();
+
     final fcm = FirebaseMessaging.instance;
 
     try {

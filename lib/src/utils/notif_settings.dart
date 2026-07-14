@@ -179,6 +179,38 @@ class NotificationType {
   static const String EXTERNAL = "externalblogentry";
 }
 
+/// Whether the app has navigated past the login/splash flow, so that
+/// notification taps can be routed immediately. Before that, routes are
+/// parked in [_pendingNotificationRoute] and consumed by the homepage once
+/// the app is ready (see [consumePendingNotificationRoute]).
+bool notificationNavigationReady = false;
+String? _pendingNotificationRoute;
+
+/// Route a notification tap to the right page.
+///
+/// Safe to call at any point of the app lifecycle: if the navigator is not
+/// ready yet (cold start from a notification tap), the route is stored and
+/// executed once the homepage is up.
+void handleNotificationNavigation(RichNotification notif) {
+  final String route = routeFromNotification(notif);
+  final NavigatorState? nav = navigatorKey.currentState;
+  if (notificationNavigationReady && nav != null) {
+    nav.pushNamed(route);
+  } else {
+    _pendingNotificationRoute = route;
+  }
+}
+
+/// Called by the homepage once the app is fully up. Navigates to the route
+/// of the notification that launched the app, if any.
+void consumePendingNotificationRoute() {
+  final String? route = _pendingNotificationRoute;
+  _pendingNotificationRoute = null;
+  if (route != null) {
+    navigatorKey.currentState?.pushNamed(route);
+  }
+}
+
 class NotificationController {
   @pragma("vm:entry-point")
   static Future<void> onNotificationCreatedMethod(
@@ -195,33 +227,35 @@ class NotificationController {
   @pragma("vm:entry-point")
   static Future<void> onActionReceivedMethod(
       ReceivedAction receivedAction) async {
-    
-    if (receivedAction.payload != null) {
-      RichNotification notif = RichNotification.fromJson(receivedAction.payload!);
-      String routeName = routeFromNotification(notif);
-      String actionKey = receivedAction.buttonKeyPressed;
+    if (receivedAction.payload == null) return;
 
-      // Navigate using the global key
-      navigatorKey.currentState?.pushReplacementNamed(
-        routeName,
-        arguments: NotificationRouteArguments(actionKey, notif),
-      );
+    RichNotification notif =
+        RichNotification.fromJson(receivedAction.payload!);
+    String actionKey = receivedAction.buttonKeyPressed;
 
-      // Handle "Open Browser" action
-      if (actionKey == ActionKeys.OPEN_BROWSER) {
-        if (notif.notificationExtra != null) {
-          Uri uri = Uri.parse(notif.notificationExtra!);
-          if (await canLaunchUrl(uri)) {
-            await launchUrl(uri);
-          }
-        }
+    // Handle "Open Browser" action
+    if (actionKey == ActionKeys.OPEN_BROWSER &&
+        notif.notificationExtra != null) {
+      Uri uri = Uri.parse(notif.notificationExtra!);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+        return;
       }
     }
+
+    handleNotificationNavigation(notif);
   }
 }
 
 /// Gives the route to navigate to from a notification
+///
+/// Every route returned from here MUST exist in the route table of
+/// [main.dart]'s onGenerateRoute — unknown routes fall back to the login
+/// page there, which looks like a broken/blank screen to the user.
+/// Types whose dedicated pages are not wired up route to /notifications.
 String routeFromNotification(RichNotification fromMap) {
+  final String objectID = fromMap.notificationObjectID ?? "";
+
   // Navigating to correct page
   return {
         NotificationType.BLOG:
@@ -230,22 +264,23 @@ String routeFromNotification(RichNotification fromMap) {
                 : "/placeblog",
         NotificationType.PLACEMENT: "/placeblog",
         NotificationType.COMMUNITY:
-            "/group/${fromMap.notificationObjectID ?? ""}",
+            objectID.isNotEmpty ? "/group/$objectID" : "/groups",
         NotificationType.COMMUNITYPOST:
-            "/communitypost/${fromMap.notificationObjectID ?? ""}",
+            objectID.isNotEmpty ? "/communitypost/$objectID" : "/groups",
         NotificationType.COMMUNITYPOSTUSERREACTION: "/groups",
         NotificationType.INTERNSHIP: "/trainblog",
-        NotificationType.BODY: "/body/${fromMap.notificationObjectID ?? ""}",
-        // NotificationType.EVENT: "/event/${fromMap.notificationObjectID ?? ""}",
-        NotificationType.EVENT: "/feed",
-        NotificationType.USER: "/user/${fromMap.notificationObjectID ?? ""}",
-        NotificationType.NEWS: "/news",
-        NotificationType.COMPLAINTS:
-            "/complaint/${fromMap.notificationExtra ?? ""}?reload=true",
-        NotificationType.QUERY: "/query",
-        NotificationType.EXTERNAL: "/externalblog",
+        NotificationType.BODY:
+            objectID.isNotEmpty ? "/body/$objectID" : "/feed",
+        NotificationType.EVENT:
+            objectID.isNotEmpty ? "/event/$objectID" : "/feed",
+        NotificationType.USER:
+            objectID.isNotEmpty ? "/user/$objectID" : "/feed",
+        NotificationType.NEWS: "/notifications",
+        NotificationType.COMPLAINTS: "/notifications",
+        NotificationType.QUERY: "/notifications",
+        NotificationType.EXTERNAL: "/notifications",
       }[fromMap.notificationType] ??
-      "/";
+      "/notifications";
 }
 
 /// Setup notifications with awesome notifications
@@ -253,35 +288,70 @@ String routeFromNotification(RichNotification fromMap) {
 /// [context] is the [BuildContext] of the app
 /// [bloc] is the instance of [InstiAppBloc] used in the app
 /// [_navigatorKey] is the [GlobalKey] of the [Navigator] used in the app
-bool _firebaseMessagingListenersAttached = false;
+bool _notificationListenersAttached = false;
+
+/// Attach all notification listeners. Idempotent; safe to call from main()
+/// and again from the UI once a context is available.
+///
+/// The backend sends two kinds of pushes (see instiapp-api helpers/fcm.py):
+///  - data-only messages (Android/"rich" devices): our code builds the
+///    notification via AwesomeNotifications, so taps arrive through
+///    [NotificationController.onActionReceivedMethod].
+///  - notification messages (iOS): the OS displays them natively, so taps
+///    arrive through [FirebaseMessaging.onMessageOpenedApp] (background) or
+///    [FirebaseMessaging.instance.getInitialMessage] (terminated). These two
+///    were previously no-ops, which made every iOS notification tap dead.
+void attachNotificationListeners() {
+  if (_notificationListenersAttached) return;
+  _notificationListenersAttached = true;
+
+  /// Foreground: build and show the rich notification ourselves
+  FirebaseMessaging.onMessage.listen(
+    (RemoteMessage message) async {
+      await sendMessage(message);
+    },
+    onError: (error, stackTrace) {},
+  );
+
+  /// Background: user tapped an OS-displayed notification
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    handleNotificationNavigation(richNotificationFromRemoteMessage(message));
+  });
+
+  /// Terminated: app was launched by tapping an OS-displayed notification
+  FirebaseMessaging.instance.getInitialMessage().then((message) {
+    if (message != null) {
+      handleNotificationNavigation(richNotificationFromRemoteMessage(message));
+    }
+  });
+
+  AwesomeNotifications().setListeners(
+    onActionReceivedMethod: NotificationController.onActionReceivedMethod,
+    onNotificationCreatedMethod:
+        NotificationController.onNotificationCreatedMethod,
+    onNotificationDisplayedMethod:
+        NotificationController.onNotificationDisplayedMethod,
+    onDismissActionReceivedMethod:
+        NotificationController.onDismissActionReceivedMethod,
+  );
+
+  /// Terminated: app was launched by tapping an AwesomeNotifications
+  /// notification (the Android data-message path)
+  AwesomeNotifications()
+      .getInitialNotificationAction(removeFromActionEvents: true)
+      .then((action) {
+    if (action != null) {
+      NotificationController.onActionReceivedMethod(action);
+    }
+  });
+}
 
 void setupNotifications(BuildContext context, InstiAppBloc bloc) async {
   // Check for permission (if not granted, request it)
   if (await bloc.hasNotificationPermission() == null)
     requestNotificationPermission(context, bloc);
 
-  /// Listen for incoming notifs and send a notification to the user
-  if (!_firebaseMessagingListenersAttached) {
-    _firebaseMessagingListenersAttached = true;
-
-    FirebaseMessaging.onMessage.listen(
-      (RemoteMessage message) async {
-        await sendMessage(message);
-      },
-      onError: (error, stackTrace) {},
-    );
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
-
-    FirebaseMessaging.instance.getInitialMessage().then((message) {});
-  }
-
-  AwesomeNotifications().setListeners(
-    onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-    onNotificationCreatedMethod: NotificationController.onNotificationCreatedMethod,
-    onNotificationDisplayedMethod: NotificationController.onNotificationDisplayedMethod,
-    onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod,
-  );
+  attachNotificationListeners();
 }
 
 void requestNotificationPermission(
@@ -331,10 +401,9 @@ void requestNotificationPermission(
   );
 }
 
-/// Send a notification to the user
-///
-/// [message] is the message recieved from firebase
-Future<void> sendMessage(RemoteMessage message) async {
+/// Build a [RichNotification] from a firebase [RemoteMessage],
+/// merging the data payload with the notification block (if any)
+RichNotification richNotificationFromRemoteMessage(RemoteMessage message) {
   final payload = Map<String, dynamic>.from(message.data);
   final notification = message.notification;
 
@@ -370,8 +439,15 @@ Future<void> sendMessage(RemoteMessage message) async {
     }
   }
 
+  return notif;
+}
+
+/// Send a notification to the user
+///
+/// [message] is the message recieved from firebase
+Future<void> sendMessage(RemoteMessage message) async {
   // Create the actual notification
-  createNotification(notif);
+  await createNotification(richNotificationFromRemoteMessage(message));
 }
 
 /// Create a notification
@@ -385,8 +461,9 @@ Future<void> createNotification(RichNotification notif) async {
 /// Get the content of the notification
 NotificationContent getNotificationContent(RichNotification notif) {
   // Modulo by the max 32-bit integer (2,147,483,647) to ensure it fits
-  int id = stringToInt(notif.notificationID ?? "") ??
-    (DateTime.now().millisecondsSinceEpoch % 2147483647);
+  int id = (stringToInt(notif.notificationID ?? "") ??
+          DateTime.now().millisecondsSinceEpoch) %
+      2147483647;
 
   /// Get the channel name to which the notification should be sent
   String getChannelKey(RichNotification notif) {

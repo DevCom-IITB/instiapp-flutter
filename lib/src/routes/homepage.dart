@@ -9,6 +9,7 @@ import 'package:InstiApp/src/routes/communitypostpage.dart';
 import 'package:InstiApp/src/routes/explorepage.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
+import 'package:InstiApp/src/utils/notif_settings.dart';
 import 'package:InstiApp/src/routes/qr_encryption.dart';
 
 import 'package:flutter/material.dart';
@@ -207,6 +208,13 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
+    // App is fully up: notification taps can navigate directly now, and
+    // the tap that may have launched the app (if any) can be routed
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notificationNavigationReady = true;
+      consumePendingNotificationRoute();
+    });
 
     _fadeInController = AnimationController(
       duration: const Duration(milliseconds: 1000),

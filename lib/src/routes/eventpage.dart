@@ -44,10 +44,11 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
-  late Future<Body> body;
+  Future<Body>? body;
   Body? fullbody;
   Event? event;
   bool isfirstbuild = true;
+  bool eventLoadFailed = false;
   late UES currentUes;
 
   @override
@@ -56,12 +57,27 @@ class _EventPageState extends State<EventPage> {
     event = widget.initialEvent;
     currentUes = event?.eventUserUes ?? UES.NotGoing;
     widget.eventFuture.then((ev) {
+      // When opened from a notification there is no initial event,
+      // so the UES state must come from the fetched one
+      if (widget.initialEvent == null && ev != null) {
+        currentUes = ev.eventUserUes ?? UES.NotGoing;
+      }
       if (this.mounted) {
         setState(() {
-          event = ev;
+          if (ev != null) {
+            event = ev;
+          } else if (event == null) {
+            eventLoadFailed = true;
+          }
         });
-      } else {
+      } else if (ev != null) {
         event = ev;
+      }
+    }).catchError((_) {
+      if (this.mounted && event == null) {
+        setState(() {
+          eventLoadFailed = true;
+        });
       }
     });
   }
@@ -93,13 +109,43 @@ class _EventPageState extends State<EventPage> {
   @override
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of(context)!.bloc;
+
+    // Opened from a notification/deep link: no initial event, wait for
+    // the fetch instead of crashing on event! below
+    if (event == null) {
+      return Scaffold(
+        backgroundColor: Color.fromRGBO(246, 246, 246, 1),
+        appBar: AppBar(
+          backgroundColor: Color.fromRGBO(246, 246, 246, 1),
+          elevation: 0,
+          iconTheme: IconThemeData(color: Colors.black),
+        ),
+        body: Center(
+          child: eventLoadFailed
+              ? Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Text(
+                    "Couldn't load this event.\nPlease try again later.",
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              : CircularProgressIndicator(),
+        ),
+      );
+    }
+
     if (isfirstbuild) {
-      body = bloc.getBody(event!.eventBodies?[0].bodyID ?? "");
-      body.then((value) {
-        setState(() {
-          fullbody = value;
-        });
-      });
+      final eventBodies = event!.eventBodies;
+      if (eventBodies != null && eventBodies.isNotEmpty) {
+        body = bloc.getBody(eventBodies[0].bodyID ?? "");
+        body!.then((value) {
+          if (this.mounted) {
+            setState(() {
+              fullbody = value;
+            });
+          }
+        }).catchError((_) {});
+      }
       isfirstbuild = false;
     }
     String? parentBodyName = "";

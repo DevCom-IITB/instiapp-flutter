@@ -45,6 +45,11 @@
             android:value="2" />
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAryoUjEhGTWvgrInX1rDAR3D3DEXD5Z7M" />
+        <!-- Channel used when FCM displays a notification itself (app killed
+             or notification-type messages); must match a channel key created
+             by AwesomeNotifications in notif_settings.dart -->
+        <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="misc_channel" />
 
         <activity android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density"
