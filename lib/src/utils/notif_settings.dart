@@ -236,7 +236,8 @@ String routeFromNotification(RichNotification fromMap) {
         NotificationType.COMMUNITYPOSTUSERREACTION: "/groups",
         NotificationType.INTERNSHIP: "/trainblog",
         NotificationType.BODY: "/body/${fromMap.notificationObjectID ?? ""}",
-        NotificationType.EVENT: "/event/${fromMap.notificationObjectID ?? ""}",
+        // NotificationType.EVENT: "/event/${fromMap.notificationObjectID ?? ""}",
+        NotificationType.EVENT: "/feed",
         NotificationType.USER: "/user/${fromMap.notificationObjectID ?? ""}",
         NotificationType.NEWS: "/news",
         NotificationType.COMPLAINTS:

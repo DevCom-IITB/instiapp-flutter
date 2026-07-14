@@ -6,7 +6,7 @@ import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/achievement_form.dart';
 import 'package:InstiApp/src/routes/alumniLoginPage.dart';
 import 'package:InstiApp/src/routes/alumni_OTP_Page.dart';
-import 'package:InstiApp/src/routes/bodypage.dart'; 
+import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/routes/buynsell_info.dart';
 import 'package:InstiApp/src/routes/buynsell_page.dart';
 import 'package:InstiApp/src/routes/calendarpage.dart';
@@ -88,6 +88,64 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await sendMessage(message);
 }
 
+// void main() async {
+//   GlobalKey<MyAppState> key = GlobalKey();
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await dotenv.load(fileName: ".env");
+//   await ensureFirebaseInitialized();
+
+//   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+//   final fcm = FirebaseMessaging.instance;
+//   final permission = await fcm.requestPermission(
+//     alert: true,
+//     badge: true,
+//     sound: true,
+//     provisional: false,
+//   );
+//   debugPrint("FCM permission status: ${permission.authorizationStatus.name}");
+
+//   // final token = await fcm.getToken();
+//   // debugPrint("========================================");
+//   // debugPrint("FCM TOKEN: $token");
+//   // debugPrint("========================================");
+//   fcm.getToken().then((token) {
+//     debugPrint("========================================");
+//     debugPrint("FCM TOKEN: $token");
+//     debugPrint("========================================");
+//   }).catchError((e) {
+//     debugPrint("FCM token error: $e");
+//   });
+
+//   // token refresh listener will be attached after bloc is created
+
+//   InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
+
+//   AwesomeNotifications().initialize(
+//     'resource://drawable/ic_launcher_foreground',
+//     notifChannels,
+//     channelGroups: notifGroups,
+//   );
+
+//   await bloc.restorePrefs();
+
+//   // Attach token refresh listener to update backend when token changes
+//   fcm.onTokenRefresh.listen((token) async {
+//     debugPrint("========================================");
+//     debugPrint("FCM TOKEN REFRESHED: $token");
+//     debugPrint("========================================");
+//     try {
+//       await bloc.patchFcmKey();
+//     } catch (e) {
+//       debugPrint("Error patching FCM key on token refresh: $e");
+//     }
+//   });
+
+//   runApp(MyApp(
+//     key: key,
+//     bloc: bloc,
+//   ));
+// }
 void main() async {
   GlobalKey<MyAppState> key = GlobalKey();
   WidgetsFlutterBinding.ensureInitialized();
@@ -95,23 +153,6 @@ void main() async {
   await ensureFirebaseInitialized();
 
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-
-  final fcm = FirebaseMessaging.instance;
-  final permission = await fcm.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-    provisional: false,
-  );
-  debugPrint(
-      "FCM permission status: ${permission.authorizationStatus.name}");
-
-  final token = await fcm.getToken();
-  debugPrint("========================================");
-  debugPrint("FCM TOKEN: $token");
-  debugPrint("========================================");
-
-  // token refresh listener will be attached after bloc is created
 
   InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
 
@@ -123,22 +164,39 @@ void main() async {
 
   await bloc.restorePrefs();
 
-  // Attach token refresh listener to update backend when token changes
-  fcm.onTokenRefresh.listen((token) async {
-    debugPrint("========================================");
-    debugPrint("FCM TOKEN REFRESHED: $token");
-    debugPrint("========================================");
-    try {
-      await bloc.patchFcmKey();
-    } catch (e) {
-      debugPrint("Error patching FCM key on token refresh: $e");
-    }
-  });
+  runApp(MyApp(key: key, bloc: bloc)); // ✅ runs immediately
 
-  runApp(MyApp(
-    key: key,
-    bloc: bloc,
-  ));
+  // Everything FCM runs AFTER app is up
+  Future.microtask(() async {
+    final fcm = FirebaseMessaging.instance;
+
+    try {
+      final permission = await fcm.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+        provisional: false,
+      );
+      debugPrint("FCM permission: ${permission.authorizationStatus.name}");
+    } catch (e) {
+      debugPrint("FCM permission error: $e");
+    }
+
+    fcm.getToken().then((token) {
+      debugPrint("FCM TOKEN: $token");
+    }).catchError((e) {
+      debugPrint("FCM token error: $e");
+    });
+
+    fcm.onTokenRefresh.listen((token) async {
+      debugPrint("FCM TOKEN REFRESHED: $token");
+      try {
+        await bloc.patchFcmKey();
+      } catch (e) {
+        debugPrint("Error patching FCM key: $e");
+      }
+    });
+  });
 }
 
 class MyApp extends StatefulWidget {
@@ -159,7 +217,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       new FlutterLocalNotificationsPlugin();
 
-  
   GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
   final AppLinks _appLinks = AppLinks();
@@ -187,7 +244,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     disposeNotification();
     super.dispose();
   }
-   
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -203,10 +259,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        systemNavigationBarColor: Color.fromRGBO(246, 246,246, 1), 
-        systemNavigationBarDividerColor: Color.fromRGBO(246, 246,246, 1),
+        systemNavigationBarColor: Color.fromRGBO(246, 246, 246, 1),
+        systemNavigationBarDividerColor: Color.fromRGBO(246, 246, 246, 1),
         systemNavigationBarIconBrightness: Brightness.dark,
-        statusBarColor:Color.fromRGBO(246, 246,246, 1),
+        statusBarColor: Color.fromRGBO(246, 246, 246, 1),
         statusBarIconBrightness: Brightness.dark,
       ),
     );
@@ -231,15 +287,15 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         navigatorKey: navigatorKey,
         title: 'InstiApp',
         builder: (context, child) {
-      final mediaQuery = MediaQuery.of(context);
-      return MediaQuery(
-        data: mediaQuery.copyWith(
-          textScaler: const TextScaler.linear(1.0),
-          boldText: false,                          
-        ),
-        child: child!,
-      );
-    },
+          final mediaQuery = MediaQuery.of(context);
+          return MediaQuery(
+            data: mediaQuery.copyWith(
+              textScaler: const TextScaler.linear(1.0),
+              boldText: false,
+            ),
+            child: child!,
+          );
+        },
         theme: ThemeData(
           // fontFamily: "SourceSansPro",
           fontFamily: "DM Sans",

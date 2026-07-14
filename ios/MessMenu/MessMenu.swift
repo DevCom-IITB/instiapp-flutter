@@ -9,10 +9,10 @@
 import WidgetKit
 import SwiftUI
 import Intents
+import AppIntents
 
 // define a structure
 struct MealMenu : Codable{
-    
     // define two properties
     var id: String
     var day: Int
@@ -31,13 +31,29 @@ struct HostelMenu: Codable{
     var mess: [MealMenu]
 }
 
-
-
-
+// MARK: - INTERACTIVE BUTTONS TEST (comment out for IPA build)
+@available(iOS 17.0, *)
+struct SelectMealIntent: AppIntent {
+    static var title: LocalizedStringResource = "Select Meal"
+    
+    @Parameter(title: "Meal")
+    var meal: String
+    
+    init() { self.meal = "" }
+    init(meal: String) { self.meal = meal }
+    
+    func perform() async throws -> some IntentResult {
+    let defaults = UserDefaults(suiteName: "group.app.instiapp.flutter")
+    defaults?.set(meal, forKey: "selectedMeal")
+    defaults?.set(Date().timeIntervalSince1970, forKey: "selectedMealTime")
+    WidgetCenter.shared.reloadAllTimelines()
+    return .result()
+    }
+}
+// MARK: - END INTERACTIVE BUTTONS TEST
 
 
 struct Provider: IntentTimelineProvider {
-    
     func hostel(for configuration: Hostel_numberIntent)-> Int {
         switch configuration.hostel{
         case .hostel1:
@@ -95,12 +111,10 @@ struct Provider: IntentTimelineProvider {
     func getMealOfNow(for hourOfTheDay: Int, for todaysMenu: MealMenu)-> [String] {
         let mealType : String
         let menu : String
-        
         if (hourOfTheDay < 10 || hourOfTheDay >= 22) {
             // breakfast
             mealType = "Breakfast";
             menu = todaysMenu.breakfast;
-            
         }
         else if (hourOfTheDay < 14) {
             // lunch
@@ -117,8 +131,6 @@ struct Provider: IntentTimelineProvider {
             menu = todaysMenu.dinner;
         }
         return [menu,mealType]
-        
-        
     }
     
     func getTodayMenu(completion: @escaping ([HostelMenu]) -> Void) {
@@ -131,7 +143,6 @@ struct Provider: IntentTimelineProvider {
         //        var request : _quest = NSMutableURLRequest()
         //        request.url = NSURL(string: url) as URL?
         //        request.httpMethod = "GET"
-        
         let loanUrl = URL(string: url)
         let task = URLSession.shared.dataTask(with: loanUrl!, completionHandler: { (data, response, error) ->Void in
             
@@ -139,7 +150,6 @@ struct Provider: IntentTimelineProvider {
                 print(error)
                 return
             }
-            
             // Parse JSON data
             
             do {
@@ -149,10 +159,6 @@ struct Provider: IntentTimelineProvider {
             catch let error{
                 print(error.localizedDescription)
             }
-            
-            
-            
-            
             // Parse JSON data
             //                            let jsonLoans = jsonResult?["loans"] as! [AnyObject]
             //                            for jsonLoan in jsonLoans {
@@ -164,13 +170,8 @@ struct Provider: IntentTimelineProvider {
             //                                loan.country = location["country"] as! String
             //                                loans.append(loan)
             
-            
-            
         } )
-        
-        
         task.resume()
-        
     }
     
     func getTimeline(for configuration: Hostel_numberIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
@@ -186,6 +187,19 @@ struct Provider: IntentTimelineProvider {
         
         let hostel = hostel(for: configuration)
         let hourOfTheDay = Calendar.current.component(.hour, from: Date())
+        // MARK: - INTERACTIVE BUTTONS TEST
+        let defaults = UserDefaults(suiteName: "group.app.instiapp.flutter")
+        let selectedMeal: String?
+        let tapTime = defaults?.double(forKey: "selectedMealTime") ?? 0
+        let secondsSinceTap = Date().timeIntervalSince1970 - tapTime
+        if secondsSinceTap < 10 {
+            // tap was less than 5 minutes ago — use selected meal
+            selectedMeal = defaults?.string(forKey: "selectedMeal")
+        } else {
+            // tap was too long ago — go back to time based
+            selectedMeal = nil
+        }
+        // MARK: - END INTERACTIVE BUTTONS TEST
         
         getTodayMenu { menu in
             var hostelMenuToday = ""
@@ -194,9 +208,25 @@ struct Provider: IntentTimelineProvider {
                 if( item.short_name == String(hostel)){
                     for daymess in item.mess{
                         if( daymess.day == day){
-                            let arr =  getMealOfNow(for: hourOfTheDay, for: daymess)
-                            hostelMenuToday = arr[0]
-                            mealType = arr[1]
+                            // let arr =  getMealOfNow(for: hourOfTheDay, for: daymess)
+                            // hostelMenuToday = arr[0]
+                            // mealType = arr[1]
+                            // MARK: - INTERACTIVE BUTTONS TEST
+                            if let selected = selectedMeal {
+                                switch selected {
+                                case "Breakfast": hostelMenuToday = daymess.breakfast; mealType = "Breakfast"
+                                case "Lunch": hostelMenuToday = daymess.lunch; mealType = "Lunch"
+                                case "Snacks": hostelMenuToday = daymess.snacks; mealType = "Snacks"
+                                case "Dinner": hostelMenuToday = daymess.dinner; mealType = "Dinner"
+                                default:
+                                    let arr = getMealOfNow(for: hourOfTheDay, for: daymess)
+                                    hostelMenuToday = arr[0]; mealType = arr[1]
+                                }
+                            } else {
+                                let arr = getMealOfNow(for: hourOfTheDay, for: daymess)
+                                hostelMenuToday = arr[0]; mealType = arr[1]
+                            }
+                            // MARK: - END INTERACTIVE BUTTONS TEST
                             break
                         }
                     }
@@ -218,8 +248,6 @@ struct Provider: IntentTimelineProvider {
 }
 
 
-
-
 struct SimpleEntry: TimelineEntry {
     let date: Date
     let day: Int
@@ -228,27 +256,62 @@ struct SimpleEntry: TimelineEntry {
     let configuration: Hostel_numberIntent
 }
 
+// struct MessMenuEntryView : View {
+//     var entry: Provider.Entry
+    
+//     var body: some View {
+//         Text("Hostel "+String(entry.day))
+//             .font(.largeTitle)
+//             .padding(EdgeInsets(top: 10, leading: 0, bottom: 5, trailing: 0))
+//             .foregroundColor(.blue)
+//         Text(entry.mealType)
+//             .font(.headline)
+//             .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
+//             .multilineTextAlignment(.leading)
+//         Text(entry.menuOfMeal)
+//             .font(.subheadline)
+//             .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+//             .multilineTextAlignment(.leading)
+//     }
+// }
 struct MessMenuEntryView : View {
     var entry: Provider.Entry
     
     var body: some View {
-        Text("Hostel "+String(entry.day))
-            .font(.largeTitle)
-            .padding(EdgeInsets(top: 10, leading: 0, bottom: 5, trailing: 0))
-            .foregroundColor(.blue)
-        Text(entry.mealType)
-            .font(.headline)
-            .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
-            .multilineTextAlignment(.leading)
-        Text(entry.menuOfMeal)
-            .font(.subheadline)
-            .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
-            .multilineTextAlignment(.leading)
-        
+        VStack(alignment: .leading) {
+            Text("Hostel " + String(entry.day))
+                .font(.largeTitle)
+                .padding(EdgeInsets(top: 10, leading: 0, bottom: 5, trailing: 0))
+                .foregroundColor(.blue)
+            Text(entry.mealType)
+                .font(.headline)
+                .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
+                .multilineTextAlignment(.leading)
+            Text(entry.menuOfMeal)
+                .font(.subheadline)
+                .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                .multilineTextAlignment(.leading)
+            
+            // MARK: - INTERACTIVE BUTTONS TEST (comment out for IPA build)
+            if #available(iOS 17.0, *) {
+                HStack {
+                    Button(intent: SelectMealIntent(meal: "Breakfast")) {
+                        Text("B").font(.caption2)
+                    }
+                    Button(intent: SelectMealIntent(meal: "Lunch")) {
+                        Text("L").font(.caption2)
+                    }
+                    Button(intent: SelectMealIntent(meal: "Snacks")) {
+                        Text("S").font(.caption2)
+                    }
+                    Button(intent: SelectMealIntent(meal: "Dinner")) {
+                        Text("D").font(.caption2)
+                    }
+                }
+            }
+            // MARK: - END INTERACTIVE BUTTONS TEST
+        }
     }
-    
-    
-    
 }
 
 @main
@@ -260,12 +323,12 @@ struct MessMenu: Widget {
             MessMenuEntryView(entry: entry)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .edgesIgnoringSafeArea(.all)
-                .background(
+                .containerBackground(for: .widget) {
                     Image("devcom")
-                        .resizable()
-                        .scaledToFit()
-                        .opacity(0.03)
-                )
+                     .resizable()
+                     .scaledToFit()
+                     .opacity(0.03)
+                }
         }
         .configurationDisplayName("Mess Menu")
         .description("Mess menu of the hostel which you selected.")
@@ -276,12 +339,6 @@ struct MessMenu: Widget {
 }
 
 struct MessMenu_Previews: PreviewProvider {
-    
-    
-    
-    
-    
-    
     static var previews: some View {
         MessMenuEntryView(entry: SimpleEntry(date: Date(), day: 2, mealType: "Lunch",menuOfMeal: "hello guys", configuration: Hostel_numberIntent()))
             .padding(.all, 14.0)

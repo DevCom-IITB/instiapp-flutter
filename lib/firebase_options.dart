@@ -26,10 +26,11 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        // throw UnsupportedError(
+        //   'DefaultFirebaseOptions have not been configured for ios - '
+        //   'you can reconfigure this by running the FlutterFire CLI again.',
+        // );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -60,5 +61,14 @@ class DefaultFirebaseOptions {
     databaseURL: 'https://astral-theory-207617.firebaseio.com',
     storageBucket: 'astral-theory-207617.firebasestorage.app',
   );
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyBh5H5f1gSyCjV7Gp3UnKAsT8ORR3IpMcY',               // API_KEY from plist
+    appId: '1:259853447628:ios:5716771e1c32347b70ed69',                 // GOOGLE_APP_ID from plist  
+    messagingSenderId: '259853447628',    // same as android (PROJECT_NUMBER)
+    projectId: 'astral-theory-207617',   // same as android
+    databaseURL: 'https://astral-theory-207617.firebaseio.com',
+    storageBucket: 'astral-theory-207617.firebasestorage.app',
+    iosBundleId: 'app.instiapp.flutter',        // BUNDLE_ID from plist
+);
 
 }

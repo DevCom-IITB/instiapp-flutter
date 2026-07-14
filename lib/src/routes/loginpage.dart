@@ -82,8 +82,8 @@ class _OnboardingLoginPageState extends State<LoginPage>
           widget.navigatorKey?.currentContext ?? context, _bloc!);
 
       /// Any toast from args
-      final args = ModalRoute.of(context)?.settings.arguments as String?;
-      if (args != null && widget.scaffoldMessengerKey != null) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is String && widget.scaffoldMessengerKey != null) {
         widget.scaffoldMessengerKey!.currentState?.showSnackBar(
           SnackBar(content: Text(args)),
         );

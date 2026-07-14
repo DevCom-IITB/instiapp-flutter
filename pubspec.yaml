@@ -8,7 +8,7 @@ publish_to: 'none'
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 3.0.1+8
+version: 3.0.4+4
 
 environment:
   sdk: '>=2.17.0 <4.0.0'

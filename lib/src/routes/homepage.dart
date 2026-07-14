@@ -313,8 +313,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     super.didChangeDependencies();
     if (firstBuild) {
       final args =
-          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-      if (args != null && args['fadeIn'] == true) {
+          ModalRoute.of(context)?.settings.arguments;
+      if (args is Map<String, dynamic> && args['fadeIn'] == true) {
         _shouldFadeIn = true;
         _fadeInController.forward();
       } else {
@@ -1243,7 +1243,7 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
                       builder: (context, snapshot) {
                         final hostels =
                             snapshot.data ?? UnmodifiableListView<Hostel>([]);
-
+                        print('HOSTEL CODES: ${hostels.map((h) => h.shortName).toList()}'); // 👈 add here
                         final isLoading = snapshot.connectionState ==
                                 ConnectionState.waiting &&
                             hostels.isEmpty;
