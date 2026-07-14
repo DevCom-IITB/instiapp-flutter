@@ -57,7 +57,7 @@ class CalendarItem {
     // 1. Resobin events -> Lectures N Labs
     if (uid.startsWith('resobin-')) {
       return PillStyle(
-        backgroundColor: const Color(0xFFF9F4D5), // light yellow
+        backgroundColor: const Color(0xFFCDE7C7), // light green
       );
     }
 
@@ -66,27 +66,30 @@ class CalendarItem {
     if (sub == 'holidays') {
       return PillStyle(
         backgroundColor: const Color(0xFFEFEFEF), // grey
-        dotColor: const Color(0xFFB7DD8A), // green dot
+        dotColor: const Color(0xFF35BA61), // green dot
       );
     } else if (sub == 'exams') {
       return PillStyle(
-        backgroundColor: const Color(0xFFFFA294), // orangish-red
+        backgroundColor: const Color(0xFFFF7474), // orangish-red
+        textColor: Colors.white,
       );
     } else if (sub == 'social-event-announcements') {
       return PillStyle(
-        backgroundColor: const Color(0xFFCCEFFF), // light blue
+        backgroundColor: const Color(0xFF5292FF), // light blue
+        textColor: Colors.white,
       );
     } else if (sub == 'reminders') {
       return PillStyle(
         backgroundColor: Colors.white,
-        borderColor: const Color(0xFFFFA294), // orangish-red border
+        borderColor: const Color(0xFFFF7474), // orangish-red border
+        textColor: Colors.black,
       );
     }
 
     // 3. Default: Other all-day events
     return PillStyle(
       backgroundColor: const Color(0xFFEFEFEF), // grey
-      dotColor: const Color(0xFFFFB073), // orange dot
+      dotColor: const Color(0xFFFFA159), // orange dot
     );
   }
 
