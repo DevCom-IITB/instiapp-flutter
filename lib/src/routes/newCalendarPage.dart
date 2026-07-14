@@ -391,22 +391,26 @@ class _CalendarPageState extends State<CalendarPage>
                                       });
                                     },
                                     onFilterTap: () async {
-                                       await showCalendarFiltersBottomSheet(context);
-                                       if (mounted) {
-                                         setState(() {
-                                           _filterVersion++;
-                                         });
-                                       }
-                                     },
+                                      await showCalendarFiltersBottomSheet(
+                                          context);
+                                      if (mounted) {
+                                        setState(() {
+                                          _filterVersion++;
+                                        });
+                                      }
+                                    },
                                     onTodayTap: _onTodayTap,
                                   ),
                                   AnimatedSize(
                                     duration: const Duration(milliseconds: 300),
                                     curve: Curves.easeInOut,
                                     child: _showMonthSelector
-                                        ? MonthSelectMenuWidget(
-                                            selectedMonth: visibleDate.month,
-                                            onMonthSelected: (monthIndex) {
+                                        ? Padding(
+                                            padding: EdgeInsets.only(
+                                                top: Responsive.height(12, context)),
+                                            child: MonthSelectMenuWidget(
+                                                selectedMonth: visibleDate.month,
+                                                onMonthSelected: (monthIndex) {
                                               final now = DateTime.now();
                                               final currentSelected =
                                                   calendarCubit.selectedDate;
@@ -454,8 +458,16 @@ class _CalendarPageState extends State<CalendarPage>
                                                   curve: Curves.easeInOut,
                                                 );
                                               }
+                                              Future.delayed(
+                                                  const Duration(
+                                                      milliseconds: 0), () {
+                                                if (mounted) {
+                                                  calendarCubit.setVisibleDate(
+                                                      targetDate);
+                                                }
+                                              });
                                             },
-                                          )
+                                          ))
                                         : const SizedBox(),
                                   )
                                 ],
@@ -489,14 +501,14 @@ class _CalendarPageState extends State<CalendarPage>
                                           });
                                         },
                                         onFilterTap: () async {
-                                           await showCalendarFiltersBottomSheet(
-                                               context);
-                                           if (mounted) {
-                                             setState(() {
-                                               _filterVersion++;
-                                             });
-                                           }
-                                         },
+                                          await showCalendarFiltersBottomSheet(
+                                              context);
+                                          if (mounted) {
+                                            setState(() {
+                                              _filterVersion++;
+                                            });
+                                          }
+                                        },
                                         onTodayTap: _onTodayTap,
                                       ),
                                       AnimatedSize(
@@ -504,40 +516,43 @@ class _CalendarPageState extends State<CalendarPage>
                                             const Duration(milliseconds: 300),
                                         curve: Curves.easeInOut,
                                         child: _showMonthSelector
-                                            ? MonthSelectMenuWidget(
-                                                selectedMonth:
-                                                    visibleDate.month,
-                                                onMonthSelected: (monthIndex) {
-                                                  final now = DateTime.now();
-                                                  final currentSelected =
-                                                      calendarCubit
-                                                          .selectedDate;
-                                                  // int day = currentSelected.day;
-                                                  int day = 1;
-                                                  final lastDayOfTargetMonth =
-                                                      DateTime(
-                                                              currentSelected
-                                                                  .year,
-                                                              monthIndex + 1,
-                                                              0)
-                                                          .day;
-                                                  if (day >
-                                                      lastDayOfTargetMonth) {
-                                                    day = lastDayOfTargetMonth;
-                                                  }
-                                                  final targetDate = DateTime(
-                                                      currentSelected.year,
-                                                      monthIndex,
-                                                      day);
-                                                  calendarCubit
-                                                      .selectDate(targetDate);
+                                            ? Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: Responsive.height(12, context)),
+                                                child: MonthSelectMenuWidget(
+                                                  selectedMonth:
+                                                      visibleDate.month,
+                                                  onMonthSelected: (monthIndex) {
+                                                    final now = DateTime.now();
+                                                    final currentSelected =
+                                                        calendarCubit
+                                                            .selectedDate;
+                                                    // int day = currentSelected.day;
+                                                    int day = 1;
+                                                    final lastDayOfTargetMonth =
+                                                        DateTime(
+                                                                currentSelected
+                                                                    .year,
+                                                                monthIndex + 1,
+                                                                0)
+                                                            .day;
+                                                    if (day >
+                                                        lastDayOfTargetMonth) {
+                                                      day = lastDayOfTargetMonth;
+                                                    }
+                                                    final targetDate = DateTime(
+                                                        currentSelected.year,
+                                                        monthIndex,
+                                                        day);
+                                                    calendarCubit
+                                                        .selectDate(targetDate);
 
-                                                  final int monthOffset =
-                                                      (currentSelected.year -
-                                                                  now.year) *
-                                                              12 +
-                                                          (monthIndex -
-                                                              now.month);
+                                                    final int monthOffset =
+                                                        (currentSelected.year -
+                                                                    now.year) *
+                                                                12 +
+                                                            (monthIndex -
+                                                                now.month);
                                                     if (_monthPageController
                                                         .hasClients) {
                                                       _monthPageController
@@ -556,7 +571,18 @@ class _CalendarPageState extends State<CalendarPage>
                                                         10000 + weekOffset,
                                                       );
                                                     }
-                                                },
+                                                    Future.delayed(
+                                                        const Duration(
+                                                            milliseconds: 50),
+                                                        () {
+                                                      if (mounted) {
+                                                        calendarCubit
+                                                            .setVisibleDate(
+                                                                targetDate);
+                                                      }
+                                                    });
+                                                  },
+                                                ),
                                               )
                                             : const SizedBox(),
                                       ),
@@ -583,14 +609,17 @@ class _CalendarPageState extends State<CalendarPage>
                                                 return Container(
                                                   height: currentHeight,
                                                   width: double.infinity,
-                                                  color: const Color(0xFFF6F6F6),
+                                                  color:
+                                                      const Color(0xFFF6F6F6),
                                                   child: Stack(
                                                     children: [
                                                       Opacity(
                                                         opacity: (1.0 -
-                                                                _controller.value)
+                                                                _controller
+                                                                    .value)
                                                             .clamp(0.0, 1.0),
-                                                        child: _controller.value <
+                                                        child: _controller
+                                                                    .value <
                                                                 0.9
                                                             ? WeekCalendarScroll(
                                                                 pageController:
@@ -614,9 +643,11 @@ class _CalendarPageState extends State<CalendarPage>
                                                                 .shrink(),
                                                       ),
                                                       Opacity(
-                                                        opacity: _controller.value
+                                                        opacity: _controller
+                                                            .value
                                                             .clamp(0.0, 1.0),
-                                                        child: _controller.value >
+                                                        child: _controller
+                                                                    .value >
                                                                 0.1
                                                             ? SingleChildScrollView(
                                                                 child:
@@ -650,35 +681,51 @@ class _CalendarPageState extends State<CalendarPage>
                                             ConstrainedBox(
                                               constraints: BoxConstraints(
                                                 maxHeight: _showMonthSelector
-                                                    ? Responsive.width(500, context)
-                                                    : Responsive.width(580, context),
+                                                    ? Responsive.height(
+                                                        450, context)
+                                                    : Responsive.height(
+                                                        580, context),
                                               ),
                                               child: MonthGridCalendarScroll(
                                                 filterVersion: _filterVersion,
-                                                pageController: _monthPageController,
-                                                onDateSelected: (DateTime date) {
-                                                  calendarCubit.selectDate(date);
-                                                  final int weekOffset = _getWeekOffset(date);
+                                                pageController:
+                                                    _monthPageController,
+                                                onDateSelected:
+                                                    (DateTime date) {
+                                                  calendarCubit
+                                                      .selectDate(date);
+                                                  final int weekOffset =
+                                                      _getWeekOffset(date);
                                                   setState(() {
                                                     _selectedView = 'day';
                                                   });
-                                                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                    if (_weekPageController.hasClients) {
-                                                      _weekPageController.jumpToPage(10000 + weekOffset);
+                                                  WidgetsBinding.instance
+                                                      .addPostFrameCallback(
+                                                          (_) {
+                                                    if (_weekPageController
+                                                        .hasClients) {
+                                                      _weekPageController
+                                                          .jumpToPage(10000 +
+                                                              weekOffset);
                                                     }
                                                   });
                                                 },
-                                                onVisibleDateChanged: (DateTime date) {
-                                                  calendarCubit.setVisibleDate(date);
+                                                onVisibleDateChanged:
+                                                    (DateTime date) {
+                                                  calendarCubit
+                                                      .setVisibleDate(date);
                                                 },
                                               ),
                                             ),
-                                          if (_selectedView != 'month' || (_selectedView == 'month' && !_showMonthSelector))
+                                          if (_selectedView != 'month' ||
+                                              (_selectedView == 'month' &&
+                                                  !_showMonthSelector))
                                             GestureDetector(
-                                              onVerticalDragUpdate:
-                                                  _handleDragUpdate,
-                                              onVerticalDragEnd: _handleDragEnd,
-                                              child: DragHandleWidget()),
+                                                onVerticalDragUpdate:
+                                                    _handleDragUpdate,
+                                                onVerticalDragEnd:
+                                                    _handleDragEnd,
+                                                child: DragHandleWidget()),
                                         ],
                                       ),
                                     ],
@@ -690,7 +737,8 @@ class _CalendarPageState extends State<CalendarPage>
                     if (_selectedView == 'list')
                       Expanded(
                         child: ListViewWidget(
-                          key: ValueKey('${calendarCubit.selectedDate}_$_filterVersion'),
+                          key: ValueKey(
+                              '${calendarCubit.selectedDate}_$_filterVersion'),
                           controller: _listController,
                           selectedDate: calendarCubit.selectedDate,
                         ),
@@ -698,9 +746,11 @@ class _CalendarPageState extends State<CalendarPage>
                     else if (_selectedView == 'day')
                       Expanded(
                         child: SingleChildScrollView(
-                          padding: EdgeInsets.only(bottom: Responsive.height(100, context)),
+                          padding: EdgeInsets.only(
+                              bottom: Responsive.height(100, context)),
                           child: EventsSectionWidget(
-                            key: ValueKey('${calendarCubit.selectedDate}_$_filterVersion'),
+                            key: ValueKey(
+                                '${calendarCubit.selectedDate}_$_filterVersion'),
                             day: calendarCubit.selectedDate,
                           ),
                         ),

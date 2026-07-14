@@ -1,4 +1,3 @@
-
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter/material.dart';
 
@@ -58,7 +57,7 @@ class CalendarItem {
     // 1. Resobin events -> Lectures N Labs
     if (uid.startsWith('resobin-')) {
       return PillStyle(
-        backgroundColor: const Color(0xFFCDE7C7), // light green
+        backgroundColor: const Color(0xFFF9F4D5), // light yellow
       );
     }
 
@@ -67,29 +66,27 @@ class CalendarItem {
     if (sub == 'holidays') {
       return PillStyle(
         backgroundColor: const Color(0xFFEFEFEF), // grey
-        dotColor: const Color(0xFF35BA61), // green dot
+        dotColor: const Color(0xFFB7DD8A), // green dot
       );
     } else if (sub == 'exams') {
       return PillStyle(
-        backgroundColor: const Color(0xFFFF7474), // orangish-red
-        textColor: Colors.white,
+        backgroundColor: const Color(0xFFFFA294), // orangish-red
       );
     } else if (sub == 'social-event-announcements') {
       return PillStyle(
-        backgroundColor: const Color(0xFF5292FF), // light blue
-        textColor: Colors.white,
+        backgroundColor: const Color(0xFFCCEFFF), // light blue
       );
     } else if (sub == 'reminders') {
       return PillStyle(
         backgroundColor: Colors.white,
-        borderColor: const Color(0xFFFF7474), // orangish-red border
+        borderColor: const Color(0xFFFFA294), // orangish-red border
       );
     }
 
     // 3. Default: Other all-day events
     return PillStyle(
       backgroundColor: const Color(0xFFEFEFEF), // grey
-      dotColor: const Color(0xFFFFA159), // orange dot
+      dotColor: const Color(0xFFFFB073), // orange dot
     );
   }
 
