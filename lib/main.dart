@@ -156,11 +156,18 @@ void main() async {
 
   InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
 
-  AwesomeNotifications().initialize(
-    'resource://drawable/ic_launcher_foreground',
-    notifChannels,
-    channelGroups: notifGroups,
-  );
+  // Android only: notifications are displayed locally via
+  // AwesomeNotifications (the backend sends Android data-only messages).
+  // On iOS the OS displays FCM notifications natively, and initializing
+  // AwesomeNotifications there hijacks the notification-center delegate,
+  // breaking taps on those notifications.
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    AwesomeNotifications().initialize(
+      'resource://drawable/ic_launcher_foreground',
+      notifChannels,
+      channelGroups: notifGroups,
+    );
+  }
 
   await bloc.restorePrefs();
 

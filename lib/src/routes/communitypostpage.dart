@@ -99,9 +99,10 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
             postLoadFailed = true;
           }
         });
-      }).catchError((_) {
+      }).catchError((e) {
         // Opened from a notification/deep link and the fetch failed:
         // show an error instead of a blank screen forever
+        debugPrint("NOTIF: CommunityPostPage initial load failed: $e");
         if (!this.mounted || this.communityPost != null) return;
         setState(() {
           postLoadFailed = true;
@@ -322,16 +323,55 @@ class _CommunityPostPageState extends State<CommunityPostPage> {
             ),
             body: Center(
               child: postLoadFailed
-                  ? Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Text(
-                        "Couldn't load this post.\nPlease try again later.",
-                        textAlign: TextAlign.center,
-                      ),
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Text(
+                            "Couldn't load this post.\nPlease try again later.",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => _retryLoad(bloc),
+                          child: Text("Retry"),
+                        ),
+                      ],
                     )
                   : CircularProgressIndicator(),
             ),
           );
+  }
+
+  /// Retry the fetch when the page was opened by route name
+  /// (notification/deep link) and the initial load failed
+  void _retryLoad(InstiAppBloc bloc) {
+    final String routeName = ModalRoute.of(context)?.settings.name ?? "";
+    if (!routeName.startsWith("/communitypost/")) return;
+    setState(() {
+      postLoadFailed = false;
+    });
+    bloc.communityPostBloc
+        .getCommunityPost(routeName.split("/communitypost/")[1])
+        .then((post) {
+      if (!this.mounted) return;
+      setState(() {
+        if (post != null) {
+          communityPost = post;
+          currentlyCommentingPost = post;
+          threadRank = post.threadRank;
+        } else {
+          postLoadFailed = true;
+        }
+      });
+    }).catchError((e) {
+      debugPrint("NOTIF: CommunityPostPage retry failed: $e");
+      if (!this.mounted) return;
+      setState(() {
+        postLoadFailed = true;
+      });
+    });
   }
 
   List<Widget> _buildCommentList(

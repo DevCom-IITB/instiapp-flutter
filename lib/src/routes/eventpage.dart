@@ -73,12 +73,40 @@ class _EventPageState extends State<EventPage> {
       } else if (ev != null) {
         event = ev;
       }
-    }).catchError((_) {
+    }).catchError((e) {
+      debugPrint("NOTIF: EventPage initial load failed: $e");
       if (this.mounted && event == null) {
         setState(() {
           eventLoadFailed = true;
         });
       }
+    });
+  }
+
+  /// Retry the fetch when the page was opened by route name
+  /// (notification/deep link) and the initial load failed
+  void _retryLoad(InstiAppBloc bloc) {
+    final String routeName = ModalRoute.of(context)?.settings.name ?? "";
+    if (!routeName.startsWith("/event/")) return;
+    setState(() {
+      eventLoadFailed = false;
+    });
+    bloc.getEvent(routeName.split("/event/")[1]).then((ev) {
+      if (!this.mounted) return;
+      setState(() {
+        if (ev != null) {
+          event = ev;
+          currentUes = ev.eventUserUes ?? UES.NotGoing;
+        } else {
+          eventLoadFailed = true;
+        }
+      });
+    }).catchError((e) {
+      debugPrint("NOTIF: EventPage retry failed: $e");
+      if (!this.mounted) return;
+      setState(() {
+        eventLoadFailed = true;
+      });
     });
   }
 
@@ -122,12 +150,21 @@ class _EventPageState extends State<EventPage> {
         ),
         body: Center(
           child: eventLoadFailed
-              ? Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Text(
-                    "Couldn't load this event.\nPlease try again later.",
-                    textAlign: TextAlign.center,
-                  ),
+              ? Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Text(
+                        "Couldn't load this event.\nPlease try again later.",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => _retryLoad(bloc),
+                      child: Text("Retry"),
+                    ),
+                  ],
                 )
               : CircularProgressIndicator(),
         ),

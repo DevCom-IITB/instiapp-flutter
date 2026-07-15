@@ -3,6 +3,7 @@ import 'package:InstiApp/src/api/model/rich_notification.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:jaguar/utils/string/string.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -194,6 +195,8 @@ String? _pendingNotificationRoute;
 void handleNotificationNavigation(RichNotification notif) {
   final String route = routeFromNotification(notif);
   final NavigatorState? nav = navigatorKey.currentState;
+  debugPrint("NOTIF: resolve type=${notif.notificationType} id=${notif.notificationObjectID} -> $route "
+      "(ready=$notificationNavigationReady, nav=${nav != null})");
   if (notificationNavigationReady && nav != null) {
     nav.pushNamed(route);
   } else {
@@ -207,9 +210,15 @@ void consumePendingNotificationRoute() {
   final String? route = _pendingNotificationRoute;
   _pendingNotificationRoute = null;
   if (route != null) {
+    debugPrint("NOTIF: consuming pending route $route");
     navigatorKey.currentState?.pushNamed(route);
   }
 }
+
+/// True on Android (the only platform where notifications are displayed
+/// locally through AwesomeNotifications; see [attachNotificationListeners])
+bool get _useAwesomeNotifications =>
+    !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
 class NotificationController {
   @pragma("vm:entry-point")
@@ -227,6 +236,8 @@ class NotificationController {
   @pragma("vm:entry-point")
   static Future<void> onActionReceivedMethod(
       ReceivedAction receivedAction) async {
+    debugPrint(
+        "NOTIF: onActionReceived button=${receivedAction.buttonKeyPressed} payload=${receivedAction.payload}");
     if (receivedAction.payload == null) return;
 
     RichNotification notif =
@@ -305,9 +316,25 @@ void attachNotificationListeners() {
   if (_notificationListenersAttached) return;
   _notificationListenersAttached = true;
 
-  /// Foreground: build and show the rich notification ourselves
+  if (!_useAwesomeNotifications) {
+    /// iOS: the backend always sends notification-type messages, which the
+    /// OS displays. Let it also display them in foreground so iOS has
+    /// exactly one display pipeline (no local duplicates).
+    FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  }
+
+  /// Foreground messages
   FirebaseMessaging.onMessage.listen(
     (RemoteMessage message) async {
+      debugPrint("NOTIF: onMessage (foreground) data=${message.data}");
+      // iOS already presents messages with a notification block natively
+      // (see setForegroundNotificationPresentationOptions above); creating
+      // a local copy would show the same notification twice
+      if (!_useAwesomeNotifications && message.notification != null) return;
       await sendMessage(message);
     },
     onError: (error, stackTrace) {},
@@ -315,40 +342,53 @@ void attachNotificationListeners() {
 
   /// Background: user tapped an OS-displayed notification
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    debugPrint("NOTIF: onMessageOpenedApp tap data=${message.data}");
     handleNotificationNavigation(richNotificationFromRemoteMessage(message));
   });
 
   /// Terminated: app was launched by tapping an OS-displayed notification
   FirebaseMessaging.instance.getInitialMessage().then((message) {
     if (message != null) {
+      debugPrint("NOTIF: getInitialMessage launch tap data=${message.data}");
       handleNotificationNavigation(richNotificationFromRemoteMessage(message));
     }
   });
 
-  AwesomeNotifications().setListeners(
-    onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-    onNotificationCreatedMethod:
-        NotificationController.onNotificationCreatedMethod,
-    onNotificationDisplayedMethod:
-        NotificationController.onNotificationDisplayedMethod,
-    onDismissActionReceivedMethod:
-        NotificationController.onDismissActionReceivedMethod,
-  );
+  /// Android only. AwesomeNotifications must NOT attach on iOS: it takes
+  /// over the iOS notification-center delegate and swallows taps on
+  /// FCM-displayed notifications, so onMessageOpenedApp never fires and
+  /// tapped notifications just open the homescreen.
+  if (_useAwesomeNotifications) {
+    AwesomeNotifications().setListeners(
+      onActionReceivedMethod: NotificationController.onActionReceivedMethod,
+      onNotificationCreatedMethod:
+          NotificationController.onNotificationCreatedMethod,
+      onNotificationDisplayedMethod:
+          NotificationController.onNotificationDisplayedMethod,
+      onDismissActionReceivedMethod:
+          NotificationController.onDismissActionReceivedMethod,
+    );
 
-  /// Terminated: app was launched by tapping an AwesomeNotifications
-  /// notification (the Android data-message path)
-  AwesomeNotifications()
-      .getInitialNotificationAction(removeFromActionEvents: true)
-      .then((action) {
-    if (action != null) {
-      NotificationController.onActionReceivedMethod(action);
-    }
-  });
+    /// Terminated: app was launched by tapping an AwesomeNotifications
+    /// notification (the Android data-message path)
+    AwesomeNotifications()
+        .getInitialNotificationAction(removeFromActionEvents: true)
+        .then((action) {
+      if (action != null) {
+        debugPrint(
+            "NOTIF: initial AwesomeNotifications action payload=${action.payload}");
+        NotificationController.onActionReceivedMethod(action);
+      }
+    });
+  }
 }
 
 void setupNotifications(BuildContext context, InstiAppBloc bloc) async {
-  // Check for permission (if not granted, request it)
-  if (await bloc.hasNotificationPermission() == null)
+  // Check for permission (if not granted, request it).
+  // The AwesomeNotifications permission dialog is Android-only; on iOS the
+  // system permission is requested through FirebaseMessaging in main().
+  if (_useAwesomeNotifications &&
+      await bloc.hasNotificationPermission() == null)
     requestNotificationPermission(context, bloc);
 
   attachNotificationListeners();
@@ -452,6 +492,11 @@ Future<void> sendMessage(RemoteMessage message) async {
 
 /// Create a notification
 Future<void> createNotification(RichNotification notif) async {
+  // Local notifications are only used on Android (see
+  // attachNotificationListeners); AwesomeNotifications is not initialized
+  // on other platforms
+  if (!_useAwesomeNotifications) return;
+
   await AwesomeNotifications().createNotification(
     content: getNotificationContent(notif),
     actionButtons: getActionButtons(notif),
