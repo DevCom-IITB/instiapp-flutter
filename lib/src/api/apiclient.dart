@@ -38,6 +38,7 @@ import 'package:InstiApp/src/api/request/chatbotlog_request.dart';
 import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
+import 'package:InstiApp/src/api/request/popup_mark_read_request.dart';
 import 'package:InstiApp/src/api/request/postFAQ_request.dart';
 import 'package:InstiApp/src/api/request/update_community_post_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
@@ -53,6 +54,7 @@ import 'package:InstiApp/src/api/response/news_feed_response.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:InstiApp/src/api/response/user_tags_reach_response.dart';
 import 'package:InstiApp/src/api/response/calendar_feed_response.dart';
+import 'package:InstiApp/src/api/response/popup_notification_response.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart' as rt;
 
@@ -62,15 +64,27 @@ part 'apiclient.g.dart';
 
 // @rt.RestApi(baseUrl: "http://10.0.2.2:3000/api")
 // @rt.RestApi(baseUrl: "https://035b-2401-4900-aa02-ddb0-5df9-3d94-6b84-937f.ngrok-free.app/api")
-@rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
+// @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
 // @rt.RestApi(baseUrl: "http://10.195.160.117/api")
 //@rt.RestApi(baseUrl: "https://nayeli-nonbulbar-denominationally.ngrok-free.dev/api")
 // @rt.RestApi(baseUrl: "https://f6ba722a576a.ngrok-free.app/api")
+@rt.RestApi(baseUrl: "http://192.168.1.233:8000/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
   @rt.GET("/mess")
   Future<List<Hostel>> getHostelMess();
+
+  @rt.GET("/popup-notification/")
+  Future<List<PopupNotificationResponse>> getPopupNotifications(
+      @rt.Header("Cookie") String sessionID,
+      );
+
+  @rt.PATCH("/popup-notification/{popupId}/mark-as-read/")
+  Future<void> markPopupAsRead(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Path("popupId") int popupId,
+      );
 
   @rt.GET("/pass-login")
   Future<Session> passwordLogin(@rt.Query("username") String username,

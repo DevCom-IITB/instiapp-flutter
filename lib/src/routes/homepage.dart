@@ -21,11 +21,12 @@ import 'feedpage.dart';
 
 import 'package:InstiApp/src/routes/userpage.dart';
 import 'package:InstiApp/src/api/model/user.dart';
+import 'package:InstiApp/src/api/response/popup_notification_response.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
 import 'package:intl/intl.dart';
 import '../widgets/custom_dialog.dart';
 import '../widgets/bottom_navbar.dart';
-import '../widgets/calendar_update_popup.dart';
+import '../widgets/popup_notification.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:InstiApp/main.dart' as main_app;
@@ -391,21 +392,84 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
     });
   }
 
-  /// Shows the calendar-update popup every time the homepage is opened.
   Future<void> _maybeShowCalendarUpdatePopup() async {
-    // cross button needed
     if (!mounted) return;
+
+    final bloc = BlocProvider.of(context)!.bloc;
+    List<PopupNotificationResponse> popups;
+    try {
+      popups = await bloc.getPopupNotifications();
+    } catch (e) {
+      print('Popup fetch failed: $e');
+      return;
+    }
+
+    if (!mounted || popups.isEmpty) return;
+
+    final popup = popups.first;
+    final linkInfo = _parsePopupLink(popup.links);
+
+    Future<void> markRead() async {
+      if (popup.id == null) return;
+      try {
+        await bloc.markPopupNotificationRead(popup.id!);
+      } catch (e, st) {
+        print("POPUP HOMEPAGE ERROR: $e");
+        print(st);
+        return;
+      }
+    }
 
     showDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(0.5),
-      builder: (dialogContext) => CalendarUpdatePopup(
-        onLater: () => Navigator.of(dialogContext).pop(),
+      builder: (dialogContext) => PopupNotification(
+        heading: popup.heading ?? '',
+        description: popup.shortDescription ?? '',
+        imageUrl: popup.imageUrl,
+        ctalabel: (linkInfo['label']?.isNotEmpty ?? false)
+            ? linkInfo['label']!
+            : 'Update now',
+        onDismiss: () {
+          Navigator.of(dialogContext).pop();
+          markRead();
+        },
         onUpdateNow: () {
-          // idhar app store play store link aayega?
+          Navigator.of(dialogContext).pop();
+          markRead();
+          _launchUrl(linkInfo['url']);
         },
       ),
     );
+  }
+
+  Map<String, String?> _parsePopupLink(List<dynamic>? links) {
+    if (links == null || links.isEmpty) return const {'url': null, 'label': null};
+    final first = links.first;
+    if (first is Map) {
+      return {
+        'url': first['url']?.toString(),
+        'label': first['label']?.toString(),
+      };
+    }
+    if (first is String) {
+      return {'url': first, 'label': null};
+    }
+    return const {'url': null, 'label': null};
+  }
+
+  Future<void> _launchUrl(String? urlString) async {
+    if (urlString == null || urlString.isEmpty) return;
+    final uri = Uri.tryParse(urlString);
+    if (uri == null) return;
+
+    try {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      // ignore, matches the existing messi-icon link handler's tolerance
+    }
   }
 
   int getCurrentMealSlot() {

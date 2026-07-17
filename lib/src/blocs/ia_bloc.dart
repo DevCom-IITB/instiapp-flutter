@@ -17,9 +17,11 @@ import 'package:InstiApp/src/api/model/user.dart';
 import 'package:InstiApp/src/api/model/venter.dart';
 import 'package:InstiApp/src/api/request/achievement_hidden_patch_request.dart';
 import 'package:InstiApp/src/api/request/postFAQ_request.dart';
+import 'package:InstiApp/src/api/request/popup_mark_read_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/api/response/alumni_login_response.dart';
+import 'package:InstiApp/src/api/response/popup_notification_response.dart';
 import 'package:InstiApp/src/api/response/getencr_response.dart';
 import 'package:InstiApp/src/blocs/ach_to_vefiry_bloc.dart';
 import 'package:InstiApp/src/blocs/achievementform_bloc.dart';
@@ -363,6 +365,32 @@ class InstiAppBloc {
   Future<String?> getQRString() async {
     GetEncrResponse res = await client.getEncr(getSessionIdHeader());
     return res.qrstring;
+  }
+
+  Future<List<PopupNotificationResponse>> getPopupNotifications() async {
+    print("POPUP: Starting API request");
+
+    try {
+      final sessionID = getSessionIdHeader();
+
+      print("POPUP: Session header: $sessionID");
+
+      final response = await client.getPopupNotifications(sessionID);
+
+      print("POPUP: API request succeeded: $response");
+      return response;
+    } catch (e, st) {
+      print("POPUP: API request failed: $e");
+      print(st);
+      rethrow;
+    }
+  }
+
+  Future<void> markPopupNotificationRead(int popupId) {
+    return client.markPopupAsRead(
+      getSessionIdHeader(),
+      popupId
+    );
   }
 
   // Event bloc

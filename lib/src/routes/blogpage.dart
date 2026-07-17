@@ -223,6 +223,12 @@ class _BlogPageState extends State<BlogPage> {
   double _yearPillOpacity = 0;
   Timer? _yearPillHideTimer;
 
+  // Google Photos-style draggable scrollbar for the company-wise view.
+  // _companyScrollFraction tracks where the thumb sits (0 = top, 1 =
+  // bottom); it follows normal scrolling too, not just dragging.
+  double _companyScrollFraction = 0.0;
+  bool _isDraggingYearScrollbar = false;
+
   ScrollController? get _activeScrollController {
     return postType == PostType.Placement
         ? _placementScrollController
@@ -239,12 +245,23 @@ class _BlogPageState extends State<BlogPage> {
 
     if (view == 'company') {
       _updateVisibleYearIndicator();
+      // Keep the scrollbar thumb in sync with normal scrolling too, but
+      // don't fight the user's finger while they're actively dragging it.
+      if (!_isDraggingYearScrollbar) {
+        final double maxExtent = controller.position.maxScrollExtent;
+        final double fraction =
+        maxExtent > 0 ? (controller.offset / maxExtent).clamp(0.0, 1.0) : 0.0;
+        if ((fraction - _companyScrollFraction).abs() > 0.001) {
+          setState(() => _companyScrollFraction = fraction);
+        }
+      }
     }
   }
 
   // Finds the year header that's scrolled up to (or past) the top of the
   // list viewport, shows the floating pill for it, and schedules the pill
-  // to fade back out shortly after scrolling settles.
+  // to fade back out shortly after scrolling settles (unless the
+  // scrollbar is actively being held, in which case it should just stay).
   void _updateVisibleYearIndicator() {
     const double topThreshold = 12; // relative to the list's own viewport
     final RenderObject? viewport =
@@ -274,10 +291,21 @@ class _BlogPageState extends State<BlogPage> {
       });
     }
 
+    if (_isDraggingYearScrollbar) return; // stay visible while held
+
     _yearPillHideTimer?.cancel();
     _yearPillHideTimer = Timer(const Duration(milliseconds: 900), () {
       if (mounted) setState(() => _yearPillOpacity = 0);
     });
+  }
+
+  // Jumps the active list to the given fraction (0..1) of its scroll
+  // extent -- used by the draggable year scrollbar.
+  void _seekCompanyListToFraction(double fraction) {
+    final controller = _activeScrollController;
+    if (controller == null || !controller.hasClients) return;
+    final double maxExtent = controller.position.maxScrollExtent;
+    controller.jumpTo((fraction * maxExtent).clamp(0.0, maxExtent));
   }
 
   bool firstBuild = true;
@@ -1020,7 +1048,7 @@ class _BlogPageState extends State<BlogPage> {
                                             ),
                                             child: IconButton(
                                                 icon: SvgPicture.asset(
-                                                  'assets/blogs/list.svg',
+                                                  'assets/blogs/list_comp_dark.svg',
                                                   color: view == 'company wise'
                                                       ? Colors.white
                                                       : Colors.black,
@@ -1156,75 +1184,161 @@ class _BlogPageState extends State<BlogPage> {
             _companyYearHeaderKeys.putIfAbsent(year, () => GlobalKey());
           }
 
-          return Stack(
-            key: _companyListViewportKey,
-            children: [
-              ListView(
-                controller: tabPostType == PostType.Placement
-                    ? _placementScrollController
-                    : _trainingScrollController,
-                children: <Widget>[
-                  for (final year in years) ...[
-                    Container(
-                      key: _companyYearHeaderKeys[year],
-                      margin: EdgeInsets.only(
-                        left: Responsive.width(19.0, context),
-                        top: Responsive.height(8.0, context),
-                        bottom: Responsive.height(8.0, context),
-                      ),
-                      child: Text(
-                        '$year',
-                        style: TextStyle(
-                          fontSize: Responsive.text(20.0, context),
-                          fontFamily: 'DM Sans',
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
+          return LayoutBuilder(builder: (context, constraints) {
+            final double trackHeight = constraints.maxHeight;
+            final double thumbHeight = Responsive.height(48.0, context);
+            final double thumbTravel =
+            (trackHeight - thumbHeight).clamp(0.0, double.infinity);
+            final double thumbTop = thumbTravel * _companyScrollFraction;
+            final String labelText =
+                '${_visibleYear ?? (years.isNotEmpty ? years.first : '')}';
+
+            void seekFromLocalDy(double localDy) {
+              final double fraction =
+              thumbTravel > 0 ? ((localDy - thumbHeight / 2) / thumbTravel) : 0.0;
+              final double clamped = fraction.clamp(0.0, 1.0);
+              setState(() => _companyScrollFraction = clamped);
+              _seekCompanyListToFraction(clamped);
+            }
+
+            return Stack(
+              key: _companyListViewportKey,
+              children: [
+                ListView(
+                  controller: tabPostType == PostType.Placement
+                      ? _placementScrollController
+                      : _trainingScrollController,
+                  children: <Widget>[
+                    for (final year in years) ...[
+                      Container(
+                        key: _companyYearHeaderKeys[year],
+                        margin: EdgeInsets.only(
+                          left: Responsive.width(19.0, context),
+                          top: Responsive.height(8.0, context),
+                          bottom: Responsive.height(8.0, context),
+                        ),
+                        child: Text(
+                          '$year',
+                          style: TextStyle(
+                            fontSize: Responsive.text(20.0, context),
+                            fontFamily: 'DM Sans',
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
-                    ),
-                    for (final entry in yearMap[year]!.entries)
-                      Blogthread(entry.value, entry.key),
+                      for (final entry in yearMap[year]!.entries)
+                        Blogthread(entry.value, entry.key),
+                    ],
                   ],
-                ],
-              ),
-              Positioned(
-                top: Responsive.height(8.0, context),
-                right: Responsive.width(16.0, context),
-                child: IgnorePointer(
-                  child: AnimatedOpacity(
-                    opacity: _yearPillOpacity,
-                    duration: const Duration(milliseconds: 200),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: Responsive.width(14.0, context),
-                        vertical: Responsive.height(8.0, context),
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.12),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
+                ),
+                // Label bubble -- follows the thumb vertically, matches the
+                // Google Photos "date while scrubbing" look. Bigger/bolder
+                // while actively held, small pill otherwise.
+                Positioned(
+                  top: (thumbTop - Responsive.height(8.0, context))
+                      .clamp(0.0, double.infinity),
+                  right: Responsive.width(28.0, context),
+                  child: IgnorePointer(
+                    child: AnimatedOpacity(
+                      opacity: _yearPillOpacity,
+                      duration: const Duration(milliseconds: 150),
+                      child: AnimatedScale(
+                        scale: _isDraggingYearScrollbar ? 1.0 : 0.85,
+                        duration: const Duration(milliseconds: 150),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: Responsive.width(
+                                _isDraggingYearScrollbar ? 18.0 : 14.0,
+                                context),
+                            vertical: Responsive.height(
+                                _isDraggingYearScrollbar ? 10.0 : 8.0,
+                                context),
                           ),
-                        ],
-                      ),
-                      child: Text(
-                        '${_visibleYear ?? (years.isNotEmpty ? years.first : '')}',
-                        style: TextStyle(
-                          fontSize: Responsive.text(14.0, context),
-                          fontFamily: 'DM Sans',
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
+                          decoration: BoxDecoration(
+                            color: _isDraggingYearScrollbar
+                                ? const Color.fromRGBO(48, 111, 220, 1)
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.12),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            labelText,
+                            style: TextStyle(
+                              fontSize: Responsive.text(
+                                  _isDraggingYearScrollbar ? 16.0 : 14.0,
+                                  context),
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w700,
+                              color: _isDraggingYearScrollbar
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          );
+                // Draggable track -- press and hold anywhere along the right
+                // edge to scrub through the list; the thumb + label follow.
+                Positioned(
+                  top: 0,
+                  bottom: 0,
+                  right: 0,
+                  width: Responsive.width(28.0, context),
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTapDown: (details) =>
+                        seekFromLocalDy(details.localPosition.dy),
+                    onVerticalDragStart: (details) {
+                      _yearPillHideTimer?.cancel();
+                      setState(() {
+                        _isDraggingYearScrollbar = true;
+                        _yearPillOpacity = 1;
+                      });
+                      seekFromLocalDy(details.localPosition.dy);
+                    },
+                    onVerticalDragUpdate: (details) =>
+                        seekFromLocalDy(details.localPosition.dy),
+                    onVerticalDragEnd: (details) {
+                      setState(() => _isDraggingYearScrollbar = false);
+                      _yearPillHideTimer?.cancel();
+                      _yearPillHideTimer =
+                          Timer(const Duration(milliseconds: 900), () {
+                            if (mounted) setState(() => _yearPillOpacity = 0);
+                          });
+                    },
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            right: Responsive.width(6.0, context)),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          margin: EdgeInsets.only(top: thumbTop),
+                          width: _isDraggingYearScrollbar ? 6 : 4,
+                          height: thumbHeight,
+                          decoration: BoxDecoration(
+                            color: _isDraggingYearScrollbar
+                                ? const Color.fromRGBO(48, 111, 220, 1)
+                                : const Color.fromRGBO(0, 0, 0, 0.2),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          });
         },
       );
     }
@@ -1519,9 +1633,9 @@ class Blogthread extends StatefulWidget {
 }
 
 class _BlogthreadState extends State<Blogthread> {
-  // Index of the post currently expanded within the shared card.
-  // -1 means all posts are collapsed.
-  int expandedIndex = 0;
+  // Indices of posts currently expanded within the shared card.
+  // Multiple can be open at once -- opening one no longer closes the others.
+  Set<int> expandedIndices = {0};
 
   String extractDepartmentName(String title) {
     if (title.contains('|')) {
@@ -1683,11 +1797,15 @@ class _BlogthreadState extends State<Blogthread> {
               for (int i = 0; i < posts.length; i++) ...[
                 Companywiseblog(
                   post: posts[i],
-                  isExpanded: i == expandedIndex,
+                  isExpanded: expandedIndices.contains(i),
                   subject: extractSubject(posts[i].title ?? ''),
                   onToggle: () {
                     setState(() {
-                      expandedIndex = (expandedIndex == i) ? -1 : i;
+                      if (expandedIndices.contains(i)) {
+                        expandedIndices.remove(i);
+                      } else {
+                        expandedIndices.add(i);
+                      }
                     });
                   },
                 ),
@@ -1708,9 +1826,6 @@ class _BlogthreadState extends State<Blogthread> {
   }
 }
 
-// A single post's row within the shared company card.
-// Controlled component: expansion state lives in _BlogthreadState so only
-// one (or zero) posts are expanded at a time within the card.
 class Companywiseblog extends StatelessWidget {
   final Post? post;
   final bool isExpanded;
@@ -1816,6 +1931,7 @@ class Companywiseblog extends StatelessWidget {
                 const SizedBox(width: 8),
                 InkWell(
                   onTap: onToggle,
+                  // TODO: swap for chevron-up.svg if available.
                   child: Transform.rotate(
                     angle: math.pi,
                     child: SvgPicture.asset(
