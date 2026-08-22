@@ -751,6 +751,7 @@ class InstiAppBloc {
     if (sessionHeader.isEmpty) {
       debugPrint('getOrFetchCalendarPreferences: sessionHeader is empty');
       return CalendarPreferencesResponse(
+        showAllEvents: true,
         showInstiappGoing: true,
         showInstiappFollowedBodies: true,
         showResobin: true,
@@ -764,13 +765,14 @@ class InstiAppBloc {
       if (prefsList.isNotEmpty) {
         calendarPreferences = prefsList.first;
         debugPrint(
-            'getOrFetchCalendarPreferences: first pref showGoing=${calendarPreferences!.showInstiappGoing}, showFollowed=${calendarPreferences!.showInstiappFollowedBodies}, showResobin=${calendarPreferences!.showResobin}');
+            'getOrFetchCalendarPreferences: first pref showAllEvents=${calendarPreferences!.showAllEvents}, showGoing=${calendarPreferences!.showInstiappGoing}, showFollowed=${calendarPreferences!.showInstiappFollowedBodies}, showResobin=${calendarPreferences!.showResobin}');
       }
     } catch (e) {
       debugPrint(
           'getOrFetchCalendarPreferences: Error fetching calendar preferences: $e');
     }
     calendarPreferences ??= CalendarPreferencesResponse();
+    calendarPreferences!.showAllEvents ??= true;
     calendarPreferences!.showInstiappGoing ??= true;
     calendarPreferences!.showInstiappFollowedBodies ??= true;
     calendarPreferences!.showResobin ??= true;
@@ -873,6 +875,51 @@ class InstiAppBloc {
     }
   }
 
+  bool _isSlotOnWeekday(ResobinSlot slot, DateTime date) {
+    final dayRaw = slot.day?.trim().toLowerCase();
+    if (dayRaw == null || dayRaw.isEmpty) return false;
+
+    final weekday = date.weekday; // 1 = Monday, ..., 7 = Sunday
+    const weekdayNames = [
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+      'sunday'
+    ];
+    const shortWeekdayNames = [
+      'mon',
+      'tue',
+      'wed',
+      'thu',
+      'fri',
+      'sat',
+      'sun'
+    ];
+
+    final targetName = weekdayNames[weekday - 1];
+    final targetShort = shortWeekdayNames[weekday - 1];
+    final targetNum = weekday.toString();
+
+    return dayRaw == targetName ||
+        dayRaw == targetShort ||
+        dayRaw == targetNum ||
+        dayRaw.startsWith(targetShort);
+  }
+
+  String _normalizeTime(String time) {
+    final parts = time.trim().split(':');
+    if (parts.length >= 2) {
+      final hour = parts[0].padLeft(2, '0');
+      final min = parts[1].padLeft(2, '0');
+      final sec = parts.length > 2 ? parts[2].padLeft(2, '0') : '00';
+      return '$hour:$min:$sec';
+    }
+    return time.trim();
+  }
+
   Future<CalendarFeedResponse> getCalendarFeedCombined(
     String sessionId,
     String start,
@@ -880,14 +927,14 @@ class InstiAppBloc {
     String tz,
   ) async {
     final prefs = await getOrFetchCalendarPreferences();
-    final cacheKey = "${start}_${end}_${prefs.showInstiappGoing}_${prefs.showInstiappFollowedBodies}_${prefs.showResobin}";
+    final cacheKey = "${start}_${end}_${prefs.showAllEvents}_${prefs.showInstiappGoing}_${prefs.showInstiappFollowedBodies}_${prefs.showResobin}";
     if (_calendarFeedCache.containsKey(cacheKey)) {
       debugPrint('getCalendarFeedCombined: cache hit for key $cacheKey');
       return _calendarFeedCache[cacheKey]!;
     }
 
     debugPrint(
-        'getCalendarFeedCombined: prefs showInstiappGoing=${prefs.showInstiappGoing}, showInstiappFollowedBodies=${prefs.showInstiappFollowedBodies}, showResobin=${prefs.showResobin}');
+        'getCalendarFeedCombined: prefs showAllEvents=${prefs.showAllEvents}, showInstiappGoing=${prefs.showInstiappGoing}, showInstiappFollowedBodies=${prefs.showInstiappFollowedBodies}, showResobin=${prefs.showResobin}');
 
     CalendarFeedResponse originalFeed;
     try {
@@ -913,7 +960,18 @@ class InstiAppBloc {
       return originalFeed;
     }
 
-    final rollNo = currSession?.profile?.userRollNumber;
+    var rollNo = currSession?.profile?.userRollNumber;
+    if (rollNo == null || rollNo.isEmpty) {
+      if (getSessionIdHeader().isNotEmpty) {
+        try {
+          await reloadCurrentUser();
+          rollNo = currSession?.profile?.userRollNumber;
+        } catch (e) {
+          debugPrint('Error reloading user profile for rollNo: $e');
+        }
+      }
+    }
+
     if (rollNo == null || rollNo.isEmpty) {
       debugPrint(
           'getCalendarFeedCombined: rollNo is null/empty, returning original feed');
@@ -928,6 +986,8 @@ class InstiAppBloc {
       try {
         resobinFeed = await client.getResobinSchedule(rollNo, "ResInstiance");
         _cachedResobinFeed = resobinFeed;
+        debugPrint(
+            'getCalendarFeedCombined: Resobin schedule fetched successfully with ${resobinFeed.length} courses for rollNo $rollNo');
       } catch (e) {
         debugPrint('Error fetching Resobin schedule: $e');
       }
@@ -946,18 +1006,23 @@ class InstiAppBloc {
       for (var date = startDate;
           date.isBefore(endDate);
           date = date.add(const Duration(days: 1))) {
-        final weekdayStr = date.weekday.toString();
-
         for (final course in resobinFeed) {
+          final venue = (course.lectureVenue != null &&
+                  course.lectureVenue!.trim().isNotEmpty)
+              ? course.lectureVenue!.trim()
+              : null;
+
           if (course.lectureSlots != null) {
             for (final slot in course.lectureSlots!) {
-              if (slot.day == weekdayStr &&
+              if (_isSlotOnWeekday(slot, date) &&
                   slot.startTime != null &&
                   slot.endTime != null) {
                 final dateStr =
                     "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-                final startIso = "${dateStr}T${slot.startTime}+05:30";
-                final endIso = "${dateStr}T${slot.endTime}+05:30";
+                final startIso =
+                    "${dateStr}T${_normalizeTime(slot.startTime!)}+05:30";
+                final endIso =
+                    "${dateStr}T${_normalizeTime(slot.endTime!)}+05:30";
                 items.add(CalendarItem(
                   uid: "resobin-lec-${course.id}-${slot.slot ?? ''}-${dateStr}",
                   title:
@@ -965,20 +1030,24 @@ class InstiAppBloc {
                   startTime: startIso,
                   endTime: endIso,
                   all_day: false,
-                  location: course.lectureVenue,
+                  location: venue,
+                  source: "resobin",
+                  subsource: "lectures-n-labs",
                 ));
               }
             }
           }
           if (course.tutorialSlots != null) {
             for (final slot in course.tutorialSlots!) {
-              if (slot.day == weekdayStr &&
+              if (_isSlotOnWeekday(slot, date) &&
                   slot.startTime != null &&
                   slot.endTime != null) {
                 final dateStr =
                     "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-                final startIso = "${dateStr}T${slot.startTime}+05:30";
-                final endIso = "${dateStr}T${slot.endTime}+05:30";
+                final startIso =
+                    "${dateStr}T${_normalizeTime(slot.startTime!)}+05:30";
+                final endIso =
+                    "${dateStr}T${_normalizeTime(slot.endTime!)}+05:30";
                 items.add(CalendarItem(
                   uid: "resobin-tut-${course.id}-${slot.slot ?? ''}-${dateStr}",
                   title:
@@ -986,7 +1055,9 @@ class InstiAppBloc {
                   startTime: startIso,
                   endTime: endIso,
                   all_day: false,
-                  location: course.lectureVenue,
+                  location: venue,
+                  source: "resobin",
+                  subsource: "lectures-n-labs",
                 ));
               }
             }

@@ -9,6 +9,7 @@ part of 'calendar_preference_response.dart';
 CalendarPreferencesResponse _$CalendarPreferencesResponseFromJson(
         Map<String, dynamic> json) =>
     CalendarPreferencesResponse(
+      showAllEvents: json['show_all_events'] as bool?,
       showInstiappGoing: json['show_instiapp_going'] as bool?,
       showInstiappFollowedBodies:
           json['show_instiapp_followed_bodies'] as bool?,
@@ -19,6 +20,7 @@ CalendarPreferencesResponse _$CalendarPreferencesResponseFromJson(
 Map<String, dynamic> _$CalendarPreferencesResponseToJson(
         CalendarPreferencesResponse instance) =>
     <String, dynamic>{
+      'show_all_events': instance.showAllEvents,
       'show_instiapp_going': instance.showInstiappGoing,
       'show_instiapp_followed_bodies': instance.showInstiappFollowedBodies,
       'show_resobin': instance.showResobin,

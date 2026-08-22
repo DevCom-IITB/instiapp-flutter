@@ -15,6 +15,9 @@ part 'calendar_preference_response.g.dart';
 
 @JsonSerializable()
 class CalendarPreferencesResponse {
+  @JsonKey(name: "show_all_events")
+  bool? showAllEvents;
+
   @JsonKey(name: "show_instiapp_going")
   bool? showInstiappGoing;
 
@@ -28,6 +31,7 @@ class CalendarPreferencesResponse {
   bool? notificationsEnabled;
 
   CalendarPreferencesResponse({
+    this.showAllEvents,
     this.showInstiappGoing,
     this.showInstiappFollowedBodies,
     this.showResobin,

@@ -138,6 +138,36 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                               Row(
                                 children: [
                                   Checkbox(
+                                    value: _preferences.showAllEvents ?? true,
+                                    onChanged: (val) {
+                                      setState(() {
+                                        _preferences.showAllEvents = val ?? false;
+                                      });
+                                      bloc.updateCalendarPreferences(_preferences);
+                                    },
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(Responsive.width(4, context)),
+                                    ),
+                                    side: const BorderSide(color: Colors.grey),
+                                    activeColor: const Color(0xFF1A56DB),
+                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                  SizedBox(width: Responsive.width(6, context)),
+                                  Text(
+                                    'All Events',
+                                    style: TextStyle(
+                                      fontSize: Responsive.width(15, context),
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: Responsive.height(16, context)),
+                              Row(
+                                children: [
+                                  Checkbox(
                                     value: _preferences.showInstiappGoing ?? true,
                                     onChanged: (val) {
                                       setState(() {
@@ -394,6 +424,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 onTap: () {
                   if (!_loading) {
                     setState(() {
+                      _preferences.showAllEvents = false;
                       _preferences.showInstiappGoing = false;
                       _preferences.showInstiappFollowedBodies = false;
                       _preferences.showResobin = false;
