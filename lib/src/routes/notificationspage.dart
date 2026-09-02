@@ -40,7 +40,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
     setState(() => clearAllLoading = true);
     try {
       final bloc = BlocProvider.of(context)!.bloc;
-      final list = await bloc.notifications.first; // get current list from stream
+      final list =
+          await bloc.notifications.first; // get current list from stream
       // Clear all notifications in parallel instead of sequentially
       await Future.wait(list.map((n) => bloc.clearNotification(n)));
       await bloc.updateNotifications();
@@ -59,7 +60,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     bloc.updateNotifications();
 
     return Scaffold(
-      backgroundColor: Color.fromRGBO(246,246,246,1),
+      backgroundColor: Color.fromRGBO(246, 246, 246, 1),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(52),
         child: AppBar(
@@ -83,7 +84,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
           centerTitle: true,
           elevation: 0,
           leading: Padding(
-            padding: const EdgeInsets.only(left: 12,),
+            padding: const EdgeInsets.only(
+              left: 12,
+            ),
             child: IconButton(
               iconSize: 52,
               padding: EdgeInsets.zero,
@@ -139,7 +142,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
       key: _scaffoldKey,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(left:16.0, right: 16, bottom: 16.0, top: 4.0),
+          padding: const EdgeInsets.only(
+              left: 16.0, right: 16, bottom: 16.0, top: 4.0),
           child: Column(
             children: [
               // Notification List with StreamBuilder
@@ -198,7 +202,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                         ),
                       );
                     }
-                    
+
                     return RefreshIndicator(
                       key: _refreshIndicatorKey,
                       onRefresh: () {
@@ -273,7 +277,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       onDismissed: (direction) async {
         await ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(
-              content: Text("${notification.getTitle()}" +" is deleted"),
+              content: Text("${notification.getTitle()}" + " is deleted"),
               action: SnackBarAction(
                 label: "Undo",
                 onPressed: () {

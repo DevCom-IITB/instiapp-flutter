@@ -7,13 +7,16 @@ part of 'calendar_body.dart';
 // **************************************************************************
 
 CalendarBody _$CalendarBodyFromJson(Map<String, dynamic> json) => CalendarBody(
-      id: json['body_id'] as String?,
+      id: (json['body_id'] ?? json['id']) as String?,
       name: json['name'] as String?,
       slug: json['slug'] as String?,
       description: json['description'] as String?,
       color: json['color'] as String?,
-      isPublic: json['is_public'] as bool?,
-      isActive: json['is_active'] as bool?,
+      isPublic: (json['is_public'] ?? json['public']) as bool?,
+      isActive: (json['is_active'] ??
+          json['is_subscribed'] ??
+          json['subscribed'] ??
+          json['active']) as bool?,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
     );

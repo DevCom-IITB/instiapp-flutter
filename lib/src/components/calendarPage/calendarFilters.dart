@@ -52,9 +52,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final bloc = BlocProvider.of(context)!.bloc;
-      final prefs = await bloc.getOrFetchCalendarPreferences();
-      final bodies = await bloc.getOrFetchCalendarPrefBodies();
-      final shared = await bloc.getOrFetchCalendarShared();
+      final prefs = await bloc.getOrFetchCalendarPreferences(forceRefresh: true);
+      final bodies = await bloc.getOrFetchCalendarPrefBodies(forceRefresh: true);
+      final shared = await bloc.getOrFetchCalendarShared(forceRefresh: true);
       if (mounted) {
         setState(() {
           _preferences = prefs;

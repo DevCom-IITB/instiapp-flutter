@@ -711,6 +711,16 @@ class InstiAppBloc {
               _defaultCalendarsSetting;
     }
 
+    if (prefs.getKeys().contains("calendarPreferences")) {
+      var x = prefs.getString("calendarPreferences");
+      if (x != null && x.isNotEmpty) {
+        try {
+          calendarPreferences =
+              CalendarPreferencesResponse.fromJson(json.decode(x));
+        } catch (_) {}
+      }
+    }
+
     restoreFromCache(sharedPrefs: prefs);
   }
 
@@ -743,46 +753,95 @@ class InstiAppBloc {
         : "";
   }
 
-  Future<CalendarPreferencesResponse> getOrFetchCalendarPreferences() async {
-    if (calendarPreferences != null) {
+  Future<CalendarPreferencesResponse> getOrFetchCalendarPreferences(
+      {String? sessionId, bool forceRefresh = false}) async {
+    if (!forceRefresh && calendarPreferences != null) {
       return calendarPreferences!;
     }
-    final sessionHeader = getSessionIdHeader();
+    var sessionHeader = (sessionId != null && sessionId.isNotEmpty)
+        ? (sessionId.startsWith('sessionid=')
+            ? sessionId
+            : 'sessionid=$sessionId')
+        : getSessionIdHeader();
+
+    if (sessionHeader.isEmpty) {
+      try {
+        await session
+            .firstWhere((s) => s?.sessionid?.isNotEmpty == true)
+            .timeout(const Duration(seconds: 3));
+      } catch (_) {}
+      sessionHeader = getSessionIdHeader();
+    }
+
     if (sessionHeader.isEmpty) {
       debugPrint('getOrFetchCalendarPreferences: sessionHeader is empty');
-      return CalendarPreferencesResponse(
+      calendarPreferences ??= CalendarPreferencesResponse(
         showAllEvents: true,
         showInstiappGoing: true,
         showInstiappFollowedBodies: true,
         showResobin: true,
         notificationsEnabled: true,
       );
+      return calendarPreferences!;
     }
+
     try {
-      final prefsList = await client.getCalendarPreferences(sessionHeader);
-      debugPrint(
-          'getOrFetchCalendarPreferences: prefsList fetched successfully. Length=${prefsList.length}');
-      if (prefsList.isNotEmpty) {
-        calendarPreferences = prefsList.first;
-        debugPrint(
-            'getOrFetchCalendarPreferences: first pref showAllEvents=${calendarPreferences!.showAllEvents}, showGoing=${calendarPreferences!.showInstiappGoing}, showFollowed=${calendarPreferences!.showInstiappFollowedBodies}, showResobin=${calendarPreferences!.showResobin}');
+      final url =
+          '${dio.options.baseUrl.isNotEmpty ? dio.options.baseUrl : "https://gymkhana.iitb.ac.in/instiapp/api"}/calendar/preferences/';
+      final res = await dio.get(
+        url,
+        options: Options(headers: {'Cookie': sessionHeader}),
+      );
+      if (res.data is List && (res.data as List).isNotEmpty) {
+        calendarPreferences = CalendarPreferencesResponse.fromJson(
+            (res.data as List).first as Map<String, dynamic>);
+      } else if (res.data is Map<String, dynamic>) {
+        calendarPreferences = CalendarPreferencesResponse.fromJson(
+            res.data as Map<String, dynamic>);
       }
+      debugPrint(
+          'getOrFetchCalendarPreferences: fetched successfully: showAllEvents=${calendarPreferences?.showAllEvents}, showGoing=${calendarPreferences?.showInstiappGoing}, showFollowed=${calendarPreferences!.showInstiappFollowedBodies}, showResobin=${calendarPreferences!.showResobin}');
     } catch (e) {
       debugPrint(
-          'getOrFetchCalendarPreferences: Error fetching calendar preferences: $e');
+          'getOrFetchCalendarPreferences: dio error: $e. Trying retrofit client...');
+      try {
+        final prefsList = await client.getCalendarPreferences(sessionHeader);
+        if (prefsList.isNotEmpty) {
+          calendarPreferences = prefsList.first;
+        }
+      } catch (e2) {
+        debugPrint('getOrFetchCalendarPreferences: client fallback error: $e2');
+      }
     }
-    calendarPreferences ??= CalendarPreferencesResponse();
+
+    calendarPreferences ??= CalendarPreferencesResponse(
+      showAllEvents: true,
+      showInstiappGoing: true,
+      showInstiappFollowedBodies: true,
+      showResobin: true,
+      notificationsEnabled: true,
+    );
     calendarPreferences!.showAllEvents ??= true;
     calendarPreferences!.showInstiappGoing ??= true;
     calendarPreferences!.showInstiappFollowedBodies ??= true;
     calendarPreferences!.showResobin ??= true;
     calendarPreferences!.notificationsEnabled ??= true;
+
+    _persistCalendarPreferences(calendarPreferences!);
     return calendarPreferences!;
+  }
+
+  void _persistCalendarPreferences(CalendarPreferencesResponse prefs) async {
+    try {
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      sp.setString("calendarPreferences", json.encode(prefs.toJson()));
+    } catch (_) {}
   }
 
   Future<void> updateCalendarPreferences(
       CalendarPreferencesResponse prefs) async {
     calendarPreferences = prefs;
+    _persistCalendarPreferences(prefs);
     clearCalendarFeedCache();
     final sessionHeader = getSessionIdHeader();
     if (sessionHeader.isNotEmpty) {
@@ -794,20 +853,61 @@ class InstiAppBloc {
     }
   }
 
-  Future<List<CalendarBodyPreference>> getOrFetchCalendarPrefBodies() async {
-    if (calendarPrefBodies != null) {
+  Future<List<CalendarBodyPreference>> getOrFetchCalendarPrefBodies(
+      {String? sessionId, bool forceRefresh = false}) async {
+    if (!forceRefresh && calendarPrefBodies != null) {
       return calendarPrefBodies!;
     }
-    final sessionHeader = getSessionIdHeader();
+    var sessionHeader = (sessionId != null && sessionId.isNotEmpty)
+        ? (sessionId.startsWith('sessionid=')
+            ? sessionId
+            : 'sessionid=$sessionId')
+        : getSessionIdHeader();
+
     if (sessionHeader.isEmpty) {
-      return [];
+      try {
+        await session
+            .firstWhere((s) => s?.sessionid?.isNotEmpty == true)
+            .timeout(const Duration(seconds: 3));
+      } catch (_) {}
+      sessionHeader = getSessionIdHeader();
     }
+
+    if (sessionHeader.isEmpty) {
+      return calendarPrefBodies ?? [];
+    }
+
     try {
-      final list = await client.getCalendarPrefBodies(sessionHeader);
-      calendarPrefBodies = list;
+      final url =
+          '${dio.options.baseUrl.isNotEmpty ? dio.options.baseUrl : "https://gymkhana.iitb.ac.in/instiapp/api"}/calendar/preferences/bodies/';
+      final res = await dio.get(
+        url,
+        options: Options(headers: {'Cookie': sessionHeader}),
+      );
+      if (res.data is List) {
+        calendarPrefBodies = (res.data as List)
+            .map((e) =>
+                CalendarBodyPreference.fromJson(e as Map<String, dynamic>))
+            .toList();
+      } else if (res.data is Map<String, dynamic> &&
+          res.data['items'] is List) {
+        calendarPrefBodies = (res.data['items'] as List)
+            .map((e) =>
+                CalendarBodyPreference.fromJson(e as Map<String, dynamic>))
+            .toList();
+      }
+      debugPrint(
+          'getOrFetchCalendarPrefBodies: fetched ${calendarPrefBodies?.length} bodies');
     } catch (e) {
-      debugPrint('Error fetching calendar body preferences: $e');
+      debugPrint(
+          'getOrFetchCalendarPrefBodies: dio error $e, trying client fallback');
+      try {
+        calendarPrefBodies = await client.getCalendarPrefBodies(sessionHeader);
+      } catch (e2) {
+        debugPrint('getOrFetchCalendarPrefBodies: client fallback error: $e2');
+      }
     }
+
     calendarPrefBodies ??= [];
     return calendarPrefBodies!;
   }
@@ -832,23 +932,54 @@ class InstiAppBloc {
     }
   }
 
-  Future<List<CalendarBody>> getOrFetchCalendarShared() async {
-    if (calendarShared != null) {
+  Future<List<CalendarBody>> getOrFetchCalendarShared(
+      {String? sessionId, bool forceRefresh = false}) async {
+    if (!forceRefresh && calendarShared != null) {
       return calendarShared!;
     }
-    final sessionHeader = getSessionIdHeader();
+    var sessionHeader = (sessionId != null && sessionId.isNotEmpty)
+        ? (sessionId.startsWith('sessionid=')
+            ? sessionId
+            : 'sessionid=$sessionId')
+        : getSessionIdHeader();
+
     if (sessionHeader.isEmpty) {
-      return [];
+      try {
+        await session
+            .firstWhere((s) => s?.sessionid?.isNotEmpty == true)
+            .timeout(const Duration(seconds: 3));
+      } catch (_) {}
+      sessionHeader = getSessionIdHeader();
     }
+
+    if (sessionHeader.isEmpty) {
+      return calendarShared ?? [];
+    }
+
     try {
-      final list = await client.getCalendarShared(sessionHeader);
-      for (var item in list) {
-        item.isActive ??= true;
+      final url =
+          '${dio.options.baseUrl.isNotEmpty ? dio.options.baseUrl : "https://gymkhana.iitb.ac.in/instiapp/api"}/calendar/shared/';
+      final res = await dio.get(
+        url,
+        options: Options(headers: {'Cookie': sessionHeader}),
+      );
+      if (res.data is List) {
+        calendarShared = (res.data as List)
+            .map((e) => CalendarBody.fromJson(e as Map<String, dynamic>))
+            .toList();
       }
-      calendarShared = list;
+      debugPrint(
+          'getOrFetchCalendarShared: fetched ${calendarShared?.length} shared calendars');
     } catch (e) {
-      debugPrint('Error fetching shared calendars: $e');
+      debugPrint(
+          'getOrFetchCalendarShared: dio error $e, trying client fallback');
+      try {
+        calendarShared = await client.getCalendarShared(sessionHeader);
+      } catch (e2) {
+        debugPrint('getOrFetchCalendarShared: client fallback error: $e2');
+      }
     }
+
     calendarShared ??= [];
     return calendarShared!;
   }
@@ -889,15 +1020,7 @@ class InstiAppBloc {
       'saturday',
       'sunday'
     ];
-    const shortWeekdayNames = [
-      'mon',
-      'tue',
-      'wed',
-      'thu',
-      'fri',
-      'sat',
-      'sun'
-    ];
+    const shortWeekdayNames = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
     final targetName = weekdayNames[weekday - 1];
     final targetShort = shortWeekdayNames[weekday - 1];
@@ -927,7 +1050,8 @@ class InstiAppBloc {
     String tz,
   ) async {
     final prefs = await getOrFetchCalendarPreferences();
-    final cacheKey = "${start}_${end}_${prefs.showAllEvents}_${prefs.showInstiappGoing}_${prefs.showInstiappFollowedBodies}_${prefs.showResobin}";
+    final cacheKey =
+        "${start}_${end}_${prefs.showAllEvents}_${prefs.showInstiappGoing}_${prefs.showInstiappFollowedBodies}_${prefs.showResobin}";
     if (_calendarFeedCache.containsKey(cacheKey)) {
       debugPrint('getCalendarFeedCombined: cache hit for key $cacheKey');
       return _calendarFeedCache[cacheKey]!;
@@ -1076,6 +1200,11 @@ class InstiAppBloc {
     updateSession(null);
     _notificationsSubject.add(UnmodifiableListView([]));
     _cachedResobinFeed = null;
+    calendarPreferences = null;
+    calendarPrefBodies = null;
+    calendarShared = null;
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    sp.remove("calendarPreferences");
     clearCalendarFeedCache();
   }
 

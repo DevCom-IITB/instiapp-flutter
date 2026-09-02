@@ -195,9 +195,9 @@ class NotificationController {
   @pragma("vm:entry-point")
   static Future<void> onActionReceivedMethod(
       ReceivedAction receivedAction) async {
-    
     if (receivedAction.payload != null) {
-      RichNotification notif = RichNotification.fromJson(receivedAction.payload!);
+      RichNotification notif =
+          RichNotification.fromJson(receivedAction.payload!);
       String routeName = routeFromNotification(notif);
       String actionKey = receivedAction.buttonKeyPressed;
 
@@ -277,9 +277,12 @@ void setupNotifications(BuildContext context, InstiAppBloc bloc) async {
 
   AwesomeNotifications().setListeners(
     onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-    onNotificationCreatedMethod: NotificationController.onNotificationCreatedMethod,
-    onNotificationDisplayedMethod: NotificationController.onNotificationDisplayedMethod,
-    onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod,
+    onNotificationCreatedMethod:
+        NotificationController.onNotificationCreatedMethod,
+    onNotificationDisplayedMethod:
+        NotificationController.onNotificationDisplayedMethod,
+    onDismissActionReceivedMethod:
+        NotificationController.onDismissActionReceivedMethod,
   );
 }
 
@@ -342,8 +345,8 @@ Future<void> sendMessage(RemoteMessage message) async {
     payload.putIfAbsent("verb", () => notification.body ?? "");
     payload.putIfAbsent("large_content", () => notification.body ?? "");
 
-    final imageUrl = notification.android?.imageUrl ??
-        notification.apple?.imageUrl;
+    final imageUrl =
+        notification.android?.imageUrl ?? notification.apple?.imageUrl;
     if (imageUrl != null && imageUrl.isNotEmpty) {
       payload.putIfAbsent("image_url", () => imageUrl);
     }
@@ -385,7 +388,7 @@ Future<void> createNotification(RichNotification notif) async {
 NotificationContent getNotificationContent(RichNotification notif) {
   // Modulo by the max 32-bit integer (2,147,483,647) to ensure it fits
   int id = stringToInt(notif.notificationID ?? "") ??
-    (DateTime.now().millisecondsSinceEpoch % 2147483647);
+      (DateTime.now().millisecondsSinceEpoch % 2147483647);
 
   /// Get the channel name to which the notification should be sent
   String getChannelKey(RichNotification notif) {
