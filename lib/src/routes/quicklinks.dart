@@ -133,8 +133,8 @@ class _QuicklinksState extends State<Quicklinks> {
             "https://acad.iitb.ac.in/academics/calendar-and-timetable",
         "Academic Timetable":
             "https://acad.iitb.ac.in/academics/calendar-and-timetable",
-        "Holidays List": "https://www.iitb.ac.in/holidays-list",
-        "Circulars": "https://www.iitb.ac.in/newacadhome/circular.jsp",
+        "Holidays List": "https://www.iitb.ac.in/holidayslist",
+        "Circulars": "https://acad.iitb.ac.in/circulars",
         "Course List": "https://portal.iitb.ac.in/asc/Courses",
       },
       // "Services": {
@@ -258,7 +258,7 @@ class _QuicklinksState extends State<Quicklinks> {
               GestureDetector(
                 onTap: () async {
                   final url = Uri.parse(
-                      "https://www.iitb.ac.in/safety/en/emergency-contact-number");
+                      "https://dosa.iitb.ac.in/support-system");
                   if (await canLaunchUrl(url)) {
                     await launchUrl(url);
                   } else {

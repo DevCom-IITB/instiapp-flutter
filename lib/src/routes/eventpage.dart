@@ -15,7 +15,9 @@ import 'package:share_plus/share_plus.dart';
 import 'package:InstiApp/src/routes/feedpage.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:InstiApp/src/utils/responsivenew.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:InstiApp/src/utils/common_widgets.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:markdown/markdown.dart' as markdown;
 
 class EventPage extends StatefulWidget {
   final Event? initialEvent;
@@ -78,17 +80,30 @@ class _EventPageState extends State<EventPage> {
   };
 
   String _buildVenueText(Event? ev) {
-  if (ev == null) return 'Venue not specified';
-  final room = ev.venueRoom?.trim();
-  final hasRoom = room != null && room.isNotEmpty;
-  final venueName = (ev.eventVenues?.isNotEmpty == true)
-      ? (ev.eventVenues![0].venueName?.trim() ?? "")
-      : "";
-  if (hasRoom && venueName.isNotEmpty) return '$room, $venueName';
-  if (hasRoom) return room!;
-  if (venueName.isNotEmpty) return venueName;
-  return 'Venue not specified';
-}
+    if (ev == null) return 'Venue not specified';
+    final room = ev.venueRoom?.trim();
+    final hasRoom = room != null && room.isNotEmpty;
+    final venueName = (ev.eventVenues?.isNotEmpty == true)
+        ? (ev.eventVenues![0].venueName?.trim() ?? "")
+        : "";
+    if (hasRoom && venueName.isNotEmpty) return '$room, $venueName';
+    if (hasRoom) return room!;
+    if (venueName.isNotEmpty) return venueName;
+    return 'Venue not specified';
+  }
+
+  String _buildDescriptionHtml() {
+    final description = event?.eventDescription?.trim();
+    if (description == null || description.isEmpty) {
+      return 'No description available';
+    }
+
+    return markdown.markdownToHtml(
+      description,
+      extensionSet: markdown.ExtensionSet.gitHubWeb,
+      blockSyntaxes: [markdown.TableSyntax()],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -559,30 +574,36 @@ class _EventPageState extends State<EventPage> {
                                 color: Color.fromRGBO(21, 32, 45, 1),
                               ),
                             ),
-                            
                             SizedBox(height: Responsive.height(8, context)),
-                            Container(
-                              child: SelectableLinkify(
-                                text : event!.eventDescription ??
-                                    "No description available",
-                                style: TextStyle(
-                                  fontSize: Responsive.text(16, context),
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: 'DM Sans',
-                                  color: Color.fromRGBO(15, 22, 32, 1),
-                                ),
-                                linkStyle: TextStyle(
-                                  color: Color.fromRGBO(48, 111, 220, 1),
-                                  decoration: TextDecoration.underline,
-                                ),
-                                onOpen: (link) async {
-                                  final uri = Uri.tryParse(link.url);
-                                  if (uri == null) return;
-                                  if (await canLaunchUrl(uri)) {
-                                    await launchUrl(uri, mode: LaunchMode.externalApplication);
-                                  }
-                                },
+                            HtmlWidget(
+                              _buildDescriptionHtml(),
+                              textStyle: TextStyle(
+                                fontSize: Responsive.text(16, context),
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'DM Sans',
+                                color: Color.fromRGBO(15, 22, 32, 1),
                               ),
+                              factoryBuilder: () => SelectableWidgetFactory(),
+                              customStylesBuilder: (element) {
+                                if (element.localName == 'a') {
+                                  return {
+                                    'color': '#306FDC',
+                                    'text-decoration': 'underline',
+                                  };
+                                }
+                                return null;
+                              },
+                              onTapUrl: (url) async {
+                                final uri = Uri.tryParse(url);
+                                if (uri == null || !await canLaunchUrl(uri)) {
+                                  return false;
+                                }
+                                await launchUrl(
+                                  uri,
+                                  mode: LaunchMode.externalApplication,
+                                );
+                                return true;
+                              },
                             ),
                             SizedBox(height: Responsive.height(70, context)),
                           ],

@@ -67,12 +67,10 @@ import 'model/calendar_body_preference.dart';
 
 part 'apiclient.g.dart';
 
-@rt.RestApi(baseUrl: "http://10.0.2.2:8000/api")
-// @rt.RestApi(baseUrl: "https://035b-2401-4900-aa02-ddb0-5df9-3d94-6b84-937f.ngrok-free.app/api")
-// @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
 // @rt.RestApi(baseUrl: "http://10.195.160.117/api")
-//@rt.RestApi(baseUrl: "https://nayeli-nonbulbar-denominationally.ngrok-free.dev/api")
-// @rt.RestApi(baseUrl: "https://f6ba722a576a.ngrok-free.app/api")
+// @rt.RestApi(baseUrl: "https://035b-2401-4900-aa02-ddb0-5df9-3d94-6b84-937f.ngrok-free.app/api")
+@rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
+
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 

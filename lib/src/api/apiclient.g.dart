@@ -14,9 +14,8 @@ class _InstiAppApi implements InstiAppApi {
     this.baseUrl,
   }) {
     // baseUrl ??= 'http://10.0.2.2:8000/api';
+    // baseUrl ??= 'http://10.195.160.117/api';
     baseUrl ??= 'https://gymkhana.iitb.ac.in/instiapp/api';
-    // baseUrl ??= 'http://10.249.155.236:8000/api';
-    // baseUrl ??= 'http://192.168.29.203:8000/api';
   }
 
   final Dio _dio;

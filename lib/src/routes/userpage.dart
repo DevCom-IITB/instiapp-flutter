@@ -14,6 +14,7 @@ import 'package:InstiApp/src/utils/responsive.dart';
 import 'package:InstiApp/src/routes/aboutpage.dart';
 import 'package:InstiApp/src/routes/bodypage.dart';
 import 'package:InstiApp/src/blocs/ia_bloc.dart';
+import 'package:InstiApp/src/utils/profile_screen_protection.dart';
 
 class UserPage extends StatefulWidget {
   final User? initialUser;
@@ -64,6 +65,8 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
+    ProfileScreenProtection.enable();
 
     // Use cached data immediately
     user = widget.initialUser;
@@ -303,6 +306,7 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    ProfileScreenProtection.disable();
     _tabController?.dispose();
     super.dispose();
   }
@@ -1119,7 +1123,8 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
             icon: Icons.info_outline,
             bottom: true,
             onTap: () {
-              BodyPage.navigateWith(context, _bloc!, body: Body(bodyID: '571c2d81-2206-46e6-825f-6b87b286863c'));
+              BodyPage.navigateWith(context, _bloc!,
+                  body: Body(bodyID: '571c2d81-2206-46e6-825f-6b87b286863c'));
             },
           ),
           SizedBox(height: RS.sh(context, 24)),
