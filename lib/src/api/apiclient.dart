@@ -4,6 +4,7 @@ import 'package:InstiApp/src/api/model/UserTag.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
 import 'package:InstiApp/src/api/model/buynsellPost.dart';
+import 'package:InstiApp/src/api/model/buynsellPostsPage.dart';
 import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/event.dart';
@@ -64,11 +65,12 @@ part 'apiclient.g.dart';
 
 // @rt.RestApi(baseUrl: "http://10.0.2.2:3000/api")
 // @rt.RestApi(baseUrl: "https://035b-2401-4900-aa02-ddb0-5df9-3d94-6b84-937f.ngrok-free.app/api")
-// @rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
+@rt.RestApi(baseUrl: "https://gymkhana.iitb.ac.in/instiapp/api")
+// above one is correct
 // @rt.RestApi(baseUrl: "http://10.195.160.117/api")
 //@rt.RestApi(baseUrl: "https://nayeli-nonbulbar-denominationally.ngrok-free.dev/api")
 // @rt.RestApi(baseUrl: "https://f6ba722a576a.ngrok-free.app/api")
-@rt.RestApi(baseUrl: "http://192.168.1.233:8000/api")
+// @rt.RestApi(baseUrl: "http://192.168.1.233:8000/api")
 abstract class InstiAppApi {
   factory InstiAppApi(Dio dio, {String baseUrl}) = _InstiAppApi;
 
@@ -99,19 +101,19 @@ abstract class InstiAppApi {
       @rt.Query('code') String code, @rt.Query('redir') String redir);
   @rt.GET("/alumniLogin")
   Future<AlumniLoginResponse> AlumniLogin(
-    @rt.Query("ldap") String ldap,
-  );
+      @rt.Query("ldap") String ldap,
+      );
 
   @rt.GET("/alumniOTP")
   Future<AlumniLoginResponse> AlumniOTP(
-    @rt.Query("ldap") String ldap,
-    @rt.Query("otp") String otp,
-  );
+      @rt.Query("ldap") String ldap,
+      @rt.Query("otp") String otp,
+      );
 
   @rt.GET("/resendAlumniOTP")
   Future<AlumniLoginResponse> ResendAlumniOTP(
-    @rt.Query("ldap") String ldap,
-  );
+      @rt.Query("ldap") String ldap,
+      );
 
   @rt.GET("/placement-blog")
   Future<List<PlacementBlogPost>> getPlacementBlogFeed(
@@ -150,14 +152,14 @@ abstract class InstiAppApi {
       @rt.Header('Cookie') String sessionId, @rt.Path() String uuid);
   @rt.POST('/events/{uuid}/approve-mail')
   Future<void> pushMail(
-    @rt.Header("Cookie") String sessionId,
-    @rt.Path() String uuid,
-  );
+      @rt.Header("Cookie") String sessionId,
+      @rt.Path() String uuid,
+      );
   @rt.POST('/events/{uuid}/reject-mail')
   Future<void> rejectMail(
-    @rt.Header("Cookie") String sessionId,
-    @rt.Path() String uuid,
-  );
+      @rt.Header("Cookie") String sessionId,
+      @rt.Path() String uuid,
+      );
 
   @rt.GET("/events")
   Future<NewsFeedResponse> getNewsFeed(@rt.Header("Cookie") String sessionId);
@@ -400,10 +402,10 @@ abstract class InstiAppApi {
 
   @rt.PUT("/communityposts/{id}")
   Future<void> updateCommunityPost(
-    @rt.Header("Cookie") String sessionId,
-    @rt.Path() String id,
-    @rt.Body() CommunityPost post,
-  );
+      @rt.Header("Cookie") String sessionId,
+      @rt.Path() String id,
+      @rt.Body() CommunityPost post,
+      );
 
   @rt.PUT("/communityposts/{action}/{id}")
   Future<void> updateCommunityPostAction(
@@ -445,6 +447,18 @@ abstract class InstiAppApi {
       @rt.Header("Cookie") String sessionId,
       {@rt.Query('all') bool showAll = true});
 
+  // Paginated variant backed by /buy/v2/products (page size is fixed at
+  // 20 server-side, see BuyAndSellViewSet.list_v2). `page` is 0-indexed.
+  // `query` maps to the `query` GET param read by helpers.misc.query_search
+  // -- the backend ignores it (returns everything) if shorter than 3
+  // chars, so keep that threshold in mind client-side too.
+  @rt.GET('/buy/v2/products')
+  Future<BuynSellPostsPage> getBuynSellPostsPage(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Query('page') int page,
+      {@rt.Query('all') bool showAll = true,
+        @rt.Query('query') String? query});
+
   @rt.GET('/buy/products/{id}')
   Future<BuynSellPost> getBuynSellPost(
       @rt.Header("Cookie") String sessionId, @rt.Path() String id);
@@ -476,10 +490,10 @@ abstract class InstiAppApi {
 
   @rt.GET('/calendar/feed')
   Future<CalendarFeedResponse> getCalendarFeed(
-    @rt.Header("Cookie") String sessionId,
-    @rt.Query('start') String start,
-    @rt.Query('end') String end,
-    @rt.Query('tz') String tz,
-  );
+      @rt.Header("Cookie") String sessionId,
+      @rt.Query('start') String start,
+      @rt.Query('end') String end,
+      @rt.Query('tz') String tz,
+      );
 
 }

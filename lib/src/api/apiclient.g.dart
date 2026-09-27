@@ -2530,6 +2530,44 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
+  Future<BuynSellPostsPage> getBuynSellPostsPage(
+    String sessionId,
+    int page, {
+    bool showAll = true,
+    String? query,
+  }) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'page': page,
+      r'all': showAll,
+      r'query': query,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<BuynSellPostsPage>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/buy/v2/products',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = BuynSellPostsPage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<BuynSellPost> getBuynSellPost(
     String sessionId,
     String id,

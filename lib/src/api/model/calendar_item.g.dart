@@ -18,7 +18,7 @@ Map<String, dynamic> _$CalendarItemToJson(CalendarItem instance) =>
     <String, dynamic>{
       'uid': instance.uid,
       'title': instance.title,
+      'all_day': instance.all_day,
       'start_time': instance.startTime,
       'end_time': instance.endTime,
-      'all_day': instance.all_day,
     };
