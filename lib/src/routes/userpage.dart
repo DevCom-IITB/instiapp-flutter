@@ -66,8 +66,6 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    ProfileScreenProtection.enable();
-
     // Use cached data immediately
     user = widget.initialUser;
 
@@ -97,6 +95,7 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
     if (_bloc == null) {
       _isGuest = true;
       cansee = false;
+      _syncProfileScreenProtection();
       _initialized = true;
       _createTabController(); // Create tab controller even for guests
       return;
@@ -104,6 +103,7 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
 
     // Determine if viewing own profile using cached session
     _checkIfViewingOwnProfileFromCache();
+    _syncProfileScreenProtection();
 
     // Create tab controller based on permissions
     _createTabController();
@@ -112,6 +112,14 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
 
     // Try to load fresh data in background
     _loadUserData();
+  }
+
+  void _syncProfileScreenProtection() {
+    if (!_isGuest && cansee) {
+      ProfileScreenProtection.enable();
+    } else {
+      ProfileScreenProtection.disable();
+    }
   }
 
   void _createTabController() {
@@ -265,6 +273,7 @@ class _UserPageState extends State<UserPage> with TickerProviderStateMixin {
             cansee = newCansee;
             _createTabController(); // Recreate tab controller with new length
           });
+          _syncProfileScreenProtection();
         }
       }
     } catch (e) {
