@@ -9,7 +9,7 @@ part of 'popup_notification_response.dart';
 PopupNotificationResponse _$PopupNotificationResponseFromJson(
         Map<String, dynamic> json) =>
     PopupNotificationResponse(
-      id: (json['id'] as num?)?.toInt(),
+      id: json['id'] as int?,
       heading: json['heading'] as String?,
       shortDescription: json['short_description'] as String?,
       longDescription: json['long_description'] as String?,

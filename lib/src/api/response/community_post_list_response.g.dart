@@ -9,7 +9,7 @@ part of 'community_post_list_response.dart';
 CommunityPostListResponse _$CommunityPostListResponseFromJson(
         Map<String, dynamic> json) =>
     CommunityPostListResponse(
-      count: (json['count'] as num?)?.toInt(),
+      count: json['count'] as int?,
       data: (json['data'] as List<dynamic>?)
           ?.map((e) => CommunityPost.fromJson(e as Map<String, dynamic>))
           .toList(),

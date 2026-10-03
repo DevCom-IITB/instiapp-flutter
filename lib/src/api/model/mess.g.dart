@@ -27,7 +27,7 @@ Map<String, dynamic> _$HostelToJson(Hostel instance) => <String, dynamic>{
 HostelMess _$HostelMessFromJson(Map<String, dynamic> json) => HostelMess(
       id: json['id'] as String?,
       breakfast: json['breakfast'] as String?,
-      day: (json['day'] as num?)?.toInt(),
+      day: json['day'] as int?,
       lunch: json['lunch'] as String?,
       snacks: json['snacks'] as String?,
       dinner: json['dinner'] as String?,

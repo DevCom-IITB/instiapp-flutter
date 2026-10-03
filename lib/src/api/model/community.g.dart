@@ -9,7 +9,7 @@ part of 'community.dart';
 Community _$CommunityFromJson(Map<String, dynamic> json) => Community(
       id: json['id'] as String?,
       name: json['name'] as String?,
-      followersCount: (json['followers_count'] as num?)?.toInt(),
+      followersCount: json['followers_count'] as int?,
       about: json['about'] as String?,
       logoImg: json['logo_image'] as String?,
       coverImg: json['cover_image'] as String?,

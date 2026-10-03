@@ -13,9 +13,9 @@ OfferedAchievements _$OfferedAchievementsFromJson(Map<String, dynamic> json) =>
       desc: json['description'] as String?,
       body: json['body'] as String?,
       event: json['event'] as String?,
-      priority: (json['priority'] as num?)?.toInt(),
+      priority: json['priority'] as int?,
       secret: json['secret'] as String?,
-      stat: (json['stat'] as num?)?.toInt(),
+      stat: json['stat'] as int?,
       users: (json['users'] as List<dynamic>?)
           ?.map((e) => User.fromJson(e as Map<String, dynamic>))
           .toList(),

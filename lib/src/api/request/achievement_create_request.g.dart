@@ -36,23 +36,30 @@ AchievementCreateRequest _$AchievementCreateRequestFromJson(
     );
 
 Map<String, dynamic> _$AchievementCreateRequestToJson(
-        AchievementCreateRequest instance) =>
-    <String, dynamic>{
-      if (instance.id case final value?) 'id': value,
-      if (instance.timeOfCreation case final value?) 'time_of_creation': value,
-      if (instance.timeOfModification case final value?)
-        'time_of_modification': value,
-      if (instance.user case final value?) 'user': value,
-      if (instance.hidden case final value?) 'hidden': value,
-      if (instance.dismissed case final value?) 'dismissed': value,
-      if (instance.verified case final value?) 'verified': value,
-      if (instance.verifiedBy case final value?) 'verified_by': value,
-      if (instance.title case final value?) 'title': value,
-      if (instance.description case final value?) 'description': value,
-      if (instance.adminNote case final value?) 'admin_note': value,
-      if (instance.bodyID case final value?) 'body': value,
-      if (instance.body case final value?) 'body_detail': value,
-      if (instance.event case final value?) 'event_detail': value,
-      if (instance.offer case final value?) 'offer': value,
-      if (instance.isSkill case final value?) 'isSkill': value,
-    };
+    AchievementCreateRequest instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('id', instance.id);
+  writeNotNull('time_of_creation', instance.timeOfCreation);
+  writeNotNull('time_of_modification', instance.timeOfModification);
+  writeNotNull('user', instance.user);
+  writeNotNull('hidden', instance.hidden);
+  writeNotNull('dismissed', instance.dismissed);
+  writeNotNull('verified', instance.verified);
+  writeNotNull('verified_by', instance.verifiedBy);
+  writeNotNull('title', instance.title);
+  writeNotNull('description', instance.description);
+  writeNotNull('admin_note', instance.adminNote);
+  writeNotNull('body', instance.bodyID);
+  writeNotNull('body_detail', instance.body);
+  writeNotNull('event_detail', instance.event);
+  writeNotNull('offer', instance.offer);
+  writeNotNull('isSkill', instance.isSkill);
+  return val;
+}

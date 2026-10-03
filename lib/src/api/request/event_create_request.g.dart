@@ -26,9 +26,8 @@ EventCreateRequest _$EventCreateRequestFromJson(Map<String, dynamic> json) =>
           ?.map((e) => e as String)
           .toList(),
       notify: json['notify'] as bool?,
-      eventUserTags: (json['user_tags'] as List<dynamic>?)
-          ?.map((e) => (e as num).toInt())
-          .toList(),
+      eventUserTags:
+          (json['user_tags'] as List<dynamic>?)?.map((e) => e as int).toList(),
       eventInterest: (json['event_interest'] as List<dynamic>?)
           ?.map((e) => Interest.fromJson(e as Map<String, dynamic>))
           .toList(),

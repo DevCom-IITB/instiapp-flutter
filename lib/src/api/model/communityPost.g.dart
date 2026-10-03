@@ -14,7 +14,7 @@ CommunityPost _$CommunityPostFromJson(Map<String, dynamic> json) =>
           ?.map((e) => CommunityPost.fromJson(e as Map<String, dynamic>))
           .toList(),
       content: json['content'] as String?,
-      commentsCount: (json['comments_count'] as num?)?.toInt(),
+      commentsCount: json['comments_count'] as int?,
       imageUrl: (json['image_url'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
@@ -22,11 +22,11 @@ CommunityPost _$CommunityPostFromJson(Map<String, dynamic> json) =>
           ? null
           : User.fromJson(json['posted_by'] as Map<String, dynamic>),
       reactionCount: (json['reactions_count'] as Map<String, dynamic>?)?.map(
-        (k, e) => MapEntry(k, (e as num).toInt()),
+        (k, e) => MapEntry(k, e as int),
       ),
       timeOfCreation: json['time_of_creation'] as String?,
       timeOfModification: json['time_of_modification'] as String?,
-      userReaction: (json['user_reaction'] as num?)?.toInt(),
+      userReaction: json['user_reaction'] as int?,
       mostLikedComment: json['most_liked_comment'] == null
           ? null
           : CommunityPost.fromJson(
@@ -34,9 +34,9 @@ CommunityPost _$CommunityPostFromJson(Map<String, dynamic> json) =>
       community: json['community'] == null
           ? null
           : Community.fromJson(json['community'] as Map<String, dynamic>),
-      threadRank: (json['thread_rank'] as num?)?.toInt(),
+      threadRank: json['thread_rank'] as int?,
       parent: json['parent'] as String?,
-      status: (json['status'] as num?)?.toInt(),
+      status: json['status'] as int?,
       interests: (json['interests'] as List<dynamic>?)
           ?.map((e) => Interest.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -93,7 +93,7 @@ Poll _$PollFromJson(Map<String, dynamic> json) => Poll(
       options: (json['options'] as List<dynamic>?)
           ?.map((e) => PollOption.fromJson(e as Map<String, dynamic>))
           .toList(),
-      totalVotes: (json['total_votes'] as num?)?.toInt(),
+      totalVotes: json['total_votes'] as int?,
       userVoted: json['user_voted'] as bool?,
     );
 
@@ -110,8 +110,8 @@ Map<String, dynamic> _$PollToJson(Poll instance) => <String, dynamic>{
 PollOption _$PollOptionFromJson(Map<String, dynamic> json) => PollOption(
       id: json['id'] as String?,
       text: json['text'] as String?,
-      order: (json['order'] as num?)?.toInt(),
-      voteCount: (json['vote_count'] as num?)?.toInt(),
+      order: json['order'] as int?,
+      voteCount: json['vote_count'] as int?,
       percentage: (json['percentage'] as num?)?.toDouble(),
       userVoted: json['user_voted'] as bool?,
     );

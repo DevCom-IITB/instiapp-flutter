@@ -7,7 +7,7 @@ part of 'notification.dart';
 // **************************************************************************
 
 Notification _$NotificationFromJson(Map<String, dynamic> json) => Notification(
-      notificationId: (json['id'] as num?)?.toInt(),
+      notificationId: json['id'] as int?,
       notificationVerb: json['verb'] as String?,
       notificationUnread: json['unread'] as bool?,
       notificationActorType: json['actor_type'] as String?,
