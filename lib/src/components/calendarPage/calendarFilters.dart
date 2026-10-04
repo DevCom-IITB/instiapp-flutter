@@ -16,20 +16,18 @@ Future<void> showCalendarFiltersBottomSheet(BuildContext context) {
           return FractionallySizedBox(
               heightFactor: 0.6632,
               child: Container(
-                  decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
                 ),
                 child: FilterBottomSheet(),
-                ));
+              ));
         });
       });
 }
-
-
 
 class FilterBottomSheet extends StatefulWidget {
   const FilterBottomSheet({super.key});
@@ -52,8 +50,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final bloc = BlocProvider.of(context)!.bloc;
-      final prefs = await bloc.getOrFetchCalendarPreferences(forceRefresh: true);
-      final bodies = await bloc.getOrFetchCalendarPrefBodies(forceRefresh: true);
+      final prefs =
+          await bloc.getOrFetchCalendarPreferences(forceRefresh: true);
+      final bodies =
+          await bloc.getOrFetchCalendarPrefBodies(forceRefresh: true);
       final shared = await bloc.getOrFetchCalendarShared(forceRefresh: true);
       if (mounted) {
         setState(() {
@@ -75,11 +75,15 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       children: [
         // title
         Padding(
-          padding:  EdgeInsets.fromLTRB(Responsive.width(20, context), Responsive.height(20, context), Responsive.width(20, context), Responsive.height(12, context)),
+          padding: EdgeInsets.fromLTRB(
+              Responsive.width(20, context),
+              Responsive.height(20, context),
+              Responsive.width(20, context),
+              Responsive.height(12, context)),
           child: Text(
             'Show only...',
             style: TextStyle(
-              fontSize: Responsive.width(18, context), 
+              fontSize: Responsive.width(18, context),
               fontWeight: FontWeight.w700,
               color: Colors.black87,
             ),
@@ -122,10 +126,11 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     horizontal: Responsive.width(12, context),
                     vertical: Responsive.height(8, context),
                   ),
-                  decoration:  BoxDecoration(
+                  decoration: BoxDecoration(
                     color: const Color(0xFFEEEEEE),
                     borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(Responsive.width(16, context)),
+                      bottomLeft:
+                          Radius.circular(Responsive.width(16, context)),
                     ),
                   ),
                   child: _loading
@@ -141,16 +146,20 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                     value: _preferences.showAllEvents ?? true,
                                     onChanged: (val) {
                                       setState(() {
-                                        _preferences.showAllEvents = val ?? false;
+                                        _preferences.showAllEvents =
+                                            val ?? false;
                                       });
-                                      bloc.updateCalendarPreferences(_preferences);
+                                      bloc.updateCalendarPreferences(
+                                          _preferences);
                                     },
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(Responsive.width(4, context)),
+                                      borderRadius: BorderRadius.circular(
+                                          Responsive.width(4, context)),
                                     ),
                                     side: const BorderSide(color: Colors.grey),
                                     activeColor: const Color(0xFF1A56DB),
-                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
                                     visualDensity: VisualDensity.compact,
                                   ),
                                   SizedBox(width: Responsive.width(6, context)),
@@ -168,19 +177,24 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                               Row(
                                 children: [
                                   Checkbox(
-                                    value: _preferences.showInstiappGoing ?? true,
+                                    value:
+                                        _preferences.showInstiappGoing ?? true,
                                     onChanged: (val) {
                                       setState(() {
-                                        _preferences.showInstiappGoing = val ?? false;
+                                        _preferences.showInstiappGoing =
+                                            val ?? false;
                                       });
-                                      bloc.updateCalendarPreferences(_preferences);
+                                      bloc.updateCalendarPreferences(
+                                          _preferences);
                                     },
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(Responsive.width(4, context)),
+                                      borderRadius: BorderRadius.circular(
+                                          Responsive.width(4, context)),
                                     ),
                                     side: const BorderSide(color: Colors.grey),
                                     activeColor: const Color(0xFF1A56DB),
-                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
                                     visualDensity: VisualDensity.compact,
                                   ),
                                   SizedBox(width: Responsive.width(6, context)),
@@ -198,19 +212,26 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                               Row(
                                 children: [
                                   Checkbox(
-                                    value: _preferences.showInstiappFollowedBodies ?? true,
+                                    value: _preferences
+                                            .showInstiappFollowedBodies ??
+                                        true,
                                     onChanged: (val) {
                                       setState(() {
-                                        _preferences.showInstiappFollowedBodies = val ?? false;
+                                        _preferences
+                                                .showInstiappFollowedBodies =
+                                            val ?? false;
                                       });
-                                      bloc.updateCalendarPreferences(_preferences);
+                                      bloc.updateCalendarPreferences(
+                                          _preferences);
                                     },
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(Responsive.width(4, context)),
+                                      borderRadius: BorderRadius.circular(
+                                          Responsive.width(4, context)),
                                     ),
                                     side: const BorderSide(color: Colors.grey),
                                     activeColor: const Color(0xFF1A56DB),
-                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
                                     visualDensity: VisualDensity.compact,
                                   ),
                                   SizedBox(width: Responsive.width(6, context)),
@@ -240,54 +261,66 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                   ),
                                 ],
                               ),
-                              if (_bodiesExpanded && (_preferences.showInstiappFollowedBodies ?? true)) ...[
+                              if (_bodiesExpanded &&
+                                  (_preferences.showInstiappFollowedBodies ??
+                                      true)) ...[
                                 const SizedBox(height: 8),
-                                ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    maxHeight: Responsive.height(150, context),
-                                  ),
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: _bodies.length,
-                                    itemBuilder: (context, idx) {
-                                      final body = _bodies[idx];
-                                      return Padding(
-                                        padding: const EdgeInsets.only(left: 20, bottom: 4),
-                                        child: Row(
-                                          children: [
-                                            Checkbox(
-                                              value: body.enabled ?? false,
-                                              onChanged: (val) {
-                                                setState(() {
-                                                  body.enabled = val ?? false;
-                                                });
-                                                if (body.bodyId != null) {
-                                                  bloc.updateSingleCalendarPrefBody(body.bodyId!, body);
-                                                }
-                                              },
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(Responsive.width(4, context)),
-                                              ),
-                                              side: const BorderSide(color: Colors.grey),
-                                              activeColor: const Color(0xFF1A56DB),
-                                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                              visualDensity: VisualDensity.compact,
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  padding: EdgeInsets.zero,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: _bodies.length,
+                                  itemBuilder: (context, idx) {
+                                    final body = _bodies[idx];
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 20, bottom: 0),
+                                      child: Row(
+                                        children: [
+                                          Checkbox(
+                                            value: body.enabled ?? false,
+                                            onChanged: (val) {
+                                              setState(() {
+                                                body.enabled = val ?? false;
+                                              });
+                                              if (body.bodyId != null) {
+                                                bloc.updateSingleCalendarPrefBody(
+                                                    body.bodyId!, body);
+                                              }
+                                            },
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      Responsive.width(
+                                                          4, context)),
                                             ),
-                                            SizedBox(width: Responsive.width(6, context)),
-                                            Expanded(
-                                              child: Text(
-                                                body.bodyName ?? '',
-                                                style: TextStyle(
-                                                  fontSize: Responsive.width(13, context),
-                                                  color: Colors.black87,
-                                                ),
+                                            side: const BorderSide(
+                                                color: Colors.grey),
+                                            activeColor:
+                                                const Color(0xFF1A56DB),
+                                            materialTapTargetSize:
+                                                MaterialTapTargetSize
+                                                    .shrinkWrap,
+                                            visualDensity:
+                                                VisualDensity.compact,
+                                          ),
+                                          SizedBox(
+                                              width: Responsive.width(
+                                                  6, context)),
+                                          Expanded(
+                                            child: Text(
+                                              body.bodyName ?? '',
+                                              style: TextStyle(
+                                                fontSize: Responsive.width(
+                                                    13, context),
+                                                color: Colors.black87,
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
                                 ),
                               ],
                               SizedBox(height: Responsive.height(16, context)),
@@ -299,14 +332,17 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                       setState(() {
                                         _preferences.showResobin = val ?? false;
                                       });
-                                      bloc.updateCalendarPreferences(_preferences);
+                                      bloc.updateCalendarPreferences(
+                                          _preferences);
                                     },
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(Responsive.width(4, context)),
+                                      borderRadius: BorderRadius.circular(
+                                          Responsive.width(4, context)),
                                     ),
                                     side: const BorderSide(color: Colors.grey),
                                     activeColor: const Color(0xFF1A56DB),
-                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
                                     visualDensity: VisualDensity.compact,
                                   ),
                                   SizedBox(width: Responsive.width(6, context)),
@@ -361,7 +397,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                     itemBuilder: (context, idx) {
                                       final cal = _sharedCalendars[idx];
                                       return Padding(
-                                        padding: const EdgeInsets.only(left: 20, bottom: 4),
+                                        padding: const EdgeInsets.only(
+                                            left: 20, bottom: 4),
                                         child: Row(
                                           children: [
                                             Checkbox(
@@ -371,23 +408,35 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                                   cal.isActive = val ?? false;
                                                 });
                                                 if (cal.slug != null) {
-                                                  bloc.toggleSharedCalendar(cal.slug!, val ?? false);
+                                                  bloc.toggleSharedCalendar(
+                                                      cal.slug!, val ?? false);
                                                 }
                                               },
                                               shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(Responsive.width(4, context)),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        Responsive.width(
+                                                            4, context)),
                                               ),
-                                              side: const BorderSide(color: Colors.grey),
-                                              activeColor: const Color(0xFF1A56DB),
-                                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                              visualDensity: VisualDensity.compact,
+                                              side: const BorderSide(
+                                                  color: Colors.grey),
+                                              activeColor:
+                                                  const Color(0xFF1A56DB),
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                              visualDensity:
+                                                  VisualDensity.compact,
                                             ),
-                                            SizedBox(width: Responsive.width(6, context)),
+                                            SizedBox(
+                                                width: Responsive.width(
+                                                    6, context)),
                                             Expanded(
                                               child: Text(
                                                 cal.name ?? '',
                                                 style: TextStyle(
-                                                  fontSize: Responsive.width(13, context),
+                                                  fontSize: Responsive.width(
+                                                      13, context),
                                                   color: Colors.black87,
                                                 ),
                                               ),
@@ -440,7 +489,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     });
                   }
                 },
-                child:  Text(
+                child: Text(
                   'Clear All',
                   style: TextStyle(
                     fontSize: Responsive.width(15, context),
@@ -465,7 +514,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   ),
                   elevation: 0,
                 ),
-                child:  Text(
+                child: Text(
                   'Apply',
                   style: TextStyle(
                     fontSize: Responsive.width(16, context),
@@ -480,8 +529,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     );
   }
 }
-
-
 
 class _SidebarTab extends StatelessWidget {
   final String label;
@@ -587,7 +634,8 @@ class _SubCheckbox extends StatelessWidget {
           Checkbox(
             value: value,
             onChanged: onChanged,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             side: const BorderSide(color: Colors.grey),
             activeColor: const Color(0xFF1A56DB),
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
