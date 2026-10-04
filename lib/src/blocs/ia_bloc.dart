@@ -1077,6 +1077,19 @@ class InstiAppBloc {
     }
 
     calendarShared ??= [];
+    for (final cal in calendarShared!) {
+      if (cal.color != null && cal.color!.isNotEmpty) {
+        if (cal.slug != null && cal.slug!.isNotEmpty) {
+          CalendarItem.calendarColors[cal.slug!.toLowerCase()] = cal.color!;
+        }
+        if (cal.id != null && cal.id!.isNotEmpty) {
+          CalendarItem.calendarColors[cal.id!.toLowerCase()] = cal.color!;
+        }
+        if (cal.name != null && cal.name!.isNotEmpty) {
+          CalendarItem.calendarColors[cal.name!.toLowerCase()] = cal.color!;
+        }
+      }
+    }
     return calendarShared!;
   }
 
@@ -1252,6 +1265,7 @@ class InstiAppBloc {
                   all_day: false,
                   location: venue,
                   source: "resobin",
+                  color: "#7178F4",
                   subsource: "lectures-n-labs",
                 ));
               }
@@ -1277,6 +1291,7 @@ class InstiAppBloc {
                   all_day: false,
                   location: venue,
                   source: "resobin",
+                  color: "#7178F4",
                   subsource: "lectures-n-labs",
                 ));
               }
