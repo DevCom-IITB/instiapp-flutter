@@ -144,23 +144,37 @@ class _MonthGridWithEventsWidgetState extends State<MonthGridWithEventsWidget> {
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: Color(0xFFEAEAEA), width: 1)),
       ),
-      child: Row(
-        children: _dayLabels
-            .map((label) => Expanded(
-                  child: Center(
-                    child: Text(
-                      label,
-                      style: TextStyle(
-                        color: const Color(0x4C3C3C43),
-                        fontSize: Responsive.width(14, context),
-                        fontFamily: 'DM Sans',
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.07,
+      child: IntrinsicHeight(
+        child: Row(
+          children: _dayLabels
+              .asMap()
+              .entries
+              .map((entry) => Expanded(
+                    child: Container(
+                      decoration: entry.key < _dayLabels.length - 1
+                          ? const BoxDecoration(
+                              border: Border(
+                                right: BorderSide(
+                                    color: Color(0xFFEAEAEA), width: 1),
+                              ),
+                            )
+                          : null,
+                      child: Center(
+                        child: Text(
+                          entry.value,
+                          style: TextStyle(
+                            color: const Color(0x4C3C3C43),
+                            fontSize: Responsive.width(14, context),
+                            fontFamily: 'DM Sans',
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: -0.07,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ))
-            .toList(),
+                  ))
+              .toList(),
+        ),
       ),
     );
   }
@@ -172,47 +186,75 @@ class _MonthGridWithEventsWidgetState extends State<MonthGridWithEventsWidget> {
     final today = DateTime(now.year, now.month, now.day);
 
     return Container(
-      padding: EdgeInsets.symmetric(vertical: Responsive.height(8, context)),
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: Color(0xFFEAEAEA), width: 1)),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: week
-            .map((dayStr) {
-              if (dayStr.isEmpty) {
-                return const Expanded(child: SizedBox.shrink());
-              }
-              final dayNum = int.parse(dayStr);
-              final cellDate = DateTime(year, month, dayNum);
-              final isSelected = cubit.isSelected(cellDate);
-              final isToday = cellDate.year == today.year && cellDate.month == today.month && cellDate.day == today.day;
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: week
+              .asMap()
+              .entries
+              .map((entry) {
+                final index = entry.key;
+                final dayStr = entry.value;
+                if (dayStr.isEmpty) {
+                  return Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: Responsive.height(8, context)),
+                      decoration: index < week.length - 1
+                          ? const BoxDecoration(
+                              border: Border(
+                                right: BorderSide(
+                                    color: Color(0xFFEAEAEA), width: 1),
+                              ),
+                            )
+                          : null,
+                    ),
+                  );
+                }
+                final dayNum = int.parse(dayStr);
+                final cellDate = DateTime(year, month, dayNum);
+                final isSelected = cubit.isSelected(cellDate);
+                final isToday = cellDate.year == today.year && cellDate.month == today.month && cellDate.day == today.day;
 
-              // Filter events for this day
-              final dayEvents = response.items.where((item) {
-                final start = DateTime.parse(item.startTime).toLocal();
-                final end = DateTime.parse(item.endTime).toLocal();
+                // Filter events for this day
+                final dayEvents = response.items.where((item) {
+                  final start = DateTime.parse(item.startTime).toLocal();
+                  final end = DateTime.parse(item.endTime).toLocal();
 
-                final dayStart = DateTime(cellDate.year, cellDate.month, cellDate.day);
-                final dayEnd = dayStart.add(const Duration(days: 1));
+                  final dayStart = DateTime(cellDate.year, cellDate.month, cellDate.day);
+                  final dayEnd = dayStart.add(const Duration(days: 1));
 
-                return start.isBefore(dayEnd) && end.isAfter(dayStart);
-              }).toList();
+                  return start.isBefore(dayEnd) && end.isAfter(dayStart);
+                }).toList();
 
-              return Expanded(
-                child: _DateCell(
-                  day: dayStr,
-                  events: dayEvents,
-                  isSelected: isSelected,
-                  isToday: isToday,
-                  onTap: () {
-                    cubit.selectDate(cellDate);
-                    widget.onDateSelected?.call(cellDate);
-                  },
-                ),
-              );
-            })
-            .toList(),
+                return Expanded(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: Responsive.height(8, context)),
+                    decoration: index < week.length - 1
+                        ? const BoxDecoration(
+                            border: Border(
+                              right: BorderSide(
+                                  color: Color(0xFFEAEAEA), width: 1),
+                            ),
+                          )
+                        : null,
+                    child: _DateCell(
+                      day: dayStr,
+                      events: dayEvents,
+                      isSelected: isSelected,
+                      isToday: isToday,
+                      onTap: () {
+                        cubit.selectDate(cellDate);
+                        widget.onDateSelected?.call(cellDate);
+                      },
+                    ),
+                  ),
+                );
+              })
+              .toList(),
+        ),
       ),
     );
   }
