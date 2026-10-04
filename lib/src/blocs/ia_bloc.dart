@@ -452,8 +452,104 @@ class InstiAppBloc {
 
   Future<void> updateNotifications() async {
     var notifs = await client.getNotifications(getSessionIdHeader());
+
+    // Fire a local push notification for any notification that we haven't
+    // shown a push for yet. IDs are persisted in SharedPreferences so this
+    // survives app restarts without re-notifying the user.
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final bool initialized = prefs.getBool('notif_seen_initialized') ?? false;
+      final Set<String> seenIds =
+          (prefs.getStringList('notif_seen_ids') ?? []).toSet();
+
+      if (!initialized) {
+        // First run: mark all existing notifications as already seen so we
+        // only notify for ones that arrive after this point.
+        for (final n in notifs) {
+          if (n.notificationId != null) seenIds.add('${n.notificationId}');
+        }
+        await prefs.setBool('notif_seen_initialized', true);
+        await prefs.setStringList('notif_seen_ids', seenIds.toList());
+      } else {
+        bool hadNew = false;
+        for (final n in notifs) {
+          final String id = '${n.notificationId}';
+          if (n.notificationId != null && !seenIds.contains(id)) {
+            seenIds.add(id);
+            hadNew = true;
+            _sendPushForApiNotification(n);
+          }
+        }
+        if (hadNew) {
+          // Cap the stored set to avoid unbounded growth.
+          final List<String> capped = seenIds.length > 500
+              ? seenIds.toList().sublist(seenIds.length - 500)
+              : seenIds.toList();
+          await prefs.setStringList('notif_seen_ids', capped);
+        }
+      }
+    } catch (e) {
+      debugPrint('updateNotifications – push tracking error: $e');
+    }
+
     _notifications = notifs;
     _notificationsSubject.add(UnmodifiableListView(_notifications));
+  }
+
+  /// Converts an [ntf.Notification] (from the InstiApp API) into a local
+  /// system push notification via AwesomeNotifications.
+  void _sendPushForApiNotification(ntf.Notification notification) {
+    try {
+      // Map the actor_type to a notification type string and channel key.
+      String type;
+      String channelKey;
+      String? objectId = notification.getID();
+      String? extra;
+
+      if (notification.notificationActorType?.contains(ntf.TYPE_EVENT) ?? false) {
+        type = 'event';
+        channelKey = 'events_channel';
+      } else if (notification.notificationActorType?.contains(ntf.TYPE_NEWSENTRY) ?? false) {
+        type = 'newsentry';
+        channelKey = 'news_channel';
+      } else if (notification.notificationActorType?.contains(ntf.TYPE_BLOG) ?? false) {
+        // Blog posts – use the post link to distinguish placement / internship.
+        final post = notification.getBlogPost();
+        final isInternship = post.link?.contains('/internship') ?? false;
+        type = isInternship ? 'internship' : 'placement';
+        channelKey = isInternship ? 'internship_channel' : 'placement_channel';
+      } else if (notification.notificationActorType?.contains(ntf.TYPE_COMPLAINT_COMMENT) ?? false) {
+        type = 'complaintcomment';
+        channelKey = 'misc_channel';
+        extra = notification.getComment().complaintID;
+      } else {
+        type = 'misc';
+        channelKey = 'misc_channel';
+      }
+
+      final int notifId =
+          (notification.notificationId ?? DateTime.now().millisecondsSinceEpoch) %
+          2147483647;
+
+      AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: notifId,
+          channelKey: channelKey,
+          title: notification.getTitle() ?? 'New notification from InstiApp',
+          body: notification.getSubtitle(),
+          largeIcon: notification.getAvatarUrl(),
+          color: Colors.blue,
+          payload: {
+            'type': type,
+            'id': objectId ?? '',
+            'extra': extra ?? '',
+            'notification_id': '${notification.notificationId ?? ''}',
+          },
+        ),
+      );
+    } catch (e) {
+      debugPrint('_sendPushForApiNotification error: $e');
+    }
   }
 
   Future clearAllNotifications() async {
@@ -1204,7 +1300,10 @@ class InstiAppBloc {
     calendarPrefBodies = null;
     calendarShared = null;
     SharedPreferences sp = await SharedPreferences.getInstance();
-    sp.remove("calendarPreferences");
+    sp.remove('calendarPreferences');
+    // Reset seen-notification tracking so the next login starts fresh.
+    sp.remove('notif_seen_initialized');
+    sp.remove('notif_seen_ids');
     clearCalendarFeedCache();
   }
 
