@@ -40,17 +40,19 @@ class ListViewWidget extends StatelessWidget {
       }
 
       final start = DateTime(day.year, day.month, day.day);
-      final end = start.add(const Duration(days: 1));
       final isoFormat = [yyyy, '-', mm, '-', dd];
+      final dateStr = formatDate(start, isoFormat);
 
       try {
         final response = await bloc.getCalendarFeedCombined(
           sessionHeader,
-          formatDate(start, isoFormat),
-          formatDate(end, isoFormat),
+          dateStr,
+          dateStr,
           'Asia/Kolkata',
         );
-        return response;
+        final filteredItems =
+            response.items.where((item) => item.isOnDay(day)).toList();
+        return CalendarFeedResponse(items: filteredItems);
       } catch (e) {
         debugPrint('Error fetching events for date: $e');
         return CalendarFeedResponse(items: []);

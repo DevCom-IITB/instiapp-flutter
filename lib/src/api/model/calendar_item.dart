@@ -289,11 +289,44 @@ class CalendarItem {
     );
   }
 
+  bool isOnDay(DateTime day) {
+    try {
+      final start = DateTime.parse(startTime).toLocal();
+      final end = DateTime.parse(endTime).toLocal();
+
+      final targetDate = DateTime(day.year, day.month, day.day);
+      final nextDate = targetDate.add(const Duration(days: 1));
+
+      if (all_day) {
+        final startDate = DateTime(start.year, start.month, start.day);
+        var endDate = DateTime(end.year, end.month, end.day);
+
+        // If end time is exactly midnight (00:00:00) on a subsequent day,
+        // it means the event ended at 24:00 of the previous day (exclusive end).
+        if (end.hour == 0 &&
+            end.minute == 0 &&
+            end.second == 0 &&
+            end.isAfter(start)) {
+          endDate = endDate.subtract(const Duration(days: 1));
+        }
+
+        return !targetDate.isBefore(startDate) && !targetDate.isAfter(endDate);
+      } else {
+        return (start.isBefore(nextDate) && end.isAfter(targetDate)) ||
+            (start.year == day.year &&
+                start.month == day.month &&
+                start.day == day.day);
+      }
+    } catch (_) {
+      return true;
+    }
+  }
+
   factory CalendarItem.fromJson(
     Map<String, dynamic> json,
   ) {
     debugPrint(
-        '[CalendarItem.fromJson] "${json['title']}" -> color: ${json['color']}, color_hint: ${json['color_hint']}, source: ${json['source']}, subsource: ${json['subsource']}');
+        '[CalendarItem.fromJson] "${json['title']}" -> start: ${json['start_time']}, end: ${json['end_time']}, color: ${json['color']}, color_hint: ${json['color_hint']}');
     return _$CalendarItemFromJson(json);
   }
 

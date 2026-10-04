@@ -61,21 +61,16 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
     }
 
     final start = DateTime(widget.day.year, widget.day.month, widget.day.day);
-    final end = start.add(const Duration(days: 1));
     final isoFormat = [yyyy, '-', mm, '-', dd];
+    final dateStr = formatDate(start, isoFormat);
 
     try {
       final response = await bloc.getCalendarFeedCombined(
         sessionHeader,
-        formatDate(start, isoFormat),
-        formatDate(end, isoFormat),
+        dateStr,
+        dateStr,
         'Asia/Kolkata',
       );
-      if (response != null && response.items != null) {
-        for (var item in response.items) {
-          print(item.toJson());
-        }
-      }
       return response;
     } catch (e) {
       debugPrint('Error fetching events for date: $e');
@@ -96,6 +91,8 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
         }
 
         final response = snapshot.data!;
+        final dayItems =
+            response.items.where((item) => item.isOnDay(day)).toList();
 
         return Column(
           mainAxisSize: MainAxisSize.min,
@@ -145,7 +142,7 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
                                 ),
                               ),
                               Text(
-                                '${response.items.length} events',
+                                '${dayItems.length} events',
                                 style: TextStyle(
                                   color: const Color(
                                       0xFF7E8287) /* instiappgrey */,
@@ -165,7 +162,7 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
                 ],
               ),
             ),
-            if (response.items.any((item) => item.all_day))
+            if (dayItems.any((item) => item.all_day))
               SizedBox(
                 width: Responsive.width(380, context),
                 child: SingleChildScrollView(
@@ -178,7 +175,7 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     spacing: Responsive.width(4, context),
                     children: [
-                      ...response.items.where((item) => item.all_day).map((item) {
+                      ...dayItems.where((item) => item.all_day).map((item) {
                         final style = item.pillStyle;
                         return Container(
                           height: 32,
@@ -233,7 +230,7 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
               spacing: Responsive.height(10, context),
               children: [
                 // all events
-                ...response.items.where((item) => !item.all_day).map((item) {
+                ...dayItems.where((item) => !item.all_day).map((item) {
                   DateTime eventStart =
                       DateTime.parse(item.startTime).toLocal();
                   String eventStartTimeString =

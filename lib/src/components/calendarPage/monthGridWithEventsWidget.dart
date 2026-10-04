@@ -47,7 +47,7 @@ class _MonthGridWithEventsWidgetState extends State<MonthGridWithEventsWidget> {
     }
 
     final start = DateTime(currentDate.year, currentDate.month, 1);
-    final end = DateTime(currentDate.year, currentDate.month + 1, 1);
+    final end = DateTime(currentDate.year, currentDate.month + 1, 0);
     final isoFormat = [yyyy, '-', mm, '-', dd];
 
     try {
@@ -219,15 +219,9 @@ class _MonthGridWithEventsWidgetState extends State<MonthGridWithEventsWidget> {
                 final isToday = cellDate.year == today.year && cellDate.month == today.month && cellDate.day == today.day;
 
                 // Filter events for this day
-                final dayEvents = response.items.where((item) {
-                  final start = DateTime.parse(item.startTime).toLocal();
-                  final end = DateTime.parse(item.endTime).toLocal();
-
-                  final dayStart = DateTime(cellDate.year, cellDate.month, cellDate.day);
-                  final dayEnd = dayStart.add(const Duration(days: 1));
-
-                  return start.isBefore(dayEnd) && end.isAfter(dayStart);
-                }).toList();
+                final dayEvents = response.items
+                    .where((item) => item.isOnDay(cellDate))
+                    .toList();
 
                 return Expanded(
                   child: Container(
