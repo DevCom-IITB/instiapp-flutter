@@ -16,8 +16,8 @@ Future<void> showCalendarFiltersBottomSheet(BuildContext context) {
           return FractionallySizedBox(
               heightFactor: 0.6632,
               child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF6F6F6),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(16),
                     topRight: Radius.circular(16),
@@ -96,22 +96,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Left sidebar tab
-              Container(
+              SizedBox(
                 width: Responsive.width(125, context),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(8),
-                    bottomRight: Radius.circular(8),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
-                      blurRadius: Responsive.width(4, context),
-                      offset: const Offset(2, 0),
-                    ),
-                  ],
-                ),
                 child: Column(
                   children: [
                     _SidebarTab(label: 'Preferences', isSelected: true),
@@ -127,7 +113,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     vertical: Responsive.height(8, context),
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEEEEEE),
+                    color: const Color(0xFFEFEFEF),
                     borderRadius: BorderRadius.only(
                       bottomLeft:
                           Radius.circular(Responsive.width(16, context)),
@@ -458,67 +444,74 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         ),
 
         Container(
+          color: const Color(0xFFF6F6F6),
           padding: EdgeInsets.symmetric(
-            horizontal: Responsive.width(20, context),
+            horizontal: Responsive.width(16, context),
             vertical: Responsive.height(16, context),
           ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-          ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Clear All btn
-              GestureDetector(
-                onTap: () {
-                  if (!_loading) {
-                    setState(() {
-                      _preferences.showAllEvents = false;
-                      _preferences.showInstiappGoing = false;
-                      _preferences.showInstiappFollowedBodies = false;
-                      _preferences.showResobin = false;
-                      bloc.updateCalendarPreferences(_preferences);
-                      for (var cal in _sharedCalendars) {
-                        if (cal.isActive == true) {
-                          cal.isActive = false;
-                          if (cal.slug != null) {
-                            bloc.toggleSharedCalendar(cal.slug!, false);
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    if (!_loading) {
+                      setState(() {
+                        _preferences.showAllEvents = false;
+                        _preferences.showInstiappGoing = false;
+                        _preferences.showInstiappFollowedBodies = false;
+                        _preferences.showResobin = false;
+                        bloc.updateCalendarPreferences(_preferences);
+                        for (var cal in _sharedCalendars) {
+                          if (cal.isActive == true) {
+                            cal.isActive = false;
+                            if (cal.slug != null) {
+                              bloc.toggleSharedCalendar(cal.slug!, false);
+                            }
                           }
                         }
-                      }
-                    });
-                  }
-                },
-                child: Text(
-                  'Clear All',
-                  style: TextStyle(
-                    fontSize: Responsive.width(15, context),
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                    decoration: TextDecoration.underline,
-                    decorationStyle: TextDecorationStyle.dotted,
+                      });
+                    }
+                  },
+                  child: SizedBox(
+                    height: Responsive.height(60, context),
+                    child: Center(
+                      child: Text(
+                        'Clear All',
+                        style: TextStyle(
+                          color: const Color(0xFF0F1620),
+                          fontSize: Responsive.text(18, context),
+                          fontFamily: 'DM Sans',
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
-
-              // Apply button
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0D1B2A),
-                  foregroundColor: Colors.white,
-                  shape: const StadiumBorder(),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Responsive.width(40, context),
-                    vertical: Responsive.height(14, context),
-                  ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  'Apply',
-                  style: TextStyle(
-                    fontSize: Responsive.width(16, context),
-                    fontWeight: FontWeight.w600,
+              SizedBox(width: Responsive.width(12, context)),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    height: Responsive.height(60, context),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F1620),
+                      borderRadius: BorderRadius.circular(50),
+                      image: const DecorationImage(
+                        image: AssetImage('assets/blogs/reachapply.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Apply',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: Responsive.text(18, context),
+                        fontFamily: 'DM Sans',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -533,29 +526,71 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 class _SidebarTab extends StatelessWidget {
   final String label;
   final bool isSelected;
+  final VoidCallback? onTap;
 
-  const _SidebarTab({required this.label, this.isSelected = false});
+  const _SidebarTab({
+    required this.label,
+    this.isSelected = false,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        vertical: Responsive.height(18, context),
-        horizontal: Responsive.width(12, context),
-      ),
-      decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFEEEEEE) : Colors.white,
-        border: isSelected
-            ? const Border(left: BorderSide(color: Color(0xFF1A56DB), width: 5))
-            : null,
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: Responsive.width(15, context),
-          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-          color: Colors.black87,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: Responsive.width(125, context),
+        height: Responsive.height(52, context),
+        color: const Color(0xFFEFEFEF),
+        child: Stack(
+          children: [
+            if (isSelected)
+              Positioned(
+                left: 0,
+                top: 0,
+                bottom: 0,
+                child: Container(
+                  width: Responsive.width(4, context),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF306FDC),
+                    borderRadius: BorderRadius.horizontal(
+                      right: Radius.circular(5),
+                    ),
+                  ),
+                ),
+              ),
+            if (isSelected)
+              Positioned(
+                left: 0,
+                top: 0,
+                bottom: 0,
+                child: Container(
+                  width: Responsive.width(104, context),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment(0.0, 0.53),
+                      end: Alignment(0.90, 0.53),
+                      colors: [Color(0x33306FDC), Color(0x33EFEFEF)],
+                    ),
+                  ),
+                ),
+              ),
+            Padding(
+              padding: EdgeInsets.only(
+                left: Responsive.width(16, context),
+                top: Responsive.height(16, context),
+              ),
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: const Color(0xFF0F1620),
+                  fontSize: Responsive.text(16, context),
+                  fontFamily: 'DM Sans',
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
