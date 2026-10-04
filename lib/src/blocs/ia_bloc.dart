@@ -1233,9 +1233,12 @@ class InstiAppBloc {
 
     final items = List<CalendarItem>.from(originalFeed.items);
     final startDate = DateTime.tryParse(start);
-    final endDate = DateTime.tryParse(end);
+    var endDate = DateTime.tryParse(end);
 
     if (startDate != null && endDate != null) {
+      if (!endDate.isAfter(startDate)) {
+        endDate = startDate.add(const Duration(days: 1));
+      }
       for (var date = startDate;
           date.isBefore(endDate);
           date = date.add(const Duration(days: 1))) {

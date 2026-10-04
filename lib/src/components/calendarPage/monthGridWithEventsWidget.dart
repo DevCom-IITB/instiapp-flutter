@@ -47,7 +47,7 @@ class _MonthGridWithEventsWidgetState extends State<MonthGridWithEventsWidget> {
     }
 
     final start = DateTime(currentDate.year, currentDate.month, 1);
-    final end = DateTime(currentDate.year, currentDate.month + 1, 0);
+    final end = DateTime(currentDate.year, currentDate.month + 1, 1);
     final isoFormat = [yyyy, '-', mm, '-', dd];
 
     try {

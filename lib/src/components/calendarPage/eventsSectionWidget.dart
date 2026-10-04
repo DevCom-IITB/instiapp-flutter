@@ -61,14 +61,14 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
     }
 
     final start = DateTime(widget.day.year, widget.day.month, widget.day.day);
+    final end = start.add(const Duration(days: 1));
     final isoFormat = [yyyy, '-', mm, '-', dd];
-    final dateStr = formatDate(start, isoFormat);
 
     try {
       final response = await bloc.getCalendarFeedCombined(
         sessionHeader,
-        dateStr,
-        dateStr,
+        formatDate(start, isoFormat),
+        formatDate(end, isoFormat),
         'Asia/Kolkata',
       );
       return response;
