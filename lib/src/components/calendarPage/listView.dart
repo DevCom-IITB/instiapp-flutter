@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'eventsSectionWidget.dart';
 import '../../api/response/calendar_feed_response.dart';
+import '../../api/model/calendar_item.dart';
 import 'package:InstiApp/src/bloc_provider.dart';
 import 'package:date_format/date_format.dart';
 import 'package:InstiApp/src/utils/responsivenew.dart';
@@ -51,7 +52,8 @@ class ListViewWidget extends StatelessWidget {
           'Asia/Kolkata',
         );
         final filteredItems =
-            response.items.where((item) => item.isOnDay(day)).toList();
+            response.items.where((item) => item.isOnDay(day)).toList()
+              ..sort(CalendarItem.compareStartTime);
         return CalendarFeedResponse(items: filteredItems);
       } catch (e) {
         debugPrint('Error fetching events for date: $e');

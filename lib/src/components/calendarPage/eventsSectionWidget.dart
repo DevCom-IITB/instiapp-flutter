@@ -5,6 +5,7 @@ import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import '../../utils/responsivenew.dart';
 import '../../api/response/calendar_feed_response.dart';
+import '../../api/model/calendar_item.dart';
 import 'package:intl/intl.dart';
 import '../../blocs/new_calendar_bloc.dart';
 
@@ -92,7 +93,8 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
 
         final response = snapshot.data!;
         final dayItems =
-            response.items.where((item) => item.isOnDay(day)).toList();
+            response.items.where((item) => item.isOnDay(day)).toList()
+              ..sort(CalendarItem.compareStartTime);
 
         return Column(
           mainAxisSize: MainAxisSize.min,

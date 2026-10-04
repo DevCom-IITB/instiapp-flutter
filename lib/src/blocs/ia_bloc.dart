@@ -1186,123 +1186,118 @@ class InstiAppBloc {
       originalFeed = CalendarFeedResponse(items: []);
     }
 
-    if (prefs.showResobin == false) {
-      debugPrint(
-          'getCalendarFeedCombined: showResobin is false, returning original feed directly');
-      _calendarFeedCache[cacheKey] = originalFeed;
-      return originalFeed;
-    }
-
-    var rollNo = currSession?.profile?.userRollNumber;
-    if (rollNo == null || rollNo.isEmpty) {
-      if (getSessionIdHeader().isNotEmpty) {
-        try {
-          await reloadCurrentUser();
-          rollNo = currSession?.profile?.userRollNumber;
-        } catch (e) {
-          debugPrint('Error reloading user profile for rollNo: $e');
-        }
-      }
-    }
-
-    if (rollNo == null || rollNo.isEmpty) {
-      debugPrint(
-          'getCalendarFeedCombined: rollNo is null/empty, returning original feed');
-      _calendarFeedCache[cacheKey] = originalFeed;
-      return originalFeed;
-    }
-
-    List<ResobinCourse> resobinFeed = [];
-    if (_cachedResobinFeed != null) {
-      resobinFeed = _cachedResobinFeed!;
-    } else {
-      try {
-        resobinFeed = await client.getResobinSchedule(rollNo, "ResInstiance");
-        _cachedResobinFeed = resobinFeed;
-        debugPrint(
-            'getCalendarFeedCombined: Resobin schedule fetched successfully with ${resobinFeed.length} courses for rollNo $rollNo');
-      } catch (e) {
-        debugPrint('Error fetching Resobin schedule: $e');
-      }
-    }
-
-    if (resobinFeed.isEmpty) {
-      _calendarFeedCache[cacheKey] = originalFeed;
-      return originalFeed;
-    }
-
     final items = List<CalendarItem>.from(originalFeed.items);
-    final startDate = DateTime.tryParse(start);
-    var endDate = DateTime.tryParse(end);
 
-    if (startDate != null && endDate != null) {
-      if (!endDate.isAfter(startDate)) {
-        endDate = startDate.add(const Duration(days: 1));
-      }
-      for (var date = startDate;
-          date.isBefore(endDate);
-          date = date.add(const Duration(days: 1))) {
-        for (final course in resobinFeed) {
-          final venue = (course.lectureVenue != null &&
-                  course.lectureVenue!.trim().isNotEmpty)
-              ? course.lectureVenue!.trim()
-              : null;
-
-          if (course.lectureSlots != null) {
-            for (final slot in course.lectureSlots!) {
-              if (_isSlotOnWeekday(slot, date) &&
-                  slot.startTime != null &&
-                  slot.endTime != null) {
-                final dateStr =
-                    "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-                final startIso =
-                    "${dateStr}T${_normalizeTime(slot.startTime!)}+05:30";
-                final endIso =
-                    "${dateStr}T${_normalizeTime(slot.endTime!)}+05:30";
-                items.add(CalendarItem(
-                  uid: "resobin-lec-${course.id}-${slot.slot ?? ''}-${dateStr}",
-                  title:
-                      "${course.course?.code ?? ''} - ${course.course?.title ?? ''}",
-                  startTime: startIso,
-                  endTime: endIso,
-                  all_day: false,
-                  location: venue,
-                  source: "resobin",
-                  color: "#7178F4",
-                  subsource: "lectures-n-labs",
-                ));
-              }
-            }
+    if (prefs.showResobin != false) {
+      var rollNo = currSession?.profile?.userRollNumber;
+      if (rollNo == null || rollNo.isEmpty) {
+        if (getSessionIdHeader().isNotEmpty) {
+          try {
+            await reloadCurrentUser();
+            rollNo = currSession?.profile?.userRollNumber;
+          } catch (e) {
+            debugPrint('Error reloading user profile for rollNo: $e');
           }
-          if (course.tutorialSlots != null) {
-            for (final slot in course.tutorialSlots!) {
-              if (_isSlotOnWeekday(slot, date) &&
-                  slot.startTime != null &&
-                  slot.endTime != null) {
-                final dateStr =
-                    "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-                final startIso =
-                    "${dateStr}T${_normalizeTime(slot.startTime!)}+05:30";
-                final endIso =
-                    "${dateStr}T${_normalizeTime(slot.endTime!)}+05:30";
-                items.add(CalendarItem(
-                  uid: "resobin-tut-${course.id}-${slot.slot ?? ''}-${dateStr}",
-                  title:
-                      "${course.course?.code ?? ''} - ${course.course?.title ?? ''}",
-                  startTime: startIso,
-                  endTime: endIso,
-                  all_day: false,
-                  location: venue,
-                  source: "resobin",
-                  color: "#7178F4",
-                  subsource: "lectures-n-labs",
-                ));
+        }
+      }
+
+      if (rollNo != null && rollNo.isNotEmpty) {
+        List<ResobinCourse> resobinFeed = [];
+        if (_cachedResobinFeed != null) {
+          resobinFeed = _cachedResobinFeed!;
+        } else {
+          try {
+            resobinFeed =
+                await client.getResobinSchedule(rollNo, "ResInstiance");
+            _cachedResobinFeed = resobinFeed;
+            debugPrint(
+                'getCalendarFeedCombined: Resobin schedule fetched successfully with ${resobinFeed.length} courses for rollNo $rollNo');
+          } catch (e) {
+            debugPrint('Error fetching Resobin schedule: $e');
+          }
+        }
+
+        if (resobinFeed.isNotEmpty) {
+          final startDate = DateTime.tryParse(start);
+          var endDate = DateTime.tryParse(end);
+
+          if (startDate != null && endDate != null) {
+            if (!endDate.isAfter(startDate)) {
+              endDate = startDate.add(const Duration(days: 1));
+            }
+            for (var date = startDate;
+                date.isBefore(endDate);
+                date = date.add(const Duration(days: 1))) {
+              for (final course in resobinFeed) {
+                final venue = (course.lectureVenue != null &&
+                        course.lectureVenue!.trim().isNotEmpty)
+                    ? course.lectureVenue!.trim()
+                    : null;
+
+                if (course.lectureSlots != null) {
+                  for (final slot in course.lectureSlots!) {
+                    if (_isSlotOnWeekday(slot, date) &&
+                        slot.startTime != null &&
+                        slot.endTime != null) {
+                      final dateStr =
+                          "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+                      final startIso =
+                          "${dateStr}T${_normalizeTime(slot.startTime!)}+05:30";
+                      final endIso =
+                          "${dateStr}T${_normalizeTime(slot.endTime!)}+05:30";
+                      items.add(CalendarItem(
+                        uid:
+                            "resobin-lec-${course.id}-${slot.slot ?? ''}-${dateStr}",
+                        title:
+                            "${course.course?.code ?? ''} - ${course.course?.title ?? ''}",
+                        startTime: startIso,
+                        endTime: endIso,
+                        all_day: false,
+                        location: venue,
+                        source: "resobin",
+                        color: "#7178F4",
+                        subsource: "lectures-n-labs",
+                      ));
+                    }
+                  }
+                }
+                if (course.tutorialSlots != null) {
+                  for (final slot in course.tutorialSlots!) {
+                    if (_isSlotOnWeekday(slot, date) &&
+                        slot.startTime != null &&
+                        slot.endTime != null) {
+                      final dateStr =
+                          "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+                      final startIso =
+                          "${dateStr}T${_normalizeTime(slot.startTime!)}+05:30";
+                      final endIso =
+                          "${dateStr}T${_normalizeTime(slot.endTime!)}+05:30";
+                      items.add(CalendarItem(
+                        uid:
+                            "resobin-tut-${course.id}-${slot.slot ?? ''}-${dateStr}",
+                        title:
+                            "${course.course?.code ?? ''} - ${course.course?.title ?? ''}",
+                        startTime: startIso,
+                        endTime: endIso,
+                        all_day: false,
+                        location: venue,
+                        source: "resobin",
+                        color: "#7178F4",
+                        subsource: "lectures-n-labs",
+                      ));
+                    }
+                  }
+                }
               }
             }
           }
         }
       }
     }
+
+    // Sort all gathered events chronologically by start time.
+    // If two events start at the same time, default order is preserved.
+    items.sort(CalendarItem.compareStartTime);
 
     final combinedResponse = CalendarFeedResponse(items: items);
     _calendarFeedCache[cacheKey] = combinedResponse;

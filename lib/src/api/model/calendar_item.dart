@@ -322,6 +322,36 @@ class CalendarItem {
     }
   }
 
+  /// Compares two CalendarItems by start time of day:
+  /// The one that starts earlier in the day shows up first.
+  /// If two start at the same time, returns 0 to preserve default order.
+  static int compareStartTime(CalendarItem a, CalendarItem b) {
+    DateTime? aStart;
+    DateTime? bStart;
+    try {
+      aStart = DateTime.parse(a.startTime).toLocal();
+    } catch (_) {
+      aStart = DateTime.tryParse(a.startTime)?.toLocal();
+    }
+    try {
+      bStart = DateTime.parse(b.startTime).toLocal();
+    } catch (_) {
+      bStart = DateTime.tryParse(b.startTime)?.toLocal();
+    }
+
+    if (aStart == null && bStart == null) return 0;
+    if (aStart == null) return 1;
+    if (bStart == null) return -1;
+
+    final aSeconds = aStart.hour * 3600 + aStart.minute * 60 + aStart.second;
+    final bSeconds = bStart.hour * 3600 + bStart.minute * 60 + bStart.second;
+
+    if (aSeconds != bSeconds) {
+      return aSeconds.compareTo(bSeconds);
+    }
+    return 0;
+  }
+
   factory CalendarItem.fromJson(
     Map<String, dynamic> json,
   ) {

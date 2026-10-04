@@ -271,8 +271,10 @@ class _DateCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final allDayEvents = events.where((e) => e.all_day).toList();
-    final timedEvents = events.where((e) => !e.all_day).toList();
+    final allDayEvents = events.where((e) => e.all_day).toList()
+      ..sort(CalendarItem.compareStartTime);
+    final timedEvents = events.where((e) => !e.all_day).toList()
+      ..sort(CalendarItem.compareStartTime);
 
     final List<CalendarItem> processedEvents = [];
     if (allDayEvents.isNotEmpty) {
