@@ -57,10 +57,11 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
+  static const String _handledPopupNotificationIdsKey =
+      'handledPopupNotificationIds';
+
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
-
-  // static const String _calendarUpdatePopupSeenKey;
 
   String currentpage = 'homepage';
   Constants myConstants = Constants();
@@ -371,9 +372,8 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
           firstBuild = false;
         });
 
-        // Show the "Insti-Calendar is out!" popup once, on the very first
-        // time the app is opened. Persisted via shared_preferences so it
-        // never shows again after the user has dismissed/acted on it.
+        // Show active popup notifications unless the user has already
+        // dismissed or acted on that notification.
         _maybeShowCalendarUpdatePopup();
       });
     }
@@ -406,40 +406,91 @@ class _HomepageState extends State<Homepage> with TickerProviderStateMixin {
 
     if (!mounted || popups.isEmpty) return;
 
-    final popup = popups.first;
-    final linkInfo = _parsePopupLink(popup.links);
+    SharedPreferences preferences;
+    try {
+      preferences = await SharedPreferences.getInstance();
+    } catch (e, st) {
+      print('Failed to load handled popup notifications: $e');
+      print(st);
+      return;
+    }
+    if (!mounted) return;
 
-    Future<void> markRead() async {
-      if (popup.id == null) return;
+    final handledPopupIds =
+        preferences.getStringList(_handledPopupNotificationIdsKey)?.toSet() ??
+            <String>{};
+    PopupNotificationResponse? popup;
+    for (final notification in popups) {
+      if (notification.id == null ||
+          !handledPopupIds.contains(notification.id.toString())) {
+        popup = notification;
+        break;
+      }
+    }
+    if (popup == null) return;
+
+    final selectedPopup = popup;
+    final linkInfo = _parsePopupLink(selectedPopup.links);
+
+    Future<void> persistHandled() async {
+      if (selectedPopup.id == null) return;
+      final preferences = await SharedPreferences.getInstance();
+      final handledIds =
+          preferences.getStringList(_handledPopupNotificationIdsKey) ?? [];
+      final popupId = selectedPopup.id.toString();
+      if (!handledIds.contains(popupId)) {
+        handledIds.add(popupId);
+        final saved = await preferences.setStringList(
+          _handledPopupNotificationIdsKey,
+          handledIds,
+        );
+        if (!saved) {
+          throw StateError('Failed to persist handled popup notification.');
+        }
+      }
+    }
+
+    Future<void> markReadOnServer() async {
+      if (selectedPopup.id == null) return;
       try {
-        await bloc.markPopupNotificationRead(popup.id!);
+        await bloc.markPopupNotificationRead(selectedPopup.id!);
       } catch (e, st) {
         print("POPUP HOMEPAGE ERROR: $e");
         print(st);
-        return;
       }
     }
 
     showDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(0.5),
-      builder: (dialogContext) => PopupNotification(
-        heading: popup.heading ?? '',
-        description: popup.shortDescription ?? '',
-        imageUrl: popup.imageUrl,
-        ctalabel: (linkInfo['label']?.isNotEmpty ?? false)
-            ? linkInfo['label']!
-            : 'Update now',
-        onDismiss: () {
-          Navigator.of(dialogContext).pop();
-          markRead();
-        },
-        onUpdateNow: () {
-          Navigator.of(dialogContext).pop();
-          markRead();
-          _launchUrl(linkInfo['url']);
-        },
-      ),
+      builder: (dialogContext) {
+        Future<void> handlePopupAction() async {
+          try {
+            await persistHandled();
+          } catch (e, st) {
+            print('Failed to persist handled popup notification: $e');
+            print(st);
+          }
+          if (dialogContext.mounted) {
+            Navigator.of(dialogContext).pop();
+          }
+          unawaited(markReadOnServer());
+        }
+
+        return PopupNotification(
+          heading: selectedPopup.heading ?? '',
+          description: selectedPopup.shortDescription ?? '',
+          imageUrl: selectedPopup.imageUrl,
+          ctalabel: (linkInfo['label']?.isNotEmpty ?? false)
+              ? linkInfo['label']!
+              : 'Update now',
+          onDismiss: handlePopupAction,
+          onUpdateNow: () async {
+            await handlePopupAction();
+            await _launchUrl(linkInfo['url']);
+          },
+        );
+      },
     );
   }
 
