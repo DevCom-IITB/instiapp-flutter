@@ -872,11 +872,11 @@ class InstiAppBloc {
     if (sessionHeader.isEmpty) {
       debugPrint('getOrFetchCalendarPreferences: sessionHeader is empty');
       calendarPreferences ??= CalendarPreferencesResponse(
-        showAllEvents: true,
+        showAllEvents: false,
         showInstiappGoing: true,
         showInstiappFollowedBodies: true,
         showResobin: true,
-        notificationsEnabled: true,
+        notificationsEnabled: false,
       );
       return calendarPreferences!;
     }
