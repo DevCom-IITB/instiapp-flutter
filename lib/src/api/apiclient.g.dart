@@ -2882,7 +2882,7 @@ class _InstiAppApi implements InstiAppApi {
             .compose(
               _dio.options,
               '/calendar/preferences/bodies/${id}/',
-              queryParameters: queryParameters,
+              queryParameters: queryParameters, 
               data: _data,
             )
             .copyWith(

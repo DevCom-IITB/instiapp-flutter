@@ -186,6 +186,15 @@ class _CalendarPageState extends State<CalendarPage>
     }
   }
 
+  void _handleTap() {
+    // Toggle between expanded and collapsed states
+    if (_controller.value > 0.5) {
+      _controller.reverse();
+    } else {
+      _controller.forward();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -721,6 +730,7 @@ class _CalendarPageState extends State<CalendarPage>
                                               (_selectedView == 'month' &&
                                                   !_showMonthSelector))
                                             GestureDetector(
+                                                onTap: _handleTap,
                                                 onVerticalDragUpdate:
                                                     _handleDragUpdate,
                                                 onVerticalDragEnd:

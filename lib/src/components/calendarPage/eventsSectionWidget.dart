@@ -5,6 +5,7 @@ import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import '../../utils/responsivenew.dart';
 import '../../api/response/calendar_feed_response.dart';
+import '../../api/model/calendar_item.dart';
 import 'package:intl/intl.dart';
 import '../../blocs/new_calendar_bloc.dart';
 
@@ -71,11 +72,6 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
         formatDate(end, isoFormat),
         'Asia/Kolkata',
       );
-      if (response != null && response.items != null) {
-        for (var item in response.items) {
-          print(item.toJson());
-        }
-      }
       return response;
     } catch (e) {
       debugPrint('Error fetching events for date: $e');
@@ -96,6 +92,9 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
         }
 
         final response = snapshot.data!;
+        final dayItems =
+            response.items.where((item) => item.isOnDay(day)).toList()
+              ..sort(CalendarItem.compareStartTime);
 
         return Column(
           mainAxisSize: MainAxisSize.min,
@@ -145,7 +144,7 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
                                 ),
                               ),
                               Text(
-                                '${response.items.length} events',
+                                '${dayItems.length} events',
                                 style: TextStyle(
                                   color: const Color(
                                       0xFF7E8287) /* instiappgrey */,
@@ -165,7 +164,7 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
                 ],
               ),
             ),
-            if (response.items.any((item) => item.all_day))
+            if (dayItems.any((item) => item.all_day))
               SizedBox(
                 width: Responsive.width(380, context),
                 child: SingleChildScrollView(
@@ -178,7 +177,7 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     spacing: Responsive.width(4, context),
                     children: [
-                      ...response.items.where((item) => item.all_day).map((item) {
+                      ...dayItems.where((item) => item.all_day).map((item) {
                         final style = item.pillStyle;
                         return Container(
                           height: 32,
@@ -233,7 +232,7 @@ class _EventsSectionWidgetState extends State<EventsSectionWidget> {
               spacing: Responsive.height(10, context),
               children: [
                 // all events
-                ...response.items.where((item) => !item.all_day).map((item) {
+                ...dayItems.where((item) => !item.all_day).map((item) {
                   DateTime eventStart =
                       DateTime.parse(item.startTime).toLocal();
                   String eventStartTimeString =

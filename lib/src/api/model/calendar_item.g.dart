@@ -14,6 +14,7 @@ CalendarItem _$CalendarItemFromJson(Map<String, dynamic> json) => CalendarItem(
       all_day: json['all_day'] as bool,
       location: json['location'] as String?,
       source: json['source'] as String?,
+      color: json['color'] as String?,
       colorHint: json['color_hint'] as String?,
       subsource: json['subsource'] as String?,
     );
@@ -27,6 +28,7 @@ Map<String, dynamic> _$CalendarItemToJson(CalendarItem instance) =>
       'all_day': instance.all_day,
       'location': instance.location,
       'source': instance.source,
+      'color': instance.color,
       'color_hint': instance.colorHint,
       'subsource': instance.subsource,
     };

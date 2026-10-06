@@ -21,6 +21,8 @@ class DatesRowWidget extends StatelessWidget {
     final calendarCubit = NewCalendarScope.of(context);
     final selectedIndex =
         selectedDateIndex ?? datesArray.indexWhere(calendarCubit.isSelected);
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
 
     return Container(
       width: double.infinity,
@@ -29,50 +31,66 @@ class DatesRowWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           for (int i = 0; i < datesArray.length; i++)
-            Expanded(
+            _buildDateCell(context, i, selectedIndex, today, calendarCubit),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateCell(BuildContext context, int i, int selectedIndex,
+      DateTime today, NewCalendarCubit calendarCubit) {
+    final date = datesArray[i];
+    final isSelected = selectedIndex == i;
+    final isToday = date.year == today.year &&
+        date.month == today.month &&
+        date.day == today.day;
+
+    return Expanded(
+      child: Center(
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              print('Tapped on date: $date');
+              calendarCubit.selectDate(date);
+              onDateSelected?.call(date);
+            },
+            child: Container(
+              width: Responsive.width(44, context),
+              height: Responsive.width(44, context),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? const Color(0xFF306FDC)
+                    : Colors.transparent,
+                shape: BoxShape.circle,
+                border: (!isSelected && isToday)
+                    ? Border.all(
+                        color: const Color(0xFF306FDC),
+                        width: 1.5,
+                      )
+                    : null,
+              ),
               child: Center(
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () {
-                      final selectedDate = datesArray[i];
-                      print('Tapped on date: $selectedDate');
-                      calendarCubit.selectDate(selectedDate);
-                      onDateSelected?.call(selectedDate);
-                    },
-                    child: Container(
-                      width: Responsive.width(44, context),
-                      height: Responsive.width(44, context),
-                      decoration: ShapeDecoration(
-                        color: selectedIndex == i
+                child: Text(
+                  date.day.toString(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: isSelected
+                        ? Colors.white
+                        : isToday
                             ? const Color(0xFF306FDC)
-                            : Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(83.95),
-                        ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          datesArray[i].day.toString(),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: selectedIndex == i
-                                ? Colors.white
-                                : Colors.black,
-                            fontSize: Responsive.width(20, context),
-                            fontFamily: 'DM Sans',
-                            fontWeight: FontWeight.w400,
-                            height: 1.01,
-                            letterSpacing: 0.32,
-                          ),
-                        ),
-                      ),
-                    ),
+                            : Colors.black,
+                    fontSize: Responsive.width(20, context),
+                    fontFamily: 'DM Sans',
+                    fontWeight: isToday ? FontWeight.w600 : FontWeight.w400,
+                    height: 1.01,
+                    letterSpacing: 0.32,
                   ),
                 ),
               ),
-            )
-        ],
+            ),
+          ),
+        ),
       ),
     );
   }

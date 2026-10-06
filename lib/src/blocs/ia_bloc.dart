@@ -452,8 +452,104 @@ class InstiAppBloc {
 
   Future<void> updateNotifications() async {
     var notifs = await client.getNotifications(getSessionIdHeader());
+
+    // Fire a local push notification for any notification that we haven't
+    // shown a push for yet. IDs are persisted in SharedPreferences so this
+    // survives app restarts without re-notifying the user.
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final bool initialized = prefs.getBool('notif_seen_initialized') ?? false;
+      final Set<String> seenIds =
+          (prefs.getStringList('notif_seen_ids') ?? []).toSet();
+
+      if (!initialized) {
+        // First run: mark all existing notifications as already seen so we
+        // only notify for ones that arrive after this point.
+        for (final n in notifs) {
+          if (n.notificationId != null) seenIds.add('${n.notificationId}');
+        }
+        await prefs.setBool('notif_seen_initialized', true);
+        await prefs.setStringList('notif_seen_ids', seenIds.toList());
+      } else {
+        bool hadNew = false;
+        for (final n in notifs) {
+          final String id = '${n.notificationId}';
+          if (n.notificationId != null && !seenIds.contains(id)) {
+            seenIds.add(id);
+            hadNew = true;
+            _sendPushForApiNotification(n);
+          }
+        }
+        if (hadNew) {
+          // Cap the stored set to avoid unbounded growth.
+          final List<String> capped = seenIds.length > 500
+              ? seenIds.toList().sublist(seenIds.length - 500)
+              : seenIds.toList();
+          await prefs.setStringList('notif_seen_ids', capped);
+        }
+      }
+    } catch (e) {
+      debugPrint('updateNotifications – push tracking error: $e');
+    }
+
     _notifications = notifs;
     _notificationsSubject.add(UnmodifiableListView(_notifications));
+  }
+
+  /// Converts an [ntf.Notification] (from the InstiApp API) into a local
+  /// system push notification via AwesomeNotifications.
+  void _sendPushForApiNotification(ntf.Notification notification) {
+    try {
+      // Map the actor_type to a notification type string and channel key.
+      String type;
+      String channelKey;
+      String? objectId = notification.getID();
+      String? extra;
+
+      if (notification.notificationActorType?.contains(ntf.TYPE_EVENT) ?? false) {
+        type = 'event';
+        channelKey = 'events_channel';
+      } else if (notification.notificationActorType?.contains(ntf.TYPE_NEWSENTRY) ?? false) {
+        type = 'newsentry';
+        channelKey = 'news_channel';
+      } else if (notification.notificationActorType?.contains(ntf.TYPE_BLOG) ?? false) {
+        // Blog posts – use the post link to distinguish placement / internship.
+        final post = notification.getBlogPost();
+        final isInternship = post.link?.contains('/internship') ?? false;
+        type = isInternship ? 'internship' : 'placement';
+        channelKey = isInternship ? 'internship_channel' : 'placement_channel';
+      } else if (notification.notificationActorType?.contains(ntf.TYPE_COMPLAINT_COMMENT) ?? false) {
+        type = 'complaintcomment';
+        channelKey = 'misc_channel';
+        extra = notification.getComment().complaintID;
+      } else {
+        type = 'misc';
+        channelKey = 'misc_channel';
+      }
+
+      final int notifId =
+          (notification.notificationId ?? DateTime.now().millisecondsSinceEpoch) %
+          2147483647;
+
+      AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: notifId,
+          channelKey: channelKey,
+          title: notification.getTitle() ?? 'New notification from InstiApp',
+          body: notification.getSubtitle(),
+          largeIcon: notification.getAvatarUrl(),
+          color: Colors.blue,
+          payload: {
+            'type': type,
+            'id': objectId ?? '',
+            'extra': extra ?? '',
+            'notification_id': '${notification.notificationId ?? ''}',
+          },
+        ),
+      );
+    } catch (e) {
+      debugPrint('_sendPushForApiNotification error: $e');
+    }
   }
 
   Future clearAllNotifications() async {
@@ -711,6 +807,16 @@ class InstiAppBloc {
               _defaultCalendarsSetting;
     }
 
+    if (prefs.getKeys().contains("calendarPreferences")) {
+      var x = prefs.getString("calendarPreferences");
+      if (x != null && x.isNotEmpty) {
+        try {
+          calendarPreferences =
+              CalendarPreferencesResponse.fromJson(json.decode(x));
+        } catch (_) {}
+      }
+    }
+
     restoreFromCache(sharedPrefs: prefs);
   }
 
@@ -743,46 +849,95 @@ class InstiAppBloc {
         : "";
   }
 
-  Future<CalendarPreferencesResponse> getOrFetchCalendarPreferences() async {
-    if (calendarPreferences != null) {
+  Future<CalendarPreferencesResponse> getOrFetchCalendarPreferences(
+      {String? sessionId, bool forceRefresh = false}) async {
+    if (!forceRefresh && calendarPreferences != null) {
       return calendarPreferences!;
     }
-    final sessionHeader = getSessionIdHeader();
+    var sessionHeader = (sessionId != null && sessionId.isNotEmpty)
+        ? (sessionId.startsWith('sessionid=')
+            ? sessionId
+            : 'sessionid=$sessionId')
+        : getSessionIdHeader();
+
+    if (sessionHeader.isEmpty) {
+      try {
+        await session
+            .firstWhere((s) => s?.sessionid?.isNotEmpty == true)
+            .timeout(const Duration(seconds: 3));
+      } catch (_) {}
+      sessionHeader = getSessionIdHeader();
+    }
+
     if (sessionHeader.isEmpty) {
       debugPrint('getOrFetchCalendarPreferences: sessionHeader is empty');
-      return CalendarPreferencesResponse(
+      calendarPreferences ??= CalendarPreferencesResponse(
         showAllEvents: true,
         showInstiappGoing: true,
         showInstiappFollowedBodies: true,
         showResobin: true,
         notificationsEnabled: true,
       );
+      return calendarPreferences!;
     }
+
     try {
-      final prefsList = await client.getCalendarPreferences(sessionHeader);
-      debugPrint(
-          'getOrFetchCalendarPreferences: prefsList fetched successfully. Length=${prefsList.length}');
-      if (prefsList.isNotEmpty) {
-        calendarPreferences = prefsList.first;
-        debugPrint(
-            'getOrFetchCalendarPreferences: first pref showAllEvents=${calendarPreferences!.showAllEvents}, showGoing=${calendarPreferences!.showInstiappGoing}, showFollowed=${calendarPreferences!.showInstiappFollowedBodies}, showResobin=${calendarPreferences!.showResobin}');
+      final url =
+          '${dio.options.baseUrl.isNotEmpty ? dio.options.baseUrl : "https://gymkhana.iitb.ac.in/instiapp/api"}/calendar/preferences/';
+      final res = await dio.get(
+        url,
+        options: Options(headers: {'Cookie': sessionHeader}),
+      );
+      if (res.data is List && (res.data as List).isNotEmpty) {
+        calendarPreferences = CalendarPreferencesResponse.fromJson(
+            (res.data as List).first as Map<String, dynamic>);
+      } else if (res.data is Map<String, dynamic>) {
+        calendarPreferences = CalendarPreferencesResponse.fromJson(
+            res.data as Map<String, dynamic>);
       }
+      debugPrint(
+          'getOrFetchCalendarPreferences: fetched successfully: showAllEvents=${calendarPreferences?.showAllEvents}, showGoing=${calendarPreferences?.showInstiappGoing}, showFollowed=${calendarPreferences!.showInstiappFollowedBodies}, showResobin=${calendarPreferences!.showResobin}');
     } catch (e) {
       debugPrint(
-          'getOrFetchCalendarPreferences: Error fetching calendar preferences: $e');
+          'getOrFetchCalendarPreferences: dio error: $e. Trying retrofit client...');
+      try {
+        final prefsList = await client.getCalendarPreferences(sessionHeader);
+        if (prefsList.isNotEmpty) {
+          calendarPreferences = prefsList.first;
+        }
+      } catch (e2) {
+        debugPrint('getOrFetchCalendarPreferences: client fallback error: $e2');
+      }
     }
-    calendarPreferences ??= CalendarPreferencesResponse();
+
+    calendarPreferences ??= CalendarPreferencesResponse(
+      showAllEvents: true,
+      showInstiappGoing: true,
+      showInstiappFollowedBodies: true,
+      showResobin: true,
+      notificationsEnabled: true,
+    );
     calendarPreferences!.showAllEvents ??= true;
     calendarPreferences!.showInstiappGoing ??= true;
     calendarPreferences!.showInstiappFollowedBodies ??= true;
     calendarPreferences!.showResobin ??= true;
     calendarPreferences!.notificationsEnabled ??= true;
+
+    _persistCalendarPreferences(calendarPreferences!);
     return calendarPreferences!;
+  }
+
+  void _persistCalendarPreferences(CalendarPreferencesResponse prefs) async {
+    try {
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      sp.setString("calendarPreferences", json.encode(prefs.toJson()));
+    } catch (_) {}
   }
 
   Future<void> updateCalendarPreferences(
       CalendarPreferencesResponse prefs) async {
     calendarPreferences = prefs;
+    _persistCalendarPreferences(prefs);
     clearCalendarFeedCache();
     final sessionHeader = getSessionIdHeader();
     if (sessionHeader.isNotEmpty) {
@@ -794,20 +949,61 @@ class InstiAppBloc {
     }
   }
 
-  Future<List<CalendarBodyPreference>> getOrFetchCalendarPrefBodies() async {
-    if (calendarPrefBodies != null) {
+  Future<List<CalendarBodyPreference>> getOrFetchCalendarPrefBodies(
+      {String? sessionId, bool forceRefresh = false}) async {
+    if (!forceRefresh && calendarPrefBodies != null) {
       return calendarPrefBodies!;
     }
-    final sessionHeader = getSessionIdHeader();
+    var sessionHeader = (sessionId != null && sessionId.isNotEmpty)
+        ? (sessionId.startsWith('sessionid=')
+            ? sessionId
+            : 'sessionid=$sessionId')
+        : getSessionIdHeader();
+
     if (sessionHeader.isEmpty) {
-      return [];
+      try {
+        await session
+            .firstWhere((s) => s?.sessionid?.isNotEmpty == true)
+            .timeout(const Duration(seconds: 3));
+      } catch (_) {}
+      sessionHeader = getSessionIdHeader();
     }
+
+    if (sessionHeader.isEmpty) {
+      return calendarPrefBodies ?? [];
+    }
+
     try {
-      final list = await client.getCalendarPrefBodies(sessionHeader);
-      calendarPrefBodies = list;
+      final url =
+          '${dio.options.baseUrl.isNotEmpty ? dio.options.baseUrl : "https://gymkhana.iitb.ac.in/instiapp/api"}/calendar/preferences/bodies/';
+      final res = await dio.get(
+        url,
+        options: Options(headers: {'Cookie': sessionHeader}),
+      );
+      if (res.data is List) {
+        calendarPrefBodies = (res.data as List)
+            .map((e) =>
+                CalendarBodyPreference.fromJson(e as Map<String, dynamic>))
+            .toList();
+      } else if (res.data is Map<String, dynamic> &&
+          res.data['items'] is List) {
+        calendarPrefBodies = (res.data['items'] as List)
+            .map((e) =>
+                CalendarBodyPreference.fromJson(e as Map<String, dynamic>))
+            .toList();
+      }
+      debugPrint(
+          'getOrFetchCalendarPrefBodies: fetched ${calendarPrefBodies?.length} bodies');
     } catch (e) {
-      debugPrint('Error fetching calendar body preferences: $e');
+      debugPrint(
+          'getOrFetchCalendarPrefBodies: dio error $e, trying client fallback');
+      try {
+        calendarPrefBodies = await client.getCalendarPrefBodies(sessionHeader);
+      } catch (e2) {
+        debugPrint('getOrFetchCalendarPrefBodies: client fallback error: $e2');
+      }
     }
+
     calendarPrefBodies ??= [];
     return calendarPrefBodies!;
   }
@@ -832,24 +1028,68 @@ class InstiAppBloc {
     }
   }
 
-  Future<List<CalendarBody>> getOrFetchCalendarShared() async {
-    if (calendarShared != null) {
+  Future<List<CalendarBody>> getOrFetchCalendarShared(
+      {String? sessionId, bool forceRefresh = false}) async {
+    if (!forceRefresh && calendarShared != null) {
       return calendarShared!;
     }
-    final sessionHeader = getSessionIdHeader();
+    var sessionHeader = (sessionId != null && sessionId.isNotEmpty)
+        ? (sessionId.startsWith('sessionid=')
+            ? sessionId
+            : 'sessionid=$sessionId')
+        : getSessionIdHeader();
+
     if (sessionHeader.isEmpty) {
-      return [];
+      try {
+        await session
+            .firstWhere((s) => s?.sessionid?.isNotEmpty == true)
+            .timeout(const Duration(seconds: 3));
+      } catch (_) {}
+      sessionHeader = getSessionIdHeader();
     }
+
+    if (sessionHeader.isEmpty) {
+      return calendarShared ?? [];
+    }
+
     try {
-      final list = await client.getCalendarShared(sessionHeader);
-      for (var item in list) {
-        item.isActive ??= true;
+      final url =
+          '${dio.options.baseUrl.isNotEmpty ? dio.options.baseUrl : "https://gymkhana.iitb.ac.in/instiapp/api"}/calendar/shared/';
+      final res = await dio.get(
+        url,
+        options: Options(headers: {'Cookie': sessionHeader}),
+      );
+      if (res.data is List) {
+        calendarShared = (res.data as List)
+            .map((e) => CalendarBody.fromJson(e as Map<String, dynamic>))
+            .toList();
       }
-      calendarShared = list;
+      debugPrint(
+          'getOrFetchCalendarShared: fetched ${calendarShared?.length} shared calendars');
     } catch (e) {
-      debugPrint('Error fetching shared calendars: $e');
+      debugPrint(
+          'getOrFetchCalendarShared: dio error $e, trying client fallback');
+      try {
+        calendarShared = await client.getCalendarShared(sessionHeader);
+      } catch (e2) {
+        debugPrint('getOrFetchCalendarShared: client fallback error: $e2');
+      }
     }
+
     calendarShared ??= [];
+    for (final cal in calendarShared!) {
+      if (cal.color != null && cal.color!.isNotEmpty) {
+        if (cal.slug != null && cal.slug!.isNotEmpty) {
+          CalendarItem.calendarColors[cal.slug!.toLowerCase()] = cal.color!;
+        }
+        if (cal.id != null && cal.id!.isNotEmpty) {
+          CalendarItem.calendarColors[cal.id!.toLowerCase()] = cal.color!;
+        }
+        if (cal.name != null && cal.name!.isNotEmpty) {
+          CalendarItem.calendarColors[cal.name!.toLowerCase()] = cal.color!;
+        }
+      }
+    }
     return calendarShared!;
   }
 
@@ -889,15 +1129,7 @@ class InstiAppBloc {
       'saturday',
       'sunday'
     ];
-    const shortWeekdayNames = [
-      'mon',
-      'tue',
-      'wed',
-      'thu',
-      'fri',
-      'sat',
-      'sun'
-    ];
+    const shortWeekdayNames = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
     final targetName = weekdayNames[weekday - 1];
     final targetShort = shortWeekdayNames[weekday - 1];
@@ -927,7 +1159,8 @@ class InstiAppBloc {
     String tz,
   ) async {
     final prefs = await getOrFetchCalendarPreferences();
-    final cacheKey = "${start}_${end}_${prefs.showAllEvents}_${prefs.showInstiappGoing}_${prefs.showInstiappFollowedBodies}_${prefs.showResobin}";
+    final cacheKey =
+        "${start}_${end}_${prefs.showAllEvents}_${prefs.showInstiappGoing}_${prefs.showInstiappFollowedBodies}_${prefs.showResobin}";
     if (_calendarFeedCache.containsKey(cacheKey)) {
       debugPrint('getCalendarFeedCombined: cache hit for key $cacheKey');
       return _calendarFeedCache[cacheKey]!;
@@ -953,118 +1186,118 @@ class InstiAppBloc {
       originalFeed = CalendarFeedResponse(items: []);
     }
 
-    if (prefs.showResobin == false) {
-      debugPrint(
-          'getCalendarFeedCombined: showResobin is false, returning original feed directly');
-      _calendarFeedCache[cacheKey] = originalFeed;
-      return originalFeed;
-    }
-
-    var rollNo = currSession?.profile?.userRollNumber;
-    if (rollNo == null || rollNo.isEmpty) {
-      if (getSessionIdHeader().isNotEmpty) {
-        try {
-          await reloadCurrentUser();
-          rollNo = currSession?.profile?.userRollNumber;
-        } catch (e) {
-          debugPrint('Error reloading user profile for rollNo: $e');
-        }
-      }
-    }
-
-    if (rollNo == null || rollNo.isEmpty) {
-      debugPrint(
-          'getCalendarFeedCombined: rollNo is null/empty, returning original feed');
-      _calendarFeedCache[cacheKey] = originalFeed;
-      return originalFeed;
-    }
-
-    List<ResobinCourse> resobinFeed = [];
-    if (_cachedResobinFeed != null) {
-      resobinFeed = _cachedResobinFeed!;
-    } else {
-      try {
-        resobinFeed = await client.getResobinSchedule(rollNo, "ResInstiance");
-        _cachedResobinFeed = resobinFeed;
-        debugPrint(
-            'getCalendarFeedCombined: Resobin schedule fetched successfully with ${resobinFeed.length} courses for rollNo $rollNo');
-      } catch (e) {
-        debugPrint('Error fetching Resobin schedule: $e');
-      }
-    }
-
-    if (resobinFeed.isEmpty) {
-      _calendarFeedCache[cacheKey] = originalFeed;
-      return originalFeed;
-    }
-
     final items = List<CalendarItem>.from(originalFeed.items);
-    final startDate = DateTime.tryParse(start);
-    final endDate = DateTime.tryParse(end);
 
-    if (startDate != null && endDate != null) {
-      for (var date = startDate;
-          date.isBefore(endDate);
-          date = date.add(const Duration(days: 1))) {
-        for (final course in resobinFeed) {
-          final venue = (course.lectureVenue != null &&
-                  course.lectureVenue!.trim().isNotEmpty)
-              ? course.lectureVenue!.trim()
-              : null;
-
-          if (course.lectureSlots != null) {
-            for (final slot in course.lectureSlots!) {
-              if (_isSlotOnWeekday(slot, date) &&
-                  slot.startTime != null &&
-                  slot.endTime != null) {
-                final dateStr =
-                    "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-                final startIso =
-                    "${dateStr}T${_normalizeTime(slot.startTime!)}+05:30";
-                final endIso =
-                    "${dateStr}T${_normalizeTime(slot.endTime!)}+05:30";
-                items.add(CalendarItem(
-                  uid: "resobin-lec-${course.id}-${slot.slot ?? ''}-${dateStr}",
-                  title:
-                      "${course.course?.code ?? ''} - ${course.course?.title ?? ''}",
-                  startTime: startIso,
-                  endTime: endIso,
-                  all_day: false,
-                  location: venue,
-                  source: "resobin",
-                  subsource: "lectures-n-labs",
-                ));
-              }
-            }
+    if (prefs.showResobin != false) {
+      var rollNo = currSession?.profile?.userRollNumber;
+      if (rollNo == null || rollNo.isEmpty) {
+        if (getSessionIdHeader().isNotEmpty) {
+          try {
+            await reloadCurrentUser();
+            rollNo = currSession?.profile?.userRollNumber;
+          } catch (e) {
+            debugPrint('Error reloading user profile for rollNo: $e');
           }
-          if (course.tutorialSlots != null) {
-            for (final slot in course.tutorialSlots!) {
-              if (_isSlotOnWeekday(slot, date) &&
-                  slot.startTime != null &&
-                  slot.endTime != null) {
-                final dateStr =
-                    "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-                final startIso =
-                    "${dateStr}T${_normalizeTime(slot.startTime!)}+05:30";
-                final endIso =
-                    "${dateStr}T${_normalizeTime(slot.endTime!)}+05:30";
-                items.add(CalendarItem(
-                  uid: "resobin-tut-${course.id}-${slot.slot ?? ''}-${dateStr}",
-                  title:
-                      "${course.course?.code ?? ''} - ${course.course?.title ?? ''}",
-                  startTime: startIso,
-                  endTime: endIso,
-                  all_day: false,
-                  location: venue,
-                  source: "resobin",
-                  subsource: "lectures-n-labs",
-                ));
+        }
+      }
+
+      if (rollNo != null && rollNo.isNotEmpty) {
+        List<ResobinCourse> resobinFeed = [];
+        if (_cachedResobinFeed != null) {
+          resobinFeed = _cachedResobinFeed!;
+        } else {
+          try {
+            resobinFeed =
+                await client.getResobinSchedule(rollNo, "ResInstiance");
+            _cachedResobinFeed = resobinFeed;
+            debugPrint(
+                'getCalendarFeedCombined: Resobin schedule fetched successfully with ${resobinFeed.length} courses for rollNo $rollNo');
+          } catch (e) {
+            debugPrint('Error fetching Resobin schedule: $e');
+          }
+        }
+
+        if (resobinFeed.isNotEmpty) {
+          final startDate = DateTime.tryParse(start);
+          var endDate = DateTime.tryParse(end);
+
+          if (startDate != null && endDate != null) {
+            if (!endDate.isAfter(startDate)) {
+              endDate = startDate.add(const Duration(days: 1));
+            }
+            for (var date = startDate;
+                date.isBefore(endDate);
+                date = date.add(const Duration(days: 1))) {
+              for (final course in resobinFeed) {
+                final venue = (course.lectureVenue != null &&
+                        course.lectureVenue!.trim().isNotEmpty)
+                    ? course.lectureVenue!.trim()
+                    : null;
+
+                if (course.lectureSlots != null) {
+                  for (final slot in course.lectureSlots!) {
+                    if (_isSlotOnWeekday(slot, date) &&
+                        slot.startTime != null &&
+                        slot.endTime != null) {
+                      final dateStr =
+                          "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+                      final startIso =
+                          "${dateStr}T${_normalizeTime(slot.startTime!)}+05:30";
+                      final endIso =
+                          "${dateStr}T${_normalizeTime(slot.endTime!)}+05:30";
+                      items.add(CalendarItem(
+                        uid:
+                            "resobin-lec-${course.id}-${slot.slot ?? ''}-${dateStr}",
+                        title:
+                            "${course.course?.code ?? ''} - ${course.course?.title ?? ''}",
+                        startTime: startIso,
+                        endTime: endIso,
+                        all_day: false,
+                        location: venue,
+                        source: "resobin",
+                        color: "#7178F4",
+                        subsource: "lectures-n-labs",
+                      ));
+                    }
+                  }
+                }
+                if (course.tutorialSlots != null) {
+                  for (final slot in course.tutorialSlots!) {
+                    if (_isSlotOnWeekday(slot, date) &&
+                        slot.startTime != null &&
+                        slot.endTime != null) {
+                      final dateStr =
+                          "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+                      final startIso =
+                          "${dateStr}T${_normalizeTime(slot.startTime!)}+05:30";
+                      final endIso =
+                          "${dateStr}T${_normalizeTime(slot.endTime!)}+05:30";
+                      items.add(CalendarItem(
+                        uid:
+                            "resobin-tut-${course.id}-${slot.slot ?? ''}-${dateStr}",
+                        title:
+                            "${course.course?.code ?? ''} - ${course.course?.title ?? ''}",
+                        startTime: startIso,
+                        endTime: endIso,
+                        all_day: false,
+                        location: venue,
+                        source: "resobin",
+                        color: "#7178F4",
+                        subsource: "lectures-n-labs",
+                      ));
+                    }
+                  }
+                }
               }
             }
           }
         }
       }
     }
+
+    // Sort all gathered events chronologically by start time.
+    // If two events start at the same time, default order is preserved.
+    items.sort(CalendarItem.compareStartTime);
 
     final combinedResponse = CalendarFeedResponse(items: items);
     _calendarFeedCache[cacheKey] = combinedResponse;
@@ -1076,6 +1309,14 @@ class InstiAppBloc {
     updateSession(null);
     _notificationsSubject.add(UnmodifiableListView([]));
     _cachedResobinFeed = null;
+    calendarPreferences = null;
+    calendarPrefBodies = null;
+    calendarShared = null;
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    sp.remove('calendarPreferences');
+    // Reset seen-notification tracking so the next login starts fresh.
+    sp.remove('notif_seen_initialized');
+    sp.remove('notif_seen_ids');
     clearCalendarFeedCache();
   }
 
