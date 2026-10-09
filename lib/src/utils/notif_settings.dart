@@ -220,6 +220,30 @@ class NotificationController {
   }
 }
 
+RichNotification _richNotificationFromRemoteMessage(RemoteMessage message) {
+  final payload = Map<String, dynamic>.from(message.data);
+  final notification = message.notification;
+
+  if (notification != null) {
+    payload.putIfAbsent("title", () => notification.title ?? "");
+    payload.putIfAbsent("verb", () => notification.body ?? "");
+  }
+
+  return RichNotification.fromJson(payload);
+}
+
+void _handleFcmNotificationTap(RemoteMessage message) {
+  final notif = _richNotificationFromRemoteMessage(message);
+  final routeName = routeFromNotification(notif);
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    navigatorKey.currentState?.pushReplacementNamed(
+      routeName,
+      arguments: NotificationRouteArguments("", notif),
+    );
+  });
+}
+
 /// Gives the route to navigate to from a notification
 String routeFromNotification(RichNotification fromMap) {
   // Navigating to correct page
@@ -255,35 +279,22 @@ String routeFromNotification(RichNotification fromMap) {
 bool _firebaseMessagingListenersAttached = false;
 
 void setupNotifications(BuildContext context, InstiAppBloc bloc) async {
-  // Check for permission (if not granted, request it)
-  if (await bloc.hasNotificationPermission() == null)
-    requestNotificationPermission(context, bloc);
-
-  /// Listen for incoming notifs and send a notification to the user
+  // Android displays notification messages automatically when the app is
+  // backgrounded or closed. In the foreground, do not create a second local
+  // notification through Awesome Notifications.
   if (!_firebaseMessagingListenersAttached) {
     _firebaseMessagingListenersAttached = true;
 
-    FirebaseMessaging.onMessage.listen(
-      (RemoteMessage message) async {
-        await sendMessage(message);
-      },
-      onError: (error, stackTrace) {},
+    FirebaseMessaging.onMessageOpenedApp.listen(
+      _handleFcmNotificationTap,
     );
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
-
-    FirebaseMessaging.instance.getInitialMessage().then((message) {});
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        _handleFcmNotificationTap(message);
+      }
+    });
   }
-
-  AwesomeNotifications().setListeners(
-    onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-    onNotificationCreatedMethod:
-        NotificationController.onNotificationCreatedMethod,
-    onNotificationDisplayedMethod:
-        NotificationController.onNotificationDisplayedMethod,
-    onDismissActionReceivedMethod:
-        NotificationController.onDismissActionReceivedMethod,
-  );
 }
 
 void requestNotificationPermission(

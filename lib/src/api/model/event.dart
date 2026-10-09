@@ -129,7 +129,7 @@ class Event extends elt.Event {
 
       subtitle += "Ends in $timeDiff | ";
     }
-    
+
     if (startTime != null) {
       subtitle +=
           formatDate(startTime.toLocal(), [dd, " ", M, " | ", HH, ":", nn]);
@@ -145,30 +145,32 @@ class Event extends elt.Event {
     return subtitle;
   }
 
-  Event(
-      {this.eventID,
-      this.eventStrID,
-      this.eventName,
-      this.verificationBodies,
-      this.eventDescription,
-      this.eventImageURL,
-      this.eventStartTime,
-      this.eventEndTime,
-      this.allDayEvent,
-      this.eventVenues,
-      this.eventBodies,
-      this.eventOfferedAchievements,
-      this.eventInterestedCount = 0,
-      this.eventGoingCount = 0,
-      this.eventUserTags,
-      this.eventInterested,
-      this.eventGoing,
-      this.eventWebsiteURL,
-      this.eventUserUesInt,
-      this.eventInterest,
-      this.venueRoom,})
-      : super(
-          date: DateTime.parse(eventStartTime!),
+  Event({
+    this.eventID,
+    this.eventStrID,
+    this.eventName,
+    this.verificationBodies,
+    this.eventDescription,
+    this.eventImageURL,
+    this.eventStartTime,
+    this.eventEndTime,
+    this.allDayEvent,
+    this.eventVenues,
+    this.eventBodies,
+    this.eventOfferedAchievements,
+    this.eventInterestedCount = 0,
+    this.eventGoingCount = 0,
+    this.eventUserTags,
+    this.eventInterested,
+    this.eventGoing,
+    this.eventWebsiteURL,
+    this.eventUserUesInt,
+    this.eventInterest,
+    this.venueRoom,
+  }) : super(
+          date: eventStartTime == null
+              ? DateTime.fromMillisecondsSinceEpoch(0)
+              : DateTime.parse(eventStartTime),
           title: eventName,
           description: eventDescription,
           location: eventVenues?.map((e) => e.venueName).toList().join(", "),

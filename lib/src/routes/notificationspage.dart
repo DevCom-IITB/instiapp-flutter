@@ -11,6 +11,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:InstiApp/src/api/model/notification.dart' as ntf;
+import 'package:InstiApp/src/api/model/rich_notification.dart';
+import 'package:InstiApp/src/utils/notif_settings.dart';
 
 class NotificationsPage extends StatefulWidget {
   final String title = "Notifications";
@@ -303,7 +305,22 @@ class _NotificationsPageState extends State<NotificationsPage> {
         ),
         onTap: () {
           if (notification.isBlogPost) {
-            Navigator.of(context).pushNamed("/placeblog");
+            final post = notification.getBlogPost();
+            final isInternship = post.link?.contains("/internship") ?? false;
+            final routeName = isInternship ? "/trainblog" : "/placeblog";
+            final notif = RichNotification(
+              notificationType:
+                  isInternship ? NotificationType.INTERNSHIP : NotificationType.PLACEMENT,
+              notificationObjectID: post.id,
+              notificationID: "${notification.notificationId}",
+              notificationTitle: post.title,
+              notificationVerb: notification.notificationVerb,
+              notificationExtra: post.link,
+            );
+            Navigator.of(context).pushNamed(
+              routeName,
+              arguments: NotificationRouteArguments("", notif),
+            );
           } else if (notification.isEvent) {
             EventPage.navigateWith(context, bloc, notification.getEvent());
           } else if (notification.isNews) {

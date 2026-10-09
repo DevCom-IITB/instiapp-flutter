@@ -68,8 +68,10 @@ TextSpan highlight(String result, String query, BuildContext context) {
 
 class BlogPage extends StatefulWidget {
   final int blogState; // 0: Placement, 1: Internship
+  final String? targetPostId;
 
-  const BlogPage({Key? key, this.blogState = 0}) : super(key: key);
+  const BlogPage({Key? key, this.blogState = 0, this.targetPostId})
+      : super(key: key);
 
   @override
   _BlogPageState createState() => _BlogPageState();
@@ -102,6 +104,9 @@ class _BlogPageState extends State<BlogPage> {
       // Initialize query and trigger the first refresh
       blogBloc?.query = "";
       blogBloc?.refresh();
+      if (widget.targetPostId != null) {
+        blogBloc?.loadPostById(widget.targetPostId!);
+      }
 
       firstBuild = false;
     }
@@ -147,6 +152,9 @@ class _BlogPageState extends State<BlogPage> {
   String? loadingReaction;
 
   List<Post>? threads;
+  bool _hasScrolledToTarget = false;
+  int _targetScrollAttempts = 0;
+  final Map<String, GlobalKey> _postKeys = {};
   // ...existing code...
   String highlightHtml(String html, String? query) {
     if (html.isEmpty) return html;
@@ -564,6 +572,7 @@ class _BlogPageState extends State<BlogPage> {
         builder: (BuildContext context,
             AsyncSnapshot<UnmodifiableListView<Post>> snapshot) {
           final posts = snapshot.data;
+          _scrollToTarget(posts);
           final int baseCount = (posts == null || posts.isEmpty)
               ? 0
               : ((posts.isNotEmpty && posts.last.content == null)
@@ -642,7 +651,7 @@ class _BlogPageState extends State<BlogPage> {
 
   Widget _post(dynamic post, PostBloc bloc, BuildContext context) {
     return Container(
-      key: ValueKey(post.id),
+      key: _postKeys.putIfAbsent(post.id ?? post.guid ?? '', () => GlobalKey()),
       child: Container(
         margin: EdgeInsets.only(
             left: Responsive.width(16.0, context),
@@ -779,6 +788,54 @@ class _BlogPageState extends State<BlogPage> {
                 ))),
       ),
     );
+  }
+
+  void _scrollToTarget(List<Post>? posts) {
+    final targetPostId = widget.targetPostId;
+    if (_hasScrolledToTarget || targetPostId == null || posts == null) {
+      return;
+    }
+
+    final targetIndex =
+        posts.indexWhere((post) => post.id?.toString() == targetPostId);
+    if (targetIndex < 0) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _hasScrolledToTarget) return;
+      final targetKey = _postKeys[targetPostId];
+      final targetContext = targetKey?.currentContext;
+
+      if (targetContext != null) {
+        _hasScrolledToTarget = true;
+        Scrollable.ensureVisible(
+          targetContext,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          alignment: 0.1,
+        );
+        return;
+      }
+
+      final controller = _activeScrollController;
+      if (controller == null || !controller.hasClients) return;
+
+      _targetScrollAttempts++;
+      if (_targetScrollAttempts > 20) return;
+
+      final maxScrollExtent = controller.position.maxScrollExtent;
+      final targetOffset = posts.length <= 1
+          ? 0.0
+          : maxScrollExtent * targetIndex / (posts.length - 1);
+      controller.jumpTo(
+        targetOffset.clamp(0.0, maxScrollExtent),
+      );
+
+      Future<void>.delayed(const Duration(milliseconds: 100), () {
+        if (mounted && !_hasScrolledToTarget) {
+          _scrollToTarget(posts);
+        }
+      });
+    });
   }
 }
 

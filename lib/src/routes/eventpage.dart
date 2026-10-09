@@ -50,7 +50,14 @@ class _EventPageState extends State<EventPage> {
   Body? fullbody;
   Event? event;
   bool isfirstbuild = true;
+  bool _eventLoadFailed = false;
+  Object? _eventLoadError;
   late UES currentUes;
+
+  Body? get eventBody =>
+      event?.eventBodies != null && event!.eventBodies!.isNotEmpty
+          ? event!.eventBodies!.first
+          : null;
 
   @override
   void initState() {
@@ -61,9 +68,22 @@ class _EventPageState extends State<EventPage> {
       if (this.mounted) {
         setState(() {
           event = ev;
+          _eventLoadFailed = ev == null;
+          if (ev != null) {
+            currentUes = ev.eventUserUes ?? UES.NotGoing;
+          }
         });
       } else {
         event = ev;
+      }
+    }).catchError((error, stackTrace) {
+      debugPrint('Event load failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      if (mounted) {
+        setState(() {
+          _eventLoadFailed = true;
+          _eventLoadError = error;
+        });
       }
     });
   }
@@ -105,11 +125,36 @@ class _EventPageState extends State<EventPage> {
     );
   }
 
+  void _goBackFromEvent() {
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.pop();
+    } else {
+      navigator.pushReplacementNamed('/feed');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of(context)!.bloc;
+    if (event == null) {
+      return Scaffold(
+        backgroundColor: const Color.fromRGBO(246, 246, 246, 1),
+        body: Center(
+          child: _eventLoadFailed
+              ? Text(
+                  'Unable to load this event'
+                  '${_eventLoadError == null ? '' : '\n$_eventLoadError'}',
+                  textAlign: TextAlign.center,
+                )
+              : const CircularProgressIndicator(),
+        ),
+      );
+    }
+
     if (isfirstbuild) {
-      body = bloc.getBody(event!.eventBodies?[0].bodyID ?? "");
+      final bodyId = eventBody?.bodyID;
+      body = bodyId == null ? Future.value(Body()) : bloc.getBody(bodyId);
       body.then((value) {
         setState(() {
           fullbody = value;
@@ -130,370 +175,266 @@ class _EventPageState extends State<EventPage> {
     Color colour = currentUes == UES.NotGoing
         ? Color.fromRGBO(255, 255, 255, 1)
         : Color.fromRGBO(48, 111, 220, 1);
-    return Scaffold(
-      backgroundColor: Color.fromRGBO(246, 246, 246, 1),
-      body: SafeArea(
-        child: Column(children: [
-          Container(
-              margin: EdgeInsets.only(
-                  left: Responsive.width(16, context),
-                  right: Responsive.width(16, context),
-                  top: Responsive.height(4, context)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                      height: Responsive.height(52, context),
-                      width: Responsive.width(52, context),
-                      decoration: BoxDecoration(
-                        color: const Color.fromRGBO(235, 235, 235, 0.8),
-                        borderRadius: BorderRadius.circular(
-                            Responsive.height(26, context)),
-                      ),
-                      child: IconButton(
-                          icon: SvgPicture.asset(
-                            'assets/blogs/arrow-left.svg',
-                            height: Responsive.height(24, context),
-                            width: Responsive.width(24, context),
-                            fit: BoxFit.fill,
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          })),
-                ],
-              )),
-          SizedBox(height: Responsive.height(12, context)),
-          Container(
-              height: Responsive.height(36, context),
-              decoration: BoxDecoration(
-                image: const DecorationImage(
-                  image: AssetImage('assets/feed/Text Area.png'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(width: Responsive.width(16, context)),
-                  ClipRRect(
-                      borderRadius:
-                          BorderRadius.circular(Responsive.height(50, context)),
-                      child: CachedNetworkImage(
-                        imageUrl: event!.eventBodies?[0].bodyImageURL ?? "",
-                        width: Responsive.width(28, context),
-                        height: Responsive.height(28, context),
-                        fit: BoxFit.cover,
-                        errorWidget: (context, error, stackTrace) => Icon(
-                            Icons.groups_2_outlined,
-                            size: Responsive.height(24, context)),
-                      )),
-                  SizedBox(width: Responsive.width(10, context)),
-                  Text(
-                    event!.eventBodies?[0].bodyName ?? "",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: Responsive.text(16, context),
-                      fontFamily: 'DM Sans',
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              )),
-          Expanded(
-            child: Stack(children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => FullscreenImagePage(
-                        imageUrl: event!.eventImageURL ??
-                            event!.eventBodies?[0].bodyImageURL ??
-                            "",
-                        heroTag: event!.eventID,
-                      ),
-                    ),
-                  );
-                },
-                child: Hero(
-                  tag: event!.eventID ?? "",
-                  child: CachedNetworkImage(
-                    imageUrl: event!.eventImageURL ??
-                        event!.eventBodies?[0].bodyImageURL ??
-                        "",
-                    height: Responsive.height(412, context),
-                    width: double.infinity,
+    return WillPopScope(
+      onWillPop: () async {
+        final navigator = Navigator.of(context);
+        if (navigator.canPop()) {
+          return true;
+        }
+        navigator.pushReplacementNamed('/feed');
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: Color.fromRGBO(246, 246, 246, 1),
+        body: SafeArea(
+          child: Column(children: [
+            Container(
+                margin: EdgeInsets.only(
+                    left: Responsive.width(16, context),
+                    right: Responsive.width(16, context),
+                    top: Responsive.height(4, context)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                        height: Responsive.height(52, context),
+                        width: Responsive.width(52, context),
+                        decoration: BoxDecoration(
+                          color: const Color.fromRGBO(235, 235, 235, 0.8),
+                          borderRadius: BorderRadius.circular(
+                              Responsive.height(26, context)),
+                        ),
+                        child: IconButton(
+                            icon: SvgPicture.asset(
+                              'assets/blogs/arrow-left.svg',
+                              height: Responsive.height(24, context),
+                              width: Responsive.width(24, context),
+                              fit: BoxFit.fill,
+                            ),
+                            onPressed: () {
+                              _goBackFromEvent();
+                            })),
+                  ],
+                )),
+            SizedBox(height: Responsive.height(12, context)),
+            Container(
+                height: Responsive.height(36, context),
+                decoration: BoxDecoration(
+                  image: const DecorationImage(
+                    image: AssetImage('assets/feed/Text Area.png'),
                     fit: BoxFit.cover,
-                    placeholder: (context, url) =>
-                        Center(child: CircularProgressIndicator()),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                 ),
-              ),
-              DraggableScrollableSheet(
-                initialChildSize: 0.5,
-                minChildSize: 0.5,
-                maxChildSize: 0.85,
-                builder: (context, scrollController) {
-                  return Container(
-                      padding: EdgeInsets.only(
-                          top: Responsive.height(10, context),
-                          left: Responsive.width(16, context),
-                          right: Responsive.width(16, context),
-                          bottom: Responsive.height(20, context)),
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(246, 246, 246, 1),
-                        borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(
-                                Responsive.height(24, context))),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(width: Responsive.width(16, context)),
+                    ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            Responsive.height(50, context)),
+                        child: CachedNetworkImage(
+                          imageUrl: eventBody?.bodyImageURL ?? "",
+                          width: Responsive.width(28, context),
+                          height: Responsive.height(28, context),
+                          fit: BoxFit.cover,
+                          errorWidget: (context, error, stackTrace) => Icon(
+                              Icons.groups_2_outlined,
+                              size: Responsive.height(24, context)),
+                        )),
+                    SizedBox(width: Responsive.width(10, context)),
+                    Text(
+                      eventBody?.bodyName ?? "",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: Responsive.text(16, context),
+                        fontFamily: 'DM Sans',
+                        fontWeight: FontWeight.w700,
                       ),
-                      child: SingleChildScrollView(
-                        controller: scrollController,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Center(
-                              child: Container(
-                                height: Responsive.height(5, context),
-                                width: Responsive.width(50, context),
-                                decoration: BoxDecoration(
-                                  color: Color.fromRGBO(210, 213, 218, 1),
-                                  borderRadius: BorderRadius.circular(
-                                      Responsive.height(100, context)),
+                    ),
+                  ],
+                )),
+            Expanded(
+              child: Stack(children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => FullscreenImagePage(
+                          imageUrl: event!.eventImageURL ??
+                              eventBody?.bodyImageURL ??
+                              "",
+                          heroTag: event!.eventID,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Hero(
+                    tag: event!.eventID ?? "",
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          event!.eventImageURL ?? eventBody?.bodyImageURL ?? "",
+                      height: Responsive.height(412, context),
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    ),
+                  ),
+                ),
+                DraggableScrollableSheet(
+                  initialChildSize: 0.5,
+                  minChildSize: 0.5,
+                  maxChildSize: 0.85,
+                  builder: (context, scrollController) {
+                    return Container(
+                        padding: EdgeInsets.only(
+                            top: Responsive.height(10, context),
+                            left: Responsive.width(16, context),
+                            right: Responsive.width(16, context),
+                            bottom: Responsive.height(20, context)),
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(246, 246, 246, 1),
+                          borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(
+                                  Responsive.height(24, context))),
+                        ),
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child: Container(
+                                  height: Responsive.height(5, context),
+                                  width: Responsive.width(50, context),
+                                  decoration: BoxDecoration(
+                                    color: Color.fromRGBO(210, 213, 218, 1),
+                                    borderRadius: BorderRadius.circular(
+                                        Responsive.height(100, context)),
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(height: Responsive.height(24, context)),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    event!.eventName ?? "",
-                                    style: TextStyle(
-                                      fontSize: Responsive.text(24, context),
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'DM Sans',
+                              SizedBox(height: Responsive.height(24, context)),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      event!.eventName ?? "",
+                                      style: TextStyle(
+                                        fontSize: Responsive.text(24, context),
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'DM Sans',
+                                      ),
                                     ),
                                   ),
-                                ),
-                                if (fullbody != null &&
-                                    fullbody!.bodyParents != null &&
-                                    fullbody!.bodyParents!.isNotEmpty)
-                                  Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal:
-                                              Responsive.width(8, context),
-                                          vertical:
-                                              Responsive.height(6, context)),
-                                      decoration: BoxDecoration(
-                                        color: Color.fromRGBO(15, 22, 32, 1),
-                                        borderRadius: BorderRadius.circular(
-                                            Responsive.height(8, context)),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.circular(
-                                                Responsive.height(15, context)),
-                                            child: CachedNetworkImage(
-                                              width:
-                                                  Responsive.width(20, context),
-                                              height: Responsive.height(
-                                                  20, context),
-                                              fit: BoxFit.cover,
-                                              imageUrl: fullbody!
-                                                      .bodyParents![0]
-                                                      .bodyImageURL ??
-                                                  "",
-                                              placeholder: (context, url) =>
-                                                  CircularProgressIndicator(),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      Icon(Icons.error),
-                                            ),
-                                          ),
-                                          SizedBox(  
-                                              width:
-                                                  Responsive.width(8, context)),
-
-                                          Text(
-                                            fullbody!.bodyParents![0].bodyShortName ?? "",
-                                            style: TextStyle(
-                                              fontSize:
-                                                  Responsive.text(14, context),
-                                              fontWeight: FontWeight.w700,
-                                              fontFamily: 'DM Sans',
-                                              color: Color.fromRGBO(
-                                                  246, 246, 246, 1),
-                                            ),
-                                          )
-                                        ],
-                                      ))
-                              ],
-                            ),
-                            SizedBox(height: Responsive.height(4, context)),
-                            Row(
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/feed/light.svg',
-                                  color: Color.fromRGBO(48, 111, 220, 1),
-                                  height: Responsive.height(16.5, context),
-                                  width: Responsive.width(9.17, context),
-                                  fit: BoxFit.cover,
-                                ),
-                                SizedBox(width: Responsive.width(6, context)),
-                                Text(
-                                  '${event!.eventGoingCount + event!.eventInterestedCount}',
-                                  style: TextStyle(
-                                    color: const Color(0xFF306FDC),
-                                    fontSize: Responsive.text(14, context),
-                                    fontFamily: 'DM Sans',
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                SizedBox(width: Responsive.width(4, context)),
-                                Text(
-                                  'Enthu',
-                                  style: TextStyle(
-                                    color: const Color(0xFF306FDC),
-                                    fontSize: Responsive.text(14, context),
-                                    fontFamily: 'DM Sans',
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: Responsive.height(12, context)),
-                            Dash(
-                              direction: Axis.horizontal,
-                              length: Responsive.width(368, context),
-                              dashLength: Responsive.width(6, context),
-                              dashGap: Responsive.width(7, context),
-                              dashColor: Color(0xFFDADADA),
-                            ),
-                            SizedBox(height: Responsive.height(24, context)),
-                            Container(
-                                padding: EdgeInsets.only(
-                                    right: Responsive.width(16, context)),
-                                child: Column(children: [
-                                  Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          height:
-                                              Responsive.height(46, context),
-                                          width: Responsive.width(46, context),
-                                          decoration: BoxDecoration(
-                                            color: Color.fromRGBO(
-                                                196, 212, 239, 1),
-                                            borderRadius: BorderRadius.circular(
-                                                Responsive.height(50, context)),
-                                          ),
-                                          child: Center(
-                                            child: SvgPicture.asset(
-                                              'assets/feed/Clock.svg',
-                                            ),
-                                          ),
+                                  if (fullbody != null &&
+                                      fullbody!.bodyParents != null &&
+                                      fullbody!.bodyParents!.isNotEmpty)
+                                    Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal:
+                                                Responsive.width(8, context),
+                                            vertical:
+                                                Responsive.height(6, context)),
+                                        decoration: BoxDecoration(
+                                          color: Color.fromRGBO(15, 22, 32, 1),
+                                          borderRadius: BorderRadius.circular(
+                                              Responsive.height(8, context)),
                                         ),
-                                        SizedBox(
-                                            width:
-                                                Responsive.width(20, context)),
-                                        Expanded(
-                                            child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                        child: Row(
                                           children: [
-                                            Text(
-                                              'Date & Time',
-                                              style: TextStyle(
-                                                fontSize: Responsive.text(
-                                                    12, context),
-                                                fontWeight: FontWeight.w600,
-                                                fontFamily: 'DM Sans',
-                                                color: Color.fromRGBO(
-                                                    126, 130, 135, 1),
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      Responsive.height(
+                                                          15, context)),
+                                              child: CachedNetworkImage(
+                                                width: Responsive.width(
+                                                    20, context),
+                                                height: Responsive.height(
+                                                    20, context),
+                                                fit: BoxFit.cover,
+                                                imageUrl: fullbody!
+                                                        .bodyParents![0]
+                                                        .bodyImageURL ??
+                                                    "",
+                                                placeholder: (context, url) =>
+                                                    CircularProgressIndicator(),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Icon(Icons.error),
                                               ),
                                             ),
                                             SizedBox(
-                                                height: Responsive.height(
-                                                    2, context)),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  event!.eventStartTime != null
-                                                      ? formatDate(event!
-                                                                  .eventStartTime ??
-                                                              "") +
-                                                          (formatDate(event!
-                                                                          .eventEndTime ??
-                                                                      "") !=
-                                                                  formatDate(
-                                                                      event!.eventStartTime ??
-                                                                          "")
-                                                              ? ' - ' +
-                                                                  formatDate(
-                                                                      event!.eventEndTime ??
-                                                                          "")
-                                                              : '')
-                                                      : 'Unknown Date',
-                                                  style: TextStyle(
-                                                    fontSize: Responsive.text(
-                                                        16, context),
-                                                    fontWeight: FontWeight.w700,
-                                                    fontFamily: 'DM Sans',
-                                                    color: Color.fromRGBO(
-                                                        15, 22, 32, 1),
-                                                  ),
-                                                ),
-                                                Text(
-                                                  formatTime(
-                                                      event!.eventStartTime ??
-                                                          ""),
-                                                  style: TextStyle(
-                                                    fontSize: Responsive.text(
-                                                        16, context),
-                                                    fontWeight: FontWeight.w700,
-                                                    fontFamily: 'DM Sans',
-                                                    color: Color.fromRGBO(
-                                                        15, 22, 32, 1),
-                                                  ),
-                                                )
-                                              ],
+                                                width: Responsive.width(
+                                                    8, context)),
+                                            Text(
+                                              fullbody!.bodyParents![0]
+                                                      .bodyShortName ??
+                                                  "",
+                                              style: TextStyle(
+                                                fontSize: Responsive.text(
+                                                    14, context),
+                                                fontWeight: FontWeight.w700,
+                                                fontFamily: 'DM Sans',
+                                                color: Color.fromRGBO(
+                                                    246, 246, 246, 1),
+                                              ),
                                             )
                                           ],
                                         ))
-                                      ]),
-                                  SizedBox(
-                                      height: Responsive.height(16, context)),
-                                  InkWell(
-                                    onTap: () async {
-                                      if ((event!.eventVenues?.isNotEmpty ??
-                                              false) &&
-                                          event!.eventVenues![0]
-                                                  .venueLatitude !=
-                                              null) {
-                                        String uri = defaultTargetPlatform ==
-                                                TargetPlatform.iOS
-                                            ? "http://maps.apple.com/?ll=${event!.eventVenues![0].venueLatitude},${event!.eventVenues![0].venueLongitude}&z=20"
-                                            : "google.navigation:q=${event!.eventVenues![0].venueLatitude},${event!.eventVenues![0].venueLongitude}";
-                                        if (await canLaunchUrl(
-                                            Uri.parse(uri))) {
-                                          await launchUrl(
-                                            Uri.parse(uri),
-                                            mode:
-                                                LaunchMode.externalApplication,
-                                          );
-                                        }
-                                      } else {}
-                                    },
-                                    child: Row(
+                                ],
+                              ),
+                              SizedBox(height: Responsive.height(4, context)),
+                              Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/feed/light.svg',
+                                    color: Color.fromRGBO(48, 111, 220, 1),
+                                    height: Responsive.height(16.5, context),
+                                    width: Responsive.width(9.17, context),
+                                    fit: BoxFit.cover,
+                                  ),
+                                  SizedBox(width: Responsive.width(6, context)),
+                                  Text(
+                                    '${event!.eventGoingCount + event!.eventInterestedCount}',
+                                    style: TextStyle(
+                                      color: const Color(0xFF306FDC),
+                                      fontSize: Responsive.text(14, context),
+                                      fontFamily: 'DM Sans',
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  SizedBox(width: Responsive.width(4, context)),
+                                  Text(
+                                    'Enthu',
+                                    style: TextStyle(
+                                      color: const Color(0xFF306FDC),
+                                      fontSize: Responsive.text(14, context),
+                                      fontFamily: 'DM Sans',
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: Responsive.height(12, context)),
+                              Dash(
+                                direction: Axis.horizontal,
+                                length: Responsive.width(368, context),
+                                dashLength: Responsive.width(6, context),
+                                dashGap: Responsive.width(7, context),
+                                dashColor: Color(0xFFDADADA),
+                              ),
+                              SizedBox(height: Responsive.height(24, context)),
+                              Container(
+                                  padding: EdgeInsets.only(
+                                      right: Responsive.width(16, context)),
+                                  child: Column(children: [
+                                    Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         children: [
@@ -512,7 +453,7 @@ class _EventPageState extends State<EventPage> {
                                             ),
                                             child: Center(
                                               child: SvgPicture.asset(
-                                                'assets/feed/Location.svg',
+                                                'assets/feed/Clock.svg',
                                               ),
                                             ),
                                           ),
@@ -527,7 +468,7 @@ class _EventPageState extends State<EventPage> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                'Venue',
+                                                'Date & Time',
                                                 style: TextStyle(
                                                   fontSize: Responsive.text(
                                                       12, context),
@@ -540,105 +481,227 @@ class _EventPageState extends State<EventPage> {
                                               SizedBox(
                                                   height: Responsive.height(
                                                       2, context)),
-                                              Text(
-                                                _buildVenueText(event),
-                                                style: TextStyle(
-                                                  fontSize: Responsive.text(
-                                                      16, context),
-                                                  fontWeight: FontWeight.w700,
-                                                  fontFamily: 'DM Sans',
-                                                  color: Color.fromRGBO(
-                                                      15, 22, 32, 1),
-                                                ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    event!.eventStartTime !=
+                                                            null
+                                                        ? formatDate(event!
+                                                                    .eventStartTime ??
+                                                                "") +
+                                                            (formatDate(event!
+                                                                            .eventEndTime ??
+                                                                        "") !=
+                                                                    formatDate(
+                                                                        event!.eventStartTime ??
+                                                                            "")
+                                                                ? ' - ' +
+                                                                    formatDate(
+                                                                        event!.eventEndTime ??
+                                                                            "")
+                                                                : '')
+                                                        : 'Unknown Date',
+                                                    style: TextStyle(
+                                                      fontSize: Responsive.text(
+                                                          16, context),
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      fontFamily: 'DM Sans',
+                                                      color: Color.fromRGBO(
+                                                          15, 22, 32, 1),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    formatTime(
+                                                        event!.eventStartTime ??
+                                                            ""),
+                                                    style: TextStyle(
+                                                      fontSize: Responsive.text(
+                                                          16, context),
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      fontFamily: 'DM Sans',
+                                                      color: Color.fromRGBO(
+                                                          15, 22, 32, 1),
+                                                    ),
+                                                  )
+                                                ],
                                               )
                                             ],
                                           ))
                                         ]),
-                                  ),
-                                ])),
-                            SizedBox(height: Responsive.height(24, context)),
-                            Dash(
-                              direction: Axis.horizontal,
-                              length: Responsive.width(368, context),
-                              dashLength: Responsive.width(6, context),
-                              dashGap: Responsive.width(7, context),
-                              dashColor: Color(0xFFDADADA),
-                            ),
-                            SizedBox(height: Responsive.height(24, context)),
-                            Text(
-                              'Description',
-                              style: TextStyle(
-                                fontSize: Responsive.text(16, context),
-                                fontWeight: FontWeight.w700,
-                                fontFamily: 'DM Sans',
-                                color: Color.fromRGBO(21, 32, 45, 1),
+                                    SizedBox(
+                                        height: Responsive.height(16, context)),
+                                    InkWell(
+                                      onTap: () async {
+                                        if ((event!.eventVenues?.isNotEmpty ??
+                                                false) &&
+                                            event!.eventVenues![0]
+                                                    .venueLatitude !=
+                                                null) {
+                                          String uri = defaultTargetPlatform ==
+                                                  TargetPlatform.iOS
+                                              ? "http://maps.apple.com/?ll=${event!.eventVenues![0].venueLatitude},${event!.eventVenues![0].venueLongitude}&z=20"
+                                              : "google.navigation:q=${event!.eventVenues![0].venueLatitude},${event!.eventVenues![0].venueLongitude}";
+                                          if (await canLaunchUrl(
+                                              Uri.parse(uri))) {
+                                            await launchUrl(
+                                              Uri.parse(uri),
+                                              mode: LaunchMode
+                                                  .externalApplication,
+                                            );
+                                          }
+                                        } else {}
+                                      },
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              height: Responsive.height(
+                                                  46, context),
+                                              width:
+                                                  Responsive.width(46, context),
+                                              decoration: BoxDecoration(
+                                                color: Color.fromRGBO(
+                                                    196, 212, 239, 1),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        Responsive.height(
+                                                            50, context)),
+                                              ),
+                                              child: Center(
+                                                child: SvgPicture.asset(
+                                                  'assets/feed/Location.svg',
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                                width: Responsive.width(
+                                                    20, context)),
+                                            Expanded(
+                                                child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Venue',
+                                                  style: TextStyle(
+                                                    fontSize: Responsive.text(
+                                                        12, context),
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily: 'DM Sans',
+                                                    color: Color.fromRGBO(
+                                                        126, 130, 135, 1),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    height: Responsive.height(
+                                                        2, context)),
+                                                Text(
+                                                  _buildVenueText(event),
+                                                  style: TextStyle(
+                                                    fontSize: Responsive.text(
+                                                        16, context),
+                                                    fontWeight: FontWeight.w700,
+                                                    fontFamily: 'DM Sans',
+                                                    color: Color.fromRGBO(
+                                                        15, 22, 32, 1),
+                                                  ),
+                                                )
+                                              ],
+                                            ))
+                                          ]),
+                                    ),
+                                  ])),
+                              SizedBox(height: Responsive.height(24, context)),
+                              Dash(
+                                direction: Axis.horizontal,
+                                length: Responsive.width(368, context),
+                                dashLength: Responsive.width(6, context),
+                                dashGap: Responsive.width(7, context),
+                                dashColor: Color(0xFFDADADA),
                               ),
-                            ),
-                            SizedBox(height: Responsive.height(8, context)),
-                            HtmlWidget(
-                              _buildDescriptionHtml(),
-                              textStyle: TextStyle(
-                                fontSize: Responsive.text(16, context),
-                                fontWeight: FontWeight.w400,
-                                fontFamily: 'DM Sans',
-                                color: Color.fromRGBO(15, 22, 32, 1),
+                              SizedBox(height: Responsive.height(24, context)),
+                              Text(
+                                'Description',
+                                style: TextStyle(
+                                  fontSize: Responsive.text(16, context),
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: 'DM Sans',
+                                  color: Color.fromRGBO(21, 32, 45, 1),
+                                ),
                               ),
-                              factoryBuilder: () => SelectableWidgetFactory(),
-                              customStylesBuilder: (element) {
-                                if (element.localName == 'a') {
-                                  return {
-                                    'color': '#306FDC',
-                                    'text-decoration': 'underline',
-                                  };
-                                }
-                                return null;
-                              },
-                              onTapUrl: (url) async {
-                                final uri = Uri.tryParse(url);
-                                if (uri == null || !await canLaunchUrl(uri)) {
-                                  return false;
-                                }
-                                await launchUrl(
-                                  uri,
-                                  mode: LaunchMode.externalApplication,
-                                );
-                                return true;
-                              },
-                            ),
-                            SizedBox(height: Responsive.height(70, context)),
-                          ],
+                              SizedBox(height: Responsive.height(8, context)),
+                              HtmlWidget(
+                                _buildDescriptionHtml(),
+                                textStyle: TextStyle(
+                                  fontSize: Responsive.text(16, context),
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'DM Sans',
+                                  color: Color.fromRGBO(15, 22, 32, 1),
+                                ),
+                                factoryBuilder: () => SelectableWidgetFactory(),
+                                customStylesBuilder: (element) {
+                                  if (element.localName == 'a') {
+                                    return {
+                                      'color': '#306FDC',
+                                      'text-decoration': 'underline',
+                                    };
+                                  }
+                                  return null;
+                                },
+                                onTapUrl: (url) async {
+                                  final uri = Uri.tryParse(url);
+                                  if (uri == null || !await canLaunchUrl(uri)) {
+                                    return false;
+                                  }
+                                  await launchUrl(
+                                    uri,
+                                    mode: LaunchMode.externalApplication,
+                                  );
+                                  return true;
+                                },
+                              ),
+                              SizedBox(height: Responsive.height(70, context)),
+                            ],
+                          ),
+                        ));
+                  },
+                ),
+                Container(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: Responsive.width(6, context),
+                            vertical: Responsive.height(6, context)),
+                        decoration: BoxDecoration(
+                          image: const DecorationImage(
+                            image: AssetImage('assets/blogs/background.png'),
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: BorderRadius.circular(
+                              Responsive.height(50, context)),
+                          border: Border.all(
+                            color: Color.fromRGBO(246, 246, 246, 1),
+                            width: Responsive.height(8, context),
+                          ),
                         ),
-                      ));
-                },
-              ),
-              Container(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: Responsive.width(6, context),
-                          vertical: Responsive.height(6, context)),
-                      decoration: BoxDecoration(
-                        image: const DecorationImage(
-                          image: AssetImage('assets/blogs/background.png'),
-                          fit: BoxFit.cover,
-                        ),
-                        borderRadius: BorderRadius.circular(
-                            Responsive.height(50, context)),
-                        border: Border.all(
-                          color: Color.fromRGBO(246, 246, 246, 1),
-                          width: Responsive.height(8, context),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            height: Responsive.height(52, context),
-                            width: Responsive.width(52, context),
-                            decoration: BoxDecoration(
-                              color: Color.fromRGBO(45, 70, 108, 1),
-                              borderRadius: BorderRadius.circular(26),
-                            ),
-                            child: IconButton(
+                        child: Row(
+                          children: [
+                            Container(
+                              height: Responsive.height(52, context),
+                              width: Responsive.width(52, context),
+                              decoration: BoxDecoration(
+                                color: Color.fromRGBO(45, 70, 108, 1),
+                                borderRadius: BorderRadius.circular(26),
+                              ),
+                              child: IconButton(
                                 icon: SvgPicture.asset(
                                   'assets/feed/share.svg',
                                   height: Responsive.height(24, context),
@@ -650,142 +713,155 @@ class _EventPageState extends State<EventPage> {
                                 //       "Check this event: ${ShareURLMaker.getEventURL(event!)}");
                                 // }),
                                 onPressed: () async {
-                                String message = Uri.encodeComponent(
-                                    "Check this event: ${ShareURLMaker.getEventURL(event!)}");
-                                String whatsappUrl =
-                                    "https://wa.me/?text=$message";
-                                if (await canLaunchUrl(
-                                    Uri.parse(whatsappUrl))) {
-                                  await launchUrl(Uri.parse(whatsappUrl),
-                                      mode: LaunchMode.externalApplication);
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content:
-                                              Text("Could not open WhatsApp")));
+                                  String message = Uri.encodeComponent(
+                                      "Check this event: ${ShareURLMaker.getEventURL(event!)}");
+                                  String whatsappUrl =
+                                      "https://wa.me/?text=$message";
+                                  if (await canLaunchUrl(
+                                      Uri.parse(whatsappUrl))) {
+                                    await launchUrl(Uri.parse(whatsappUrl),
+                                        mode: LaunchMode.externalApplication);
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                "Could not open WhatsApp")));
+                                  }
+                                },
+                              ),
+                            ),
+                            SizedBox(width: Responsive.width(8, context)),
+                            Expanded(
+                                child: InkWell(
+                              onTap: () async {
+                                if (bloc.currSession == null) {
+                                  return;
                                 }
-                              },),
-                          ),
-                          SizedBox(width: Responsive.width(8, context)),
-                          Expanded(
-                              child: InkWell(
-                            onTap: () async {
-                              if (bloc.currSession == null) {
-                                return;
-                              }
-                              setState(() {
-                                if (currentUes == UES.Going) {
-                                  currentUes = UES.NotGoing;
-                                } else {
-                                  currentUes = UES.Going;
-                                }
-                              });
-                              await bloc.updateUesEvent(event!, currentUes);
-                              setState(() {});
-                            },
-                            child: Container(
-                                padding: EdgeInsets.only(
-                                    left: Responsive.width(16, context),
-                                    right: Responsive.width(16, context),
-                                    top: Responsive.height(13, context),
-                                    bottom: Responsive.height(13, context)),
-                                decoration: BoxDecoration(
-                                  color: currentUes == UES.NotGoing
-                                      ? Color.fromRGBO(48, 111, 220, 1)
-                                      : Color.fromRGBO(21, 32, 46, 1),
-                                  borderRadius: BorderRadius.circular(50),
-                                  border: Border.all(
-                                    color: currentUes == UES.NotGoing ? Color.fromRGBO(48, 111, 220, 1) : const Color(0xFF7E8287),
-                                    width: Responsive.width(2, context),
+                                setState(() {
+                                  if (currentUes == UES.Going) {
+                                    currentUes = UES.NotGoing;
+                                  } else {
+                                    currentUes = UES.Going;
+                                  }
+                                });
+                                await bloc.updateUesEvent(event!, currentUes);
+                                setState(() {});
+                              },
+                              child: Container(
+                                  padding: EdgeInsets.only(
+                                      left: Responsive.width(16, context),
+                                      right: Responsive.width(16, context),
+                                      top: Responsive.height(13, context),
+                                      bottom: Responsive.height(13, context)),
+                                  decoration: BoxDecoration(
+                                    color: currentUes == UES.NotGoing
+                                        ? Color.fromRGBO(48, 111, 220, 1)
+                                        : Color.fromRGBO(21, 32, 46, 1),
+                                    borderRadius: BorderRadius.circular(50),
+                                    border: Border.all(
+                                      color: currentUes == UES.NotGoing
+                                          ? Color.fromRGBO(48, 111, 220, 1)
+                                          : const Color(0xFF7E8287),
+                                      width: Responsive.width(2, context),
+                                    ),
                                   ),
-                                ),
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      SvgPicture.asset(
-                                        'assets/feed/light.svg',
-                                        colorFilter: currentUes == UES.NotGoing ? ColorFilter.mode(Color.fromRGBO(48, 111, 220, 1), BlendMode.srcIn) : ColorFilter.mode(const Color(0xFF7E8287), BlendMode.srcIn),
-                                        height:
-                                            Responsive.height(18.3, context),
-                                        width: Responsive.width(15, context),
-                                        fit: BoxFit.cover,
-                                      ),
-                                      if (UES.NotGoing == currentUes)
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/feed/light.svg',
+                                          colorFilter:
+                                              currentUes == UES.NotGoing
+                                                  ? ColorFilter.mode(
+                                                      Color.fromRGBO(
+                                                          48, 111, 220, 1),
+                                                      BlendMode.srcIn)
+                                                  : ColorFilter.mode(
+                                                      const Color(0xFF7E8287),
+                                                      BlendMode.srcIn),
+                                          height:
+                                              Responsive.height(18.3, context),
+                                          width: Responsive.width(15, context),
+                                          fit: BoxFit.cover,
+                                        ),
+                                        if (UES.NotGoing == currentUes)
+                                          SizedBox(
+                                              width: Responsive.width(
+                                                  11, context)),
+                                        if (UES.NotGoing == currentUes)
+                                          Text(
+                                            'Show enthu',
+                                            style: TextStyle(
+                                              fontSize:
+                                                  Responsive.text(14, context),
+                                              fontWeight: FontWeight.w700,
+                                              fontFamily: 'DM Sans',
+                                              color: colour,
+                                            ),
+                                          ),
                                         SizedBox(
                                             width:
                                                 Responsive.width(11, context)),
-                                      if (UES.NotGoing == currentUes)
-                                        Text(
-                                          'Show enthu',
-                                          style: TextStyle(
-                                            fontSize:
-                                                Responsive.text(14, context),
-                                            fontWeight: FontWeight.w700,
-                                            fontFamily: 'DM Sans',
-                                            color: colour,
+                                        // if (UES.Going == currentUes)
+                                        //   SvgPicture.asset(
+                                        //     'assets/feed/light.svg',
+                                        //     color: colour,
+                                        //     height:
+                                        //         Responsive.height(18.3, context),
+                                        //     width: Responsive.width(15, context),
+                                        //     fit: BoxFit.cover,
+                                        //   ),
+                                        if (UES.Going == currentUes)
+                                          Text(
+                                            'Showing Enthu',
+                                            style: TextStyle(
+                                              fontSize:
+                                                  Responsive.text(14, context),
+                                              fontWeight: FontWeight.w700,
+                                              fontFamily: 'DM Sans',
+                                              color: const Color(0xFF7E8287),
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                            width:
-                                                Responsive.width(11, context)),
-                                      // if (UES.Going == currentUes)
-                                      //   SvgPicture.asset(
-                                      //     'assets/feed/light.svg',
-                                      //     color: colour,
-                                      //     height:
-                                      //         Responsive.height(18.3, context),
-                                      //     width: Responsive.width(15, context),
-                                      //     fit: BoxFit.cover,
-                                      //   ),
-                                      if (UES.Going == currentUes)
-                                        Text(
-                                          'Showing Enthu',
-                                          style: TextStyle(
-                                            fontSize:
-                                                Responsive.text(14, context),
-                                            fontWeight: FontWeight.w700,
-                                            fontFamily: 'DM Sans',
-                                            color: const Color(0xFF7E8287),
-                                          ),
-                                        ),
-                                    ])),
-                          )),
-                          SizedBox(width: Responsive.width(8, context)),
-                          // Container(
-                          //   height: Responsive.height(52, context),
-                          //   width: Responsive.width(52, context),
-                          //   decoration: BoxDecoration(
-                          //     borderRadius: BorderRadius.circular(26),
-                          //     color: Color.fromRGBO(37, 211, 102, 1),
-                          //   ),
-                          //   child: IconButton(
-                          //     icon: SvgPicture.asset(
-                          //       'assets/feed/whatsapp.svg',
-                          //       fit: BoxFit.none,
-                          //     ),
-                          //     onPressed: () async {
-                          //       String message = Uri.encodeComponent(
-                          //           "Check this event: ${ShareURLMaker.getEventURL(event!)}");
-                          //       String whatsappUrl =
-                          //           "https://wa.me/?text=$message";
-                          //       if (await canLaunchUrl(
-                          //           Uri.parse(whatsappUrl))) {
-                          //         await launchUrl(Uri.parse(whatsappUrl),
-                          //             mode: LaunchMode.externalApplication);
-                          //       } else {
-                          //         ScaffoldMessenger.of(context).showSnackBar(
-                          //             SnackBar(
-                          //                 content:
-                          //                     Text("Could not open WhatsApp")));
-                          //       }
-                          //     },
-                          //   ),
-                          // ),
-                        ],
-                      )))
-            ]),
-          )
-        ]),
+                                      ])),
+                            )),
+                            SizedBox(width: Responsive.width(8, context)),
+                            // Container(
+                            //   height: Responsive.height(52, context),
+                            //   width: Responsive.width(52, context),
+                            //   decoration: BoxDecoration(
+                            //     borderRadius: BorderRadius.circular(26),
+                            //     color: Color.fromRGBO(37, 211, 102, 1),
+                            //   ),
+                            //   child: IconButton(
+                            //     icon: SvgPicture.asset(
+                            //       'assets/feed/whatsapp.svg',
+                            //       fit: BoxFit.none,
+                            //     ),
+                            //     onPressed: () async {
+                            //       String message = Uri.encodeComponent(
+                            //           "Check this event: ${ShareURLMaker.getEventURL(event!)}");
+                            //       String whatsappUrl =
+                            //           "https://wa.me/?text=$message";
+                            //       if (await canLaunchUrl(
+                            //           Uri.parse(whatsappUrl))) {
+                            //         await launchUrl(Uri.parse(whatsappUrl),
+                            //             mode: LaunchMode.externalApplication);
+                            //       } else {
+                            //         ScaffoldMessenger.of(context).showSnackBar(
+                            //             SnackBar(
+                            //                 content:
+                            //                     Text("Could not open WhatsApp")));
+                            //       }
+                            //     },
+                            //   ),
+                            // ),
+                          ],
+                        )))
+              ]),
+            )
+          ]),
+        ),
       ),
     );
   }

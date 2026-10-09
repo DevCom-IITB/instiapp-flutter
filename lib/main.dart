@@ -84,8 +84,6 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint("Background message data: ${message.data}");
   debugPrint(
       "Background notification: title=${message.notification?.title}, body=${message.notification?.body}");
-
-  await sendMessage(message);
 }
 
 void main() async {
@@ -445,11 +443,23 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
               case "/mess":
                 return _buildRoute(settings, MessPage());
               case "/placeblog":
-                return _buildRoute(settings, BlogPage(blogState: 0));
+                return _buildRoute(
+                  settings,
+                  BlogPage(
+                    blogState: 0,
+                    targetPostId: _notificationTargetPostId(settings),
+                  ),
+                );
               case "/researchblog":
                 return _buildRoute(settings, ResearchBlogPage());
               case "/trainblog":
-                return _buildRoute(settings, BlogPage(blogState: 1));
+                return _buildRoute(
+                  settings,
+                  BlogPage(
+                    blogState: 1,
+                    targetPostId: _notificationTargetPostId(settings),
+                  ),
+                );
               case "/feed":
                 return _buildRoute(settings, Homepage());
               case "/alumniLoginPage":
@@ -515,6 +525,14 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       settings: settings,
       builder: (BuildContext context) => builder,
     );
+  }
+
+  String? _notificationTargetPostId(RouteSettings settings) {
+    final arguments = settings.arguments;
+    if (arguments is NotificationRouteArguments) {
+      return arguments.notif.notificationObjectID;
+    }
+    return null;
   }
 
   void handleAppLink(Uri? uri) {
