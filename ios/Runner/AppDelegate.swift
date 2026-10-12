@@ -4,6 +4,7 @@ import Firebase
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
+  private let enableProfileBrightnessBoost = false
   private var previousScreenBrightness: CGFloat?
   private var screenCaptureOverlay: UIView?
 
@@ -34,16 +35,19 @@ import Firebase
       channel.setMethodCallHandler { [weak self] call, result in
         switch call.method {
         case "enable":
-          if self?.previousScreenBrightness == nil {
-            self?.previousScreenBrightness = UIScreen.main.brightness
+          if self?.enableProfileBrightnessBoost == true {
+            if self?.previousScreenBrightness == nil {
+              self?.previousScreenBrightness = UIScreen.main.brightness
+            }
+            UIScreen.main.brightness = 1.0
           }
-          UIScreen.main.brightness = 1.0
           result(nil)
         case "disable":
-          if let brightness = self?.previousScreenBrightness {
+          if self?.enableProfileBrightnessBoost == true,
+             let brightness = self?.previousScreenBrightness {
             UIScreen.main.brightness = brightness
+            self?.previousScreenBrightness = nil
           }
-          self?.previousScreenBrightness = nil
           result(nil)
         default:
           result(FlutterMethodNotImplemented)
