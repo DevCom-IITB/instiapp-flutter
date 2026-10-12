@@ -45,7 +45,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
           .toList(),
       venueRoom: json['venue_room'] as String?,
     )
-      ..eventLongDescription = json['longdescription'] as String?
+      ..eventLongDescription = _stringOrNullFromJson(json['longdescription'])
       ..emailVerified = json['email_verified'] as bool?
       ..eventStartDate = json['eventStartDate'] == null
           ? null

@@ -10,6 +10,9 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'event.g.dart';
 
+String? _stringOrNullFromJson(Object? value) =>
+    value is String ? value : null;
+
 // UserEventStatus
 enum UES {
   NotGoing,
@@ -34,7 +37,7 @@ class Event extends elt.Event {
   @JsonKey(name: "verification_bodies")
   List<Body>? verificationBodies;
 
-  @JsonKey(name: "longdescription")
+  @JsonKey(name: "longdescription", fromJson: _stringOrNullFromJson)
   String? eventLongDescription;
 
   @JsonKey(name: "image_url")
