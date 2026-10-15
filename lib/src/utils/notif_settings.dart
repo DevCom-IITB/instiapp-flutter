@@ -201,10 +201,9 @@ class NotificationController {
       String routeName = routeFromNotification(notif);
       String actionKey = receivedAction.buttonKeyPressed;
 
-      // Navigate using the global key
-      navigatorKey.currentState?.pushReplacementNamed(
+      _navigateFromNotification(
         routeName,
-        arguments: NotificationRouteArguments(actionKey, notif),
+        NotificationRouteArguments(actionKey, notif),
       );
 
       // Handle "Open Browser" action
@@ -237,11 +236,27 @@ void _handleFcmNotificationTap(RemoteMessage message) {
   final routeName = routeFromNotification(notif);
 
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    navigatorKey.currentState?.pushReplacementNamed(
+    _navigateFromNotification(
       routeName,
-      arguments: NotificationRouteArguments("", notif),
+      NotificationRouteArguments("", notif),
     );
   });
+}
+
+void _navigateFromNotification(
+  String routeName,
+  NotificationRouteArguments arguments,
+) {
+  final navigator = navigatorKey.currentState;
+  if (navigator == null) return;
+
+  if (routeName == "/placeblog" || routeName == "/trainblog") {
+    navigator.pushNamedAndRemoveUntil("/feed", (route) => false);
+    navigator.pushNamed(routeName, arguments: arguments);
+    return;
+  }
+
+  navigator.pushReplacementNamed(routeName, arguments: arguments);
 }
 
 /// Gives the route to navigate to from a notification
