@@ -201,10 +201,12 @@ class NotificationController {
       String routeName = routeFromNotification(notif);
       String actionKey = receivedAction.buttonKeyPressed;
 
-      _navigateFromNotification(
-        routeName,
-        NotificationRouteArguments(actionKey, notif),
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _navigateFromNotification(
+          routeName,
+          NotificationRouteArguments(actionKey, notif),
+        );
+      });
 
       // Handle "Open Browser" action
       if (actionKey == ActionKeys.OPEN_BROWSER) {
@@ -294,11 +296,17 @@ String routeFromNotification(RichNotification fromMap) {
 bool _firebaseMessagingListenersAttached = false;
 
 void setupNotifications(BuildContext context, InstiAppBloc bloc) async {
-  // Android displays notification messages automatically when the app is
-  // backgrounded or closed. In the foreground, do not create a second local
-  // notification through Awesome Notifications.
   if (!_firebaseMessagingListenersAttached) {
     _firebaseMessagingListenersAttached = true;
+
+    FirebaseMessaging.onMessage.listen((message) async {
+      try {
+        await sendMessage(message);
+      } catch (error, stackTrace) {
+        debugPrint('Failed to show foreground notification: $error');
+        debugPrintStack(stackTrace: stackTrace);
+      }
+    });
 
     FirebaseMessaging.onMessageOpenedApp.listen(
       _handleFcmNotificationTap,
@@ -399,7 +407,7 @@ Future<void> sendMessage(RemoteMessage message) async {
   }
 
   // Create the actual notification
-  createNotification(notif);
+  await createNotification(notif);
 }
 
 /// Create a notification

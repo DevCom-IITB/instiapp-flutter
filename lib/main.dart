@@ -114,10 +114,13 @@ void main() async {
   // FirebaseMessaging.onBackgroundMessage(sendMessage);
   await dotenv.load(fileName: "assets/config/env");
 
-  AwesomeNotifications().initialize(
-    'resource://drawable/ic_launcher_foreground',
+  await AwesomeNotifications().initialize(
+    'resource://drawable/ic_notification',
     notifChannels,
     channelGroups: notifGroups,
+  );
+  await AwesomeNotifications().setListeners(
+    onActionReceivedMethod: NotificationController.onActionReceivedMethod,
   );
 
   await bloc.restorePrefs();
