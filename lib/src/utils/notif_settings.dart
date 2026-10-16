@@ -299,6 +299,16 @@ void setupNotifications(BuildContext context, InstiAppBloc bloc) async {
   if (!_firebaseMessagingListenersAttached) {
     _firebaseMessagingListenersAttached = true;
 
+    await AwesomeNotifications().setListeners(
+      onActionReceivedMethod: NotificationController.onActionReceivedMethod,
+      onNotificationCreatedMethod:
+          NotificationController.onNotificationCreatedMethod,
+      onNotificationDisplayedMethod:
+          NotificationController.onNotificationDisplayedMethod,
+      onDismissActionReceivedMethod:
+          NotificationController.onDismissActionReceivedMethod,
+    );
+
     FirebaseMessaging.onMessage.listen((message) async {
       try {
         await sendMessage(message);
