@@ -283,6 +283,23 @@ class PostBloc {
     _setIndexListener();
   }
 
+  Future<void> loadPostById(String postId) async {
+    if (query.isNotEmpty || category.isNotEmpty) return;
+
+    for (int pageIndex = 0; pageIndex < 100; pageIndex++) {
+      List<Post>? page = _fetchPages[pageIndex];
+      if (page == null) {
+        page = await getBlogPage(pageIndex);
+        _handleFetchedPage(page, pageIndex);
+      }
+
+      if (page.any((post) => post.id == postId) ||
+          page.length < _noOfPostsPerPage) {
+        return;
+      }
+    }
+  }
+
   Future updateUserReaction(NewsArticle article, int reaction) async {
     String sel = "$reaction";
     int sendReaction = article.userReaction == reaction ? -1 : reaction;
