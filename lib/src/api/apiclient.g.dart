@@ -338,6 +338,190 @@ class _InstiAppApi implements InstiAppApi {
   }
 
   @override
+  Future<BlogFiltersResponse> getPlacementBlogFilters(String sessionId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<BlogFiltersResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/placementblogs/filters/',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = BlogFiltersResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<BlogPostsPage> getPlacementBlogPosts(
+    String sessionId,
+    Map<String, dynamic> query,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(query);
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<BlogPostsPage>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/placementblogs/posts/',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = BlogPostsPage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<BlogThreadsPage> getPlacementBlogThreads(
+    String sessionId,
+    Map<String, dynamic> query,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(query);
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<BlogThreadsPage>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/placementblogs/threads/',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = BlogThreadsPage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<BlogFiltersResponse> getInternshipBlogFilters(String sessionId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<BlogFiltersResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/internship/filters/',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = BlogFiltersResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<BlogPostsPage> getInternshipBlogPosts(
+    String sessionId,
+    Map<String, dynamic> query,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(query);
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<BlogPostsPage>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/internship/posts/',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = BlogPostsPage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<BlogThreadsPage> getInternshipBlogThreads(
+    String sessionId,
+    Map<String, dynamic> query,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(query);
+    final _headers = <String, dynamic>{r'Cookie': sessionId};
+    _headers.removeWhere((k, v) => v == null);
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<BlogThreadsPage>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/internship/threads/',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = BlogThreadsPage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<List<ExternalBlogPost>> getExternalBlogFeed(
     String sessionId,
     int from,

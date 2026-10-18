@@ -51,8 +51,18 @@ DateTime? _parsePublishedDate(String? raw) {
   // Fallback: parse the "EEE, MMM d, HH:mm:ss" shape seen in the UI today
   // (e.g. "Thur, Nov 28, 22:53:02"), assuming the current year.
   const Map<String, int> monthMap = {
-    'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
-    'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12,
+    'jan': 1,
+    'feb': 2,
+    'mar': 3,
+    'apr': 4,
+    'may': 5,
+    'jun': 6,
+    'jul': 7,
+    'aug': 8,
+    'sep': 9,
+    'oct': 10,
+    'nov': 11,
+    'dec': 12,
   };
   final RegExpMatch? match = RegExp(
     r'^\s*\w+,\s*([A-Za-z]{3})[a-z]*\s+(\d{1,2}),\s*(\d{1,2}):(\d{2}):(\d{2})\s*$',
@@ -64,7 +74,11 @@ DateTime? _parsePublishedDate(String? raw) {
   final int? hour = int.tryParse(match.group(3)!);
   final int? minute = int.tryParse(match.group(4)!);
   final int? second = int.tryParse(match.group(5)!);
-  if (month == null || day == null || hour == null || minute == null || second == null) {
+  if (month == null ||
+      day == null ||
+      hour == null ||
+      minute == null ||
+      second == null) {
     return null;
   }
 
@@ -249,8 +263,9 @@ class _BlogPageState extends State<BlogPage> {
       // don't fight the user's finger while they're actively dragging it.
       if (!_isDraggingYearScrollbar) {
         final double maxExtent = controller.position.maxScrollExtent;
-        final double fraction =
-        maxExtent > 0 ? (controller.offset / maxExtent).clamp(0.0, 1.0) : 0.0;
+        final double fraction = maxExtent > 0
+            ? (controller.offset / maxExtent).clamp(0.0, 1.0)
+            : 0.0;
         if ((fraction - _companyScrollFraction).abs() > 0.001) {
           setState(() => _companyScrollFraction = fraction);
         }
@@ -265,7 +280,7 @@ class _BlogPageState extends State<BlogPage> {
   void _updateVisibleYearIndicator() {
     const double topThreshold = 12; // relative to the list's own viewport
     final RenderObject? viewport =
-    _companyListViewportKey.currentContext?.findRenderObject();
+        _companyListViewportKey.currentContext?.findRenderObject();
     if (viewport is! RenderBox || !viewport.attached) return;
 
     int? matchedYear;
@@ -408,7 +423,7 @@ class _BlogPageState extends State<BlogPage> {
                                   label: 'Department',
                                   isActive: activeTab == 'department',
                                   onTap: () => setSheetState(
-                                          () => activeTab = 'department'),
+                                      () => activeTab = 'department'),
                                   context: context,
                                 ),
                               ],
@@ -440,7 +455,7 @@ class _BlogPageState extends State<BlogPage> {
                                       ? tempRoles
                                       : tempDepartments;
                                   final isSelected =
-                                  selectedSet.contains(option);
+                                      selectedSet.contains(option);
                                   return GestureDetector(
                                     onTap: () => setSheetState(() {
                                       if (!selectedSet.add(option)) {
@@ -455,13 +470,13 @@ class _BlogPageState extends State<BlogPage> {
                                         children: [
                                           Container(
                                             width:
-                                            Responsive.width(18, context),
+                                                Responsive.width(18, context),
                                             height:
-                                            Responsive.height(18, context),
+                                                Responsive.height(18, context),
                                             decoration: BoxDecoration(
                                               // shape: BoxShape.circle,
                                               borderRadius:
-                                              BorderRadius.circular(4),
+                                                  BorderRadius.circular(4),
                                               border: Border.all(
                                                 color: isSelected
                                                     ? const Color(0xFF306FDC)
@@ -474,10 +489,10 @@ class _BlogPageState extends State<BlogPage> {
                                             ),
                                             child: isSelected
                                                 ? const Icon(
-                                              Icons.check,
-                                              size: 16,
-                                              color: Colors.white,
-                                            )
+                                                    Icons.check,
+                                                    size: 16,
+                                                    color: Colors.white,
+                                                  )
                                                 : null,
                                           ),
                                           SizedBox(
@@ -770,7 +785,7 @@ class _BlogPageState extends State<BlogPage> {
                                       icon: SvgPicture.asset(
                                         'assets/blogs/arrow-left.svg',
                                         height:
-                                        Responsive.height(24.0, context),
+                                            Responsive.height(24.0, context),
                                         width: Responsive.width(24.0, context),
                                         fit: BoxFit.none,
                                       ),
@@ -778,7 +793,7 @@ class _BlogPageState extends State<BlogPage> {
                                         Navigator.of(context)
                                             .pushNamedAndRemoveUntil(
                                           '/feed', //navigate to homepage
-                                              (route) => false,
+                                          (route) => false,
                                         );
                                       },
                                     )),
@@ -854,7 +869,7 @@ class _BlogPageState extends State<BlogPage> {
                                       currquery = query;
                                     });
                                     if ((postType != PostType.ChatBot &&
-                                        query.length >= 4) ||
+                                            query.length >= 4) ||
                                         query.length == 0) {
                                       blogBloc!.query = query;
                                       await blogBloc.refresh(
@@ -893,7 +908,7 @@ class _BlogPageState extends State<BlogPage> {
                                         'assets/explore/x.svg',
                                         width: Responsive.width(24.0, context),
                                         height:
-                                        Responsive.height(24.0, context)),
+                                            Responsive.height(24.0, context)),
                                   ),
                                 ),
                             ],
@@ -906,7 +921,7 @@ class _BlogPageState extends State<BlogPage> {
                                 right: Responsive.width(16.0, context)),
                             child: Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   InkWell(
                                       borderRadius: BorderRadius.circular(
@@ -961,17 +976,17 @@ class _BlogPageState extends State<BlogPage> {
                                                 Container(
                                                   padding: EdgeInsets.symmetric(
                                                     horizontal:
-                                                    Responsive.width(
-                                                        8.0, context),
+                                                        Responsive.width(
+                                                            8.0, context),
                                                     vertical: Responsive.height(
                                                         2.0, context),
                                                   ),
                                                   decoration: BoxDecoration(
                                                     color:
-                                                    const Color(0xFF306FDC),
+                                                        const Color(0xFF306FDC),
                                                     borderRadius:
-                                                    BorderRadius.circular(
-                                                        999),
+                                                        BorderRadius.circular(
+                                                            999),
                                                   ),
                                                   child: Text(
                                                     _activeBlogFilterCount()
@@ -982,7 +997,7 @@ class _BlogPageState extends State<BlogPage> {
                                                           12.0, context),
                                                       fontFamily: 'DM Sans',
                                                       fontWeight:
-                                                      FontWeight.w700,
+                                                          FontWeight.w700,
                                                     ),
                                                   ),
                                                 ),
@@ -996,72 +1011,72 @@ class _BlogPageState extends State<BlogPage> {
                                           ))),
                                   Container(
                                       child: Row(
-                                        children: [
-                                          Container(
-                                            height:
+                                    children: [
+                                      Container(
+                                        height:
                                             Responsive.height(36.0, context),
-                                            width: Responsive.width(36.0, context),
-                                            decoration: BoxDecoration(
+                                        width: Responsive.width(36.0, context),
+                                        decoration: BoxDecoration(
+                                          color: view == 'normal'
+                                              ? const Color.fromRGBO(
+                                                  48, 111, 220, 1)
+                                              : const Color.fromRGBO(
+                                                  239, 239, 239, 1),
+                                          borderRadius: BorderRadius.circular(
+                                              Responsive.height(18.0, context)),
+                                        ),
+                                        child: IconButton(
+                                            icon: SvgPicture.asset(
+                                              'assets/blogs/list2.svg',
                                               color: view == 'normal'
-                                                  ? const Color.fromRGBO(
-                                                  48, 111, 220, 1)
-                                                  : const Color.fromRGBO(
-                                                  239, 239, 239, 1),
-                                              borderRadius: BorderRadius.circular(
-                                                  Responsive.height(18.0, context)),
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              fit: BoxFit.none,
                                             ),
-                                            child: IconButton(
-                                                icon: SvgPicture.asset(
-                                                  'assets/blogs/list2.svg',
-                                                  color: view == 'normal'
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                  fit: BoxFit.none,
-                                                ),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    view = 'normal';
-                                                  });
-                                                }),
-                                          ),
-                                          SizedBox(
-                                              width:
+                                            onPressed: () {
+                                              setState(() {
+                                                view = 'normal';
+                                              });
+                                            }),
+                                      ),
+                                      SizedBox(
+                                          width:
                                               Responsive.width(8.0, context)),
-                                          Container(
-                                            height:
+                                      Container(
+                                        height:
                                             Responsive.height(36.0, context),
-                                            width: Responsive.width(36.0, context),
-                                            decoration: BoxDecoration(
-                                              color: view == 'company wise'
-                                                  ? const Color.fromRGBO(
+                                        width: Responsive.width(36.0, context),
+                                        decoration: BoxDecoration(
+                                          color: view == 'company wise'
+                                              ? const Color.fromRGBO(
                                                   48, 111, 220, 1)
-                                                  : const Color.fromRGBO(
+                                              : const Color.fromRGBO(
                                                   239, 239, 239, 1),
-                                              borderRadius:
+                                          borderRadius:
                                               BorderRadius.circular(18),
-                                              border: Border.all(
-                                                color: Color.fromRGBO(
-                                                    210, 213, 218, 1),
-                                                width:
+                                          border: Border.all(
+                                            color: Color.fromRGBO(
+                                                210, 213, 218, 1),
+                                            width:
                                                 Responsive.width(1.0, context),
-                                              ),
-                                            ),
-                                            child: IconButton(
-                                                icon: SvgPicture.asset(
-                                                  'assets/blogs/list_comp_dark.svg',
-                                                  color: view == 'company wise'
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                  fit: BoxFit.none,
-                                                ),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    view = 'company wise';
-                                                  });
-                                                }),
                                           ),
-                                        ],
-                                      ))
+                                        ),
+                                        child: IconButton(
+                                            icon: SvgPicture.asset(
+                                              'assets/blogs/list_comp_dark.svg',
+                                              color: view == 'company wise'
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              fit: BoxFit.none,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                view = 'company wise';
+                                              });
+                                            }),
+                                      ),
+                                    ],
+                                  ))
                                 ])),
                         SizedBox(height: Responsive.height(24.0, context)),
                         Expanded(
@@ -1146,8 +1161,8 @@ class _BlogPageState extends State<BlogPage> {
           final int baseCount = (posts == null || posts.isEmpty)
               ? 0
               : ((posts.isNotEmpty && posts.last.content == null)
-              ? posts.length - 1
-              : posts.length);
+                  ? posts.length - 1
+                  : posts.length);
           final int totalItemCount = baseCount + 1;
 
           return RefreshIndicator(
@@ -1172,7 +1187,7 @@ class _BlogPageState extends State<BlogPage> {
             AsyncSnapshot<UnmodifiableListView<Post>> snapshot) {
           final List<Post> posts = snapshot.data?.toList() ?? [];
           final Map<int, Map<String, List<Post>>> yearMap =
-          groupPostsByYearAndCompany(posts);
+              groupPostsByYearAndCompany(posts);
           final List<int> years = yearMap.keys.toList()
             ..sort((a, b) => b.compareTo(a));
 
@@ -1188,14 +1203,15 @@ class _BlogPageState extends State<BlogPage> {
             final double trackHeight = constraints.maxHeight;
             final double thumbHeight = Responsive.height(48.0, context);
             final double thumbTravel =
-            (trackHeight - thumbHeight).clamp(0.0, double.infinity);
+                (trackHeight - thumbHeight).clamp(0.0, double.infinity);
             final double thumbTop = thumbTravel * _companyScrollFraction;
             final String labelText =
                 '${_visibleYear ?? (years.isNotEmpty ? years.first : '')}';
 
             void seekFromLocalDy(double localDy) {
-              final double fraction =
-              thumbTravel > 0 ? ((localDy - thumbHeight / 2) / thumbTravel) : 0.0;
+              final double fraction = thumbTravel > 0
+                  ? ((localDy - thumbHeight / 2) / thumbTravel)
+                  : 0.0;
               final double clamped = fraction.clamp(0.0, 1.0);
               setState(() => _companyScrollFraction = clamped);
               _seekCompanyListToFraction(clamped);
@@ -1252,8 +1268,7 @@ class _BlogPageState extends State<BlogPage> {
                                 _isDraggingYearScrollbar ? 18.0 : 14.0,
                                 context),
                             vertical: Responsive.height(
-                                _isDraggingYearScrollbar ? 10.0 : 8.0,
-                                context),
+                                _isDraggingYearScrollbar ? 10.0 : 8.0, context),
                           ),
                           decoration: BoxDecoration(
                             color: _isDraggingYearScrollbar
@@ -1312,8 +1327,8 @@ class _BlogPageState extends State<BlogPage> {
                       _yearPillHideTimer?.cancel();
                       _yearPillHideTimer =
                           Timer(const Duration(milliseconds: 900), () {
-                            if (mounted) setState(() => _yearPillOpacity = 0);
-                          });
+                        if (mounted) setState(() => _yearPillOpacity = 0);
+                      });
                     },
                     child: Align(
                       alignment: Alignment.centerRight,
@@ -1349,7 +1364,7 @@ class _BlogPageState extends State<BlogPage> {
     bloc.inPostIndex.add(index);
 
     final Post? post =
-    (posts != null && posts.length > index) ? posts[index] : null;
+        (posts != null && posts.length > index) ? posts[index] : null;
 
     if (post == null) {
       return Padding(
@@ -1360,19 +1375,19 @@ class _BlogPageState extends State<BlogPage> {
     if (post.content == null) {
       return Container(
           child: Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: Responsive.height(4.0, context),
-                horizontal: Responsive.width(4.0, context)),
-            child: Center(
-              child: Text("End of Results",
-                  style: TextStyle(
-                    fontSize: Responsive.text(16.0, context),
-                    fontFamily: 'DM Sans',
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                  )),
-            ),
-          ));
+        padding: EdgeInsets.symmetric(
+            vertical: Responsive.height(4.0, context),
+            horizontal: Responsive.width(4.0, context)),
+        child: Center(
+          child: Text("End of Results",
+              style: TextStyle(
+                fontSize: Responsive.text(16.0, context),
+                fontFamily: 'DM Sans',
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              )),
+        ),
+      ));
     }
     return _post(post, bloc, context);
   }
@@ -1391,7 +1406,7 @@ class _BlogPageState extends State<BlogPage> {
         ),
         child: ClipRRect(
             borderRadius:
-            BorderRadius.circular(Responsive.height(14.0, context)),
+                BorderRadius.circular(Responsive.height(14.0, context)),
             child: Container(
                 width: double.infinity,
                 padding: EdgeInsets.only(
@@ -1452,7 +1467,7 @@ class _BlogPageState extends State<BlogPage> {
                                     strutStyle: StrutStyle.fromTextStyle(
                                       TextStyle(
                                         fontSize:
-                                        Responsive.text(14.0, context),
+                                            Responsive.text(14.0, context),
                                         fontFamily: 'DM Sans',
                                         fontWeight: FontWeight.w700,
                                       ),
@@ -1492,14 +1507,14 @@ class _BlogPageState extends State<BlogPage> {
                     ),
                     Container(
                         child: Text(
-                          post.published,
-                          style: TextStyle(
-                            fontSize: Responsive.text(16.0, context),
-                            fontFamily: 'DM Sans',
-                            fontWeight: FontWeight.w700,
-                            color: const Color.fromRGBO(48, 111, 220, 1),
-                          ),
-                        )),
+                      post.published,
+                      style: TextStyle(
+                        fontSize: Responsive.text(16.0, context),
+                        fontFamily: 'DM Sans',
+                        fontWeight: FontWeight.w700,
+                        color: const Color.fromRGBO(48, 111, 220, 1),
+                      ),
+                    )),
                     SizedBox(
                       height: Responsive.height(8.0, context),
                     ),
@@ -1508,8 +1523,8 @@ class _BlogPageState extends State<BlogPage> {
                         data: wrapTableWithDiv(
                             highlightHtml(post.content ?? "", bloc.query)),
                         defaultTextStyle:
-                        Theme.of(context).textTheme.bodyMedium ??
-                            TextStyle(),
+                            Theme.of(context).textTheme.bodyMedium ??
+                                TextStyle(),
                       ),
                     ),
                   ],
@@ -1523,7 +1538,7 @@ String wrapTableWithDiv(String html) {
   return html.replaceAllMapped(
     RegExp(r'(<table[\s\S]*?>[\s\S]*?<\/table>)',
         multiLine: true, caseSensitive: false),
-        (match) => '<div class="table-radius">${match.group(0)}</div>',
+    (match) => '<div class="table-radius">${match.group(0)}</div>',
   );
 }
 
@@ -1537,53 +1552,53 @@ class CommonHtml extends StatelessWidget {
   Widget build(BuildContext context) {
     return data != null
         ? HtmlWidget(
-      data ?? "",
-      customStylesBuilder: (element) {
-        if (element.classes.contains('hl')) {
-          return {
-            'background-color': '#ffd54f',
-            'padding': '0px',
-            'border-radius': '2px',
-          };
-        }
-        if (element.classes.contains('table-radius')) {
-          return {
-            'border-radius': '8px',
-            'overflow': 'hidden',
-          };
-        }
-        if (element.localName == 'table') {
-          return {
-            'background-color': '#f6f6f6',
-            'padding': '16px',
-          };
-        }
-        return null;
-      },
-      factoryBuilder: () => SelectableWidgetFactory(),
-      onTapUrl: (link) async {
-        if (await canLaunchUrl(Uri.parse(link))) {
-          await launchUrl(
-            Uri.parse(link),
-            mode: LaunchMode.externalApplication,
-          );
-          return true;
-        } else {
-          throw "Couldn't launch $link";
-        }
-      },
-    )
+            data ?? "",
+            customStylesBuilder: (element) {
+              if (element.classes.contains('hl')) {
+                return {
+                  'background-color': '#ffd54f',
+                  'padding': '0px',
+                  'border-radius': '2px',
+                };
+              }
+              if (element.classes.contains('table-radius')) {
+                return {
+                  'border-radius': '8px',
+                  'overflow': 'hidden',
+                };
+              }
+              if (element.localName == 'table') {
+                return {
+                  'background-color': '#f6f6f6',
+                  'padding': '16px',
+                };
+              }
+              return null;
+            },
+            factoryBuilder: () => SelectableWidgetFactory(),
+            onTapUrl: (link) async {
+              if (await canLaunchUrl(Uri.parse(link))) {
+                await launchUrl(
+                  Uri.parse(link),
+                  mode: LaunchMode.externalApplication,
+                );
+                return true;
+              } else {
+                throw "Couldn't launch $link";
+              }
+            },
+          )
         : CircularProgressIndicatorExtended(
-      label: Text("Loading content"),
-    );
+            label: Text("Loading content"),
+          );
   }
 }
 
 class SelectableWidgetFactory extends WidgetFactory with SelectableTextFactory {
   @override
   SelectionChangedCallback? get selectableTextOnChanged => (selection, cause) {
-    // do something when the selection changes
-  };
+        // do something when the selection changes
+      };
 }
 
 class CircularProgressIndicatorExtended extends StatelessWidget {
@@ -1608,17 +1623,17 @@ class CircularProgressIndicatorExtended extends StatelessWidget {
           width: size,
           child: CircularProgressIndicator(
             valueColor:
-            new AlwaysStoppedAnimation<Color>(theme.colorScheme.secondary),
+                new AlwaysStoppedAnimation<Color>(theme.colorScheme.secondary),
             strokeWidth: 2,
           ),
         ),
       ]..addAll(label != null
           ? [
-        SizedBox(
-          width: Responsive.width(12.0, context),
-        ),
-        label!
-      ]
+              SizedBox(
+                width: Responsive.width(12.0, context),
+              ),
+              label!
+            ]
           : []),
     );
   }
@@ -1702,50 +1717,51 @@ class _BlogthreadState extends State<Blogthread> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                widget.CompanyName,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontFamily: 'DM Sans',
-                                  fontWeight: FontWeight.w700,
-                                  height: 1,
-                                ),
-                              ),
-                              Text(
-                                extractDepartmentName(
-                                    posts.isNotEmpty ? (posts.first.title ?? '') : ''),
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'DM Sans',
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
+                          Text(
+                            widget.CompanyName,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w700,
+                              height: 1,
+                            ),
+                          ),
+                          Text(
+                            extractDepartmentName(posts.isNotEmpty
+                                ? (posts.first.title ?? '')
+                                : ''),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'DM Sans',
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
 
-                              // "view company timeline" row -- removed from
-                              // the UI for now (kept here, commented out, in
-                              // case it needs to come back).
-                              // Row(
-                              //   children: [
-                              //     SvgPicture.asset(
-                              //       'assets/blogs/clock.svg',
-                              //       height: 18,
-                              //       width: 18,
-                              //       fit: BoxFit.none,
-                              //     ),
-                              //     const SizedBox(width: 4),
-                              //     Text(
-                              //       'view company timeline',
-                              //       style: TextStyle(
-                              //         color: const Color.fromRGBO(48, 111, 220, 1),
-                              //         fontSize: 16,
-                              //         fontFamily: 'DM Sans',
-                              //         fontWeight: FontWeight.w700,
-                              //         decoration: TextDecoration.underline,
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
-                            ])),
+                          // "view company timeline" row -- removed from
+                          // the UI for now (kept here, commented out, in
+                          // case it needs to come back).
+                          // Row(
+                          //   children: [
+                          //     SvgPicture.asset(
+                          //       'assets/blogs/clock.svg',
+                          //       height: 18,
+                          //       width: 18,
+                          //       fit: BoxFit.none,
+                          //     ),
+                          //     const SizedBox(width: 4),
+                          //     Text(
+                          //       'view company timeline',
+                          //       style: TextStyle(
+                          //         color: const Color.fromRGBO(48, 111, 220, 1),
+                          //         fontSize: 16,
+                          //         fontFamily: 'DM Sans',
+                          //         fontWeight: FontWeight.w700,
+                          //         decoration: TextDecoration.underline,
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
+                        ])),
                     const SizedBox(width: 16),
                     SizedBox(
                       width: 40,
@@ -1960,7 +1976,7 @@ class Companywiseblog extends StatelessWidget {
             child: CommonHtml(
               data: post?.content,
               defaultTextStyle:
-              Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+                  Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
             ),
           ),
         ],

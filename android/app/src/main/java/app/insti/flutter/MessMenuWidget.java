@@ -54,6 +54,13 @@ public class MessMenuWidget extends AppWidgetProvider {
                                        String overrideMeal) {
 
         views = new RemoteViews(context.getPackageName(), R.layout.mess_menu_widget);
+        int widgetPadding = context.getResources().getDimensionPixelSize(R.dimen.widget_margin);
+        views.setViewPadding(
+                R.id.mess_menu_widget,
+                widgetPadding,
+                widgetPadding,
+                widgetPadding,
+                widgetPadding);
 
         // Attach meal-button PendingIntents
         attachMealButtonIntents(context, appWidgetId);

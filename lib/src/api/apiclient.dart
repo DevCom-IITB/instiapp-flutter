@@ -3,27 +3,14 @@ import 'dart:io';
 import 'package:InstiApp/src/api/model/UserTag.dart';
 import 'package:InstiApp/src/api/model/achievements.dart';
 import 'package:InstiApp/src/api/model/body.dart';
+import 'package:InstiApp/src/api/model/blog_api.dart';
 import 'package:InstiApp/src/api/model/buynsellPost.dart';
 import 'package:InstiApp/src/api/model/buynsellPostsPage.dart';
 import 'package:InstiApp/src/api/model/community.dart';
 import 'package:InstiApp/src/api/model/communityPost.dart';
 import 'package:InstiApp/src/api/model/event.dart';
 import 'package:InstiApp/src/api/model/lostandfoundPost.dart';
-import 'dart:async';
-import 'dart:io';
-import 'package:InstiApp/src/api/model/UserTag.dart';
-import 'package:InstiApp/src/api/model/achievements.dart';
-import 'package:InstiApp/src/api/model/body.dart';
-import 'package:InstiApp/src/api/model/buynsellPost.dart';
-import 'package:InstiApp/src/api/model/community.dart';
-import 'package:InstiApp/src/api/model/communityPost.dart';
-import 'package:InstiApp/src/api/model/event.dart';
-import 'package:InstiApp/src/api/model/lostandfoundPost.dart';
 import 'package:InstiApp/src/api/model/mess.dart';
-import 'package:InstiApp/src/api/model/messCalEvent.dart';
-import 'package:InstiApp/src/api/model/notification.dart';
-import 'package:InstiApp/src/api/model/offeredAchievements.dart';
-import 'package:InstiApp/src/api/model/post.dart';
 import 'package:InstiApp/src/api/model/messCalEvent.dart';
 import 'package:InstiApp/src/api/model/notification.dart';
 import 'package:InstiApp/src/api/model/offeredAchievements.dart';
@@ -39,13 +26,13 @@ import 'package:InstiApp/src/api/request/chatbotlog_request.dart';
 import 'package:InstiApp/src/api/request/comment_create_request.dart';
 import 'package:InstiApp/src/api/request/complaint_create_request.dart';
 import 'package:InstiApp/src/api/request/event_create_request.dart';
-import 'package:InstiApp/src/api/request/popup_mark_read_request.dart';
 import 'package:InstiApp/src/api/request/postFAQ_request.dart';
 import 'package:InstiApp/src/api/request/update_community_post_request.dart';
 import 'package:InstiApp/src/api/request/user_fcm_patch_request.dart';
 import 'package:InstiApp/src/api/request/user_scn_patch_request.dart';
 import 'package:InstiApp/src/api/response/achievement_create_response.dart';
 import 'package:InstiApp/src/api/response/alumni_login_response.dart';
+import 'package:InstiApp/src/api/response/calendar_feed_response.dart';
 import 'package:InstiApp/src/api/response/community_post_list_response.dart';
 import 'package:InstiApp/src/api/response/event_create_response.dart';
 import 'package:InstiApp/src/api/response/explore_response.dart';
@@ -54,7 +41,6 @@ import 'package:InstiApp/src/api/response/image_upload_response.dart';
 import 'package:InstiApp/src/api/response/news_feed_response.dart';
 import 'package:InstiApp/src/api/response/secret_response.dart';
 import 'package:InstiApp/src/api/response/user_tags_reach_response.dart';
-import 'package:InstiApp/src/api/response/calendar_feed_response.dart';
 import 'package:InstiApp/src/api/response/popup_notification_response.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart' as rt;
@@ -79,14 +65,14 @@ abstract class InstiAppApi {
 
   @rt.GET("/popup-notification/")
   Future<List<PopupNotificationResponse>> getPopupNotifications(
-      @rt.Header("Cookie") String sessionID,
-      );
+    @rt.Header("Cookie") String sessionID,
+  );
 
   @rt.PATCH("/popup-notification/{popupId}/mark-as-read/")
   Future<void> markPopupAsRead(
-      @rt.Header("Cookie") String sessionId,
-      @rt.Path("popupId") int popupId,
-      );
+    @rt.Header("Cookie") String sessionId,
+    @rt.Path("popupId") int popupId,
+  );
 
   @rt.GET("/pass-login")
   Future<Session> passwordLogin(@rt.Query("username") String username,
@@ -101,19 +87,19 @@ abstract class InstiAppApi {
       @rt.Query('code') String code, @rt.Query('redir') String redir);
   @rt.GET("/alumniLogin")
   Future<AlumniLoginResponse> AlumniLogin(
-      @rt.Query("ldap") String ldap,
-      );
+    @rt.Query("ldap") String ldap,
+  );
 
   @rt.GET("/alumniOTP")
   Future<AlumniLoginResponse> AlumniOTP(
-      @rt.Query("ldap") String ldap,
-      @rt.Query("otp") String otp,
-      );
+    @rt.Query("ldap") String ldap,
+    @rt.Query("otp") String otp,
+  );
 
   @rt.GET("/resendAlumniOTP")
   Future<AlumniLoginResponse> ResendAlumniOTP(
-      @rt.Query("ldap") String ldap,
-      );
+    @rt.Query("ldap") String ldap,
+  );
 
   @rt.GET("/placement-blog")
   Future<List<PlacementBlogPost>> getPlacementBlogFeed(
@@ -121,6 +107,34 @@ abstract class InstiAppApi {
       @rt.Query("from") int from,
       @rt.Query("num") int number,
       @rt.Query("query") String query);
+
+  @rt.GET("/placementblogs/filters/")
+  Future<BlogFiltersResponse> getPlacementBlogFilters(
+      @rt.Header("Cookie") String sessionId);
+
+  @rt.GET("/placementblogs/posts/")
+  Future<BlogPostsPage> getPlacementBlogPosts(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Queries() Map<String, dynamic> query);
+
+  @rt.GET("/placementblogs/threads/")
+  Future<BlogThreadsPage> getPlacementBlogThreads(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Queries() Map<String, dynamic> query);
+
+  @rt.GET("/internship/filters/")
+  Future<BlogFiltersResponse> getInternshipBlogFilters(
+      @rt.Header("Cookie") String sessionId);
+
+  @rt.GET("/internship/posts/")
+  Future<BlogPostsPage> getInternshipBlogPosts(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Queries() Map<String, dynamic> query);
+
+  @rt.GET("/internship/threads/")
+  Future<BlogThreadsPage> getInternshipBlogThreads(
+      @rt.Header("Cookie") String sessionId,
+      @rt.Queries() Map<String, dynamic> query);
 
   @rt.GET("/external-blog")
   Future<List<ExternalBlogPost>> getExternalBlogFeed(
@@ -152,14 +166,14 @@ abstract class InstiAppApi {
       @rt.Header('Cookie') String sessionId, @rt.Path() String uuid);
   @rt.POST('/events/{uuid}/approve-mail')
   Future<void> pushMail(
-      @rt.Header("Cookie") String sessionId,
-      @rt.Path() String uuid,
-      );
+    @rt.Header("Cookie") String sessionId,
+    @rt.Path() String uuid,
+  );
   @rt.POST('/events/{uuid}/reject-mail')
   Future<void> rejectMail(
-      @rt.Header("Cookie") String sessionId,
-      @rt.Path() String uuid,
-      );
+    @rt.Header("Cookie") String sessionId,
+    @rt.Path() String uuid,
+  );
 
   @rt.GET("/events")
   Future<NewsFeedResponse> getNewsFeed(@rt.Header("Cookie") String sessionId);
@@ -402,10 +416,10 @@ abstract class InstiAppApi {
 
   @rt.PUT("/communityposts/{id}")
   Future<void> updateCommunityPost(
-      @rt.Header("Cookie") String sessionId,
-      @rt.Path() String id,
-      @rt.Body() CommunityPost post,
-      );
+    @rt.Header("Cookie") String sessionId,
+    @rt.Path() String id,
+    @rt.Body() CommunityPost post,
+  );
 
   @rt.PUT("/communityposts/{action}/{id}")
   Future<void> updateCommunityPostAction(
@@ -454,10 +468,8 @@ abstract class InstiAppApi {
   // chars, so keep that threshold in mind client-side too.
   @rt.GET('/buy/v2/products')
   Future<BuynSellPostsPage> getBuynSellPostsPage(
-      @rt.Header("Cookie") String sessionId,
-      @rt.Query('page') int page,
-      {@rt.Query('all') bool showAll = true,
-        @rt.Query('query') String? query});
+      @rt.Header("Cookie") String sessionId, @rt.Query('page') int page,
+      {@rt.Query('all') bool showAll = true, @rt.Query('query') String? query});
 
   @rt.GET('/buy/products/{id}')
   Future<BuynSellPost> getBuynSellPost(
@@ -490,10 +502,9 @@ abstract class InstiAppApi {
 
   @rt.GET('/calendar/feed')
   Future<CalendarFeedResponse> getCalendarFeed(
-      @rt.Header("Cookie") String sessionId,
-      @rt.Query('start') String start,
-      @rt.Query('end') String end,
-      @rt.Query('tz') String tz,
-      );
-
+    @rt.Header("Cookie") String sessionId,
+    @rt.Query('start') String start,
+    @rt.Query('end') String end,
+    @rt.Query('tz') String tz,
+  );
 }
