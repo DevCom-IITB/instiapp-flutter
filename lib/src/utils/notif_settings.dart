@@ -416,8 +416,8 @@ Future<void> sendMessage(RemoteMessage message) async {
     }
   }
 
-  // Create the actual notification
-  await createNotification(notif);
+  // Awesome Notifications disabled: Relying strictly on system FCM notifications
+  // await createNotification(notif);
 }
 
 /// Create a notification

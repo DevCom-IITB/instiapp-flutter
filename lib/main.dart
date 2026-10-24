@@ -103,6 +103,13 @@ void main() async {
   );
   debugPrint("FCM permission status: ${permission.authorizationStatus.name}");
 
+  // On iOS, allow FCM/APNs to present alert, sound and badge directly
+  await fcm.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
   final token = await fcm.getToken();
   debugPrint("========================================");
   debugPrint("FCM TOKEN: $token");
