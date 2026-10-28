@@ -50,7 +50,7 @@ class _MapPageState extends State<MapPage> {
 
   late jag.Jaguar server;
 
-  static const String mapBaseUrl = "https://saket-choudhary.me/iitbmap/";
+  static const String mapBaseUrl = "https://iitbmap.pages.dev/";
 
   String get mapUrl {
     final location = widget.location?.trim();
