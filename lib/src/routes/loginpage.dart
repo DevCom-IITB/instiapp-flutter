@@ -44,12 +44,6 @@ class LoginPage extends StatefulWidget {
 
 class _OnboardingLoginPageState extends State<LoginPage>
     with TickerProviderStateMixin {
-  static const String _clientId = "wcXeaPWFL4G3j2xA78JYEc3xZ6uZeoSwEW4xkbbx";
-  static const String _backendUrl = "http://10.195.160.117/api/";
-  static const String _ssoAuthorizationUrl =
-      "https://gymkhana.iitb.ac.in/sso/oauth/authorize/";
-  static const String _redirectUri = "http://localhost:3000/login";
-
   late AnimationController _resizeController;
   late final AnimationController _moveController;
   late AnimationController _welcomeController;
@@ -60,7 +54,7 @@ class _OnboardingLoginPageState extends State<LoginPage>
   bool _isExitingToHome = false;
   bool _showLoadingDesign = false;
 
-  final String successUrl = _redirectUri;
+  final String successUrl = "https://www.insti.app/login-android.html";
   final String guestUrl = "https://guesturi";
   final String alumniUrl = "https://alumniurl";
   bool _isWebViewVisible = false;
@@ -1665,13 +1659,7 @@ class _OnboardingLoginPageState extends State<LoginPage>
         _isWebViewVisible = true;
         _isSSOLoading = false;
         _webViewUrl =
-            Uri.parse(_ssoAuthorizationUrl).replace(queryParameters: const {
-          "client_id": _clientId,
-          "response_type": "code",
-          "scope":
-              "basic profile picture sex ldap phone insti_address program secondary_emails",
-          "redirect_uri": _redirectUri,
-        }).toString();
+            "https://gymkhana.iitb.ac.in/profiles/oauth/authorize/?client_id=vR1pU7wXWyve1rUkg0fMS6StL1Kr6paoSmRIiLXJ&response_type=code&scope=basic%20profile%20picture%20sex%20ldap%20phone%20insti_address%20program%20secondary_emails&redirect_uri=https://www.insti.app/login-android.html";
       });
     });
   }
@@ -1692,12 +1680,9 @@ class _OnboardingLoginPageState extends State<LoginPage>
 
     if (code != null) {
       try {
-        final response = await InstiAppApi(
-          _bloc!.dio,
-          baseUrl: _backendUrl,
-        ).login(
+        final response = await InstiAppApi(_bloc!.dio).login(
           code,
-          _redirectUri,
+          "https://www.insti.app/login-android.html",
         );
 
         if (response.sessionid != null) {

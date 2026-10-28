@@ -112,7 +112,7 @@ class _MapPageState extends State<MapPage> {
           ),
           Positioned(
             top: 8,
-            right: 8,
+            left: 8,
             child: SafeArea(
               child: Container(
                 decoration: BoxDecoration(
