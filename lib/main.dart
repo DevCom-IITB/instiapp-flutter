@@ -89,7 +89,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async {
   GlobalKey<MyAppState> key = GlobalKey();
   WidgetsFlutterBinding.ensureInitialized();
-  // await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: ".env");
   await ensureFirebaseInitialized();
 
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
@@ -112,7 +112,6 @@ void main() async {
 
   InstiAppBloc bloc = InstiAppBloc(wholeAppKey: key);
   // FirebaseMessaging.onBackgroundMessage(sendMessage);
-  await dotenv.load(fileName: "assets/config/env");
 
   AwesomeNotifications().initialize(
     'resource://drawable/ic_notification',

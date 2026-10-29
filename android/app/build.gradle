@@ -46,7 +46,7 @@ android {
         applicationId "app.insti.flutter"
         minSdk 26
         targetSdk 36
-        versionCode 49
+        versionCode 50
         versionName "3.0.3"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
